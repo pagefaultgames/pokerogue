@@ -9,7 +9,7 @@ import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
+import { bypassLogin, isBeta, isDev, systemSaveShortKeyMap } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
@@ -74,7 +74,7 @@ import type {
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
-import { decrypt, encrypt } from "#utils/data";
+import { decrypt, encrypt, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
@@ -101,24 +101,6 @@ function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
       return "runHistoryData";
   }
 }
-
-const systemShortKeys = {
-  seenAttr: "$sa",
-  caughtAttr: "$ca",
-  natureAttr: "$na",
-  seenCount: "$s",
-  caughtCount: "$c",
-  hatchedCount: "$hc",
-  ivs: "$i",
-  moveset: "$m",
-  eggMoves: "$em",
-  candyCount: "$x",
-  friendship: "$f",
-  abilityAttr: "$a",
-  passiveAttr: "$pa",
-  valueReduction: "$vr",
-  classicWinCount: "$wc",
-};
 
 const ErrorMessages = {
   OUT_OF_DATE: i18next.t("gameData:reloadSaveData"),
@@ -394,36 +376,7 @@ export class GameData {
 
     this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-    if (systemData.starterData) {
-      this.starterData = systemData.starterData;
-    } else {
-      this.initStarterData();
-
-      if (systemData["starterMoveData"]) {
-        const starterMoveData = systemData["starterMoveData"];
-        for (const s of Object.keys(starterMoveData)) {
-          this.starterData[s].moveset = starterMoveData[s];
-        }
-      }
-
-      if (systemData["starterEggMoveData"]) {
-        const starterEggMoveData = systemData["starterEggMoveData"];
-        for (const s of Object.keys(starterEggMoveData)) {
-          this.starterData[s].eggMoves = starterEggMoveData[s];
-        }
-      }
-
-      this.migrateStarterAbilities(systemData, this.starterData);
-
-      const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-      for (const s of starterIds) {
-        this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-        this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-        if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-          this.starterData[s].candyCount += 4;
-        }
-      }
-    }
+    this.starterData = systemData.starterData;
 
     if (systemData.gameStats) {
       this.gameStats = systemData.gameStats;
@@ -454,16 +407,16 @@ export class GameData {
     }
 
     if (systemData.voucherCounts) {
-      getEnumKeys(VoucherType).forEach(key => {
+      for (const key of getEnumKeys(VoucherType)) {
         const index = VoucherType[key];
-        this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-      });
+        this.voucherCounts[index] = systemData.voucherCounts[index] ?? 0;
+      }
     }
 
-    this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+    this.eggs = systemData.eggs?.map(e => e.toEgg()) ?? [];
 
-    this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-    this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+    this.eggPity = systemData.eggPity?.slice(0) ?? [0, 0, 0, 0];
+    this.unlockPity = systemData.unlockPity?.slice(0) ?? [0, 0, 0, 0];
 
     this.dexData = Object.assign(this.dexData, systemData.dexData);
     this.consolidateDexData(this.dexData);
@@ -471,6 +424,7 @@ export class GameData {
   }
 
   public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+    // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
 
@@ -592,15 +546,15 @@ export class GameData {
     return ret;
   }
 
-  convertSystemDataStr(dataStr: string, shorten = false): string {
+  private convertSystemDataStr(dataStr: string, shorten = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
     dataStr = dataStr.replace(/"trainerId":\d+/g, `"trainerId":${this.trainerId}`);
     dataStr = dataStr.replace(/"secretId":\d+/g, `"secretId":${this.secretId}`);
-    const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
-    const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
+    const fromKeys = shorten ? Object.keys(systemSaveShortKeyMap) : Object.values(systemSaveShortKeyMap);
+    const toKeys = shorten ? Object.values(systemSaveShortKeyMap) : Object.keys(systemSaveShortKeyMap);
     for (const k in fromKeys) {
       dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace("$", "\\$")}`, "g"), toKeys[k]);
     }
@@ -1463,15 +1417,12 @@ export class GameData {
   public importData(dataType: GameDataType, slotId = 0): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
-    let saveFile: any = document.getElementById("saveFile");
-    if (saveFile) {
-      saveFile.remove();
-    }
+    document.getElementById("saveFile")?.remove();
 
-    saveFile = document.createElement("input");
+    const saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
-    saveFile.accept = ".prsv";
+    saveFile.accept = ".prsv, .json, .txt";
 
     // iOS requires user interaction with a visible element to trigger file input
     if (isIos()) {
@@ -1525,7 +1476,7 @@ export class GameData {
       saveFile.style.display = "none";
     }
 
-    saveFile.addEventListener("change", e => {
+    saveFile.addEventListener("change", ev => {
       const overlay = document.getElementById("iosUploadOverlay");
       const button = document.getElementById("iosUploadButton");
       overlay?.remove();
@@ -1535,9 +1486,17 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
-          let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
+          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
+          const saveData = e.target?.result?.toString() ?? "";
+
+          let dataStr: string;
+          if (isValidJSON(saveData)) {
+            dataStr = saveData;
+          } else {
+            dataStr = AES.decrypt(saveData, saveKey).toString(enc.Utf8);
+          }
+
           try {
             switch (dataType) {
               case GameDataType.SYSTEM: {
@@ -1628,9 +1587,9 @@ export class GameData {
             );
           });
         };
-      })((e.target as any).files[0]);
+      })((ev.target as any).files[0]);
 
-      reader.readAsText((e.target as any).files[0]);
+      reader.readAsText((ev.target as any).files[0]);
     });
 
     if (!isIos()) {
@@ -2210,30 +2169,6 @@ export class GameData {
       }
       if (!Object.hasOwn(entry, "ribbons")) {
         entry.ribbons = new RibbonData(0);
-      }
-    }
-  }
-
-  migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
-    const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-    const starterData = initialStarterData || systemData.starterData;
-    const dexData = systemData.dexData;
-    for (const s of starterIds) {
-      const dexAttr = dexData[s].caughtAttr;
-      starterData[s].abilityAttr =
-        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
-        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
-      if (dexAttr) {
-        if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
-          dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;
-        }
-        if (dexAttr & DexAttr.VARIANT_2) {
-          dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-        }
-        if (dexAttr & DexAttr.VARIANT_3) {
-          dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-        }
       }
     }
   }

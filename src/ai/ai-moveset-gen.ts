@@ -30,6 +30,7 @@ import {
   LEVEL_BASED_DENYLIST_THRESHOLD,
   MOVE_POWER_CEILING,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
+  RELEARN_LEVEL_REQUIREMENT,
   RELEARN_MOVE_WEIGHT,
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
@@ -85,7 +86,12 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
   let allLevelMoves: LevelMovesWithSource;
   // TODO: Investigate why there needs to be error handling here
   try {
-    allLevelMoves = pokemon.getLevelMoves(1, true, true, pokemon.hasTrainer());
+    allLevelMoves = pokemon.getLevelMoves({
+      startingLevel: 1,
+      includeEvolutionMoves: true,
+      includePrevolutionMoves: true,
+      includeRelearnerMoves: pokemon.hasTrainer(),
+    });
   } catch (e) {
     console.warn("Error encountered trying to generate moveset for %s: %s", pokemon.species.name, e);
     return movePool;
@@ -117,7 +123,8 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
         }
         break;
       case RELEARN_MOVE:
-        weight = hasTrainer ? RELEARN_MOVE_WEIGHT : 0;
+        weight = hasTrainer && level >= RELEARN_LEVEL_REQUIREMENT ? RELEARN_MOVE_WEIGHT : 0;
+        break;
     }
 
     movePool.set(id, weight);
