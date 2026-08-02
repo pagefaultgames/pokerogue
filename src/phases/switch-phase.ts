@@ -136,7 +136,7 @@ export class SwitchPhase extends PokemonPhase {
       switchedInPokemon.tempSummonData.turnCount--;
       switchedInPokemon.tempSummonData.waveTurnCount--;
     }
-  
+
     // If this switch is the result of a Baton (item/move), transfer all
     // relevant effects from the active Pokemon to the switched in Pokemon.
     // A similar effect occurs for the user's active Substitute and Shed Tail.
