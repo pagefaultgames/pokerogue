@@ -215,4 +215,20 @@ describe("Inverse Battle", () => {
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
   });
+
+  it("should nullify the Ground immunity of Flying types, but preserve immunities from other effects", async () => {
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
+
+    const enemy = game.field.getEnemyPokemon();
+
+    enemy.summonData.types = [PokemonType.FLYING];
+    expect(enemy.isGrounded()).toBe(false);
+    expect(enemy["isForciblyUngrounded"]()).toBe(false);
+    expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(2);
+
+    game.field.mockAbility(enemy, AbilityId.LEVITATE);
+
+    expect(enemy["isForciblyUngrounded"]()).toBe(true);
+    expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(0);
+  });
 });
