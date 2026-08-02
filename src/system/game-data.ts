@@ -1422,7 +1422,7 @@ export class GameData {
     const saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
-    saveFile.accept = ".prsv, .json, .txt";
+    saveFile.accept = isIos() ? ".prsv" : ".prsv, .json, .txt";
 
     // iOS requires user interaction with a visible element to trigger file input
     if (isIos()) {
