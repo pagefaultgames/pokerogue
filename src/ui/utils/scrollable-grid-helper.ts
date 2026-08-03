@@ -423,7 +423,7 @@ export class ScrollableGridHelper<TCell extends GridCell, TData> extends Phaser.
    */
   private applyScroll(animate = true): void {
     if (animate && this.isScrolling()) {
-      this.scrollAnimator?.snap();
+      this.scrollAnimator?.cancel();
       this.renderGrid(this.slideTargetRow);
     }
 

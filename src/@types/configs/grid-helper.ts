@@ -67,7 +67,7 @@ export interface ScrollableGridConfig<TCell extends GridCell, TData> {
   /**
    * Called whenever the highlighted item changes (cursor move, scroll, hover, {@linkcode setItems}, etc.).
    * Provides access to the currently-selected item and the previously-selected item, if it exists.
-   * If i.e. the grid was just reset, `previous` may be `undefined`.
+   * If e.g. the grid was just reset, `previous` may be `undefined`.
    */
   onItemSelected?: ((cell: TCell, data: TData, previous?: { cell: TCell; data: TData }) => void) | undefined;
 
@@ -85,19 +85,22 @@ export interface ScrollableGridConfig<TCell extends GridCell, TData> {
    */
   scrollTween?: ScrollTweenConfig | undefined;
 
+  /**
+   * Whether the grid will wrap around upon navigating past the edges.
+   * If any exit callbacks are specified in the config, they will disable wrapping for the specified direction(s).
+   */
   wrap?: boolean;
 
   /** Called when the cursor would exit the grid to the left.
    *
    * The primary purpose of these methods is to allow easy composition with other UI elements/menus.
-   * All of these callbacks override wrapping (wrap will not occur in the direction specified, even if it is enabled).
    */
   onExitLeft?: () => void;
-  /** Called when the cursor would exit the grid to the right */
+  /** Called when the cursor would exit the grid to the right, to allow composition */
   onExitRight?: () => void;
-  /** Called when the cursor would exit the grid to the top */
+  /** Called when the cursor would exit the grid to the top, to allow composition */
   onExitTop?: () => void;
-  /** Called when the cursor would exit the grid to the bottom */
+  /** Called when the cursor would exit the grid to the bottom, to allow composition */
   onExitBottom?: () => void;
 }
 

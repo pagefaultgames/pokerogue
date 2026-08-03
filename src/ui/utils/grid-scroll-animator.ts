@@ -21,10 +21,8 @@ export class GridScrollAnimator<TCell extends GridCell> {
   constructor(config: GridScrollAnimatorConfig<TCell>) {
     this.config = config;
     for (let col = 0; col < config.cols; col++) {
-      const cell = config.createCell();
+      const cell = config.createCell().setPosition(config.columnX(col), 0).setVisible(false);
       // The overscan row mirrors the column positions of the grid's first row with y set per slide
-      cell.setPosition(config.columnX(col), 0);
-      cell.setVisible(false);
       this.overscanCells.push(cell);
       config.cellContainer.add(cell);
     }
@@ -41,7 +39,7 @@ export class GridScrollAnimator<TCell extends GridCell> {
    */
   public slide(direction: 1 | -1, incomingRowStart: number): void {
     const { cellContainer, rows, spacingY, tween } = this.config;
-    this.snap();
+    this.cancel();
     this.config.renderRow(this.overscanCells, incomingRowStart);
     const incomingY = direction > 0 ? rows * spacingY : -spacingY;
     for (const cell of this.overscanCells) {
@@ -62,20 +60,6 @@ export class GridScrollAnimator<TCell extends GridCell> {
         this.commitSlide();
       },
     });
-  }
-
-  /**
-   * Finish an in-flight slide immediately
-   */
-  public snap(): void {
-    const tween = this.tween;
-    if (tween == null) {
-      return;
-    }
-    this.tween = null;
-    tween.stop();
-    this.config.cellContainer.y = 0;
-    this.endSlide();
   }
 
   /**
