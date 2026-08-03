@@ -66,7 +66,7 @@ async function run(): Promise<void> {
     const authToken = getInput("github_token", { required: true });
 
     const { eventName } = context;
-    if (eventName !== "pull_request_target") {
+    if (eventName !== "pull_request") {
       setFailed(`Invalid event: ${eventName}`);
       return;
     }
