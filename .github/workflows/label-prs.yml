@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  pull-requests: write
+  issues: write
 
 jobs:
   label-prs:
