@@ -5,8 +5,8 @@ import type { Pokemon } from "#field/pokemon";
 /**
  *  Checks if condition is checking for sunny weather and mega sol is present
  *
- * @param pokemon The Pokemon whose abilities should be checked.
- * @param weatherTypes Weather types to check for
+ * @param pokemon - The Pokemon whose abilities should be checked.
+ * @param weatherTypes - Weather types to check for
  * @returns Whether Mega Sol is present and condition expects sunny weather
  */
 export function isMegaSolSunny(pokemon: Pokemon, weatherTypes: readonly WeatherType[]): boolean {
