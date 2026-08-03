@@ -65,11 +65,6 @@ async function run(): Promise<void> {
   try {
     const authToken = getInput("github_token", { required: true });
 
-    const { eventName } = context;
-    if (eventName !== "pull_request_target") {
-      setFailed(`Invalid event: ${eventName}`);
-      return;
-    }
     if (!context.payload.pull_request) {
       setFailed("Error parsing pull request data!");
       return;
