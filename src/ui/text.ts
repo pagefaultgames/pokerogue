@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
-import { settings } from "#system/settings-manager";
 import type { TextStyleOptions } from "#types/ui-types";
 import i18next from "i18next";
 import type Phaser from "phaser";

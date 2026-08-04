@@ -1,5 +1,6 @@
 import { eventBus } from "#app/event-bus";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { TouchControl } from "#app/touch-controls";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
@@ -11,7 +12,6 @@ import { PAD_GENERIC } from "#inputs/pad-generic";
 import { PAD_PROCON } from "#inputs/pad-procon";
 import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
 import { PAD_XBOX360 } from "#inputs/pad-xbox360";
-import { settings } from "#system/settings-manager";
 import type {
   CustomInterfaceConfig,
   CustomKeyboardConfig,

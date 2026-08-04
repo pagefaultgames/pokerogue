@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
 import { ExpNotification } from "#enums/exp-notification";
@@ -8,7 +9,6 @@ import { getBaseLearnableMoveSource } from "#field/learnsets";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#system/achv";
-import { settings } from "#system/settings-manager";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 

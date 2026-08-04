@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
-import { settings } from "#system/settings-manager";
 import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons, LayoutConfig } from "#types/ui-types";
 import { TabMenu } from "#ui/containers/tab-menu";

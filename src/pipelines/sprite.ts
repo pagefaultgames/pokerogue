@@ -1,9 +1,9 @@
+import { settings } from "#app/global-settings-manager";
 import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
 import { MysteryEncounterIntroVisuals } from "#field/mystery-encounter-intro";
 import { Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { variantColorCache } from "#sprites/variant";
-import { settings } from "#system/settings-manager";
 import { rgbHexToRgba } from "#utils/color-utils";
 import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";

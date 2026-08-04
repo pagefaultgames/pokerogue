@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import type { Egg } from "#data/egg";
@@ -8,7 +9,6 @@ import { EggSkipPreference } from "#enums/egg-skip-preference";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { achvs } from "#system/achv";
-import { settings } from "#system/settings-manager";
 import i18next from "i18next";
 
 /**

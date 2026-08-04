@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
@@ -7,7 +8,6 @@ import type { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import { fixedInt } from "#utils/common";
 

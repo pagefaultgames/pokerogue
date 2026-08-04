@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
 import { PERMANENT_STATS, type PermanentStat, Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { settings } from "#system/settings-manager";
 import { getTextColor } from "#ui/text";
 import i18next from "i18next";
 

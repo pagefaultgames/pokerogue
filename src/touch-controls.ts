@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { UiTheme } from "#enums/ui-theme";
 import { UiWindowStyle } from "#enums/ui-window-style";
-import { settings } from "#system/settings-manager";
 import { hasTouchscreen } from "#utils/app-utils";
 import { enumValueToKey } from "#utils/enums";
 import type Phaser from "phaser";

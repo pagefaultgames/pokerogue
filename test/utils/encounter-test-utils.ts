@@ -1,3 +1,4 @@
+import { settings } from "#app/global-settings-manager";
 import { Status } from "#data/status-effect";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
@@ -7,7 +8,6 @@ import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
-import { settings } from "#system/settings-manager";
 import type { GameManager } from "#test/framework/game-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";

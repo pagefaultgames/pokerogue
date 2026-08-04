@@ -1,12 +1,12 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { InputsController } from "#app/inputs-controller";
 import { isDev } from "#constants/app-constants";
 import { SETTINGS_UI_MODES } from "#constants/ui-constants";
 import { Button } from "#enums/buttons";
 import { GameSpeed } from "#enums/game-speed";
 import { UiMode } from "#enums/ui-mode";
-import { settings } from "#system/settings-manager";
 import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";

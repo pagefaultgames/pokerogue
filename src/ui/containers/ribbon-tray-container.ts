@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
-import { settings } from "#system/settings-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";

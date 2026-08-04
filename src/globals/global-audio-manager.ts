@@ -1,5 +1,5 @@
+import { settings } from "#app/global-settings-manager";
 import type { AudioManager as GlobalAudioManager } from "#audio/audio-manager";
-import { settings } from "#system/settings-manager";
 
 export let audioManager: GlobalAudioManager;
 

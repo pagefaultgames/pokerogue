@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { ExpNotification } from "#enums/exp-notification";
 import { ExpBoosterModifier } from "#modifiers/modifier";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
-import { settings } from "#system/settings-manager";
 import { ValueHolder } from "#utils/value-holder";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {

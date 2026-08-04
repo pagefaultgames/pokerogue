@@ -1,9 +1,9 @@
+import { settings } from "#app/global-settings-manager";
 import { Gender } from "#data/gender";
 import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { variantColorCache, variantData } from "#sprites/variant";
-import { settings } from "#system/settings-manager";
 import { cachedFetch } from "#utils/fetch-utils";
 
 // Regex patterns

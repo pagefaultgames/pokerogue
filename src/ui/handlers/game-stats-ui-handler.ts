@@ -1,11 +1,11 @@
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
 import { TextStyle } from "#enums/text-style";
 import type { GameData } from "#system/game-data";
-import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";

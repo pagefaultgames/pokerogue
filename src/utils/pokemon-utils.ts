@@ -2,6 +2,7 @@ import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { POKERUS_STARTER_COUNT } from "#balance/starters";
+import { starterColors } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
@@ -14,7 +15,7 @@ import { randSeedIntRange, randSeedItem } from "#utils/common";
  * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
  * @returns The national dex number matching the `SpeciesId`
  */
-export function getDexNumber(speciesId: SpeciesId): SpeciesId {
+export function getDexNumber(speciesId: SpeciesId): number {
   return speciesId % 2000;
 }
 
@@ -202,4 +203,20 @@ export function decodeNickname(nickname: string, pokemonName: string): string {
 /** @returns A random {@linkcode RegularPokemonType} */
 export function getRandomRegularPokemonType(): RegularPokemonType {
   return randSeedIntRange(MIN_REGULAR_POKEMON_TYPE, MAX_REGULAR_POKEMON_TYPE) as RegularPokemonType;
+}
+
+/**
+ * Get the starter color for a given speciesId.
+ * @remarks
+ * Falls back to white if no color is found for the speciesId.
+ * @param speciesId - The {@linkcode SpeciesId} of the Pokémon to get the starter color for
+ * @returns A tuple of the starter color
+ */
+export function getStarterColors(speciesId: SpeciesId): [string, string] {
+  if (!starterColors[speciesId]) {
+    console.warn(`Missing starter colors for "${SpeciesId[speciesId]}".`);
+    // Default to white if no colors are found
+    starterColors[speciesId] = ["#FFFFFF", "#FFFFFF"];
+  }
+  return starterColors[speciesId];
 }

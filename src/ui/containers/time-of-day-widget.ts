@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { settings } from "#system/settings-manager";
 import { fixedInt } from "#utils/common";
 
 /** A small self contained UI element that displays the time of day as an icon */

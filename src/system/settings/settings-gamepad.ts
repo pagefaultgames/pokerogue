@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import { settings } from "#system/settings-manager";
 import type { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";

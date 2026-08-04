@@ -1,5 +1,6 @@
 import { SETTINGS_COLOR } from "#app/constants/colors";
 import { audioManager } from "#app/global-audio-manager";
+import { settings } from "#app/global-settings-manager";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -7,7 +8,6 @@ import { HpBarSpeed } from "#enums/hp-bar-speed";
 import { PlayerGender } from "#enums/player-gender";
 import { TypeHints } from "#enums/type-hints";
 import { VolumeSetting } from "#enums/volume-setting";
-import { settings } from "#system/settings-manager";
 import type { GameManager } from "#test/framework/game-manager";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import { getEnumStr } from "#test/utils/string-utils";
