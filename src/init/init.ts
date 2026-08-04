@@ -9,6 +9,7 @@ import { initBiomeBgmLoopPoints } from "#init/init-biome-bgm-loop-points";
 import { initBiomeDepths } from "#init/init-biome-depths";
 import { initBiomes } from "#init/init-biomes";
 import { initCatchableSpecies } from "#init/init-catchable-species";
+import { initStarterColors } from "#init/init-starter-colors";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
 import { initModifierTypes } from "#modifiers/modifier-type";
 import { initMoves } from "#moves/move";
@@ -18,6 +19,7 @@ import { initVouchers } from "#system/voucher";
 import { initStatsKeys } from "#ui/game-stats-ui-handler";
 
 export async function initializeGame(): Promise<void> {
+  await initStarterColors();
   initBiomeBgmLoopPoints();
   initSpeciesDataRegistry();
   await initGlobalAudioManager();

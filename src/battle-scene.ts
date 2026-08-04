@@ -14,7 +14,6 @@ import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { initGlobalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
 import { LoadingScene } from "#app/loading-scene";
 import { activeOverrides } from "#app/overrides";
@@ -372,8 +371,8 @@ export class BattleScene extends SceneBase {
    */
   public async preload(): Promise<void> {
     /**
-     * These moves serve as fallback animations for other moves without loaded animations, and
-     * must be loaded prior to game start.
+     * These moves serve as fallback animations for other moves without loaded animations,
+     * and must be loaded prior to game start.
      */
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
@@ -381,7 +380,6 @@ export class BattleScene extends SceneBase {
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
-      this.initStarterColors(),
     ]).catch(reason => {
       throw new Error(`Unexpected error during BattleScene preLoad!\nReason: ${reason}`);
     });
@@ -697,17 +695,6 @@ export class BattleScene extends SceneBase {
     }
     const expVariantData = await cachedFetch("./images/pokemon/variant/_exp_masterlist.json").then(r => r.json());
     deepMergeSpriteData(variantData, expVariantData);
-  }
-
-  async initStarterColors(): Promise<void> {
-    if (Object.keys(starterColors).length > 0) {
-      // already initialized
-      return;
-    }
-    const sc = await cachedFetch("./starter-colors.json").then(res => res.json());
-    for (const key of Object.keys(sc)) {
-      starterColors[key] = sc[key];
-    }
   }
 
   // TODO: Add a `getPartyOnSide` function for getting the party of a pokemon
