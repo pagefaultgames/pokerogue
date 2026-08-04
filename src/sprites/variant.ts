@@ -1,7 +1,7 @@
+import { settings } from "#app/global-settings-manager";
 import { VariantTier } from "#enums/variant-tier";
 import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
-import { settings } from "#system/settings-manager";
 import { cachedFetch } from "#utils/fetch-utils";
 
 export type Variant = 0 | 1 | 2;

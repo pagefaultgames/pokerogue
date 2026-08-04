@@ -1,9 +1,9 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { Achv } from "#system/achv";
-import { settings } from "#system/settings-manager";
 import { Voucher } from "#system/voucher";
 import { addTextObject } from "#ui/text";
 

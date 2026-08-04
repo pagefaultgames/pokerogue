@@ -1,9 +1,9 @@
 import type { BattleScene } from "#app/battle-scene";
+import { settings } from "#app/global-settings-manager";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
-import { settings } from "#system/settings-manager";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";

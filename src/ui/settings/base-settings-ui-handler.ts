@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { settings as settingsManager } from "#system/settings-manager";
 import type { MappingSettingName } from "#types/configs/inputs";
 import type { SettingsCategory, SettingsUiItem } from "#types/settings";
 import type { InputsIcons } from "#types/ui-types";
@@ -253,7 +253,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     this.updateBindings();
 
     this.uiItems.forEach((uiItem, s) => {
-      const value = settingsManager[this.category][uiItem.key];
+      const value = settings[this.category][uiItem.key];
       let index = 0;
 
       if (value !== undefined) {
@@ -263,7 +263,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       if (index < 0) {
         console.warn(
           `Could not find index for ${uiItem.key}.`,
-          `\nExpected value: ${settingsManager[this.category][uiItem.key]}`,
+          `\nExpected value: ${settings[this.category][uiItem.key]}`,
           "\nAvailable values:",
           uiItem.options,
         );
@@ -507,7 +507,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     this.settingsContainer.setVisible(false);
     this.setScrollCursor(0);
     this.eraseCursor();
-    this.getUi().bgmBar.toggleBgmBar(settingsManager.display.showBgmBar);
+    this.getUi().bgmBar.toggleBgmBar(settings.display.showBgmBar);
   }
 
   /**
@@ -543,17 +543,17 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       if (this.canLoseProgress()) {
         this.showConfirm(
           i18next.t("menuUiHandler:losingProgressionWarning"),
-          () => settingsManager.updateAndReload(this.category, key as never, newValue),
+          () => settings.updateAndReload(this.category, key as never, newValue),
           () => this.handleCancelConfirm(uiItem),
         );
         return;
       }
 
-      settingsManager.updateAndReload(this.category, key as never, newValue);
+      settings.updateAndReload(this.category, key as never, newValue);
       return;
     }
 
-    settingsManager.update(this.category, key as never, newValue);
+    settings.update(this.category, key as never, newValue);
   }
 
   protected canLoseProgress(): boolean {
@@ -587,7 +587,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
   protected handleCancelConfirm(uiItem: SettingsUiItem) {
     const { key, options } = uiItem;
 
-    const oldValue = settingsManager[this.category][key];
+    const oldValue = settings[this.category][key];
     const oldOptionIndex = options.findIndex(option => option.value === oldValue);
     this.setOptionCursor(-1, Math.max(oldOptionIndex, 0), false);
   }

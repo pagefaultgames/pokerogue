@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Phase } from "#app/phase";
-import { settings } from "#system/settings-manager";
 
 export class MessagePhase extends Phase {
   public readonly phaseName = "MessagePhase";

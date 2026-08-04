@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
@@ -10,7 +11,6 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
-import { settings } from "#system/settings-manager";
 import i18next from "i18next";
 
 export class SummonPhase extends PartyMemberPokemonPhase {

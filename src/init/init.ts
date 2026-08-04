@@ -2,6 +2,7 @@ import "#app/extensions"; // Setup Phaser extension methods/etc
 
 import { initAbilities } from "#abilities/init-abilities";
 import { initGlobalAudioManager } from "#app/global-audio-manager";
+import { initSettingsManager } from "#app/global-settings-manager";
 import { initChallenges } from "#data/challenge";
 import { initTrainerTypeDialogue } from "#data/dialogue";
 import { initSpeciesDataRegistry } from "#data/species-data-registry";
@@ -21,6 +22,7 @@ import { initStatsKeys } from "#ui/game-stats-ui-handler";
 export async function initializeGame(): Promise<void> {
   await initStarterColors();
   initBiomeBgmLoopPoints();
+  await initSettingsManager();
   initSpeciesDataRegistry();
   await initGlobalAudioManager();
   initModifierTypes();

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
-import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 

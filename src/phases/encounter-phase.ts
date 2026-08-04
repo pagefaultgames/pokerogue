@@ -2,6 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -34,7 +35,6 @@ import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils"
 import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
-import { settings } from "#system/settings-manager";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 

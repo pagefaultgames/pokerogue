@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
@@ -23,7 +24,6 @@ import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#mo
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
-import { settings } from "#system/settings-manager";
 import type { TurnMove } from "#types/turn-move";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";

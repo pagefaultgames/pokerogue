@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { TypeHints } from "#enums/type-hints";
 import type { EnemyPokemon } from "#field/pokemon";
-import { settings } from "#system/settings-manager";
 import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";

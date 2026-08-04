@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { BattlerIndex } from "#enums/battler-index";
 import { DamageNumbersMode } from "#enums/damage-numbers-mode";
 import { HitResult } from "#enums/hit-result";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
-import { settings } from "#system/settings-manager";
 import type { DamageResult } from "#types/damage-result";
 import { addTextObject } from "#ui/text";
 import { fixedInt, formatStat } from "#utils/common";

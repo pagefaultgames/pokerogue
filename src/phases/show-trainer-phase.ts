@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { BattlePhase } from "#phases/battle-phase";
-import { settings } from "#system/settings-manager";
 
 export class ShowTrainerPhase extends BattlePhase {
   public readonly phaseName = "ShowTrainerPhase";

@@ -1,12 +1,12 @@
 import { FixedBattleConfig, getRandomTrainerFunc } from "#app/battle";
 import { Trainer } from "#app/field/trainer";
+import { settings } from "#app/global-settings-manager";
 import { randSeedInt } from "#app/utils/common";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
-import { settings } from "#system/settings-manager";
 
 export interface FixedBattleConfigs {
   [key: number]: FixedBattleConfig;

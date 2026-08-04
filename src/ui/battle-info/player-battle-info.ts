@@ -1,10 +1,10 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
-import { settings } from "#system/settings-manager";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { getLocalizedSpriteKey } from "#utils/common";

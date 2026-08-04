@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { Achv } from "#system/achv";
 import { achvs } from "#system/achv";
-import { settings } from "#system/settings-manager";
 import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
 import type { AchvUnlocks, VoucherUnlocks } from "#types/save-data";

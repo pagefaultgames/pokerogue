@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { Challenge } from "#data/challenge";
 import {
@@ -14,7 +15,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
-import { settings } from "#system/settings-manager";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";

@@ -1,18 +1,15 @@
 import { eventBus } from "#app/event-bus";
 import { isDev } from "#constants/app-constants";
-import { GameDataType } from "#enums/game-data-type";
 import { MusicPreference } from "#enums/music-preference";
 import { PlayerGender } from "#enums/player-gender";
 import { SpriteSet } from "#enums/sprite-set";
 import { UiTheme } from "#enums/ui-theme";
 import { version } from "#package.json";
-import { defaultSettings } from "#system/default-settings";
 import { applySettingsVersionMigration } from "#system/version-converter";
 import type { Settings, SettingsCategory, UserFacingSettings } from "#types/settings";
-import { getDataTypeKey } from "#utils/data";
 
 /** Manages game settings */
-class SettingsManager {
+export class SettingsManager {
   /** Local storage key for persisting settings. */
   public readonly lsKey: string;
 
@@ -154,6 +151,3 @@ class SettingsManager {
     }
   }
 }
-
-/** Singleton instance of {@linkcode SettingsManager} */
-export const settings = new SettingsManager(getDataTypeKey(GameDataType.SETTINGS), defaultSettings);

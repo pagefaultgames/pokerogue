@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import { UiMode } from "#enums/ui-mode";
-import { settings } from "#system/settings-manager";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
 import i18next from "i18next";

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { legacyCompatibleImages } from "#app/scene-base";
 import type { UiWindowStyle } from "#enums/ui-window-style";
-import { settings } from "#system/settings-manager";
 
 export enum WindowVariant {
   NORMAL,

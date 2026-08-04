@@ -1,9 +1,9 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { settings } from "#system/settings-manager";
 import type { DamageResult } from "#types/damage-result";
 import { fixedInt } from "#utils/common";
 

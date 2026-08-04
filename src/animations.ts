@@ -1,9 +1,9 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { BattleAnim } from "#data/battle-anims";
 import { PokeballType } from "#enums/pokeball";
 import type { Variant } from "#sprites/variant";
-import { settings } from "#system/settings-manager";
 import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/common";
 
 /**
