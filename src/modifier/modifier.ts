@@ -25,6 +25,7 @@ import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import type { VoucherType } from "#enums/voucher-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   DoubleBattleChanceBoosterModifierType,
@@ -40,7 +41,6 @@ import type {
   TerastallizeModifierType,
   TmModifierType,
 } from "#modifiers/modifier-type";
-import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/color-utils";

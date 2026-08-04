@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { getStarterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { allMoves } from "#data/data-lists";
 import type { EggHatchData } from "#data/egg-hatch-data";
@@ -12,7 +11,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import { addTextObject, updateCandyCountTextStyle } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { padInt } from "#utils/common";
-import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
 import { PokemonInfoContainer } from "./pokemon-info-container";
 
 /**

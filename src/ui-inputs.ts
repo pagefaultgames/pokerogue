@@ -1,35 +1,37 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { InputsController } from "#app/inputs-controller";
 import { isDev } from "#constants/app-constants";
+import { SETTINGS_UI_MODES } from "#constants/ui-constants";
 import { Button } from "#enums/buttons";
+import { GameSpeed } from "#enums/game-speed";
 import { UiMode } from "#enums/ui-mode";
-import { Setting, SettingKeys, settingIndex } from "#system/settings";
 import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import { GeneralSettingsUiHandler } from "#ui/general-settings-ui-handler";
 import { GameChallengesUiHandler } from "#ui/handlers/challenges-select-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
-import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
-import Phaser from "phaser";
+import type Phaser from "phaser";
 
 type ActionKeys = Record<Button, () => void>;
 
 export class UiInputs {
   private events: Phaser.Events.EventEmitter;
-  private inputsController: InputsController;
+  private readonly inputsController: InputsController;
 
   constructor(inputsController: InputsController) {
     this.inputsController = inputsController;
     this.init();
   }
 
-  init(): void {
+  private init(): void {
     this.events = this.inputsController.events;
     this.listenInputs();
   }
@@ -76,7 +78,7 @@ export class UiInputs {
   }
 
   doVibration(inputSuccess: boolean, vibrationLength: number): void {
-    if (inputSuccess && globalScene.enableVibration && typeof navigator.vibrate !== "undefined") {
+    if (inputSuccess && settings.general.enableVibration && typeof navigator.vibrate !== "undefined") {
       navigator.vibrate(vibrationLength);
     }
   }
@@ -153,8 +155,8 @@ export class UiInputs {
       t.toggleInfo(pressed);
     }
     // handle normal pokemon battle ui
-    for (const p of globalScene.getField().filter(p => p?.isActive(true))) {
-      p.toggleStats(pressed);
+    for (const pkmn of globalScene.getField().filter(p => p?.isActive(true))) {
+      pkmn.toggleStats(pressed);
     }
   }
 
@@ -169,13 +171,13 @@ export class UiInputs {
   }
 
   buttonInfo(pressed = true): void {
-    if (globalScene.showMovesetFlyout) {
-      for (const p of globalScene.getEnemyField().filter(p => p?.isActive(true))) {
-        p.toggleFlyout(pressed);
+    if (settings.display.showMovesetFlyout) {
+      for (const pkmn of globalScene.getEnemyField().filter(p => p?.isActive(true))) {
+        pkmn.toggleFlyout(pressed);
       }
     }
 
-    if (globalScene.showArenaFlyout) {
+    if (settings.display.showArenaFlyout) {
       globalScene.ui.processInfoButton(pressed);
     }
   }
@@ -217,7 +219,7 @@ export class UiInputs {
       PokedexUiHandler,
       PokedexPageUiHandler,
       GameChallengesUiHandler,
-      SettingsUiHandler,
+      GeneralSettingsUiHandler,
       RunInfoUiHandler,
       SettingsDisplayUiHandler,
       SettingsAudioUiHandler,
@@ -232,28 +234,18 @@ export class UiInputs {
     }
   }
 
-  buttonSpeedChange(up = true): void {
-    const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
-    const settingOptions = Setting[settingGameSpeed].options;
-    let currentSetting = settingOptions.findIndex(item => item.value === globalScene.gameSpeed.toString());
-    // if current setting is -1, then the current game speed is not a valid option, so default to index 1 (3x)
-    if (currentSetting === -1) {
-      currentSetting = 1;
-    }
-    let direction: number;
-    if (up && globalScene.gameSpeed < 5) {
-      direction = 1;
-    } else if (!up && globalScene.gameSpeed > 2) {
-      direction = -1;
-    } else {
+  private buttonSpeedChange(up = true): void {
+    const { ui } = globalScene;
+
+    if (SETTINGS_UI_MODES.includes(ui?.getMode())) {
       return;
     }
-    globalScene.gameData.saveSetting(
-      SettingKeys.Game_Speed,
-      Phaser.Math.Clamp(currentSetting + direction, 0, settingOptions.length - 1),
-    );
-    if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-      (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
-    }
+
+    const gameSpeeds = Object.values(GameSpeed);
+    const gameSpeedIndex = gameSpeeds.indexOf(settings.general.gameSpeed);
+    const lastIndex = gameSpeeds.length - 1;
+    const newIndex = up ? Math.min(gameSpeedIndex + 1, lastIndex) : Math.max(gameSpeedIndex - 1, 0);
+
+    settings.update("general", "gameSpeed", gameSpeeds[newIndex]);
   }
 }
