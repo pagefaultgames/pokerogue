@@ -22,6 +22,7 @@ import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
+import { settings } from "#system/settings-manager";
 import type { Localizable } from "#types/locales";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterMoveset } from "#types/save-data";
@@ -685,7 +686,7 @@ export abstract class PokemonSpeciesForm {
 
     await populateVariantColorCache(
       "pkmn__" + baseSpriteKey,
-      globalScene.experimentalSprites && hasExpSprite(spriteKey),
+      settings.expSpritesEnabled && hasExpSprite(spriteKey),
       baseSpriteKey.replace("__", "/"),
     );
   }

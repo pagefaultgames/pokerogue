@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { TypeHints } from "#enums/type-hints";
-import { UiTheme } from "#enums/ui-theme";
 import type { EnemyPokemon } from "#field/pokemon";
+import { settings } from "#system/settings-manager";
 import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
@@ -150,7 +150,11 @@ export class EnemyBattleInfo extends BattleInfo {
   updateEffectiveness(effectiveness?: string) {
     this.currentEffectiveness = effectiveness;
 
-    if (globalScene.typeHints === TypeHints.OFF || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
+    if (
+      settings.display.typeHintsMode === TypeHints.OFF
+      || effectiveness === undefined
+      || this.flyoutMenu.flyoutVisible
+    ) {
       this.effectivenessContainer.setVisible(false);
       return;
     }
@@ -211,7 +215,7 @@ export class EnemyBattleInfo extends BattleInfo {
     }
 
     if (this.boss && this.bossSegments > 1) {
-      const isLegacyUiTheme = globalScene.uiTheme === UiTheme.LEGACY;
+      const isLegacyUiTheme = settings.isLegacyTheme;
       const maxHp = pokemon.getMaxHp();
       for (let s = 1; s < this.bossSegments; s++) {
         const dividerX = (Math.round((maxHp / this.bossSegments) * s) / maxHp) * this.hpBar.width;

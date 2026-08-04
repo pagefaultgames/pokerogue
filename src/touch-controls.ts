@@ -1,5 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
+import { UiTheme } from "#enums/ui-theme";
+import { UiWindowStyle } from "#enums/ui-window-style";
+import { settings } from "#system/settings-manager";
+import { hasTouchscreen } from "#utils/app-utils";
+import { enumValueToKey } from "#utils/enums";
 import type Phaser from "phaser";
 
 const repeatInputDelayMillis = 250;
@@ -170,9 +175,7 @@ export class TouchControl {
     return true;
   }
 
-  /**
-   * Deactivates all currently pressed keys.
-   */
+  /** Deactivates all currently pressed keys. */
   deactivatePressedKey(): void {
     for (const key of Object.keys(this.inputInterval)) {
       clearInterval(this.inputInterval[key]);
@@ -182,16 +185,28 @@ export class TouchControl {
     }
     this.buttonLock = [];
   }
+
+  public render(): void {
+    if (!hasTouchscreen() || !settings.general.enableTouchControls) {
+      return;
+    }
+
+    document.documentElement.dataset.uiTheme = UiTheme[settings.display.uiTheme];
+    document.documentElement.dataset.windowType = enumValueToKey(UiWindowStyle, settings.display.uiWindowStyle);
+    const touchControls = document.getElementById("touchControls");
+    if (touchControls) {
+      touchControls.classList.add("visible");
+    }
+  }
 }
 
 const doubleTapThresholdMillis = 500;
 
 /**
- * {@link https://stackoverflow.com/a/39778831/4622620|Source}
- *
  * Installs a single document-level listener that suppresses the native double-tap-to-zoom
  * gesture everywhere on the page, including elements added after this is called. Intended
  * to be called once at startup.
+ * @see {@link https://stackoverflow.com/a/39778831/4622620 | Source}
  */
 export function preventDoubleTapZoom(): void {
   let lastTouchTimeStamp = 0;
@@ -215,15 +230,6 @@ export function preventDoubleTapZoom(): void {
     },
     { capture: true, passive: false },
   );
-}
-
-/**
- * Check if the device has a touchscreen.
- *
- * @returns `true` if the device has a touchscreen, otherwise `false`.
- */
-export function hasTouchscreen(): boolean {
-  return window.matchMedia("(hover: none), (pointer: coarse)").matches;
 }
 
 /**

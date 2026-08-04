@@ -29,6 +29,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { VoucherType } from "#enums/voucher-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import {
   AddPokeballModifier,
@@ -114,7 +115,8 @@ import {
   TurnStatusEffectModifier,
 } from "#modifiers/modifier";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
+import { settings } from "#system/settings-manager";
+import { getVoucherTypeIcon, getVoucherTypeName } from "#system/voucher";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
 import type { ObjectValues } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
@@ -1034,7 +1036,7 @@ export class MoneyRewardModifierType extends ModifierType {
   getDescription(): string {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, moneyAmount.value);
 
     return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
@@ -1154,7 +1156,7 @@ export class TmModifierType extends PokemonModifierType {
 
   getDescription(): string {
     return i18next.t(
-      globalScene.enableMoveInfo
+      settings.display.enableMoveInfo
         ? "modifierType:ModifierType.TmModifierTypeWithInfo.description"
         : "modifierType:ModifierType.TmModifierType.description",
       { moveName: allMoves[this.moveId].name },

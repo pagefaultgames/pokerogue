@@ -8,6 +8,7 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
+import { settings } from "#system/settings-manager";
 import type { nil } from "#types/common";
 import { coerceArray } from "#utils/array";
 import { getFrameMs } from "#utils/common";
@@ -912,7 +913,7 @@ export abstract class BattleAnim {
       }
     };
 
-    if (!globalScene.moveAnimations && !this.playRegardlessOfIssues) {
+    if (!settings.display.enableMoveAnimations && !this.playRegardlessOfIssues) {
       return cleanUpAndComplete();
     }
 
@@ -1201,7 +1202,7 @@ export abstract class BattleAnim {
       }
     };
 
-    if (!globalScene.moveAnimations && !this.playRegardlessOfIssues) {
+    if (!settings.display.enableMoveAnimations && !this.playRegardlessOfIssues) {
       return cleanUpAndComplete();
     }
 

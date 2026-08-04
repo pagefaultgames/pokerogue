@@ -3,6 +3,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
+import { settings } from "#system/settings-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
@@ -127,20 +128,20 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         (ribbon === RibbonData.NO_HEAL || ribbon === RibbonData.NO_SHOP) && this.ribbonData.has(RibbonData.NO_SUPPORT);
       const hasRibbon = this.ribbonData.has(ribbon) || overrideClassicRibbon || overrideNoSupportRibbons;
 
-      if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
+      if (!hasRibbon && !settings.general.dexForDevs && !settings.display.showMissingRibbons) {
         continue;
       }
       ribbons.push(ribbon);
 
       const icon = ribbonFlagToAssetKey(ribbon);
 
-      if (hasRibbon || globalScene.dexForDevs) {
+      if (hasRibbon || settings.general.dexForDevs) {
         icon.clearTint();
       } else {
         icon.setTint(0);
       }
 
-      if (hasRibbon || globalScene.dexForDevs || globalScene.showMissingRibbons) {
+      if (hasRibbon || settings.general.dexForDevs || settings.display.showMissingRibbons) {
         icon.setPosition(14 + (index % this.maxColumns) * 18, 14 + Math.floor(index / this.maxColumns) * 17);
 
         this.add(icon);

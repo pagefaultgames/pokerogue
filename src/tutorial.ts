@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { UiMode } from "#enums/ui-mode";
+import { settings } from "#system/settings-manager";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
 import i18next from "i18next";
@@ -25,7 +26,7 @@ const tutorialHandlers = {
   },
   [Tutorial.ACCESS_MENU]: () => {
     return new Promise<void>(resolve => {
-      if (globalScene.enableTouchControls) {
+      if (settings.general.enableTouchControls) {
         return resolve();
       }
       globalScene
@@ -120,19 +121,21 @@ const tutorialHandlers = {
 };
 
 /**
- * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done
- * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}
+ * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done. \
+ * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}. \
  * The main menu will also get disabled while the tutorial is running
- * @param tutorial the {@linkcode Tutorial} to play
+ * @param tutorial - The {@linkcode Tutorial} to play
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
-  if (!globalScene.enableTutorials && !activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
-    return false;
-  }
+  if (!activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+    if (!settings.general.enableTutorials) {
+      return false;
+    }
 
-  if (globalScene.gameData.getTutorialFlags()[tutorial] && !activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
-    return false;
+    if (globalScene.gameData.getTutorialFlags()[tutorial]) {
+      return false;
+    }
   }
 
   const handler = globalScene.ui.getHandler();

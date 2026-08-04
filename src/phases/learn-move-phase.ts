@@ -11,6 +11,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { settings } from "#system/settings-manager";
 import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import i18next from "i18next";
@@ -145,7 +146,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   private async rejectMoveAndEnd(move: Move, pokemon: Pokemon): Promise<void> {
-    if (globalScene.hideMoveSkipConfirm) {
+    if (!settings.general.levelMoveConfirmation) {
       globalScene.ui.setMode(this.messageMode);
       globalScene.ui
         .showTextPromise(
@@ -159,11 +160,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         .then(() => this.end());
       return;
     }
+
     await globalScene.ui.showTextPromise(
       i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }),
       undefined,
       false,
     );
+
     globalScene.ui.setModeWithoutClear(
       UiMode.CONFIRM,
       () => {

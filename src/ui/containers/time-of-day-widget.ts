@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
 import { BattleSceneEventType } from "#events/battle-scene";
+import { settings } from "#system/settings-manager";
 import { fixedInt } from "#utils/common";
 
 /** A small self contained UI element that displays the time of day as an icon */
@@ -14,10 +15,10 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
   private readonly timeOfDayIconBgs: Phaser.GameObjects.Sprite[] = new Array(2);
 
   /** An array containing all timeOfDayIcon objects for easier iteration */
-  private timeOfDayIcons: Phaser.GameObjects.Sprite[];
+  private readonly timeOfDayIcons: Phaser.GameObjects.Sprite[];
 
   /** A map containing all timeOfDayIcon arrays with a matching string key for easier iteration */
-  private timeOfDayIconPairs: Map<string, Phaser.GameObjects.Sprite[]> = new Map([
+  private readonly timeOfDayIconPairs: Map<string, Phaser.GameObjects.Sprite[]> = new Map([
     ["bg", this.timeOfDayIconBgs],
     ["mg", this.timeOfDayIconMgs],
     ["fg", this.timeOfDayIconFgs],
@@ -49,8 +50,8 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
   constructor(x = 0, y = 0) {
     super(globalScene, x, y);
 
-    this.setVisible(globalScene.showTimeOfDayWidget);
-    if (!globalScene.showTimeOfDayWidget) {
+    this.setVisible(settings.display.showTimeOfDayWidget);
+    if (!settings.display.showTimeOfDayWidget) {
       return;
     }
 
@@ -71,7 +72,7 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
    * Creates a tween animation based on the 'Back' ease algorithm
    * @returns an array of all tweens in the animation
    */
-  private getBackTween(): Phaser.Types.Tweens.TweenBuilderConfig[] {
+  private getBackTweens(): Phaser.Types.Tweens.TweenBuilderConfig[] {
     const rotate = {
       targets: [this.timeOfDayIconMgs[0], this.timeOfDayIconMgs[1]],
       angle: "+=90",
@@ -94,7 +95,7 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
    * Creates a tween animation based on the 'Bounce' ease algorithm
    * @returns an array of all tweens in the animation
    */
-  private getBounceTween(): Phaser.Types.Tweens.TweenBuilderConfig[] {
+  private getBounceTweens(): Phaser.Types.Tweens.TweenBuilderConfig[] {
     const bounce = {
       targets: [this.timeOfDayIconMgs[0], this.timeOfDayIconMgs[1]],
       angle: "+=90",
@@ -135,9 +136,11 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
     this.resetIcons();
 
     // Tween based on the player setting
-    (globalScene.timeOfDayAnimation === EaseType.BACK ? this.getBackTween() : this.getBounceTween()).forEach(tween =>
-      globalScene.tweens.add(tween),
-    );
+    const tweens =
+      settings.display.timeOfDayAnimation === EaseType.BACK ? this.getBackTweens() : this.getBounceTweens();
+    for (const tween of tweens) {
+      globalScene.tweens.add(tween);
+    }
 
     // Swaps all elements of the icon arrays by shifting the first element onto the end of the array
     // This ensures index[0] is always the new time of day icon and index[1] is always the current one

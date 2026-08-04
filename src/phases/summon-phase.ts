@@ -7,10 +7,10 @@ import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import { BattleType } from "#enums/battle-type";
 import { FieldPosition } from "#enums/field-position";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { PlayerGender } from "#enums/player-gender";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
+import { settings } from "#system/settings-manager";
 import i18next from "i18next";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
@@ -80,9 +80,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       if (this.player) {
         globalScene.pbTray.hide();
       }
-      globalScene.trainer.setTexture(
-        `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-      );
+      globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
       globalScene.time.delayedCall(562, () => {
         globalScene.trainer.setFrame("2");
         globalScene.time.delayedCall(64, () => {

@@ -4,6 +4,7 @@ import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
+import { settings } from "#system/settings-manager";
 import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons, LayoutConfig } from "#types/ui-types";
 import { TabMenu } from "#ui/containers/tab-menu";
@@ -23,7 +24,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected optionsContainer: Phaser.GameObjects.Container;
   protected tabMenu: TabMenu;
   protected readonly settingsTabs = [
-    { mode: UiMode.SETTINGS, labelKey: "settings:general" },
+    { mode: UiMode.SETTINGS_GENERAL, labelKey: "settings:general" },
     { mode: UiMode.SETTINGS_DISPLAY, labelKey: "settings:display" },
     { mode: UiMode.SETTINGS_AUDIO, labelKey: "settings:audio" },
     { mode: UiMode.SETTINGS_GAMEPAD, labelKey: "settings:gamepad" },
@@ -60,24 +61,14 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected commonSettingsCount;
   protected textureOverride;
   protected titleSelected;
-  protected localStoragePropertyName;
   protected rowsToDisplay: number;
   protected device: Device;
 
-  abstract saveSettingToLocalStorage(setting, cursor): void;
-  abstract setSetting(setting, value: number): boolean;
+  abstract setSetting(setting: MappingSettingName, value: number): boolean;
 
   constructor(mode: UiMode | null = null) {
     super(mode);
     this.rowsToDisplay = 8;
-  }
-
-  private getLocalStorageSetting(): object {
-    // Retrieve the settings from local storage or use an empty object if none exist.
-    const settings: object = Object.hasOwn(localStorage, this.localStoragePropertyName)
-      ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!)
-      : {}; // TODO: is this bang correct?
-    return settings;
   }
 
   public override setup(): void {
@@ -335,15 +326,11 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       return;
     }
 
-    // Retrieve the gamepad settings from local storage or use an empty object if none exist.
-    const settings: object = this.getLocalStorageSetting();
-
     // Update the cursor for each key based on the stored settings or default cursors.
     this.keys.forEach((key, index) => {
-      this.setOptionCursor(
-        index,
-        Object.hasOwn(settings, key as string) ? settings[key as string] : this.optionCursors[index],
-      );
+      if (key === "enabled") {
+        this.setOptionCursor(index, settings.gamepad[key] ? Number(!settings.gamepad[key]) : this.optionCursors[index]);
+      }
     });
 
     // If the active configuration has no custom bindings set, exit the function early.
@@ -657,7 +644,8 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
     // Check if the setting is not part of the bindings (i.e., it's a regular setting).
     if (!this.bindingSettings.includes(setting) && !setting.includes("BUTTON_")) {
       // Get the label of the last selected option and revert its color to the default.
-      const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
+      const lastValueLabel =
+        this.optionValueLabels[settingIndex][lastCursor] ?? this.optionValueLabels[settingIndex][0];
       lastValueLabel.setColor(getTextColor(TextStyle.WINDOW));
       lastValueLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
 
@@ -665,14 +653,14 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       this.optionCursors[settingIndex] = cursor;
 
       // Change the color of the new selected option to indicate it's selected.
-      const newValueLabel = this.optionValueLabels[settingIndex][cursor];
+      const newValueLabel = this.optionValueLabels[settingIndex][cursor] ?? this.optionValueLabels[settingIndex][0];
       newValueLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
       newValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
     }
 
     // If the save flag is set, save the setting to local storage
     if (save) {
-      this.saveSettingToLocalStorage(setting, cursor);
+      this.setSetting(setting, cursor);
     }
 
     return true; // Return true to indicate the cursor was successfully updated.

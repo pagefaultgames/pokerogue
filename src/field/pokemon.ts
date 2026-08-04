@@ -140,6 +140,7 @@ import { achvs } from "#system/achv";
 import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
+import { settings } from "#system/settings-manager";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
 import type {
@@ -6379,7 +6380,11 @@ export class PlayerPokemon extends Pokemon {
    * @param lastLevel - The level of this Pokemon before the EXP increase
    */
   public async showExpGain(lastLevel: number): Promise<void> {
-    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel, globalScene.expGainsSpeed === ExpGainsSpeed.SKIP);
+    await this.battleInfo.updatePokemonExpDisplay(
+      this,
+      lastLevel,
+      settings.general.expGainsSpeed === ExpGainsSpeed.SKIP,
+    );
     await this.updateInfo();
   }
 

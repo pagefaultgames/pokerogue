@@ -3,7 +3,9 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Button } from "#enums/buttons";
+import { EggSkipPreference } from "#enums/egg-skip-preference";
 import { UiMode } from "#enums/ui-mode";
+import { settings } from "#system/settings-manager";
 import { HatchedPokemonContainer } from "#ui/hatched-pokemon-container";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
@@ -180,7 +182,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
 
     // Prevent exiting the egg summary for 2 seconds if the egg hatching
     // was skipped automatically and for 1 second otherwise
-    const exitBlockingDuration = globalScene.eggSkipPreference === 2 ? 2000 : 1000;
+    const exitBlockingDuration = settings.general.eggSkipPreference === EggSkipPreference.ALWAYS ? 2000 : 1000;
     this.blockExit = true;
     globalScene.time.delayedCall(exitBlockingDuration, () => (this.blockExit = false));
 

@@ -36,7 +36,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
-import { MusicPreference } from "#system/settings";
+import { settings } from "#system/settings-manager";
 import type { OptionSelectItem } from "#types/ui-types";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
@@ -126,11 +126,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
     // Load bgm
     let bgmKey: string;
-    if (globalScene.musicPreference === MusicPreference.GENFIVE) {
-      bgmKey = "mystery_encounter_gen_5_gts";
-    } else {
+    if (settings.musicPreferenceAllGens) {
       // Mixed option
       bgmKey = "mystery_encounter_gen_6_gts";
+    } else {
+      bgmKey = "mystery_encounter_gen_5_gts";
     }
 
     // Load possible trade options

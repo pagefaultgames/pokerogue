@@ -4,7 +4,9 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { bypassLogin } from "#constants/app-constants";
+import { PlayerGender } from "#enums/player-gender";
 import { UiMode } from "#enums/ui-mode";
+import { settings } from "#system/settings-manager";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
 import i18next, { t } from "i18next";
@@ -55,7 +57,7 @@ export class LoginPhase extends Phase {
   public override async end(): Promise<void> {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
-    if (!globalScene.gameData.gender) {
+    if (settings.general.playerGender === PlayerGender.UNSET) {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 

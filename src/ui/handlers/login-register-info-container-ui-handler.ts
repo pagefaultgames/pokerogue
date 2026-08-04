@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { LANGUAGE_MAX_OPTIONS } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
-import { languageOptions } from "#system/settings-language";
+import { SUPPORTED_LANGUAGE_ENTRIES } from "#system/supported-languages";
 import type { ModalConfig, OptionSelectItem } from "#types/ui-types";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import { fixedInt } from "#utils/common";
@@ -110,11 +111,23 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       .setPositionRelative(this.infoContainer, 40, 0)
       .on("pointerdown", () => {
         this.setInteractive(false);
-        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-          options: languageOptions,
-          maxOptions: 7,
-          delay: 1000,
+
+        // biome-ignore lint/suspicious/noConfusingVoidType: intended
+        const options: { label: string; handler: () => boolean | void }[] = [];
+
+        for (const [lang, props] of Object.entries(SUPPORTED_LANGUAGE_ENTRIES)) {
+          const label = props.label;
+          const handler = (): boolean => this.changeLanguageHandler(lang);
+
+          options.push({ label, handler });
+        }
+
+        options.push({
+          label: i18next.t("settings:back"),
+          handler: (): void => this.cancelLanguageChangeHandler(),
         });
+
+        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, maxOptions: LANGUAGE_MAX_OPTIONS, delay: 1000 });
       });
 
     this.infoContainer.setAlpha(0);
@@ -125,6 +138,29 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       y: "-=24",
       alpha: 1,
     });
+  }
+
+  private changeLanguageHandler(lang: string): boolean {
+    if (lang === i18next.resolvedLanguage) {
+      this.cancelLanguageChangeHandler();
+      return true;
+    }
+
+    try {
+      i18next.changeLanguage(lang);
+      // Reloading the whole page is necessary to apply the new locales
+      // due to various static elements being translated
+      window.location.reload();
+      return true;
+    } catch (error) {
+      console.error("Error changing locale:", error);
+      return false;
+    }
+  }
+
+  private cancelLanguageChangeHandler(): void {
+    globalScene.ui.revertMode();
+    this.setInteractive(true);
   }
 
   /**

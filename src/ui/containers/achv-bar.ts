@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import type { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { Achv } from "#system/achv";
+import { settings } from "#system/settings-manager";
 import { Voucher } from "#system/voucher";
 import { addTextObject } from "#ui/text";
 
@@ -23,7 +24,7 @@ export class AchvBar extends Phaser.GameObjects.Container {
 
   constructor() {
     super(globalScene, globalScene.scaledCanvas.width, 0);
-    this.playerGender = globalScene.gameData.gender;
+    this.playerGender = settings.general.playerGender;
   }
 
   setup(): void {

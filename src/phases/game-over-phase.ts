@@ -24,6 +24,7 @@ import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
+import { settings } from "#system/settings-manager";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
@@ -67,7 +68,7 @@ export class GameOverPhase extends BattlePhase {
     // Otherwise, continue standard Game Over logic
 
     if (this.isVictory && globalScene.gameMode.isEndless) {
-      const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+      const genderIndex = settings.general.playerGender;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       globalScene.ui.showDialogue(
         i18next.t("miscDialogue:endingEndless", { context: genderStr }),
@@ -77,7 +78,7 @@ export class GameOverPhase extends BattlePhase {
         0,
         fixedInt(3000),
       );
-    } else if (this.isVictory || !globalScene.enableRetries) {
+    } else if (this.isVictory || !settings.general.enableRetries) {
       this.handleGameOver();
     } else {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
@@ -227,19 +228,16 @@ export class GameOverPhase extends BattlePhase {
               clear(endCardPhase);
             } else {
               globalScene.ui.fadeIn(500).then(() => {
-                const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+                const genderIndex = settings.general.playerGender;
                 const genderStr = PlayerGender[genderIndex].toLowerCase();
                 // Dialogue has to be retrieved so that the rival's expressions can be loaded and shown via getCharVariantFromDialogue
                 const dialogue = i18next.t(dialogueKey, { context: genderStr });
                 globalScene.charSprite
-                  .showCharacter(
-                    `rival_${globalScene.gameData.gender === PlayerGender.FEMALE ? "m" : "f"}`,
-                    getCharVariantFromDialogue(dialogue),
-                  )
+                  .showCharacter(`rival_${settings.isPlayerFemale ? "m" : "f"}`, getCharVariantFromDialogue(dialogue))
                   .then(() => {
                     globalScene.ui.showDialogue(
                       dialogueKey,
-                      globalScene.gameData.gender === PlayerGender.FEMALE
+                      settings.isPlayerFemale
                         ? trainerConfigs[TrainerType.RIVAL].name
                         : trainerConfigs[TrainerType.RIVAL].nameFemale,
                       null,

@@ -14,6 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
+import { settings } from "#system/settings-manager";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
@@ -29,7 +30,7 @@ export enum AchvTier {
 }
 
 function getGenderStr(): string {
-  const genderIndex = globalScene?.gameData?.gender ?? PlayerGender.MALE;
+  const genderIndex = settings.general.playerGender;
   const genderStr = PlayerGender[genderIndex].toLowerCase();
   return genderStr;
 }

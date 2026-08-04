@@ -6,6 +6,7 @@ import type { Challenges } from "#enums/challenges";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { settings } from "#system/settings-manager";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import { generateStarters } from "#test/utils/game-manager-utils";
 import type { IntClosedRange, TupleOf } from "type-fest";
@@ -68,7 +69,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
   async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.runToSummon(...speciesIds);
 
-    if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
+    if (settings.general.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,

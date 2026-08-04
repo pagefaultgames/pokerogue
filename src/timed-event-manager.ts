@@ -7,7 +7,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { TrainerType } from "#enums/trainer-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
-import type { EventEncounter, EventMysteryEncounterTier, EventWeatherPools, TimedEvent } from "#types/events";
+import type { EventEncounter, EventMysteryEncounterTier, EventWeatherPools, TimedEvent } from "#types/game-events";
 import { randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
 import { timedEvents } from "./data/balance/timed-events";
