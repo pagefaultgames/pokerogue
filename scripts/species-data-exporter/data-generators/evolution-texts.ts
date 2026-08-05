@@ -6,13 +6,13 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { supportedLngs } from "#app/i18n-supported-lngs";
 import { EvoCondKey, EvolutionItem, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { getGenderSymbol } from "#data/gender";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
+import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { toCamelCase } from "#utils/strings";
 import i18next, { type TFunction } from "i18next";
 import { writeData } from "../helpers";
@@ -38,7 +38,7 @@ export async function generateEvolutionTextsData() {
     }
   }
 
-  for (const lng of supportedLngs) {
+  for (const lng of SUPPORTED_LANGUAGES) {
     const translate = i18next.getFixedT(lng);
     for (const [index, evo] of entryEvolutions.entries()) {
       const conditions = getEvoConditionDescription(evo, translate);

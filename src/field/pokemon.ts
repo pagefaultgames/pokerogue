@@ -8,6 +8,7 @@ import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
@@ -6379,7 +6380,11 @@ export class PlayerPokemon extends Pokemon {
    * @param lastLevel - The level of this Pokemon before the EXP increase
    */
   public async showExpGain(lastLevel: number): Promise<void> {
-    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel, globalScene.expGainsSpeed === ExpGainsSpeed.SKIP);
+    await this.battleInfo.updatePokemonExpDisplay(
+      this,
+      lastLevel,
+      settings.general.expGainsSpeed === ExpGainsSpeed.SKIP,
+    );
     await this.updateInfo();
   }
 

@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
@@ -145,7 +146,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   private async rejectMoveAndEnd(move: Move, pokemon: Pokemon): Promise<void> {
-    if (globalScene.hideMoveSkipConfirm) {
+    if (!settings.general.levelMoveConfirmation) {
       globalScene.ui.setMode(this.messageMode);
       globalScene.ui
         .showTextPromise(
@@ -159,11 +160,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         .then(() => this.end());
       return;
     }
+
     await globalScene.ui.showTextPromise(
       i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }),
       undefined,
       false,
     );
+
     globalScene.ui.setModeWithoutClear(
       UiMode.CONFIRM,
       () => {
