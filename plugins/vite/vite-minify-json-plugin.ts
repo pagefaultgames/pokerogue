@@ -7,9 +7,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import fs from "node:fs";
-import path from "node:path";
-import readline from "node:readline";
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { clearLine, moveCursor } from "node:readline";
 import chalk from "chalk";
 import type { Logger, Plugin as VitePlugin } from "vite";
 
@@ -47,21 +47,21 @@ export function minifyPublicJsonFiles(): VitePlugin {
       logger.info(cyan(`\t→ Plugin: ${NAME} v${VERSION}`));
     },
     async generateBundle(options): Promise<void> {
-      const clearLine = (): void => {
+      const clearTerminalLine = (): void => {
         if (!process.env.CI) {
-          readline.moveCursor(process.stdout, 0, -1);
-          readline.clearLine(process.stdout, 0);
+          moveCursor(process.stdout, 0, -1);
+          clearLine(process.stdout, 0);
         }
       };
 
       const minifyFile = (fullPath: string, outputFilePath: string): void => {
         try {
-          const content = fs.readFileSync(fullPath, "utf-8");
+          const content = readFileSync(fullPath, "utf-8");
           const minifiedContent = JSON.stringify(JSON.parse(content));
-          fs.writeFileSync(outputFilePath, minifiedContent, "utf-8");
+          writeFileSync(outputFilePath, minifiedContent, "utf-8");
           count++;
         } catch (err) {
-          fs.copyFileSync(fullPath, outputFilePath);
+          copyFileSync(fullPath, outputFilePath);
           const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
           error.stack = err.stack;
           errors.push(error);
@@ -69,25 +69,26 @@ export function minifyPublicJsonFiles(): VitePlugin {
       };
 
       const minifyJsonFiles = (dir: string, outDir: string): void => {
-        const files = fs.readdirSync(dir);
+        const files = readdirSync(dir);
 
         for (const file of files) {
-          const fullPath = path.join(dir, file);
-          const outputFilePath = path.join(outDir, file);
-          const stat = fs.statSync(fullPath);
+          const fullPath = join(dir, file);
+          const outputFilePath = join(outDir, file);
+          const stat = statSync(fullPath);
 
           if (skipExcludes(file)) {
-            clearLine();
+            clearTerminalLine();
             logger.info(yellow(`Skipping "${fullPath}".`));
             continue;
           }
 
           if (stat.isDirectory()) {
-            clearLine();
+            clearTerminalLine();
             logger.info(green(`Processing directory "${fullPath}".`));
+
             // Recurse into subdirectories
-            const nestedOutputDir = path.join(outDir, file);
-            fs.mkdirSync(nestedOutputDir, { recursive: true });
+            const nestedOutputDir = join(outDir, file);
+            mkdirSync(nestedOutputDir, { recursive: true });
             minifyJsonFiles(fullPath, nestedOutputDir);
             continue;
           }
@@ -98,21 +99,21 @@ export function minifyPublicJsonFiles(): VitePlugin {
           }
 
           // Copy other files as-is
-          fs.copyFileSync(fullPath, outputFilePath);
+          copyFileSync(fullPath, outputFilePath);
         }
       };
 
       logger.info(cyan("\nBeginning JSON minification."));
-
-      const assetsDir = path.resolve("./assets");
-      const localesDir = path.resolve("./locales");
-      const outputDir = path.resolve(options.dir || "dist");
-
       if (!process.env.CI) {
         logger.info("");
       }
+
+      const assetsDir = resolve("./assets");
+      const localesDir = resolve("./locales");
+      const outputDir = resolve(options.dir || "dist");
+
       minifyJsonFiles(assetsDir, outputDir);
-      minifyJsonFiles(localesDir, path.join(outputDir, "locales"));
+      minifyJsonFiles(localesDir, join(outputDir, "locales"));
 
       logger.info(cyan("JSON minification complete."));
     },
