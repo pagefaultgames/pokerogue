@@ -11,8 +11,9 @@ export interface CursorConfig {
   height?: number;
   /** Nineslice corner sizes (px) */
   slice?: number | { left?: number; right?: number; top?: number; bottom?: number };
-  /** Pixel offset from the cell's top-left where the cursor is drawn */
+  /** Horizontal pixel offset from the cell's top-left where the cursor is drawn */
   offsetX?: number;
+  /** Vertical pixel offset from the cell's top-left where the cursor is drawn */
   offsetY?: number;
   behindCells?: boolean;
 }
@@ -91,16 +92,32 @@ export interface ScrollableGridConfig<TCell extends GridCell, TData> {
    */
   wrap?: boolean;
 
-  /** Called when the cursor would exit the grid to the left.
-   *
-   * The primary purpose of these methods is to allow easy composition with other UI elements/menus.
+  /**
+   * Called when the cursor would exit the grid to the left.
+   * @remarks
+   * Used to allow for easy composition with other UI elements.
    */
   onExitLeft?: () => void;
-  /** Called when the cursor would exit the grid to the right, to allow composition */
+
+  /**
+   * Called when the cursor would exit the grid to the right.
+   * @remarks
+   * Used to allow for easy composition with other UI elements.
+   */
   onExitRight?: () => void;
-  /** Called when the cursor would exit the grid to the top, to allow composition */
+
+  /**
+   * Called when the cursor would exit the grid to the top, to allow composition
+   * @remarks
+   * Used to allow for easy composition with other UI elements.
+   */
   onExitTop?: () => void;
-  /** Called when the cursor would exit the grid to the bottom, to allow composition */
+
+  /**
+   * Called when the cursor would exit the grid to the bottom, to allow composition
+   * @remarks
+   * Used to allow for easy composition with other UI elements.
+   */
   onExitBottom?: () => void;
 }
 

@@ -159,7 +159,7 @@ export class ScrollableGridHelper<TCell extends GridCell, TData> extends Phaser.
       return false;
     }
 
-    const scrollCursor = this.scrollBar?.getCurrentRow() ?? 0;
+    const scrollCursor = this.scrollBar?.currentRow ?? 0;
     const onScreenRows = Math.min(this.rows, Math.ceil(this.items.length / this.cols));
     const maxScrollCursor = Math.max(0, Math.ceil(this.items.length / this.cols) - onScreenRows);
     const currentRowIndex = Math.floor(this.cursor / this.cols);
@@ -269,7 +269,7 @@ export class ScrollableGridHelper<TCell extends GridCell, TData> extends Phaser.
    * @returns The offset from relative index to absolute index for an item given the scroll amount
    */
   private getItemOffset(): number {
-    return (this.scrollBar?.getCurrentRow() ?? 0) * this.cols;
+    return (this.scrollBar?.currentRow ?? 0) * this.cols;
   }
 
   /**
@@ -635,7 +635,7 @@ export class ScrollableGridHelper<TCell extends GridCell, TData> extends Phaser.
    * @returns The first visible row index (0 when not scrolled).
    */
   public getScrollRow(): number {
-    return this.scrollBar?.getCurrentRow() ?? 0;
+    return this.scrollBar?.currentRow ?? 0;
   }
 
   /**

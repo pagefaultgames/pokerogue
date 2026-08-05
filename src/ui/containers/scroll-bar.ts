@@ -12,7 +12,7 @@ export class ScrollBar extends Phaser.GameObjects.Container {
   private readonly displayRows: number;
   private readonly top: number;
   private readonly onScroll: ((v: number, dv: number) => void) | undefined;
-  private currentRow: number;
+  private _currentRow: number;
   private totalRows: number;
   private grabOffsetY = 0;
   /** In-flight tween that slides the handle to match a cell scroll animation */
@@ -39,7 +39,7 @@ export class ScrollBar extends Phaser.GameObjects.Container {
     this.top = this.getWorldPoint().y;
     this.displayRows = maxRows;
     this.totalRows = maxRows;
-    this.currentRow = 0;
+    this._currentRow = 0;
 
     const borderSize = 2;
     width = Math.max(width, 4);
@@ -116,13 +116,13 @@ export class ScrollBar extends Phaser.GameObjects.Container {
    * @param scrollCursor how many times the view was scrolled down
    */
   public setScrollCursor(scrollCursor: number): void {
-    if (scrollCursor === this.currentRow) {
+    if (scrollCursor === this._currentRow) {
       return;
     }
 
     this.cancelHandleAnimation();
-    const change = this.currentRow - scrollCursor;
-    this.currentRow = scrollCursor;
+    const change = this._currentRow - scrollCursor;
+    this._currentRow = scrollCursor;
     this.updateHandlePosition();
     this.onScroll?.(scrollCursor, change);
   }
@@ -145,12 +145,12 @@ export class ScrollBar extends Phaser.GameObjects.Container {
 
   private updateHandlePosition(): void {
     this.handleBody.y =
-      1 + ((this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows) * this.currentRow;
+      1 + ((this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows) * this._currentRow;
     this.handleBottom.y = this.handleBody.y + this.handleBody.displayHeight;
   }
 
-  public getCurrentRow(): number {
-    return this.currentRow;
+  public get currentRow(): number {
+    return this._currentRow;
   }
 
   /**
@@ -162,14 +162,14 @@ export class ScrollBar extends Phaser.GameObjects.Container {
    * @param ease - Phaser ease string
    */
   public tweenHandle(fromRow: number, duration: number, ease: string): void {
-    if (fromRow === this.currentRow) {
+    if (fromRow === this._currentRow) {
       return;
     }
     this.cancelHandleAnimation();
 
     const trackRatio = (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows;
     const startY = 1 + trackRatio * fromRow;
-    const endY = 1 + trackRatio * this.currentRow;
+    const endY = 1 + trackRatio * this._currentRow;
 
     // Rewind the handle to the starting position
     this.handleBody.y = startY;
