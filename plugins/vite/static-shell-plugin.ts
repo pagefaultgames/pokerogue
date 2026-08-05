@@ -25,13 +25,14 @@ interface ManifestEntry {
  * flash of default white background). Mirrors the `body`/fullscreen rules in
  * index.css.
  */
-const CRITICAL_STYLE = `<style>
-  html, body { background: #484050; }
-  @media (display-mode: fullscreen) {
-    body { background: #000000; }
-  }
-  #touchControls:not(.visible) { display: none; }
-</style>`;
+const CRITICAL_STYLE = `
+  <style>
+    html, body { background: #484050; }
+    @media (display-mode: fullscreen) {
+      body { background: #000000; }
+    }
+    #touchControls:not(.visible) { display: none; }
+  </style>`;
 
 /**
  * Bootstrap loader injected into the shipped index.html in place of Vite's
@@ -44,49 +45,50 @@ const CRITICAL_STYLE = `<style>
  * hard-cached indefinitely - notably by iOS "Add to Home Screen" apps, which
  * cache the start_url regardless of headers or service worker state.
  */
-const BOOTSTRAP_SCRIPT = `<script>
-(function () {
-  function inject(manifest) {
-    (manifest.preloads || []).forEach(function (href) {
-      var link = document.createElement("link");
-      link.rel = "modulepreload";
-      link.href = href;
-      document.head.appendChild(link);
-    });
-    (manifest.css || []).forEach(function (href) {
-      var link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    });
-    var script = document.createElement("script");
-    script.type = "module";
-    script.src = manifest.js;
-    document.body.appendChild(script);
-  }
-
-  fetch("./asset-manifest.json", { cache: "no-store" })
-    .then(function (res) {
-      if (!res.ok) {
-        throw new Error("asset-manifest.json fetch failed: " + res.status);
+const BOOTSTRAP_SCRIPT = `
+  <script>
+    (function () {
+      function inject(manifest) {
+        (manifest.preloads || []).forEach(function (href) {
+          var link = document.createElement("link");
+          link.rel = "modulepreload";
+          link.href = href;
+          document.head.appendChild(link);
+        });
+        (manifest.css || []).forEach(function (href) {
+          var link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = href;
+          document.head.appendChild(link);
+        });
+        var script = document.createElement("script");
+        script.type = "module";
+        script.src = manifest.js;
+        document.body.appendChild(script);
       }
-      return res.json();
-    })
-    .then(inject)
-    .catch(function (err) {
-      console.error("Failed to fetch current asset manifest:", err);
-      document.body.innerHTML =
-        '<p style="color:#fff;text-align:center;margin-top:2em;">Failed to load PokéRogue. Please check your connection and try again.</p>';
-    });
-})();
-</script>`;
+
+      fetch("./asset-manifest.json", { cache: "no-store" })
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error("asset-manifest.json fetch failed: " + res.status);
+          }
+          return res.json();
+        })
+        .then(inject)
+        .catch(function (err) {
+          console.error("Failed to fetch current asset manifest:", err);
+          document.body.innerHTML =
+            '<p style="color:#fff;text-align:center;margin-top:2em;">Failed to load PokéRogue. Please check your connection and try again.</p>';
+        });
+    })();
+  </script>`;
 
 /** Matches Vite's injected entry `<script type="module" crossorigin src="...">` tag. */
-const ENTRY_SCRIPT_PATTERN = /<script type="module" crossorigin src="[^"]*"><\/script>/;
+const ENTRY_SCRIPT_PATTERN = /\s*<script type="module" crossorigin src="[^"]*"><\/script>/;
 /** Matches Vite's injected `<link rel="modulepreload" ...>` tags (one or more, greedy across lines). */
-const MODULEPRELOAD_LINK_PATTERN = /<link rel="modulepreload"[^>]*>\n?/g;
+const MODULEPRELOAD_LINK_PATTERN = /\s*<link rel="modulepreload"[^>]*>\n?/g;
 /** Matches Vite's injected `<link rel="stylesheet" crossorigin href="...">` tag(s). */
-const STYLESHEET_LINK_PATTERN = /<link rel="stylesheet" crossorigin href="[^"]*">\n?/g;
+const STYLESHEET_LINK_PATTERN = /\s*<link rel="stylesheet" crossorigin href="[^"]*">\n?/g;
 
 /** The small runtime manifest written to dist/asset-manifest.json. */
 interface AssetManifest {
@@ -177,7 +179,7 @@ export function staticShellPlugin(): VitePlugin {
 
       html = html.replace(ENTRY_SCRIPT_PATTERN, CRITICAL_STYLE + BOOTSTRAP_SCRIPT);
       html = html.replace(MODULEPRELOAD_LINK_PATTERN, "");
-      html = html.replace(STYLESHEET_LINK_PATTERN, "");
+      html = html.replace(STYLESHEET_LINK_PATTERN, "\n");
 
       fs.writeFileSync(indexPath, html);
       fs.rmSync(path.join(outDir, ".vite"), { recursive: true, force: true });
