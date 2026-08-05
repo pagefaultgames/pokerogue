@@ -54,7 +54,20 @@ export function minifyPublicJsonFiles(): VitePlugin {
         }
       };
 
-      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: good enough
+      const minifyFile = (fullPath: string, outputFilePath: string): void => {
+        try {
+          const content = fs.readFileSync(fullPath, "utf-8");
+          const minifiedContent = JSON.stringify(JSON.parse(content));
+          fs.writeFileSync(outputFilePath, minifiedContent, "utf-8");
+          count++;
+        } catch (err) {
+          fs.copyFileSync(fullPath, outputFilePath);
+          const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
+          error.stack = err.stack;
+          errors.push(error);
+        }
+      };
+
       const minifyJsonFiles = (dir: string, outDir: string): void => {
         const files = fs.readdirSync(dir);
 
@@ -80,18 +93,7 @@ export function minifyPublicJsonFiles(): VitePlugin {
           }
 
           if (file.endsWith(".json")) {
-            try {
-              // Minify JSON file
-              const content = fs.readFileSync(fullPath, "utf-8");
-              const minifiedContent = JSON.stringify(JSON.parse(content));
-              fs.writeFileSync(outputFilePath, minifiedContent, "utf-8");
-              count++;
-            } catch (err) {
-              fs.copyFileSync(fullPath, outputFilePath);
-              const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
-              error.stack = err.stack;
-              errors.push(error);
-            }
+            minifyFile(fullPath, outputFilePath);
             continue;
           }
 
