@@ -118,11 +118,7 @@ export class EvolutionPhase extends Phase {
    */
   protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
     const spriteKey = pokemon.getSpriteKey(true);
-    try {
-      sprite.play(spriteKey);
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    sprite.play(spriteKey);
 
     if (setPipeline) {
       sprite.setPipeline(globalScene.spritePipeline, {
@@ -407,7 +403,7 @@ export class EvolutionPhase extends Phase {
         ? LearnMoveSituation.EVOLUTION_FUSED_BASE
         : LearnMoveSituation.EVOLUTION;
     const levelMoves = this.pokemon
-      .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
+      .getLevelMoves({ startingLevel: this.lastLevel + 1, includeEvolutionMoves: true, learnSituation })
       .filter(lm => lm[0] === EVOLVE_MOVE);
     for (const lm of levelMoves) {
       globalScene.phaseManager.unshiftNew("LearnMovePhase", globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]);

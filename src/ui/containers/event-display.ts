@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { EventType } from "#enums/event-type";
 import { TextStyle } from "#enums/text-style";
 import type { nil } from "#types/common";
-import type { TimedEvent } from "#types/events";
+import type { TimedEvent } from "#types/game-events";
 import { addTextObject } from "#ui/text";
 import { padInt } from "#utils/common";
 import i18next from "i18next";

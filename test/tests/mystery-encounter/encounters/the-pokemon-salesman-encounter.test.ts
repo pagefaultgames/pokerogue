@@ -6,8 +6,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
+import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounter-biomes";
 import {
   getSalesmanSpeciesOffer,
   ThePokemonSalesmanEncounter,

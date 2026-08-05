@@ -19,31 +19,22 @@ import { truncateString } from "#utils/common";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */
-
 export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
-  /**
-   * Creates an instance of SettingsGamepadUiHandler.
-   *
-   * @param mode - The UI mode, optional.
-   */
   constructor(mode: UiMode | null = null) {
     super(mode);
+
     this.titleSelected = "Gamepad";
     this.setting = SettingGamepad;
     this.settingDeviceDefaults = settingGamepadDefaults;
     this.settingDeviceOptions = settingGamepadOptions;
     this.configs = [PAD_XBOX360, PAD_DUALSHOCK, PAD_UNLICENSED_SNES];
     this.commonSettingsCount = 2;
-    this.localStoragePropertyName = "settingsGamepad";
     this.settingBlacklisted = settingGamepadBlackList;
     this.device = Device.GAMEPAD;
   }
 
   setSetting = setSettingGamepad;
 
-  /**
-   * Setup UI elements.
-   */
   setup() {
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
@@ -66,7 +57,7 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
    * @param activeConfig - The active gamepad configuration.
    * @returns `true` if the layout was successfully applied, otherwise `false`.
    */
-  setLayout(activeConfig: InterfaceConfig): boolean {
+  setLayout(activeConfig: InterfaceConfig | null): activeConfig is InterfaceConfig {
     // Check if there is no active configuration (e.g., no gamepad connected).
     if (!activeConfig) {
       // Retrieve the layout for when no gamepads are connected.
@@ -107,24 +98,6 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
           );
         }
       }
-    }
-  }
-
-  /**
-   * Save the setting to local storage.
-   *
-   * @param settingName - The setting to save.
-   * @param cursor - The cursor position to save.
-   */
-  saveSettingToLocalStorage(settingName, cursor): void {
-    if (this.setting[settingName] !== this.setting.Controller) {
-      globalScene.gameData.saveControlSetting(
-        this.device,
-        this.localStoragePropertyName,
-        settingName,
-        this.settingDeviceDefaults,
-        cursor,
-      );
     }
   }
 }

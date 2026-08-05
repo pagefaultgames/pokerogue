@@ -1115,8 +1115,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.BUTTERFREE, level: 10 })],
     passives: AbilityId.STURDY,
     levelMoves: [
-      [RELEARN_MOVE, MoveId.TACKLE],
-      [EVOLVE_MOVE, MoveId.HARDEN],
+      [EVOLVE_MOVE, MoveId.HARDEN], // Tackle / String Shot intentionally missing so wild Pokemon spawn only with Harden.
       [1, MoveId.HARDEN],
     ],
     tms: [MoveId.IRON_DEFENSE],
@@ -1213,6 +1212,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.GUST],
+      [1, MoveId.TACKLE],
+      [1, MoveId.STRING_SHOT],
       [11, MoveId.CONFUSION],
       [13, MoveId.POISON_POWDER],
       [13, MoveId.STUN_SPORE],
@@ -1356,7 +1357,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.BEEDRILL, level: 10 })],
     passives: AbilityId.STURDY,
     levelMoves: [
-      [EVOLVE_MOVE, MoveId.HARDEN],
+      [EVOLVE_MOVE, MoveId.HARDEN], // Poison Sting / String Shot intentionally missing so wild Pokemon spawn only with Harden.
       [1, MoveId.HARDEN],
     ],
     tms: [MoveId.IRON_DEFENSE, MoveId.BUG_BITE, MoveId.ELECTROWEB, MoveId.TERA_BLAST],
@@ -1454,6 +1455,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
       [EVOLVE_MOVE, MoveId.TWINEEDLE],
       [1, MoveId.POISON_STING],
+      [1, MoveId.STRING_SHOT],
       [11, MoveId.FURY_ATTACK],
       [13, MoveId.FURY_CUTTER],
       [15, MoveId.RAGE],
@@ -3786,7 +3788,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [56, MoveId.HEALING_WISH],
       [58, MoveId.AFTER_YOU],
     ],
-    tms: [MoveId.HYPER_BEAM, MoveId.FUTURE_SIGHT, MoveId.FOCUS_BLAST, MoveId.GIGA_IMPACT],
+    tms: [MoveId.HYPER_BEAM, MoveId.FUTURE_SIGHT, MoveId.AIR_SLASH, MoveId.FOCUS_BLAST, MoveId.GIGA_IMPACT],
   };
   generationOneSpeciesData[SpeciesId.VULPIX] = {
     species: new PokemonSpecies({
@@ -15601,12 +15603,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [8, MoveId.SWIFT],
       [11, MoveId.ANCIENT_POWER],
       [15, MoveId.PSYCHO_CUT],
+      [18, MoveId.PSYCH_UP],
       [22, MoveId.PSYBEAM],
       [26, MoveId.SAFEGUARD],
       [29, MoveId.AMNESIA],
       [33, MoveId.MIRACLE_EYE],
-      [36, MoveId.BARRIER],
-      [40, MoveId.LOW_KICK],
+      [36, MoveId.LOW_KICK],
+      [40, MoveId.BARRIER],
       [43, MoveId.AURA_SPHERE],
       [46, MoveId.MIST],
       [50, MoveId.PSYCHIC],
@@ -15616,7 +15619,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [70, MoveId.AGILITY],
       [75, MoveId.PSYSTRIKE],
       [79, MoveId.CALM_MIND],
-      [86, MoveId.PSYCH_UP],
+      [86, MoveId.DYNAMIC_PUNCH],
       [93, MoveId.ME_FIRST],
       [100, MoveId.FUTURE_SIGHT],
     ],

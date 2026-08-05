@@ -1,6 +1,7 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterAttributes } from "#types/save-data";
+import { GameDataType } from "#enums/game-data-type";
+import type { StarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**
@@ -74,21 +75,14 @@ export function isBareObject(obj: any): boolean {
   return true;
 }
 
-// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
-// if they ever add private static variables, move this into StarterPrefs
-const StarterPrefers_DEFAULT: string = "{}";
-let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
-
-export interface StarterPreferences {
-  [key: number]: StarterAttributes | undefined;
-}
-// called on starter selection show once
+// The latest data saved/loaded for the Starter Preferences. Required to reduce read/writes.
+// Initialized as "{}", since this is the default value and no data needs to be stored if present.
+const DEFAULT_STARTER_PREFS = "{}";
+let savedStarterPrefs: string = DEFAULT_STARTER_PREFS;
 
 export function loadStarterPreferences(): StarterPreferences {
-  return JSON.parse(
-    (StarterPrefers_private_latest =
-      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
-  );
+  savedStarterPrefs = localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) ?? DEFAULT_STARTER_PREFS;
+  return JSON.parse(savedStarterPrefs);
 }
 
 export function saveStarterPreferences(prefs: StarterPreferences): void {
@@ -97,13 +91,47 @@ export function saveStarterPreferences(prefs: StarterPreferences): void {
     console.warn("Refusing to save empty starter preferences");
     return;
   }
+
   // no reason to store `{}` (for starters not customized)
   const pStr: string = JSON.stringify(prefs, (_, value) => (isBareObject(value) ? undefined : value));
-  if (pStr !== StarterPrefers_private_latest) {
+
+  if (pStr !== savedStarterPrefs) {
     console.log("%cSaving starter preferences", "color: blue");
-    // something changed, store the update
     localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
-    // update the latest prefs
-    StarterPrefers_private_latest = pStr;
+    savedStarterPrefs = pStr;
+  }
+}
+
+export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
+  switch (dataType) {
+    case GameDataType.SYSTEM:
+      return "data";
+    case GameDataType.SESSION: {
+      let ret = "sessionData";
+      if (slotId) {
+        ret += slotId;
+      }
+      return ret;
+    }
+    case GameDataType.SETTINGS:
+      return "settings";
+    case GameDataType.TUTORIALS:
+      return "tutorials";
+    case GameDataType.SEEN_DIALOGUES:
+      return "seenDialogues";
+    case GameDataType.RUN_HISTORY:
+      return "runHistoryData";
+    case GameDataType.MAPPING_CONFIG:
+      return "mappingConfigs";
+  }
+}
+
+/** @returns Whether the input is valid JSON */
+export function isValidJSON(str: string): boolean {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch {
+    return false;
   }
 }

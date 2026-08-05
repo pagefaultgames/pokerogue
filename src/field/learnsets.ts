@@ -162,18 +162,16 @@ function filterAndSortLevelMoves(
   // A set of moves the species gets by level, but are above the current level
   const levelMovesAboveCurrentLevel = new Set(
     levelMoves
-      .filter(
-        lm =>
-          (lm[2] === LearnableMoveSource.LEVEL || lm[2] === LearnableMoveSource.FUSION_LEVEL) && lm[0] > pokemon.level,
-      )
+      .filter(lm => getBaseLearnableMoveSource(lm[2]) === LearnableMoveSource.LEVEL && lm[0] > pokemon.level)
       .map(lm => lm[1]),
   );
 
   // A set of moves the species learns by level.
+  // Only includes level moves it can already learn.
   // Used to prefer showing a move as level rather than showing as a prevo/evo move
   const ownMoves = new Set(
     levelMoves
-      .filter(lm => lm[2] === LearnableMoveSource.LEVEL || lm[2] === LearnableMoveSource.FUSION_LEVEL)
+      .filter(lm => getBaseLearnableMoveSource(lm[2]) === LearnableMoveSource.LEVEL && lm[0] <= pokemon.level)
       .map(lm => lm[1]),
   );
 
@@ -186,7 +184,7 @@ function filterAndSortLevelMoves(
     const [level, move, source] = lm;
     const isRelearner = level < startingLevel;
     const allowedEvolutionMove = level === 0 && includeEvolutionMoves;
-    const isLevelMoveSource = source === LearnableMoveSource.LEVEL || source === LearnableMoveSource.FUSION_LEVEL;
+    const isLevelMoveSource = getBaseLearnableMoveSource(source) === LearnableMoveSource.LEVEL;
     const isOwnMoveFromNonLevelSource = ownMoves.has(move) && !isLevelMoveSource;
     const isLockedPrevoMove =
       levelMovesAboveCurrentLevel.has(move)

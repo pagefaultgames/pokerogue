@@ -143,7 +143,7 @@ const extremeBiomeEncounters: MysteryEncounterType[] = [];
 
 const nonExtremeBiomeEncounters: MysteryEncounterType[] = [
   // MysteryEncounterType.FIELD_TRIP, Disabled
-  MysteryEncounterType.DANCING_LESSONS, // Is also in BADLANDS, DESERT, VOLCANO, WASTELAND, ABYSS
+  MysteryEncounterType.BUG_TYPE_SUPERFAN,
 ];
 
 const humanTransitableBiomeEncounters: MysteryEncounterType[] = [
@@ -177,7 +177,6 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.CLOWNING_AROUND,
   MysteryEncounterType.WEIRD_DREAM,
   MysteryEncounterType.TELEPORTING_HIJINKS,
-  MysteryEncounterType.BUG_TYPE_SUPERFAN,
   MysteryEncounterType.UNCOMMON_BREED,
 ];
 
@@ -191,37 +190,51 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
 export const mysteryEncountersByBiome = new Map<BiomeId, MysteryEncounterType[]>([
   [BiomeId.TOWN, []],
   [BiomeId.PLAINS, [MysteryEncounterType.SLUMBERING_SNORLAX]],
-  [BiomeId.GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
-  [BiomeId.TALL_GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [
+    BiomeId.GRASS,
+    [
+      MysteryEncounterType.SLUMBERING_SNORLAX,
+      MysteryEncounterType.ABSOLUTE_AVARICE,
+      MysteryEncounterType.DANCING_LESSONS,
+    ],
+  ],
+  [
+    BiomeId.TALL_GRASS,
+    [
+      MysteryEncounterType.SLUMBERING_SNORLAX,
+      MysteryEncounterType.ABSOLUTE_AVARICE,
+      MysteryEncounterType.DANCING_LESSONS,
+    ],
+  ],
   [BiomeId.METROPOLIS, []],
   [BiomeId.FOREST, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.ABSOLUTE_AVARICE]],
   [BiomeId.SEA, [MysteryEncounterType.LOST_AT_SEA]],
   [BiomeId.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
-  [BiomeId.BEACH, []],
+  [BiomeId.BEACH, [MysteryEncounterType.DANCING_LESSONS]],
   [BiomeId.LAKE, []],
   [BiomeId.SEABED, []],
   [BiomeId.MOUNTAIN, []],
   [BiomeId.BADLANDS, [MysteryEncounterType.DANCING_LESSONS]],
   [BiomeId.CAVE, [MysteryEncounterType.THE_STRONG_STUFF]],
-  [BiomeId.DESERT, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.DESERT, []],
   [BiomeId.ICE_CAVE, []],
-  [BiomeId.MEADOW, []],
+  [BiomeId.MEADOW, [MysteryEncounterType.DANCING_LESSONS]],
   [BiomeId.POWER_PLANT, []],
-  [BiomeId.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT, MysteryEncounterType.DANCING_LESSONS]],
-  [BiomeId.GRAVEYARD, []],
+  [BiomeId.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT]],
+  [BiomeId.GRAVEYARD, [MysteryEncounterType.DANCING_LESSONS]],
   [BiomeId.DOJO, []],
   [BiomeId.FACTORY, []],
-  [BiomeId.RUINS, []],
-  [BiomeId.WASTELAND, [MysteryEncounterType.DANCING_LESSONS]],
-  [BiomeId.ABYSS, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.RUINS, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.WASTELAND, []],
+  [BiomeId.ABYSS, []],
   [BiomeId.SPACE, [MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER]],
   [BiomeId.CONSTRUCTION_SITE, []],
   [BiomeId.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
   [BiomeId.FAIRY_CAVE, []],
-  [BiomeId.TEMPLE, []],
+  [BiomeId.TEMPLE, [MysteryEncounterType.DANCING_LESSONS]],
   [BiomeId.SLUM, []],
   [BiomeId.SNOWY_FOREST, []],
-  [BiomeId.ISLAND, []],
+  [BiomeId.ISLAND, [MysteryEncounterType.DANCING_LESSONS]],
   [BiomeId.LABORATORY, []],
 ]);
 

@@ -41,6 +41,12 @@ import type { IntRange } from "type-fest";
 
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn
+ * from a memory mushroom
+ */
+export const RELEARN_LEVEL_REQUIREMENT = 40;
+
+/**
+ * The minimum level for a Pokémon to generate with a move it can only learn
  * from a common tier TM
  */
 export const COMMON_TIER_TM_LEVEL_REQUIREMENT = 25;
@@ -137,9 +143,9 @@ export const EGG_MOVE_WEIGHT_MAX = 60;
  */
 export const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
 /** The weight given to evolution moves */
-export const EVOLUTION_MOVE_WEIGHT = 70;
+export const EVOLUTION_MOVE_WEIGHT = 60;
 /** The weight given to relearn moves */
-export const RELEARN_MOVE_WEIGHT = 60;
+export const RELEARN_MOVE_WEIGHT = 50;
 
 /** The base weight multiplier to use
  *

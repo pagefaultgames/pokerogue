@@ -1,8 +1,8 @@
 import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { getStarterColors } from "#app/global-vars/starter-colors";
 import { getStarterValueFriendshipCap } from "#balance/starters";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { getGenderColor, getGenderSymbol } from "#data/gender";
@@ -12,7 +12,6 @@ import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
-import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -30,7 +29,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getDexNumber } from "#utils/pokemon-utils";
+import { getDexNumber, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -384,12 +383,10 @@ export class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(
       getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
     );
+
     const spriteKey = this.pokemon.getSpriteKey(true);
-    try {
-      this.pokemonSprite.play(spriteKey);
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    this.pokemonSprite.play(spriteKey);
+
     this.pokemonSprite
       .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
       .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
@@ -836,12 +833,10 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
-        const otColor =
-          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
-        const usernameReplacement =
-          globalScene.gameData.gender === PlayerGender.FEMALE
-            ? i18next.t("trainerNames:playerF")
-            : i18next.t("trainerNames:playerM");
+        const otColor = settings.isPlayerFemale ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement = settings.isPlayerFemale
+          ? i18next.t("trainerNames:playerF")
+          : i18next.t("trainerNames:playerM");
 
         const profileContainerProfileTitle = globalScene.add //
           .image(7, 4, getLocalizedSpriteKey("summary_profile_profile_title")) // Pixel text 'PROFILE'
@@ -853,7 +848,7 @@ export class SummaryUiHandler extends UiHandler {
           7,
           10,
           `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
-            globalScene.hideUsername
+            settings.display.hideUsername
               ? usernameReplacement
               : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
             otColor,
@@ -862,7 +857,7 @@ export class SummaryUiHandler extends UiHandler {
         ).setOrigin(0);
         profileContainer.add(trainerText);
 
-        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
+        const idToDisplay = settings.display.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           10,

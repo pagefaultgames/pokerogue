@@ -2,34 +2,13 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt } from "#utils/common";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-
-export interface OptionSelectConfig {
-  xOffset?: number;
-  yOffset?: number;
-  options: OptionSelectItem[];
-  maxOptions?: number;
-  delay?: number;
-  noCancel?: boolean;
-  supportHover?: boolean;
-}
-
-export interface OptionSelectItem {
-  label: string;
-  handler: () => boolean;
-  onHover?: () => void;
-  skip?: boolean;
-  keepOpen?: boolean;
-  overrideSound?: boolean;
-  style?: TextStyle;
-  item?: string;
-  itemArgs?: any[];
-}
 
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";

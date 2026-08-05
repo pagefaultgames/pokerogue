@@ -4,12 +4,13 @@ import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
+import { bypassLogin, isBeta, isDev, systemSaveShortKeyMap } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
@@ -20,7 +21,7 @@ import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
-import { Device } from "#enums/devices";
+import type { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
@@ -31,6 +32,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
+import { VoucherType } from "#enums/voucher-type";
 import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
@@ -45,20 +47,13 @@ import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
-import { resetSettings, SettingKeys, setSetting } from "#system/settings";
-import { SettingGamepad, setSettingGamepad, settingGamepadDefaults } from "#system/settings-gamepad";
-import type { SettingKeyboard } from "#system/settings-keyboard";
-import { setSettingKeyboard } from "#system/settings-keyboard";
 import { TrainerData } from "#system/trainer-data";
-import {
-  applySessionVersionMigration,
-  applySettingsVersionMigration,
-  applySystemVersionMigration,
-} from "#system/version-migration/version-converter";
-import { VoucherType, vouchers } from "#system/voucher";
+import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-migration/version-converter";
+import { vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
+  AppliedMigrators,
   DexAttrProps,
   RunHistoryData,
   SeenDialogues,
@@ -73,58 +68,23 @@ import type {
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
-import { decrypt, encrypt } from "#utils/data";
-import { getEnumKeys, getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
+import { getEnumKeys } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
-function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
-  switch (dataType) {
-    case GameDataType.SYSTEM:
-      return "data";
-    case GameDataType.SESSION: {
-      let ret = "sessionData";
-      if (slotId) {
-        ret += slotId;
-      }
-      return ret;
-    }
-    case GameDataType.SETTINGS:
-      return "settings";
-    case GameDataType.TUTORIALS:
-      return "tutorials";
-    case GameDataType.SEEN_DIALOGUES:
-      return "seenDialogues";
-    case GameDataType.RUN_HISTORY:
-      return "runHistoryData";
-  }
-}
-
-const systemShortKeys = {
-  seenAttr: "$sa",
-  caughtAttr: "$ca",
-  natureAttr: "$na",
-  seenCount: "$s",
-  caughtCount: "$c",
-  hatchedCount: "$hc",
-  ivs: "$i",
-  moveset: "$m",
-  eggMoves: "$em",
-  candyCount: "$x",
-  friendship: "$f",
-  abilityAttr: "$a",
-  passiveAttr: "$pa",
-  valueReduction: "$vr",
-  classicWinCount: "$wc",
+const ErrorMessages = {
+  OUT_OF_DATE: i18next.t("gameData:reloadSaveData"),
+  OUT_OF_DATE_LOCAL: i18next.t("gameData:reloadSaveDataLocal"),
+  DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
+  TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
+  FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
 };
 
 export class GameData {
   public trainerId: number;
   public secretId: number;
-
-  public gender: PlayerGender;
 
   public dexData: DexData;
   private defaultDexData: DexData | null;
@@ -144,16 +104,17 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
+  public appliedMigrators: AppliedMigrators = {};
+
   /**
-   * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
+   * @param fromRaw - (Default `false`) Whether to skip initialization of fields that are normally
+   * randomized on new game start. Used for the admin panel.
    */
   constructor(fromRaw = false) {
     if (fromRaw) {
       this.trainerId = 0;
       this.secretId = 0;
     } else {
-      this.loadSettings();
-      this.loadGamepadSettings();
       this.loadMappingConfigs();
       this.trainerId = randInt(65536);
       this.secretId = randInt(65536);
@@ -186,7 +147,8 @@ export class GameData {
     return {
       trainerId: this.trainerId,
       secretId: this.secretId,
-      gender: this.gender,
+      // TODO: save some settings (such as player gender) separately, outside of system data
+      gender: settings.general.playerGender,
       dexData: this.dexData,
       starterData: this.starterData,
       gameStats: this.gameStats,
@@ -199,6 +161,7 @@ export class GameData {
       timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
+      appliedMigrators: this.appliedMigrators,
     };
   }
 
@@ -223,8 +186,10 @@ export class GameData {
       return false;
     }
 
-    for (const speciesId of getEnumValues(SpeciesId)) {
-      if (!speciesDataRegistry.isStarter(speciesId) || defaultStarterSpecies.includes(speciesId)) {
+    let dataValidated = true;
+
+    for (const speciesId of speciesDataRegistry.getAllStarters()) {
+      if (defaultStarterSpecies.includes(speciesId)) {
         continue;
       }
 
@@ -235,15 +200,17 @@ export class GameData {
 
       if (starterEntry == null) {
         console.error("Missing starter data for %s (%d)!", species, speciesId);
-        return false;
+        dataValidated = false;
+        continue;
       }
       if (dexEntry == null) {
         console.error("Missing dex data for %s (%d)!", species, speciesId);
-        return false;
+        dataValidated = false;
+        continue;
       }
 
       const hasStarterData =
-        starterEntry.abilityAttr > 1
+        starterEntry.abilityAttr > 0
         || starterEntry.eggMoves > 0
         || starterEntry.moveset != null
         || starterEntry.passiveAttr > 0
@@ -252,20 +219,25 @@ export class GameData {
       const noDexData = dexEntry.caughtCount === 0 && dexEntry.hatchedCount === 0 && dexEntry.caughtAttr === 0n;
 
       if (hasStarterData && noDexData) {
-        console.error("Corrupt save data detected, save rejected!");
+        console.error("Corrupt save data detected!");
         console.warn("Species: %s (%d)", species, speciesId);
         console.warn(starterEntry);
         console.warn(dexEntry);
-        return false;
+        dataValidated = false;
       }
     }
 
-    return true;
+    return dataValidated;
   }
 
-  private async showInvalidSaveModal<const T>(returnValue: T): Promise<T> {
+  private async showInvalidSaveModal<const T>(
+    returnValue: T,
+    message: string = ErrorMessages.FAILED_VALIDATION,
+  ): Promise<T> {
     const { promise, resolve } = Promise.withResolvers<T>();
-    await globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
+
     // TODO: This is a temporary hacky solution to ensure the modal displays when saving
     // on the starter select UI, which change the UI mode without awaiting this async call..
     globalScene.time.delayedCall(fixedInt(1000), () => {
@@ -274,10 +246,11 @@ export class GameData {
       if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       } else {
-        globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+        globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       }
     });
+
     return promise;
   }
 
@@ -285,7 +258,7 @@ export class GameData {
     const data = this.getSystemSaveData();
 
     if (!this.validateSystemData(data)) {
-      return this.showInvalidSaveModal(false);
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
     }
     globalScene.ui.savingIcon.show();
 
@@ -328,11 +301,11 @@ export class GameData {
 
     if (typeof saveDataOrErr === "number" || !saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
       if (saveDataOrErr === 404) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:saveDataNotFound"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.DATA_NOT_FOUND, null, true);
         return true;
       }
       if (typeof saveDataOrErr === "string" && saveDataOrErr.includes("Too many connections")) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:tooManyConnections"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.TOO_MANY_CONNECTIONS, null, true);
         return false;
       }
       return false;
@@ -359,48 +332,17 @@ export class GameData {
 
   /**
    * Initialize system data _after_ it has been parsed from JSON.
-   * @param systemData The parsed `SystemSaveData` to initialize from
+   * @param systemData - The parsed `SystemSaveData` to initialize from
    */
   private initParsedSystem(systemData: SystemSaveData): void {
     applySystemVersionMigration(systemData);
 
+    this.appliedMigrators = systemData.appliedMigrators;
+
     this.trainerId = systemData.trainerId;
     this.secretId = systemData.secretId;
 
-    this.gender = systemData.gender;
-
-    this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
-
-    if (systemData.starterData) {
-      this.starterData = systemData.starterData;
-    } else {
-      this.initStarterData();
-
-      if (systemData["starterMoveData"]) {
-        const starterMoveData = systemData["starterMoveData"];
-        for (const s of Object.keys(starterMoveData)) {
-          this.starterData[s].moveset = starterMoveData[s];
-        }
-      }
-
-      if (systemData["starterEggMoveData"]) {
-        const starterEggMoveData = systemData["starterEggMoveData"];
-        for (const s of Object.keys(starterEggMoveData)) {
-          this.starterData[s].eggMoves = starterEggMoveData[s];
-        }
-      }
-
-      this.migrateStarterAbilities(systemData, this.starterData);
-
-      const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-      for (const s of starterIds) {
-        this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-        this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-        if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-          this.starterData[s].candyCount += 4;
-        }
-      }
-    }
+    this.starterData = systemData.starterData;
 
     if (systemData.gameStats) {
       this.gameStats = systemData.gameStats;
@@ -431,23 +373,29 @@ export class GameData {
     }
 
     if (systemData.voucherCounts) {
-      getEnumKeys(VoucherType).forEach(key => {
+      for (const key of getEnumKeys(VoucherType)) {
         const index = VoucherType[key];
-        this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-      });
+        this.voucherCounts[index] = systemData.voucherCounts[index] ?? 0;
+      }
     }
 
-    this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+    this.eggs = systemData.eggs?.map(e => e.toEgg()) ?? [];
 
-    this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-    this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+    this.eggPity = systemData.eggPity?.slice(0) ?? [0, 0, 0, 0];
+    this.unlockPity = systemData.unlockPity?.slice(0) ?? [0, 0, 0, 0];
 
     this.dexData = Object.assign(this.dexData, systemData.dexData);
     this.consolidateDexData(this.dexData);
     this.defaultDexData = null;
+
+    // Ensure that the player gender in settings matches the player gender in system data
+    if (systemData.gender !== PlayerGender.UNSET && systemData.gender !== settings.general.playerGender) {
+      settings.update("general", "playerGender", systemData.gender);
+    }
   }
 
   public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+    // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
 
@@ -545,7 +493,8 @@ export class GameData {
 
   // TODO: Why is this static
   static parseSystemData(dataStr: string): SystemSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary
+    const parsedData = JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
       }
@@ -565,17 +514,19 @@ export class GameData {
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
+    parsedData.appliedMigrators ??= {};
+    return parsedData;
   }
 
-  convertSystemDataStr(dataStr: string, shorten = false): string {
+  private convertSystemDataStr(dataStr: string, shorten = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
     dataStr = dataStr.replace(/"trainerId":\d+/g, `"trainerId":${this.trainerId}`);
     dataStr = dataStr.replace(/"secretId":\d+/g, `"secretId":${this.secretId}`);
-    const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
-    const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
+    const fromKeys = shorten ? Object.keys(systemSaveShortKeyMap) : Object.values(systemSaveShortKeyMap);
+    const toKeys = shorten ? Object.values(systemSaveShortKeyMap) : Object.keys(systemSaveShortKeyMap);
     for (const k in fromKeys) {
       dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace("$", "\\$")}`, "g"), toKeys[k]);
     }
@@ -595,7 +546,7 @@ export class GameData {
     }
 
     globalScene.phaseManager.clearPhaseQueue();
-    await this.reinitializeSaveData(JSON.stringify(systemData));
+    await this.reinitializeSaveData({ systemDataStr: JSON.stringify(systemData) });
     return false;
   }
 
@@ -612,11 +563,16 @@ export class GameData {
   /**
    * Discards local save data and re-populates it with data from the server (or the provided data).
    * @param systemDataStr - (Optional) Save data to load
+   * @param message - (Optional) The message to display to the user
    */
-  private async reinitializeSaveData(systemDataStr?: string): Promise<void> {
-    const { promise, resolve } = Promise.withResolvers<void>();
-
-    await globalScene.ui.setMode(UiMode.SESSION_RELOAD, !!systemDataStr);
+  private async reinitializeSaveData({
+    systemDataStr,
+    message,
+  }: {
+    systemDataStr?: string;
+    message?: string;
+  } = {}): Promise<false> {
+    const alertMessage = systemDataStr ? ErrorMessages.OUT_OF_DATE_LOCAL : ErrorMessages.OUT_OF_DATE;
 
     this.clearLocalData();
 
@@ -626,30 +582,7 @@ export class GameData {
       await this.loadSystem();
     }
 
-    globalScene.time.delayedCall(fixedInt(5000), () => resolve());
-    return promise;
-  }
-
-  /**
-   * Saves a setting to localStorage
-   * @param setting string ideally of SettingKeys
-   * @param valueIndex index of the setting's option
-   * @returns true
-   */
-  public saveSetting(setting: string, valueIndex: number): boolean {
-    let settings: object = {};
-    if (Object.hasOwn(localStorage, "settings")) {
-      settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
-    }
-
-    setSetting(setting, valueIndex);
-
-    settings[setting] = valueIndex;
-    settings["gameVersion"] = globalScene.game.config.gameVersion;
-
-    localStorage.setItem("settings", JSON.stringify(settings));
-
-    return true;
+    return this.showInvalidSaveModal(false, message ?? alertMessage);
   }
 
   /**
@@ -657,140 +590,82 @@ export class GameData {
    *
    * @param deviceName - The name of the device for which the configurations are being saved.
    * @param config - The configuration object containing custom mapping details.
-   * @returns `true` if the configurations are successfully saved.
    */
-  public saveMappingConfigs(deviceName: string, config): boolean {
-    const key = deviceName.toLowerCase(); // Convert the gamepad name to lowercase to use as a key
-    let mappingConfigs: object = {}; // Initialize an empty object to hold the mapping configurations
-    if (Object.hasOwn(localStorage, "mappingConfigs")) {
-      // Check if 'mappingConfigs' exists in localStorage
-      mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!); // TODO: is this bang correct?
-    } // Parse the existing 'mappingConfigs' from localStorage
+  public saveMappingConfigs(deviceName: string, config): void {
+    const key = deviceName.toLowerCase();
+    let mappingConfigs: object = {};
+    const lsMappingConfigs = localStorage.getItem(getDataTypeKey(GameDataType.MAPPING_CONFIG));
+
+    if (lsMappingConfigs) {
+      try {
+        mappingConfigs = JSON.parse(lsMappingConfigs);
+      } catch (err) {
+        console.error("Error parsing mapping configs from local storage:", err);
+      }
+    }
+
     if (!mappingConfigs[key]) {
       mappingConfigs[key] = {};
-    } // If there is no configuration for the given key, create an empty object for it
-    mappingConfigs[key].custom = config.custom; // Assign the custom configuration to the mapping configuration for the given key
-    localStorage.setItem("mappingConfigs", JSON.stringify(mappingConfigs)); // Save the updated mapping configurations back to localStorage
-    return true; // Return true to indicate the operation was successful
+    }
+    mappingConfigs[key].custom = config.custom;
+
+    localStorage.setItem(getDataTypeKey(GameDataType.MAPPING_CONFIG), JSON.stringify(mappingConfigs));
   }
 
   /**
    * Loads the mapping configurations from localStorage and injects them into the input controller.
    *
-   * @returns `true` if the configurations are successfully loaded and injected; `false` if no configurations are found in localStorage.
-   *
-   * @remarks
-   * This method checks if the 'mappingConfigs' entry exists in localStorage. If it does not exist, the method returns `false`.
-   * If 'mappingConfigs' exists, it parses the configurations and injects each configuration into the input controller
-   * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
+   * @returns `true` if the configurations are successfully loaded and injected;
+   * `false` if no configurations are found in localStorage.
    */
   public loadMappingConfigs(): boolean {
-    if (!Object.hasOwn(localStorage, "mappingConfigs")) {
-      // Check if 'mappingConfigs' exists in localStorage
+    const lsMappingConfigs = localStorage.getItem(getDataTypeKey(GameDataType.MAPPING_CONFIG));
+    if (!lsMappingConfigs) {
       return false;
-    } // If 'mappingConfigs' does not exist, return false
+    }
 
-    const mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!); // Parse the existing 'mappingConfigs' from localStorage // TODO: is this bang correct?
+    const mappingConfigs = JSON.parse(lsMappingConfigs);
 
     for (const key of Object.keys(mappingConfigs)) {
-      // Iterate over the keys of the mapping configurations
       globalScene.inputController.injectConfig(key, mappingConfigs[key]);
-    } // Inject each configuration into the input controller for the corresponding key
+    }
 
-    return true; // Return true to indicate the operation was successful
-  }
-
-  public resetMappingToFactory(): boolean {
-    if (!Object.hasOwn(localStorage, "mappingConfigs")) {
-      // Check if 'mappingConfigs' exists in localStorage
-      return false;
-    } // If 'mappingConfigs' does not exist, return false
-    localStorage.removeItem("mappingConfigs");
-    globalScene.inputController.resetConfigs();
-    return true; // TODO: is `true` the correct return value?
+    return true;
   }
 
   /**
-   * Saves a gamepad setting to localStorage.
-   *
-   * @param setting - The gamepad setting to save.
-   * @param valueIndex - The index of the value to set for the gamepad setting.
-   * @returns `true` if the setting is successfully saved.
-   *
-   * @remarks
-   * This method initializes an empty object for gamepad settings if none exist in localStorage.
-   * It then updates the setting in the current scene and iterates over the default gamepad settings
-   * to update the specified setting with the new value. Finally, it saves the updated settings back
-   * to localStorage and returns `true` to indicate success.
+   * Reset the mappings for the given device to its default values. \
+   * If it's a gamepad, only reset the one currently in use.
+   * @param device - The {@linkcode Device} to reset
+   * @returns Whether the operation was successful
    */
-  public saveControlSetting(
-    device: Device,
-    localStoragePropertyName: string,
-    setting: SettingGamepad | SettingKeyboard,
-    settingDefaults,
-    valueIndex: number,
-  ): boolean {
-    let settingsControls: object = {}; // Initialize an empty object to hold the gamepad settings
-
-    if (Object.hasOwn(localStorage, localStoragePropertyName)) {
-      // Check if 'settingsControls' exists in localStorage
-      settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName)!); // Parse the existing 'settingsControls' from localStorage // TODO: is this bang correct?
-    }
-
-    if (device === Device.GAMEPAD) {
-      setSettingGamepad(setting as SettingGamepad, valueIndex);
-    } else if (device === Device.KEYBOARD) {
-      setSettingKeyboard(setting as SettingKeyboard, valueIndex);
-    }
-
-    Object.keys(settingDefaults).forEach(s => {
-      // Iterate over the default gamepad settings
-      if (s === setting) {
-        // If the current setting matches, update its value
-        settingsControls[s] = valueIndex;
-      }
-    });
-
-    localStorage.setItem(localStoragePropertyName, JSON.stringify(settingsControls)); // Save the updated gamepad settings back to localStorage
-
-    return true; // Return true to indicate the operation was successful
-  }
-
-  /**
-   * Loads Settings from local storage if available
-   * @returns true if succesful, false if not
-   */
-  private loadSettings(): boolean {
-    resetSettings();
-
-    if (!Object.hasOwn(localStorage, "settings")) {
+  public resetMappingToDefault(device: Device): boolean {
+    const deviceName = globalScene.inputController?.selectedDevice[device];
+    if (!deviceName) {
       return false;
     }
 
-    const settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
-
-    applySettingsVersionMigration(settings);
-
-    for (const setting of Object.keys(settings)) {
-      setSetting(setting, settings[setting]);
+    const lsMappingConfigs = localStorage.getItem(getDataTypeKey(GameDataType.MAPPING_CONFIG));
+    if (!lsMappingConfigs) {
+      return false;
     }
 
-    return true; // TODO: is `true` the correct return value?
-  }
+    let mappingConfigs = {};
 
-  private loadGamepadSettings(): void {
-    Object.values(SettingGamepad).forEach(setting => {
-      setSettingGamepad(setting, settingGamepadDefaults[setting]);
-    });
-
-    if (!Object.hasOwn(localStorage, "settingsGamepad")) {
-      return;
+    try {
+      mappingConfigs = JSON.parse(lsMappingConfigs);
+    } catch (err) {
+      console.error("Error parsing mapping configs from local storage:", err);
+      return false;
     }
-    const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
 
-    for (const setting of Object.keys(settingsGamepad)) {
-      setSettingGamepad(setting as SettingGamepad, settingsGamepad[setting]);
+    if (Object.hasOwn(mappingConfigs, deviceName)) {
+      delete mappingConfigs[deviceName];
+      localStorage.setItem(getDataTypeKey(GameDataType.MAPPING_CONFIG), JSON.stringify(mappingConfigs));
+      globalScene.inputController.resetConfig(device);
     }
+
+    return true;
   }
 
   /**
@@ -799,7 +674,6 @@ export class GameData {
    * @param status - The completion status to set
    */
   public saveTutorialFlag(tutorial: Tutorial, status: boolean): void {
-    // Grab the prior save data tutorial
     const saveDataKey = getDataTypeKey(GameDataType.TUTORIALS);
     const tutorials: TutorialFlags = Object.hasOwn(localStorage, saveDataKey)
       ? JSON.parse(localStorage.getItem(saveDataKey)!)
@@ -1324,7 +1198,7 @@ export class GameData {
       : this.getSystemSaveData(); // TODO: is this bang correct?
 
     if (!this.validateSystemData(systemData)) {
-      return this.showInvalidSaveModal(false);
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
     }
 
     // Saving icon should go after validation to avoid confusing users.
@@ -1434,15 +1308,12 @@ export class GameData {
   public importData(dataType: GameDataType, slotId = 0): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
-    let saveFile: any = document.getElementById("saveFile");
-    if (saveFile) {
-      saveFile.remove();
-    }
+    document.getElementById("saveFile")?.remove();
 
-    saveFile = document.createElement("input");
+    const saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
-    saveFile.accept = ".prsv";
+    saveFile.accept = isIos() ? ".prsv" : ".prsv, .json, .txt";
 
     // iOS requires user interaction with a visible element to trigger file input
     if (isIos()) {
@@ -1496,7 +1367,7 @@ export class GameData {
       saveFile.style.display = "none";
     }
 
-    saveFile.addEventListener("change", e => {
+    saveFile.addEventListener("change", ev => {
       const overlay = document.getElementById("iosUploadOverlay");
       const button = document.getElementById("iosUploadButton");
       overlay?.remove();
@@ -1506,9 +1377,17 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
-          let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
+          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
+          const saveData = e.target?.result?.toString() ?? "";
+
+          let dataStr: string;
+          if (isValidJSON(saveData)) {
+            dataStr = saveData;
+          } else {
+            dataStr = AES.decrypt(saveData, saveKey).toString(enc.Utf8);
+          }
+
           try {
             switch (dataType) {
               case GameDataType.SYSTEM: {
@@ -1599,9 +1478,9 @@ export class GameData {
             );
           });
         };
-      })((e.target as any).files[0]);
+      })((ev.target as any).files[0]);
 
-      reader.readAsText((e.target as any).files[0]);
+      reader.readAsText((ev.target as any).files[0]);
     });
 
     if (!isIos()) {
@@ -1842,7 +1721,7 @@ export class GameData {
       }
       return await this.setPokemonSpeciesCaught(
         pokemon,
-        getPokemonSpecies(prevolution),
+        speciesDataRegistry.getSpecies(prevolution),
         incrementCount,
         fromEgg,
         showMessage,
@@ -2181,30 +2060,6 @@ export class GameData {
       }
       if (!Object.hasOwn(entry, "ribbons")) {
         entry.ribbons = new RibbonData(0);
-      }
-    }
-  }
-
-  migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
-    const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-    const starterData = initialStarterData || systemData.starterData;
-    const dexData = systemData.dexData;
-    for (const s of starterIds) {
-      const dexAttr = dexData[s].caughtAttr;
-      starterData[s].abilityAttr =
-        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
-        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
-      if (dexAttr) {
-        if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
-          dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;
-        }
-        if (dexAttr & DexAttr.VARIANT_2) {
-          dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-        }
-        if (dexAttr & DexAttr.VARIANT_3) {
-          dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-        }
       }
     }
   }
