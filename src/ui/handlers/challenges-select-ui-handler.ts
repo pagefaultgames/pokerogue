@@ -522,7 +522,7 @@ export class GameChallengesUiHandler extends UiHandler {
                 // Then, adjust the scroll to display the bottommost elements of the menu.
                 const successB = this.setScrollCursor(challenges.length - MAX_ROWS_TO_DISPLAY);
                 success = successA && successB; // success is just there to play the little validation sound effect
-              } else {
+              } else if (challenges.length > 0) {
                 // If there are `MAX_ROWS_TO_DISPLAY` or less challenges, just move to the bottom one
                 success = this.setCursor(challenges.length - 1);
               }
@@ -549,7 +549,7 @@ export class GameChallengesUiHandler extends UiHandler {
               const successB = this.setScrollCursor(0);
               success = successA && successB; // success is just there to play the little validation sound effect
             }
-          } else if (challenges.length < MAX_ROWS_TO_DISPLAY && this.cursor === challenges.length - 1) {
+          } else if (challenges.length < MAX_ROWS_TO_DISPLAY && this.cursor >= challenges.length - 1) {
             // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
             success = this.setCursor(0);
           } else {

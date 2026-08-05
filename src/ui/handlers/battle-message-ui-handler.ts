@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
@@ -34,7 +35,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    this.bg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
+    this.bg = globalScene.add.sprite(0, 0, "bg", settings.display.uiWindowStyle);
     this.bg.setName("sprite-battle-msg-bg");
     this.bg.setOrigin(0, 1);
     ui.add(this.bg);
@@ -76,7 +77,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBoxContainer = globalScene.add.container(0, -16);
     this.nameBoxContainer.setVisible(false);
 
-    this.nameBox = globalScene.add.nineslice(0, 0, "namebox", globalScene.windowType, 72, 16, 8, 8, 5, 5);
+    this.nameBox = globalScene.add.nineslice(0, 0, "namebox", settings.display.uiWindowStyle, 72, 16, 8, 8, 5, 5);
     this.nameBox.setOrigin(0, 0);
 
     this.nameIcon = globalScene.add.sprite(8, 0, "items", "");
@@ -201,7 +202,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
 
   promptLevelUpStats(partyMemberIndex: number, prevStats: number[], showTotals: boolean): Promise<void> {
     return new Promise(resolve => {
-      if (!globalScene.showLevelUpStats) {
+      if (!settings.display.showStatsOnLevelUp) {
         return resolve();
       }
       const newStats = globalScene.getPlayerParty()[partyMemberIndex].stats;

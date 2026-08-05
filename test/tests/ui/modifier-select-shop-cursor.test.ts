@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { settings } from "#app/global-settings-manager";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
@@ -35,7 +36,7 @@ describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
     // Wave 10 is a boss wave -> `getPlayerShopModifierTypeOptionsForWave(10)` returns [],
     // leaving the shop with no rows even though the game mode still "has a shop".
     scene.currentBattle.waveIndex = 10;
-    scene.shopCursorTarget = ShopCursorTarget.SHOP;
+    settings.update("display", "shopCursorTarget", ShopCursorTarget.SHOP);
 
     const selectModifierPhase = new SelectModifierPhase();
     scene.phaseManager.unshiftPhase(selectModifierPhase);

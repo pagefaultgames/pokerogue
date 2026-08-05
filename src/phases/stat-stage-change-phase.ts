@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { OctolockTag } from "#data/battler-tags";
@@ -72,7 +73,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const applied = this.getAppliedChanges(pokemon);
     this.options.onChange?.(pokemon, applied);
 
-    if (applied.some(c => c.stages !== 0) && globalScene.moveAnimations) {
+    if (applied.some(c => c.stages !== 0) && settings.display.enableMoveAnimations) {
       this.playStatChangeAnimation(pokemon).then(() => this.applyStatChangesAndEnd(pokemon, applied));
     } else {
       this.applyStatChangesAndEnd(pokemon, applied);
