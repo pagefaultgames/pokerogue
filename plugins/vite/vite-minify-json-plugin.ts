@@ -9,11 +9,12 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import readline from "node:readline";
 import chalk from "chalk";
 import type { Logger, Plugin as VitePlugin } from "vite";
 
 const NAME = "minify-public-json-files";
-const VERSION = "3.0.0";
+const VERSION = "3.1.0";
 
 /** Patterns that should be excluded, meant to be excluded at any level */
 const EXCLUDE_PATTERNS = ["REUSE.toml", ".git", "LICENSE", "README.md", "package.json", "pnpm-lock.yaml"];
@@ -46,6 +47,13 @@ export function minifyPublicJsonFiles(): VitePlugin {
       logger.info(cyan(`\t→ Plugin: ${NAME} v${VERSION}`));
     },
     async generateBundle(options): Promise<void> {
+      const clearLine = (): void => {
+        if (!process.env.CI) {
+          readline.moveCursor(process.stdout, 0, -1);
+          readline.clearLine(process.stdout, 0);
+        }
+      };
+
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: good enough
       const minifyJsonFiles = (dir: string, outDir: string): void => {
         const files = fs.readdirSync(dir);
@@ -56,11 +64,13 @@ export function minifyPublicJsonFiles(): VitePlugin {
           const stat = fs.statSync(fullPath);
 
           if (skipExcludes(file)) {
+            clearLine();
             logger.info(yellow(`Skipping "${fullPath}".`));
             continue;
           }
 
           if (stat.isDirectory()) {
+            clearLine();
             logger.info(green(`Processing directory "${fullPath}".`));
             // Recurse into subdirectories
             const nestedOutputDir = path.join(outDir, file);
@@ -68,6 +78,7 @@ export function minifyPublicJsonFiles(): VitePlugin {
             minifyJsonFiles(fullPath, nestedOutputDir);
             continue;
           }
+
           if (file.endsWith(".json")) {
             try {
               // Minify JSON file
@@ -83,6 +94,7 @@ export function minifyPublicJsonFiles(): VitePlugin {
             }
             continue;
           }
+
           // Copy other files as-is
           fs.copyFileSync(fullPath, outputFilePath);
         }
@@ -94,6 +106,9 @@ export function minifyPublicJsonFiles(): VitePlugin {
       const localesDir = path.resolve("./locales");
       const outputDir = path.resolve(options.dir || "dist");
 
+      if (!process.env.CI) {
+        logger.info("");
+      }
       minifyJsonFiles(assetsDir, outputDir);
       minifyJsonFiles(localesDir, path.join(outputDir, "locales"));
 
