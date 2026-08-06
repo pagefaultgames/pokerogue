@@ -1,8 +1,8 @@
 import { VALUE_REDUCTION_MAX } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { getStarterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
@@ -36,7 +36,6 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
-import { UiTheme } from "#enums/ui-theme";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
@@ -64,7 +63,7 @@ import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, getLocalizedSpriteKey, padInt } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
-import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -436,7 +435,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.pokemonLuckText);
 
     // Candy icon and count
-    const isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
+    const isLegacyUi = settings.isLegacyTheme;
     this.pokemonCandyContainer = globalScene.add //
       .container(isLegacyUi ? 7 : 4.5, 18);
 
@@ -791,7 +790,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES)
           || (!globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()
             && o === MenuOptions.RIBBONS
-            && !globalScene.showMissingRibbons
+            && !settings.display.showMissingRibbons
             && !globalScene.gameData.starterData[this.species.speciesId]?.classicWinCount);
         const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
         const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
@@ -976,7 +975,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private isCaught(otherSpecies?: PokemonSpecies): bigint {
     const species = otherSpecies ? otherSpecies : this.species;
 
-    if (globalScene.dexForDevs) {
+    if (settings.general.dexForDevs) {
       species.getFullUnlocksData();
     }
 
@@ -994,7 +993,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    * @returns `true` if the form is caught
    */
   private isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: number | undefined): boolean {
-    if (globalScene.dexForDevs) {
+    if (settings.general.dexForDevs) {
       return true;
     }
     const species = otherSpecies ? otherSpecies : this.species;
@@ -1736,7 +1735,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             }
 
             const hasRibbons = globalScene.gameData.dexData[this.species.speciesId]?.ribbons.getRibbons();
-            const { showMissingRibbons } = globalScene;
+            const { showMissingRibbons } = settings.display;
             const classicWinCount = globalScene.gameData.starterData[this.species.speciesId]?.classicWinCount;
 
             if (!hasRibbons && !showMissingRibbons && !classicWinCount) {
@@ -1857,7 +1856,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             let newFormIndex = this.formIndex;
             do {
               newFormIndex = (newFormIndex + 1) % formCount;
-              if (this.species.forms[newFormIndex].isStarterSelectable || globalScene.dexForDevs) {
+              if (this.species.forms[newFormIndex].isStarterSelectable || settings.general.dexForDevs) {
                 break;
               }
             } while (newFormIndex !== props.formIndex || this.species.forms[newFormIndex].isUnobtainable);
@@ -2525,7 +2524,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.canCycleGender = isMaleCaught && isFemaleCaught;
 
       // If the dev option for the dex is selected, all forms can be cycled through
-      this.canCycleForm = globalScene.dexForDevs
+      this.canCycleForm = settings.general.dexForDevs
         ? species.forms.length > 1
         : species.forms.filter(f => f.isStarterSelectable).filter(f => f).length > 1;
 

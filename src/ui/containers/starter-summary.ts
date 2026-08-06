@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -12,7 +12,6 @@ import { Passive } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
 import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
@@ -28,7 +27,7 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { getLocalizedSpriteKey, padInt, truncateString } from "#utils/common";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -373,10 +372,9 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   private setupPokemonStatisticsContainer(): GameObjects.Container {
     const pokemonStatisticsContainer = globalScene.add.container(0, 0);
 
-    const isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
     // Candy icon and count
     this.pokemonCandyContainer = globalScene.add
-      .container(isLegacyUi ? 7 : 4.5, 18)
+      .container(settings.isLegacyTheme ? 7 : 4.5, 18)
       .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
     this.pokemonCandyIcon = globalScene.add //
       .sprite(0, 0, "candy")
@@ -403,7 +401,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     ]);
 
     this.pokemonCaughtHatchedContainer = globalScene.add //
-      .container(isLegacyUi ? 4.5 : 2, 25)
+      .container(settings.isLegacyTheme ? 4.5 : 2, 25)
       .setScale(0.5);
 
     const pokemonCaughtIcon = globalScene.add //
@@ -529,7 +527,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     if (dexEntry.caughtAttr) {
       this.setNameAndNumber(species, starterPreferences);
 
-      const colorScheme = starterColors[species.speciesId];
+      const colorScheme = getStarterColors(species.speciesId);
 
       this.pokemonUncaughtText.setVisible(false);
       this.pokemonPermanentInfoContainer.setVisible(true);

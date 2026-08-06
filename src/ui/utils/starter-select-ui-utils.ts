@@ -1,5 +1,6 @@
 import { VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { speciesEggMoves } from "#balance/egg-moves";
 import {
@@ -8,6 +9,8 @@ import {
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
 } from "#balance/starters";
+import { CandyUpgradeDisplayMode } from "#enums/candy-upgrade-display-mode";
+import { CandyUpgradeNotificationMode } from "#enums/candy-upgrade-notification-mode";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
@@ -113,12 +116,18 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean
 
 /** @returns Whether upgrade notifications are enabled and set to display as an icon */
 export function isUpgradeIconEnabled(): boolean {
-  return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 0;
+  return (
+    settings.display.candyUpgradeNotificationMode !== CandyUpgradeNotificationMode.OFF
+    && settings.display.candyUpgradeDisplayMode === CandyUpgradeDisplayMode.ICON
+  );
 }
 
 /** @returns Whether upgrade notifications are enabled and set to display as an animation */
 export function isUpgradeAnimationEnabled(): boolean {
-  return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
+  return (
+    settings.display.candyUpgradeNotificationMode !== CandyUpgradeNotificationMode.OFF
+    && settings.display.candyUpgradeDisplayMode === CandyUpgradeDisplayMode.ANIMATION
+  );
 }
 
 interface StarterSelectLanguageSetting {

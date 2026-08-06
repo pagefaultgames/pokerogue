@@ -73,7 +73,7 @@
 
       // these must always be last
       "#test/*": ["../test/*.ts"],
-      "#app/*": ["../src/*.ts"]
+      "#app/*": ["../src/globals/*.ts", "../src/*.ts"]
     }
   }
 }

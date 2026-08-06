@@ -99,7 +99,7 @@
 
       // these must always be last
       "#test/*": ["./test/*.ts"],
-      "#app/*": ["./src/*.ts"]
+      "#app/*": ["./src/globals/*.ts", "./src/*.ts"]
     }
   },
   // We cannot use a blanket "**/*.ts" include here excluding `scripts` because it would bar us from checking any boilerplate files,
