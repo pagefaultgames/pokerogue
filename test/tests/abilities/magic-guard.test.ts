@@ -38,7 +38,7 @@ describe("Ability - Magic Guard", () => {
     { name: "Volatile Status Conditions", enemyMove: MoveId.LEECH_SEED },
     // TODO: Add a test that Protect triggers crash damage if not already existing,
     // then mention the file name it's included in
-    { name: "Crash Damage", move: MoveId.HIGH_JUMP_KICK, enemyMove: MoveId.PROTECT }, 
+    { name: "Crash Damage", move: MoveId.HIGH_JUMP_KICK, enemyMove: MoveId.PROTECT },
     { name: "Variable Recoil Moves", move: MoveId.DOUBLE_EDGE },
     { name: "HP% Recoil Moves", move: MoveId.CHLOROBLAST },
   ])("should prevent damage from $name", async ({ move = MoveId.SPLASH, enemyMove = MoveId.SPLASH }) => {
@@ -73,14 +73,15 @@ describe("Ability - Magic Guard", () => {
       game.override.enemyLevel(1).passiveAbility(passive).enemyAbility(enemyAbility);
       await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
+      const player = game.field.getPlayerPokemon();
+      const enemy = game.field.getEnemyPokemon();
+
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
       await game.toEndOfTurn();
 
-      const player = game.field.getPlayerPokemon();
-      const enemy = game.field.getEnemyPokemon();
-      expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
       expect(enemy).toHaveAbilityApplied(enemyAbility);
+      expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
       expect(player).toHaveFullHp();
     },
   );
