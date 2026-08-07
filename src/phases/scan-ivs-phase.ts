@@ -6,6 +6,7 @@ import { PERMANENT_STATS, type PermanentStat, Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { getTextColor } from "#ui/text";
 import i18next from "i18next";
 
@@ -16,15 +17,17 @@ export class ScanIvsPhase extends PokemonPhase {
     super(battlerIndex);
   }
 
-  start() {
+  public override start(): void {
     super.start();
+
+    const { gameData, ui } = globalScene;
 
     const pokemon = this.getPokemon();
 
     for (const enemy of globalScene.getEnemyField()) {
       const enemyIvs = enemy.ivs;
       // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
-      const currentIvs = globalScene.gameData.dexData[enemy.species.getRootSpeciesId()].ivs;
+      const currentIvs = gameData.dexData[enemy.species.getRootSpeciesId()].ivs;
       const statsContainer = enemy.getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
       const statsContainerLabels = statsContainer.filter(m => m.name.includes("icon_stat_label"));
       for (const statContainer of statsContainerLabels) {
@@ -47,28 +50,25 @@ export class ScanIvsPhase extends PokemonPhase {
       return;
     }
 
-    globalScene.ui.showText(
-      i18next.t("battle:ivScannerUseQuestion", {
-        pokemonName: getPokemonNameWithAffix(pokemon),
-      }),
+    ui.showText(
+      i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }),
       null,
       () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          () => {
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            globalScene.ui.clearText();
-            globalScene.ui
-              .getMessageHandler()
+        const options: ConfirmModeConfig = {
+          yesHandler: () => {
+            ui.setMode(UiMode.MESSAGE);
+            ui.clearText();
+            ui.getMessageHandler()
               .promptIvs(pokemon.id, pokemon.ivs)
               .then(() => this.end());
           },
-          () => {
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            globalScene.ui.clearText();
+          noHandler: () => {
+            ui.setMode(UiMode.MESSAGE);
+            ui.clearText();
             this.end();
           },
-        );
+        };
+        ui.setMode(UiMode.CONFIRM, options);
       },
     );
   }

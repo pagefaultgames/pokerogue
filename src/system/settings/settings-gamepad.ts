@@ -3,6 +3,7 @@ import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import type { OptionSelectModeConfig } from "#types/ui-types";
 import type { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";
@@ -135,7 +136,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
             cancelHandler();
             return true;
           };
-          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+          const optionSelectConfig: OptionSelectModeConfig = {
             options: [
               ...gp.map((g, index) => ({
                 label: truncateString(g, 30), // Truncate the gamepad name for display
@@ -146,7 +147,9 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
                 handler: cancelHandler,
               },
             ],
-          });
+            yOffset: 48,
+          };
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, optionSelectConfig);
           return false;
         }
       }
