@@ -27,7 +27,7 @@ import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -196,8 +196,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       });
 
       // Run to ability train option selection
-      const optionSelectUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
-      vi.spyOn(optionSelectUiHandler, "show");
+      const confirmUiHandler = game.scene.ui.handlers[UiMode.CONFIRM] as ConfirmUiHandler;
+      vi.spyOn(confirmUiHandler, "show");
       const partyUiHandler = game.scene.ui.handlers[UiMode.PARTY] as PartyUiHandler;
       vi.spyOn(partyUiHandler, "show");
       game.endPhase();
@@ -205,9 +205,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(game).toBeAtPhase("PostMysteryEncounterPhase");
 
       // Wait for Yes/No confirmation to appear
-      await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalled());
+      await vi.waitFor(() => expect(confirmUiHandler.show).toHaveBeenCalled());
       // Select "Yes" on train ability
-      optionSelectUiHandler.processInput(Button.ACTION);
+      confirmUiHandler.processInput(Button.ACTION);
       // Select first pokemon in party to train
       await vi.waitFor(() => expect(partyUiHandler.show).toHaveBeenCalled());
       partyUiHandler.processInput(Button.ACTION);

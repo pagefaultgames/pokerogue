@@ -49,7 +49,7 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
+import type { OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
@@ -570,6 +570,7 @@ export function selectPokemonForOption(
           const fullOptions = secondaryOptions
             .map(option => {
               // Update handler to resolve promise
+              // TODO: don't update the handler like this
               const onSelect = option.handler;
               option.handler = () => {
                 onSelect();
@@ -595,18 +596,13 @@ export function selectPokemonForOption(
               },
             });
 
-          const config: OptionSelectConfig = {
-            options: fullOptions,
-            maxOptions: 7,
-            yOffset: 0,
-            supportHover: true,
-          };
+          const config: OptionSelectModeConfig = { options: fullOptions, maxOptions: 7, yOffset: 48 };
 
           // Do hover over the starting selection option
           if (fullOptions[0]?.onHover) {
             fullOptions[0].onHover();
           }
-          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config);
         };
 
         const textPromptKey = globalScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
@@ -643,7 +639,7 @@ export function selectOptionThenPokemon(
   return new Promise<PokemonAndOptionSelected | null>(resolve => {
     const modeToSetOnExit = globalScene.ui.getMode();
 
-    const displayOptions = async (config: OptionSelectConfig) => {
+    const displayOptions = async (config: OptionSelectModeConfig) => {
       await globalScene.ui.setMode(UiMode.MESSAGE);
       if (optionSelectPromptKey) {
         showEncounterText(optionSelectPromptKey);
@@ -684,6 +680,7 @@ export function selectOptionThenPokemon(
     const fullOptions = options
       .map((option, index) => {
         // Update handler to resolve promise
+        // TODO: don't update the handler like this
         const onSelect = option.handler;
         option.handler = () => {
           onSelect();
@@ -708,11 +705,10 @@ export function selectOptionThenPokemon(
         },
       });
 
-    const config: OptionSelectConfig = {
+    const config: OptionSelectModeConfig = {
       options: fullOptions,
       maxOptions: 7,
-      yOffset: 0,
-      supportHover: true,
+      yOffset: 48,
     };
 
     displayOptions(config);

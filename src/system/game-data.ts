@@ -67,6 +67,7 @@ import type {
   VoucherUnlocks,
 } from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -1319,7 +1320,7 @@ export class GameData {
   }
 
   // TODO: Refactor this spaghetti monster
-  public importData(dataType: GameDataType, slotId = 0): void {
+  public importData(dataType: GameDataType, slotId = 0, confirmWindowXOffset?: number): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
     document.getElementById("saveFile")?.remove();
@@ -1442,54 +1443,49 @@ export class GameData {
             return displayError(i18next.t("menuUiHandler:importCorrupt", { dataName }));
           }
 
-          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
-            globalScene.ui.setOverlayMode(
-              UiMode.CONFIRM,
-              () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+          // TODO: move this outside of game data
+          const importDataConfirmOptions: ConfirmModeConfig = {
+            yesHandler: () => {
+              localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-                  updateUserInfo().then(success => {
-                    if (!success[0]) {
-                      return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
+              if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+                updateUserInfo().then(success => {
+                  if (!success[0]) {
+                    return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
+                  }
+                  const { trainerId, secretId } = this;
+                  let updatePromise: Promise<string | null>;
+                  if (dataType === GameDataType.SESSION) {
+                    updatePromise = pokerogueApi.savedata.session.update(
+                      { slot: slotId, trainerId, secretId, clientSessionId },
+                      dataStr,
+                    );
+                  } else {
+                    updatePromise = pokerogueApi.savedata.system.update(
+                      { trainerId, secretId, clientSessionId },
+                      dataStr,
+                    );
+                  }
+                  updatePromise.then(error => {
+                    if (error) {
+                      console.error(error);
+                      return displayError(i18next.t("menuUiHandler:importError", { dataName }));
                     }
-                    const { trainerId, secretId } = this;
-                    let updatePromise: Promise<string | null>;
-                    if (dataType === GameDataType.SESSION) {
-                      updatePromise = pokerogueApi.savedata.session.update(
-                        {
-                          slot: slotId,
-                          trainerId,
-                          secretId,
-                          clientSessionId,
-                        },
-                        dataStr,
-                      );
-                    } else {
-                      updatePromise = pokerogueApi.savedata.system.update(
-                        { trainerId, secretId, clientSessionId },
-                        dataStr,
-                      );
-                    }
-                    updatePromise.then(error => {
-                      if (error) {
-                        console.error(error);
-                        return displayError(i18next.t("menuUiHandler:importError", { dataName }));
-                      }
-                      window.location.reload();
-                    });
+                    window.location.reload();
                   });
-                } else {
-                  window.location.reload();
-                }
-              },
-              () => {
-                globalScene.ui.revertMode();
-                globalScene.ui.showText("", 0);
-              },
-              false,
-              -98,
-            );
+                });
+              } else {
+                window.location.reload();
+              }
+            },
+            noHandler: () => {
+              globalScene.ui.revertMode();
+              globalScene.ui.showText("", 0);
+            },
+            xOffset: confirmWindowXOffset,
+          };
+          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
+            globalScene.ui.setOverlayMode(UiMode.CONFIRM, importDataConfirmOptions);
           });
         };
       })((ev.target as any).files[0]);

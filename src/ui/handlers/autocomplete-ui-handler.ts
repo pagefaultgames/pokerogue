@@ -1,36 +1,26 @@
 import { Button } from "#enums/buttons";
-import { UiMode } from "#enums/ui-mode";
-import { BaseOptionSelectUiHandler } from "#ui/base-option-select-ui-handler";
+import type { UIOptionSelectItem } from "#types/ui-types";
+import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type Phaser from "phaser";
 
-export class AutoCompleteUiHandler extends BaseOptionSelectUiHandler {
-  modalContainer: Phaser.GameObjects.Container;
-  constructor(mode: UiMode = UiMode.OPTION_SELECT) {
-    super(mode);
-  }
+export class AutoCompleteUiHandler extends OptionSelectUiHandler {
+  private modalContainer?: Phaser.GameObjects.Container;
 
-  getWindowWidth(): number {
-    return 64;
-  }
-
-  show(args: any[]): boolean {
-    if (args[0].modalContainer) {
+  public override show(args: any[]): boolean {
+    if (args[0]?.modalContainer) {
       const { modalContainer } = args[0];
-      const show = super.show(args);
       this.modalContainer = modalContainer;
-      this.setupOptions();
 
-      return show;
+      return super.show(args);
     }
+
     return false;
   }
 
-  protected setupOptions() {
-    super.setupOptions();
+  protected override updateSizeForOptions(options: UIOptionSelectItem[]): void {
+    super.updateSizeForOptions(options);
+
     if (this.modalContainer) {
-      this.optionSelectContainer.setSize(
-        this.optionSelectContainer.height,
-        Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()),
-      );
       this.optionSelectContainer.setPositionRelative(
         this.modalContainer,
         this.optionSelectBg.width,
@@ -39,13 +29,30 @@ export class AutoCompleteUiHandler extends BaseOptionSelectUiHandler {
     }
   }
 
-  processInput(button: Button): boolean {
-    // the cancel and action button are here because if you're typing, x and z are used for cancel/action. This means you could be typing something and accidentally cancel/select when you don't mean to
-    // the submit button is therefore used to select a choice (the enter button), though this does not work on my local dev testing for phones, as for my phone/keyboard combo, the enter and z key are both
-    // bound to Button.ACTION, which makes this not work on mobile
+  public override processInput(button: Button): boolean {
+    const ui = this.getUi();
+
+    if (button === Button.SUBMIT) {
+      const option = this.currentOption;
+
+      if (option?.handler()) {
+        if (!option.keepOpen) {
+          this.clear();
+        }
+        if (!option.noSoundEffects) {
+          ui.playSelect();
+        }
+      } else {
+        ui.playError();
+      }
+
+      return true;
+    }
+
     if (button !== Button.CANCEL && button !== Button.ACTION) {
       return super.processInput(button);
     }
+
     return false;
   }
 }
