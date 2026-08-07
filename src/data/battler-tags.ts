@@ -1919,7 +1919,7 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
     this.#damageRatio = damageRatio;
   }
 
-  public override onContact(attacker: Pokemon, user: Pokemon): void {
+  public override onContact(attacker: Pokemon): void {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
     if (!cancelled.value) {
