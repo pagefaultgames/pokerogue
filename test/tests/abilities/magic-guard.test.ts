@@ -152,8 +152,8 @@ describe("Ability - Magic Guard", () => {
 
     // Heal enemy to full & use tackle again
     const enemy = game.field.getEnemyPokemon();
-    const prevDmg = blissey.getInverseHp();
-    blissey.hp = blissey.getMaxHp();
+    const prevDmg = enemy.getInverseHp();
+    enemy.hp = enemy.getMaxHp();
 
     game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
