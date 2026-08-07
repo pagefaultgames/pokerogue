@@ -201,4 +201,5 @@ describe("Ability - Magic Guard", () => {
 
     expect(enemy).not.toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
     expect(player).not.toHaveFullHp();
+  });
 });
