@@ -80,7 +80,7 @@ describe("Ability - Magic Guard", () => {
       const player = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
       expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
-      expect(enemy).toHaveAbilityApplied(ability);
+      expect(enemy).toHaveAbilityApplied(enemyAbility);
       expect(player).toHaveFullHp();
     },
   );
@@ -148,7 +148,7 @@ describe("Ability - Magic Guard", () => {
     expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
     expect(player).toHaveFullHp();
     expect(player).toHaveStatusEffect(StatusEffect.BURN);
-    expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
+    expect(getStatusEffectCatchRateMultiplier(player.status!.effect)).toBe(1.5);
 
     // Heal enemy to full & use tackle again
     const enemy = game.field.getEnemyPokemon();
