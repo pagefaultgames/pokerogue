@@ -155,10 +155,7 @@ export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => 
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
 export abstract class Move {
-  public id: MoveId;
-  public get name(): string {
-    return this.id === MoveId.NONE ? "" : `${i18next.t(`move:${toCamelCase(MoveId[this.id])}.name`)}${this.nameAppend}`;
-  }
+  public readonly id: MoveId;
 
   private readonly _type: PokemonType;
   // TODO: just make the underlying property public readonly
@@ -167,6 +164,11 @@ export abstract class Move {
   public power: number;
   public accuracy: number;
   public pp: number;
+
+  // TODO: Since we reload the page on i18n language change, this should be made into a readonly property so the pokedex doesn't timeout during testing
+  public get name(): string {
+    return this.id === MoveId.NONE ? "" : `${i18next.t(`move:${toCamelCase(MoveId[this.id])}.name`)}${this.nameAppend}`;
+  }
 
   public get effect(): string {
     return this.id === MoveId.NONE
@@ -289,6 +291,7 @@ export abstract class Move {
     }
   }
 
+  // TODO: Remove getters and make field public readonly
   get type() {
     return this._type;
   }

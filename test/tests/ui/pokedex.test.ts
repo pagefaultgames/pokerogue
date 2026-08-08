@@ -8,6 +8,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
+import { mockI18next } from "#test/utils/test-utils";
 import type { StarterAttributes } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
@@ -44,6 +45,8 @@ function permutations<T>(array: T[], length: number): T[][] {
   );
 }
 
+// TODO: This suite times out due to move name grabbing lagging out the game to hell and back.
+// We should change the fields to readonly properties set once on initialization/construction and re-enable them
 describe("UI - Pokedex", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -61,16 +64,15 @@ describe("UI - Pokedex", () => {
   // #region Helper Functions
 
   /**
-   * Run the game to open the pokedex UI.
-   * @returns The handler for the pokedex UI.
+   * Run the game and open the pokedex UI.
+   * @returns A Promise that resolves with the Pokedex UI handler.
    */
   async function runToOpenPokedex(): Promise<PokedexUiHandler> {
-    // Open the pokedex UI.
     await game.runToTitle();
 
+    mockI18next();
     await game.scene.ui.setOverlayMode(UiMode.POKEDEX);
 
-    // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
     expect(handler).toBeInstanceOf(PokedexUiHandler);
 
@@ -78,19 +80,18 @@ describe("UI - Pokedex", () => {
   }
 
   /**
-   * Run the game to open the pokedex UI.
-   * @returns The handler for the pokedex UI.
+   * Run the game to open the pokedex page UI.
+   * @returns A Promise that resolves with the pokedex page UI handler.
    */
   async function runToPokedexPage(
     species: PokemonSpecies,
     starterAttributes: StarterAttributes = {},
   ): Promise<PokedexPageUiHandler> {
-    // Open the pokedex UI.
     await game.runToTitle();
 
+    mockI18next();
     await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
 
-    // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
     expect(handler).toBeInstanceOf(PokedexPageUiHandler);
 
@@ -98,8 +99,9 @@ describe("UI - Pokedex", () => {
   }
 
   /**
-   * Compute a set of pokemon that have a specific ability in allAbilities
+   * Return all species that have a form with the specified ability.
    * @param ability - The ability to filter for
+   * @returns A set of all species that have the specified ability in at least 1 form.
    */
   function getSpeciesWithAbility(ability: AbilityId): Set<SpeciesId> {
     const speciesSet = new Set<SpeciesId>();
@@ -117,16 +119,14 @@ describe("UI - Pokedex", () => {
   }
 
   /**
-   * Compute a set of pokemon that have one of the specified type(s)
-   *
-   * Includes all forms of the pokemon
+   * Compute a set of pokemon that have one of the specified type(s).
    * @param types - The types to filter for
+   * @returns A set of all species that have the specified type in at least 1 form.
    */
   function getSpeciesWithType(...types: PokemonType[]): Set<SpeciesId> {
     const speciesSet = new Set<SpeciesId>();
     const tySet = new Set<PokemonType>(types);
 
-    // get the pokemon and its forms
     outer: for (const pkmn of speciesDataRegistry.getAllSpecies()) {
       // @ts-expect-error We know that type2 might be null.
       if (tySet.has(pkmn.type1) || tySet.has(pkmn.type2)) {

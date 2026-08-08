@@ -845,12 +845,9 @@ interface PokemonSpeciesConstructor {
 }
 
 export class PokemonSpecies extends PokemonSpeciesForm {
-  public get name(): string {
-    return i18next.t(`pokemon:${toCamelCase(SpeciesId[this.speciesId])}`);
-  }
-  public get category(): string {
-    return i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
-  }
+  public readonly name: string;
+  public readonly category: string;
+
   readonly subLegendary: boolean;
   readonly legendary: boolean;
   readonly mythical: boolean;
@@ -894,6 +891,9 @@ export class PokemonSpecies extends PokemonSpeciesForm {
     this.genderDiffs = data.genderDiffs;
     this.canChangeForm = !!data.canChangeForm;
     this.forms = data.forms || [];
+
+    this.name = i18next.t(`pokemon:${toCamelCase(SpeciesId[this.speciesId])}`);
+    this.category = i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
 
     this.forms.forEach((form, f) => {
       form.speciesId = data.id;
