@@ -100,7 +100,6 @@ import {
   getLuckString,
   getLuckTextTint,
   getPartyLuckValue,
-  type ModifierType,
   PokemonHeldItemModifierType,
 } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -155,7 +154,7 @@ import {
 import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
+import { getModifierType } from "#utils/modifier-utils";
 import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
@@ -639,7 +638,7 @@ export class BattleScene extends SceneBase {
       hideOnComplete: true,
     });
 
-    this.reset(false, false, true);
+    this.reset(false, false);
 
     // Initialize UI-related aspects and then start the login phase.
     this.ui = new UI();
@@ -1129,7 +1128,7 @@ export class BattleScene extends SceneBase {
   }
 
   // TODO: Break up function - this does far too much in 1 sitting
-  reset(clearScene = false, clearData = false, reloadI18n = false): void {
+  reset(clearScene = false, clearData = false): void {
     if (clearData) {
       this.gameData = new GameData();
     }
@@ -1216,24 +1215,6 @@ export class BattleScene extends SceneBase {
 
     this.updateGameInfo();
 
-    if (reloadI18n) {
-      // TODO: remove this stuff once the modifier type happens
-      const localizable = getEnumValues(ModifierPoolType)
-        .map(mpt => getModifierPoolForType(mpt))
-        .flatMap(mp =>
-          Object.values(mp)
-            .flat()
-            .map(mt => mt.modifierType)
-            .filter(
-              (mt): mt is ModifierType & { localize: () => void } =>
-                "localize" in mt && typeof mt.localize === "function",
-            ),
-        );
-      for (const item of localizable) {
-        item.localize();
-      }
-    }
-
     if (clearScene) {
       // Reload variant data in case sprite set has changed
       this.initVariantData();
@@ -1251,7 +1232,7 @@ export class BattleScene extends SceneBase {
           this.children.removeAll(true);
           // TODO: Do we even need this?
           this.game.domContainer.innerHTML = "";
-          // TODO: `launchBattle` calls `reset(false, false, true)`
+          // TODO: `launchBattle` calls `reset()`
           this.launchBattle();
         },
       });

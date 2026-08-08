@@ -500,7 +500,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     (this.getUi().handlers[UiMode.TITLE] as TitleUiHandler)?.updateUsername();
     if (this.reloadRequired) {
       this.reloadRequired = false;
-      globalScene.reset(true, false, true);
+      globalScene.reset(true, false);
     }
   }
 
