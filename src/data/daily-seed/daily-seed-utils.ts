@@ -216,7 +216,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
     startingLevel,
     undefined,
     config?.formIndex,
-    undefined,
+    config?.gender,
     isShiny,
     config?.variant,
     undefined,

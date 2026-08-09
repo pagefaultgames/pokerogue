@@ -29,6 +29,11 @@
           },
           "passive": {
             "$ref": "#/$defs/passive"
+          },
+          "gender": {
+            "type": "integer",
+            "minimum": -1,
+            "maximum": 1
           }
         },
         "required": ["speciesId"],
