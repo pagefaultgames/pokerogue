@@ -8,7 +8,6 @@ import { BattleType } from "#enums/battle-type";
 import type { FieldBattlerIndex } from "#enums/battler-index";
 import { FieldPosition } from "#enums/field-position";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { PlayerGender } from "#enums/player-gender";
 import { SwitchType } from "#enums/switch-type";
 import type { EncounterPhase } from "#phases/encounter-phase";
 import { PokemonPhase } from "#phases/pokemon-phase";
