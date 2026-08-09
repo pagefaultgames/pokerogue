@@ -6,6 +6,7 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -176,4 +177,19 @@ export async function promptSegments(): Promise<number> {
     default: 5,
     required: true,
   });
+}
+
+/**
+ * Prompt the user to enter a gender for the Pokémon.
+ * @returns A Promise that resolves with the chosen gender.
+ */
+export async function promptGender(): Promise<Gender> {
+  const genderName = await select({
+    message: "Please select the gender of the Pokémon.",
+    choices: getEnumKeys(Gender)
+      .filter(g => g !== "GENDERLESS")
+      .map(toTitleCase),
+  });
+  const genderId = Gender[toUpperSnakeCase(genderName) as keyof typeof Gender];
+  return genderId;
 }
