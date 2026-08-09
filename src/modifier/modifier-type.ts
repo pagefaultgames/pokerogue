@@ -1509,7 +1509,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       const tierUniqueCompatibleTms = partyMemberCompatibleTms
         .flat()
         .filter(tm => tmPoolTiers[tm] === tier)
-        .filter(tm => !allMoves[tm].name.endsWith(" (N)"))
+        .filter(tm => !allMoves[tm].isUnimplemented)
         .filter((tm, i, array) => array.indexOf(tm) === i);
       if (tierUniqueCompatibleTms.length === 0) {
         return null;

@@ -107,7 +107,7 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
     }
     const move = allMoves[id];
     // Skip unimplemented moves or moves that are already in the pool
-    if (move.name.endsWith(" (N)") || movePool.has(id)) {
+    if (move.isUnimplemented || movePool.has(id)) {
       continue;
     }
 
@@ -385,7 +385,7 @@ function filterMovePool(
       !ignoreSoftBlocklists && (noDoublesMovesInSingles || applyLevelBasedDenyList || excludeWorseOffensiveStatMoves);
     if (
       weight <= 0
-      || move.name.endsWith(" (N)") // Forbid unimplemented moves
+      || move.isUnimplemented // Forbid unimplemented moves
       || move.hasAttr("SacrificialAttrOnHit") // No one gets Memento or Final Gambit
       || (isBoss && (move.hasAttr("SacrificialAttr") || move.hasAttr("HpSplitAttr"))) // Bosses never get self ko moves or Pain Split
       || (hasTrainer && move.hasAttr("OneHitKOAttr")) // trainers never get OHKO moves
