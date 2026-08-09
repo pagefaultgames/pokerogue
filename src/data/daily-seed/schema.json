@@ -110,6 +110,12 @@
         "$ref": "#/$defs/mysteryEncounter"
       }
     },
+    "forcedBiomes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/forcedBiome"
+      }
+    },
     "seed": {
       "type": "string"
     },
@@ -231,6 +237,25 @@
         }
       },
       "required": ["waveIndex", "type"],
+      "additionalProperties": false
+    },
+    "forcedBiome": {
+      "type": "object",
+      "properties": {
+        "waveIndex": {
+          "type": "integer",
+          "enum": [10, 20, 30, 40]
+        },
+        "biomeId": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["waveIndex", "biomeId"],
       "additionalProperties": false
     }
   },
