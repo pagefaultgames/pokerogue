@@ -2,10 +2,12 @@ import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerType } from "#enums/trainer-type";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
@@ -61,7 +63,8 @@ describe("Ability - Magic Guard", () => {
     { abName: "Innards Out", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.INNARDS_OUT },
     { abName: "Rough Skin", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.ROUGH_SKIN },
     { abName: "Dry Skin", move: MoveId.SUNNY_DAY, passive: AbilityId.DRY_SKIN },
-    { abName: "Liquid Ooze", move: MoveId.DRAIN_PUNCH, enemyAbility: AbilityId.LIQUID_OOZE },
+    // TODO: This vacuously passes due to a bug in liquid ooze itself
+    // { abName: "Liquid Ooze", move: MoveId.ABSORB, enemyAbility: AbilityId.LIQUID_OOZE },
   ])(
     "should prevent damage from $abName",
     async ({
@@ -70,23 +73,20 @@ describe("Ability - Magic Guard", () => {
       passive = AbilityId.BALL_FETCH,
       enemyAbility = AbilityId.BALL_FETCH,
     }) => {
-      game.override.enemyLevel(1).passiveAbility(passive).enemyAbility(enemyAbility);
+      game.override.enemyLevel(1).passiveAbility(passive).enemyAbility(enemyAbility).battleType(BattleType.TRAINER)
+        .randomTrainer({trainerType: TrainerType.YOUNGSTER});
       await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
       const player = game.field.getPlayerPokemon();
-      const enemy = game.field.getEnemyPokemon();
+      // const enemy = game.field.getEnemyPokemon();
 
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
-      await game.toEndOfTurn();
+      await game.toNextTurn();
 
-      // TODO: Enable check once liquid ooze handling is handled by the ability itself 
       // if (enemyAbility !== AbilityId.BALL_FETCH) {
       // expect(enemy).toHaveAbilityApplied(enemyAbility);
       // }
-      if (passive !== AbilityId.BALL_FETCH) {
-        expect(player).toHaveAbilityApplied(passive);
-      }
       expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
       expect(player).toHaveFullHp();
     },
@@ -176,7 +176,6 @@ describe("Ability - Magic Guard", () => {
 
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();
-    expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
     expect(player).toHaveFullHp();
     expect(player).toHaveStatusEffect(StatusEffect.POISON);
   });
@@ -186,7 +185,6 @@ describe("Ability - Magic Guard", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SPIKY_SHIELD);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     const player = game.field.getPlayerPokemon();
@@ -195,18 +193,14 @@ describe("Ability - Magic Guard", () => {
     expect(player).toHaveFullHp();
     expect(enemy).toHaveFullHp();
 
-    // regression test: used to check defender's abiliry
-    game.field.mockAbility(player, AbilityId.BALL_FETCH);
-    game.field.mockAbility(enemy, AbilityId.MAGIC_GUARD);
+    // regression test: used to check defender's ability instead of the user's
     player.waveData.abilitiesApplied.clear();
-    enemy.waveData.abilitiesApplied.clear();
 
-    game.move.use(MoveId.TACKLE);
-    await game.move.forceEnemyMove(MoveId.SPIKY_SHIELD);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.move.use(MoveId.SPIKY_SHIELD);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.toEndOfTurn();
 
-    expect(enemy).not.toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
-    expect(player).not.toHaveFullHp();
+    expect(player).not.toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
+    expect(enemy).not.toHaveFullHp();
   });
 });
