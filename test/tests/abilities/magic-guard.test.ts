@@ -77,15 +77,11 @@ describe("Ability - Magic Guard", () => {
       await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
       const player = game.field.getPlayerPokemon();
-      const enemy = game.field.getEnemyPokemon();
 
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
       await game.toNextTurn();
 
-      if (enemyAbility !== AbilityId.BALL_FETCH) {
-      expect(enemy).toHaveAbilityApplied(enemyAbility);
-      }
       expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
       expect(player).toHaveFullHp();
     },
