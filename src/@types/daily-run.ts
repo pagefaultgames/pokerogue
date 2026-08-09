@@ -1,3 +1,4 @@
+import type { Gender } from "#data/gender";
 import type { AbilityId } from "#enums/ability-id";
 import type { BiomeId } from "#enums/biome-id";
 import type { BiomePoolTier } from "#enums/biome-pool-tier";
@@ -23,6 +24,7 @@ export interface DailySeedStarter {
   nature?: Nature | undefined;
   ability?: AbilityId | undefined;
   passive?: AbilityId | undefined;
+  gender?: Gender | undefined;
 }
 
 export type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
