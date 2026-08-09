@@ -1,6 +1,8 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
@@ -10,7 +12,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -27,7 +28,6 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -87,7 +87,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(SpeciesId.WOBBUFFET).getName());
+    encounter.setDialogueToken("wobbuffetName", speciesDataRegistry.getSpecies(SpeciesId.WOBBUFFET).getName());
     return true;
   })
   .withOnVisualsStart(() => {
@@ -190,9 +190,7 @@ async function summonPlayerPokemon() {
       }),
     );
     globalScene.pbTray.hide();
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(562, () => {
       globalScene.trainer.setFrame("2");
       globalScene.time.delayedCall(64, () => {
@@ -210,7 +208,7 @@ async function summonPlayerPokemon() {
     });
 
     // Also loads Wobbuffet data (cannot be shiny)
-    const enemySpecies = getPokemonSpecies(SpeciesId.WOBBUFFET);
+    const enemySpecies = speciesDataRegistry.getSpecies(SpeciesId.WOBBUFFET);
     globalScene.currentBattle.enemyParty = [];
     const wobbuffet = globalScene.addEnemyPokemon(
       enemySpecies,

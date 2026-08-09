@@ -29,7 +29,6 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
 import { randSeedInt, randSeedItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -116,7 +115,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         && validEventEncounters.length === 0)
     ) {
       // If you roll 1%, give shiny Magikarp with random variant
-      species = getPokemonSpecies(SpeciesId.MAGIKARP);
+      species = speciesDataRegistry.getSpecies(SpeciesId.MAGIKARP);
       pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
     } else if (
       validEventEncounters.length > 0
@@ -126,7 +125,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       do {
         // If you roll 50%, give event encounter with 3 extra shiny rolls and its HA, if it has one
         const enc = randSeedItem(validEventEncounters);
-        species = getPokemonSpecies(enc.species);
+        species = speciesDataRegistry.getSpecies(enc.species);
         pokemon = new PlayerPokemon(
           species,
           5,
@@ -144,10 +143,10 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       } while (tries < 6);
       if (!pokemon.shiny && pokemon.abilityIndex !== 2) {
         // If, after 6 tries, you STILL somehow don't have an HA or shiny mon, pick from only the event mons that have an HA.
-        if (validEventEncounters.some(s => !!getPokemonSpecies(s.species).abilityHidden)) {
-          validEventEncounters.filter(s => !!getPokemonSpecies(s.species).abilityHidden);
+        if (validEventEncounters.some(s => !!speciesDataRegistry.getSpecies(s.species).abilityHidden)) {
+          validEventEncounters.filter(s => !!speciesDataRegistry.getSpecies(s.species).abilityHidden);
           const enc = randSeedItem(validEventEncounters);
-          species = getPokemonSpecies(enc.species);
+          species = speciesDataRegistry.getSpecies(enc.species);
           pokemon = new PlayerPokemon(species, 5, 2, enc.formIndex);
           pokemon.trySetShinySeed();
           pokemon.trySetShinySeed();
@@ -155,7 +154,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
           isEventEncounter = true;
         } else {
           // If there's, and this would never happen, no eligible event encounters with a hidden ability, just do Magikarp
-          species = getPokemonSpecies(SpeciesId.MAGIKARP);
+          species = speciesDataRegistry.getSpecies(SpeciesId.MAGIKARP);
           pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
         }
       }
@@ -255,7 +254,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
  * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSalesmanSpeciesOffer(): PokemonSpecies {
-  return getPokemonSpecies(
+  return speciesDataRegistry.getSpecies(
     getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
   );
 }

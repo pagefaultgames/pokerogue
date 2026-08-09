@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { isBeta, isDev } from "#constants/app-constants";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -10,7 +11,7 @@ import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter, SerializedD
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import Ajv from "ajv";
 import customDailyRunSchema from "./schema.json";
 
@@ -112,7 +113,7 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
   }
 
   // Fall back to default variant if none exists
-  const starterSpecies = getPokemonSpecies(config.speciesId);
+  const starterSpecies = speciesDataRegistry.getSpecies(config.speciesId);
   if (config.variant != null && !starterSpecies.hasVariants()) {
     console.warn("Variant for custom daily run seed starter does not exist, using base variant...", config.variant);
     config.variant = 0;
@@ -160,7 +161,7 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
   }
 
   // Fall back to default variant if none exists
-  const starterSpecies = getPokemonSpecies(config.speciesId);
+  const starterSpecies = speciesDataRegistry.getSpecies(config.speciesId);
   if (config.variant != null && !starterSpecies.hasVariants()) {
     console.warn("Variant for custom daily run seed boss does not exist, using base variant...", config.variant);
     config.variant = 0;
@@ -209,7 +210,7 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
 export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedStarter): Starter {
   const startingLevel = globalScene.gameMode.getStartingLevel();
 
-  const isShiny = config?.variant != null;
+  const isShiny = config?.variant == null ? undefined : true;
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,

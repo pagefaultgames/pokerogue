@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
@@ -10,7 +11,6 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { PartyUiMode } from "#enums/party-ui-mode";
-import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -31,7 +31,6 @@ import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { playNumberTween, playTween } from "#utils/anim-utils";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { waitTime } from "#utils/time";
 import i18next from "i18next";
 
@@ -40,31 +39,22 @@ export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
 
 /**
  * Gets the sprite key and file root for a given PokemonSpecies (accounts for gender, shiny, variants, forms, and experimental)
- * @param species
+ * @param speciesId
  * @param female
  * @param formIndex
  * @param shiny
  * @param variant
  */
 export function getSpriteKeysFromSpecies(
-  species: SpeciesId,
+  speciesId: SpeciesId,
   female?: boolean,
   formIndex?: number,
   shiny?: boolean,
   variant?: number,
 ): { spriteKey: string; fileRoot: string } {
-  const spriteKey = getPokemonSpecies(species).getSpriteKey(
-    female ?? false,
-    formIndex ?? 0,
-    shiny ?? false,
-    variant ?? 0,
-  );
-  const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(
-    female ?? false,
-    formIndex ?? 0,
-    shiny ?? false,
-    variant ?? 0,
-  );
+  const species = speciesDataRegistry.getSpecies(speciesId);
+  const spriteKey = species.getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
+  const fileRoot = species.getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
   return { spriteKey, fileRoot };
 }
 
@@ -256,20 +246,19 @@ export function getRandomSpeciesByStarterCost(
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = speciesDataRegistry
-    .getAllStarters()
-    .map(s => [s, speciesDataRegistry.getStarterCost(s)])
-    .filter(s => {
-      const pokemonSpecies = getPokemonSpecies(s[0]);
-      return (
-        pokemonSpecies
-        && (!excludedSpecies || !excludedSpecies.includes(s[0]))
-        && (allowSubLegendary || !pokemonSpecies.subLegendary)
-        && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical)
-      );
-    })
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
+  let filteredSpecies: [species: PokemonSpecies, cost: number][] = [];
+
+  for (const species of speciesDataRegistry.getAllStarters(true)) {
+    if (
+      species
+      && !excludedSpecies?.includes(species.speciesId)
+      && (allowSubLegendary || !species.subLegendary)
+      && (allowLegendary || !species.legendary)
+      && (allowMythical || !species.mythical)
+    ) {
+      filteredSpecies.push([species, speciesDataRegistry.getStarterCost(species.speciesId)]);
+    }
+  }
 
   if (types && types.length > 0) {
     filteredSpecies = filteredSpecies.filter(
@@ -456,7 +445,7 @@ export async function trainerThrowPokeball(
   pokeball.setOrigin(0.5, 0.625);
   globalScene.field.add(pokeball);
 
-  globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+  globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
 
   // TODO: Do some sort of `Promise.all` on these to ensure the phase doesn't end before all animations finish
   waitTime(300).then(() => {
@@ -473,7 +462,7 @@ export async function trainerThrowPokeball(
     globalScene.trainer.setFrame("3");
     waitTime(768).then(() => {
       globalScene.trainer.setTexture(
-        `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
+        `trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`,
       );
     });
   });
@@ -998,13 +987,15 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
     w += speciesWeightPair[1];
     if (roll < w) {
-      const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
-      return getPokemonSpecies(initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode));
+      const initialSpecies = speciesDataRegistry.getSpecies(speciesWeightPair[0]);
+      return speciesDataRegistry.getSpecies(
+        initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode),
+      );
     }
   }
 
   // Defaults to Scyther
-  return getPokemonSpecies(SpeciesId.SCYTHER);
+  return speciesDataRegistry.getSpecies(SpeciesId.SCYTHER);
 }
 
 /**

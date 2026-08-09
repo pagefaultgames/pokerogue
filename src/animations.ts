@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { BattleAnim } from "#data/battle-anims";
 import { PokeballType } from "#enums/pokeball";
 import type { Variant } from "#sprites/variant";
@@ -304,7 +305,7 @@ export class Animation {
       particle.play({
         key: "pb_open_particle",
         startFrame: (index + 3) % 4,
-        frameRate: Math.floor(16 * globalScene.gameSpeed),
+        frameRate: Math.floor(16 * settings.general.gameSpeed),
       });
       globalScene.tweens.add({
         targets: particle,

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { playTween } from "#utils/anim-utils";

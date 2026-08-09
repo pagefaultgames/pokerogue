@@ -1,12 +1,14 @@
 import { getRandomRivalPartyMemberFunc } from "#app/ai/rival-team-gen";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { signatureSpecies } from "#balance/signature-species";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
+import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -52,7 +54,6 @@ import type {
 import type { Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -991,19 +992,21 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
-): (level: number, strength: PartyMemberStrength) => EnemyPokemon {
-  return (level: number, strength: PartyMemberStrength) => {
+): PartyMemberFunc {
+  return (level: number, strength: PartyMemberStrength, evoThresholdKind: EvoLevelThresholdKind) => {
     let species: SpeciesId | readonly SpeciesId[] | typeof speciesPool = speciesPool;
     do {
       species = randSeedItem(species);
     } while (typeof species !== "number");
 
     if (!ignoreEvolution) {
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
+      species = speciesDataRegistry
+        .getSpecies(species)
+        .getTrainerSpeciesForLevel(level, true, strength, evoThresholdKind);
     }
 
     return globalScene.addEnemyPokemon(
-      getPokemonSpecies(species),
+      speciesDataRegistry.getSpecies(species),
       level,
       trainerSlot,
       undefined,
@@ -1028,7 +1031,7 @@ function getSpeciesFilterRandomPartyMemberFunc(
 
   return (level: number, strength: PartyMemberStrength) => {
     const waveIndex = globalScene.currentBattle.waveIndex;
-    const species = getPokemonSpecies(
+    const species = speciesDataRegistry.getSpecies(
       globalScene
         .randomSpecies(waveIndex, level, false, speciesFilter)
         // TODO: What EvoLevelThresholdKind to use here?
