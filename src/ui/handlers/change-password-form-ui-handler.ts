@@ -1,9 +1,9 @@
 import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#types/ui-types";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
 export class ChangePasswordFormUiHandler extends FormModalUiHandler {

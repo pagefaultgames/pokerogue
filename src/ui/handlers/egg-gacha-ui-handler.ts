@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { IEggOptions } from "#data/egg";
@@ -9,13 +10,13 @@ import { EggTier } from "#enums/egg-type";
 import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
+import { VoucherType } from "#enums/voucher-type";
+import { getVoucherTypeIcon } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class EggGachaUiHandler extends MessageUiHandler {
@@ -106,7 +107,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     let legendaryLabelX = gachaX;
     let legendaryLabelY = gachaY;
-    if (["de", "es-ES", "es-419", "tr", "eu", "vi", "pl"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "tr", "eu", "pl"].includes(currentLanguage)) {
       pokemonIconX = -25;
       pokemonIconY = 10;
       legendaryLabelX = -6;
@@ -119,7 +120,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
         {
-          if (["de", "es-ES", "eu", "vi", "pl"].includes(currentLanguage)) {
+          if (["de", "es-ES", "eu", "pl"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
           }
           let xOffset = 0;
@@ -655,7 +656,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
    */
   private updateLegendaryGacha(): void {
     const infoContainer = this.gachaInfoContainers[GachaType.LEGENDARY];
-    const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
+    const species = speciesDataRegistry.getSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
     const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
     pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
   }

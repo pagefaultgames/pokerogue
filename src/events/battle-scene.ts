@@ -7,10 +7,6 @@ import type { PokemonMove } from "#moves/pokemon-move";
 /** Enum comprising all {@linkcode BattleScene} events that can be emitted. */
 export enum BattleSceneEventType {
   /**
-   * Emitted when the corresponding setting is changed
-   * @see {@linkcode CandyUpgradeNotificationChangedEvent}
-   */
-  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
 
   /**
    * Emitted whenever a Pokemon's moveset is changed or altered - whether from moveset-overridding effects,
@@ -56,19 +52,6 @@ abstract class BattleSceneEvent<T extends BattleSceneEventType> extends Event {
 }
 
 export type { BattleSceneEvent };
-
-/**
- * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
- */
-export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent<BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED> {
-  /** The new value the setting was changed to */
-  public readonly newValue: number;
-  constructor(newValue: number) {
-    super(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED);
-
-    this.newValue = newValue;
-  }
-}
 
 /**
  * Container class for {@linkcode BattleSceneEventType.MOVESET_CHANGED} events. \

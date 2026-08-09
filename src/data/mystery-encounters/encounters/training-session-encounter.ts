@@ -27,7 +27,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PokemonData } from "#system/pokemon-data";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
@@ -45,7 +45,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
+  .withScenePartySizeRequirement(2)
   .withFleeAllowed(false)
   .withHideWildIntroMessage(true)
   .withPreventGameStatsUpdates(true) // Do not count the Pokemon as seen or defeated since it is ours

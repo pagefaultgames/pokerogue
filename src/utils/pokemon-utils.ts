@@ -2,35 +2,20 @@ import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { POKERUS_STARTER_COUNT } from "#balance/starters";
+import { starterColors } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
+import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { randSeedItem } from "#utils/common";
-
-/**
- * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species - The {@linkcode SpeciesId} to fetch.
- * If an array of `SpeciesId`s is passed (such as for named trainer spawn pools),
- * one will be selected at random.
- * @returns The associated {@linkcode PokemonSpecies} object
- * @deprecated Use {@linkcode speciesDataRegistry.getSpecies}
- */
-// TODO: remove this function
-export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  if (Array.isArray(species)) {
-    // TODO: this RNG roll should not be handled by this function
-    species = species[Math.floor(Math.random() * species.length)];
-  }
-  return speciesDataRegistry.getSpecies(species);
-}
+import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
  * Converts the internal id of the Pokemon into its national dex number
  * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
  * @returns The national dex number matching the `SpeciesId`
  */
-export function getDexNumber(speciesId: SpeciesId): SpeciesId {
+export function getDexNumber(speciesId: SpeciesId): number {
   return speciesId % 2000;
 }
 
@@ -46,7 +31,7 @@ export function getPokerusStarters(): PokemonSpecies[] {
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
         const randomSpeciesId = randSeedItem(speciesDataRegistry.getAllStarters());
-        const species = getPokemonSpecies(randomSpeciesId);
+        const species = speciesDataRegistry.getSpecies(randomSpeciesId);
         if (!pokerusStarters.includes(species)) {
           pokerusStarters.push(species);
         }
@@ -133,7 +118,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 }
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies = getPokemonSpecies(species);
+  const retSpecies: PokemonSpecies = speciesDataRegistry.getSpecies(species);
 
   if (formIndex < retSpecies.forms.length) {
     return retSpecies.forms[formIndex];
@@ -213,4 +198,25 @@ export function decodeNickname(nickname: string, pokemonName: string): string {
     console.error(`Failed to decode nickname for ${pokemonName}!\n`, err);
     return pokemonName;
   }
+}
+
+/** @returns A random {@linkcode RegularPokemonType} */
+export function getRandomRegularPokemonType(): RegularPokemonType {
+  return randSeedIntRange(MIN_REGULAR_POKEMON_TYPE, MAX_REGULAR_POKEMON_TYPE) as RegularPokemonType;
+}
+
+/**
+ * Get the starter color for a given speciesId.
+ * @remarks
+ * Falls back to white if no color is found for the speciesId.
+ * @param speciesId - The {@linkcode SpeciesId} of the Pokémon to get the starter color for
+ * @returns A tuple of the starter color
+ */
+export function getStarterColors(speciesId: SpeciesId): [string, string] {
+  if (!starterColors[speciesId]) {
+    console.warn(`Missing starter colors for "${SpeciesId[speciesId]}".`);
+    // Default to white if no colors are found
+    starterColors[speciesId] = ["#FFFFFF", "#FFFFFF"];
+  }
+  return starterColors[speciesId];
 }

@@ -1,6 +1,7 @@
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
@@ -29,6 +30,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { VoucherType } from "#enums/voucher-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import {
   AddPokeballModifier,
@@ -114,7 +116,7 @@ import {
   TurnStatusEffectModifier,
 } from "#modifiers/modifier";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
+import { getVoucherTypeIcon, getVoucherTypeName } from "#system/voucher";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
 import type { ObjectValues } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
@@ -123,8 +125,8 @@ import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 const outputModifierData = false;
@@ -446,13 +448,13 @@ export class TerastallizeModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TerastallizeModifierType.name", {
-      teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
+      teraType: i18next.t(getPokemonTypeLocaleKey(this.teraType)),
     });
   }
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.TerastallizeModifierType.description", {
-      teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
+      teraType: i18next.t(getPokemonTypeLocaleKey(this.teraType)),
     });
   }
 
@@ -857,7 +859,7 @@ export class AttackTypeBoosterModifierType
   getDescription(): string {
     // TODO: Need getTypeName?
     return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
+      moveType: i18next.t(getPokemonTypeLocaleKey(this.moveType)),
     });
   }
 
@@ -1034,7 +1036,7 @@ export class MoneyRewardModifierType extends ModifierType {
   getDescription(): string {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, moneyAmount.value);
 
     return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
@@ -1154,7 +1156,7 @@ export class TmModifierType extends PokemonModifierType {
 
   getDescription(): string {
     return i18next.t(
-      globalScene.enableMoveInfo
+      settings.display.enableMoveInfo
         ? "modifierType:ModifierType.TmModifierTypeWithInfo.description"
         : "modifierType:ModifierType.TmModifierType.description",
       { moveName: allMoves[this.moveId].name },
@@ -1503,11 +1505,11 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
         return new TmModifierType(pregenArgs[0] as MoveId);
       }
-      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).getCompatibleTms(true, true));
+      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).getCompatibleTms(true, true, true));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms
         .flat()
         .filter(tm => tmPoolTiers[tm] === tier)
-        .filter(tm => !allMoves[tm].name.endsWith(" (N)"))
+        .filter(tm => !allMoves[tm].isUnimplemented)
         .filter((tm, i, array) => array.indexOf(tm) === i);
       if (tierUniqueCompatibleTms.length === 0) {
         return null;
@@ -1645,7 +1647,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
       ]
         .flat()
         .flatMap(fc => fc.item)
-        .filter(i => (i && i < 100) === isRareFormChangeItem);
+        .filter(i => (i && i < 150) === isRareFormChangeItem);
       // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
       if (formChangeItemPool.length === 0) {

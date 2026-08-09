@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MoveId } from "#enums/move-id";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
 import type { MovesetChangedEvent, SummonDataResetEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
@@ -97,7 +97,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
           FLYOUT_WIDTH / 2,
           0,
           1,
-          FLYOUT_HEIGHT + (globalScene.uiTheme === UiTheme.LEGACY ? 1 : 0),
+          FLYOUT_HEIGHT + (settings.isLegacyTheme ? 1 : 0),
           0x212121,
         ).setOrigin(0.5, 0),
       )

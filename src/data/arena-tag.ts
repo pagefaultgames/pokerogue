@@ -45,10 +45,10 @@
  */
 
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
+import type { BattlerTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -61,8 +61,10 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
-import { Stat } from "#enums/stat";
+import { type BattleStat, Stat } from "#enums/stat";
+import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
+import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import { isSpreadMove } from "#moves/move-utils";
@@ -73,9 +75,11 @@ import type {
   RoomArenaTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
+import type { StatChange } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
@@ -312,24 +316,35 @@ export class MistTag extends SerializableArenaTag {
    * Attempt to block the lowering of stats.
    * @param simulated - Whether to suppress messages and other animations from being playerd
    * @param defender - The {@linkcode Pokemon} receiving the stat drop
-   * @param cancelled - A {@linkcode BooleanHolder} containing whether to nullify the interaction
+   * @param changes - The stat changes being attempted
+   * @param cancelledStats - The set of cancelled stat changes, added to by this method
    * @param source - The Pokemon causing the stat drop, if applicable
    */
   override apply(
     simulated: boolean,
     defender: Pokemon,
-    cancelled: BooleanHolder,
+    changes: readonly StatChange[],
+    cancelledStats: Set<BattleStat>,
     source: Pokemon | undefined,
   ): boolean {
     if (source) {
-      const bypassed = new BooleanHolder(false);
+      const bypassed = new ValueHolder(false);
       applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
       if (bypassed.value) {
         return false;
       }
     }
 
-    cancelled.value = true;
+    for (const change of changes) {
+      if (change.stages < 0) {
+        cancelledStats.add(change.stat);
+      }
+    }
+
+    if (cancelledStats.size === 0) {
+      return false;
+    }
+
     if (!simulated) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:mistApply", {
@@ -786,6 +801,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   /**
    * Check if the maximum number of layers for this tag has been reached.
    * @returns Whether this tag can have another layer added to it.
+   * @sealed
    */
   public canAdd(): boolean {
     return this.layers < this.maxLayers;
@@ -794,13 +810,16 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   /**
    * Add a new layer to this tag upon overlap, triggering the tag's normal {@linkcode onAdd} effects upon doing so.
    */
-  override onOverlap(): void {
+  public override onOverlap(): void {
     if (!this.canAdd()) {
       return;
     }
-    (this as Mutable<this>).layers++;
 
+    (this as Mutable<this>).layers++;
     this.onAdd();
+    globalScene.arena.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
+    );
   }
 
   /**
@@ -1044,16 +1063,15 @@ class StickyWebTag extends EntryHazardTag {
   }
 
   override activateTrap(simulated: boolean, pokemon: Pokemon): boolean {
-    const cancelled = new BooleanHolder(false);
+    const cancelledStats: Set<BattleStat> = new Set();
     // TODO: Does this need to pass `simulated` as a parameter?
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon,
-      cancelled,
-      stat: Stat.SPD,
-      stages: -1,
+      cancelledStats,
+      changes: [{ stat: Stat.SPD, stages: -1 }],
     });
 
-    if (cancelled.value) {
+    if (cancelledStats.size > 0) {
       return false;
     }
 
@@ -1067,19 +1085,12 @@ class StickyWebTag extends EntryHazardTag {
       }),
     );
 
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      false,
-      [Stat.SPD],
-      -1,
-      true,
-      false,
-      true,
-      null,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: [{ stat: Stat.SPD, stages: -1 }],
+      sourcePokemon: this.getSourcePokemon(),
+      sourceEffectType: StatChangeSource.STICKY_WEB,
+    });
     return true;
   }
 }
@@ -1201,9 +1212,11 @@ export class TrickRoomTag extends RoomArenaTag {
 }
 
 /**
- * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) Gravity}.
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity}.
+ *
  * Grounds all Pokémon on the field, including Flying-types and those with
- * {@linkcode AbilityId.LEVITATE} for the duration of the arena tag, usually 5 turns.
+ * abilities like {@link https://bulbapedia.bulbagarden.net/wiki/Levitate_(Ability) | Levitate}
+ * for the duration of the arena tag, usually 5 turns.
  */
 export class GravityTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.GRAVITY;
@@ -1221,25 +1234,30 @@ export class GravityTag extends SerializableArenaTag {
 
   onAdd(quiet = false): void {
     super.onAdd(quiet);
-    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
-      if (pokemon !== null) {
-        const wasGrounded = pokemon.isGrounded();
 
-        pokemon.removeTag(BattlerTagType.FLOATING);
-        pokemon.removeTag(BattlerTagType.TELEKINESIS);
-        if (pokemon.getTag(BattlerTagType.FLYING)) {
-          pokemon.addTag(BattlerTagType.INTERRUPTED);
-        }
-        if (!wasGrounded) {
-          globalScene.phaseManager.queueMessage(
-            i18next.t("arenaTag:gravityGroundsPokemon", {
-              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            }),
-          );
-        }
+    // Remove all flying-related effects from all on-field Pokemon,
+    // displaying a message for each one that was airborne prior to move use.
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      const wasAirborne = !pokemon.isGrounded(true);
+
+      pokemon.removeTag(BattlerTagType.FLOATING);
+      pokemon.removeTag(BattlerTagType.TELEKINESIS);
+      if (pokemon.getTag(BattlerTagType.FLYING)) {
+        pokemon.removeTag(BattlerTagType.FLYING);
+        pokemon.addTag(BattlerTagType.INTERRUPTED);
+      }
+
+      if (wasAirborne) {
+        globalScene.phaseManager.queueMessage(
+          i18next.t("arenaTag:gravityGroundsPokemon", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          }),
+        );
       }
     }
   }
+
+  // TODO: Move accuracy boost to an `apply` method
 }
 
 /**
@@ -1286,14 +1304,11 @@ class TailwindTag extends SerializableArenaTag {
       // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(AbilityId.WIND_RIDER)) {
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, true);
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          pokemon.getBattlerIndex(),
-          true,
-          [Stat.ATK],
-          1,
-          true,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          changes: [{ stat: Stat.ATK, stages: 1 }],
+          sourcePokemon: pokemon,
+        });
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
       }
     }

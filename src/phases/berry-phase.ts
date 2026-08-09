@@ -5,7 +5,7 @@ import { CommonAnim } from "#enums/move-anims-common";
 import type { Pokemon } from "#field/pokemon";
 import { BerryModifier } from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
-import { BooleanHolder } from "#utils/common";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /**
@@ -40,7 +40,7 @@ export class BerryPhase extends FieldPhase {
     }
 
     // TODO: If both opponents on field have unnerve, which one displays its message?
-    const cancelled = new BooleanHolder(false);
+    const cancelled = new ValueHolder(false);
     pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", { pokemon: opp, cancelled }));
     if (cancelled.value) {
       globalScene.phaseManager.queueMessage(
@@ -65,7 +65,15 @@ export class BerryPhase extends FieldPhase {
         pokemon.loseHeldItem(berryModifier);
       }
     }
+    if (pokemon.queuedBerryStatChanges.length > 0) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: pokemon.queuedBerryStatChanges,
+        sourcePokemon: pokemon,
+      });
+    }
     globalScene.updateModifiers(pokemon.isPlayer());
+    pokemon.queuedBerryStatChanges = [];
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });

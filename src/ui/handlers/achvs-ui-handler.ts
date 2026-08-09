@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { Achv } from "#system/achv";
-import { achvs, getAchievementDescription } from "#system/achv";
+import { achvs } from "#system/achv";
 import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
 import type { AchvUnlocks, VoucherUnlocks } from "#types/save-data";
@@ -50,9 +51,9 @@ export class AchvsUiHandler extends MessageUiHandler {
   private unlockText: Phaser.GameObjects.Text;
 
   private achvsName: string;
-  private achvsTotal: number;
+  private readonly achvsTotal: number;
   private vouchersName: string;
-  private vouchersTotal: number;
+  private readonly vouchersTotal: number;
   private currentTotal: number;
 
   private scrollBar: ScrollBar;
@@ -93,7 +94,7 @@ export class AchvsUiHandler extends MessageUiHandler {
       .setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });
@@ -199,14 +200,6 @@ export class AchvsUiHandler extends MessageUiHandler {
   }
 
   protected showAchv(achv: Achv) {
-    // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
-    const genderStr = PlayerGender[genderIndex].toLowerCase();
-
-    achv.name = i18next.t(`achv:${achv.localizationKey}.name`, {
-      context: genderStr,
-    });
-    achv.description = getAchievementDescription(achv.localizationKey);
     const achvUnlocks = globalScene.gameData.achvUnlocks;
     const unlocked = Object.hasOwn(achvUnlocks, achv.id);
     const hidden = !unlocked && achv.secret && (!achv.parentId || !Object.hasOwn(achvUnlocks, achv.parentId));

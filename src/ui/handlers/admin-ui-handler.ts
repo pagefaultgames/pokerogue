@@ -7,9 +7,9 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { GameData } from "#system/game-data";
 import type { AdminUiHandlerService, AdminUiHandlerServiceMode, SearchAccountResponse } from "#types/api";
+import type { ModalConfig } from "#types/ui-types";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 

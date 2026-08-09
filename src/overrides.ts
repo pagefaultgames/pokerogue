@@ -26,7 +26,7 @@ import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
-import { Variant } from "#sprites/variant";
+import type { Variant } from "#sprites/variant";
 import type { CustomDailyRunConfig } from "#types/daily-run";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
@@ -37,9 +37,9 @@ import type { IntClosedRange, TupleOf } from "type-fest";
  */
 
 /**
- * Overrides that are using when testing different in game situations
+ * Overrides can be added to this object to aid in testing different in-game situations.
  *
- * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
+ * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}.
  *
  * If an override name starts with "STARTING", it will only apply when a new run begins.
  *
@@ -97,7 +97,7 @@ class DefaultOverrides {
    * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
    * and may be removed in a future PR.
    */
-  readonly BATTLE_STYLE_OVERRIDE: BattleStyleOverride | null = null;
+  readonly FIELD_SIZE_OVERRIDE: FieldSizeOverride | null = null;
   /**
    * If present and non-`null`, will override the starting wave # when starting a new run.
    * Should never be set to a negative value.
@@ -351,7 +351,7 @@ export const defaultOverrides = new DefaultOverrides();
 
 export const activeOverrides = { ...defaultOverrides, ...overrides } satisfies InstanceType<OverridesType>;
 
-export type BattleStyleOverride = "double" | "single" | "even-doubles" | "odd-doubles";
+export type FieldSizeOverride = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
