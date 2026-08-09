@@ -1446,9 +1446,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.DOWN:
         if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
-          // not last row
+          // This is not the last row of starters
           if (currentRow - this.scrollCursor === 8) {
-            // last row of visible starters
+            // This is the last visible row, but there are more rows underneath, so we need to scroll
             this.scrollCursor++;
             this.updateScroll();
             this.setCursor(this.cursor);
@@ -1460,7 +1460,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         if (numOfRows > 1) {
-          // DOWN from last row of Pokemon > Wrap around to first row
+          // This is the last row, so we wrap around to the first row
           this.scrollCursor = 0;
           this.updateScroll();
           success = this.setCursor(this.cursor % 9);
