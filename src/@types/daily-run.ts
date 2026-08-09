@@ -106,6 +106,18 @@ export interface DailyEventMysteryEncounter {
 }
 
 /**
+ * Configuration for a custom daily run forced biome.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.json`
+ */
+export interface ForcedBiome {
+  waveIndex: 10 | 20 | 30 | 40;
+  /** One or more biomes to force at the end of the specified wave index */
+  biomeId: BiomeId[];
+}
+
+/**
  * Configuration for a custom daily run seed.
  * @privateRemarks
  * When updating this interface, also update:
@@ -121,6 +133,7 @@ export interface CustomDailyRunConfig {
   trainerManipulations?: DailyTrainerManipulation[] | undefined;
   challenges?: DailyEventChallenge[] | undefined;
   mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
+  forcedBiomes?: ForcedBiome[] | undefined;
   /** The actual seed used for the daily run. */
   seed: string;
 }
@@ -138,5 +151,6 @@ export interface SerializedDailyRunConfig {
   trainerManipulations?: DailyTrainerManipulation[] | undefined;
   challenges?: DailyEventChallenge[] | undefined;
   mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
+  forcedBiomes?: ForcedBiome[] | undefined;
   seed: string;
 }

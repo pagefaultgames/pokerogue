@@ -367,6 +367,31 @@ export function getDailyEventSeedBiome(): BiomeId | null {
 }
 
 /**
+ * Get the forced biome(s) for the current wave in a custom daily run.
+ * @returns An array of {@linkcode BiomeId}s to force, or `null` if there is no forced biome for the current wave.
+ */
+export function getDailyForcedBiome(): BiomeId[] | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  const forcedBiomes = globalScene.gameMode.dailyConfig?.forcedBiomes?.find(
+    b => b.waveIndex === globalScene.currentBattle.waveIndex,
+  )?.biomeId;
+
+  if (forcedBiomes == null) {
+    return null;
+  }
+
+  if (!forcedBiomes.every(b => Object.values(BiomeId).includes(b))) {
+    console.warn("Invalid biome ID(s) used for custom daily run seed forced biome:", forcedBiomes);
+    return null;
+  }
+
+  return forcedBiomes;
+}
+
+/**
  * Sets a custom luck value for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The custom luck value or `null` if there is no luck property.
