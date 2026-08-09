@@ -17,6 +17,7 @@ import {
   promptBiome,
   promptChallenges,
   promptEdit,
+  promptForcedBiomes,
   promptForcedWaves,
   promptLuck,
   promptMoney,
@@ -117,6 +118,9 @@ async function handleAnswer(answer: EditOption): Promise<void> {
     case "biome":
       customSeedConfig.biome = await promptBiome();
       break;
+    case "biome transitions":
+      customSeedConfig.forcedBiomes = await promptForcedBiomes();
+      break;
     case "luck":
       customSeedConfig.luck = await promptLuck();
       break;
@@ -142,6 +146,8 @@ async function handleAnswer(answer: EditOption): Promise<void> {
       console.log(chalk.gray("Exiting..."));
       process.exitCode = 0;
       return;
+    default:
+      answer satisfies never;
   }
 
   if (answer !== "edit") {
