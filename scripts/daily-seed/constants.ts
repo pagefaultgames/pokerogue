@@ -13,6 +13,7 @@ export const EDIT_OPTIONS = [
   "boss",
   "biome",
   "luck",
+  "biome transitions",
   "forced waves",
   "trainer manipulation",
   "challenges",
