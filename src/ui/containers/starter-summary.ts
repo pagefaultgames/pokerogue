@@ -29,7 +29,6 @@ import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { getLocalizedSpriteKey, padInt, truncateString } from "#utils/common";
 import { getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -84,8 +83,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   /** Container for ivs, whether they should be shown */
   private readonly statsContainer: StatsContainer;
   private statsMode = false;
-
-  private assetLoadCancelled: ValueHolder<boolean> | null;
 
   /** Which of the tooltips is displayed (on mouse hover) */
   private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
@@ -630,11 +627,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.pokemonPreferencesContainer.setVisible(false);
 
-    if (this.assetLoadCancelled) {
-      this.assetLoadCancelled.value = true;
-      this.assetLoadCancelled = null;
-    }
-
     this.shinyOverlay.setVisible(false);
     this.pokemonNumberText
       .setColor(getTextColor(TextStyle.SUMMARY))
@@ -662,11 +654,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonSprite.setVisible(false);
     this.teraIcon.setVisible(false);
 
-    if (this.assetLoadCancelled) {
-      this.assetLoadCancelled.value = true;
-      this.assetLoadCancelled = null;
-    }
-
     this.pokemonPreferencesContainer.setVisible(true);
 
     this.shinyOverlay.setVisible(shiny);
@@ -678,9 +665,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     );
 
     this.setShinyIcon(shiny, variant);
-
-    const assetLoadCancelled = new ValueHolder(false);
-    this.assetLoadCancelled = assetLoadCancelled;
 
     if (shouldUpdateSprite) {
       this.updateSprite(species, female, formIndex, shiny, variant);
@@ -817,11 +801,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     variant: Variant,
   ): void {
     species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
-      if (this.assetLoadCancelled?.value) {
-        return;
-      }
-      this.assetLoadCancelled = null;
-
       this.pokemonSprite
         .play(species.getSpriteKey(female, formIndex, shiny, variant))
         .setPipelineData("shiny", shiny)
