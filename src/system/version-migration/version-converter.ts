@@ -77,6 +77,7 @@ import * as v1_12_0_1 from "#system/v1_12_0_1";
 import * as v1_12_0_3 from "#system/v1_12_0_3";
 import * as v1_12_0_10 from "#system/v1_12_0_10";
 import * as v1_12_1_0 from "#system/v1_12_1_0";
+import * as v1_12_2_0 from "#system/v1_12_2_0";
 
 // To add a new set of migrators, add them to the appropriate array of migrators
 
@@ -90,6 +91,7 @@ const systemMigrators: SystemSaveMigrator[] = [
   ...v1_12_0_1.systemMigrators,
   ...v1_12_0_3.systemMigrators,
   ...v1_12_0_10.systemMigrators,
+  ...v1_12_2_0.systemMigrators,
 ];
 
 /** All session save migrators */
