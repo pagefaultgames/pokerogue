@@ -797,7 +797,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       settings.display.candyUpgradeDisplayMode === CandyUpgradeDisplayMode.ICON
       || species.speciesId !== species.getRootSpeciesId(false)
     ) {
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE); // Check that this does not interfere with setting mode to ACTIVE.
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE); // TODO: Check that this does not interfere with setting mode to ACTIVE.
       return;
     }
 
