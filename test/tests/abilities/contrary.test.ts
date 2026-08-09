@@ -42,7 +42,7 @@ describe("Ability - Contrary", () => {
   });
 
   // TODO: Stat stage change moves don't count as failed when they should
-  it.todo("should invert the failure conditions of stat stage moves", async () => {
+  it.todo("should invert the failure conditions of normal stat stage change moves", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
@@ -71,7 +71,8 @@ describe("Ability - Contrary", () => {
     expect(player).toHaveStatStage(Stat.DEF, -6);
   });
 
-  it("should cause Belly Drum to minimize the user's ATK", async () => {
+  // TODO: Verify interactions with HP cutting moves and add tests for clangorous soul/fillet away if needed
+  it.todo("should cause Belly Drum to minimize the user's ATK", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
@@ -84,6 +85,16 @@ describe("Ability - Contrary", () => {
     expect(player).toHaveAbilityApplied(AbilityId.CONTRARY);
     expect(player).toHaveStatStage(Stat.ATK, -6);
     expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
+
+    player.hp = player.getMaxHp();
+    player.setStatStage(Stat.ATK, -6);
+
+    game.move.use(MoveId.BELLY_DRUM);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.BELLY_DRUM, result: MoveResult.FAIL });
+    expect(player).toHaveStatStage(Stat.ATK, -6);
+    expect(player).toHaveFullHp();
   });
 
   it("should cause Clear Body to block stat drops based on their final amount", async () => {

@@ -4376,7 +4376,9 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return user => user.hp > user.getMaxHp() / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
+    return user =>
+      user.hp > user.getMaxHp() / this.cutRatio // TODO: This may not be accurate for contrary
+      && this.stats.some(s => user.getStatStage(s) < 6);
   }
 }
 
