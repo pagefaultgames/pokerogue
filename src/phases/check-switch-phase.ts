@@ -36,7 +36,7 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     const pokemon = globalScene.getPlayerField()[this.fieldIndex];
-    const { field, settings, phaseManager } = globalScene;
+    const { field, phaseManager } = globalScene;
 
     // End this phase early...
 
