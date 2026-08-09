@@ -10,6 +10,7 @@ import i18next from "i18next";
 export class GamepadBindingUiHandler extends BaseBindingUiHandler {
   constructor(mode: UiMode | null = null) {
     super(mode);
+
     globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }
   setup() {
