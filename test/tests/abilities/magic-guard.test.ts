@@ -63,8 +63,7 @@ describe("Ability - Magic Guard", () => {
     { abName: "Innards Out", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.INNARDS_OUT },
     { abName: "Rough Skin", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.ROUGH_SKIN },
     { abName: "Dry Skin", move: MoveId.SUNNY_DAY, passive: AbilityId.DRY_SKIN },
-    // TODO: This vacuously passes due to a bug in liquid ooze itself
-    // { abName: "Liquid Ooze", move: MoveId.ABSORB, enemyAbility: AbilityId.LIQUID_OOZE },
+    { abName: "Liquid Ooze", move: MoveId.ABSORB, enemyAbility: AbilityId.LIQUID_OOZE },
   ])(
     "should prevent damage from $abName",
     async ({
@@ -78,15 +77,15 @@ describe("Ability - Magic Guard", () => {
       await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
       const player = game.field.getPlayerPokemon();
-      // const enemy = game.field.getEnemyPokemon();
+      const enemy = game.field.getEnemyPokemon();
 
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
       await game.toNextTurn();
 
-      // if (enemyAbility !== AbilityId.BALL_FETCH) {
-      // expect(enemy).toHaveAbilityApplied(enemyAbility);
-      // }
+      if (enemyAbility !== AbilityId.BALL_FETCH) {
+      expect(enemy).toHaveAbilityApplied(enemyAbility);
+      }
       expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
       expect(player).toHaveFullHp();
     },
