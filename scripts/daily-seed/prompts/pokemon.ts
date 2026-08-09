@@ -5,6 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -13,7 +14,7 @@ import type { Variant } from "#sprites/variant";
 import type { StarterMoveset } from "#types/save-data";
 import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
-import { number, search } from "@inquirer/prompts";
+import { number, search, select } from "@inquirer/prompts";
 
 // TODO: Change all these prompts to pass `Choice` objects to inquirer to avoid re-mapping cases back and forth
 // (which would also remove the annoying type assertions)
@@ -134,7 +135,7 @@ export async function promptMoveset(): Promise<StarterMoveset> {
  */
 export async function promptAbility(passive = false): Promise<AbilityId> {
   const abilityName = await search({
-    message: `Please enter the ${passive ? "passive" : "normal"} ability of the final boss.`,
+    message: `Please enter the ${passive ? "passive" : "normal"} ability of the Pokémon.`,
     source: term => {
       const abilities = getEnumKeys(AbilityId).map(toTitleCase);
       if (!term) {
@@ -145,6 +146,23 @@ export async function promptAbility(passive = false): Promise<AbilityId> {
   });
   const abilityId = AbilityId[toUpperSnakeCase(abilityName) as keyof typeof AbilityId];
   return abilityId;
+}
+
+/**
+ * Prompt the user to enter an ability index for a given species.
+ * @param speciesId - The species for which to prompt the ability index
+ * @returns A Promise that resolves with the chosen ability index.
+ */
+export async function promptAbilityIndex(speciesId: SpeciesId): Promise<number> {
+  const species = speciesDataRegistry.getSpecies(speciesId);
+  const abilities = [species.ability1, species.ability2, species.abilityHidden].filter(Boolean);
+  const selectedAbilityName = await select({
+    message: "Please select the ability of the Pokémon.",
+    choices: abilities.map(a => toTitleCase(AbilityId[a])),
+  });
+  const selectedAbilityId = AbilityId[toUpperSnakeCase(selectedAbilityName) as keyof typeof AbilityId];
+  const abilityIndex = abilities.indexOf(selectedAbilityId);
+  return abilityIndex;
 }
 
 /**
