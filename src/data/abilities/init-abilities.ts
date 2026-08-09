@@ -539,6 +539,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.LIQUID_OOZE, 3) //
       .attr(ReverseDrainAbAttr)
+      .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.OVERGROW, 3) //
       .attr(LowHpMoveTypePowerBoostAbAttr, PokemonType.GRASS)
