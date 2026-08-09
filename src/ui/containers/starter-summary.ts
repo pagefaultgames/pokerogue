@@ -644,11 +644,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     const species = speciesDataRegistry.getSpecies(starterId);
 
-    // We will only update the sprite if there is a change to form, shiny/variant
-    // or gender for species with gender sprite differences
-    const shouldUpdateSprite =
-      (species.genderDiffs && female != null) || formIndex != null || shiny != null || variant != null;
-
     this.updateCandyTooltip();
 
     this.pokemonSprite.setVisible(false);
@@ -666,11 +661,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.setShinyIcon(shiny, variant);
 
-    if (shouldUpdateSprite) {
-      this.updateSprite(species, female, formIndex, shiny, variant);
-    } else {
-      this.pokemonSprite.setVisible(!this.statsMode);
-    }
+    this.updateSprite(species, female, formIndex, shiny, variant);
 
     if (species.malePercent === null) {
       this.pokemonGenderText.setText("");
