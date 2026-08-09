@@ -111,11 +111,21 @@ export interface DailyEventMysteryEncounter {
  * When updating this interface, also update:
  * - `src/data/daily-seed/schema.json`
  */
-export interface ForcedBiome {
-  waveIndex: 10 | 20 | 30 | 40;
-  /** One or more biomes to force at the end of the specified wave index */
-  biomeId: BiomeId[];
-}
+export type ForcedBiome =
+  | {
+      waveIndex: 10 | 20 | 30 | 40;
+      /** One or more biomes to force at the end of the specified wave index */
+      biomeId: BiomeId[];
+      /** Whether all map options should be available at the end of the specified wave index */
+      allMapOptions?: never;
+    }
+  | {
+      waveIndex: 10 | 20 | 30 | 40;
+      /** One or more biomes to force at the end of the specified wave index */
+      biomeId?: never;
+      /** Whether all map options should be available at the end of the specified wave index */
+      allMapOptions: true;
+    };
 
 /**
  * Configuration for a custom daily run seed.

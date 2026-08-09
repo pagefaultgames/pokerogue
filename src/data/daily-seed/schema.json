@@ -253,9 +253,26 @@
             "minimum": 0
           },
           "minItems": 1
+        },
+        "allMapOptions": {
+          "type": "boolean"
         }
       },
-      "required": ["waveIndex", "biomeId"],
+      "required": ["waveIndex"],
+      "oneOf": [
+        {
+          "required": ["biomeId"],
+          "not": {
+            "required": ["allMapOptions"]
+          }
+        },
+        {
+          "required": ["allMapOptions"],
+          "not": {
+            "required": ["biomeId"]
+          }
+        }
+      ],
       "additionalProperties": false
     }
   },
