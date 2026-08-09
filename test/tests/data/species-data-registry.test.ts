@@ -1,8 +1,10 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { getEnumValues } from "#utils/enums";
 import { describe, expect, it } from "vitest";
+import starterSpeciesIdDefinition from "../../../src/@types/starter-species-id.ts?raw";
 
 describe("SpeciesDataRegistry", () => {
   describe("General", () => {
@@ -162,6 +164,23 @@ describe("SpeciesDataRegistry", () => {
             .toBe(calculatedFormBst);
         }
       }
+    });
+  });
+
+  describe("Types", () => {
+    it("should have all and only starters in the StarterSpeciesId type", () => {
+      const typeStarterIds = Array.from(starterSpeciesIdDefinition.matchAll(/SpeciesId\.(\w+)/g), match => {
+        return SpeciesId[match[1]] as StarterSpeciesId;
+      });
+      const registryStarterIds = speciesDataRegistry.getAllStarters();
+      const typeOnlyIds = typeStarterIds.filter(speciesId => !registryStarterIds.includes(speciesId));
+
+      expect
+        .soft(
+          typeOnlyIds,
+          `StarterSpeciesId has no registered starters: ${typeOnlyIds.map(id => SpeciesId[id]).join(", ")}`,
+        )
+        .toEqual([]);
     });
   });
 });
