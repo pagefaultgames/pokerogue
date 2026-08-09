@@ -10,6 +10,7 @@
  * Usage: `pnpm dailySeed:create`
  */
 
+import { setSpeciesDataRegistry } from "#app/global-species-data-registry";
 import { EDIT_OPTIONS } from "#daily-seed/constants";
 import { promptBoss } from "#daily-seed/prompts/boss";
 import {
@@ -24,6 +25,7 @@ import {
   promptTrainerManipulation,
 } from "#daily-seed/prompts/general";
 import { promptStarters } from "#daily-seed/prompts/starter";
+import { SpeciesDataRegistry } from "#data/species-data-registry";
 import { getPropertyValue } from "#script-utils/arguments";
 import { promptOverwrite, writeFileSafe } from "#script-utils/file";
 import type { CustomDailyRunConfig } from "#types/daily-run";
@@ -58,6 +60,7 @@ type EditOption = (typeof editOptions)[number];
  * Run the `dailySeed:create` script.
  */
 async function main(): Promise<void> {
+  setSpeciesDataRegistry(new SpeciesDataRegistry());
   // TODO: Add help text
   console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
 
