@@ -16,16 +16,29 @@ import type { TupleRange } from "./type-helpers";
  * When updating this interface, also update:
  * - `src/data/daily-seed/schema.json`
  */
-export interface DailySeedStarter {
+interface DailySeedStarterBase {
   speciesId: SpeciesId;
   formIndex?: number | undefined;
   variant?: Variant | undefined;
   moveset?: StarterMoveset | undefined;
   nature?: Nature | undefined;
-  ability?: AbilityId | undefined;
   passive?: AbilityId | undefined;
   gender?: Gender | undefined;
 }
+
+export type DailySeedStarter = DailySeedStarterBase &
+  (
+    | {
+        /** Any ability, including one the species cannot normally have. */
+        ability?: AbilityId | undefined;
+        abilityIndex?: never;
+      }
+    | {
+        ability?: never;
+        /** The species ability slot to use. */
+        abilityIndex?: number | undefined;
+      }
+  );
 
 export type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
 

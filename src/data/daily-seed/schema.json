@@ -27,6 +27,9 @@
           "ability": {
             "$ref": "#/$defs/ability"
           },
+          "abilityIndex": {
+            "$ref": "#/$defs/abilityIndex"
+          },
           "passive": {
             "$ref": "#/$defs/passive"
           },
@@ -35,6 +38,9 @@
             "minimum": -1,
             "maximum": 1
           }
+        },
+        "not": {
+          "required": ["ability", "abilityIndex"]
         },
         "required": ["speciesId"],
         "additionalProperties": false
@@ -148,6 +154,11 @@
     "ability": {
       "type": "integer",
       "exclusiveMinimum": 0
+    },
+    "abilityIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
     },
     "passive": {
       "type": "integer",
