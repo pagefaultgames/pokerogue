@@ -6760,7 +6760,7 @@ export class EnemyPokemon extends Pokemon {
               }
               // If this move is unimplemented, or the move is known to fail when used, set its target score to -20
               if (
-                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
+                (move.isUnimplemented || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
