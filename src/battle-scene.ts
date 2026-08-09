@@ -61,9 +61,9 @@ import { TimeOfDay } from "#enums/time-of-day";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
-import type { BattleSceneEventMap } from "#events/battle-scene";
 import type { UiWindowStyle } from "#enums/ui-window-style";
 import { VolumeSetting } from "#enums/volume-setting";
+import type { BattleSceneEventMap } from "#events/battle-scene";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
 import { ArenaBase } from "#field/arena-base";
@@ -126,8 +126,8 @@ import type {
   NewBattleSavedProps,
 } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
-import type { TypedEventTarget } from "#types/typed-event-target";
 import type { VolumeSettingsKey } from "#types/settings";
+import type { TypedEventTarget } from "#types/typed-event-target";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
