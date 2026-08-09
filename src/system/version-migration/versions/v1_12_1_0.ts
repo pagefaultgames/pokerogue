@@ -1,4 +1,10 @@
-import type { SettingsSaveMigrator } from "#types/save-migrators";
+import { loggedInUser } from "#app/account";
+import type { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import type { Variant } from "#sprites/variant";
+import type { AllStarterPreferences, StarterPreferences } from "#types/save-data";
+import type { SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import { saveStarterPreferences } from "#utils/data";
 
 // #region Frozen Types
 
@@ -77,6 +83,20 @@ type AudioSettingsKey = keyof AudioSettings;
 
 /** All keys for the gamepad settings */
 type GamepadSettingsKey = keyof GamepadSettings;
+
+interface OldStarterAttributes {
+  nature?: number | undefined;
+  ability?: number | undefined;
+  variant?: number | undefined;
+  form?: number | undefined;
+  female?: boolean | undefined;
+  shiny?: boolean | undefined;
+  favorite?: boolean | undefined;
+  nickname?: string | undefined;
+  tera?: PokemonType | undefined;
+}
+
+type OldStarterPreferences = Partial<Record<SpeciesId, OldStarterAttributes | undefined>>;
 
 // #endregion Frozen Types
 
@@ -270,6 +290,20 @@ function migrateKeys(data: object): void {
   }
 }
 
+function mapStaterPreferences(attr: OldStarterAttributes): StarterPreferences {
+  return {
+    nature: attr.nature,
+    abilityIndex: attr.ability,
+    variant: attr.variant as Variant,
+    formIndex: attr.form,
+    female: attr.female,
+    shiny: attr.shiny,
+    favorite: attr.favorite,
+    nickname: attr.nickname,
+    tera: attr.tera,
+  };
+}
+
 // #endregion Key migration
 
 // #region Value migration
@@ -405,5 +439,25 @@ const migrateSettings: SettingsSaveMigrator = {
 };
 
 export const settingsMigrators: readonly SettingsSaveMigrator[] = [migrateSettings] as const;
+
+const migrateStarterPreferences: SystemSaveMigrator = {
+  name: "migrateStarterPreferences",
+  version: "1.12.1.0",
+  migrate: (_data: object): void => {
+    const oldStarterPreferences = JSON.parse(
+      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) ?? "{}",
+    ) as OldStarterPreferences;
+
+    const newStarterPreferences: AllStarterPreferences = {};
+
+    for (const speciesId of Object.keys(oldStarterPreferences)) {
+      newStarterPreferences[speciesId] = mapStaterPreferences(oldStarterPreferences[speciesId] ?? {});
+    }
+
+    saveStarterPreferences(newStarterPreferences);
+  },
+};
+
+export const systemMigrators: readonly SystemSaveMigrator[] = [migrateStarterPreferences] as const;
 
 // #endregion Migrators
