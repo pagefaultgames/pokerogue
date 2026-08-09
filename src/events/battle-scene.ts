@@ -117,7 +117,6 @@ export class NewArenaEvent extends BattleSceneEvent<BattleSceneEventType.NEW_ARE
 }
 
 export type BattleSceneEventMap = {
-  [BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED]: CandyUpgradeNotificationChangedEvent;
   [BattleSceneEventType.MOVESET_CHANGED]: MovesetChangedEvent;
   [BattleSceneEventType.SUMMON_DATA_RESET]: SummonDataResetEvent;
   [BattleSceneEventType.ENCOUNTER_PHASE]: EncounterPhaseEvent;

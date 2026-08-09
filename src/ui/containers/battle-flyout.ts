@@ -193,6 +193,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   /** @returns Whether the flyout is currently visible. */
+  // TODO: Explain why this is even needed?
   public get isVisible(): boolean {
     return this.alpha > 0;
   }

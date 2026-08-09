@@ -110,7 +110,7 @@ describe("UI - Arena Flyout", () => {
         duration: 5,
         maxDuration: 5,
       });
-      battleEventTarget.dispatchEvent(new TurnEndEvent(1));
+      battleEventTarget.dispatchEvent(new TurnEndEvent());
       expectInfoUpdate("weatherInfo", {
         weatherType: WeatherType.RAIN,
         duration: 4,
@@ -125,7 +125,7 @@ describe("UI - Arena Flyout", () => {
       });
 
       flyout["weatherInfo"]!.duration = 1;
-      game.scene.eventTarget.dispatchEvent(new TurnEndEvent(1));
+      game.scene.eventTarget.dispatchEvent(new TurnEndEvent());
       expect(flyout["weatherInfo"]).toBeUndefined();
     });
 
@@ -136,7 +136,7 @@ describe("UI - Arena Flyout", () => {
         duration: 5,
         maxDuration: 5,
       });
-      battleEventTarget.dispatchEvent(new TurnEndEvent(1));
+      battleEventTarget.dispatchEvent(new TurnEndEvent());
       expectInfoUpdate("terrainInfo", {
         terrainType: TerrainType.MISTY,
         duration: 4,
@@ -151,7 +151,7 @@ describe("UI - Arena Flyout", () => {
       });
 
       flyout["terrainInfo"]!.duration = 1;
-      game.scene.eventTarget.dispatchEvent(new TurnEndEvent(1));
+      game.scene.eventTarget.dispatchEvent(new TurnEndEvent());
       expect(flyout["terrainInfo"]).toBeUndefined();
     });
 
