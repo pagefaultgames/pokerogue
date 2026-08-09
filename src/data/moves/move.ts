@@ -4345,10 +4345,11 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
 
 export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
   /**
-   * The ratio of the user's maximum HP to be lost.
+   * A divisor for the user's maximum HP to be lost.
    * The move will fail if less than this amount is available.
    */
-  private readonly damageRatio: number;
+  // TODO: Make this a % ratio
+  private readonly cutRatio: number;
   /**
    * An optional callback function to be called after the HP loss is applied, allowing for custom messages or effects to be triggered.
    */
@@ -4358,16 +4359,16 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
   constructor(
     stat: BattleStat[],
     levels: number,
-    damageRatio: number,
+    cutRatio: number,
     messageCallback?: ((user: Pokemon) => void) | undefined,
   ) {
     super(stat, levels, true);
 
-    this.damageRatio = damageRatio;
+    this.cutRatio = cutRatio;
     this.messageCallback = messageCallback;
   }
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.damageAndUpdate(toDmgValue(user.getMaxHp() * this.damageRatio), { result: HitResult.INDIRECT });
+    user.damageAndUpdate(toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
     user.updateInfo(); // TODO: Floating promise!!!
     const ret = super.apply(user, target, move, args);
     this.messageCallback?.(user);
@@ -4375,7 +4376,7 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return user => user.hp > user.getMaxHp() * this.damageRatio && this.stats.some(s => user.getStatStage(s) < 6);
+    return user => user.hp > user.getMaxHp() / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
   }
 }
 
