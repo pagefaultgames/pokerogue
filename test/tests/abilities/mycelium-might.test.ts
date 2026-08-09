@@ -66,7 +66,7 @@ describe("Abilities - Mycelium Might", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
-    expect(player.hp).toEqual(player.getMaxHp());
+    expect(player.hp).toBe(player.getMaxHp());
     await game.phaseInterceptor.to("TurnEndPhase");
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
@@ -83,6 +83,6 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.
     // The enemy Pokemon (without M.M.) goes second because its speed is lower.
     // This means that the commandOrder should be identical to the speedOrder
-    expect(player.hp).toEqual(player.getMaxHp());
+    expect(player.hp).toBe(player.getMaxHp());
   });
 });

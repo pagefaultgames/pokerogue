@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/framework/game-manager";
@@ -21,46 +22,81 @@ describe("Abilities - Contrary", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.BULBASAUR)
-      .enemyAbility(AbilityId.CONTRARY)
-      .ability(AbilityId.INTIMIDATE)
+      .ability(AbilityId.CONTRARY)
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should invert stat changes when applied", async () => {
-    await game.classicMode.startBattle(SpeciesId.SLOWBRO);
+  it("should invert all stat changes applied to the user", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
+    game.move.use(MoveId.COSMIC_POWER);
+    await game.move.forceEnemyMove(MoveId.NOBLE_ROAR);
+    await game.toEndOfTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveAbilityApplied(AbilityId.CONTRARY);
+    expect(player).toHaveStatStage(Stat.ATK, 1);
+    expect(player).toHaveStatStage(Stat.SPATK, 1);
+    expect(player).toHaveStatStage(Stat.DEF, -1);
+    expect(player).toHaveStatStage(Stat.SPDEF, -1);
   });
 
-  describe("With Clear Body", () => {
-    it("should apply positive effects", async () => {
-      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).moveset([MoveId.TAIL_WHIP]);
-      await game.classicMode.startBattle(SpeciesId.SLOWBRO);
+  // TODO: Stat stage change moves don't count as failed when they should
+  it.todo("should invert the failure conditions of stat stage moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-      const enemyPokemon = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    player.setStatStage(Stat.ATK, -6);
+    player.setStatStage(Stat.DEF, 6);
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    game.move.use(MoveId.IRON_DEFENSE);
+    await game.move.forceEnemyMove(MoveId.GROWL);
+    await game.toNextTurn();
 
-      game.move.select(MoveId.TAIL_WHIP);
-      await game.phaseInterceptor.to("TurnEndPhase");
+    expect(player).toHaveAbilityApplied(AbilityId.CONTRARY);
+    expect(player).toHaveStatStage(Stat.ATK, -5);
+    expect(player).toHaveStatStage(Stat.DEF, 4);
 
-      expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(1);
-    });
+    player.setStatStage(Stat.ATK, 6);
+    player.setStatStage(Stat.DEF, -6);
 
-    it("should block negative effects", async () => {
-      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY);
-      await game.classicMode.startBattle(SpeciesId.SLOWBRO);
+    game.move.use(MoveId.HARDEN);
+    await game.move.forceEnemyMove(MoveId.GROWL);
+    await game.toEndOfTurn();
 
-      const enemyPokemon = game.field.getEnemyPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.HARDEN, result: MoveResult.FAIL });
+    expect(enemy).toHaveUsedMove({ move: MoveId.GROWL, result: MoveResult.FAIL });
+    expect(player).toHaveStatStage(Stat.ATK, 6);
+    expect(player).toHaveStatStage(Stat.DEF, -6);
+  });
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+  it("should cause Belly Drum to minimize the user's ATK", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-      game.move.use(MoveId.DECORATE);
-      await game.phaseInterceptor.to("TurnEndPhase");
+    const player = game.field.getPlayerPokemon();
+    player.setStatStage(Stat.ATK, 6);
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
-    });
+    game.move.use(MoveId.BELLY_DRUM);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.BELLY_DRUM, result: MoveResult.SUCCESS });
+    expect(player).toHaveAbilityApplied(AbilityId.CONTRARY);
+    expect(player).toHaveStatStage(Stat.ATK, -6);
+    expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
+  });
+
+  it("should cause Clear Body to block stat drops based on their final amount", async () => {
+    game.override.enemyAbility(AbilityId.CONTRARY).enemyPassiveAbility(AbilityId.CLEAR_BODY);
+    await game.classicMode.startBattle(SpeciesId.SLOWBRO);
+
+    game.move.use(MoveId.SPICY_EXTRACT); // +2 atk, -2 def normally
+    await game.toEndOfTurn();
+
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveAbilityApplied(AbilityId.CONTRARY);
+    expect(enemy).toHaveAbilityApplied(AbilityId.CLEAR_BODY);
+    expect(enemy).toHaveStatStage(Stat.ATK, 2);
+    expect(enemy).toHaveStatStage(Stat.DEF, 0);
   });
 });
