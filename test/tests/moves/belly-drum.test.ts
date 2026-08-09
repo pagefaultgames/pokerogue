@@ -8,7 +8,7 @@ import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Belly Drum", () => {
+describe("Move - Belly Drum", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

@@ -2202,14 +2202,16 @@ export class MessageAttr extends MoveEffectAttr {
 }
 
 export class RecoilAttr extends MoveEffectAttr {
-  private readonly useHp: boolean;
+  /** Whether the recoil damage should be based on the user's maximum HP instead of the damage dealt. */
+  private readonly useMaxHp: boolean;
   private readonly damageRatio: number;
   private readonly unblockable: boolean;
 
-  constructor(useHp = false, damageRatio = 0.25, unblockable = false) {
+  // TODO: Make the parameter order more sensible - damage ratio required first, then the other 2 booleans
+  constructor(useMaxHp = false, damageRatio = 0.25, unblockable = false) {
     super(true, { lastHitOnly: true });
 
-    this.useHp = useHp;
+    this.useMaxHp = useMaxHp;
     this.damageRatio = damageRatio;
     this.unblockable = unblockable;
   }
@@ -2219,33 +2221,28 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
+      const cancelled = new BooleanHolder(false);
       const abAttrParams: AbAttrParamsWithCancel = { pokemon: user, cancelled };
       applyAbAttrs("BlockRecoilDamageAttr", abAttrParams);
       applyAbAttrs("BlockNonDirectDamageAbAttr", abAttrParams);
-    }
-
-    if (cancelled.value) {
-      return false;
+      if (cancelled.value) {
+        return false;
+      }
     }
 
     // Chloroblast and Struggle should not deal recoil damage if the move was not successful
     if (
-      this.useHp
+      this.useMaxHp
       && [MoveResult.FAIL, MoveResult.MISS].includes(user.getLastXMoves(1)[0]?.result ?? MoveResult.FAIL)
     ) {
       return false;
     }
 
-    const damageValue = (this.useHp ? user.getMaxHp() : user.turnData.totalDamageDealt) * this.damageRatio;
+    const damageValue = (this.useMaxHp ? user.getMaxHp() : user.turnData.totalDamageDealt) * this.damageRatio;
     const minValue = user.turnData.totalDamageDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
-      return false;
-    }
-
-    if (cancelled.value) {
       return false;
     }
 
@@ -2271,14 +2268,6 @@ export class SacrificialAttr extends MoveEffectAttr {
     super(true, { trigger: MoveEffectTrigger.POST_TARGET });
   }
 
-  /**
-   * Deals damage to the user equal to their current hp
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
   apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
     user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
     user.turnData.damageTaken += user.hp;

@@ -7,7 +7,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Contrary", () => {
+describe("Ability - Contrary", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
