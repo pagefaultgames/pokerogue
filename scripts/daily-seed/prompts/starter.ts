@@ -10,6 +10,7 @@ import {
   promptAbility,
   promptAbilityIndex,
   promptFormIndex,
+  promptGender,
   promptMoveset,
   promptNature,
   promptSpeciesId,
@@ -94,6 +95,9 @@ async function promptStarterOptions(starterConfig: DailySeedStarter): Promise<vo
       break;
     case "passive":
       starterConfig.passive = await promptAbility(true);
+      break;
+    case "gender":
+      starterConfig.gender = await promptGender();
       break;
     case "finish":
       // Re-add all used options for next starter
