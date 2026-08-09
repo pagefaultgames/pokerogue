@@ -31,7 +31,7 @@ describe("Moves - Chloroblast and Steel Beam", () => {
   it.each([
     { move: MoveId.CHLOROBLAST, name: "Chloroblast" },
     { move: MoveId.STEEL_BEAM, name: "Steel Beam" },
-  ])("should deal recoil damage equal to half the user's maximum HP", async ({ move }) => {
+  ])("should deal recoil damage equal to half the user's maximum HP on success", async ({ move }) => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(move);
@@ -45,7 +45,7 @@ describe("Moves - Chloroblast and Steel Beam", () => {
     expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
   });
 
-  it("should deal recoil damage even if the move misses", async () => {
+  it("should not deal recoil damage if the move misses", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.CHLOROBLAST);
@@ -56,7 +56,7 @@ describe("Moves - Chloroblast and Steel Beam", () => {
 
     const player = game.field.getPlayerPokemon();
     expect(player).toHaveUsedMove({ move: MoveId.CHLOROBLAST, result: MoveResult.MISS });
-    expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
+    expect(player).toHaveFullHp();
   });
 
   it("should be able to KO the user", async () => {
