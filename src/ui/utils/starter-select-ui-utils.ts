@@ -336,10 +336,7 @@ export function getDexAttrFromPreferences(
 
   // This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
   // If they're not there, it enables shiny state by default if any shiny was caught
-  if (
-    starterPreferences.shiny
-    || ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
-  ) {
+  if (starterPreferences.shiny || ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences?.shiny !== false)) {
     props += DexAttr.SHINY;
     if (starterPreferences.variant !== undefined) {
       props += BigInt(Math.pow(2, starterPreferences.variant)) * DexAttr.DEFAULT_VARIANT;
