@@ -215,7 +215,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,
-    undefined,
+    config?.abilityIndex,
     config?.formIndex,
     config?.gender,
     isShiny,
