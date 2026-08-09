@@ -3976,6 +3976,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     return false;
   }
 
+  // TODO: This is stupid (if you need dynamic levels, use a lambda)
   getLevels(_user: Pokemon): number {
     return this.stages;
   }
@@ -4343,32 +4344,38 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
 }
 
 export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
-  private readonly cutRatio: number;
+  /**
+   * The ratio of the user's maximum HP to be lost.
+   * The move will fail if less than this amount is available.
+   */
+  private readonly damageRatio: number;
+  /**
+   * An optional callback function to be called after the HP loss is applied, allowing for custom messages or effects to be triggered.
+   */
+  // TODO: If this is supposed to display a message, the type should encode that information (return string instead of void)
   private readonly messageCallback: ((user: Pokemon) => void) | undefined;
 
   constructor(
     stat: BattleStat[],
     levels: number,
-    cutRatio: number,
+    damageRatio: number,
     messageCallback?: ((user: Pokemon) => void) | undefined,
   ) {
     super(stat, levels, true);
 
-    this.cutRatio = cutRatio;
+    this.damageRatio = damageRatio;
     this.messageCallback = messageCallback;
   }
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.damageAndUpdate(toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
-    user.updateInfo();
+    user.damageAndUpdate(toDmgValue(user.getMaxHp() * this.damageRatio), { result: HitResult.INDIRECT });
+    user.updateInfo(); // TODO: Floating promise!!!
     const ret = super.apply(user, target, move, args);
-    if (this.messageCallback) {
-      this.messageCallback(user);
-    }
+    this.messageCallback?.(user);
     return ret;
   }
 
   getCondition(): MoveConditionFunc {
-    return user => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
+    return user => user.hp > user.getMaxHp() * this.damageRatio && this.stats.some(s => user.getStatStage(s) < 6);
   }
 }
 
