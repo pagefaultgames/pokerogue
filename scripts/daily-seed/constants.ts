@@ -46,5 +46,6 @@ export const STARTER_OPTIONS = [
   "ability",
   "abilityIndex",
   "passive",
+  "gender",
   "finish",
 ] as const;
