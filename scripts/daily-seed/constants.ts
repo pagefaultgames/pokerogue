@@ -38,4 +38,13 @@ export const BOSS_OPTIONS = [
 ] as const;
 
 /** All accepted options for configuring a starter Pokemon. */
-export const STARTER_OPTIONS = ["formIndex", "variant", "moveset", "nature", "ability", "passive", "finish"] as const;
+export const STARTER_OPTIONS = [
+  "formIndex",
+  "variant",
+  "moveset",
+  "nature",
+  "ability",
+  "abilityIndex",
+  "passive",
+  "finish",
+] as const;
