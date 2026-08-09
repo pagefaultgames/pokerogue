@@ -44,7 +44,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
 
-    if (move.name.endsWith(" (N)")) {
+    if (move.isUnimplemented) {
       this.end();
       return;
     }
