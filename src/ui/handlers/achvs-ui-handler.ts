@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
@@ -93,7 +94,7 @@ export class AchvsUiHandler extends MessageUiHandler {
       .setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });

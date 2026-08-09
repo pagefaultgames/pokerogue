@@ -2,6 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -603,7 +604,7 @@ export class EncounterPhase extends BattlePhase {
               : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const cycleCountNoOrdinal = count.toLocaleString();
-          const genderIndex = gameData.gender ?? PlayerGender.UNSET;
+          const genderIndex = settings.general.playerGender;
           const genderStr = PlayerGender[genderIndex].toLowerCase();
           const encounterDialogue = i18next.t(localizationKey, {
             context: genderStr,

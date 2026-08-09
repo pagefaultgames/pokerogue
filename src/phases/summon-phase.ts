@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
@@ -148,7 +149,7 @@ export class SummonPhase extends PokemonPhase {
   private async playPlayerTrainerThrowSequence(): Promise<void> {
     const { time, trainer, tweens } = globalScene;
 
-    trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`);
+    trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
 
     time.delayedCall(562, () => {
       trainer.setFrame("2");
@@ -215,8 +216,7 @@ export class SummonPhase extends PokemonPhase {
       "pb",
       getPokeballAtlasKey(pokemon.pokeball),
     );
-    pokeball.setVisible(false);
-    pokeball.setOrigin(0.5, 0.625);
+    pokeball.setVisible(false).setOrigin(0.5, 0.625);
     field.add(pokeball);
 
     if (this.fieldIndex === 1) {

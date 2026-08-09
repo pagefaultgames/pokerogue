@@ -182,7 +182,7 @@ export class TitlePhase extends Phase {
       {
         label: i18next.t("menu:settings"),
         handler: () => {
-          globalScene.ui.setOverlayMode(UiMode.SETTINGS);
+          globalScene.ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
           return true;
         },
         keepOpen: true,

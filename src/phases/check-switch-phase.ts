@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
@@ -35,7 +36,7 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     const pokemon = globalScene.getPlayerField()[this.fieldIndex];
-    const { field, battleStyle, phaseManager } = globalScene;
+    const { field, settings, phaseManager } = globalScene;
 
     // End this phase early...
 
@@ -48,7 +49,7 @@ export class CheckSwitchPhase extends BattlePhase {
     }
 
     // ...if the user is playing in Set Mode
-    if (battleStyle === BattleStyle.SET) {
+    if (settings.general.battleStyle === BattleStyle.SET) {
       this.end();
       return;
     }
