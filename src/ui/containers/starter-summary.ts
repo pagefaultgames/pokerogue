@@ -531,10 +531,11 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonStatisticsContainer.setVisible(true);
 
       const luck = globalScene.gameData.getDexAttrLuck(dexEntry.caughtAttr);
+      const luckDisabled = !!luck && globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.pokemonLuckText
         .setVisible(!!luck)
-        .setText(luck.toString())
-        .setTint(getVariantTint(Phaser.Math.Clamp(luck - 1, 0, 2) as Variant));
+        .setText(luckDisabled ? i18next.t("starterSelectUiHandler:disabled") : luck.toString())
+        .setTint(luckDisabled ? 0x808080 : getVariantTint(Math.min(luck - 1, 2) as Variant));
       this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
       let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
