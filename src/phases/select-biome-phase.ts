@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { getDailyForcedBiome } from "#data/daily-seed/daily-run";
+import { getDailyForcedBiomes } from "#data/daily-seed/daily-run";
 import { allBiomes } from "#data/data-lists";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
@@ -33,7 +33,7 @@ export class SelectBiomePhase extends BattlePhase {
       return;
     }
 
-    const forcedBiomes = getDailyForcedBiome();
+    const forcedBiomes = getDailyForcedBiomes();
     if (forcedBiomes != null && forcedBiomes.length === 1) {
       this.setNextBiomeAndEnd(forcedBiomes[0]);
       return;
