@@ -107,7 +107,7 @@ describe("Ability - Contrary", () => {
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).toHaveAbilityApplied(AbilityId.CONTRARY);
     expect(enemy).toHaveAbilityApplied(AbilityId.CLEAR_BODY);
-    expect(enemy).toHaveStatStage(Stat.ATK, 2);
-    expect(enemy).toHaveStatStage(Stat.DEF, 0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0); // -2 w/ contrary -> 0
+    expect(enemy).toHaveStatStage(Stat.DEF, 2); // +2 w/ contrary
   });
 });
