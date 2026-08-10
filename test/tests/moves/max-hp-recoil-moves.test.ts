@@ -8,7 +8,7 @@ import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Chloroblast and Steel Beam", () => {
+describe("Moves - Max HP% Recoil Moves", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -31,7 +31,8 @@ describe("Moves - Chloroblast and Steel Beam", () => {
   it.each([
     { move: MoveId.CHLOROBLAST, name: "Chloroblast" },
     { move: MoveId.STEEL_BEAM, name: "Steel Beam" },
-  ])("should deal recoil damage equal to half the user's maximum HP on success", async ({ move }) => {
+    { move: MoveId.MIND_BLOWN, name: "Mind Blown" },
+  ])("$name should deal recoil damage equal to half the user's maximum HP on success", async ({ move }) => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(move);
@@ -45,28 +46,32 @@ describe("Moves - Chloroblast and Steel Beam", () => {
     expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
   });
 
+  // NB: According to https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-54#post-8548957,
+  // Steel Beam uniquely deals recoil damage if the move misses (unlike other moves with this trait).
+  // Given how trivial and wildly inconsistent this is, we count it as a minor buff to Steel Beam.
   it("should not deal recoil damage if the move misses", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.use(MoveId.CHLOROBLAST);
+    game.move.use(MoveId.STEEL_BEAM);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
     const player = game.field.getPlayerPokemon();
-    expect(player).toHaveUsedMove({ move: MoveId.CHLOROBLAST, result: MoveResult.MISS });
+    expect(player).toHaveUsedMove({ move: MoveId.STEEL_BEAM, result: MoveResult.MISS });
     expect(player).toHaveFullHp();
   });
 
   it("should be able to KO the user", async () => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const player = game.field.getPlayerPokemon();
     player.hp = toDmgValue(player.getMaxHp() / 2);
 
     game.move.use(MoveId.CHLOROBLAST);
     await game.move.forceEnemyMove(MoveId.SPLASH);
+    game.doSelectPartyPokemon(1); // queue an input to switch pokemon so the game doesn't stall
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toEndOfTurn();
