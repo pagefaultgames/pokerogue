@@ -26,6 +26,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   validate(): boolean {
+    // TODO: WHY WHY WHY
     return !!this.formChange;
   }
 
@@ -132,12 +133,11 @@ export class FormChangePhase extends EvolutionPhase {
    */
   private beginTweens(preName: string, transformedPokemon: Pokemon): void {
     globalScene.tweens.chain({
-      // Starts 250ms after sprites have been configured
       targets: null,
       tweens: [
         // Step 1: Fade in the background overlay
         {
-          delay: 250,
+          delay: 250, // Starts 250ms after sprites have been configured
           targets: this.evolutionBgOverlay,
           alpha: 1,
           duration: 1500,
@@ -173,12 +173,9 @@ export class FormChangePhase extends EvolutionPhase {
       onComplete: () => {
         audioManager.playSound("se/beam");
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
-        globalScene.time.delayedCall(1000, () => {
-          this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
-          globalScene.animations
-            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite)
-            .then(() => this.afterCycle(preName, transformedPokemon));
-        });
+        globalScene.animations
+          .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite, 1000)[0]
+          .setCallback("onComplete", () => this.afterCycle(preName, transformedPokemon));
       },
     });
   }

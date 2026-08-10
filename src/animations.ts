@@ -4,7 +4,7 @@ import { settings } from "#app/global-settings-manager";
 import type { BattleAnim } from "#data/battle-anims";
 import { PokeballType } from "#enums/pokeball";
 import type { Variant } from "#sprites/variant";
-import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/common";
+import { getFrameMs, randGauss, randInt } from "#utils/common";
 
 /**
  * Class for handling general animations such as particle effects.
@@ -80,47 +80,59 @@ export class Animation {
    * @param finalCycle - Number representing how many times to recursively cycle the animation
    * @param pokemonTintSprite - The tinted sprite of the Pokemon
    * @param pokemonNewFormTintSprite - The tinted sprite of the Pokemon's new form
-   * @param cancelled - If its value is set to `true` by external code during the animation, then cancel the animation.
+   * @returns A tuple containing the tween chain and a function to cancel the animations on the next iteration.
+   * @remarks
+   * Callers that want to perform extra behaviour on the cycle completion
+   * should set the `onComplete` and `onStop` callbacks on the returned chain.
    */
+  // TODO: Make the parameters sensible
   public doCycle(
     currentCycle: number,
     finalCycle: number,
     pokemonTintSprite: Phaser.GameObjects.Sprite,
     pokemonNewFormTintSprite: Phaser.GameObjects.Sprite,
-    cancelled?: BooleanHolder,
-  ): Promise<void> {
-    const isFinalCycle = currentCycle === finalCycle;
-    const duration = 500 / currentCycle;
+    delay = 0,
+  ): [chain: Phaser.Tweens.TweenChain, cancelFunc: () => void] {
+    pokemonNewFormTintSprite.setScale(0.25).setVisible(true);
 
-    return new Promise(resolve => {
-      globalScene.tweens.add({
-        targets: pokemonTintSprite,
+    const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
+    for (; currentCycle <= finalCycle; currentCycle += 0.5) {
+      const duration = 500 / currentCycle;
+
+      // TODO: Make a very large tween chain
+      const config = {
+        targets: [pokemonTintSprite, pokemonNewFormTintSprite],
         scale: 0.25,
         ease: "Cubic.easeInOut",
         duration,
-        yoyo: !isFinalCycle,
-      });
-      globalScene.tweens.add({
-        targets: pokemonNewFormTintSprite,
-        scale: 1,
-        ease: "Cubic.easeInOut",
-        duration,
-        yoyo: !isFinalCycle,
-        onComplete: () => {
-          if (cancelled?.value) {
-            return resolve();
-          }
-          if (isFinalCycle) {
-            pokemonTintSprite.setVisible(false);
-            return resolve();
-          }
-          // TODO: Explain or refactor away the recursion
-          this.doCycle(currentCycle + 0.5, finalCycle, pokemonTintSprite, pokemonNewFormTintSprite, cancelled).then(
-            resolve,
-          );
-        },
-      });
-    });
+        yoyo: currentCycle < finalCycle,
+      } satisfies Phaser.Types.Tweens.TweenBuilderConfig as Phaser.Types.Tweens.TweenBuilderConfig;
+      if (currentCycle >= finalCycle) {
+        config.onComplete = () => {
+          pokemonTintSprite.setVisible(false);
+        };
+      }
+      tweenConfigs.push(config);
+    }
+
+    // Run both chains in parallel
+    const chain = globalScene.tweens.chain({ delay, targets: null, tweens: tweenConfigs });
+
+    return [
+      chain,
+      () => {
+        // Stop gracefully after the next flash concludes
+        const oldCallback = chain.currentTween.callbacks.onComplete;
+        // i hate phaser's shit types
+        chain.currentTween.setCallback(
+          "onComplete",
+          (...[tween, ...args]: Parameters<Phaser.Types.Tweens.TweenOnCompleteCallback>) => {
+            oldCallback?.(tween, ...args);
+            tween.stop();
+          },
+        );
+      },
+    ];
   }
 
   /**
