@@ -74,9 +74,14 @@ describe("Moves - Max HP% Recoil Moves", () => {
     game.doSelectPartyPokemon(1); // queue an input to switch pokemon so the game doesn't stall
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
-    await game.toEndOfTurn();
+
+    // TODO: see if we can skip to turn end directly once switch refactor is merged
+    // I am 90% sure the leaving pokemon's summon data gets cleared unnecessarily
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(player).toHaveUsedMove({ move: MoveId.CHLOROBLAST, result: MoveResult.SUCCESS });
+
+    await game.toEndOfTurn();
     expect(player).toHaveFainted();
   });
 
