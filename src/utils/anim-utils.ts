@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import type { SceneBase } from "#app/scene-base";
-import { IS_TEST, isBeta } from "#constants/app-constants";
 import type { Except } from "type-fest";
 
 /**
@@ -30,13 +29,4 @@ export async function playTween(config: PlayTweenConfig, scene: SceneBase = glob
       onComplete: resolve,
     }),
   );
-}
-
-export async function waitForTween(tween: Phaser.Tweens.Tween): Promise<void> {
-  if ((isBeta || IS_TEST) && !tween.isPlaying()) {
-    throw new Error("Tween is not playing");
-  }
-  await new Promise(resolve => {
-    tween.setCallback("onComplete", resolve);
-  });
 }
