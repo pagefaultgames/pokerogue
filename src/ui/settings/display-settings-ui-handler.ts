@@ -1,179 +1,73 @@
-import type { UiMode } from "#enums/ui-mode";
-import { SettingKeys, SettingType } from "#system/settings";
+import { globalScene } from "#app/global-scene";
+import { LANGUAGE_MAX_OPTIONS } from "#constants/app-constants";
+import { UiMode } from "#enums/ui-mode";
+import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supported-languages";
+import type { DisplaySettingsKey, SettingsUiItem } from "#types/settings";
+import type { OptionSelectItem } from "#types/ui-types";
 import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
+import { displaySettingUiItems } from "#ui/settings-ui-items";
+import i18next from "i18next";
 
 export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
-  /**
-   * Creates an instance of SettingsGamepadUiHandler.
-   *
-   * @param mode - The UI mode, optional.
-   */
-  constructor(mode: UiMode | null = null) {
-    super(SettingType.DISPLAY, mode);
-    this.title = "Display";
+  constructor() {
+    super("display", displaySettingUiItems);
+  }
 
-    /**
-     * Update to current language from default value.
-     * - default value is 'English'
-     */
-    const languageIndex = this.settings.findIndex(s => s.key === SettingKeys.Language);
-    if (languageIndex >= 0) {
-      const currentLocale = localStorage.getItem("prLang");
-      switch (currentLocale) {
-        case "en":
-          this.settings[languageIndex].options[0] = {
-            value: "English",
-            label: "English",
-          };
-          break;
-        case "es-ES":
-          this.settings[languageIndex].options[0] = {
-            value: "Español (ES)",
-            label: "Español (ES)",
-          };
-          break;
-        case "es-419":
-          this.settings[languageIndex].options[0] = {
-            value: "Español (LATAM)",
-            label: "Español (LATAM)",
-          };
-          break;
-        case "fr":
-          this.settings[languageIndex].options[0] = {
-            value: "Français",
-            label: "Français",
-          };
-          break;
-        case "de":
-          this.settings[languageIndex].options[0] = {
-            value: "Deutsch",
-            label: "Deutsch",
-          };
-          break;
-        case "it":
-          this.settings[languageIndex].options[0] = {
-            value: "Italiano",
-            label: "Italiano",
-          };
-          break;
-        case "pt-BR":
-          this.settings[languageIndex].options[0] = {
-            value: "Português (BR)",
-            label: "Português (BR)",
-          };
-          break;
-        case "ko":
-        case "ko-KR":
-          this.settings[languageIndex].options[0] = {
-            value: "한국어",
-            label: "한국어",
-          };
-          break;
-        case "ja":
-          this.settings[languageIndex].options[0] = {
-            value: "日本語",
-            label: "日本語",
-          };
-          break;
-        case "zh-Hans":
-          this.settings[languageIndex].options[0] = {
-            value: "简体中文",
-            label: "简体中文",
-          };
-          break;
-        case "zh-Hant":
-          this.settings[languageIndex].options[0] = {
-            value: "繁體中文",
-            label: "繁體中文",
-          };
-          break;
-        case "th":
-          this.settings[languageIndex].options[0] = {
-            value: "ไทย",
-            label: "ไทย",
-          };
-          break;
-        case "ca":
-          this.settings[languageIndex].options[0] = {
-            value: "Català",
-            label: "Català (Needs Help)",
-          };
-          break;
-        case "eu":
-          this.settings[languageIndex].options[0] = {
-            value: "Euskara",
-            label: "Euskara (Needs Help)",
-          };
-          break;
-        case "tr":
-          this.settings[languageIndex].options[0] = {
-            value: "Türkçe",
-            label: "Türkçe (Needs Help)",
-          };
-          break;
-        case "ru":
-          this.settings[languageIndex].options[0] = {
-            value: "Русский",
-            label: "Русский (Needs Help)",
-          };
-          break;
-        case "uk":
-          this.settings[languageIndex].options[0] = {
-            value: "Українська",
-            label: "Українська (Needs Help)",
-          };
-          break;
-        case "pl":
-          this.settings[languageIndex].options[0] = {
-            value: "Polski",
-            label: "Polski (Needs Help)",
-          };
-          break;
-        case "id":
-          this.settings[languageIndex].options[0] = {
-            value: "Bahasa Indonesia",
-            label: "Bahasa Indonesia (Needs Help)",
-          };
-          break;
-        case "hi":
-          this.settings[languageIndex].options[0] = {
-            value: "हिन्दी",
-            label: "हिन्दी (Needs Help)",
-          };
-          break;
-        case "vi":
-          this.settings[languageIndex].options[0] = {
-            value: "Tiếng Việt",
-            label: "Tiếng Việt",
-          };
-          break;
-        case "da":
-          this.settings[languageIndex].options[0] = {
-            value: "Dansk",
-            label: "Dansk (Needs Help)",
-          };
-          break;
-        case "sv":
-          this.settings[languageIndex].options[0] = {
-            value: "Svenska",
-            label: "Svenska",
-          };
-          break;
-        case "tl":
-          this.settings[languageIndex].options[0] = {
-            value: "Tagalog",
-            label: "Tagalog (Needs Help)",
-          };
-          break;
-        default:
-          this.settings[languageIndex].options[0] = {
-            value: "English",
-            label: "English",
-          };
-          break;
-      }
+  protected override handleSaveSetting<V = any>(uiItem: SettingsUiItem<DisplaySettingsKey>, newValue: V): void {
+    if (uiItem.key === "language" && newValue) {
+      this.displayLanguageOptions();
+      return;
     }
 
-    this.localStorageKey = "settings";
+    super.handleSaveSetting(uiItem, newValue);
+  }
+
+  private displayLanguageOptions(): void {
+    const options: OptionSelectItem[] = [];
+
+    for (const [lang, props] of Object.entries(SUPPORTED_LANGUAGE_ENTRIES)) {
+      if (lang === i18next.resolvedLanguage) {
+        continue;
+      }
+
+      const label = props.label;
+
+      const handler = (): boolean => {
+        if (this.canLoseProgress()) {
+          this.showConfirm(
+            i18next.t("menuUiHandler:losingProgressionWarning"),
+            () => this.changeLanguageHandler(lang, label),
+            () => this.cancelLanguageChangeHandler(),
+          );
+          return true;
+        }
+        return this.changeLanguageHandler(lang, label);
+      };
+
+      options.push({ label, handler });
+    }
+
+    options.push({
+      label: i18next.t("settings:back"),
+      handler: () => this.cancelLanguageChangeHandler(),
+    });
+
+    globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, maxOptions: LANGUAGE_MAX_OPTIONS });
+  }
+
+  private cancelLanguageChangeHandler(): boolean {
+    this.setOptionCursor(0, 0);
+    globalScene.ui.revertMode();
+    return true;
+  }
+
+  private changeLanguageHandler(lang: SupportedLanguage, label: string): boolean {
+    i18next.changeLanguage(lang);
+    this.setOptionCursor(0, 0);
+    this.updateOptionValueLabel(0, 0, label);
+    // Reloading the whole page is necessary to apply the new locales
+    // due to various static elements being translated
+    window.location.reload();
+    return true;
   }
 }
