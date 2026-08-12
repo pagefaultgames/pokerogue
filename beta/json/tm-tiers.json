@@ -1004,6 +1004,10 @@
     "tier": "GREAT"
   },
   {
+    "move": "DUAL_CHOP",
+    "tier": "GREAT"
+  },
+  {
     "move": "RAZOR_SHELL",
     "tier": "GREAT"
   },

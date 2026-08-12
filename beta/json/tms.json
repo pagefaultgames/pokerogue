@@ -22209,6 +22209,12 @@
     "dexNum": 56,
     "id": "MANKEY",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 56,
+    "id": "MANKEY",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -22762,6 +22768,12 @@
     "id": "PRIMEAPE",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 57,
+    "id": "PRIMEAPE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 57,
@@ -24388,6 +24400,12 @@
     "id": "POLIWRATH",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 62,
+    "id": "POLIWRATH",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 62,
@@ -26649,6 +26667,12 @@
     "dexNum": 66,
     "id": "MACHOP",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 66,
+    "id": "MACHOP",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -27070,6 +27094,12 @@
     "id": "MACHOKE",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 67,
+    "id": "MACHOKE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 67,
@@ -27550,6 +27580,12 @@
     "id": "MACHAMP",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 68,
+    "id": "MACHAMP",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 68,
@@ -47043,6 +47079,12 @@
     "dexNum": 115,
     "id": "KANGASKHAN",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 115,
+    "id": "KANGASKHAN",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -50055,6 +50097,12 @@
     "dexNum": 123,
     "id": "SCYTHER",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 123,
+    "id": "SCYTHER",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -51033,6 +51081,12 @@
     "dexNum": 125,
     "id": "ELECTABUZZ",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 125,
+    "id": "ELECTABUZZ",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -51460,6 +51514,12 @@
     "id": "MAGMAR",
     "form": null,
     "move": "INCINERATE"
+  },
+  {
+    "dexNum": 126,
+    "id": "MAGMAR",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 126,
@@ -62746,6 +62806,12 @@
     "id": "MEW",
     "form": null,
     "move": "DRILL_RUN"
+  },
+  {
+    "dexNum": 151,
+    "id": "MEW",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 151,
@@ -75130,6 +75196,12 @@
     "id": "AMPHAROS",
     "form": null,
     "move": "DRAGON_TAIL"
+  },
+  {
+    "dexNum": 181,
+    "id": "AMPHAROS",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 181,
@@ -88809,6 +88881,12 @@
     "dexNum": 212,
     "id": "SCIZOR",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 212,
+    "id": "SCIZOR",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -99321,6 +99399,12 @@
     "dexNum": 239,
     "id": "ELEKID",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 239,
+    "id": "ELEKID",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -99676,6 +99760,12 @@
     "id": "MAGBY",
     "form": null,
     "move": "INCINERATE"
+  },
+  {
+    "dexNum": 240,
+    "id": "MAGBY",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 240,
@@ -106059,6 +106149,12 @@
     "dexNum": 254,
     "id": "SCEPTILE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 254,
+    "id": "SCEPTILE",
+    "form": null,
     "move": "THROAT_CHOP"
   },
   {
@@ -106983,6 +107079,12 @@
     "dexNum": 256,
     "id": "COMBUSKEN",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 256,
+    "id": "COMBUSKEN",
+    "form": null,
     "move": "POWER_UP_PUNCH"
   },
   {
@@ -107542,6 +107644,12 @@
     "id": "BLAZIKEN",
     "form": null,
     "move": "LOW_SWEEP"
+  },
+  {
+    "dexNum": 257,
+    "id": "BLAZIKEN",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 257,
@@ -161175,6 +161283,12 @@
     "dexNum": 391,
     "id": "MONFERNO",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 391,
+    "id": "MONFERNO",
+    "form": null,
     "move": "LASH_OUT"
   },
   {
@@ -161788,6 +161902,12 @@
     "id": "INFERNAPE",
     "form": null,
     "move": "RETALIATE"
+  },
+  {
+    "dexNum": 392,
+    "id": "INFERNAPE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 392,
@@ -181065,6 +181185,12 @@
     "dexNum": 444,
     "id": "GABITE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 444,
+    "id": "GABITE",
+    "form": null,
     "move": "BREAKING_SWIPE"
   },
   {
@@ -181492,6 +181618,12 @@
     "id": "GARCHOMP",
     "form": null,
     "move": "GIGA_IMPACT"
+  },
+  {
+    "dexNum": 445,
+    "id": "GARCHOMP",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 445,
@@ -182787,6 +182919,12 @@
     "dexNum": 447,
     "id": "RIOLU",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 447,
+    "id": "RIOLU",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -183316,6 +183454,12 @@
     "id": "LUCARIO",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 448,
+    "id": "LUCARIO",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 448,
@@ -185307,6 +185451,12 @@
     "dexNum": 453,
     "id": "CROAGUNK",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 453,
+    "id": "CROAGUNK",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -185848,6 +185998,12 @@
     "id": "TOXICROAK",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 454,
+    "id": "TOXICROAK",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 454,
@@ -190971,6 +191127,12 @@
     "dexNum": 466,
     "id": "ELECTIVIRE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 466,
+    "id": "ELECTIVIRE",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -191464,6 +191626,12 @@
     "id": "MAGMORTAR",
     "form": null,
     "move": "INCINERATE"
+  },
+  {
+    "dexNum": 467,
+    "id": "MAGMORTAR",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 467,
@@ -194860,6 +195028,12 @@
     "id": "GALLADE",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 475,
+    "id": "GALLADE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 475,
@@ -206361,6 +206535,12 @@
     "dexNum": 500,
     "id": "EMBOAR",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 500,
+    "id": "EMBOAR",
+    "form": null,
     "move": "SOLAR_BLADE"
   },
   {
@@ -220671,6 +220851,12 @@
     "dexNum": 539,
     "id": "SAWK",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 539,
+    "id": "SAWK",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -227889,6 +228075,12 @@
     "dexNum": 559,
     "id": "SCRAGGY",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 559,
+    "id": "SCRAGGY",
+    "form": null,
     "move": "SNARL"
   },
   {
@@ -228460,6 +228652,12 @@
     "id": "SCRAFTY",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 560,
+    "id": "SCRAFTY",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 560,
@@ -245847,6 +246045,12 @@
     "dexNum": 610,
     "id": "AXEW",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 610,
+    "id": "AXEW",
+    "form": null,
     "move": "SNARL"
   },
   {
@@ -246244,6 +246448,12 @@
     "id": "FRAXURE",
     "form": null,
     "move": "DRAGON_TAIL"
+  },
+  {
+    "dexNum": 611,
+    "id": "FRAXURE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 611,
@@ -246706,6 +246916,12 @@
     "id": "HAXORUS",
     "form": null,
     "move": "DRAGON_TAIL"
+  },
+  {
+    "dexNum": 612,
+    "id": "HAXORUS",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 612,
@@ -249273,6 +249489,12 @@
     "dexNum": 619,
     "id": "MIENFOO",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 619,
+    "id": "MIENFOO",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -249718,6 +249940,12 @@
     "id": "MIENSHAO",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 620,
+    "id": "MIENSHAO",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 620,
@@ -251601,6 +251829,12 @@
     "dexNum": 624,
     "id": "PAWNIARD",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 624,
+    "id": "PAWNIARD",
+    "form": null,
     "move": "SNARL"
   },
   {
@@ -252016,6 +252250,12 @@
     "id": "BISHARP",
     "form": null,
     "move": "RETALIATE"
+  },
+  {
+    "dexNum": 625,
+    "id": "BISHARP",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 625,
@@ -261459,6 +261699,12 @@
     "dexNum": 648,
     "id": "MELOETTA",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 648,
+    "id": "MELOETTA",
+    "form": null,
     "move": "DISARMING_VOICE"
   },
   {
@@ -262377,6 +262623,12 @@
     "dexNum": 650,
     "id": "CHESPIN",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 650,
+    "id": "CHESPIN",
+    "form": null,
     "move": "GRASSY_TERRAIN"
   },
   {
@@ -262870,6 +263122,12 @@
     "id": "QUILLADIN",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 651,
+    "id": "QUILLADIN",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 651,
@@ -263464,6 +263722,12 @@
     "id": "CHESNAUGHT",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 652,
+    "id": "CHESNAUGHT",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 652,
@@ -271131,6 +271395,12 @@
     "dexNum": 674,
     "id": "PANCHAM",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 674,
+    "id": "PANCHAM",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -271684,6 +271954,12 @@
     "id": "PANGORO",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 675,
+    "id": "PANGORO",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 675,
@@ -273111,6 +273387,12 @@
     "dexNum": 680,
     "id": "DOUBLADE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 680,
+    "id": "DOUBLADE",
+    "form": null,
     "move": "SWORDS_DANCE"
   },
   {
@@ -273382,6 +273664,12 @@
     "id": "AEGISLASH",
     "form": null,
     "move": "GIGA_IMPACT"
+  },
+  {
+    "dexNum": 681,
+    "id": "AEGISLASH",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 681,
@@ -276015,6 +276303,12 @@
     "dexNum": 688,
     "id": "BINACLE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 688,
+    "id": "BINACLE",
+    "form": null,
     "move": "RAZOR_SHELL"
   },
   {
@@ -276526,6 +276820,12 @@
     "id": "BARBARACLE",
     "form": null,
     "move": "BULLDOZE"
+  },
+  {
+    "dexNum": 689,
+    "id": "BARBARACLE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 689,
@@ -281218,6 +281518,12 @@
     "id": "HAWLUCHA",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 701,
+    "id": "HAWLUCHA",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 701,
@@ -288399,6 +288705,12 @@
     "dexNum": 720,
     "id": "HOOPA",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 720,
+    "id": "HOOPA",
+    "form": null,
     "move": "PHANTOM_FORCE"
   },
   {
@@ -290493,6 +290805,12 @@
     "dexNum": 726,
     "id": "TORRACAT",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 726,
+    "id": "TORRACAT",
+    "form": null,
     "move": "PAY_DAY"
   },
   {
@@ -291028,6 +291346,12 @@
     "id": "INCINEROAR",
     "form": null,
     "move": "SCORCHING_SANDS"
+  },
+  {
+    "dexNum": 727,
+    "id": "INCINEROAR",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 727,
@@ -293811,6 +294135,12 @@
     "dexNum": 735,
     "id": "GUMSHOOS",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 735,
+    "id": "GUMSHOOS",
+    "form": null,
     "move": "TAKE_DOWN"
   },
   {
@@ -295401,6 +295731,12 @@
     "dexNum": 739,
     "id": "CRABRAWLER",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 739,
+    "id": "CRABRAWLER",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -295846,6 +296182,12 @@
     "id": "CRABOMINABLE",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 740,
+    "id": "CRABOMINABLE",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 740,
@@ -297856,6 +298198,12 @@
     "id": "LYCANROC",
     "form": "midnight",
     "move": "FOUL_PLAY"
+  },
+  {
+    "dexNum": 745,
+    "id": "LYCANROC",
+    "form": "midnight",
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 745,
@@ -300363,6 +300711,12 @@
     "dexNum": 753,
     "id": "FOMANTIS",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 753,
+    "id": "FOMANTIS",
+    "form": null,
     "move": "PETAL_BLIZZARD"
   },
   {
@@ -300724,6 +301078,12 @@
     "id": "LURANTIS",
     "form": null,
     "move": "ROUND"
+  },
+  {
+    "dexNum": 754,
+    "id": "LURANTIS",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 754,
@@ -302409,6 +302769,12 @@
     "dexNum": 759,
     "id": "STUFFUL",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 759,
+    "id": "STUFFUL",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -302770,6 +303136,12 @@
     "id": "BEWEAR",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 760,
+    "id": "BEWEAR",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 760,
@@ -305518,6 +305890,12 @@
     "id": "GOLISOPOD",
     "form": null,
     "move": "DRILL_RUN"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 768,
@@ -310875,6 +311253,12 @@
     "dexNum": 782,
     "id": "JANGMO_O",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 782,
+    "id": "JANGMO_O",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -311296,6 +311680,12 @@
     "id": "HAKAMO_O",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 783,
+    "id": "HAKAMO_O",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 783,
@@ -311854,6 +312244,12 @@
     "id": "KOMMO_O",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 784,
+    "id": "KOMMO_O",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 784,
@@ -312958,6 +313354,12 @@
     "id": "TAPU_BULU",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 787,
+    "id": "TAPU_BULU",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 787,
@@ -314943,6 +315345,12 @@
     "dexNum": 794,
     "id": "BUZZWOLE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 794,
+    "id": "BUZZWOLE",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -316467,6 +316875,12 @@
     "dexNum": 799,
     "id": "GUZZLORD",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 799,
+    "id": "GUZZLORD",
+    "form": null,
     "move": "HEAT_CRASH"
   },
   {
@@ -317890,6 +318304,12 @@
     "id": "MARSHADOW",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 802,
+    "id": "MARSHADOW",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 802,
@@ -319582,6 +320002,12 @@
     "id": "ZERAORA",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 807,
+    "id": "ZERAORA",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 807,
@@ -331731,6 +332157,12 @@
     "dexNum": 852,
     "id": "CLOBBOPUS",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 852,
+    "id": "CLOBBOPUS",
+    "form": null,
     "move": "POWER_UP_PUNCH"
   },
   {
@@ -332020,6 +332452,12 @@
     "id": "GRAPPLOCT",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 853,
+    "id": "GRAPPLOCT",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 853,
@@ -335434,6 +335872,12 @@
     "id": "PERRSERKER",
     "form": null,
     "move": "WORK_UP"
+  },
+  {
+    "dexNum": 863,
+    "id": "PERRSERKER",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 863,
@@ -348207,6 +348651,12 @@
     "dexNum": 900,
     "id": "KLEAVOR",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 900,
+    "id": "KLEAVOR",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -370755,6 +371205,12 @@
     "dexNum": 979,
     "id": "ANNIHILAPE",
     "form": null,
+    "move": "DUAL_CHOP"
+  },
+  {
+    "dexNum": 979,
+    "id": "ANNIHILAPE",
+    "form": null,
     "move": "CONFIDE"
   },
   {
@@ -372700,6 +373156,12 @@
     "id": "KINGAMBIT",
     "form": null,
     "move": "RETALIATE"
+  },
+  {
+    "dexNum": 983,
+    "id": "KINGAMBIT",
+    "form": null,
+    "move": "DUAL_CHOP"
   },
   {
     "dexNum": 983,
