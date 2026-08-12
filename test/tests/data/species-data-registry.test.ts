@@ -169,18 +169,15 @@ describe("SpeciesDataRegistry", () => {
 
   describe("Types", () => {
     it("should have all and only starters in the StarterSpeciesId type", () => {
-      const typeStarterIds = Array.from(starterSpeciesIdDefinition.matchAll(/SpeciesId\.(\w+)/g), match => {
-        return SpeciesId[match[1]] as StarterSpeciesId;
-      });
+      const typeStarterIds = Array.from(
+        starterSpeciesIdDefinition.matchAll(/SpeciesId\.(\w+)/g),
+        match => SpeciesId[match[1]] as StarterSpeciesId,
+      );
       const registryStarterIds = speciesDataRegistry.getAllStarters();
       const typeOnlyIds = typeStarterIds.filter(speciesId => !registryStarterIds.includes(speciesId));
 
-      expect
-        .soft(
-          typeOnlyIds,
-          `StarterSpeciesId has no registered starters: ${typeOnlyIds.map(id => SpeciesId[id]).join(", ")}`,
-        )
-        .toEqual([]);
+      const errorMessage = `StarterSpeciesId has non-starters: [${typeOnlyIds.map(id => SpeciesId[id]).join(", ")}]!`;
+      expect(typeOnlyIds, errorMessage).toEqual([]);
     });
   });
 });
