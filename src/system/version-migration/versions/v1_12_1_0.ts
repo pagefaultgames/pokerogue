@@ -85,15 +85,15 @@ type AudioSettingsKey = keyof AudioSettings;
 type GamepadSettingsKey = keyof GamepadSettings;
 
 interface OldStarterAttributes {
-  nature?: number | undefined;
   ability?: number | undefined;
-  variant?: number | undefined;
-  form?: number | undefined;
-  female?: boolean | undefined;
-  shiny?: boolean | undefined;
   favorite?: boolean | undefined;
+  female?: boolean | undefined;
+  form?: number | undefined;
+  nature?: number | undefined;
   nickname?: string | undefined;
+  shiny?: boolean | undefined;
   tera?: PokemonType | undefined;
+  variant?: number | undefined;
 }
 
 type OldStarterPreferences = Partial<Record<SpeciesId, OldStarterAttributes | undefined>>;
@@ -292,15 +292,15 @@ function migrateKeys(data: object): void {
 
 function mapStaterPreferences(attr: OldStarterAttributes): StarterPreferences {
   return {
-    nature: attr.nature,
     abilityIndex: attr.ability,
-    variant: attr.variant as Variant,
-    formIndex: attr.form,
-    female: attr.female,
-    shiny: attr.shiny,
     favorite: attr.favorite,
+    female: attr.female,
+    formIndex: attr.form,
+    nature: attr.nature,
     nickname: attr.nickname,
+    shiny: attr.shiny,
     tera: attr.tera,
+    variant: attr.variant as Variant,
   };
 }
 

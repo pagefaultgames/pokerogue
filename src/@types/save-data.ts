@@ -103,15 +103,15 @@ export interface StarterMoveData {
 
 /** The starter's current attributes (such as selected nature, nickname, etc). */
 export interface StarterPreferences {
-  nature?: number | undefined;
   abilityIndex?: number | undefined;
-  variant?: Variant | undefined;
-  formIndex?: number | undefined;
-  female?: boolean | undefined;
-  shiny?: boolean | undefined;
   favorite?: boolean | undefined;
+  female?: boolean | undefined;
+  formIndex?: number | undefined;
+  nature?: number | undefined;
   nickname?: string | undefined;
+  shiny?: boolean | undefined;
   tera?: PokemonType | undefined;
+  variant?: Variant | undefined;
 }
 
 export type AllStarterPreferences = Partial<Record<SpeciesId, StarterPreferences | undefined>>;
