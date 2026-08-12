@@ -535,7 +535,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonLuckText
         .setVisible(!!luck)
         .setText(luckDisabled ? i18next.t("starterSelectUiHandler:disabled") : luck.toString())
-        .setTint(luckDisabled ? 0x808080 : getVariantTint(Math.min(luck - 1, 2) as Variant));
+        .setTint(luckDisabled ? 0x808080 : getVariantTint(Phaser.Math.Clamp(luck - 1, 0, 2) as Variant));
       this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
       let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
