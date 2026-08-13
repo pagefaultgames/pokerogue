@@ -2,6 +2,7 @@ lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
+  dedupePeers: true
   excludeLinksFromLockfile: false
 
 overrides:
@@ -52,7 +53,7 @@ importers:
         version: 4.0.1
       i18next-korean-postposition-processor:
         specifier: ^1.0.0
-        version: 1.0.0(i18next@26.3.6(typescript@6.0.3))
+        version: 1.0.0(i18next@26.3.6)
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -122,22 +123,22 @@ importers:
         version: 0.28.20(typescript@6.0.3)
       typedoc-github-theme:
         specifier: ^0.4.0
-        version: 0.4.0(typedoc@0.28.20(typescript@6.0.3))
+        version: 0.4.0(typedoc@0.28.20)
       typedoc-plugin-coverage:
         specifier: ^4.0.3
-        version: 4.0.3(typedoc@0.28.20(typescript@6.0.3))
+        version: 4.0.3(typedoc@0.28.20)
       typedoc-plugin-mdn-links:
         specifier: ^5.1.1
-        version: 5.1.1(typedoc@0.28.20(typescript@6.0.3))
+        version: 5.1.1(typedoc@0.28.20)
       typedoc-plugin-missing-exports:
         specifier: ^4.1.4
-        version: 4.1.4(typedoc@0.28.20(typescript@6.0.3))
+        version: 4.1.4(typedoc@0.28.20)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
       unplugin-inline-enum:
         specifier: ^0.8.2
-        version: 0.8.2(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+        version: 0.8.2(rolldown@1.2.3)(vite@8.2.1)
       vite:
         specifier: ^8.2.1
         version: 8.2.1(@types/node@24.13.3)(yaml@2.9.0)
@@ -146,7 +147,7 @@ importers:
         version: 6.0.0(@types/node@24.13.3)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0(@types/node@24.13.3)(typescript@6.0.3))(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+        version: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0)(vite@8.2.1)
       vitest-canvas-mock:
         specifier: ^1.1.4
         version: 1.1.4(vitest@4.1.10)
@@ -1949,8 +1950,8 @@ snapshots:
 
   '@asamuzakjp/css-color@6.0.7':
     dependencies:
-      '@csstools/css-calc': 3.3.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
-      '@csstools/css-color-parser': 4.1.10(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-calc': 3.3.0(@csstools/css-parser-algorithms@4.0.0)(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-color-parser': 4.1.10(@csstools/css-parser-algorithms@4.0.0)(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-tokenizer': 4.0.0
       lru-cache: 11.5.2
@@ -2037,15 +2038,15 @@ snapshots:
 
   '@csstools/color-helpers@6.1.0': {}
 
-  '@csstools/css-calc@3.3.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+  '@csstools/css-calc@3.3.0(@csstools/css-parser-algorithms@4.0.0)(@csstools/css-tokenizer@4.0.0)':
     dependencies:
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-tokenizer': 4.0.0
 
-  '@csstools/css-color-parser@4.1.10(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+  '@csstools/css-color-parser@4.1.10(@csstools/css-parser-algorithms@4.0.0)(@csstools/css-tokenizer@4.0.0)':
     dependencies:
       '@csstools/color-helpers': 6.1.0
-      '@csstools/css-calc': 3.3.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-calc': 3.3.0(@csstools/css-parser-algorithms@4.0.0)(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-tokenizer': 4.0.0
 
@@ -2537,7 +2538,7 @@ snapshots:
       obug: 2.1.4
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0(@types/node@24.13.3)(typescript@6.0.3))(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+      vitest: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0)(vite@8.2.1)
 
   '@vitest/expect@4.1.10':
     dependencies:
@@ -2548,7 +2549,7 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.10(msw@2.15.0(@types/node@24.13.3)(typescript@6.0.3))(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))':
+  '@vitest/mocker@4.1.10(msw@2.15.0)(vite@8.2.1)':
     dependencies:
       '@vitest/spy': 4.1.10
       estree-walker: 3.0.3
@@ -2827,7 +2828,7 @@ snapshots:
 
   i18next-http-backend@4.0.1: {}
 
-  i18next-korean-postposition-processor@1.0.0(i18next@26.3.6(typescript@6.0.3)):
+  i18next-korean-postposition-processor@1.0.0(i18next@26.3.6):
     dependencies:
       i18next: 26.3.6(typescript@6.0.3)
 
@@ -3352,19 +3353,19 @@ snapshots:
     dependencies:
       tagged-tag: 1.0.0
 
-  typedoc-github-theme@0.4.0(typedoc@0.28.20(typescript@6.0.3)):
+  typedoc-github-theme@0.4.0(typedoc@0.28.20):
     dependencies:
       typedoc: 0.28.20(typescript@6.0.3)
 
-  typedoc-plugin-coverage@4.0.3(typedoc@0.28.20(typescript@6.0.3)):
+  typedoc-plugin-coverage@4.0.3(typedoc@0.28.20):
     dependencies:
       typedoc: 0.28.20(typescript@6.0.3)
 
-  typedoc-plugin-mdn-links@5.1.1(typedoc@0.28.20(typescript@6.0.3)):
+  typedoc-plugin-mdn-links@5.1.1(typedoc@0.28.20):
     dependencies:
       typedoc: 0.28.20(typescript@6.0.3)
 
-  typedoc-plugin-missing-exports@4.1.4(typedoc@0.28.20(typescript@6.0.3)):
+  typedoc-plugin-missing-exports@4.1.4(typedoc@0.28.20):
     dependencies:
       typedoc: 0.28.20(typescript@6.0.3)
 
@@ -3391,14 +3392,14 @@ snapshots:
   universal-user-agent@7.0.3:
     optional: true
 
-  unplugin-inline-enum@0.8.2(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0)):
+  unplugin-inline-enum@0.8.2(rolldown@1.2.3)(vite@8.2.1):
     dependencies:
       ast-kit: 3.0.0
       picomatch: 4.0.5
       rolldown-string: 0.3.1(rolldown@1.2.3)
       tinyglobby: 0.2.17
-      unplugin: 3.3.0(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
-      unplugin-replace: 0.9.0(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+      unplugin: 3.3.0(rolldown@1.2.3)(vite@8.2.1)
+      unplugin-replace: 0.9.0(rolldown@1.2.3)(vite@8.2.1)
     transitivePeerDependencies:
       - '@farmfe/core'
       - '@rspack/core'
@@ -3410,11 +3411,11 @@ snapshots:
       - vite
       - webpack
 
-  unplugin-replace@0.9.0(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0)):
+  unplugin-replace@0.9.0(rolldown@1.2.3)(vite@8.2.1):
     dependencies:
       js-tokens: 10.0.0
       rolldown-string: 0.3.1(rolldown@1.2.3)
-      unplugin: 3.3.0(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+      unplugin: 3.3.0(rolldown@1.2.3)(vite@8.2.1)
     transitivePeerDependencies:
       - '@farmfe/core'
       - '@rspack/core'
@@ -3426,7 +3427,7 @@ snapshots:
       - vite
       - webpack
 
-  unplugin@3.3.0(rolldown@1.2.3)(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0)):
+  unplugin@3.3.0(rolldown@1.2.3)(vite@8.2.1):
     dependencies:
       '@jridgewell/remapping': 2.3.5
       picomatch: 4.0.5
@@ -3476,12 +3477,12 @@ snapshots:
     dependencies:
       cssfontparser: 1.2.1
       moo-color: 1.0.3
-      vitest: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0(@types/node@24.13.3)(typescript@6.0.3))(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+      vitest: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0)(vite@8.2.1)
 
-  vitest@4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0(@types/node@24.13.3)(typescript@6.0.3))(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0)):
+  vitest@4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(msw@2.15.0)(vite@8.2.1):
     dependencies:
       '@vitest/expect': 4.1.10
-      '@vitest/mocker': 4.1.10(msw@2.15.0(@types/node@24.13.3)(typescript@6.0.3))(vite@8.2.1(@types/node@24.13.3)(yaml@2.9.0))
+      '@vitest/mocker': 4.1.10(msw@2.15.0)(vite@8.2.1)
       '@vitest/pretty-format': 4.1.10
       '@vitest/runner': 4.1.10
       '@vitest/snapshot': 4.1.10
