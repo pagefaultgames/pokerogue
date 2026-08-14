@@ -85,7 +85,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
     });
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().mode);
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === ui.mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
