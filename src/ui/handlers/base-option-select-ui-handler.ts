@@ -98,7 +98,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
 
     // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
     // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
-    const optionsForWidth = globalScene.ui.getMode() === UiMode.AUTO_COMPLETE ? optionsWithScroll : options;
+    const optionsForWidth = globalScene.ui.mode === UiMode.AUTO_COMPLETE ? optionsWithScroll : options;
     this.optionSelectText = addBBCodeTextObject(
       0,
       0,
@@ -225,7 +225,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
       } else {
         ui.playError();
       }
-    } else if (button === Button.SUBMIT && ui.getMode() === UiMode.AUTO_COMPLETE) {
+    } else if (button === Button.SUBMIT && ui.mode === UiMode.AUTO_COMPLETE) {
       // this is here to differentiate between a Button.SUBMIT vs Button.ACTION within the autocomplete handler
       // this is here because Button.ACTION is picked up as z on the keyboard, meaning if you're typing and hit z, it'll select the option you've chosen
       success = true;

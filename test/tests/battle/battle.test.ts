@@ -88,7 +88,7 @@ describe("Phase - Battle Phase", () => {
       ...([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE].slice(0, qty) as [SpeciesId]),
     );
 
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
+    expect(game.scene.ui?.mode).toBe(UiMode.COMMAND);
     expect(game.scene.phaseManager.getCurrentPhase()).toBeInstanceOf(CommandPhase);
   });
 

@@ -31,7 +31,7 @@ export class PhaseInterceptor {
    * A log containing all phases having been executed in FIFO order. \
    * Entries are appended each time {@linkcode run} is called, and can be cleared manually with {@linkcode clearLogs}.
    */
-  public readonly log: PhaseString[] = [];
+  public readonly phaseLog: PhaseString[] = [];
   /**
    * The interceptor's current state.
    * @see {@linkcode StateType}
@@ -89,7 +89,7 @@ export class PhaseInterceptor {
         // end the current phase manually, so we just wait for the phase to end from the caller.
         if (this.state === "interrupted") {
           if (!didLog) {
-            this.doLog("PhaseInterceptor.to: Waiting for phase to end after being interrupted!");
+            this.log("PhaseInterceptor.to: Waiting for phase to end after being interrupted!");
             didLog = true;
           }
           return false;
@@ -109,13 +109,13 @@ export class PhaseInterceptor {
 
     // We hit the target; run as applicable and wrap up.
     if (!runTarget) {
-      this.doLog(`PhaseInterceptor.to: Stopping before running ${this.target}`);
+      this.log(`PhaseInterceptor.to: Stopping before running ${this.target}`);
       return;
     }
 
     await this.run(currentPhase);
-    this.doLog(
-      `PhaseInterceptor.to: Stopping ${this.state === "interrupted" ? `after reaching ${getEnumStr(UiMode, this.scene.ui.getMode())} during` : "on completion of"} ${this.target}`,
+    this.log(
+      `PhaseInterceptor.to: Stopping ${this.state === "interrupted" ? `after reaching ${getEnumStr(UiMode, this.scene.ui.mode)} during` : "on completion of"} ${this.target}`,
     );
   }
 
@@ -169,7 +169,7 @@ export class PhaseInterceptor {
     if (this.state !== "idling") {
       throw new Error(`PhaseInterceptor.shiftPhase attempted to skip phase ${phaseName} mid-execution!`);
     }
-    this.doLog(`Skipping current phase: ${phaseName}`);
+    this.log(`Skipping current phase: ${phaseName}`);
     this.scene.phaseManager.shiftPhase();
   }
 
@@ -180,21 +180,21 @@ export class PhaseInterceptor {
    */
   private logPhase(phaseName: PhaseString): void {
     console.log(`%cStart Phase: ${phaseName}`, `color:${PHASE_START_COLOR}`);
-    this.log.push(phaseName);
+    this.phaseLog.push(phaseName);
   }
 
   /**
    * Clear all prior phase logs.
    */
   public clearLogs(): void {
-    this.log.splice(0, this.log.length);
+    this.phaseLog.splice(0, this.phaseLog.length);
   }
 
   /**
    * Wrapper function to add coral coloration to phase logs.
    * @param args - Arguments to original logging function
    */
-  private doLog(...args: unknown[]): void {
+  private log(...args: unknown[]): void {
     console.log(chalk.hex(PHASE_INTERCEPTOR_COLOR)(...args));
   }
 }

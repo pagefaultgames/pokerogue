@@ -90,7 +90,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       globalScene.ui.setMode(this.settingsTabs[_newIndex].mode);
     });
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
@@ -385,7 +385,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   public override show(args: any[]): boolean {
     super.show(args);
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }

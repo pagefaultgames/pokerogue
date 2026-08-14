@@ -247,7 +247,7 @@ export class GameData {
     globalScene.time.delayedCall(fixedInt(1000), () => {
       // on the pokedex page, which changes the UiMode after calling this so the
       // user never sees the alert modal.
-      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+      if (globalScene.ui.mode === UiMode.ALERT_MODAL) {
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       } else {
         globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
@@ -439,7 +439,7 @@ export class GameData {
         await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
 
         globalScene.time.delayedCall(fixedInt(1000), () => {
-          if (globalScene.ui.getMode() !== UiMode.ALERT_MODAL) {
+          if (globalScene.ui.mode !== UiMode.ALERT_MODAL) {
             globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
           }
         });

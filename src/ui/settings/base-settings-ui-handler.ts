@@ -85,7 +85,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
     });
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
@@ -246,7 +246,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
    */
   public override show(args: any[]): boolean {
     super.show(args);
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }

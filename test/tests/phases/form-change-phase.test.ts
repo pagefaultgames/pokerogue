@@ -52,7 +52,7 @@ describe("Form Change Phase", () => {
     await game.toNextTurn();
 
     // After the form change: Should be Crowned form
-    expect(game.phaseInterceptor.log.includes("FormChangePhase")).toBe(true);
+    expect(game.phaseInterceptor.phaseLog.includes("FormChangePhase")).toBe(true);
     expect(zacian.getFormKey()).toBe("crowned");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY, PokemonType.STEEL]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 150, 115, 80, 115, 148]);
