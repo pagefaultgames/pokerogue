@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { tmPoolTiers, tmSpecies } from "#balance/tms";
+import { tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allMoves } from "#data/data-lists";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
@@ -19,10 +19,7 @@ export class TmReward extends PokemonReward {
       "",
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
       (pokemon: PlayerPokemon) => {
-        if (
-          pokemon.compatibleTms.indexOf(moveId) === -1
-          || pokemon.getMoveset().filter(m => m.moveId === moveId).length > 0
-        ) {
+        if (!pokemon.isTmCompatible(moveId, true)) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -35,7 +32,7 @@ export class TmReward extends PokemonReward {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TmModifierType.name", {
-      moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: padInt(Object.keys(tmPoolTiers).indexOf(this.moveId.toString()) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
   }
@@ -50,8 +47,8 @@ export class TmReward extends PokemonReward {
   }
 
   /**
-   * Applies {@linkcode TmConsumable}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should learn the TM
+   * Apply this reward, queueing a `LearnMovePhase` for the target.
+   * @param pokemon - The {@linkcode PlayerPokemon} that should learn the TM
    * @returns always `true`
    */
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -79,12 +76,7 @@ export class TmRewardGenerator extends RewardGenerator {
     }
 
     const party = globalScene.getPlayerParty();
-    const partyMemberCompatibleTms = party.map(p => {
-      const previousLevelMoves = p.getLearnableLevelMoves();
-      return (p as PlayerPokemon).compatibleTms.filter(
-        tm => !p.moveset.find(m => m.moveId === tm) && !previousLevelMoves.find(lm => lm === tm),
-      );
-    });
+    const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true));
     const tierUniqueCompatibleTms = partyMemberCompatibleTms
       .flat()
       .filter(tm => tmPoolTiers[tm] === this.tier)
