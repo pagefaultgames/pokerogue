@@ -13,6 +13,7 @@ import { getFrameMs, randGauss, randInt } from "#utils/common";
 // TODO: Can this be made into an interface/POJO?
 // TODO: Rename to not conflict with built-in `animation` class
 // TODO: Clean up a lot of the animation code to be more maintainable and add better docs
+// TODO: Rework into using and returning promises
 export class Animation {
   // #region Public Methods
 
@@ -80,10 +81,10 @@ export class Animation {
    * @param finalCycle - Number representing how many times to recursively cycle the animation
    * @param pokemonTintSprite - The tinted sprite of the Pokemon
    * @param pokemonNewFormTintSprite - The tinted sprite of the Pokemon's new form
-   * @returns A tuple containing the tween chain and a function to cancel the animations on the next iteration.
+   * @returns A tuple containing the tween chain and a function to gracefully stop the animations after the next iteration.
    * @remarks
-   * Callers that want to perform extra behaviour on the cycle completion
-   * should set the `onComplete` and `onStop` callbacks on the returned chain.
+   * Callers that want to perform extra behaviour on cycle completion/interruption can set the `onComplete` and `onStop` callbacks on the returned chain.
+   * The former will be called only if the chain completes all cycles, while the latter will be called if the chain is stopped early.
    */
   // TODO: Make the parameters sensible
   public doCycle(
@@ -92,7 +93,8 @@ export class Animation {
     pokemonTintSprite: Phaser.GameObjects.Sprite,
     pokemonNewFormTintSprite: Phaser.GameObjects.Sprite,
     delay = 0,
-  ): [chain: Phaser.Tweens.TweenChain, cancelFunc: () => void] {
+  ): [chain: Phaser.Tweens.TweenChain, stopFunc: () => void] {
+    // TODO: Change return type to a promise if desired
     pokemonNewFormTintSprite.setScale(0.25).setVisible(true);
 
     const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
@@ -102,7 +104,8 @@ export class Animation {
       // TODO: Make a very large tween chain
       const config = {
         targets: [pokemonTintSprite, pokemonNewFormTintSprite],
-        scale: 0.25,
+        // I really wish phaser's types were better
+        scale: (target: Phaser.GameObjects.Sprite) => (target === pokemonTintSprite ? 0.25 : 1),
         ease: "Cubic.easeInOut",
         duration,
         yoyo: currentCycle < finalCycle,
@@ -122,15 +125,10 @@ export class Animation {
       chain,
       () => {
         // Stop gracefully after the next flash concludes
-        const oldCallback = chain.currentTween.callbacks.onComplete;
-        // i hate phaser's shit types
-        chain.currentTween.setCallback(
-          "onComplete",
-          (...[tween, ...args]: Parameters<Phaser.Types.Tweens.TweenOnCompleteCallback>) => {
-            oldCallback?.(tween, ...args);
-            tween.stop();
-          },
-        );
+        chain.currentTween.once("complete", () => {
+          chain.stop();
+          pokemonTintSprite.setVisible(false);
+        });
       },
     ];
   }
