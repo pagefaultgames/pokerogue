@@ -461,9 +461,7 @@ export async function trainerThrowPokeball(
   waitTime(256).then(() => {
     globalScene.trainer.setFrame("3");
     waitTime(768).then(() => {
-      globalScene.trainer.setTexture(
-        `trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`,
-      );
+      globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     });
   });
 

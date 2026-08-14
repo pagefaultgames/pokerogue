@@ -16,8 +16,8 @@ import {
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { BattlerIndex } from "#enums/battler-index";
 import { ChallengeType } from "#enums/challenge-type";
-import { PokeballType } from "#enums/pokeball";
 import { PartyUiMode } from "#enums/party-ui-mode";
+import { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon } from "#field/pokemon";
