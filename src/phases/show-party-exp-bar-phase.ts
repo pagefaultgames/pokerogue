@@ -18,7 +18,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   public override start(): void {
     super.start();
 
-    const pokemon = this.getPokemon();
+    const pokemon = this.getPlayerPokemon();
     const exp = new ValueHolder(this.expValue);
     globalScene.applyPlayerItems(TrainerItemEffect.EXP_BOOSTER, { numberHolder: exp });
     exp.value = Math.floor(exp.value);
