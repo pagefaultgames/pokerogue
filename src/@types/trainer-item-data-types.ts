@@ -1,5 +1,5 @@
 import type { RarityTier } from "#enums/reward-tier";
-import { TrainerItemId } from "#enums/trainer-item-id";
+import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import type { AllTrainerItems } from "#items/all-trainer-items";
 import type { MarkerTrainerItem, TrainerItem } from "#items/trainer-item";
 import type { TrainerItemAttr } from "#items/trainer-item-attr";
@@ -26,7 +26,7 @@ export function isTrainerItemSpecs(entry: unknown): entry is TrainerItemSpecs {
   return (
     typeof (entry as TrainerItemSpecs).id === "number"
     && typeof (entry as TrainerItemSpecs).stack === "number"
-    && (entry as TrainerItemSpecs).id in TrainerItemId
+    && (entry as TrainerItemSpecs).id in TrainerItemNames
   );
 }
 

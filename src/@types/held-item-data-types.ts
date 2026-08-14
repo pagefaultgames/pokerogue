@@ -1,4 +1,4 @@
-import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { type HeldItemCategoryId, type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
@@ -41,7 +41,7 @@ export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
   return (
     typeof (entry as HeldItemSpecs).id === "number"
     && typeof (entry as HeldItemSpecs).stack === "number"
-    && (entry as HeldItemSpecs).id in HeldItemId
+    && (entry as HeldItemSpecs).id in HeldItemNames
   );
 }
 
