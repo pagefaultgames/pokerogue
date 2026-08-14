@@ -152,6 +152,7 @@ import { applyHeldItems } from "#utils/items";
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -2429,8 +2430,7 @@ export class BattleScene extends SceneBase {
    * @param target {@linkcode Pokemon} recepient in this transfer
    * @param playSound `true` to play a sound when transferring the item
    * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
-   * @param instant ??? (Optional)
-   * @param ignoreUpdate ??? (Optional)
+   * @param ignoreUpdate If `true`, doesn't update the item bars as part of this transfer. Optional, defaults to `false`
    * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
    * @returns `true` if the transfer was successful
    */
@@ -2443,7 +2443,7 @@ export class BattleScene extends SceneBase {
     ignoreUpdate?: boolean,
     itemLost = true,
   ): boolean {
-    const cancelled = new BooleanHolder(false);
+    const cancelled = new ValueHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
@@ -2461,13 +2461,16 @@ export class BattleScene extends SceneBase {
       return false;
     }
     const countTaken = Math.min(transferQuantity, itemStack, maxStackCount - matchingItemStack);
-
-    const itemSpecs = source.heldItemManager.getItemSpecs(heldItemId);
-    if (!itemSpecs) {
+    if (countTaken <= 0) {
       return false;
     }
+
+    if (source.heldItemManager.getItemSpecs(heldItemId) == null) {
+      return false;
+    }
+
     source.heldItemManager.remove(heldItemId, countTaken);
-    target.heldItemManager.add(itemSpecs);
+    target.heldItemManager.add(heldItemId, countTaken);
 
     if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
       applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
