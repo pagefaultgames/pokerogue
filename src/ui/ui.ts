@@ -564,10 +564,10 @@ export class UI extends Phaser.GameObjects.Container {
       };
       if (
         (!chainMode
-          && (transitionModes.indexOf(this._mode) > -1 || transitionModes.indexOf(mode) > -1)
-          && noTransitionModes.indexOf(this._mode) === -1
-          && noTransitionModes.indexOf(mode) === -1)
-        || (chainMode && noTransitionModes.indexOf(mode) === -1)
+          && (transitionModes.includes(this._mode) || transitionModes.includes(mode))
+          && !noTransitionModes.includes(this._mode)
+          && !noTransitionModes.includes(mode))
+        || (chainMode && !noTransitionModes.includes(mode))
       ) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
