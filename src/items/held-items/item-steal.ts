@@ -69,6 +69,10 @@ abstract class ItemTransferHeldItemAttr<T extends HeldItemEffect> extends HeldIt
 export class TurnEndItemStealHeldItemAttr extends ItemTransferHeldItemAttr<typeof HeldItemEffect.TURN_END_ITEM_STEAL> {
   public override readonly effect = HeldItemEffect.TURN_END_ITEM_STEAL;
 
+  public override shouldApply({ pokemon }: ItemStealParams): boolean {
+    return !pokemon.isFainted();
+  }
+
   /**
    * Determines the targets to transfer items from when this applies.
    * @param pokemon the {@linkcode Pokemon} holding this item
