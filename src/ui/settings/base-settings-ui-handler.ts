@@ -52,7 +52,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
   protected category: SettingsCategory;
 
   constructor(category: SettingsCategory, uiItems: SettingsUiItem[]) {
-    super(null);
+    super();
 
     this.category = category;
 

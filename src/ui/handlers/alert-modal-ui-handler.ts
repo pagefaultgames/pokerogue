@@ -15,10 +15,6 @@ export class AlertModalUiHandler extends ModalUiHandler {
   private width = 250;
   private height = 32;
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
-
   public override getModalTitle(): string {
     return "";
   }

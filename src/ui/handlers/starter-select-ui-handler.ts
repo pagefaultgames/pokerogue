@@ -214,10 +214,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private allowTera: boolean;
   private oldCursor = -1;
 
-  constructor() {
-    super(UiMode.STARTER_SELECT);
-  }
-
   public override setup(): void {
     const ui = this.getUi();
 

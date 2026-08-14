@@ -14,7 +14,6 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TrainerVariant } from "#enums/trainer-variant";
-import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
 import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
@@ -69,10 +68,6 @@ export class RunInfoUiHandler extends UiHandler {
 
   private partyVisibility: boolean;
   private modifiersModule: any;
-
-  constructor() {
-    super(UiMode.RUN_INFO);
-  }
 
   override async setup() {
     this.runContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);

@@ -14,6 +14,9 @@ const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
 
 export abstract class BaseOptionSelectUiHandler extends UiHandler {
+  /** Used to set the name of {@linkcode optionSelectContainer} */
+  protected readonly mode: UiMode;
+
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
@@ -36,6 +39,12 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
   protected textContent: string;
 
+  constructor(mode: UiMode = UiMode.OPTION_SELECT) {
+    super();
+
+    this.mode = mode;
+  }
+
   protected abstract getWindowWidth(): number;
 
   protected getWindowHeight(): number {
@@ -46,7 +55,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -48);
-    this.optionSelectContainer.setName(`option-select-${this.mode ? UiMode[this.mode] : "UNKNOWN"}`);
+    this.optionSelectContainer.setName(`option-select-${UiMode[this.mode]}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 

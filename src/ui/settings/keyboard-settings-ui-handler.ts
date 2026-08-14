@@ -20,8 +20,8 @@ import i18next from "i18next";
 
 /** Class representing the settings UI handler for keyboards */
 export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
 
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;

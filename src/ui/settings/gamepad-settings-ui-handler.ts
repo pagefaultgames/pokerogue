@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
 import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
 import { PAD_XBOX360 } from "#inputs/pad-xbox360";
@@ -20,8 +19,8 @@ import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */
 export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
 
     this.titleSelected = "Gamepad";
     this.setting = SettingGamepad;

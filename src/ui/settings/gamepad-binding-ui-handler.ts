@@ -8,7 +8,7 @@ import i18next from "i18next";
 
 export class GamepadBindingUiHandler extends BaseBindingUiHandler {
   constructor() {
-    super(null);
+    super();
 
     globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }

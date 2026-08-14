@@ -8,8 +8,8 @@ import i18next from "i18next";
 
 export class KeyboardBindingUiHandler extends BaseBindingUiHandler {
   constructor() {
-    super(null);
-    // Listen to gamepad button down events to initiate binding.
+    super();
+
     globalScene.input.keyboard?.on("keydown", this.onKeyDown, this);
   }
 
