@@ -55,7 +55,7 @@ export abstract class Reward {
   // TODO: This is set inconsistently across classes and is only really used for category checks
   public id: RewardId;
   private readonly localeKey: string;
-  public readonly iconName: string;
+  private readonly _iconName: string;
   public group: string; // TODO: Make a union type of all groups
   public readonly soundName: string;
   public tier: RarityTier;
@@ -64,7 +64,7 @@ export abstract class Reward {
   // TODO: Move `id` into the constructor instead of assigning it in subclasses
   constructor(localeKey: string | null, iconName: string | null, group?: string, soundName = "se/restore") {
     this.localeKey = localeKey!;
-    this.iconName = iconName!;
+    this._iconName = iconName!;
     this.group = group!;
     this.soundName = soundName;
   }
@@ -75,6 +75,10 @@ export abstract class Reward {
 
   public get description(): string {
     return i18next.t(`${this.localeKey}.description`);
+  }
+
+  public get iconName(): string {
+    return this._iconName;
   }
 
   // TODO: Should this be abstract?
