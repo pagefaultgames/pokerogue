@@ -58,13 +58,13 @@ export class HeldItemReward extends PokemonReward {
 }
 
 export class BerryRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: BerryType): HeldItemReward {
+  override generateReward(pregenArgs?: BerryType): HeldItemReward | null {
     if (pregenArgs !== undefined) {
       const item = berryTypeToHeldItem[pregenArgs];
       return new HeldItemReward(item);
     }
     const item = getNewBerryHeldItem();
-    return new HeldItemReward(item);
+    return item == null ? null : new HeldItemReward(item);
   }
 }
 
@@ -87,6 +87,7 @@ export class BaseStatBoosterRewardGenerator extends RewardGenerator {
       const item = permanentStatToHeldItem[pregenArgs];
       return new HeldItemReward(item);
     }
-    return new HeldItemReward(getNewVitaminHeldItem());
+    const item = getNewVitaminHeldItem();
+    return item == null ? null : new HeldItemReward(item);
   }
 }
