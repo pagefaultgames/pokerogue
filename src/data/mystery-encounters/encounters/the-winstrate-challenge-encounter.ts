@@ -211,7 +211,6 @@ async function endTrainerBattleAndShowDialogue(): Promise<void> {
   for (const [i, pokemon] of playerField.entries()) {
     pokemon.lapseTag(BattlerTagType.COMMANDED);
     globalScene.phaseManager.unshiftNew("RecallPhase", i);
-
   }
 
   for (const pokemon of globalScene.getPlayerParty()) {
