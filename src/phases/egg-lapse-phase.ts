@@ -12,6 +12,8 @@ import { achvs } from "#system/achv";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import i18next from "i18next";
 
+const MIN_EGGS_TO_SKIP = 2;
+
 /**
  * Phase that handles updating eggs, and hatching any ready eggs
  * Also handles prompts for skipping animation, and calling the egg summary phase
@@ -20,14 +22,14 @@ export class EggLapsePhase extends Phase {
   public readonly phaseName = "EggLapsePhase";
 
   private eggHatchData: EggHatchData[] = [];
-  private readonly minEggsToSkip: number = 2;
 
-  start() {
+  public override start(): void {
     super.start();
 
-    const eggsToHatch: Egg[] = globalScene.gameData.eggs.filter((egg: Egg) => {
-      return activeOverrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
-    });
+    const { gameData, phaseManager, ui } = globalScene;
+    const { eggs } = gameData;
+
+    const eggsToHatch = eggs.filter(egg => activeOverrides.EGG_IMMEDIATE_HATCH_OVERRIDE || --egg.hatchWaves < 1);
     this.eggHatchData = [];
 
     if (eggsToHatch.length === 0) {
@@ -35,13 +37,12 @@ export class EggLapsePhase extends Phase {
       return;
     }
 
-    if (eggsToHatch.length >= this.minEggsToSkip) {
+    if (eggsToHatch.length >= MIN_EGGS_TO_SKIP) {
       switch (settings.general.eggSkipPreference) {
         case EggSkipPreference.ASK:
-          globalScene.ui.showText(
-            i18next.t("battle:eggHatching"),
-            0,
-            () => {
+          ui.showText(i18next.t("battle:eggHatching"), {
+            delay: 0,
+            callback: () => {
               const options: ConfirmModeConfig = {
                 yesHandler: () => {
                   this.hatchEggsSkipped(eggsToHatch);
@@ -53,15 +54,15 @@ export class EggLapsePhase extends Phase {
                 },
                 inputDelay: 1000,
               };
-              globalScene.ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatch.length }), 0);
-              globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, options);
+              ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatch.length }), { delay: 0 });
+              ui.setModeWithoutClear(UiMode.CONFIRM, options);
             },
-            100,
-            true,
-          );
+            callbackDelay: 100,
+            prompt: true,
+          });
           break;
         case EggSkipPreference.ALWAYS:
-          globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
+          phaseManager.queueMessage(i18next.t("battle:eggHatching"));
           this.hatchEggsSkipped(eggsToHatch);
           this.showSummary();
           break;
@@ -71,7 +72,7 @@ export class EggLapsePhase extends Phase {
     }
 
     // regular hatches, no summary
-    globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
+    phaseManager.queueMessage(i18next.t("battle:eggHatching"));
     this.hatchEggsRegular(eggsToHatch);
     this.end();
   }

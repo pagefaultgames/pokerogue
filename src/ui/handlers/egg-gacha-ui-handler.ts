@@ -11,6 +11,7 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { VoucherType } from "#enums/voucher-type";
 import { getVoucherTypeIcon } from "#system/voucher";
+import type { ShowTextOptions } from "#types/ui-types";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -285,8 +286,8 @@ export class EggGachaUiHandler extends MessageUiHandler {
     for (const voucher of getEnumValues(VoucherType)) {
       const container = globalScene.add.container(globalScene.scaledCanvas.width - 56 * voucher, 0);
 
-      const bg = addWindow(0, 0, 56, 22).setOrigin(1, 0);
-      container.add(bg);
+      const voucherBg = addWindow(0, 0, 56, 22).setOrigin(1, 0);
+      container.add(voucherBg);
 
       const countLabel = addTextObject(-48, 3, "0", TextStyle.WINDOW).setOrigin(0);
       container.add(countLabel);
@@ -335,7 +336,9 @@ export class EggGachaUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.getUi().showText(this.defaultText, 0);
+    const { ui } = globalScene;
+
+    ui.showText(this.defaultText, { delay: 0 });
 
     this.setGachaCursor(1);
 
@@ -343,9 +346,11 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     this.updateVoucherCounts();
 
-    this.getUi().bringToTop(this.eggGachaContainer);
+    ui.bringToTop(this.eggGachaContainer);
 
-    this.eggGachaContainer.setActive(true).setVisible(true);
+    this.eggGachaContainer //
+      .setActive(true)
+      .setVisible(true);
 
     handleTutorial(Tutorial.EGG_GACHA);
 
@@ -487,8 +492,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
         }
       }
 
-      const egg = new Egg(eggOptions);
-      eggs.push(egg);
+      eggs.push(new Egg(eggOptions));
     }
     // Shuffle the eggs in case the guaranteed one got added as last egg
     return randSeedShuffle(eggs);
@@ -663,39 +667,31 @@ export class EggGachaUiHandler extends MessageUiHandler {
     });
   }
 
-  showText(
+  public override showText(
     text: string,
-    delay?: number,
-    callback?: () => void,
-    callbackDelay?: number,
-    prompt?: boolean,
-    promptDelay?: number,
+    { delay, callback, callbackDelay, prompt, promptDelay }: ShowTextOptions = {},
   ): void {
-    if (!text) {
-      text = this.defaultText;
-    }
-
     this.resizeMessageBox(text);
 
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
   }
 
   private resizeMessageBox(text: string): void {
-    if (text.indexOf("\n") === -1) {
-      this.eggGachaMessageBox.setSize(320, 32);
-      this.eggGachaMessageBox.setY(0);
-      this.message.setY(8);
-      this.nameBoxContainer?.setY(-7);
-    } else {
+    if (text.includes("\n")) {
       this.eggGachaMessageBox.setSize(320, 46);
       this.eggGachaMessageBox.setY(-14);
       this.message.setY(-6);
       this.nameBoxContainer?.setY(-21);
+    } else {
+      this.eggGachaMessageBox.setSize(320, 32);
+      this.eggGachaMessageBox.setY(0);
+      this.message.setY(8);
+      this.nameBoxContainer?.setY(-7);
     }
   }
 
-  showError(text: string): void {
-    this.showText(text, undefined, () => this.showText(this.defaultText), fixedInt(1500));
+  private showError(text: string): void {
+    this.showText(text, { callback: () => this.showText(this.defaultText), callbackDelay: fixedInt(1500) });
   }
 
   setTransitioning(transitioning: boolean): void {
@@ -768,7 +764,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     }
 
     // TODO: Remove this dangling proimse if necessary when the UI's input event handling supports async functions
-    void this.pull(pulls);
+    this.pull(pulls);
     return true;
   }
 

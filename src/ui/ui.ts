@@ -6,6 +6,7 @@ import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { ShowDialogueOptions, ShowTextOptions, ShowTextPromiseOptions } from "#types/ui-types";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import { AdminUiHandler } from "#ui/admin-ui-handler";
@@ -289,51 +290,64 @@ export class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  public showTextPromise(text: string, callbackDelay = 0, prompt = true, promptDelay?: number | null): Promise<void> {
-    return new Promise<void>(resolve => {
-      this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
-    });
+  public async showTextPromise(
+    text: string,
+    { callbackDelay = 0, prompt = true, promptDelay }: ShowTextPromiseOptions = {},
+  ): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
+
+    this.showText(text, { callback: () => resolve(), callbackDelay, prompt, promptDelay });
+
+    return await promise;
   }
 
-  public showText(
-    text: string,
-    delay?: number | null,
-    callback?: (() => void) | null,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-  ): void {
-    const pokename: string[] = [];
-    const repname = ["#POKEMON1", "#POKEMON2"];
+  public showText(text: string, { delay, callback, callbackDelay, prompt, promptDelay }: ShowTextOptions = {}): void {
+    const pkmnName: string[] = [];
+    const repName = ["#POKEMON1", "#POKEMON2"];
+
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
-      pokename.push(globalScene.getPlayerField()[p].getNameToRender());
-      text = text.split(pokename[p]).join(repname[p]);
+      pkmnName.push(globalScene.getPlayerField()[p].getNameToRender());
+      text = text.split(pkmnName[p]).join(repName[p]);
     }
-    if (prompt && text.indexOf("$") > -1) {
+
+    if (prompt && text.includes("$")) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback?.();
+
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
-        messagePages[p] = messagePages[p].split(repname[0]).join(pokename[0]);
-        messagePages[p] = messagePages[p].split(repname[1]).join(pokename[1]);
-        showMessageAndCallback = () => this.showText(messagePages[p], null, originalFunc, null, true);
+        messagePages[p] = messagePages[p].split(repName[0]).join(pkmnName[0]);
+        messagePages[p] = messagePages[p].split(repName[1]).join(pkmnName[1]);
+        showMessageAndCallback = () => this.showText(messagePages[p], { callback: originalFunc, prompt: true });
       }
+
       showMessageAndCallback();
     } else {
       for (let p = 0; p < globalScene.getPlayerField().length; p++) {
-        text = text.split(repname[p]).join(pokename[p]);
+        text = text.split(repName[p]).join(pkmnName[p]);
       }
-      this.getCurrentMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+
+      this.getCurrentMessageHandler().showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
     }
+  }
+
+  public async showDialoguePromise(
+    keyOrText: string,
+    name: string,
+    { delay = 0, callbackDelay, promptDelay }: Omit<ShowDialogueOptions, "name"> = {},
+  ): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
+
+    this.showDialogue(keyOrText, name, () => resolve(), { delay, callbackDelay, promptDelay });
+
+    return await promise;
   }
 
   public showDialogue(
     keyOrText: string,
-    name: string | undefined,
-    delay: number | null = 0,
+    name: string,
     callback: () => void,
-    callbackDelay?: number,
-    promptDelay?: number,
+    { delay = 0, callbackDelay, promptDelay }: Omit<ShowDialogueOptions, "name"> = {},
   ): void {
     // Get localized dialogue (if available)
     let hasi18n = false;
@@ -358,23 +372,16 @@ export class UI extends Phaser.GameObjects.Container {
       hasi18n && globalScene.gameData.saveSeenDialogue(keyOrText);
       callback();
     };
-    if (text.indexOf("$") > -1) {
+    if (text.includes("$")) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
-        showMessageAndCallback = () => this.showDialogue(messagePages[p], name, null, originalFunc);
+        showMessageAndCallback = () => this.showDialogue(messagePages[p], name, originalFunc);
       }
       showMessageAndCallback();
     } else {
-      this.getCurrentMessageHandler().showDialogue(
-        text,
-        name,
-        delay,
-        showMessageAndCallback,
-        callbackDelay,
-        true,
-        promptDelay,
-      );
+      const handler = this.getCurrentMessageHandler();
+      handler.showDialogue(text, showMessageAndCallback, { name, delay, callbackDelay, promptDelay });
     }
   }
 
