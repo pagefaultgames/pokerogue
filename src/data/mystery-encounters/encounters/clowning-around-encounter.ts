@@ -307,9 +307,9 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         // Shuffles Berries (if they have any)
         let numBerries = 0;
-        for (const m of items.filter(m => m instanceof BerryModifier)) {
-          numBerries += m.stackCount;
-          globalScene.removeModifier(m);
+        for (const mod of items.filter(m => m instanceof BerryModifier)) {
+          numBerries += mod.stackCount;
+          globalScene.removeModifier(mod);
         }
 
         generateItemsOfTier(mostHeldItemsPokemon, numBerries, "Berries");
@@ -320,15 +320,15 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numUltra = 0;
         let numRogue = 0;
 
-        for (const m of items.filter(m => m.isTransferable && !(m instanceof BerryModifier))) {
-          const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
+        for (const mod of items.filter(m => m.isTransferable && !(m instanceof BerryModifier))) {
+          const type = mod.type.withTierFromPool(ModifierPoolType.PLAYER, party);
           const tier = type.tier ?? ModifierTier.ULTRA;
           if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
-            numRogue += m.stackCount;
-            globalScene.removeModifier(m);
+            numRogue += mod.stackCount;
+            globalScene.removeModifier(mod);
           } else if (type.id === "LUCKY_EGG" || type.id === "SOOTHE_BELL" || tier === ModifierTier.ULTRA) {
-            numUltra += m.stackCount;
-            globalScene.removeModifier(m);
+            numUltra += mod.stackCount;
+            globalScene.removeModifier(mod);
           }
         }
 
@@ -447,7 +447,7 @@ async function handleSwapAbility(): Promise<boolean> {
 }
 
 function displayYesNoOptions(resolve: { (value: boolean | PromiseLike<boolean>): void; (arg0: boolean): void }): void {
-  showEncounterText(`${namespace}:option.1.abilityPrompt`, null, 500, false);
+  showEncounterText(`${namespace}:option.1.abilityPrompt`, { callbackDelay: 500, prompt: false });
 
   const confirmMenuConfig: ConfirmModeConfig = {
     yesHandler: () => {

@@ -1879,7 +1879,7 @@ export class PreMoveMessageAttr extends MoveAttr {
 
     // TODO: Consider changing if/when MoveAttr `apply` return values become significant
     if (message) {
-      globalScene.phaseManager.queueMessage(message, 500);
+      globalScene.phaseManager.queueMessage(message, { callbackDelay: 500 });
       return true;
     }
     return false;
@@ -2202,7 +2202,7 @@ export class MessageAttr extends MoveEffectAttr {
 
     // TODO: Consider changing if/when MoveAttr `apply` return values become significant
     if (message) {
-      globalScene.phaseManager.queueMessage(message, 500);
+      globalScene.phaseManager.queueMessage(message, { callbackDelay: 500 });
       return true;
     }
     return false;
@@ -7177,8 +7177,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       }
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
-        0,
-        true,
+        { callbackDelay: 0, prompt: true },
       );
       const allyPokemon = user.getAlly();
       if (
@@ -7325,9 +7324,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         switchOutTarget.leaveField(false);
         globalScene.phaseManager.queueMessage(
           i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }),
-          null,
-          true,
-          500,
+          { prompt: true, promptDelay: 500 },
         );
 
         // in double battles redirect potential moves off fled pokemon

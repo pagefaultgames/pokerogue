@@ -49,7 +49,12 @@ import type { LevelMovesWithSource } from "#types/level-moves";
 import type { StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
-import type { OptionSelectIconConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
+import type {
+  OptionSelectIconConfig,
+  OptionSelectItem,
+  OptionSelectModeConfig,
+  PokedexShowTextOptions,
+} from "#types/ui-types";
 import { BaseStatsOverlay } from "#ui/base-stats-overlay";
 import { getLearnableMoveSourceIconFrame } from "#ui/learnable-move-utils";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -1096,14 +1101,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
   public override showText(
     text: string,
-    delay?: number,
-    callback?: () => void,
-    callbackDelay?: number,
-    prompt?: boolean,
-    promptDelay?: number,
-    moveToTop?: boolean,
-  ) {
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    { delay, callback, callbackDelay, prompt, promptDelay, moveToTop }: PokedexShowTextOptions = {},
+  ): void {
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
 
     const singleLine = text?.indexOf("\n") === -1;
 
@@ -1253,15 +1253,15 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     onHover: () => {
                       this.moveInfoOverlay.show(allMoves[moveId]);
                       if (level === 0) {
-                        this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"), 0);
+                        this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"), { delay: 0 });
                       } else if (level === -1) {
-                        this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"), 0);
+                        this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"), { delay: 0 });
                       } else if (level <= 5) {
-                        this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"), 0);
+                        this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"), { delay: 0 });
                       } else if (learnedViaPrevo) {
-                        this.showText(i18next.t("pokedexUiHandler:prevoRelearnMove", { level }), 0);
+                        this.showText(i18next.t("pokedexUiHandler:prevoRelearnMove", { level }), { delay: 0 });
                       } else {
-                        this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"), 0);
+                        this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"), { delay: 0 });
                       }
                     },
                   };
@@ -1399,7 +1399,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                           number: getTmNumber(moveId),
                           tier: i18next.t(`modifier:tier.${ModifierTier[tmPoolTiers[moveId]].toLowerCase()}`),
                         }),
-                        0,
+                        { delay: 0 },
                       );
                     },
                   };
@@ -2019,15 +2019,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                 if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
                   // Egg list full, show error message at the top of the screen and abort
-                  this.showText(
-                    i18next.t("egg:tooManyEggs"),
-                    undefined,
-                    () => this.showText("", 0, () => (this.tutorialActive = false)),
-                    2000,
-                    false,
-                    undefined,
-                    true,
-                  );
+                  this.showText(i18next.t("egg:tooManyEggs"), {
+                    callback: () => this.showText("", { delay: 0, callback: () => (this.tutorialActive = false) }),
+                    callbackDelay: 2000,
+                    moveToTop: true,
+                  });
                   return false;
                 }
                 if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {

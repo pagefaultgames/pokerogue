@@ -2318,12 +2318,7 @@ export class SlowStartTag extends AbilityBattlerTag {
     super.onRemove(pokemon);
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:slowStartOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-      null,
-      false,
-      null,
+      i18next.t("battlerTags:slowStartOnRemove", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
     );
   }
 }
@@ -2375,10 +2370,6 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         statName: i18next.t(getStatKey(highestStat)),
       }),
-      null,
-      false,
-      null,
-      false,
     );
   }
 
@@ -3314,17 +3305,13 @@ export class SubstituteTag extends SerializableBattlerTag {
     globalScene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
     if (this.sourceMove === MoveId.SHED_TAIL) {
       globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:shedTailOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-        1500,
+        i18next.t("battlerTags:shedTailOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+        { callbackDelay: 1500 },
       );
     } else {
       globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:substituteOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-        1500,
+        i18next.t("battlerTags:substituteOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+        { callbackDelay: 1500 },
       );
     }
 
@@ -3454,10 +3441,8 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
     globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:tormentOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-      1500,
+      i18next.t("battlerTags:tormentOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+      { callbackDelay: 1500 },
     );
   }
 
@@ -3514,10 +3499,8 @@ export class TauntTag extends MoveRestrictionBattlerTag {
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
     globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:tauntOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-      1500,
+      i18next.t("battlerTags:tauntOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+      { callbackDelay: 1500 },
     );
   }
 
