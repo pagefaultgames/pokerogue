@@ -67,7 +67,7 @@ export class EvolutionPhase extends Phase {
     return globalScene.ui.setModeForceTransition(UiMode.EVOLUTION_SCENE);
   }
 
-  async start() {
+  public override async start(): Promise<void> {
     super.start();
     await this.setMode();
 

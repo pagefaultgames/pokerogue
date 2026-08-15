@@ -125,7 +125,9 @@ export function doPokemonTransformationSequence(
             globalScene.time.delayedCall(700, () => {
               globalScene.animations.doArcDownward(transformationBaseBg, transformationContainer, xOffset, yOffset);
               globalScene.time.delayedCall(1000, () => {
-                pokemonEvoTintSprite.setScale(0.25).setVisible(true);
+                pokemonEvoTintSprite //
+                  .setScale(0.25)
+                  .setVisible(true);
                 globalScene.animations
                   .doCycle(1.5, 6, pokemonTintSprite, pokemonEvoTintSprite)[0]
                   .setCallback("onComplete", () => {

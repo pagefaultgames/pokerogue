@@ -191,7 +191,9 @@ export class Animation {
     delay = 0,
   ): [chain: Phaser.Tweens.TweenChain, stopFunc: () => void] {
     // TODO: Change return type to a promise if desired
-    pokemonNewFormTintSprite.setScale(0.25).setVisible(true);
+    pokemonNewFormTintSprite //
+      .setScale(0.25)
+      .setVisible(true);
 
     const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
     for (; currentCycle <= finalCycle; currentCycle += 0.5) {
