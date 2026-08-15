@@ -7,9 +7,11 @@ import i18next from "i18next";
 
 export class EndCardPhase extends Phase {
   public readonly phaseName = "EndCardPhase";
+
   public endCard: Phaser.GameObjects.Image;
   public text: Phaser.GameObjects.Text;
-  start(): void {
+
+  public override start(): void {
     super.start();
 
     globalScene.ui.getMessageHandler().bg.setVisible(false);
@@ -33,16 +35,13 @@ export class EndCardPhase extends Phase {
     globalScene.ui.clearText();
 
     globalScene.ui.fadeIn(1000).then(() => {
-      globalScene.ui.showText(
-        "",
-        null,
-        () => {
+      globalScene.ui.showText("", {
+        callback: () => {
           globalScene.ui.getMessageHandler().bg.setVisible(true);
           this.end();
         },
-        null,
-        true,
-      );
+        prompt: true,
+      });
     });
   }
 }

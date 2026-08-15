@@ -75,10 +75,8 @@ export class GameOverPhase extends BattlePhase {
       globalScene.ui.showDialogue(
         i18next.t("miscDialogue:endingEndless", { context: genderStr }),
         i18next.t("miscDialogue:endingName"),
-        0,
         () => this.handleGameOver(),
-        0,
-        fixedInt(3000),
+        { promptDelay: fixedInt(3000) },
       );
       return;
     }
@@ -124,9 +122,8 @@ export class GameOverPhase extends BattlePhase {
       inputDelay: 1000,
     };
 
-    globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
-      globalScene.ui.setMode(UiMode.CONFIRM, retryOptions);
-    });
+    const callback = () => globalScene.ui.setMode(UiMode.CONFIRM, retryOptions);
+    globalScene.ui.showText(i18next.t("battle:retryBattle"), { callback });
   }
 
   /**
@@ -178,128 +175,127 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
-  handleGameOver(): void {
-    const doGameOver = (newClear: boolean) => {
-      globalScene.disableMenu = true;
-      globalScene.time.delayedCall(1000, () => {
-        let firstClear = false;
-        if (this.isVictory) {
-          if (globalScene.gameMode.isClassic) {
-            firstClear = globalScene.validateAchv(achvs.CLASSIC_VICTORY);
-            globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
-            globalScene.gameData.gameStats.sessionsWon++;
-            for (const pokemon of globalScene.getPlayerParty()) {
-              this.awardFirstClassicCompletion(pokemon);
-              if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
-                this.awardFirstClassicCompletion(pokemon, true);
-              }
+  /** Submethod of {@linkcode handleGameOver} */
+  private doGameOver(newClear: boolean): void {
+    const { charSprite, gameData, gameMode, phaseManager, sessionSlotId, time, ui } = globalScene;
+    const { gameStats } = gameData;
+    const { challenges, isChallenge, isClassic, isDaily } = gameMode;
+
+    globalScene.disableMenu = true;
+    time.delayedCall(1000, () => {
+      let firstClear = false;
+      if (this.isVictory) {
+        if (isClassic) {
+          firstClear = globalScene.validateAchv(achvs.CLASSIC_VICTORY);
+          globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
+          gameStats.sessionsWon++;
+          for (const pokemon of globalScene.getPlayerParty()) {
+            this.awardFirstClassicCompletion(pokemon);
+            if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
+              this.awardFirstClassicCompletion(pokemon, true);
             }
-            this.awardRibbons();
-          } else if (globalScene.gameMode.isDaily && newClear) {
-            globalScene.gameData.gameStats.dailyRunSessionsWon++;
-            globalScene.validateAchv(achvs.DAILY_VICTORY);
           }
+          this.awardRibbons();
+        } else if (isDaily && newClear) {
+          gameStats.dailyRunSessionsWon++;
+          globalScene.validateAchv(achvs.DAILY_VICTORY);
+        }
+      }
+
+      const fadeDuration = this.isVictory ? 10000 : 5000;
+      audioManager.fadeOutBgm(fadeDuration);
+
+      const activeBattlers = globalScene.getField().filter(p => p?.isActive(true));
+      activeBattlers.forEach(p => p.hideInfo());
+      ui.fadeOut(fadeDuration).then(() => {
+        activeBattlers.forEach(a => a.setVisible(false));
+        globalScene.setFieldScale(1, true);
+        phaseManager.clearPhaseQueue();
+        ui.clearText();
+
+        if (this.isVictory && isChallenge) {
+          challenges.forEach(c => globalScene.validateAchvs(ChallengeAchv, c));
         }
 
-        const fadeDuration = this.isVictory ? 10000 : 5000;
-        audioManager.fadeOutBgm(fadeDuration);
-        const activeBattlers = globalScene.getField().filter(p => p?.isActive(true));
-        activeBattlers.map(p => p.hideInfo());
-        globalScene.ui.fadeOut(fadeDuration).then(() => {
-          activeBattlers.map(a => a.setVisible(false));
-          globalScene.setFieldScale(1, true);
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.ui.clearText();
+        const clear = (endCardPhase?: EndCardPhase) => {
+          if (this.isVictory && newClear) {
+            this.handleUnlocks();
 
-          if (this.isVictory && globalScene.gameMode.isChallenge) {
-            globalScene.gameMode.challenges.forEach(c => globalScene.validateAchvs(ChallengeAchv, c));
-          }
-
-          const clear = (endCardPhase?: EndCardPhase) => {
-            if (this.isVictory && newClear) {
-              this.handleUnlocks();
-
-              for (const species of this.firstRibbons) {
-                globalScene.phaseManager.unshiftNew("RibbonModifierRewardPhase", modifierTypes.VOUCHER_PLUS, species);
-              }
-              if (!firstClear) {
-                globalScene.phaseManager.unshiftNew("GameOverModifierRewardPhase", modifierTypes.VOUCHER_PREMIUM);
-              }
+            for (const species of this.firstRibbons) {
+              phaseManager.unshiftNew("RibbonModifierRewardPhase", modifierTypes.VOUCHER_PLUS, species);
             }
-            this.getRunHistoryEntry().then(runHistoryEntry => {
-              globalScene.gameData.saveRunHistory(runHistoryEntry, this.isVictory);
-              globalScene.phaseManager.pushNew("PostGameOverPhase", globalScene.sessionSlotId, endCardPhase);
-              this.end();
-            });
-          };
+            if (!firstClear) {
+              phaseManager.unshiftNew("GameOverModifierRewardPhase", modifierTypes.VOUCHER_PREMIUM);
+            }
+          }
+          this.getRunHistoryEntry().then(runHistoryEntry => {
+            gameData.saveRunHistory(runHistoryEntry, this.isVictory);
+            phaseManager.pushNew("PostGameOverPhase", sessionSlotId, endCardPhase);
+            this.end();
+          });
+        };
 
-          if (this.isVictory && globalScene.gameMode.isClassic) {
-            const dialogueKey = "miscDialogue:ending";
+        if (this.isVictory && isClassic) {
+          const dialogueKey = "miscDialogue:ending";
 
-            if (globalScene.ui.shouldSkipDialogue(dialogueKey)) {
-              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
-              globalScene.phaseManager.unshiftPhase(endCardPhase);
-              clear(endCardPhase);
-            } else {
-              globalScene.ui.fadeIn(500).then(() => {
+          if (ui.shouldSkipDialogue(dialogueKey)) {
+            const endCardPhase = phaseManager.create("EndCardPhase");
+            phaseManager.unshiftPhase(endCardPhase);
+            clear(endCardPhase);
+          } else {
+            ui.fadeIn(500)
+              .then(() => {
                 const genderIndex = settings.general.playerGender;
                 const genderStr = PlayerGender[genderIndex].toLowerCase();
-                // Dialogue has to be retrieved so that the rival's expressions can be loaded and shown via getCharVariantFromDialogue
+
+                const key = `rival_${settings.isPlayerFemale ? "m" : "f"}`;
+
                 const dialogue = i18next.t(dialogueKey, { context: genderStr });
-                globalScene.charSprite
-                  .showCharacter(`rival_${settings.isPlayerFemale ? "m" : "f"}`, getCharVariantFromDialogue(dialogue))
-                  .then(() => {
-                    globalScene.ui.showDialogue(
-                      dialogueKey,
-                      settings.isPlayerFemale
-                        ? trainerConfigs[TrainerType.RIVAL].name
-                        : trainerConfigs[TrainerType.RIVAL].nameFemale,
-                      null,
-                      () => {
-                        globalScene.ui.fadeOut(500).then(() => {
-                          globalScene.charSprite.hide().then(() => {
-                            const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
-                            globalScene.phaseManager.unshiftPhase(endCardPhase);
-                            clear(endCardPhase);
-                          });
-                        });
-                      },
-                    );
-                  });
+                const variant = getCharVariantFromDialogue(dialogue);
+
+                return charSprite.showCharacter(key, variant);
+              })
+              .then(() => {
+                const name = settings.isPlayerFemale
+                  ? trainerConfigs[TrainerType.RIVAL].name
+                  : trainerConfigs[TrainerType.RIVAL].nameFemale;
+                return ui.showDialoguePromise(dialogueKey, name);
+              })
+              .then(() => ui.fadeOut(500))
+              .then(() => charSprite.hide())
+              .then(() => {
+                const endCardPhase = phaseManager.create("EndCardPhase");
+                phaseManager.unshiftPhase(endCardPhase);
+                clear(endCardPhase);
               });
-            }
-          } else {
-            clear();
           }
-        });
+        } else {
+          clear();
+        }
       });
-    };
+    });
+  }
+
+  private handleGameOver(): void {
+    const { gameData, gameMode, phaseManager, sessionSlotId: slot } = globalScene;
 
     // If Online, execute apiFetch as intended
     // If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks
     if (!bypassLogin || isLocalServerConnected) {
       pokerogueApi.savedata.session
-        .newclear({
-          slot: globalScene.sessionSlotId,
-          isVictory: this.isVictory,
-          clientSessionId,
-        })
-        .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
+        .newclear({ slot, isVictory: this.isVictory, clientSessionId })
+        .then(success => this.doGameOver(!gameMode.isDaily || !!success))
         .catch(_err => {
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.unshiftNew("MessagePhase", i18next.t("menu:serverCommunicationFailed"), 2500);
+          phaseManager.clearPhaseQueue();
+          phaseManager.unshiftNew("MessagePhase", i18next.t("menu:serverCommunicationFailed"), { callbackDelay: 2500 });
           // force the game to reload after 2 seconds.
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+          setTimeout(() => window.location.reload(), 2000);
           this.end();
         });
     } else if (this.isVictory) {
-      globalScene.gameData.offlineNewClear().then(result => {
-        doGameOver(result);
-      });
+      gameData.offlineNewClear().then(result => this.doGameOver(result));
     } else {
-      doGameOver(false);
+      this.doGameOver(false);
     }
   }
 

@@ -12,6 +12,7 @@ import i18next from "i18next";
  */
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ExpPhase";
+
   private readonly expValue: number;
 
   constructor(partyMemberIndex: number, expValue: number) {
@@ -24,26 +25,23 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     super.start();
 
     const pokemon = this.getPlayerPokemon();
+
     const exp = new ValueHolder(this.expValue);
     globalScene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
+
+    const callback = () => {
+      const lastLevel = pokemon.level;
+      pokemon.addExp(exp.value);
+      const newLevel = pokemon.level;
+      if (newLevel > lastLevel) {
+        globalScene.phaseManager.unshiftNew("LevelUpPhase", this.partyMemberIndex, lastLevel, newLevel);
+      }
+      pokemon.showExpGain(lastLevel).then(() => this.end());
+    };
     globalScene.ui.showText(
-      i18next.t("battle:expGain", {
-        pokemonName: getPokemonNameWithAffix(pokemon),
-        exp: exp.value,
-      }),
-      null,
-      () => {
-        const lastLevel = pokemon.level;
-        pokemon.addExp(exp.value);
-        const newLevel = pokemon.level;
-        if (newLevel > lastLevel) {
-          globalScene.phaseManager.unshiftNew("LevelUpPhase", this.partyMemberIndex, lastLevel, newLevel);
-        }
-        pokemon.showExpGain(lastLevel).then(() => this.end());
-      },
-      null,
-      true,
+      i18next.t("battle:expGain", { pokemonName: getPokemonNameWithAffix(pokemon), exp: exp.value }),
+      { callback, prompt: true },
     );
   }
 }
