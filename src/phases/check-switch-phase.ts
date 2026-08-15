@@ -62,25 +62,20 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    globalScene.ui.showText(
-      i18next.t("battle:switchQuestion", {
-        pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon"),
-      }),
-      null,
-      () => {
-        const options: ConfirmModeConfig = {
-          yesHandler: () => {
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
-            this.end();
-          },
-          noHandler: () => {
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            this.end();
-          },
-        };
-        globalScene.ui.setMode(UiMode.CONFIRM, options);
+    const options: ConfirmModeConfig = {
+      yesHandler: () => {
+        globalScene.ui.setMode(UiMode.MESSAGE);
+        globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
+        this.end();
       },
-    );
+      noHandler: () => {
+        globalScene.ui.setMode(UiMode.MESSAGE);
+        this.end();
+      },
+    };
+    const callback = () => globalScene.ui.setMode(UiMode.CONFIRM, options);
+    const pokemonName = this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon");
+
+    globalScene.ui.showText(i18next.t("battle:switchQuestion", { pokemonName }), { callback });
   }
 }

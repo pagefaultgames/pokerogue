@@ -23,9 +23,8 @@ import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
-  /**
-   * Whether or not instant revive should be prevented
-   */
+
+  /** Whether or not instant revive should be prevented */
   private readonly preventInstantRevive: boolean;
 
   /**
@@ -112,11 +111,8 @@ export class FaintPhase extends PokemonPhase {
     }
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("battle:fainted", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-      null,
-      true,
+      i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+      { prompt: true },
     );
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
 
@@ -231,10 +227,11 @@ export class FaintPhase extends PokemonPhase {
 
   private handleFinalBossFaint(): void {
     const { phaseManager, ui } = globalScene;
+
     const enemy = this.getPokemon();
 
     if (enemy.formIndex > 0) {
-      ui.showDialogue(classicFinalBossDialogue.secondStageWin, enemy.species.name, null, () => this.doFaint());
+      ui.showDialogue(classicFinalBossDialogue.secondStageWin, enemy.species.name, () => this.doFaint());
       return;
     }
 

@@ -274,144 +274,140 @@ export class AttemptCapturePhase extends PokemonPhase {
     const addStatus = new BooleanHolder(true);
     applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
 
-    ui.showText(
-      i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
-        pokemonName: pokemon.name,
-      }),
-      null,
-      () => {
-        const end = () => {
-          phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
-          pokemonInfoContainer.hide();
-          this.removePb();
-          this.end();
-        };
-        const removePokemon = () => {
-          globalScene.addFaintedEnemyScore(pokemon);
-          pokemon.hp = 0;
-          pokemon.doSetStatus(StatusEffect.FAINT);
-          globalScene.clearEnemyHeldItemModifiers();
-          pokemon.leaveField(true, true, true);
-        };
-        const addToParty = (slotIndex?: number) => {
-          const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
-          const modifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
-          if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {
-            globalScene.validateAchv(achvs.SHINY_PARTY);
-          }
-          Promise.all(modifiers.map(m => globalScene.addModifier(m, true))).then(() => {
-            globalScene.updateModifiers(true);
-            removePokemon();
-            if (newPokemon) {
-              newPokemon.leaveField(true, true, false);
-              newPokemon.loadAssets().then(end);
-            } else {
-              end();
-            }
-          });
-        };
-        Promise.all([pokemon.hideInfo(), gameData.setPokemonCaught(pokemon)]).then(() => {
-          if (!addStatus.value) {
-            removePokemon();
-            end();
-            return;
-          }
-          if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
-            const addToPartyMenuConfig: OptionSelectModeConfig = {
-              options: [
-                {
-                  label: i18next.t("partyUiHandler:summary"),
-                  handler: () => {
-                    const newPokemon = globalScene.addPlayerPokemon(
-                      pokemon.species,
-                      pokemon.level,
-                      pokemon.abilityIndex,
-                      pokemon.formIndex,
-                      pokemon.gender,
-                      pokemon.shiny,
-                      pokemon.variant,
-                      pokemon.ivs,
-                      pokemon.nature,
-                      pokemon,
-                    );
-                    ui.setMode(
-                      UiMode.SUMMARY,
-                      newPokemon,
-                      0,
-                      SummaryUiMode.DEFAULT,
-                      () => {
-                        ui.setMode(UiMode.MESSAGE).then(() => promptRelease());
-                      },
-                      false,
-                    );
-                    return true;
-                  },
-                },
-                {
-                  label: i18next.t("menuUiHandler:pokedex"),
-                  handler: () => {
-                    const attributes = {
-                      shiny: pokemon.shiny,
-                      variant: pokemon.variant,
-                      form: pokemon.formIndex,
-                      female: pokemon.gender === Gender.FEMALE,
-                    };
-                    ui.setOverlayMode(UiMode.POKEDEX_PAGE, pokemon.species, attributes, null, null, () => {
+    const end = () => {
+      phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
+      pokemonInfoContainer.hide();
+      this.removePb();
+      this.end();
+    };
+    const removePokemon = () => {
+      globalScene.addFaintedEnemyScore(pokemon);
+      pokemon.hp = 0;
+      pokemon.doSetStatus(StatusEffect.FAINT);
+      globalScene.clearEnemyHeldItemModifiers();
+      pokemon.leaveField(true, true, true);
+    };
+    const addToParty = (slotIndex?: number) => {
+      const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
+      const modifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
+      if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {
+        globalScene.validateAchv(achvs.SHINY_PARTY);
+      }
+      Promise.all(modifiers.map(m => globalScene.addModifier(m, true))).then(() => {
+        globalScene.updateModifiers(true);
+        removePokemon();
+        if (newPokemon) {
+          newPokemon.leaveField(true, true, false);
+          newPokemon.loadAssets().then(end);
+        } else {
+          end();
+        }
+      });
+    };
+    const callback = () => {
+      Promise.all([pokemon.hideInfo(), gameData.setPokemonCaught(pokemon)]).then(() => {
+        if (!addStatus.value) {
+          removePokemon();
+          end();
+          return;
+        }
+        if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
+          const addToPartyMenuConfig: OptionSelectModeConfig = {
+            options: [
+              {
+                label: i18next.t("partyUiHandler:summary"),
+                handler: () => {
+                  const newPokemon = globalScene.addPlayerPokemon(
+                    pokemon.species,
+                    pokemon.level,
+                    pokemon.abilityIndex,
+                    pokemon.formIndex,
+                    pokemon.gender,
+                    pokemon.shiny,
+                    pokemon.variant,
+                    pokemon.ivs,
+                    pokemon.nature,
+                    pokemon,
+                  );
+                  ui.setMode(
+                    UiMode.SUMMARY,
+                    newPokemon,
+                    0,
+                    SummaryUiMode.DEFAULT,
+                    () => {
                       ui.setMode(UiMode.MESSAGE).then(() => promptRelease());
-                    });
-                    return true;
-                  },
+                    },
+                    false,
+                  );
+                  return true;
                 },
-                {
-                  label: i18next.t("menu:yes"),
-                  handler: () => {
-                    ui.setMode(
-                      UiMode.PARTY,
-                      PartyUiMode.RELEASE,
-                      this.fieldIndex,
-                      (slotIndex: number, _option: PartyOption) => {
-                        ui.setMode(UiMode.MESSAGE).then(() => {
-                          if (slotIndex < PLAYER_PARTY_MAX_SIZE) {
-                            addToParty(slotIndex);
-                          } else {
-                            promptRelease();
-                          }
-                        });
-                      },
-                    );
-                    return true;
-                  },
-                },
-                {
-                  label: i18next.t("menu:no"),
-                  handler: () => {
-                    ui.setMode(UiMode.MESSAGE).then(() => {
-                      removePokemon();
-                      end();
-                    });
-                    return true;
-                  },
-                },
-              ],
-              yOffset: 48,
-              onResize: (w: number, _h: number) => {
-                pokemonInfoContainer.makeRoomForOptionSelectUi(w);
               },
-            };
-            const promptRelease = (): void => {
-              ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
-                ui.setMode(UiMode.OPTION_SELECT, addToPartyMenuConfig);
-              });
-            };
-            promptRelease();
-          } else {
-            addToParty();
-          }
-        });
-      },
-      0,
-      true,
-    );
+              {
+                label: i18next.t("menuUiHandler:pokedex"),
+                handler: () => {
+                  const attributes = {
+                    shiny: pokemon.shiny,
+                    variant: pokemon.variant,
+                    form: pokemon.formIndex,
+                    female: pokemon.gender === Gender.FEMALE,
+                  };
+                  ui.setOverlayMode(UiMode.POKEDEX_PAGE, pokemon.species, attributes, null, null, () => {
+                    ui.setMode(UiMode.MESSAGE).then(() => promptRelease());
+                  });
+                  return true;
+                },
+              },
+              {
+                label: i18next.t("menu:yes"),
+                handler: () => {
+                  ui.setMode(
+                    UiMode.PARTY,
+                    PartyUiMode.RELEASE,
+                    this.fieldIndex,
+                    (slotIndex: number, _option: PartyOption) => {
+                      ui.setMode(UiMode.MESSAGE).then(() => {
+                        if (slotIndex < PLAYER_PARTY_MAX_SIZE) {
+                          addToParty(slotIndex);
+                        } else {
+                          promptRelease();
+                        }
+                      });
+                    },
+                  );
+                  return true;
+                },
+              },
+              {
+                label: i18next.t("menu:no"),
+                handler: () => {
+                  ui.setMode(UiMode.MESSAGE).then(() => {
+                    removePokemon();
+                    end();
+                  });
+                  return true;
+                },
+              },
+            ],
+            yOffset: 48,
+            onResize: (w: number, _h: number) => {
+              pokemonInfoContainer.makeRoomForOptionSelectUi(w);
+            },
+          };
+          const promptRelease = (): void => {
+            ui.showText(
+              i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), //
+              { callback: () => ui.setMode(UiMode.OPTION_SELECT, addToPartyMenuConfig) },
+            );
+          };
+          promptRelease();
+        } else {
+          addToParty();
+        }
+      });
+    };
+
+    const i18nKey = addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge";
+    ui.showText(i18next.t(i18nKey, { pokemonName: pokemon.name }), { callback, prompt: true });
   }
 
   removePb() {

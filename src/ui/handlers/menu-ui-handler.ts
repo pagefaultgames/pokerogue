@@ -9,7 +9,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { ConfirmModeConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
+import type { ConfirmModeConfig, OptionSelectItem, OptionSelectModeConfig, ShowTextOptions } from "#types/ui-types";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
@@ -199,11 +199,10 @@ export class MenuUiHandler extends OptionSelectUiHandler {
 
     const confirmSlot = (message: string, slotFilter: (i: number) => boolean, callback: (i: number) => void) => {
       ui.revertMode();
-      ui.showText(message, null, () => {
+
+      const showTextCallback = () => {
         const config: OptionSelectModeConfig = {
-          options: new Array(5)
-            .fill(null)
-            .map((_, i) => i)
+          options: [0, 1, 2, 3, 4]
             .filter(slotFilter)
             .map(i => {
               return {
@@ -211,17 +210,17 @@ export class MenuUiHandler extends OptionSelectUiHandler {
                 handler: () => {
                   callback(i);
                   ui.revertMode();
-                  ui.showText("", 0);
+                  ui.showText("", { delay: 0 });
                   return true;
                 },
-              };
+              } satisfies OptionSelectItem as OptionSelectItem;
             })
             .concat([
               {
                 label: i18next.t("menuUiHandler:cancel"),
                 handler: () => {
                   ui.revertMode();
-                  ui.showText("", 0);
+                  ui.showText("", { delay: 0 });
                   return true;
                 },
               },
@@ -229,8 +228,11 @@ export class MenuUiHandler extends OptionSelectUiHandler {
           xOffset: this.optionSelectBg.displayWidth,
           yOffset: this.menuMessageBox.displayHeight + 1,
         };
+
         ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, config);
-      });
+      };
+
+      ui.showText(message, { callback: showTextCallback });
     };
 
     if (isBeta || isDev || isApp) {
@@ -312,19 +314,20 @@ export class MenuUiHandler extends OptionSelectUiHandler {
         label: i18next.t("menuUiHandler:clearLocalData"),
         handler: () => {
           ui.revertMode();
-          ui.showText(i18next.t("menuUiHandler:clearLocalDataWarning"), null, () => {
-            const config: ConfirmModeConfig = {
-              yesHandler: () => {
-                globalScene.gameData.clearLocalData();
-                window.location.reload();
-              },
-              noHandler: () => {
-                globalScene.ui.revertMode();
-                globalScene.ui.showText("", 0);
-              },
-            };
-            ui.setOverlayMode(UiMode.CONFIRM, config);
-          });
+
+          const config: ConfirmModeConfig = {
+            yesHandler: () => {
+              globalScene.gameData.clearLocalData();
+              window.location.reload();
+            },
+            noHandler: () => {
+              globalScene.ui.revertMode();
+              globalScene.ui.showText("", { delay: 0 });
+            },
+          };
+          const callback = () => ui.setOverlayMode(UiMode.CONFIRM, config);
+
+          ui.showText(i18next.t("menuUiHandler:clearLocalDataWarning"), { callback });
           return true;
         },
         keepOpen: true,
@@ -372,18 +375,18 @@ export class MenuUiHandler extends OptionSelectUiHandler {
               }
               // Switch to the dialog test window
               this.toggleDialogTestMode(true);
-              ui.showText(
-                String(i18next.t(translatedString, interpolatorOptions)),
-                null,
-                () =>
-                  globalScene.ui.showText("", 0, () => {
-                    handler.tutorialActive = false;
-                    // Go back to the default message window
-                    this.toggleDialogTestMode(false);
+              ui.showText(String(i18next.t(translatedString, interpolatorOptions)), {
+                callback: () =>
+                  globalScene.ui.showText("", {
+                    delay: 0,
+                    callback: () => {
+                      handler.tutorialActive = false;
+                      // Go back to the default message window
+                      this.toggleDialogTestMode(false);
+                    },
                   }),
-                null,
-                true,
-              );
+                prompt: true,
+              });
             },
             () => {
               ui.revertMode();
@@ -565,7 +568,10 @@ export class MenuUiHandler extends OptionSelectUiHandler {
           ui.setOverlayMode(UiMode.EGG_LIST);
           success = true;
         } else {
-          ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), fixedInt(1500));
+          ui.showText(
+            i18next.t("menuUiHandler:noEggs"), //
+            { callback: () => ui.showText(""), callbackDelay: fixedInt(1500) },
+          );
         }
         break;
       case MenuOptions.EGG_GACHA:
@@ -669,21 +675,24 @@ export class MenuUiHandler extends OptionSelectUiHandler {
         };
 
         if (globalScene.currentBattle.turn > 1) {
-          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+          const options: ConfirmModeConfig = {
+            yesHandler: doSaveQuit,
+            noHandler: () => {
+              ui.revertMode();
+              this.showText("", { delay: 0 });
+            },
+            xOffset: this.optionSelectBg.displayWidth,
+          };
+          const callback = () => {
             if (!this.active) {
-              this.showText("", 0);
+              this.showText("", { delay: 0 });
               return;
             }
-            const options: ConfirmModeConfig = {
-              yesHandler: doSaveQuit,
-              noHandler: () => {
-                ui.revertMode();
-                this.showText("", 0);
-              },
-              xOffset: this.optionSelectBg.displayWidth,
-            };
+
             ui.setOverlayMode(UiMode.CONFIRM, options);
-          });
+          };
+
+          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), { callback });
         } else {
           doSaveQuit();
         }
@@ -703,21 +712,23 @@ export class MenuUiHandler extends OptionSelectUiHandler {
         };
 
         if (globalScene.currentBattle) {
-          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+          const options: ConfirmModeConfig = {
+            yesHandler: doLogout,
+            noHandler: () => {
+              ui.revertMode();
+              this.showText("", { delay: 0 });
+            },
+            xOffset: this.optionSelectBg.displayWidth,
+          };
+          const callback = () => {
             if (!this.active) {
-              this.showText("", 0);
+              this.showText("", { delay: 0 });
               return;
             }
-            const options: ConfirmModeConfig = {
-              yesHandler: doLogout,
-              noHandler: () => {
-                ui.revertMode();
-                this.showText("", 0);
-              },
-              xOffset: this.optionSelectBg.displayWidth,
-            };
+
             ui.setOverlayMode(UiMode.CONFIRM, options);
-          });
+          };
+          ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), { callback });
         } else {
           doLogout();
         }
@@ -745,17 +756,13 @@ export class MenuUiHandler extends OptionSelectUiHandler {
     return super.processInput(button);
   }
 
-  showText(
+  public override showText(
     text: string,
-    delay?: number,
-    callback?: () => void,
-    callbackDelay?: number,
-    prompt?: boolean,
-    promptDelay?: number,
+    { delay, callback, callbackDelay, prompt, promptDelay }: ShowTextOptions = {},
   ): void {
     this.menuMessageBoxContainer.setVisible(!!text);
 
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
   }
 
   public override clear(): void {

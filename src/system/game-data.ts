@@ -305,11 +305,11 @@ export class GameData {
 
     if (typeof saveDataOrErr === "number" || !saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
       if (saveDataOrErr === 404) {
-        globalScene.phaseManager.queueMessage(ErrorMessages.DATA_NOT_FOUND, null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.DATA_NOT_FOUND, { prompt: true });
         return true;
       }
       if (typeof saveDataOrErr === "string" && saveDataOrErr.includes("Too many connections")) {
-        globalScene.phaseManager.queueMessage(ErrorMessages.TOO_MANY_CONNECTIONS, null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.TOO_MANY_CONNECTIONS, { prompt: true });
         return false;
       }
       return false;
@@ -1434,7 +1434,10 @@ export class GameData {
           }
 
           const displayError = (error: string) =>
-            globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
+            globalScene.ui.showText(error, {
+              callback: () => globalScene.ui.showText("", { delay: 0 }),
+              callbackDelay: fixedInt(1500),
+            });
 
           if (!valid) {
             return displayError(i18next.t("menuUiHandler:importCorrupt", { dataName }));
@@ -1477,13 +1480,14 @@ export class GameData {
             },
             noHandler: () => {
               globalScene.ui.revertMode();
-              globalScene.ui.showText("", 0);
+              globalScene.ui.showText("", { delay: 0 });
             },
             xOffset: confirmWindowXOffset,
           };
-          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
-            globalScene.ui.setOverlayMode(UiMode.CONFIRM, importDataConfirmOptions);
-          });
+          globalScene.ui.showText(
+            i18next.t("menuUiHandler:confirmImport", { dataName }), //
+            { callback: () => globalScene.ui.setOverlayMode(UiMode.CONFIRM, importDataConfirmOptions) },
+          );
         };
       })((ev.target as any).files[0]);
 
@@ -1749,11 +1753,8 @@ export class GameData {
     // TODO: Remove and replace with a simpler check if the return value is found to be unnecessary
     return new Promise(resolve =>
       globalScene.ui.showText(
-        i18next.t("battle:addedAsAStarter", { pokemonName: species.name }),
-        null,
-        async () => resolve(await checkPrevolution(true)),
-        null,
-        true,
+        i18next.t("battle:addedAsAStarter", { pokemonName: species.name }), //
+        { callback: async () => resolve(await checkPrevolution(true)), prompt: true },
       ),
     );
   }
@@ -1854,7 +1855,7 @@ export class GameData {
         ? i18next.t("egg:rareEggMoveUnlock", { moveName })
         : i18next.t("egg:eggMoveUnlock", { moveName });
 
-    return new Promise(resolve => globalScene.ui.showText(message, null, () => resolve(true), null, true));
+    return new Promise(resolve => globalScene.ui.showText(message, { callback: () => resolve(true), prompt: true }));
   }
 
   /** Return whether the root species of a given `PokemonSpecies` has been unlocked in the dex */
