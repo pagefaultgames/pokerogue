@@ -1,7 +1,7 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
 import { GameDataType } from "#enums/game-data-type";
-import type { StarterPreferences } from "#types/save-data";
+import type { AllStarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**
@@ -80,12 +80,12 @@ export function isBareObject(obj: any): boolean {
 const DEFAULT_STARTER_PREFS = "{}";
 let savedStarterPrefs: string = DEFAULT_STARTER_PREFS;
 
-export function loadStarterPreferences(): StarterPreferences {
+export function loadStarterPreferences(): AllStarterPreferences {
   savedStarterPrefs = localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) ?? DEFAULT_STARTER_PREFS;
   return JSON.parse(savedStarterPrefs);
 }
 
-export function saveStarterPreferences(prefs: StarterPreferences): void {
+export function saveStarterPreferences(prefs: AllStarterPreferences): void {
   // Fastest way to check if an object has any properties (does no allocation)
   if (isBareObject(prefs)) {
     console.warn("Refusing to save empty starter preferences");

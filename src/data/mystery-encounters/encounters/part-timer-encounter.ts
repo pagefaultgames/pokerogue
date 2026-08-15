@@ -251,7 +251,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       })
       .withPreOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
+        const selectedPokemon = encounter.selectedOption!.primaryPokemon!;
         encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 
         // Reduce all PP to 2 (if they started at greater than 2)

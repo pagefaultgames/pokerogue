@@ -181,74 +181,78 @@ async function spawnNextTrainerOrEndEncounter() {
   }
 }
 
-function endTrainerBattleAndShowDialogue(): Promise<void> {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
-  return new Promise(async resolve => {
-    if (globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
-      // Battle is over
-      const trainer = globalScene.currentBattle.trainer;
-      if (trainer) {
-        globalScene.tweens.add({
-          targets: trainer,
-          x: "+=16",
-          y: "-=16",
-          alpha: 0,
-          ease: "Sine.easeInOut",
-          duration: 750,
-          onComplete: () => {
-            globalScene.field.remove(trainer, true);
-          },
-        });
-      }
+async function endTrainerBattleAndShowDialogue(): Promise<void> {
+  const { promise, resolve } = Promise.withResolvers<void>();
 
-      await spawnNextTrainerOrEndEncounter();
-      resolve(); // Wait for all dialogue/post battle stuff to complete before resolving
-    } else {
-      globalScene.arena.resetArenaEffects();
-      const playerField = globalScene.getPlayerField();
-      for (const pokemon of playerField) {
-        pokemon.lapseTag(BattlerTagType.COMMANDED);
-      }
-      playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
-
-      for (const pokemon of globalScene.getPlayerParty()) {
-        // Only trigger form change when Eiscue is in Noice form
-        // Hardcoded Eiscue for now in case it is fused with another pokemon
-        if (
-          pokemon.species.speciesId === SpeciesId.EISCUE
-          && pokemon.hasAbility(AbilityId.ICE_FACE)
-          && pokemon.formIndex === 1
-        ) {
-          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
-        }
-
-        // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
-        pokemon.resetBattleAndWaveData();
-        applyAbAttrs("PostBattleInitAbAttr", { pokemon });
-      }
-
-      globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
-      // Hide the trainer and init next battle
-      const trainer = globalScene.currentBattle.trainer;
-      // Unassign previous trainer from battle so it isn't destroyed before animation completes
-      globalScene.currentBattle.trainer = null;
-      await spawnNextTrainerOrEndEncounter();
-      if (trainer) {
-        globalScene.tweens.add({
-          targets: trainer,
-          x: "+=16",
-          y: "-=16",
-          alpha: 0,
-          ease: "Sine.easeInOut",
-          duration: 750,
-          onComplete: () => {
-            globalScene.field.remove(trainer, true);
-            resolve();
-          },
-        });
-      }
+  if (globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
+    // Battle is over
+    const trainer = globalScene.currentBattle.trainer;
+    if (trainer) {
+      globalScene.tweens.add({
+        targets: trainer,
+        x: "+=16",
+        y: "-=16",
+        alpha: 0,
+        ease: "Sine.easeInOut",
+        duration: 750,
+        onComplete: () => {
+          globalScene.field.remove(trainer, true);
+        },
+      });
     }
-  });
+
+    await spawnNextTrainerOrEndEncounter();
+    resolve();
+    return promise;
+  }
+
+  globalScene.arena.resetArenaEffects();
+  const playerField = globalScene.getPlayerField();
+  for (const pokemon of playerField) {
+    pokemon.lapseTag(BattlerTagType.COMMANDED);
+  }
+  playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
+
+  for (const pokemon of globalScene.getPlayerParty()) {
+    // Only trigger form change when Eiscue is in Noice form
+    // Hardcoded Eiscue for now in case it is fused with another pokemon
+    if (
+      pokemon.species.speciesId === SpeciesId.EISCUE
+      && pokemon.hasAbility(AbilityId.ICE_FACE)
+      && pokemon.formIndex === 1
+    ) {
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
+    }
+
+    // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
+    pokemon.resetBattleAndWaveData();
+    applyAbAttrs("PostBattleInitAbAttr", { pokemon });
+  }
+
+  globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
+  // Hide the trainer and init next battle
+  const trainer = globalScene.currentBattle.trainer;
+  // Unassign previous trainer from battle so it isn't destroyed before animation completes
+  globalScene.currentBattle.trainer = null;
+  await spawnNextTrainerOrEndEncounter();
+  if (trainer) {
+    globalScene.tweens.add({
+      targets: trainer,
+      x: "+=16",
+      y: "-=16",
+      alpha: 0,
+      ease: "Sine.easeInOut",
+      duration: 750,
+      onComplete: () => {
+        globalScene.field.remove(trainer, true);
+        resolve();
+      },
+    });
+  } else {
+    resolve();
+  }
+
+  return promise;
 }
 
 function getVictorTrainerConfig(): EnemyPartyConfig {

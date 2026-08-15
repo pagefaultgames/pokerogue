@@ -90,6 +90,7 @@ const systemMigrators: SystemSaveMigrator[] = [
   ...v1_12_0_1.systemMigrators,
   ...v1_12_0_3.systemMigrators,
   ...v1_12_0_10.systemMigrators,
+  ...v1_12_1_0.systemMigrators,
 ];
 
 /** All session save migrators */
