@@ -122,7 +122,7 @@ import type {
 } from "#types/move-types";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -240,6 +240,8 @@ export abstract class Move implements Localizable {
     return this._allyTargetDefault;
   }
   private nameAppend = "";
+
+  public readonly isUnimplemented: boolean = false;
 
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
@@ -631,6 +633,7 @@ export abstract class Move implements Localizable {
    */
   unimplemented(): this {
     this.nameAppend += " (N)";
+    (this as Mutable<this>).isUnimplemented = true;
     return this;
   }
 
@@ -8139,7 +8142,7 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
    */
   protected isMoveAllowed(move: MoveId): boolean {
     const valid = new BooleanHolder(
-      move !== MoveId.NONE && !this.invalidMoves.has(move) && !allMoves[move].name.endsWith(" (N)"),
+      move !== MoveId.NONE && !this.invalidMoves.has(move) && !allMoves[move].isUnimplemented,
     );
     applyChallenges(ChallengeType.POKEMON_MOVE, move, valid);
     return valid.value;

@@ -430,7 +430,7 @@ export class MovePhase extends PokemonPhase {
     const moveName = move.getName();
     let failedText: string | undefined;
     const usability = new BooleanHolder(false);
-    if (moveName.endsWith(" (N)")) {
+    if (move.getMove().isUnimplemented) {
       failedText = i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") });
     } else if (moveId === MoveId.NONE || this.targets.length === 0) {
       this.cancel();
