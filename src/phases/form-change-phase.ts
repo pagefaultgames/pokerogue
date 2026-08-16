@@ -173,14 +173,9 @@ export class FormChangePhase extends EvolutionPhase {
       onComplete: () => {
         audioManager.playSound("se/beam");
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
-        globalScene.time.delayedCall(1000, () => {
-          this.pokemonEvoTintSprite //
-            .setScale(0.25)
-            .setVisible(true);
-          globalScene.animations
-            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite)[0]
-            .setCallback("onComplete", () => this.afterCycle(preName, transformedPokemon));
-        });
+        globalScene.animations
+          .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoTintSprite, 1000)[0]
+          .setCallback("onComplete", () => this.afterCycle(preName, transformedPokemon));
       },
     });
   }

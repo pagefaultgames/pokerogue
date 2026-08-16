@@ -191,8 +191,9 @@ export class Animation {
     delay = 0,
   ): [chain: Phaser.Tweens.TweenChain, stopFunc: () => void] {
     // TODO: Change return type to a promise if desired
-    // TODO: See if we can set the new form tint sprite to 0.25x scale & make it visible?
-    // // Only callsite that doesn't do so immediately before calling is the form change phase...
+    pokemonNewFormTintSprite //
+      .setScale(0.25)
+      .setVisible(true);
 
     const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
     for (; currentCycle <= finalCycle; currentCycle += 0.5) {
