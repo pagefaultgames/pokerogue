@@ -182,7 +182,7 @@ export class Animation {
    * Callers that want to perform extra behaviour on cycle completion/interruption can set the `onComplete` and `onStop` callbacks on the returned chain.
    * The former will be called only if the chain completes all cycles, while the latter will be called if the chain is stopped early.
    */
-  // TODO: Make the parameters sensible
+  // TODO: Make the parameters sensible (+1 increments instead of +0.5, make things a bit more sensible)
   public doCycle(
     currentCycle: number,
     finalCycle: number,
@@ -191,23 +191,21 @@ export class Animation {
     delay = 0,
   ): [chain: Phaser.Tweens.TweenChain, stopFunc: () => void] {
     // TODO: Change return type to a promise if desired
-    pokemonNewFormTintSprite //
-      .setScale(0.25)
-      .setVisible(true);
+    // TODO: See if we can set the new form tint sprite to 0.25x scale & make it visible?
+    // // Only callsite that doesn't do so immediately before calling is the form change phase...
 
     const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
     for (; currentCycle <= finalCycle; currentCycle += 0.5) {
       const duration = 500 / currentCycle;
 
-      // TODO: Make a very large tween chain
-      const config = {
+      const config: Phaser.Types.Tweens.TweenBuilderConfig = {
         targets: [pokemonTintSprite, pokemonNewFormTintSprite],
         // I really wish phaser's types were better
         scale: (target: Phaser.GameObjects.Sprite) => (target === pokemonTintSprite ? 0.25 : 1),
         ease: "Cubic.easeInOut",
         duration,
         yoyo: currentCycle < finalCycle,
-      } satisfies Phaser.Types.Tweens.TweenBuilderConfig as Phaser.Types.Tweens.TweenBuilderConfig;
+      };
       if (currentCycle >= finalCycle) {
         config.onComplete = () => {
           pokemonTintSprite.setVisible(false);
@@ -216,17 +214,21 @@ export class Animation {
       tweenConfigs.push(config);
     }
 
-    // Run both chains in parallel
     const chain = globalScene.tweens.chain({ delay, targets: null, tweens: tweenConfigs });
 
     return [
       chain,
       () => {
+        // type assertion needed because phaser types are unsafe
+        const { currentTween } = chain as { currentTween: Phaser.Tweens.Tween | null };
+
         // Stop gracefully after the next flash concludes
-        chain.currentTween.once("complete", () => {
-          chain.stop();
-          pokemonTintSprite.setVisible(false);
-        });
+        if (currentTween) {
+          currentTween.once("complete", () => {
+            chain.stop();
+            pokemonTintSprite.setVisible(false);
+          });
+        }
       },
     ];
   }

@@ -26,7 +26,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   validate(): boolean {
-    // TODO: WHY WHY WHY
+    // TODO: This is really dumb
     return !!this.formChange;
   }
 
@@ -173,9 +173,14 @@ export class FormChangePhase extends EvolutionPhase {
       onComplete: () => {
         audioManager.playSound("se/beam");
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
-        globalScene.animations
-          .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite, 1000)[0]
-          .setCallback("onComplete", () => this.afterCycle(preName, transformedPokemon));
+        globalScene.time.delayedCall(1000, () => {
+          this.pokemonEvoTintSprite //
+            .setScale(0.25)
+            .setVisible(true);
+          globalScene.animations
+            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite)[0]
+            .setCallback("onComplete", () => this.afterCycle(preName, transformedPokemon));
+        });
       },
     });
   }

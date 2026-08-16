@@ -127,12 +127,12 @@ export class GameWrapper {
       killTweensOf: () => [] as any,
       // @ts-expect-error
       chain: data => {
-        // @ts-expect-error
-        data?.tweens?.forEach(tween => tween.onComplete?.());
-        // @ts-expect-error
-        data.onComplete?.();
+        // @ts-expect-error: missing params for `onComplete`
+        (data as Phaser.Types.Tweens.TweenChainBuilderConfig)?.tweens?.forEach(tween => tween.onComplete?.());
+        // @ts-expect-error: missing params for `onComplete`
+        (data as Phaser.Types.Tweens.TweenChainBuilderConfig).onComplete?.();
 
-        // TODO: This is a fucking hack
+        // TODO: This is a fucking hack and doesn't support phaser events
         function setCallback(
           this: Phaser.Tweens.Tween,
           ...[type, callback, params]: Parameters<Phaser.Tweens.BaseTween["setCallback"]>

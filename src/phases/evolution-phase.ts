@@ -252,6 +252,10 @@ export class EvolutionPhase extends Phase {
    */
   private prepareForCycle(evolvedPokemon: Pokemon): void {
     globalScene.time.delayedCall(1500, () => {
+      this.pokemonEvoTintSprite //
+        .setScale(0.25)
+        .setVisible(true);
+
       const [chain, cancelFunc] = globalScene.animations.doCycle(
         1,
         15,
