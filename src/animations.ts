@@ -178,6 +178,7 @@ export class Animation {
    * @param pokemonTintSprite - The tinted sprite of the Pokemon
    * @param pokemonNewFormTintSprite - The tinted sprite of the Pokemon's new form
    * @returns A tuple containing the tween chain and a function to gracefully stop the animations after the next iteration.
+   * The callback is safe to call multiple times (and will do nothing on all but the first calls).
    * @remarks
    * Callers that want to perform extra behaviour on cycle completion/interruption can set the `onComplete` and `onStop` callbacks on the returned chain.
    * The former will be called only if the chain completes all cycles, while the latter will be called if the chain is stopped early.
@@ -195,6 +196,8 @@ export class Animation {
       .setScale(0.25)
       .setVisible(true);
 
+    let cancelled = false;
+
     const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
     for (; currentCycle <= finalCycle; currentCycle += 0.5) {
       const duration = 500 / currentCycle;
@@ -209,7 +212,9 @@ export class Animation {
       };
       if (currentCycle >= finalCycle) {
         config.onComplete = () => {
-          pokemonTintSprite.setVisible(false);
+          if (!cancelled) {
+            pokemonTintSprite.setVisible(false);
+          }
         };
       }
       tweenConfigs.push(config);
@@ -217,17 +222,22 @@ export class Animation {
 
     const chain = globalScene.tweens.chain({ delay, targets: null, tweens: tweenConfigs });
 
+    // TODO: This may or may not cancel on the final cycle
+    // depending on which callback Phaser sends out first.
+    // The index check simply ensures that the chain is not stopped if it has already completed all cycles.
+
     return [
       chain,
       () => {
-        // type assertion needed because phaser types are unsafe
-        const { currentTween } = chain as { currentTween: Phaser.Tweens.Tween | null };
-
         // Stop gracefully after the next flash concludes
-        if (currentTween) {
+        const { currentTween, currentIndex } = chain;
+
+        // type assertion needed because phaser types are unsafe
+        if ((currentTween as Phaser.Tweens.Tween | null) && !cancelled && currentIndex < tweenConfigs.length - 1) {
+          cancelled = true;
           currentTween.once("complete", () => {
             chain.stop();
-            pokemonTintSprite.setVisible(false);
+            pokemonNewFormTintSprite.setVisible(false);
           });
         }
       },

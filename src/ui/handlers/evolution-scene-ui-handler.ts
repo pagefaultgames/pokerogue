@@ -63,6 +63,7 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
   processInput(button: Button): boolean {
     if (button === Button.CANCEL && this.cancelFunc != null) {
       this.cancelFunc();
+      this.cancelFunc = undefined;
       return true;
     }
 
