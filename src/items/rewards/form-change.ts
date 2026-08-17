@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
-import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
+import { SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { FormChangeItemId } from "#enums/form-change-item-id";
+import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
@@ -22,8 +24,9 @@ export class FormChangeItemReward extends PokemonReward {
     super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
       // Make sure the Pokemon has alternate forms
       if (
-        Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
-        && pokemonFormChanges[pokemon.species.speciesId]
+        speciesDataRegistry.hasFormChanges(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+        && speciesDataRegistry
+          .getFormChanges(pokemon.species.speciesId)
           .filter(
             fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
           )
@@ -85,9 +88,9 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
     const formChangeItemPool = [
       ...new Set(
         party
-          .filter(p => Object.hasOwn(pokemonFormChanges, p.species.speciesId))
+          .filter(p => speciesDataRegistry.hasFormChanges(p.species.speciesId))
           .flatMap(p => {
-            const formChanges = pokemonFormChanges[p.species.speciesId];
+            const formChanges = speciesDataRegistry.getFormChanges(p.species.speciesId);
             let formChangeItemTriggers = formChanges
               .filter(
                 fc =>
@@ -109,8 +112,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
               let foundULTRA_Z = false;
               let foundN_LUNA = false;
               let foundN_SOLAR = false;
-              formChangeItemTriggers.forEach((fc, _i) => {
-                console.log("Checking ", fc.item);
+              formChangeItemTriggers.forEach(fc => {
                 switch (fc.item) {
                   case FormChangeItemId.ULTRANECROZIUM_Z:
                     foundULTRA_Z = true;
@@ -128,8 +130,6 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
                 formChangeItemTriggers = formChangeItemTriggers.filter(
                   fc => fc.item !== FormChangeItemId.ULTRANECROZIUM_Z,
                 );
-              } else {
-                console.log("DID NOT FIND ");
               }
             }
             return formChangeItemTriggers;
@@ -138,7 +138,12 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
     ]
       .flat()
       .flatMap(fc => fc.item)
-      .filter(i => (i && i < 100) === this.isRareFormChangeItem);
+      .filter(i =>
+        isItemInCategory(
+          i,
+          this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
+        ),
+      );
     // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
     if (formChangeItemPool.length === 0) {

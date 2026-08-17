@@ -17,16 +17,15 @@ function getPoolWeights(pool: TrainerItemPool, manager: TrainerItemManager): num
   });
 }
 
-export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: TrainerItemManager): TrainerItemId {
+export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: TrainerItemManager): TrainerItemId | null {
   const weights = getPoolWeights(pool, manager);
 
   const pickedIndex = pickWeightedIndex(weights);
   if (pickedIndex == null) {
-    return 0;
+    return null;
   }
-  const entry = pool[pickedIndex].entry;
 
-  return entry as TrainerItemId;
+  return pool[pickedIndex].entry;
 }
 
 export function assignEnemyBuffTokenForWave(tier: RarityTier) {
@@ -51,11 +50,16 @@ export function assignEnemyBuffTokenForWave(tier: RarityTier) {
   let candidate = getNewTrainerItemFromPool(enemyBuffTokenPool[tier], globalScene.enemyTrainerItems);
   let r = 0;
   while (
-    ++r < retryCount
+    candidate !== null
+    && ++r < retryCount
     && allTrainerItems[candidate].getMaxStackCount()
       < globalScene.enemyTrainerItems.getStack(candidate) + (r < 10 ? tierStackCount : 1)
   ) {
     candidate = getNewTrainerItemFromPool(enemyBuffTokenPool[tier], globalScene.enemyTrainerItems);
+  }
+
+  if (candidate === null) {
+    return;
   }
 
   globalScene.enemyTrainerItems.add(candidate, tierStackCount);

@@ -47,6 +47,15 @@ export abstract class HeldItemBase {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
+  /**
+   * The name of the sound effect played when this item is obtained or transferred.
+   * @defaultValue `"se/restore"`
+   * @todo As far as I can tell this was the "default" sfx before, but we should check and decide if that should be the case
+   */
+  public get soundName(): string {
+    return "se/restore";
+  }
+
   constructor(type: HeldItemId, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;

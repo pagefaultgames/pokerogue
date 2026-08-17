@@ -358,4 +358,8 @@ export class MockText implements MockGameObject {
   setActive(_active: boolean): this {
     return this;
   }
+
+  setLetterSpacing(_spacing?: number | undefined): this {
+    return this;
+  }
 }
