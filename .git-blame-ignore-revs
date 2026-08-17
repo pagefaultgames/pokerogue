@@ -91,3 +91,6 @@ d0ddcaa7a3a9dd262577abf60e40dcc8834faf7b
 
 # [Dev] Update Biome from `2.3.2` to `2.3.8` (#6799)
 b6bd9566e24729e4677f1afb60da159425a9f60d
+
+# misc: update imports for consistency
+a535a409fdb5097a67d6e50bad95f799eae4ed0b
