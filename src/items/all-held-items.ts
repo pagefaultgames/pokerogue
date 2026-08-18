@@ -134,7 +134,7 @@ const vitaminItems = PERMANENT_STATS.reduce(
   (ret, stat) => {
     const id = permanentStatToHeldItem[stat];
     id satisfies BaseStatItemId;
-    ret[stat] = new HeldItemBuilder(id, 30) //
+    ret[id] = new HeldItemBuilder(id, 30) //
       .attr(BaseStatMultiplyHeldItemAttr, stat)
       .unstealable()
       .untransferable()
