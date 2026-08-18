@@ -3680,6 +3680,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       );
       fixedDamage.value = toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
+      // This return skips the rest of the calculation, so abilities that endure a hit
+      // taken at full HP (Sturdy) have to be given their chance to apply here too.
+      if (this.isFullHp() && !ignoreAbility) {
+        applyAbAttrs("PreDefendFullHpEndureAbAttr", {
+          pokemon: this,
+          opponent: source,
+          move,
+          simulated,
+          damage: fixedDamage,
+        });
+      }
+
       return {
         cancelled: false,
         result: HitResult.EFFECTIVE,
