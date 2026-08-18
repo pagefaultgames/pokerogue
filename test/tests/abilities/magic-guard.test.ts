@@ -137,7 +137,7 @@ describe("AbilityId - Magic Guard", () => {
 
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
-    expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
+    expect(magikarp).toHaveStatusEffect(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
     // Heal blissey to full & use tackle again
@@ -160,6 +160,6 @@ describe("AbilityId - Magic Guard", () => {
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();
     expect(player.hp).toBe(player.getMaxHp());
-    expect(player.status?.effect).toBe(StatusEffect.POISON);
+    expect(player).toHaveStatusEffect(StatusEffect.POISON);
   });
 });
