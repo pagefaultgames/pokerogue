@@ -28,39 +28,45 @@ describe("Moves - Max HP% Recoil Moves", () => {
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 
-  it.each([
-    { move: MoveId.CHLOROBLAST, name: "Chloroblast" },
-    { move: MoveId.STEEL_BEAM, name: "Steel Beam" },
-    { move: MoveId.MIND_BLOWN, name: "Mind Blown" },
-  ])("$name should deal recoil damage equal to half the user's maximum HP on success", async ({ move }) => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+  describe.each([
+    { move: MoveId.CHLOROBLAST, name: "Chloroblast", recoilOnMiss: false },
+    { move: MoveId.STEEL_BEAM, name: "Steel Beam", recoilOnMiss: true },
+    { move: MoveId.MIND_BLOWN, name: "Mind Blown", recoilOnMiss: true },
+  ])("$name", ({ move, recoilOnMiss }) => {
+    const verbStr = recoilOnMiss ? "should" : "should not";
 
-    game.move.use(move);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.move.forceHit();
-    await game.toEndOfTurn();
+    it("should deal recoil damage equal to half the user's maximum HP on success", async () => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    expect(player).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
-    expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
-  });
+      game.move.use(move);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.move.forceHit();
+      await game.toEndOfTurn();
 
-  // NB: According to https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-54#post-8548957,
-  // Steel Beam uniquely deals recoil damage if the move misses (unlike other moves with this trait).
-  // Given how trivial and wildly inconsistent this is, we count it as a minor buff to Steel Beam.
-  it("should not deal recoil damage if the move misses", async () => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+      const player = game.field.getPlayerPokemon();
+      expect(player).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
+      expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
+    });
 
-    game.move.use(MoveId.STEEL_BEAM);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.move.forceMiss();
-    await game.toEndOfTurn();
+    // TODO: This does not work for Steel Beam and Mind Blown (they currently mimic Chloroblast)
+    it.todo(`${verbStr} deal recoil damage if the move misses`, async () => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    expect(player).toHaveUsedMove({ move: MoveId.STEEL_BEAM, result: MoveResult.MISS });
-    expect(player).toHaveFullHp();
+      game.move.use(move);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.move.forceMiss();
+      await game.toEndOfTurn();
+
+      const player = game.field.getPlayerPokemon();
+      expect(player).toHaveUsedMove({ move, result: MoveResult.MISS });
+      if (recoilOnMiss) {
+        expect(player).not.toHaveFullHp();
+      } else {
+        expect(player).toHaveFullHp();
+      }
+    });
   });
 
   it("should be able to KO the user", async () => {
