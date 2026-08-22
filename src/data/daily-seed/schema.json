@@ -37,6 +37,14 @@
             "type": "integer",
             "minimum": -1,
             "maximum": 1
+          },
+          "ivs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/iv"
+            },
+            "minItems": 6,
+            "maxItems": 6
           }
         },
         "not": {
@@ -72,6 +80,14 @@
         },
         "passive": {
           "$ref": "#/$defs/passive"
+        },
+        "ivs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/iv"
+          },
+          "minItems": 6,
+          "maxItems": 6
         },
         "segments": {
           "type": "integer",
@@ -163,6 +179,11 @@
     "passive": {
       "type": "integer",
       "exclusiveMinimum": 0
+    },
+    "iv": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 31
     },
     "moveset": {
       "type": "array",
