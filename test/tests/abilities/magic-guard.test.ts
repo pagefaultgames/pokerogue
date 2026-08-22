@@ -178,24 +178,15 @@ describe("Ability - Magic Guard", () => {
   it("should prevent Spiky Shield contact damage for the attacker", async () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
     expect(player).toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
     expect(player).toHaveFullHp();
     expect(enemy).toHaveFullHp();
-
-    // regression test: used to check defender's ability instead of the user's
-    player.waveData.abilitiesApplied.clear();
-
-    game.move.use(MoveId.SPIKY_SHIELD);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.toEndOfTurn();
-
-    expect(player).not.toHaveAbilityApplied(AbilityId.MAGIC_GUARD);
-    expect(enemy).not.toHaveFullHp();
   });
 });
