@@ -1,4 +1,4 @@
-import { getRandomRivalPartyMemberFunc } from "#app/ai/rival-team-gen";
+import { getRandomRivalPartyMemberFunc } from "#ai/rival-team-gen";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";

@@ -7,13 +7,13 @@
  * @module
  */
 
-import { PHASE_START_COLOR } from "#app/constants/colors";
 import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
 import { IS_TEST } from "#constants/app-constants";
 import type { BattlerIndex, FieldBattlerIndex } from "#enums/battler-index";
+import { PHASE_START_COLOR } from "#constants/colors";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
@@ -317,8 +317,8 @@ export class PhaseManager {
 
   /**
    * Queue a sequence of phases to switch out a currently on-field Pokemon with another party member.
-   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to switch out
-   * @param params - Parameters used to customize the switching behaviour
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to switch out.
+   * @param params - Parameters used to customize the switching behaviour.
    * @remarks
    * This should not be used to queue start-of-battle entrance sequences.
    */
@@ -343,8 +343,8 @@ export class PhaseManager {
 
   /**
    * Queue a sequence of phases to add a **single** Pokemon to the field.
-   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to send in
-   * @param params - Parameters used to customize switching behavior
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to send in.
+   * @param params - Optional parameters used to customize switching behavior.
    * @throws {Error}
    * Throws an error if `battlerIndex` corresponds to an enemy Pokemon with `checkSwitch` set to `true`
    * @see {@linkcode queueBattlerEntrancePhases}

@@ -1,7 +1,7 @@
 import type { PreAttackModifyDamageAbAttrParams, UngroundedAbAttr } from "#abilities/ab-attrs";
 import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import { generateMoveset } from "#app/ai/ai-moveset-gen";
+import { generateMoveset } from "#ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
@@ -13,11 +13,11 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
-import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
+import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
@@ -37,8 +37,8 @@ import {
   TarShotTag,
   TrappedTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss, isDailyForcedWaveHiddenAbility } from "#data/daily-seed/daily-run";
-import { isDailyEventSeed, isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
+import { getDailyEventSeedBoss, isDailyForcedWaveHiddenAbility } from "#data/daily-run";
+import { isDailyEventSeed, isDailyFinalBoss } from "#data/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -136,8 +136,8 @@ import type { Variant } from "#sprites/variant";
 import { populateVariantColors, variantColorCache, variantData } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { PokemonData } from "#system/pokemon-data";
-import { RibbonData } from "#system/ribbons/ribbon-data";
-import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
+import { RibbonData } from "#system/ribbon-data";
+import { awardRibbonsToSpeciesLine } from "#system/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
 import type {
