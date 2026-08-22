@@ -908,7 +908,7 @@ export class BattleScene extends SceneBase {
       pokemon.generateFusionSpecies();
     }
 
-    if (boss && !dataSource) {
+    if (boss && !dataSource && !this.gameMode.dailyConfig?.boss?.ivs) {
       const secondaryIvs = getIvsFromId(randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {

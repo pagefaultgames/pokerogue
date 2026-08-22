@@ -136,6 +136,19 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
     config.passive = undefined;
   }
 
+  if (config.gender != null && !getEnumValues(Gender).includes(config.gender)) {
+    console.warn("Invalid gender used for custom daily run seed starter:", config.gender);
+    config.gender = undefined;
+  }
+
+  if (
+    config.ivs != null
+    && (!Array.isArray(config.ivs) || config.ivs.length !== 6 || !config.ivs.every(iv => isBetween(iv, 0, 31)))
+  ) {
+    console.warn("Invalid IVs used for custom daily run seed starter:", config.ivs);
+    config.ivs = undefined;
+  }
+
   return config;
 }
 
@@ -200,6 +213,14 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
     config.segments = undefined;
   }
 
+  if (
+    config.ivs != null
+    && (!Array.isArray(config.ivs) || config.ivs.length !== 6 || !config.ivs.every(iv => isBetween(iv, 0, 31)))
+  ) {
+    console.warn("Invalid IVs used for custom daily run seed boss:", config.ivs);
+    config.ivs = undefined;
+  }
+
   return config;
 }
 
@@ -220,7 +241,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
     config?.gender,
     isShiny,
     config?.variant,
-    undefined,
+    config?.ivs,
     config?.nature,
   );
 

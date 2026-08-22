@@ -6594,6 +6594,10 @@ export class EnemyPokemon extends Pokemon {
     if (bossConfig.moveset != null) {
       this.tryPopulateMoveset(bossConfig.moveset, true);
     }
+
+    if (bossConfig.ivs != null) {
+      this.ivs = bossConfig.ivs;
+    }
   }
 
   override generateAndPopulateMoveset(useRivalSignatures = false, formIndex?: number): void {
