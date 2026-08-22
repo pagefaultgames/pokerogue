@@ -33,6 +33,7 @@ export const BOSS_OPTIONS = [
   "nature",
   "ability",
   "passive",
+  "ivs",
   "segments",
   "catchable",
   "finish",
@@ -47,6 +48,7 @@ export const STARTER_OPTIONS = [
   "ability",
   "abilityIndex",
   "passive",
+  "ivs",
   "gender",
   "finish",
 ] as const;
