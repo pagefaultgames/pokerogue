@@ -19,7 +19,6 @@ describe("Abilities - Early Bird", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.REST, MoveId.BELLY_DRUM, MoveId.SPLASH])
       .ability(AbilityId.EARLY_BIRD)
       .battleStyle("single")
       .criticalHits(false)
@@ -59,7 +58,6 @@ describe("Abilities - Early Bird", () => {
     await game.toNextTurn();
 
     expect(player).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 3 });
-
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 

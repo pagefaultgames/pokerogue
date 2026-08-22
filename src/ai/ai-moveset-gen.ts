@@ -9,8 +9,8 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES, LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES, LEVEL_BASED_DENYLIST } from "#balance/forbidden-moves";
 import {
   BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
@@ -35,13 +35,10 @@ import {
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
-} from "#balance/moves/moveset-generation";
-import {
-  EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT,
-  getSpeciesDeniedOffensiveStat,
-} from "#balance/moves/off-stat-denylist";
-import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
-import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
+} from "#balance/moveset-generation";
+import { EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT, getSpeciesDeniedOffensiveStat } from "#balance/off-stat-denylist";
+import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/signature-moves";
+import { SUPERCEDED_MOVES } from "#balance/superceded-moves";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";

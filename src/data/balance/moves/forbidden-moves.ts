@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { LEVEL_BASED_DENYLIST_THRESHOLD } from "#balance/moves/moveset-generation";
+import type { LEVEL_BASED_DENYLIST_THRESHOLD } from "#balance/moveset-generation";
 import { MoveId } from "#enums/move-id";
 
 /** Forbidden during movegen if the current battle is not a double battle */
