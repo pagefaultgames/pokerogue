@@ -491,6 +491,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - zaccie
 - zacharied
 - Zé Ricardo
+
 and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contributors?all=1) who has contributed to the project.
 
 ## Bug/Issue Managers
