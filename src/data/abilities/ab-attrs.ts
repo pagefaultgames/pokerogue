@@ -1043,7 +1043,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
       return false;
     }
 
-    const cancelled = new BooleanHolder(false);
+    const cancelled = new ValueHolder(false);
     applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled, simulated });
     return !cancelled.value;
   }
