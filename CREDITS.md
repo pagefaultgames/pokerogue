@@ -17,9 +17,9 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 ### Artist
 - bwl626
-- Crow W (aka Crowo)
 - “Caramel” saltedcarriemel
 - “chorus” worm_wcry.o
+- Crow W (aka Crowo)
 - Dops
 - "Green Ninja757" (aka DaleB)
 - Fontbane
