@@ -30,6 +30,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 - redactedinlight
 - “Togepi” togepimax
 - unicorn_power
+- vex💤
 
 ## Head Composer
 - Firel
