@@ -1,4 +1,4 @@
-import type { determineEnemySpecies } from "#app/ai/ai-species-gen";
+import type { determineEnemySpecies } from "#ai/ai-species-gen";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allMoves, } from "#data/data-lists";

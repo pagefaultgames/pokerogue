@@ -65,8 +65,8 @@ describe("Moves - Aromatherapy", () => {
     expect(leftOpp.status?.effect).toBeTruthy();
     expect(rightOpp.status?.effect).toBeTruthy();
 
-    expect(leftOpp.status?.effect).toBe(StatusEffect.BURN);
-    expect(rightOpp.status?.effect).toBe(StatusEffect.BURN);
+    expect(leftOpp).toHaveStatusEffect(StatusEffect.BURN);
+    expect(rightOpp).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should not cure status effect of allies ON FIELD with Sap Sipper, should still cure allies in party", async () => {
@@ -87,7 +87,7 @@ describe("Moves - Aromatherapy", () => {
     expect(partyPokemon.resetStatus).toHaveBeenCalledOnce();
 
     expect(leftPlayer.status?.effect).toBeUndefined();
-    expect(rightPlayer.status?.effect).toBe(StatusEffect.BURN);
+    expect(rightPlayer).toHaveStatusEffect(StatusEffect.BURN);
     expect(partyPokemon.status?.effect).toBeUndefined();
   });
 });

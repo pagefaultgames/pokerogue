@@ -12,6 +12,7 @@ import { PAD_GENERIC } from "#inputs/pad-generic";
 import { PAD_PROCON } from "#inputs/pad-procon";
 import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
 import { PAD_XBOX360 } from "#inputs/pad-xbox360";
+import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type {
   CustomInterfaceConfig,
   CustomKeyboardConfig,
@@ -20,8 +21,7 @@ import type {
   InterfaceConfig,
   MappingSettingName,
   SelectedDevice,
-} from "#types/configs/inputs";
-import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
+} from "#types/inputs";
 import type { AnySettingKey } from "#types/settings";
 import type { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
 import type { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
