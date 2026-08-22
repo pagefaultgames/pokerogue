@@ -56,7 +56,6 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
       .bringToTop(this.evolutionContainer)
       .bringToTop(this.messageBg.setVisible(true))
       .bringToTop(this.messageContainer.setVisible(true));
-
     return true;
   }
 

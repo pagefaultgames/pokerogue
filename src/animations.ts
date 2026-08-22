@@ -177,11 +177,9 @@ export class Animation {
    * @param finalCycle - Number representing how many times to recursively cycle the animation
    * @param pokemonTintSprite - The tinted sprite of the Pokemon
    * @param pokemonNewFormTintSprite - The tinted sprite of the Pokemon's new form
-   * @returns A tuple containing the tween chain and a function to gracefully stop the animations after the next iteration.
-   * The callback is safe to call multiple times (and will do nothing on all but the first calls).
-   * @remarks
-   * Callers that want to perform extra behaviour on cycle completion/interruption can set the `onComplete` and `onStop` callbacks on the returned chain.
-   * The former will be called only if the chain completes all cycles, while the latter will be called if the chain is stopped early.
+   * @returns A tuple containing a promise resolving to whether the cycle completed normally (`true`) or was stopped early (`false`),
+   * and a function to stop the animation early.
+   * The stop function is idempotent and can be safely called even after the tween has been destroyed.
    */
   // TODO: Make the parameters sensible (+1 increments instead of +0.5, make things a bit more sensible)
   public doCycle(
@@ -190,56 +188,59 @@ export class Animation {
     pokemonTintSprite: Phaser.GameObjects.Sprite,
     pokemonNewFormTintSprite: Phaser.GameObjects.Sprite,
     delay = 0,
-  ): [chain: Phaser.Tweens.TweenChain, stopFunc: () => void] {
-    // TODO: Change return type to a promise if desired
+  ): [promise: Promise<boolean>, stopFunc: () => void] {
     pokemonNewFormTintSprite //
       .setScale(0.25)
       .setVisible(true);
-
-    let cancelled = false;
 
     const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
     for (; currentCycle <= finalCycle; currentCycle += 0.5) {
       const duration = 500 / currentCycle;
 
-      const config: Phaser.Types.Tweens.TweenBuilderConfig = {
+      tweenConfigs.push({
         targets: [pokemonTintSprite, pokemonNewFormTintSprite],
         // I really wish phaser's types were better
         scale: (target: Phaser.GameObjects.Sprite) => (target === pokemonTintSprite ? 0.25 : 1),
         ease: "Cubic.easeInOut",
         duration,
         yoyo: currentCycle < finalCycle,
-      };
-      if (currentCycle >= finalCycle) {
-        config.onComplete = () => {
-          if (!cancelled) {
-            pokemonTintSprite.setVisible(false);
-          }
-        };
-      }
-      tweenConfigs.push(config);
+      });
     }
 
-    const chain = globalScene.tweens.chain({ delay, targets: null, tweens: tweenConfigs });
+    // `settled` guards the visual side effects only, since the promise itself only ever honors its first `resolve` call
+    let settled = false;
+    const { promise, resolve } = Promise.withResolvers<boolean>();
 
-    // TODO: This may or may not cancel on the final cycle
-    // depending on which callback Phaser sends out first.
-    // The index check simply ensures that the chain is not stopped if it has already completed all cycles.
+    const chain = globalScene.tweens.chain({
+      delay,
+      targets: null,
+      tweens: tweenConfigs,
+      onComplete: () => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        pokemonTintSprite.setVisible(false);
+        resolve(true);
+      },
+    });
 
     return [
-      chain,
+      promise,
       () => {
-        // Stop gracefully after the next flash concludes
-        const { currentTween, currentIndex } = chain;
-
-        // type assertion needed because phaser types are unsafe
-        if ((currentTween as Phaser.Tweens.Tween | null) && !cancelled && currentIndex < tweenConfigs.length - 1) {
-          cancelled = true;
-          currentTween.once("complete", () => {
-            chain.stop();
-            pokemonNewFormTintSprite.setVisible(false);
-          });
+        if (settled) {
+          return;
         }
+        settled = true;
+        if (!chain.currentTween) {
+          return;
+        }
+
+        chain.currentTween.once("complete", () => {
+          chain.stop();
+          pokemonNewFormTintSprite.setVisible(false);
+          resolve(false);
+        });
       },
     ];
   }

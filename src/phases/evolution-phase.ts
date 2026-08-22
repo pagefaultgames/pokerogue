@@ -252,7 +252,7 @@ export class EvolutionPhase extends Phase {
    */
   private prepareForCycle(evolvedPokemon: Pokemon): void {
     globalScene.time.delayedCall(1500, () => {
-      const [chain, cancelFunc] = globalScene.animations.doCycle(
+      const [promise, cancelFunc] = globalScene.animations.doCycle(
         1,
         15,
         this.pokemonTintSprite,
@@ -261,13 +261,13 @@ export class EvolutionPhase extends Phase {
       if (this.canCancel) {
         this.evolutionHandler.cancelFunc = cancelFunc;
       }
-      chain
-        .setCallback("onComplete", () => {
+      promise.then(completed => {
+        if (completed) {
           this.handleSuccessEvolution(evolvedPokemon);
-        })
-        .setCallback("onStop", () => {
+        } else {
           this.handleFailedEvolution(evolvedPokemon);
-        });
+        }
+      });
     });
   }
 

@@ -1,4 +1,3 @@
-import type { Animation } from "#app/animations";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -104,9 +103,6 @@ export class FormChangePhase extends EvolutionPhase {
 
   /**
    * Commence the animations that occur once the form change evolution cycle is complete
-   *
-   * @privateRemarks
-   * This would prefer {@linkcode Animation.doCycle | doCycle} to be refactored and de-promisified so this can be moved into {@linkcode beginTweens}
    * @param preName - The name of the Pokemon before the evolution
    * @param transformedPokemon - The Pokemon being transformed into
    */
@@ -175,7 +171,7 @@ export class FormChangePhase extends EvolutionPhase {
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
         globalScene.animations
           .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoTintSprite, 1000)[0]
-          .setCallback("onComplete", () => this.afterCycle(preName, transformedPokemon));
+          .then(() => this.afterCycle(preName, transformedPokemon));
       },
     });
   }
