@@ -4397,7 +4397,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
       if (!sleeping || opp.switchOutStatus) {
         return false;
       }
-      const cancelled = new BooleanHolder(false);
+      const cancelled = new ValueHolder(false);
       applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: opp, cancelled });
       return !cancelled.value;
     });
