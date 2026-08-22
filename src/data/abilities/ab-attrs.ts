@@ -3992,7 +3992,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
   }
 
   override canApply({ pokemon }: PostWeatherLapseAbAttrParams): boolean {
-    const cancelled = new BooleanHolder(false);
+    const cancelled = new ValueHolder(false);
     applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, simulated: false, cancelled });
     return !cancelled.value;
   }
