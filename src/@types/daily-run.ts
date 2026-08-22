@@ -7,8 +7,12 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import type { IntClosedRange, TupleOf } from "type-fest";
 import type { StarterMoveset } from "./save-data";
 import type { TupleRange } from "./type-helpers";
+
+type DailySeedIv = IntClosedRange<0, 32>;
+type DailySeedIvs = TupleOf<6, DailySeedIv>;
 
 /**
  * Configuration for a custom daily run starter Pokémon.
@@ -24,6 +28,7 @@ interface DailySeedStarterBase {
   nature?: Nature | undefined;
   passive?: AbilityId | undefined;
   gender?: Gender | undefined;
+  ivs?: DailySeedIvs | undefined;
 }
 
 export type DailySeedStarter = DailySeedStarterBase &
@@ -56,6 +61,7 @@ export interface DailySeedBoss {
   nature?: Nature | undefined;
   ability?: AbilityId | undefined;
   passive?: AbilityId | undefined;
+  ivs?: DailySeedIvs | undefined;
   segments?: number | undefined;
   catchable?: boolean | undefined;
 }
