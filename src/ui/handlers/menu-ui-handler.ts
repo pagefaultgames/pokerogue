@@ -1,5 +1,6 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { loggedInUser, updateUserInfo } from "#app/account";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { bypassLogin, isApp, isBeta, isDev } from "#constants/app-constants";
@@ -8,7 +9,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -201,7 +202,7 @@ export class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.add(this.menuMessageBoxContainer);
 
-    const manageDataOptions: any[] = []; // TODO: proper type
+    const manageDataOptions: OptionSelectItem[] = [];
 
     const confirmSlot = (message: string, slotFilter: (i: number) => boolean, callback: (i: number) => void) => {
       ui.revertMode();
@@ -304,16 +305,39 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       });
     }
-    manageDataOptions.push(
-      {
-        label: i18next.t("menuUiHandler:exportData"),
-        handler: () => {
-          globalScene.gameData.tryExportData(GameDataType.SYSTEM);
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportData"),
+      handler: () => {
+        globalScene.gameData.tryExportData(GameDataType.SYSTEM);
+        return true;
+      },
+      keepOpen: true,
+    });
+    if (!bypassLogin) {
+      manageDataOptions.push({
+        label: i18next.t("menuUiHandler:clearLocalData"),
+        handler() {
+          ui.revertMode();
+          ui.showText(i18next.t("menuUiHandler:clearLocalDataWarning"), null, () => {
+            ui.setOverlayMode(
+              UiMode.CONFIRM,
+              () => {
+                globalScene.gameData.clearLocalData();
+                window.location.reload();
+              },
+              () => {
+                globalScene.ui.revertMode();
+                globalScene.ui.showText("", 0);
+              },
+              false,
+              -98,
+            );
+          });
           return true;
         },
         keepOpen: true,
-      },
-      {
+      });
+      manageDataOptions.push({
         // Note: i18n key is under `menu`, not `menuUiHandler` to avoid duplication
         label: i18next.t("menu:changePassword"),
         handler: () => {
@@ -323,8 +347,8 @@ export class MenuUiHandler extends MessageUiHandler {
           return true;
         },
         keepOpen: true,
-      },
-    );
+      });
+    }
     if (isBeta || isDev) {
       manageDataOptions.push({
         label: "Test Dialogue",
@@ -517,7 +541,7 @@ export class MenuUiHandler extends MessageUiHandler {
 
     this.getUi().hideTooltip();
 
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     // Make sure the tutorial overlay sits above everything, but below the message box
     this.menuContainer.bringToTop(this.tutorialOverlay);
@@ -551,7 +575,7 @@ export class MenuUiHandler extends MessageUiHandler {
       this.showText("", 0);
       switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
-          ui.setOverlayMode(UiMode.SETTINGS);
+          ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
           success = true;
           break;
         case MenuOptions.ACHIEVEMENTS:

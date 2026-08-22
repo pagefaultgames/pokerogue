@@ -1,8 +1,13 @@
 import { SETTINGS_COLOR } from "#app/constants/colors";
+import { audioManager } from "#app/global-audio-manager";
+import { settings } from "#app/global-settings-manager";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
+import { HpBarSpeed } from "#enums/hp-bar-speed";
 import { PlayerGender } from "#enums/player-gender";
+import { TypeHints } from "#enums/type-hints";
+import { VolumeSetting } from "#enums/volume-setting";
 import type { GameManager } from "#test/framework/game-manager";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import { getEnumStr } from "#test/utils/string-utils";
@@ -22,16 +27,20 @@ export class SettingsHelper extends GameManagerHelper {
    * Initialize default settings upon starting a new test case.
    */
   private initDefaultSettings(): void {
-    this.game.scene.gameSpeed = 5;
-    this.game.scene.moveAnimations = false;
-    this.game.scene.showLevelUpStats = false;
-    this.game.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
-    this.game.scene.expParty = ExpNotification.SKIP;
-    this.game.scene.hpBarSpeed = 3;
-    this.game.scene.enableTutorials = false;
-    this.game.scene.battleStyle = BattleStyle.SET;
-    this.game.scene.gameData.gender = PlayerGender.MALE; // set initial player gender;
-    this.game.scene.fieldVolume = 0;
+    settings.update("general", "gameSpeed", 5);
+    settings.update("display", "enableMoveAnimations", false);
+    settings.update("display", "showStatsOnLevelUp", false);
+    settings.update("general", "expGainsSpeed", ExpGainsSpeed.SKIP);
+    settings.update("general", "partyExpNotificationMode", ExpNotification.SKIP);
+    settings.update("general", "hpBarSpeed", HpBarSpeed.SKIP);
+    settings.update("general", "enableTutorials", false);
+    settings.update("general", "battleStyle", BattleStyle.SET);
+    settings.update("general", "playerGender", PlayerGender.MALE);
+    audioManager.setVolume(VolumeSetting.BGM, 0);
+    audioManager.setVolume(VolumeSetting.FIELD, 0);
+    audioManager.setVolume(VolumeSetting.MAIN, 0);
+    audioManager.setVolume(VolumeSetting.SE, 0);
+    audioManager.setVolume(VolumeSetting.UI, 0);
   }
 
   /**
@@ -40,19 +49,30 @@ export class SettingsHelper extends GameManagerHelper {
    * @returns `this`
    */
   public battleStyle(style: BattleStyle): this {
-    this.game.scene.battleStyle = style;
+    settings.update("general", "battleStyle", style);
     this.log(`Battle Style set to ${getEnumStr(BattleStyle, style)}!`);
     return this;
   }
 
   /**
-   * Toggle the availability of type hints.
-   * @param enable - Whether to enable or disable type hints
+   * Change the current {@linkcode TypeHints} mode.
+   * @param mode - The `TypeHints` mode to set
    * @returns `this`
    */
-  public typeHints(enable: boolean): this {
-    this.game.scene.typeHints = enable;
-    this.log(`Type Hints ${enable ? "enabled" : "disabled"}!`);
+  public typeHints(mode: TypeHints): this {
+    settings.update("display", "typeHintsMode", mode);
+    this.log(`Type Hints set to ${getEnumStr(TypeHints, mode)}!`);
+    return this;
+  }
+
+  /**
+   * Toggle the option to skip level move confirmations
+   * @param enable - Whether to enable or disable level move confirmations
+   * @returns `this`
+   */
+  public levelMoveConfirmation(enable: boolean): this {
+    settings.update("general", "levelMoveConfirmation", enable);
+    this.log(`Level Move Confirmation ${enable ? "enabled" : "disabled"}!`);
     return this;
   }
 
@@ -62,7 +82,7 @@ export class SettingsHelper extends GameManagerHelper {
    * @returns `this`
    */
   public playerGender(gender: PlayerGender): this {
-    this.game.scene.gameData.gender = gender;
+    settings.update("general", "playerGender", gender);
     this.log(`Gender set to ${getEnumStr(PlayerGender, gender)}!`);
     return this;
   }
@@ -73,7 +93,7 @@ export class SettingsHelper extends GameManagerHelper {
    * @returns `this`
    */
   public expGainsSpeed(speed: ExpGainsSpeed): this {
-    this.game.scene.expGainsSpeed = speed;
+    settings.update("general", "expGainsSpeed", speed);
     this.log(`EXP Gain bar speed set to ${getEnumStr(ExpGainsSpeed, speed)}!`);
     return this;
   }

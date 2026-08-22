@@ -175,7 +175,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
-    expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemy).toHaveStatusEffect(StatusEffect.PARALYSIS);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
@@ -298,5 +298,44 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("TurnStartPhase");
 
     expect(game.field.getEnemyPokemon().hasAbility(AbilityId.GULP_MISSILE)).toBe(false);
+  });
+
+  it("shouldn't cause a softlock if it faints the player", async () => {
+    game.override.enemySpecies(SpeciesId.CRAMORANT).enemyAbility(AbilityId.GULP_MISSILE).startingLevel(200);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.FALSE_SWIPE);
+    await game.move.forceEnemyMove(MoveId.DIVE);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    player.hp = 1;
+    game.move.use(MoveId.EXTREME_SPEED);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveFainted();
+  });
+
+  it("shouldn't cause a softlock if it faints the enemy pokemon", async () => {
+    game.override.startingLevel(1).enemyLevel(200);
+    await game.classicMode.startBattle(SpeciesId.CRAMORANT, SpeciesId.MILOTIC);
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.SURF);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    enemy.hp = 1;
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(enemy).toHaveFainted();
   });
 });

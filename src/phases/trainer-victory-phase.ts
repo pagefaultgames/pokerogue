@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#data/data-lists";
@@ -16,7 +17,7 @@ export class TrainerVictoryPhase extends BattlePhase {
   start() {
     globalScene.disableMenu = true;
 
-    globalScene.playBgm(globalScene.currentBattle.trainer?.config.victoryBgm);
+    audioManager.playBgm(globalScene.currentBattle.trainer?.config.victoryBgm);
 
     globalScene.phaseManager.unshiftNew("MoneyRewardPhase", globalScene.currentBattle.trainer?.config.moneyMultiplier!); // TODO: is this bang correct?
 

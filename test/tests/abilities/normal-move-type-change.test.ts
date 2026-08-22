@@ -15,7 +15,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
  * a different type and boost their power
  *
  * Includes
- * - Aerialate
+ * - Aerilate
  * - Galvanize
  * - Pixilate
  * - Refrigerate
@@ -26,6 +26,7 @@ describe.each([
   { ab: AbilityId.PIXILATE, ab_name: "Pixilate", ty: PokemonType.FAIRY, tyName: "fairy" },
   { ab: AbilityId.REFRIGERATE, ab_name: "Refrigerate", ty: PokemonType.ICE, tyName: "ice" },
   { ab: AbilityId.AERILATE, ab_name: "Aerilate", ty: PokemonType.FLYING, tyName: "flying" },
+  { ab: AbilityId.DRAGONIZE, ab_name: "Dragonize", ty: PokemonType.DRAGON, tyName: "dragon" },
 ])("Abilities - $ab_name", ({ ab, ty, tyName }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;

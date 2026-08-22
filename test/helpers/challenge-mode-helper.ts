@@ -1,4 +1,5 @@
-import overrides from "#app/overrides";
+import { settings } from "#app/global-settings-manager";
+import { activeOverrides } from "#app/overrides";
 import type { Challenge } from "#data/challenge";
 import { copyChallenge } from "#data/challenge";
 import { BattleStyle } from "#enums/battle-style";
@@ -54,7 +55,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
     });
 
     await this.game.phaseInterceptor.to("EncounterPhase");
-    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
+    if (activeOverrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
@@ -68,7 +69,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
   async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.runToSummon(...speciesIds);
 
-    if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
+    if (settings.general.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,

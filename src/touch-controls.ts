@@ -1,5 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
+import { UiTheme } from "#enums/ui-theme";
+import { UiWindowStyle } from "#enums/ui-window-style";
+import { hasTouchscreen } from "#utils/app-utils";
+import { enumValueToKey } from "#utils/enums";
 import type Phaser from "phaser";
 
 const repeatInputDelayMillis = 250;
@@ -38,8 +43,6 @@ export class TouchControl {
    * Initialize touch controls by binding keys to buttons.
    */
   init() {
-    this.preventElementZoom(document.querySelector("#dpad"));
-    document.querySelectorAll(".apad-button").forEach(element => this.preventElementZoom(element as HTMLElement));
     // Select all elements with the 'data-key' attribute and bind keys to them
     for (const button of document.querySelectorAll("[data-key]")) {
       // @ts-expect-error - Bind the key to the button using the dataset key
@@ -172,42 +175,7 @@ export class TouchControl {
     return true;
   }
 
-  /**
-   * {@link https://stackoverflow.com/a/39778831/4622620|Source}
-   *
-   * Prevent zoom on specified element
-   * @param element
-   */
-  preventElementZoom(element: HTMLElement | null): void {
-    if (!element) {
-      return;
-    }
-    element.addEventListener("touchstart", (event: TouchEvent) => {
-      if (!(event.currentTarget instanceof HTMLElement)) {
-        return;
-      }
-
-      const currentTouchTimeStamp = event.timeStamp;
-      const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
-      const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
-      const fingers = event.touches.length;
-      event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
-
-      if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
-        return;
-      } // not double-tap
-
-      event.preventDefault();
-
-      if (event.target instanceof HTMLElement) {
-        event.target.click();
-      }
-    });
-  }
-
-  /**
-   * Deactivates all currently pressed keys.
-   */
+  /** Deactivates all currently pressed keys. */
   deactivatePressedKey(): void {
     for (const key of Object.keys(this.inputInterval)) {
       clearInterval(this.inputInterval[key]);
@@ -217,15 +185,51 @@ export class TouchControl {
     }
     this.buttonLock = [];
   }
+
+  public render(): void {
+    if (!hasTouchscreen() || !settings.general.enableTouchControls) {
+      return;
+    }
+
+    document.documentElement.dataset.uiTheme = UiTheme[settings.display.uiTheme];
+    document.documentElement.dataset.windowType = enumValueToKey(UiWindowStyle, settings.display.uiWindowStyle);
+    const touchControls = document.getElementById("touchControls");
+    if (touchControls) {
+      touchControls.classList.add("visible");
+    }
+  }
 }
 
+const doubleTapThresholdMillis = 500;
+
 /**
- * Check if the device has a touchscreen.
- *
- * @returns `true` if the device has a touchscreen, otherwise `false`.
+ * Installs a single document-level listener that suppresses the native double-tap-to-zoom
+ * gesture everywhere on the page, including elements added after this is called. Intended
+ * to be called once at startup.
+ * @see {@link https://stackoverflow.com/a/39778831/4622620 | Source}
  */
-export function hasTouchscreen(): boolean {
-  return window.matchMedia("(hover: none), (pointer: coarse)").matches;
+export function preventDoubleTapZoom(): void {
+  let lastTouchTimeStamp = 0;
+
+  document.addEventListener(
+    "touchstart",
+    (event: TouchEvent) => {
+      const currentTouchTimeStamp = event.timeStamp;
+      const timeStampDifference = currentTouchTimeStamp - lastTouchTimeStamp;
+      lastTouchTimeStamp = currentTouchTimeStamp;
+
+      if (!timeStampDifference || timeStampDifference > doubleTapThresholdMillis || event.touches.length > 1) {
+        return; // not a double-tap
+      }
+
+      event.preventDefault();
+
+      if (event.target instanceof HTMLElement) {
+        event.target.click();
+      }
+    },
+    { capture: true, passive: false },
+  );
 }
 
 /**
@@ -249,4 +253,16 @@ export function isMobile(): boolean {
     }
   })(navigator.userAgent || navigator.vendor || window["opera"]);
   return ret;
+}
+
+/**
+ * Detect if the current device is running iOS (iPhone, iPad, or iPod)
+ * @returns Whether the current device is running iOS.
+ */
+export function isIos(): boolean {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any)["opera"];
+  // Check for iPhone, iPad, or iPod
+  const userAgentCheck = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+  const iPadSpecificCheck = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  return userAgentCheck || iPadSpecificCheck;
 }

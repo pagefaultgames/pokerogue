@@ -38,17 +38,11 @@
         "biome.suggestInstallingGlobally": false,
 
         // # JS/TS setting overrides
-        "javascript.preferences.importModuleSpecifier": "non-relative",
-        "javascript.preferences.importModuleSpecifierEnding": "index",
-        "javascript.preferGoToSourceDefinition": true,
-        "javascript.updateImportsOnFileMove.enabled": "always",
-
-        "typescript.preferences.importModuleSpecifier": "non-relative",
-        "typescript.preferences.importModuleSpecifierEnding": "index",
-        "typescript.preferGoToSourceDefinition": true,
-        "typescript.updateImportsOnFileMove.enabled": "always",
-
-        "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+        "js/ts.preferences.importModuleSpecifier": "non-relative",
+        "js/ts.preferences.importModuleSpecifierEnding": "index",
+        "js/ts.preferGoToSourceDefinition": true,
+        "js/ts.updateImportsOnFileMove.enabled": "always",
+        "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
 
         // # Miscellaneous
         "npm.packageManager": "pnpm",
@@ -65,6 +59,6 @@
       ]
     }
   },
-  "postCreateCommand": "pnpm install",
+  "postCreateCommand": "pnpm install; pnpm update-submodules",
   "forwardPorts": [8000]
 }

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { signatureSpecies } from "#balance/signature-species";
 import { EntryHazardTag } from "#data/arena-tag";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -18,7 +18,6 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -322,11 +321,15 @@ export class Trainer extends Phaser.GameObjects.Container {
         // If the battle is not one of the named trainer doubles
         if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
           if (Object.hasOwn(this.config.partyMemberFuncs, index)) {
-            ret = this.config.partyMemberFuncs[index](level, strength);
+            ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
             return;
           }
           if (Object.hasOwn(this.config.partyMemberFuncs, index - template.size)) {
-            ret = this.config.partyMemberFuncs[index - template.size](level, template.getStrength(index));
+            ret = this.config.partyMemberFuncs[index - template.size](
+              level,
+              template.getStrength(index),
+              template.getEvoThresholdKind(index),
+            );
             return;
           }
         }
@@ -408,9 +411,9 @@ export class Trainer extends Phaser.GameObjects.Container {
         // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
         let species = useNewSpeciesPool
           ? // TODO: should this use `randSeedItem`?
-            getPokemonSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
+            speciesDataRegistry.getSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
           : template.isSameSpecies(index) && index > offset
-            ? getPokemonSpecies(
+            ? speciesDataRegistry.getSpecies(
                 battle.enemyParty[offset].species.getTrainerSpeciesForLevel(
                   level,
                   false,
@@ -422,7 +425,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
         // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
         if (newSpeciesPool) {
-          species = getPokemonSpecies(
+          species = speciesDataRegistry.getSpecies(
             species.getSpeciesForLevel(level, true, true, strength, template.evoLevelThresholdKind),
           );
         }
@@ -473,22 +476,22 @@ export class Trainer extends Phaser.GameObjects.Container {
       while (typeof rolledSpecies !== "number") {
         rolledSpecies = randSeedItem(tierPool);
       }
-      baseSpecies = getPokemonSpecies(rolledSpecies);
+      baseSpecies = speciesDataRegistry.getSpecies(rolledSpecies);
     } else {
       baseSpecies = globalScene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
 
-    let ret = getPokemonSpecies(
+    let ret = speciesDataRegistry.getSpecies(
       baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
     );
     let retry = false;
 
     console.log(ret.getName());
 
-    if (Object.hasOwn(pokemonPrevolutions, baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
+    if (speciesDataRegistry.hasPrevolution(baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
-      const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes(true));
+      const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes());
       if (
         partyMemberTypes.indexOf(ret.type1) > -1
         || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)
@@ -504,7 +507,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       console.log("Attempting reroll of species evolution to fit specialty type...");
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
-        ret = getPokemonSpecies(
+        ret = speciesDataRegistry.getSpecies(
           baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
         );
         console.log(ret.name);
@@ -536,8 +539,8 @@ export class Trainer extends Phaser.GameObjects.Container {
   checkDuplicateSpecies(baseSpecies: SpeciesId): boolean {
     const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
       let root = s;
-      while (Object.hasOwn(pokemonPrevolutions, root)) {
-        root = pokemonPrevolutions[root];
+      while (speciesDataRegistry.hasPrevolution(root)) {
+        root = speciesDataRegistry.getPrevolution(root)!;
       }
       return root;
     });

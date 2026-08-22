@@ -1,8 +1,10 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
 import { getCharVariantFromDialogue } from "#data/dialogue";
@@ -10,6 +12,7 @@ import { getNatureName } from "#data/nature";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { Challenges } from "#enums/challenges";
 import { FieldPosition } from "#enums/field-position";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -122,6 +125,7 @@ export class EncounterPhase extends BattlePhase {
             level,
             TrainerSlot.NONE,
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
+            this.isEncounterShinyLocked(),
           );
           if (globalScene.currentBattle.isClassicFinalBoss) {
             battle.enemyParty[e].ivs.fill(31);
@@ -222,7 +226,7 @@ export class EncounterPhase extends BattlePhase {
         }),
       );
     } else {
-      const overridedBossSegments = Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
+      const overridedBossSegments = activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
       // for double battles, reduce the health segments for boss Pokemon unless there is an override
       if (!overridedBossSegments && battle.enemyParty.filter(p => p.isBoss()).length > 1) {
         for (const enemyPokemon of battle.enemyParty) {
@@ -308,6 +312,16 @@ export class EncounterPhase extends BattlePhase {
     });
   }
 
+  /**
+   * @returns `true` if the current encounter should be shiny locked, `false` otherwise
+   */
+  private isEncounterShinyLocked(): boolean {
+    const endAndIllegalMode =
+      globalScene.arena.biomeId === BiomeId.END
+      && (globalScene.gameMode.isEndless || globalScene.gameMode.hasChallenge(Challenges.FRESH_START));
+    return endAndIllegalMode;
+  }
+
   private incrementMysteryEncounterChance(): void {
     const { battleType, waveIndex } = globalScene.currentBattle;
     if (
@@ -321,7 +335,7 @@ export class EncounterPhase extends BattlePhase {
   }
 
   protected doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+    audioManager.playBgm(undefined, true);
     globalScene.updateModifiers(false);
     globalScene.setFieldScale(1);
 
@@ -424,7 +438,7 @@ export class EncounterPhase extends BattlePhase {
 
       const doSummon = () => {
         globalScene.currentBattle.started = true;
-        globalScene.playBgm(undefined);
+        audioManager.playBgm(undefined);
         globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
@@ -625,7 +639,7 @@ export class EncounterPhase extends BattlePhase {
               : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const cycleCountNoOrdinal = count.toLocaleString();
-          const genderIndex = gameData.gender ?? PlayerGender.UNSET;
+          const genderIndex = settings.general.playerGender;
           const genderStr = PlayerGender[genderIndex].toLowerCase();
           const encounterDialogue = i18next.t(localizationKey, {
             context: genderStr,

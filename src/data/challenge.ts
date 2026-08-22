@@ -2,11 +2,11 @@ import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
-import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
+import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { DexAttr } from "#enums/dex-attr";
@@ -16,7 +16,7 @@ import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { PokemonType } from "#enums/pokemon-type";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -25,12 +25,13 @@ import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { GameData } from "#system/game-data";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -61,6 +62,11 @@ export abstract class Challenge {
   public get ribbonAwarded(): RibbonFlag {
     return 0n as RibbonFlag;
   }
+
+  /**
+   * The category of the challenge for grouping in the UI.
+   */
+  public abstract get category(): ChallengeCategory;
 
   /**
    * @param id - The enum value for the challenge
@@ -235,7 +241,7 @@ export abstract class Challenge {
    * @param cost - Holder for the cost of the starter Pokémon
    * @returns Whether this function did anything.
    */
-  applyStarterCost(speciesId: StarterSpeciesId, cost: NumberHolder): boolean {
+  applyStarterCost(speciesId: SpeciesId, cost: NumberHolder): boolean {
     return false;
   }
 
@@ -453,6 +459,10 @@ export class SingleGenerationChallenge extends Challenge {
     return this.value ? ((RibbonData.MONO_GEN_1 << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
 
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.MISC;
+  }
+
   constructor() {
     super(Challenges.SINGLE_GENERATION, 9);
   }
@@ -480,8 +490,10 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
-    const baseGeneration = getPokemonSpecies(pokemon.species.speciesId).generation;
-    const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0;
+    const baseGeneration = speciesDataRegistry.getSpecies(pokemon.species.speciesId).generation;
+    const fusionGeneration = pokemon.isFusion()
+      ? speciesDataRegistry.getSpecies(pokemon.fusionSpecies!.speciesId).generation
+      : 0;
     if (
       pokemon.isPlayer()
       && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))
@@ -752,7 +764,7 @@ interface MonotypeOverride {
   /** The species to override */
   species: SpeciesId;
   /** The type to count as */
-  type: PokemonType;
+  type: RegularPokemonType;
   /** If part of a fusion, should we check the fused species instead of the base species? */
   fusion: boolean;
 }
@@ -764,6 +776,10 @@ export class SingleTypeChallenge extends Challenge {
     // `RibbonData.MONO_NORMAL` starts the flag position for the types,
     // and we shift it by 1 for the specific type.
     return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
+  }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.MISC;
   }
 
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
@@ -806,7 +822,7 @@ export class SingleTypeChallenge extends Challenge {
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
     if (
       pokemon.isPlayer()
-      && !pokemon.isOfType(this.value - 1, false, false, true)
+      && !pokemon.isOfType(this.value - 1, { includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })
       && !SingleTypeChallenge.TYPE_OVERRIDES.some(
         o =>
           o.type === this.value - 1
@@ -828,7 +844,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getDescription(overrideValue: number = this.value): string {
-    const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
+    const type = i18next.t(getPokemonTypeLocaleKey(overrideValue - 1));
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {
@@ -850,20 +866,25 @@ export class FreshStartChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.FRESH_START : 0n;
   }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.CHALLENGE;
+  }
+
   constructor() {
     super(Challenges.FRESH_START, 2);
   }
 
   applyStarterChoice(species: PokemonSpecies, isValid: BooleanHolder): boolean {
-    if (this.value === 1 && !defaultStarterSpeciesAndEvolutions.includes(species.speciesId)) {
+    if (this.value === 1 && !speciesDataRegistry.getDefaultStartersAndEvolutions().includes(species.speciesId)) {
       isValid.value = false;
       return true;
     }
     return false;
   }
 
-  applyStarterCost(speciesId: StarterSpeciesId, cost: NumberHolder): boolean {
-    cost.value = speciesStarterCosts[speciesId];
+  applyStarterCost(speciesId: SpeciesId, cost: NumberHolder): boolean {
+    cost.value = speciesDataRegistry.getStarterCost(speciesId);
     return true;
   }
 
@@ -893,24 +914,9 @@ export class FreshStartChallenge extends Challenge {
       dexEntry.ivs[i] = Math.min(dexEntry.ivs[i], 15);
     }
 
-    // Removes shiny and variants
-    dexEntry.caughtAttr &= ~DexAttr.SHINY;
-    dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
-
     // Remove unlocked forms for specific species
-    if (speciesId === SpeciesId.ZYGARDE) {
-      // Sets ability from power construct to aura break
-      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
-      dexEntry.caughtAttr &= formMask;
-    } else if (
-      [
-        SpeciesId.PIKACHU,
-        SpeciesId.EEVEE,
-        SpeciesId.PICHU,
-        SpeciesId.ROTOM,
-        SpeciesId.MELOETTA,
-        SpeciesId.FROAKIE,
-      ].includes(speciesId)
+    if (
+      [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(speciesId)
     ) {
       const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
       dexEntry.caughtAttr &= formMask;
@@ -934,21 +940,12 @@ export class FreshStartChallenge extends Challenge {
       validMoves = validMoves.filter(m => !existingMoveIds.includes(m));
       pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
     }
-    pokemon.luck = 0; // No luck
-    pokemon.shiny = false; // Not shiny
-    pokemon.variant = 0; // Not shiny
-    if (pokemon.species.speciesId === SpeciesId.ZYGARDE && pokemon.formIndex >= 2) {
-      pokemon.formIndex -= 2; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
-    } else if (
+    pokemon.luck = 0; // No luck, even if shiny
+    if (
       pokemon.formIndex > 0
-      && [
-        SpeciesId.PIKACHU,
-        SpeciesId.EEVEE,
-        SpeciesId.PICHU,
-        SpeciesId.ROTOM,
-        SpeciesId.MELOETTA,
-        SpeciesId.FROAKIE,
-      ].includes(pokemon.species.speciesId)
+      && [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(
+        pokemon.species.speciesId,
+      )
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
     }
@@ -977,6 +974,11 @@ export class InverseBattleChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.INVERSE : 0n;
   }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.MISC;
+  }
+
   constructor() {
     super(Challenges.INVERSE_BATTLE, 1);
   }
@@ -1011,6 +1013,11 @@ export class FlipStatChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.FLIP_STATS : 0n;
   }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.MISC;
+  }
+
   constructor() {
     super(Challenges.FLIP_STAT, 1);
   }
@@ -1036,6 +1043,10 @@ export class FlipStatChallenge extends Challenge {
 
 /** Lowers the amount of starter points available. */
 export class LowerStarterMaxCostChallenge extends Challenge {
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.CHALLENGE;
+  }
+
   constructor() {
     super(Challenges.LOWER_MAX_STARTER_COST, 9);
   }
@@ -1045,7 +1056,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   }
 
   applyStarterChoice(species: PokemonSpecies, isValid: BooleanHolder): boolean {
-    if (speciesStarterCosts[species.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
+    if (speciesDataRegistry.getStarterCost(species.speciesId) > DEFAULT_PARTY_MAX_COST - this.value) {
       isValid.value = false;
       return true;
     }
@@ -1062,6 +1073,10 @@ export class LowerStarterMaxCostChallenge extends Challenge {
 
 /** Lowers the maximum cost of starters available. */
 export class LowerStarterPointsChallenge extends Challenge {
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.CHALLENGE;
+  }
+
   constructor() {
     super(Challenges.LOWER_STARTER_POINTS, 9);
   }
@@ -1097,6 +1112,10 @@ export class LimitedSupportChallenge extends Challenge {
         return 0n as RibbonFlag;
     }
   }
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.NUZLOCKE;
+  }
+
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);
   }
@@ -1130,6 +1149,10 @@ export class LimitedCatchChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.LIMITED_CATCH : 0n;
   }
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.NUZLOCKE;
+  }
+
   constructor() {
     super(Challenges.LIMITED_CATCH, 1);
   }
@@ -1160,6 +1183,10 @@ export class HardcoreChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.HARDCORE : 0n;
   }
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.NUZLOCKE;
+  }
+
   constructor() {
     super(Challenges.HARDCORE, 1);
   }
@@ -1208,6 +1235,9 @@ export class HardcoreChallenge extends Challenge {
 export class PassivesChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.PASSIVE_CHALLENGE : 0n;
+  }
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.MISC;
   }
 
   constructor() {

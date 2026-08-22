@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
-import { PERMANENT_STATS, Stat } from "#enums/stat";
+import { PERMANENT_STATS, type PermanentStat, Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -27,7 +28,8 @@ export class ScanIvsPhase extends PokemonPhase {
       const statsContainer = enemy.getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
       const statsContainerLabels = statsContainer.filter(m => m.name.includes("icon_stat_label"));
       for (const statContainer of statsContainerLabels) {
-        const ivStat = Stat[statContainer.frame.name] as Stat;
+        const ivStat = Stat[statContainer.frame.name] as PermanentStat;
+        // TODO: is this `Number()` even needed?
         if (enemyIvs[ivStat] > currentIvs[ivStat] && PERMANENT_STATS.includes(Number(ivStat))) {
           const hexColour =
             enemyIvs[ivStat] === 31
@@ -40,7 +42,7 @@ export class ScanIvsPhase extends PokemonPhase {
       }
     }
 
-    if (globalScene.hideIvs) {
+    if (settings.general.hideIvScanner) {
       this.end();
       return;
     }

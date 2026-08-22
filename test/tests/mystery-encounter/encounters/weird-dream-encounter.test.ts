@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as EncounterTransformationSequence from "#mystery-encounters/encounter-transformation-sequence";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
@@ -71,7 +71,6 @@ describe("Weird Dream - Mystery Encounter", () => {
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = WeirdDreamEncounter;
-    const loadBgmSpy = vi.spyOn(scene, "loadBgm");
 
     const { onInit } = WeirdDreamEncounter;
 
@@ -80,7 +79,6 @@ describe("Weird Dream - Mystery Encounter", () => {
     WeirdDreamEncounter.populateDialogueTokensFromRequirements();
     const onInitResult = onInit!();
 
-    expect(loadBgmSpy).toHaveBeenCalled();
     expect(onInitResult).toBe(true);
   });
 

@@ -46,3 +46,4 @@ coverage
 
 # Script outputs
 *.csv
+species-output/*
