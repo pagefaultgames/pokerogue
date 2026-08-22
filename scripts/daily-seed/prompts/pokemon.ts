@@ -11,7 +11,9 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import type { Variant } from "#sprites/variant";
+import type { DailySeedIv, DailySeedIvs } from "#types/daily-run";
 import type { StarterMoveset } from "#types/save-data";
 import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
@@ -192,4 +194,29 @@ export async function promptGender(): Promise<Gender> {
   });
   const genderId = Gender[toUpperSnakeCase(genderName) as keyof typeof Gender];
   return genderId;
+}
+
+/**
+ * Prompt the user to enter the IVs for a Pokémon.
+ * @returns A Promise that resolves with the chosen IVs.
+ */
+export async function promptIvs(): Promise<DailySeedIvs> {
+  const ivs: DailySeedIvs = [0, 0, 0, 0, 0, 0];
+  let lastIv = 0;
+
+  for (let i = 0; i < ivs.length; i++) {
+    const statName = toTitleCase(Stat[i]);
+    const iv = (await number({
+      message: `Please enter the IV for ${statName}.`,
+      min: 0,
+      max: 31,
+      step: 1,
+      required: true,
+      default: lastIv,
+    })) as DailySeedIv;
+    ivs[i] = iv;
+    lastIv = iv;
+  }
+
+  return ivs;
 }
