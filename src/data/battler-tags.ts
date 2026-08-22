@@ -778,7 +778,7 @@ export class GenericTrappedTag extends TrappedTag {
   // Insofar as ghost types cannot be trapped by trapping effects, simple trapping effects do not do anythign on them
   // TODO: Do we need to fail the move?
   override canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(PokemonType.GHOST, true, true);
+    return !pokemon.isOfType(PokemonType.GHOST);
   }
 }
 
@@ -845,13 +845,11 @@ export class OctolockTag extends TrappedTag {
   }
 
   lapse(pokemon: Pokemon): boolean {
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      false,
-      [Stat.DEF, Stat.SPDEF],
-      -1,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      sourcePokemon: this.getSourcePokemon(),
+      changes: groupStatChange([Stat.DEF, Stat.SPDEF], -1),
+    });
     return true;
   }
 }
@@ -2597,7 +2595,7 @@ export class SaltCuredTag extends DamageOverTimeTag {
   }
 
   protected override getDamageHpRatio(pokemon: Pokemon): number {
-    const types = pokemon.getTypes(true, true);
+    const types = pokemon.getTypes();
     // Slightly faster than doing an `includes`
     const waterOrSteel = types.some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
     return waterOrSteel ? 0.25 : 0.125;
