@@ -94,3 +94,6 @@ b6bd9566e24729e4677f1afb60da159425a9f60d
 
 # misc: update imports for consistency
 a535a409fdb5097a67d6e50bad95f799eae4ed0b
+
+# test: update old tests to use `.toHaveStatusEffect` matcher
+1fa9206ac2078da41b3b85d7f13854395c488fc9

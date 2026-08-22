@@ -75,12 +75,12 @@ describe("Status Effects", () => {
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
 
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
 
       game.move.use(MoveId.SPLASH);
