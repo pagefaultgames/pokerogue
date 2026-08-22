@@ -63,7 +63,7 @@ import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase } from "#utils/strings";
-import type { ValueHolder } from "#utils/value-holder";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
