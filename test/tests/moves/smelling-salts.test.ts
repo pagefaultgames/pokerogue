@@ -20,7 +20,6 @@ describe("Moves - Smelling Salts", () => {
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .moveset([MoveId.SMELLING_SALTS])
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(100)
@@ -33,25 +32,27 @@ describe("Moves - Smelling Salts", () => {
   it("should cure the target's paralysis", async () => {
     game.override.enemyStatusEffect(StatusEffect.PARALYSIS);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
     const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.SMELLING_SALTS);
+    game.move.use(MoveId.SMELLING_SALTS);
     await game.toNextTurn();
 
-    expect(enemy.status?.effect).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not cure the user's own paralysis", async () => {
     game.override.statusEffect(StatusEffect.PARALYSIS);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.SMELLING_SALTS);
+    game.move.use(MoveId.SMELLING_SALTS);
     await game.move.forceStatusActivation(false);
     await game.toNextTurn();
 
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-    expect(player.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemy).not.toHaveFullHp();
+    expect(player).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 });
