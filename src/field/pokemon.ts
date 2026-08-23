@@ -48,6 +48,7 @@ import {
   SpeciesFormChangePostMoveTrigger,
 } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
+import type { VariableMoveTypeAttr } from "#data/moves/move";
 import { getNatureStatMultiplier } from "#data/nature";
 import {
   CustomPokemonData,
@@ -2587,6 +2588,37 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     return moveTypeHolder.value as PokemonType;
+  }
+
+  /**
+   * Return the type of a move, considering abilities, when used by this Pokémon
+   * for the purposes of spawning items.
+   *
+   * @param move - The move being used
+   * @returns An array of {@linkcode PokemonType}s that the move is considered to be for item spawning purposes.
+   *
+   * @remarks
+   * This method should not be used if the move has the {@linkcode VariableMoveTypeAttr} attribute.
+   */
+  public getMoveTypeForItemSpawn(move: Move): PokemonType[] {
+    if (move.hasAttr("VariableMoveTypeAttr")) {
+      return [move.type];
+    }
+    // Setting movesetGenInProgress ensures that ability suppression
+    // like gastro acid and neutralizing gas are ignored when applyAbAttrs
+    // invokes `canApplyAbility`
+    globalScene.movesetGenInProgress = true;
+    const moveTypeHolder = new ValueHolder(move.type);
+    applyAbAttrs("MoveTypeChangeAbAttr", {
+      pokemon: this,
+      move,
+      simulated: true,
+      moveType: moveTypeHolder,
+      // The `opponent` field is benign here; it's used for condition checks
+      opponent: this,
+    });
+    globalScene.movesetGenInProgress = false;
+    return [moveTypeHolder.value];
   }
 
   /**
