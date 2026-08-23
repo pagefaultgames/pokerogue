@@ -116,7 +116,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.SPLASH, 0);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(milotic.status?.effect).toBe(StatusEffect.BURN);
+    expect(milotic).toHaveStatusEffect(StatusEffect.BURN);
 
     game.doSwitchPokemon(2);
     game.move.use(MoveId.HEAL_BELL, 1);
