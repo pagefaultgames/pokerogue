@@ -11,9 +11,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @sealed
  */
 export type PartiallyFilledStatus =
-  | ({ effect: StatusEffect.TOXIC } & Pick<Status, "toxicTurnCount">)
-  | ({ effect: StatusEffect.SLEEP } & Pick<Status, "sleepTurnsRemaining">)
-  | ({ effect: StatusEffect.FREEZE } & Pick<Status, "freezeTurnsRemaining">);
+  | { effect: StatusEffect.TOXIC; toxicTurnCount: number }
+  | { effect: StatusEffect.SLEEP; sleepTurnsRemaining: number };
 
 /**
  * Matcher that checks if a Pokemon's {@linkcode StatusEffect} is as expected

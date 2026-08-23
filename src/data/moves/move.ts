@@ -2202,16 +2202,14 @@ export class MessageAttr extends MoveEffectAttr {
 }
 
 export class RecoilAttr extends MoveEffectAttr {
-  /** Whether the recoil damage should be based on the user's maximum HP instead of the damage dealt. */
-  private readonly useMaxHp: boolean;
+  private readonly useHp: boolean;
   private readonly damageRatio: number;
   private readonly unblockable: boolean;
 
-  // TODO: Make the parameter order more sensible - damage ratio required first, then the other 2 booleans
-  constructor(useMaxHp = false, damageRatio = 0.25, unblockable = false) {
+  constructor(useHp = false, damageRatio = 0.25, unblockable = false) {
     super(true, { lastHitOnly: true });
 
-    this.useMaxHp = useMaxHp;
+    this.useHp = useHp;
     this.damageRatio = damageRatio;
     this.unblockable = unblockable;
   }
@@ -2221,28 +2219,33 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
+    const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
-      const cancelled = new BooleanHolder(false);
       const abAttrParams: AbAttrParamsWithCancel = { pokemon: user, cancelled };
       applyAbAttrs("BlockRecoilDamageAttr", abAttrParams);
       applyAbAttrs("BlockNonDirectDamageAbAttr", abAttrParams);
-      if (cancelled.value) {
-        return false;
-      }
+    }
+
+    if (cancelled.value) {
+      return false;
     }
 
     // Chloroblast and Struggle should not deal recoil damage if the move was not successful
     if (
-      this.useMaxHp
+      this.useHp
       && [MoveResult.FAIL, MoveResult.MISS].includes(user.getLastXMoves(1)[0]?.result ?? MoveResult.FAIL)
     ) {
       return false;
     }
 
-    const damageValue = (this.useMaxHp ? user.getMaxHp() : user.turnData.totalDamageDealt) * this.damageRatio;
+    const damageValue = (this.useHp ? user.getMaxHp() : user.turnData.totalDamageDealt) * this.damageRatio;
     const minValue = user.turnData.totalDamageDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
+      return false;
+    }
+
+    if (cancelled.value) {
       return false;
     }
 
@@ -2268,6 +2271,14 @@ export class SacrificialAttr extends MoveEffectAttr {
     super(true, { trigger: MoveEffectTrigger.POST_TARGET });
   }
 
+  /**
+   * Deals damage to the user equal to their current hp
+   * @param user {@linkcode Pokemon} that used the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
     user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
     user.turnData.damageTaken += user.hp;
@@ -3976,7 +3987,6 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     return false;
   }
 
-  // TODO: This is stupid (if you need dynamic levels, use a lambda)
   getLevels(_user: Pokemon): number {
     return this.stages;
   }
@@ -4344,16 +4354,7 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
 }
 
 export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
-  /**
-   * A divisor for the user's maximum HP to be lost.
-   * The move will fail if less than this amount is available.
-   */
-  // TODO: Make this a % ratio
   private readonly cutRatio: number;
-  /**
-   * An optional callback function to be called after the HP loss is applied, allowing for custom messages or effects to be triggered.
-   */
-  // TODO: If this is supposed to display a message, the type should encode that information (return string instead of void)
   private readonly messageCallback: ((user: Pokemon) => void) | undefined;
 
   constructor(
@@ -4369,16 +4370,16 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
   }
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
-    user.updateInfo(); // TODO: Floating promise!!!
+    user.updateInfo();
     const ret = super.apply(user, target, move, args);
-    this.messageCallback?.(user);
+    if (this.messageCallback) {
+      this.messageCallback(user);
+    }
     return ret;
   }
 
   getCondition(): MoveConditionFunc {
-    return user =>
-      user.hp > user.getMaxHp() / this.cutRatio // TODO: This may not be accurate for contrary
-      && this.stats.some(s => user.getStatStage(s) < 6);
+    return user => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
   }
 }
 

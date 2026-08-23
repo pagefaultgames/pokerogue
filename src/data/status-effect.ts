@@ -7,17 +7,7 @@ export class Status {
   public effect: StatusEffect;
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */
   public toxicTurnCount = 0;
-  /**
-   * The number of turns this Pokemon will remain asleep for, decremented once every time it attempts to use a move.
-   * The status will be cured once this reaches 0.
-   */
   public sleepTurnsRemaining?: number | undefined;
-  /**
-   * The number of turns this Pokemon will remain frozen for, decremented once every time it attempts to use a move.
-   * The status will be cured once this reaches 0.
-   * @remarks
-   * Freeze also has a 25% chance to thaw out at the end of each turn; this value merely upper-bounds for its duration.
-   */
   public freezeTurnsRemaining?: number | undefined;
 
   // TODO: Make this take an object?

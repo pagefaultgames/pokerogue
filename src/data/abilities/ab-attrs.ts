@@ -1032,7 +1032,6 @@ export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
 export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   private readonly damageRatio: number;
 
-  // TODO: This is a divisor, not a ratio
   constructor(damageRatio: number) {
     super();
 
@@ -4909,7 +4908,6 @@ export class PostFaintFormChangeAbAttr extends PostFaintAbAttr {
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private readonly damageRatio: number;
 
-  // TODO: This is a divisor, not a ratio
   constructor(damageRatio: number) {
     super(true);
 
