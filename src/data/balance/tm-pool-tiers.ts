@@ -257,6 +257,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.ELECTROWEB]: ModifierTier.GREAT,
   [MoveId.WILD_CHARGE]: ModifierTier.GREAT,
   [MoveId.DRILL_RUN]: ModifierTier.GREAT,
+  [MoveId.DUAL_CHOP]: ModifierTier.GREAT,
   [MoveId.RAZOR_SHELL]: ModifierTier.GREAT,
   [MoveId.HEAT_CRASH]: ModifierTier.GREAT,
   [MoveId.TAIL_SLAP]: ModifierTier.GREAT,

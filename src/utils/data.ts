@@ -1,6 +1,7 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterPreferences } from "#types/save-data";
+import { GameDataType } from "#enums/game-data-type";
+import type { AllStarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**
@@ -79,12 +80,12 @@ export function isBareObject(obj: any): boolean {
 const DEFAULT_STARTER_PREFS = "{}";
 let savedStarterPrefs: string = DEFAULT_STARTER_PREFS;
 
-export function loadStarterPreferences(): StarterPreferences {
+export function loadStarterPreferences(): AllStarterPreferences {
   savedStarterPrefs = localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) ?? DEFAULT_STARTER_PREFS;
   return JSON.parse(savedStarterPrefs);
 }
 
-export function saveStarterPreferences(prefs: StarterPreferences): void {
+export function saveStarterPreferences(prefs: AllStarterPreferences): void {
   // Fastest way to check if an object has any properties (does no allocation)
   if (isBareObject(prefs)) {
     console.warn("Refusing to save empty starter preferences");
@@ -98,5 +99,39 @@ export function saveStarterPreferences(prefs: StarterPreferences): void {
     console.log("%cSaving starter preferences", "color: blue");
     localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
     savedStarterPrefs = pStr;
+  }
+}
+
+export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
+  switch (dataType) {
+    case GameDataType.SYSTEM:
+      return "data";
+    case GameDataType.SESSION: {
+      let ret = "sessionData";
+      if (slotId) {
+        ret += slotId;
+      }
+      return ret;
+    }
+    case GameDataType.SETTINGS:
+      return "settings";
+    case GameDataType.TUTORIALS:
+      return "tutorials";
+    case GameDataType.SEEN_DIALOGUES:
+      return "seenDialogues";
+    case GameDataType.RUN_HISTORY:
+      return "runHistoryData";
+    case GameDataType.MAPPING_CONFIG:
+      return "mappingConfigs";
+  }
+}
+
+/** @returns Whether the input is valid JSON */
+export function isValidJSON(str: string): boolean {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch {
+    return false;
   }
 }

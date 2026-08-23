@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { Stat } from "#enums/stat";
@@ -192,7 +193,7 @@ export class PlayerBattleInfo extends BattleInfo {
     const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
     const ratio = relLevelExp === 0 ? 0 : levelExp / relLevelExp;
     const nextWidth = ratio * EXP_BAR_WIDTH;
-    const speed = globalScene.expGainsSpeed;
+    const speed = settings.general.expGainsSpeed;
 
     const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
       1 - Math.max(lastLevel - 100, 0) / 150,

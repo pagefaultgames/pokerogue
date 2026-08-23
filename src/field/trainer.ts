@@ -321,11 +321,15 @@ export class Trainer extends Phaser.GameObjects.Container {
         // If the battle is not one of the named trainer doubles
         if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
           if (Object.hasOwn(this.config.partyMemberFuncs, index)) {
-            ret = this.config.partyMemberFuncs[index](level, strength);
+            ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
             return;
           }
           if (Object.hasOwn(this.config.partyMemberFuncs, index - template.size)) {
-            ret = this.config.partyMemberFuncs[index - template.size](level, template.getStrength(index));
+            ret = this.config.partyMemberFuncs[index - template.size](
+              level,
+              template.getStrength(index),
+              template.getEvoThresholdKind(index),
+            );
             return;
           }
         }

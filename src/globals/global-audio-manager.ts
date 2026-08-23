@@ -1,3 +1,4 @@
+import { settings } from "#app/global-settings-manager";
 import type { AudioManager as GlobalAudioManager } from "#audio/audio-manager";
 
 export let audioManager: GlobalAudioManager;
@@ -6,5 +7,12 @@ export let audioManager: GlobalAudioManager;
 // If that is fixed, this can be removed and replaced with `export const audioManager = new AudioManager();` again
 export async function initGlobalAudioManager(): Promise<void> {
   const { AudioManager } = await import("#audio/audio-manager");
-  audioManager = new AudioManager();
+  const {
+    bgmVolume: bgm,
+    fieldVolume: field,
+    masterVolume: main,
+    soundEffectsVolume: se,
+    uiVolume: ui,
+  } = settings.audio;
+  audioManager = new AudioManager({ bgm, field, main, se, ui });
 }
