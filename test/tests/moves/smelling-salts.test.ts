@@ -25,8 +25,6 @@ describe("Moves - Smelling Salts", () => {
       .enemyLevel(100)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH);
-
-    vi.spyOn(allMoves[MoveId.SMELLING_SALTS], "accuracy", "get").mockReturnValue(100);
   });
 
   it("should cure the target's paralysis", async () => {
