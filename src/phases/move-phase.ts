@@ -940,8 +940,6 @@ export class MovePhase extends PokemonPhase {
    *     to lapse on move failure/cancellation.
    *
    *     TODO: ...this seems weird.
-   * - Lapses `AFTER_MOVE` tags:
-   *   - This handles the effects of {@linkcode MoveId.SUBSTITUTE | Substitute}
    * - Removes the second turn of charge moves
    */
   protected handlePreMoveFailures(): void {
@@ -961,7 +959,6 @@ export class MovePhase extends PokemonPhase {
     pokemon.pushMoveHistory(moveHistoryEntry);
 
     pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     // This clears out 2 turn moves after they've been used
     // TODO: Remove post move queue refactor
