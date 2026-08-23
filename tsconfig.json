@@ -32,6 +32,7 @@
     "esModuleInterop": true,
     "sourceMap": false,
     "allowJs": false,
+    "allowImportingTsExtensions": true, // needed for Vite
     "strict": false, // TODO: Enable this eventually
     "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
