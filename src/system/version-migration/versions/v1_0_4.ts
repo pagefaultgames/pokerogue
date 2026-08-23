@@ -3,6 +3,7 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
+import type { LegacySessionSaveData } from "#system/legacy-data";
 import { SettingKeys } from "#system/settings";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
@@ -127,7 +128,8 @@ const migrateModifiers: SessionSaveMigrator = {
   version: "1.0.4",
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary?
   migrate: (data: SessionSaveData): void => {
-    for (const m of data.modifiers) {
+    const legacyData = data as LegacySessionSaveData;
+    for (const m of legacyData.modifiers) {
       if (m.className === "PokemonBaseStatModifier") {
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {
@@ -171,7 +173,7 @@ const migrateModifiers: SessionSaveMigrator = {
       }
     }
 
-    for (const m of data.enemyModifiers) {
+    for (const m of legacyData.enemyModifiers) {
       if (m.className === "PokemonBaseStatModifier") {
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {

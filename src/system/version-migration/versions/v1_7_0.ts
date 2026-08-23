@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { DexAttr } from "#enums/dex-attr";
+import type { LegacySessionSaveData } from "#system/version-migration/legacy-data";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -39,27 +40,29 @@ export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectab
 const migrateTera: SessionSaveMigrator = {
   version: "1.7.0",
   migrate: (data: SessionSaveData): void => {
-    for (let i = 0; i < data.modifiers.length; ) {
-      if (data.modifiers[i].className === "TerastallizeModifier") {
-        data.party.forEach(p => {
-          if (p.id === data.modifiers[i].args[0]) {
-            p.teraType = data.modifiers[i].args[1];
+    const legacyData = data as LegacySessionSaveData;
+
+    for (let i = 0; i < legacyData.modifiers.length; ) {
+      if (legacyData.modifiers[i].className === "TerastallizeModifier") {
+        legacyData.party.forEach(p => {
+          if (p.id === legacyData.modifiers[i].args[0]) {
+            p.teraType = legacyData.modifiers[i].args[1];
           }
         });
-        data.modifiers.splice(i, 1);
+        legacyData.modifiers.splice(i, 1);
       } else {
         i++;
       }
     }
 
-    for (let i = 0; i < data.enemyModifiers.length; ) {
-      if (data.enemyModifiers[i].className === "TerastallizeModifier") {
-        data.enemyParty.forEach(p => {
-          if (p.id === data.enemyModifiers[i].args[0]) {
-            p.teraType = data.enemyModifiers[i].args[1];
+    for (let i = 0; i < legacyData.enemyModifiers.length; ) {
+      if (legacyData.enemyModifiers[i].className === "TerastallizeModifier") {
+        legacyData.enemyParty.forEach(p => {
+          if (p.id === legacyData.enemyModifiers[i].args[0]) {
+            p.teraType = legacyData.enemyModifiers[i].args[1];
           }
         });
-        data.enemyModifiers.splice(i, 1);
+        legacyData.enemyModifiers.splice(i, 1);
       } else {
         i++;
       }

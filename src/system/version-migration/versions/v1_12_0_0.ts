@@ -1,5 +1,6 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import type { LegacySessionSaveData } from "#system/legacy-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
@@ -235,8 +236,9 @@ const shiftFormChangeItems: SessionSaveMigrator = {
   version: "1.12.0.0",
   migrate: (data: SessionSaveData) => {
     // Shifting these up by 50 will work for now, but a more permanent solution will be desired in the future
+    const legacyData = data as LegacySessionSaveData;
     const shiftAmount = 50;
-    for (const modifier of data.modifiers ?? []) {
+    for (const modifier of legacyData.modifiers ?? []) {
       if (modifier.className === "PokemonFormChangeItemModifier") {
         if (typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
           modifier.args[1] += shiftAmount;

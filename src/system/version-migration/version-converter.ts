@@ -59,6 +59,7 @@ import * as v1_9_0 from "#system/v1_9_0";
 import * as v1_10_0 from "#system/v1_10_0";
 import * as v1_11_19 from "#system/v1_11_19";
 import * as v1_12_0_0 from "#system/v1_12_0_0";
+import * as v1_13_0_0 from "#system/v1_13_0_0";
 
 // To add a new set of migrators, add them to the appropriate array of migrators
 
@@ -77,6 +78,7 @@ const sessionMigrators: SessionSaveMigrator[] = [
   ...v1_9_0.sessionMigrators,
   ...v1_10_0.sessionMigrators,
   ...v1_12_0_0.sessionMigrators,
+  ...v1_13_0_0.sessionMigrators,
 ];
 
 /** All settings migrators */
