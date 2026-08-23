@@ -6,7 +6,7 @@
  */
 
 import { namespaceMap } from "#app/i18n-namespace-map";
-import { supportedLngs } from "#app/i18n-supported-lngs";
+import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { toKebabCase } from "#utils/strings";
 import { readFileSync } from "node:fs";
 import { join } from "path";
@@ -18,6 +18,8 @@ const PROJECT_ROOT = join(import.meta.dirname, "..", "..");
 
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
+
+const supportedLngs = SUPPORTED_LANGUAGES;
 
 // TODO: find a better way to handle this
 await i18next.use(I18NextHttpBackend).init({

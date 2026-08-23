@@ -1,11 +1,12 @@
-import { determineEnemySpecies } from "#app/ai/ai-species-gen";
+import { determineEnemySpecies } from "#ai/ai-species-gen";
 import type { GameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { AnySound } from "#audio/audio-manager";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
@@ -685,7 +686,7 @@ export abstract class PokemonSpeciesForm {
 
     await populateVariantColorCache(
       "pkmn__" + baseSpriteKey,
-      globalScene.experimentalSprites && hasExpSprite(spriteKey),
+      settings.expSpritesEnabled && hasExpSprite(spriteKey),
       baseSpriteKey.replace("__", "/"),
     );
   }

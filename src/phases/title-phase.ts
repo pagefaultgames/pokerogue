@@ -8,7 +8,7 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-seed/daily-run";
+import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -183,7 +183,7 @@ export class TitlePhase extends Phase {
       {
         label: i18next.t("menu:settings"),
         handler: () => {
-          globalScene.ui.setOverlayMode(UiMode.SETTINGS);
+          globalScene.ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
           return true;
         },
         keepOpen: true,

@@ -12,7 +12,7 @@ import {
   settingGamepadDefaults,
   settingGamepadOptions,
 } from "#system/settings-gamepad";
-import type { InterfaceConfig } from "#types/configs/inputs";
+import type { InterfaceConfig } from "#types/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
@@ -22,13 +22,13 @@ import i18next from "i18next";
 export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
   constructor(mode: UiMode | null = null) {
     super(mode);
+
     this.titleSelected = "Gamepad";
     this.setting = SettingGamepad;
     this.settingDeviceDefaults = settingGamepadDefaults;
     this.settingDeviceOptions = settingGamepadOptions;
     this.configs = [PAD_XBOX360, PAD_DUALSHOCK, PAD_UNLICENSED_SNES];
     this.commonSettingsCount = 2;
-    this.localStoragePropertyName = "settingsGamepad";
     this.settingBlacklisted = settingGamepadBlackList;
     this.device = Device.GAMEPAD;
   }
@@ -98,24 +98,6 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
           );
         }
       }
-    }
-  }
-
-  /**
-   * Save the setting to local storage.
-   *
-   * @param settingName - The setting to save.
-   * @param cursor - The cursor position to save.
-   */
-  saveSettingToLocalStorage(settingName, cursor): void {
-    if (this.setting[settingName] !== this.setting.Controller) {
-      globalScene.gameData.saveControlSetting(
-        this.device,
-        this.localStoragePropertyName,
-        settingName,
-        this.settingDeviceDefaults,
-        cursor,
-      );
     }
   }
 }
