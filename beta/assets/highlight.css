@@ -145,4 +145,4 @@
 .hl-15 { color: var(--hl-15); }
 .hl-16 { color: var(--hl-16); }
 .hl-17 { color: var(--hl-17); }
-pre, code { background: var(--code-background); }
+pre, code, math[display='block'] { background: var(--code-background); }
