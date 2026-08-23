@@ -444,7 +444,7 @@ export class GameManager {
     const valid = !!systemData.dexData && !!systemData.timestamp;
     if (valid) {
       await updateUserInfo();
-      await this.scene.gameData.initSystem(dataStr);
+      await this.scene.gameData["initSystem"](dataStr);
     }
     return updateUserInfo();
   }
