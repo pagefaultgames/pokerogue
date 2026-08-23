@@ -2202,10 +2202,12 @@ export class MessageAttr extends MoveEffectAttr {
 }
 
 export class RecoilAttr extends MoveEffectAttr {
+  /** Whether the recoil damage should be based on the user's maximum HP instead of the damage dealt. */
   private readonly useHp: boolean;
   private readonly damageRatio: number;
   private readonly unblockable: boolean;
 
+  // TODO: Make the parameter order more sensible - damage ratio required first, then the other 2 booleans
   constructor(useHp = false, damageRatio = 0.25, unblockable = false) {
     super(true, { lastHitOnly: true });
 
@@ -2219,15 +2221,14 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
+      const cancelled = new ValueHolder(false);
       const abAttrParams: AbAttrParamsWithCancel = { pokemon: user, cancelled };
       applyAbAttrs("BlockRecoilDamageAttr", abAttrParams);
       applyAbAttrs("BlockNonDirectDamageAbAttr", abAttrParams);
-    }
-
-    if (cancelled.value) {
-      return false;
+      if (cancelled.value) {
+        return false;
+      }
     }
 
     // Chloroblast and Struggle should not deal recoil damage if the move was not successful
@@ -2242,10 +2243,6 @@ export class RecoilAttr extends MoveEffectAttr {
     const minValue = user.turnData.totalDamageDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
-      return false;
-    }
-
-    if (cancelled.value) {
       return false;
     }
 
