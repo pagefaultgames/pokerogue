@@ -1,17 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { FormModalConfig, ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, truncateString } from "#utils/common";
 import type Phaser from "phaser";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-
-export interface FormModalConfig extends ModalConfig {
-  errorMessage?: string;
-}
 
 export abstract class FormModalUiHandler extends ModalUiHandler {
   protected editing = false;
@@ -128,9 +124,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         this.inputs[0]?.setFocus();
       }, 50);
 
-      // #region: Override button pointerDown
       // Override the pointerDown event for the buttonBgs to call the `submitAction` and `cancelAction`
-      // properties that we set above, allowing their behavior to change after this method terminates
+      // properties that we set above, allowing their behavior to change after this method terminates.
       // Some subclasses use this to add behavior to the submit and cancel action
 
       this.buttonBgs[0] // formatting
@@ -148,7 +143,6 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
             this.cancelAction();
           }
         });
-      //#endregion: Override pointerDown events
 
       this.modalContainer.setAlpha(0).y += 24;
 

@@ -32,12 +32,19 @@
  * @module
  */
 
-import type { LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
-import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import type { LEVEL_BASED_DENYLIST } from "#balance/forbidden-moves";
+import type { FORCED_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 
-//#region Constants
+// #region Constants
+
+/**
+ * The minimum level for a Pokémon to generate with a move it can only learn
+ * from a memory mushroom
+ */
+export const RELEARN_LEVEL_REQUIREMENT = 40;
+
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn
  * from a common tier TM
@@ -136,9 +143,9 @@ export const EGG_MOVE_WEIGHT_MAX = 60;
  */
 export const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
 /** The weight given to evolution moves */
-export const EVOLUTION_MOVE_WEIGHT = 70;
+export const EVOLUTION_MOVE_WEIGHT = 60;
 /** The weight given to relearn moves */
-export const RELEARN_MOVE_WEIGHT = 60;
+export const RELEARN_MOVE_WEIGHT = 50;
 
 /** The base weight multiplier to use
  *
@@ -179,13 +186,16 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.DRAGON_RAGE,
   MoveId.DRAGON_TAIL,
   MoveId.DREAM_EATER,
+  MoveId.ELECTROWEB,
   MoveId.ENDEAVOR,
   MoveId.EXPLOSION,
   MoveId.FAKE_OUT,
+  MoveId.FELL_STINGER,
   MoveId.FIRE_SPIN,
   MoveId.FIRST_IMPRESSION,
   MoveId.FISSURE,
   MoveId.FLING,
+  MoveId.FLIP_TURN,
   MoveId.FOCUS_PUNCH,
   MoveId.FUTURE_SIGHT,
   MoveId.GUILLOTINE,
@@ -199,6 +209,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.NATURAL_GIFT,
   MoveId.NATURES_MADNESS,
   MoveId.NIGHT_SHADE,
+  MoveId.POISON_FANG, // Functions as coverage or a chance of Toxic with slight chip damage.
   MoveId.POWER_TRIP,
   MoveId.PSYWAVE,
   MoveId.RUINATION,
@@ -214,8 +225,11 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.STEEL_ROLLER,
   MoveId.STORED_POWER,
   MoveId.SUPER_FANG,
+  MoveId.SUCKER_PUNCH,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
+  MoveId.U_TURN,
+  MoveId.VOLT_SWITCH,
   MoveId.WHIRLPOOL,
   MoveId.WRAP,
   // Moves that always change type.
@@ -223,7 +237,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.HIDDEN_POWER,
 ]);
 
-//#endregion Constants
+// #endregion Constants
 
 /**
  * Get the maximum number of TMs a Pokémon is allowed to learn based on

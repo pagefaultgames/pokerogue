@@ -1,12 +1,12 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { MoneyMultiplierModifier } from "#app/modifier/modifier";
-import { NumberHolder } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { MoneyMultiplierModifier } from "#modifiers/modifier";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
@@ -22,6 +22,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -250,7 +251,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       })
       .withPreOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
+        const selectedPokemon = encounter.selectedOption!.primaryPokemon!;
         encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 
         // Reduce all PP to 2 (if they started at greater than 2)
@@ -295,51 +296,51 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .build();
 
 function doStrongWorkSfx() {
-  globalScene.playSound("battle_anims/PRSFX- Horn Drill1");
-  globalScene.playSound("battle_anims/PRSFX- Horn Drill1");
+  audioManager.playSound("battle_anims/PRSFX- Horn Drill1");
+  audioManager.playSound("battle_anims/PRSFX- Horn Drill1");
 
   globalScene.time.delayedCall(1000, () => {
-    globalScene.playSound("battle_anims/PRSFX- Guillotine2");
+    audioManager.playSound("battle_anims/PRSFX- Guillotine2");
   });
 
   globalScene.time.delayedCall(2000, () => {
-    globalScene.playSound("battle_anims/PRSFX- Heavy Slam2");
+    audioManager.playSound("battle_anims/PRSFX- Heavy Slam2");
   });
 
   globalScene.time.delayedCall(2500, () => {
-    globalScene.playSound("battle_anims/PRSFX- Guillotine2");
+    audioManager.playSound("battle_anims/PRSFX- Guillotine2");
   });
 }
 
 function doDeliverySfx() {
-  globalScene.playSound("battle_anims/PRSFX- Accelerock1");
+  audioManager.playSound("battle_anims/PRSFX- Accelerock1");
 
   globalScene.time.delayedCall(1500, () => {
-    globalScene.playSound("battle_anims/PRSFX- Extremespeed1");
+    audioManager.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
   globalScene.time.delayedCall(2000, () => {
-    globalScene.playSound("battle_anims/PRSFX- Extremespeed1");
+    audioManager.playSound("battle_anims/PRSFX- Extremespeed1");
   });
 
   globalScene.time.delayedCall(2250, () => {
-    globalScene.playSound("battle_anims/PRSFX- Agility");
+    audioManager.playSound("battle_anims/PRSFX- Agility");
   });
 }
 
 function doSalesSfx() {
-  globalScene.playSound("battle_anims/PRSFX- Captivate");
+  audioManager.playSound("battle_anims/PRSFX- Captivate");
 
   globalScene.time.delayedCall(1500, () => {
-    globalScene.playSound("battle_anims/PRSFX- Attract2");
+    audioManager.playSound("battle_anims/PRSFX- Attract2");
   });
 
   globalScene.time.delayedCall(2000, () => {
-    globalScene.playSound("battle_anims/PRSFX- Aurora Veil2");
+    audioManager.playSound("battle_anims/PRSFX- Aurora Veil2");
   });
 
   globalScene.time.delayedCall(3000, () => {
-    globalScene.playSound("battle_anims/PRSFX- Attract2");
+    audioManager.playSound("battle_anims/PRSFX- Attract2");
   });
 }
 

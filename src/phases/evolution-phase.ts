@@ -1,8 +1,9 @@
-import type { AnySound } from "#app/battle-scene";
 import { EVOLVE_MOVE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
+import type { BackgroundMusic } from "#audio/background-music";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { getTypeRgb } from "#data/type";
@@ -12,7 +13,6 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class EvolutionPhase extends Phase {
   // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
@@ -27,7 +27,7 @@ export class EvolutionPhase extends Phase {
 
   private evolution: SpeciesFormEvolution | null;
   private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
-  private evolutionBgm: AnySound | null;
+  private evolutionBgm: BackgroundMusic | null;
   private evolutionHandler: EvolutionSceneUiHandler;
 
   /** Container for all assets used by the scene. When the scene is cleared, the children within this are destroyed. */
@@ -118,11 +118,7 @@ export class EvolutionPhase extends Phase {
    */
   protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
     const spriteKey = pokemon.getSpriteKey(true);
-    try {
-      sprite.play(spriteKey);
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    sprite.play(spriteKey);
 
     if (setPipeline) {
       sprite.setPipeline(globalScene.spritePipeline, {
@@ -214,7 +210,7 @@ export class EvolutionPhase extends Phase {
    */
   private playEvolutionAnimation(evolvedPokemon: Pokemon): void {
     globalScene.time.delayedCall(1000, () => {
-      this.evolutionBgm = globalScene.playSoundWithoutBgm("evolution");
+      this.evolutionBgm = audioManager.replaceBgmUntilEnd("bw/evolution");
       globalScene.tweens.add({
         targets: this.evolutionBgOverlay,
         alpha: 1,
@@ -225,7 +221,7 @@ export class EvolutionPhase extends Phase {
           globalScene.time.delayedCall(1000, () => {
             this.evolutionBg.setVisible(true).play();
           });
-          globalScene.playSound("se/charge");
+          audioManager.playSound("se/charge");
           globalScene.animations.doSpiralUpward(this.evolutionBaseBg, this.evolutionContainer);
           this.fadeOutPokemonSprite(evolvedPokemon);
         },
@@ -244,7 +240,7 @@ export class EvolutionPhase extends Phase {
       onComplete: () => {
         this.pokemonSprite.setVisible(false);
         globalScene.time.delayedCall(1100, () => {
-          globalScene.playSound("se/beam");
+          audioManager.playSound("se/beam");
           globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
           this.prepareForCycle(evolvedPokemon);
         });
@@ -297,9 +293,7 @@ export class EvolutionPhase extends Phase {
         this.evolutionBg.setVisible(false);
       },
     });
-    if (this.evolutionBgm) {
-      SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
-    }
+    this.evolutionBgm?.fadeOut(100);
   }
 
   /**
@@ -349,7 +343,7 @@ export class EvolutionPhase extends Phase {
           () => {
             const end = () => {
               globalScene.ui.showText("", 0);
-              globalScene.playBgm();
+              audioManager.playBgm();
               evolvedPokemon.destroy();
               this.end();
             };
@@ -379,13 +373,11 @@ export class EvolutionPhase extends Phase {
    * Fadeout evolution music, play the cry, show the evolution completed text, and end the phase
    */
   private onEvolutionComplete(evolvedPokemon: Pokemon) {
-    if (this.evolutionBgm) {
-      SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
-    }
+    this.evolutionBgm?.fadeOut(100);
     globalScene.time.delayedCall(250, () => {
       this.pokemon.cry();
       globalScene.time.delayedCall(1250, () => {
-        globalScene.playSoundWithoutBgm("evolution_fanfare");
+        audioManager.replaceBgmUntilEnd("bw/evolution_fanfare");
 
         evolvedPokemon.destroy();
         globalScene.ui.showText(
@@ -399,7 +391,7 @@ export class EvolutionPhase extends Phase {
           true,
           fixedInt(4000),
         );
-        globalScene.time.delayedCall(fixedInt(4250), () => globalScene.playBgm());
+        globalScene.time.delayedCall(fixedInt(4250), () => audioManager.playBgm());
       });
     });
   }
@@ -411,14 +403,14 @@ export class EvolutionPhase extends Phase {
         ? LearnMoveSituation.EVOLUTION_FUSED_BASE
         : LearnMoveSituation.EVOLUTION;
     const levelMoves = this.pokemon
-      .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
+      .getLevelMoves({ startingLevel: this.lastLevel + 1, includeEvolutionMoves: true, learnSituation })
       .filter(lm => lm[0] === EVOLVE_MOVE);
     for (const lm of levelMoves) {
       globalScene.phaseManager.unshiftNew("LearnMovePhase", globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]);
     }
     globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
 
-    globalScene.playSound("se/shine");
+    audioManager.playSound("se/shine");
     globalScene.animations.doSpray(this.evolutionBaseBg, this.evolutionContainer);
 
     globalScene.tweens.chain({
@@ -456,7 +448,7 @@ export class EvolutionPhase extends Phase {
    * @param evolvedPokemon - The evolved Pokemon
    */
   private handleSuccessEvolution(evolvedPokemon: Pokemon): void {
-    globalScene.playSound("se/sparkle");
+    audioManager.playSound("se/sparkle");
     this.pokemonEvoSprite.setVisible(true);
     globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
 

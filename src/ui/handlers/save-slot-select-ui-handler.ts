@@ -9,7 +9,7 @@ import { UiMode } from "#enums/ui-mode";
 import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, SaveSlotSelectCallback } from "#types/ui-types";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -24,8 +24,6 @@ export enum SaveSlotUiMode {
   LOAD,
   SAVE,
 }
-
-export type SaveSlotSelectCallback = (cursor: number) => void;
 
 export class SaveSlotSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectContainer: Phaser.GameObjects.Container;
@@ -373,7 +371,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     if (!this.cursorObj) {
       this.cursorObj = globalScene.add.container(0, 0);
       const cursorBox = globalScene.add.nineslice(
-        0,
+        1,
         15,
         "select_cursor_highlight_thick",
         undefined,

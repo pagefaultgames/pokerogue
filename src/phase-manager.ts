@@ -7,14 +7,13 @@
  * @module
  */
 
-import { PHASE_START_COLOR } from "#app/constants/colors";
 import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
+import { PHASE_START_COLOR } from "#constants/colors";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
-import type { PokemonMove } from "#moves/pokemon-move";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
@@ -57,6 +56,7 @@ import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { MoveHeaderPhase } from "#phases/move-header-phase";
 import { MovePhase } from "#phases/move-phase";
+import { MoveReflectPhase } from "#phases/move-reflect-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterBattleStartCleanupPhase,
@@ -79,7 +79,6 @@ import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
-import { ReloadSessionPhase } from "#phases/reload-session-phase";
 import { ResetStatusPhase } from "#phases/reset-status-phase";
 import { ReturnPhase } from "#phases/return-phase";
 import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
@@ -165,6 +164,7 @@ const PHASES = Object.freeze({
   MoveEffectPhase,
   MoveEndPhase,
   MoveHeaderPhase,
+  MoveReflectPhase,
   MovePhase,
   MysteryEncounterPhase,
   MysteryEncounterOptionSelectedPhase,
@@ -186,7 +186,6 @@ const PHASES = Object.freeze({
   PostSummonPhase,
   PostTurnStatusEffectPhase,
   QuietFormChangePhase,
-  ReloadSessionPhase,
   ResetStatusPhase,
   ReturnPhase,
   RevivalBlessingPhase,
@@ -578,15 +577,6 @@ export class PhaseManager {
   }
 
   /**
-   * Find and change the queued move of the first {@linkcode MovePhase} meeting the given condition.
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.dynamicQueueManager.setMoveForPhase(phaseCondition, move);
-  }
-
-  /**
    * Redirect moves which were targeted at a {@linkcode Pokemon} that has been removed
    * @param removedPokemon - The removed {@linkcode Pokemon}
    * @param allyPokemon - The ally of the removed pokemon
@@ -618,5 +608,6 @@ export class PhaseManager {
       turnEndPhase.upcomingInterlude = true;
     }
   }
+
   // #endregion Phase Functions
 }

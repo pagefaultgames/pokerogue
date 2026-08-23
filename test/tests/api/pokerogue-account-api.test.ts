@@ -1,4 +1,4 @@
-import { PokerogueAccountApi } from "#api/pokerogue-account-api";
+import { PokerogueAccountApi } from "#api/account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
@@ -6,12 +6,12 @@ import type { AccountInfoResponse } from "#types/api";
 import * as CookieUtils from "#utils/cookies";
 import * as cookies from "#utils/cookies";
 import { HttpResponse, http } from "msw";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const accountApi = new PokerogueAccountApi(apiBase);
-let server: SetupServerApi;
+let server: SetupServer;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

@@ -1,10 +1,9 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { CenterOfAttentionTag } from "#data/battler-tags";
+import { activeOverrides } from "#app/overrides";
+import { MOVE_COLOR } from "#constants/colors";
+import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
 import { getStatusEffectActivationText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
@@ -29,12 +28,14 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export class MovePhase extends PokemonPhase {
@@ -109,7 +110,8 @@ export class MovePhase extends PokemonPhase {
     };
   }
 
-  //#region Phase Start
+  // #region Phase Start
+
   public start(): void {
     super.start();
 
@@ -138,6 +140,13 @@ export class MovePhase extends PokemonPhase {
     // Removing Glaive Rush's two flags happens before everything else
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
+
+    // Override the move being used if Encore was added to this Pokemon this turn.
+    const encoreTag = user.getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
+    const override = encoreTag?.tryOverrideMove(user);
+    if (override) {
+      [this.move, this.targets] = override;
+    }
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.
@@ -229,9 +238,9 @@ export class MovePhase extends PokemonPhase {
     this.end();
   }
 
-  //#endregion Phase Start
+  // #endregion Phase Start
 
-  //#region First Failure Check
+  // #region First Failure Check
 
   /**
    * Perform the first round of move failure checks, occurring before move usage text is displayed
@@ -361,7 +370,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
+    if (activeOverrides.STATUS_ACTIVATION_OVERRIDE) {
       return false;
     }
 
@@ -369,17 +378,19 @@ export class MovePhase extends PokemonPhase {
     const move = this.move.getMove();
     if (
       move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, true, true))
+      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, { returnOriginalTypesIfStellar: true }))
     ) {
       this.thaw = true;
       return false;
     }
+    pokemon.status.incrementTurn();
     if (
-      Overrides.STATUS_ACTIVATION_OVERRIDE === false
+      activeOverrides.STATUS_ACTIVATION_OVERRIDE === false
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || ((!pokemon.randBattleSeedInt(4) || (pokemon.status.freezeTurnsRemaining ?? 0) <= 0)
+        && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -420,7 +431,7 @@ export class MovePhase extends PokemonPhase {
     const moveName = move.getName();
     let failedText: string | undefined;
     const usability = new BooleanHolder(false);
-    if (moveName.endsWith(" (N)")) {
+    if (move.getMove().isUnimplemented) {
       failedText = i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") });
     } else if (moveId === MoveId.NONE || this.targets.length === 0) {
       this.cancel();
@@ -510,7 +521,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
+    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(8) === 0;
     if (!proc) {
       return false;
     }
@@ -519,9 +530,9 @@ export class MovePhase extends PokemonPhase {
     return true;
   }
 
-  //#endregion First Failure Check
+  // #endregion First Failure Check
 
-  //#region Second Failure Check
+  // #region Second Failure Check
 
   /**
    * Attempt to thaw the user if it successfully uses a self-thawing move.
@@ -641,28 +652,16 @@ export class MovePhase extends PokemonPhase {
    * Deduct PP from the move being used, accounting for Pressure and other effects.
    */
   protected usePP(): void {
-    if (!isIgnorePP(this.useMode)) {
-      const move = this.move;
-      // "commit" to using the move, deducting PP.
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
-      move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
+    if (isIgnorePP(this.useMode)) {
+      return;
     }
-  }
-
-  /**
-   * Apply PP increasing abilities (currently only {@linkcode AbilityId.PRESSURE | Pressure})
-   * on all target Pokemon.
-   * @param targets - An array containing all active Pokemon targeted by this Phase's move
-   * @returns The amount of extra PP consumed due to Pressure
-   */
-  // TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
-  // This is likely due to said ability being a stub...
-  public getPpIncreaseFromPressure(targets: Pokemon[]): number {
-    const foesWithPressure = this.pokemon
-      .getOpponents(true)
-      .filter(opponent => targets.includes(opponent) && opponent.hasAbilityWithAttr("IncreasePpAbAttr"));
-    return foesWithPressure.length;
+    const { move, pokemon: user } = this;
+    const ppHolder = new NumberHolder(1);
+    this.getActiveTargetPokemon().forEach(target => {
+      applyAbAttrs("IncreasePpUsedAbAttr", { pokemon: target, opponent: user, pp: ppHolder });
+    });
+    move.usePp(ppHolder.value);
+    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
   }
 
   /**
@@ -712,7 +711,7 @@ export class MovePhase extends PokemonPhase {
    * - (on cart, not applicable to Pokerogue) Moves that fail if used ON a raid / special boss: selfdestruct/explosion/imprision/power split / guard split
    * - (on cart, not applicable to Pokerogue) Moves that fail during a "co-op" battle (like when Arven helps during raid boss): ally switch / teatime
    *
-   * After all checks, Powder causing the user to explode
+   * Powder after all other checks, causing the user to explode
    */
   protected secondFailureCheck(): boolean {
     const move = this.move.getMove();
@@ -721,7 +720,12 @@ export class MovePhase extends PokemonPhase {
     const arena = globalScene.arena;
 
     if (!move.applyConditions(user, this.getActiveTargetPokemon()[0], 2)) {
-      // TODO: Make pollen puff failing from heal block use its own message
+      if (move.hasAttr("HealOnAllyAttr")) {
+        failedText = i18next.t("battle:moveDisabledHealBlock", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
+          moveName: move.name,
+        });
+      }
       this.failed = true;
     } else if (arena.isMoveWeatherCancelled(user, move)) {
       failedText = getWeatherBlockMessage(globalScene.arena.weatherType);
@@ -742,9 +746,9 @@ export class MovePhase extends PokemonPhase {
     return false;
   }
 
-  //#endregion Second Failure Check
+  // #endregion Second Failure Check
 
-  //#region Move Execution
+  // #region Move Execution
 
   /**
    * Check for cancellation edge cases - no targets remaining, or `MoveId.NONE` is in the queue
@@ -845,30 +849,22 @@ export class MovePhase extends PokemonPhase {
    * The rest of the failure conditions are marked as sequence 4 and *should* happen in the move effect phase (though happen here for now)
    */
   protected thirdFailureCheck(): boolean {
-    /**
-     * Move conditions assume the move has a single target
-     * TODO: is this sustainable?
-     */
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
     const arena = globalScene.arena;
     const user = this.pokemon;
 
+    // Note: Move conditions currently assume the move has a single target
+    // TODO: should this be changed?
     const failsConditions = !move.applyConditions(user, targets[0], 3);
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
-    // Apply queenly majesty / dazzling
-    if (!failed) {
+    if (!failed && targets[0] != null && user.isOpponent(targets[0])) {
       const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-      const cancelled = new BooleanHolder(false);
+      const cancelled = new ValueHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
-        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
-          pokemon,
-          opponent: user,
-          move,
-          cancelled,
-        });
+        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", { pokemon, opponent: user, move, cancelled });
       });
       failed = cancelled.value;
     }
@@ -930,9 +926,9 @@ export class MovePhase extends PokemonPhase {
     super.end();
   }
 
-  //#endregion Move Execution
+  // #endregion Move Execution
 
-  //#region Helpers
+  // #region Helpers
 
   /**
    * Handles the case where the move was cancelled or failed:
@@ -944,8 +940,6 @@ export class MovePhase extends PokemonPhase {
    *     to lapse on move failure/cancellation.
    *
    *     TODO: ...this seems weird.
-   * - Lapses `AFTER_MOVE` tags:
-   *   - This handles the effects of {@linkcode MoveId.SUBSTITUTE | Substitute}
    * - Removes the second turn of charge moves
    */
   protected handlePreMoveFailures(): void {
@@ -965,7 +959,6 @@ export class MovePhase extends PokemonPhase {
     pokemon.pushMoveHistory(moveHistoryEntry);
 
     pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     // This clears out 2 turn moves after they've been used
     // TODO: Remove post move queue refactor
@@ -1068,5 +1061,5 @@ export class MovePhase extends PokemonPhase {
     }
   }
 
-  //#endregion Helpers
+  // #endregion Helpers
 }

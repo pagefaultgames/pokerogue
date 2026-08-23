@@ -1,14 +1,13 @@
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import type { MovePhase } from "#app/phases/move-phase";
-import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
+import type { Pokemon } from "#field/pokemon";
+import type { MovePhase } from "#phases/move-phase";
+import { DynamicPhasePriorityQueue } from "#queues/pokemon-phase-priority-queue";
 import type { PhaseConditionFunc } from "#types/phase-types";
 
 /** A priority queue responsible for the ordering of {@linkcode MovePhase}s */
-export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
+export class MovePhasePriorityQueue extends DynamicPhasePriorityQueue<MovePhase> {
   private lastTurnOrder: Pokemon[] = [];
 
   protected override reorder(): void {
@@ -44,13 +43,6 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     const phase = this.queue.find(condition);
     if (phase != null) {
       phase.timingModifier = modifier;
-    }
-  }
-
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
-    const phase = this.queue.find(condition);
-    if (phase != null) {
-      phase.move = move;
     }
   }
 

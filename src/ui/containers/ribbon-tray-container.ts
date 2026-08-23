@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
-import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
+import { ribbonFlagToAssetKey } from "#system/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
@@ -68,17 +69,17 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         }
         break;
       case Button.LEFT:
-        if (this.trayCursor !== 0) {
-          success = this.setTrayCursor(this.trayCursor - 1);
-        } else {
+        if (this.trayCursor === 0) {
           success = this.setTrayCursor(numberOfIcons - 1);
+        } else {
+          success = this.setTrayCursor(this.trayCursor - 1);
         }
         break;
       case Button.RIGHT:
-        if (this.trayCursor !== numberOfIcons - 1) {
-          success = this.setTrayCursor(this.trayCursor + 1);
-        } else {
+        if (this.trayCursor === numberOfIcons - 1) {
           success = this.setTrayCursor(0);
+        } else {
+          success = this.setTrayCursor(this.trayCursor + 1);
         }
         break;
       case Button.CANCEL:
@@ -127,20 +128,20 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         (ribbon === RibbonData.NO_HEAL || ribbon === RibbonData.NO_SHOP) && this.ribbonData.has(RibbonData.NO_SUPPORT);
       const hasRibbon = this.ribbonData.has(ribbon) || overrideClassicRibbon || overrideNoSupportRibbons;
 
-      if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
+      if (!hasRibbon && !settings.general.dexForDevs && !settings.display.showMissingRibbons) {
         continue;
       }
       ribbons.push(ribbon);
 
       const icon = ribbonFlagToAssetKey(ribbon);
 
-      if (hasRibbon || globalScene.dexForDevs) {
+      if (hasRibbon || settings.general.dexForDevs) {
         icon.clearTint();
       } else {
         icon.setTint(0);
       }
 
-      if (hasRibbon || globalScene.dexForDevs || globalScene.showMissingRibbons) {
+      if (hasRibbon || settings.general.dexForDevs || settings.display.showMissingRibbons) {
         icon.setPosition(14 + (index % this.maxColumns) * 18, 14 + Math.floor(index / this.maxColumns) * 17);
 
         this.add(icon);

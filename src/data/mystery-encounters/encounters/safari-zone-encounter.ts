@@ -1,5 +1,8 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -7,7 +10,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { EnemyPokemon } from "#field/pokemon";
 import { IvScannerModifier } from "#modifiers/modifier";
@@ -31,7 +33,6 @@ import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encount
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { BooleanHolder, NumberHolder, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
@@ -369,20 +370,16 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
   globalScene.field.add(bait);
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      globalScene.playSound("se/pb_throw");
+      audioManager.playSound("se/pb_throw");
 
       // Trainer throw frames
       globalScene.trainer.setFrame("2");
       globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          globalScene.trainer.setTexture(
-            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-          );
+          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
         });
       });
 
@@ -403,12 +400,12 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
               y: originalY - 5,
               loop: 6,
               onStart: () => {
-                globalScene.playSound("battle_anims/PRSFX- Bug Bite");
+                audioManager.playSound("battle_anims/PRSFX- Bug Bite");
                 bait.setFrame("0002.png");
               },
               onLoop: () => {
                 if (index % 2 === 0) {
-                  globalScene.playSound("battle_anims/PRSFX- Bug Bite");
+                  audioManager.playSound("battle_anims/PRSFX- Bug Bite");
                 }
                 if (index === 4) {
                   bait.setFrame("0003.png");
@@ -438,20 +435,16 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
   globalScene.field.add(mud);
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
-      globalScene.playSound("se/pb_throw");
+      audioManager.playSound("se/pb_throw");
 
       // Trainer throw frames
       globalScene.trainer.setFrame("2");
       globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          globalScene.trainer.setTexture(
-            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-          );
+          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
         });
       });
 
@@ -463,7 +456,7 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
         duration: 500,
         onComplete: () => {
           // Mud frame 2
-          globalScene.playSound("battle_anims/PRSFX- Sludge Bomb2");
+          audioManager.playSound("battle_anims/PRSFX- Sludge Bomb2");
           mud.setFrame("0002.png");
           // Mud splat
           globalScene.time.delayedCall(200, () => {
@@ -489,10 +482,10 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
                 y: originalY - 20,
                 loop: 1,
                 onStart: () => {
-                  globalScene.playSound("battle_anims/PRSFX- Taunt2");
+                  audioManager.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onLoop: () => {
-                  globalScene.playSound("battle_anims/PRSFX- Taunt2");
+                  audioManager.playSound("battle_anims/PRSFX- Taunt2");
                 },
                 onComplete: () => {
                   resolve(true);
@@ -578,7 +571,7 @@ async function doEndTurn(cursorIndex: number) {
  * @returns A function to get a random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
-  return getPokemonSpecies(
+  return speciesDataRegistry.getSpecies(
     getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
   );
 }

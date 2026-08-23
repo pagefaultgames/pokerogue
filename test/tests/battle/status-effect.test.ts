@@ -70,22 +70,17 @@ describe("Status Effects", () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const player = game.field.getPlayerPokemon();
-      player.status = new Status(StatusEffect.SLEEP, 0, 4);
+      player.status = new Status(StatusEffect.SLEEP, 0, 3);
 
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
 
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
-
-      game.move.use(MoveId.SPLASH);
-      await game.toNextTurn();
-
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
 
       game.move.use(MoveId.SPLASH);

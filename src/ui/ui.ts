@@ -1,4 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
@@ -6,6 +8,9 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
+import { AdminUiHandler } from "#ui/admin-ui-handler";
+import { AlertModalUiHandler } from "#ui/alert-modal-ui-handler";
+import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BallUiHandler } from "#ui/ball-ui-handler";
@@ -15,6 +20,7 @@ import { GameChallengesUiHandler } from "#ui/challenges-select-ui-handler";
 import { ChangePasswordFormUiHandler } from "#ui/change-password-form-ui-handler";
 import { CommandUiHandler } from "#ui/command-ui-handler";
 import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
+import { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
 import { EggGachaUiHandler } from "#ui/egg-gacha-ui-handler";
 import { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { EggListUiHandler } from "#ui/egg-list-ui-handler";
@@ -23,7 +29,10 @@ import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { FightUiHandler } from "#ui/fight-ui-handler";
 import { GameStatsUiHandler } from "#ui/game-stats-ui-handler";
 import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
+import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import { GeneralSettingsUiHandler } from "#ui/general-settings-ui-handler";
 import { KeyboardBindingUiHandler } from "#ui/keyboard-binding-ui-handler";
+import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
 import { LoginFormUiHandler } from "#ui/login-form-ui-handler";
 import { LoginOrRegisterUiHandler } from "#ui/login-or-register-ui-handler";
@@ -31,7 +40,6 @@ import { MenuUiHandler } from "#ui/menu-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
-import { NavigationManager } from "#ui/navigation-menu";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
@@ -39,16 +47,11 @@ import { PokedexScanUiHandler } from "#ui/pokedex-scan-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RegistrationFormUiHandler } from "#ui/registration-form-ui-handler";
 import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
+import { RenameRunFormUiHandler } from "#ui/rename-run-ui-handler";
 import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import { SavingIconContainer } from "#ui/saving-icon-handler";
-import { SessionReloadModalUiHandler } from "#ui/session-reload-modal-ui-handler";
-import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
-import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
-import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
-import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
-import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import { SummaryUiHandler } from "#ui/summary-ui-handler";
 import { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
@@ -60,8 +63,6 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
-import { AdminUiHandler } from "./handlers/admin-ui-handler";
-import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -86,7 +87,7 @@ const noTransitionModes = [
   UiMode.MENU_OPTION_SELECT,
   UiMode.GAMEPAD_BINDING,
   UiMode.KEYBOARD_BINDING,
-  UiMode.SETTINGS,
+  UiMode.SETTINGS_GENERAL,
   UiMode.SETTINGS_AUDIO,
   UiMode.SETTINGS_DISPLAY,
   UiMode.SETTINGS_GAMEPAD,
@@ -97,7 +98,6 @@ const noTransitionModes = [
   UiMode.LOGIN_FORM,
   UiMode.REGISTRATION_FORM,
   UiMode.LOADING,
-  UiMode.SESSION_RELOAD,
   UiMode.UNAVAILABLE,
   UiMode.RENAME_POKEMON,
   UiMode.RENAME_RUN,
@@ -107,6 +107,7 @@ const noTransitionModes = [
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
   UiMode.CHANGE_PASSWORD_FORM,
+  UiMode.ALERT_MODAL,
 ];
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
@@ -151,7 +152,7 @@ export class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(),
       new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
       // settings
-      new SettingsUiHandler(),
+      new GeneralSettingsUiHandler(),
       new SettingsDisplayUiHandler(),
       new SettingsAudioUiHandler(),
       new SettingsGamepadUiHandler(),
@@ -169,7 +170,6 @@ export class UI extends Phaser.GameObjects.Container {
       new LoginFormUiHandler(),
       new RegistrationFormUiHandler(),
       new LoadingModalUiHandler(),
-      new SessionReloadModalUiHandler(),
       new UnavailableModalUiHandler(),
       new GameChallengesUiHandler(),
       new RenameFormUiHandler(),
@@ -181,6 +181,7 @@ export class UI extends Phaser.GameObjects.Container {
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
       new ChangePasswordFormUiHandler(),
+      new AlertModalUiHandler(),
     ];
   }
 
@@ -293,8 +294,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      // biome-ignore lint/complexity/useOptionalChain: optional chain would change this to be null instead of undefined.
-      let showMessageAndCallback = () => callback && callback();
+      let showMessageAndCallback = () => callback?.();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         messagePages[p] = messagePages[p].split(repname[0]).join(pokename[0]);
@@ -326,7 +326,7 @@ export class UI extends Phaser.GameObjects.Container {
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     if (i18next.exists(keyOrText)) {
@@ -382,7 +382,7 @@ export class UI extends Phaser.GameObjects.Container {
   shouldSkipDialogue(i18nKey: string): boolean {
     if (
       i18next.exists(i18nKey)
-      && globalScene.skipSeenDialogues
+      && settings.general.skipSeenDialogues
       && globalScene.gameData.getSeenDialogues()[i18nKey] === true
     ) {
       return true;
@@ -478,11 +478,11 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    globalScene.playSound("ui/select");
+    audioManager.playSound("ui/select");
   }
 
   playError(): void {
-    globalScene.playSound("ui/error");
+    audioManager.playSound("ui/error");
   }
 
   fadeOut(duration: number): Promise<void> {
@@ -659,11 +659,9 @@ export class UI extends Phaser.GameObjects.Container {
 
   /**
    * Attempts to free memory held by UI handlers
-   * and clears menus from {@linkcode NavigationManager} to prepare for reset
    */
   public freeUIData(): void {
     this.handlers.forEach(h => h.destroy());
     this.handlers = [];
-    NavigationManager.getInstance().clearNavigationMenus();
   }
 }

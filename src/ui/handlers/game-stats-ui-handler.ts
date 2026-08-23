@@ -1,11 +1,10 @@
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { settings } from "#app/global-settings-manager";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
-import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -38,14 +37,14 @@ const displayStats: DisplayStats = {
     label_key: "starters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!d.caughtAttr);
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
+      return `${starterCount} (${Math.floor((starterCount / speciesDataRegistry.getAllStarters().length) * 1000) / 10}%)`;
     },
   },
   shinyStartersUnlocked: {
     label_key: "shinyStarters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!(d.caughtAttr & DexAttr.SHINY));
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
+      return `${starterCount} (${Math.floor((starterCount / speciesDataRegistry.getAllStarters().length) * 1000) / 10}%)`;
     },
   },
   dexEncountered: {
@@ -250,7 +249,24 @@ export class GameStatsUiHandler extends UiHandler {
     const resolvedLang = i18next.resolvedLanguage ?? "en";
     // NOTE TO TRANSLATION TEAM: Add more languages that want to display
     // in a single-column inside of the `[]` (e.g. `["ru", "fr"]`)
-    return ["fr", "es-ES", "es-419", "it", "ja", "pt-BR", "ru", "id", "th", "tr", "sv", "uk"].includes(resolvedLang);
+    const singleColumnLanguages = [
+      "fr",
+      "es-ES",
+      "es-419",
+      "it",
+      "ja",
+      "pt-BR",
+      "ru",
+      "id",
+      "th",
+      "tr",
+      "sv",
+      "uk",
+      "eu",
+      "vi",
+      "pl",
+    ];
+    return singleColumnLanguages.includes(resolvedLang);
   }
   /** The number of columns used by this menu in the resolved language */
   private get columnCount(): 1 | 2 {
@@ -319,12 +335,11 @@ export class GameStatsUiHandler extends UiHandler {
    * @returns The username of logged in user
    */
   private getUsername(): string {
-    const usernameReplacement =
-      globalScene.gameData.gender === PlayerGender.FEMALE
-        ? i18next.t("trainerNames:playerF")
-        : i18next.t("trainerNames:playerM");
+    const usernameReplacement = settings.isPlayerFemale
+      ? i18next.t("trainerNames:playerF")
+      : i18next.t("trainerNames:playerM");
 
-    const displayName = globalScene.hideUsername
+    const displayName = settings.display.hideUsername
       ? usernameReplacement
       : (loggedInUser?.username ?? i18next.t("common:guest"));
 
@@ -385,7 +400,7 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
-    const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
+    const isLegacyTheme = settings.isLegacyTheme;
     const arrowX = this.singleCol ? colWidth / 2 : colWidth;
     this.arrowDown = globalScene.add.sprite(arrowX, sHeight - (isLegacyTheme ? 9 : 5), "prompt");
 
@@ -424,7 +439,7 @@ export class GameStatsUiHandler extends UiHandler {
     if (!this.setCursor(0)) {
       this.updateStats();
     }
-    if (globalScene.uiTheme === UiTheme.LEGACY) {
+    if (settings.isLegacyTheme) {
       this.arrowUp.setTint(0x484848);
       this.arrowDown.setTint(0x484848);
     }

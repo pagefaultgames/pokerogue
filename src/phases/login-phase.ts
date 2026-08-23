@@ -1,8 +1,11 @@
 import { updateUserInfo } from "#app/account";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { bypassLogin } from "#constants/app-constants";
+import { PlayerGender } from "#enums/player-gender";
 import { UiMode } from "#enums/ui-mode";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
@@ -54,7 +57,7 @@ export class LoginPhase extends Phase {
   public override async end(): Promise<void> {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
-    if (!globalScene.gameData.gender) {
+    if (settings.general.playerGender === PlayerGender.UNSET) {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 
@@ -93,7 +96,7 @@ export class LoginPhase extends Phase {
       ui.showText(i18next.t("menu:logInOrCreateAccount"));
     }
 
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
   }
@@ -125,7 +128,7 @@ export class LoginPhase extends Phase {
       await gameData.loadSystem();
       this.end();
     };
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });
   }
@@ -145,7 +148,7 @@ export class LoginPhase extends Phase {
       }
       this.end();
     };
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
   }

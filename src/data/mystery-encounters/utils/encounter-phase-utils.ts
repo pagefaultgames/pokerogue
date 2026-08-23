@@ -1,8 +1,10 @@
 import type { Battle } from "#app/battle";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
+import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE } from "#balance/rates";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
@@ -20,6 +22,7 @@ import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -46,12 +49,10 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /**
@@ -78,7 +79,7 @@ export function doTrainerExclamation(): void {
     },
   });
 
-  globalScene.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
+  audioManager.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -471,7 +472,7 @@ export function updatePlayerMoney(moneyAmount: number, playSound = true, showMes
   globalScene.animateMoneyChanged(isIncrease);
 
   if (playSound) {
-    globalScene.playSound("se/buy");
+    audioManager.playSound("se/buy");
   }
 
   if (showMessage) {
@@ -843,7 +844,7 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
     !globalScene
       .getEnemyParty()
       .find(p =>
-        encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true),
+        encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE ? !p?.isFainted(true) : p.isOnField(),
       )
   ) {
     globalScene.phaseManager.pushNew("BattleEndPhase", true);
@@ -998,7 +999,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     shinyRerolls = 0,
     eventHiddenRerolls = 0,
     eventShinyRerolls = 0,
-    hiddenAbilityChance = BASE_HIDDEN_ABILITY_CHANCE,
+    hiddenAbilityChance = BASE_HIDDEN_ABILITY_RATE,
     shinyChance = BASE_SHINY_CHANCE,
     maxShinyChance = 0,
     speciesFilter = () => true,
@@ -1015,16 +1016,13 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
 
   if (eventChance && eventEncounters.length > 0 && (eventChance === 100 || randSeedInt(100) < eventChance)) {
     const eventEncounter = randSeedItem(eventEncounters);
-    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(
-      level,
-      !eventEncounter.blockEvolution,
-      isBoss,
-      globalScene.gameMode,
-    );
+    const levelSpecies = speciesDataRegistry
+      .getSpecies(eventEncounter.species)
+      .getWildSpeciesForLevel(level, !eventEncounter.blockEvolution, isBoss, globalScene.gameMode);
     if (params.isEventEncounter) {
       params.isEventEncounter.value = true;
     }
-    bossSpecies = getPokemonSpecies(levelSpecies);
+    bossSpecies = speciesDataRegistry.getSpecies(levelSpecies);
     formIndex = eventEncounter.formIndex;
   } else if (speciesFunction) {
     bossSpecies = speciesFunction();
@@ -1052,8 +1050,8 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     shinyRerolls--;
   }
 
-  while (hiddenRerolls > 0) {
-    ret.tryRerollHiddenAbilitySeed(hiddenAbilityChance, true);
+  while (hiddenRerolls > 0 && ret.abilityIndex !== 2) {
+    ret.tryRerollHiddenAbilitySeed(hiddenAbilityChance);
     hiddenRerolls--;
   }
 

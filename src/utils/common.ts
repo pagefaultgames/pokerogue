@@ -1,8 +1,9 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supported-languages";
 import { enumValueToKey } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -69,7 +70,7 @@ export function padInt(value: number, length: number, padWith?: string): string 
   if (!padWith) {
     padWith = "0";
   }
-  let valueStr = value.toString();
+  let valueStr: string = value.toString();
   while (valueStr.length < length) {
     valueStr = `${padWith}${valueStr}`;
   }
@@ -96,7 +97,7 @@ export function randInt(range: number, min = 0): number {
  * Generate a random integer using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
  * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
  * @param min - The minimum integer to pick, default `0`
- * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+ * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1) inclusive
  */
 export function randSeedInt(range: number, min = 0): number {
   if (range <= 1) {
@@ -116,12 +117,13 @@ export function randSeedIntRange(min: number, max: number): number {
 }
 
 /**
- * Returns a random integer between min and max (non-inclusive)
+ * Returns a **completely unseeded** random integer
  * @param min The lowest number
  * @param max The highest number
+ * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
  */
 export function randIntRange(min: number, max: number): number {
-  return randInt(max - min, min);
+  return randInt(max - min + 1, min);
 }
 
 /**
@@ -278,6 +280,7 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
+// TODO: Remove in favor of async functions
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | undefined> {
   return condition ? promiseFunc() : Promise.resolve(undefined);
 }
@@ -316,108 +319,13 @@ export function fixedInt(value: number): number {
   return new FixedInt(value) as unknown as number;
 }
 
-export function rgbToHsv(r: number, g: number, b: number) {
-  const v = Math.max(r, g, b);
-  const c = v - Math.min(r, g, b);
-  const h = c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
-  return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
-}
-
 /**
- * Compare color difference in RGB
- * @param rgb1 First RGB color in array
- * @param rgb2 Second RGB color in array
+ * This function checks if all localized images used by the game have been added for the given language.
+ * @param key - The language key (e.g. "ko").
+ * @returns Whether the given language is supported and has localized sprites.
  */
-export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
-  const [r1, g1, b1] = rgb1;
-  const [r2, g2, b2] = rgb2;
-  const drp2 = Math.pow(r1 - r2, 2);
-  const dgp2 = Math.pow(g1 - g2, 2);
-  const dbp2 = Math.pow(b1 - b2, 2);
-  const t = (r1 + r2) / 2;
-
-  return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + (t * (drp2 - dbp2)) / 256));
-}
-
-// Extract out the rgb values from a hex string
-const hexRegex = /^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i;
-
-export function rgbHexToRgba(hex: string) {
-  const color = hex.match(hexRegex) ?? ["000000", "00", "00", "00"];
-  return {
-    r: Number.parseInt(color[1], 16),
-    g: Number.parseInt(color[2], 16),
-    b: Number.parseInt(color[3], 16),
-    a: 255,
-  };
-}
-
-export function rgbaToInt(rgba: readonly number[]): number {
-  return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
-}
-
-/**
- * Provided valid HSV values, calculates and stitches together a string of that
- * HSV color's corresponding hex code.
- *
- * Sourced from {@link https://stackoverflow.com/a/44134328}.
- * @param h Hue in degrees, must be in a range of [0, 360]
- * @param s Saturation percentage, must be in a range of [0, 1]
- * @param l Ligthness percentage, must be in a range of [0, 1]
- * @returns a string of the corresponding color hex code with a "#" prefix
- */
-export function hslToHex(h: number, s: number, l: number): string {
-  const a = s * Math.min(l, 1 - l);
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const rgb = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
-    return Math.round(rgb * 255)
-      .toString(16)
-      .padStart(2, "0");
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-/**
- * This function returns `true` if all localized images used by the game have been added for the given language.
- *
- * If the lang is not in the function, it usually means that lang is going to use the default english version
- *
- * English itself counts as not available
- */
-export function hasAllLocalizedSprites(lang?: string): boolean {
-  // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
-  if (!lang) {
-    lang = i18next.resolvedLanguage;
-  }
-
-  switch (lang) {
-    case "es-ES":
-    case "es-419":
-    case "fr":
-    case "da":
-    case "de":
-    case "it":
-    case "zh-Hans":
-    case "zh-Hant":
-    case "pt-BR":
-    case "ro":
-    case "th":
-    case "tr":
-    case "ko":
-    case "ja":
-    case "ca":
-    case "ru":
-    case "id":
-    case "hi":
-    case "tl":
-    case "nb-NO":
-    case "sv":
-    case "uk":
-      return true;
-    default:
-      return false;
-  }
+export function hasAllLocalizedSprites(key: string): boolean {
+  return !!SUPPORTED_LANGUAGE_ENTRIES[key as SupportedLanguage]?.hasAllLocalizedImages;
 }
 
 /**
@@ -469,7 +377,8 @@ export function toDmgValue(value: number, minValue = 1) {
  * @returns the localized sprite key
  */
 export function getLocalizedSpriteKey(baseKey: string) {
-  return `${baseKey}${hasAllLocalizedSprites(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+  const lang = i18next.resolvedLanguage ?? "en";
+  return `${baseKey}${lang !== "en" && hasAllLocalizedSprites(lang) ? `_${i18next.resolvedLanguage}` : ""}`;
 }
 
 /**
@@ -511,14 +420,6 @@ export function getBiomeName(biome: BiomeId | -1) {
   if (biome === -1) {
     return i18next.t("biome:unknownLocation");
   }
-  switch (biome) {
-    case BiomeId.GRASS:
-      return i18next.t("biome:grass");
-    case BiomeId.RUINS:
-      return i18next.t("biome:ruins");
-    case BiomeId.END:
-      return i18next.t("biome:end");
-    default:
-      return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
-  }
+
+  return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
 }

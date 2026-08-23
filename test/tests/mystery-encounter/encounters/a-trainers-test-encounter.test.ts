@@ -7,8 +7,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { ATrainersTestEncounter } from "#mystery-encounters/a-trainers-test-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
+import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounter-biomes";
 import type { PartyHealPhase } from "#phases/party-heal-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
@@ -133,16 +133,6 @@ describe("A Trainer's Test - Mystery Encounter", () => {
   });
 
   describe("Option 2 - Decline the Challenge", () => {
-    beforeEach(() => {
-      // Mock sound object
-      vi.spyOn(scene, "playSoundWithoutBgm").mockImplementation(() => {
-        return {
-          totalDuration: 1,
-          destroy: () => null,
-        } as any;
-      });
-    });
-
     it("should have the correct properties", () => {
       const option = ATrainersTestEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);

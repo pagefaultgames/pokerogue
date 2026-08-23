@@ -104,7 +104,7 @@ describe("Moves - Safeguard", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
@@ -117,7 +117,7 @@ describe("Moves - Safeguard", () => {
     await game.move.forceEnemyMove(MoveId.SAFEGUARD);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
 
     enemyPokemon.resetStatus();
 
@@ -125,7 +125,7 @@ describe("Moves - Safeguard", () => {
     await game.move.forceEnemyMove(MoveId.REST);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("protects from ability-inflicted status", async () => {
@@ -134,7 +134,7 @@ describe("Moves - Safeguard", () => {
     const player = game.field.getPlayerPokemon();
     game.field.mockAbility(player, AbilityId.STATIC);
     vi.spyOn(
-      allAbilities[AbilityId.STATIC].getAttrs("PostDefendContactApplyStatusEffectAbAttr")[0],
+      allAbilities[AbilityId.STATIC].getAttrs("PostDefendApplyStatusEffectAbAttr")[0],
       "canApply",
     ).mockReturnValue(true);
 

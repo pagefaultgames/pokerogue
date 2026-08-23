@@ -2,13 +2,10 @@ import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#types/ui-types";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-
-export interface ModalConfig {
-  buttonActions: ((...args: any[]) => any)[];
-}
 
 export abstract class ModalUiHandler extends UiHandler {
   protected modalContainer: Phaser.GameObjects.Container;
@@ -99,7 +96,7 @@ export abstract class ModalUiHandler extends UiHandler {
   show(args: any[]): boolean {
     if (args.length > 0 && "buttonActions" in args[0]) {
       super.show(args);
-      if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
+      if (Object.hasOwn(args[0], "fadeOut") && typeof args[0].fadeOut === "function") {
         const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();
 
         const overlay = globalScene.add.rectangle(

@@ -2,12 +2,13 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { Battle } from "#app/battle";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { activeOverrides } from "#app/overrides";
 import { NIGHT_TIME } from "#constants/game-constants";
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
+import { getArenaTag } from "#data/arena-tag";
 import { biomeBgmLoopPoints } from "#data/biome-bgm-loop-points";
-import { getDailyForcedWaveBiomePoolTier } from "#data/daily-seed/daily-run";
+import { getDailyForcedWaveBiomePoolTier } from "#data/daily-run";
 import { allBiomes } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -28,23 +29,30 @@ import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import {
+  type ArenaEventMap,
+  ArenaTagAddedEvent,
+  ArenaTagRemovedEvent,
+  TerrainChangedEvent,
+  WeatherChangedEvent,
+} from "#events/arena";
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
+import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
 import type { ArenaPokemonPools, TrainerPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor, Mutable } from "#types/type-helpers";
+import type { TypedEventTarget } from "#types/typed-event-target";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import type { NonEmptyTuple } from "type-fest";
@@ -57,7 +65,7 @@ export class Arena {
 
   /** All currently-active {@linkcode ArenaTag}s on both sides of the field. */
   public tags: ArenaTag[] = [];
-  /** All currently-active {@linkcode PositionalTag}s on both sides of the field, sorted by tag type. */
+  /** A manager for the currently-active {@linkcode PositionalTag}s on both sides of the field. */
   public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public readonly bgm: string;
@@ -98,7 +106,11 @@ export class Arena {
   private pokemonPool: ArenaPokemonPools;
   private readonly trainerPool: TrainerPools;
 
-  public readonly eventTarget: EventTarget = new EventTarget();
+  /**
+   * Event dispatcher for various {@linkcode ArenaEvent}s.
+   * Used primarily to update the arena flyout.
+   */
+  public readonly eventTarget = new EventTarget() as TypedEventTarget<keyof ArenaEventMap, ArenaEventMap>;
 
   constructor(biomeId: BiomeId, playerFaints = 0) {
     this.biomeId = biomeId;
@@ -144,7 +156,8 @@ export class Arena {
     return 131 / 180;
   }
 
-  // #endregion
+  // #endregion Getters
+
   // #region Misc Public Methods
 
   public init() {
@@ -202,7 +215,8 @@ export class Arena {
     this.removeAllTags();
   }
 
-  // #endregion
+  // #endregion Misc Public Methods
+
   // #region Misc Private Methods
 
   /**
@@ -261,7 +275,8 @@ export class Arena {
     return BiomePoolTier.ULTRA_RARE;
   }
 
-  // #endregion
+  // #endregion Misc Private Methods
+
   // #region Weather
 
   /** @returns Whether or not the weather can be changed to the specified weather */
@@ -272,9 +287,12 @@ export class Arena {
   /**
    * Sets weather to the override specified in `overrides.ts`
    */
+  // TODO: make this apply at the start of a new biome like the terrain one - this would be a lot more useful for tests
   private overrideWeather(): void {
-    const weather = Overrides.WEATHER_OVERRIDE;
+    const weather = activeOverrides.WEATHER_OVERRIDE;
     this.weather = new Weather(weather, 0);
+
+    this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, 0));
     globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
     globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
   }
@@ -286,7 +304,7 @@ export class Arena {
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
   public trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
-    if (Overrides.WEATHER_OVERRIDE) {
+    if (activeOverrides.WEATHER_OVERRIDE) {
       this.overrideWeather();
       return true;
     }
@@ -318,16 +336,16 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
 
-    this.weather = weather ? new Weather(weather, weatherDuration.value, weatherDuration.value) : null;
-    this.eventTarget.dispatchEvent(
-      new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
-    ); // TODO: this `x?.y!` is dumb, fix this
+    if (weather === WeatherType.NONE) {
+      this.weather = null;
+      this.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE));
+      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
+    } else {
+      this.weather = new Weather(weather, weatherDuration.value, weatherDuration.value);
+      this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, weatherDuration.value));
 
-    if (this.weather) {
       globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
       globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
-    } else {
-      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
@@ -412,7 +430,8 @@ export class Arena {
     this.trySetWeather(randomWeather);
   }
 
-  // #endregion
+  // #endregion Weather
+
   // #region Terrain
 
   /** @returns Whether or not the terrain can be set to the specified terrain */
@@ -441,13 +460,14 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
 
-    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
+    if (terrain === TerrainType.NONE) {
+      this.terrain = null;
+      this.eventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.NONE));
 
-    this.eventTarget.dispatchEvent(
-      new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
-    ); // TODO: are those bangs correct?
-
-    if (this.terrain) {
+      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
+    } else {
+      this.terrain = new Terrain(terrain, terrainDuration.value, terrainDuration.value);
+      this.eventTarget.dispatchEvent(new TerrainChangedEvent(terrain, terrainDuration.value));
       if (!ignoreAnim) {
         globalScene.phaseManager.unshiftNew(
           "CommonAnimPhase",
@@ -457,8 +477,6 @@ export class Arena {
         );
       }
       globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
-    } else {
-      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
@@ -472,14 +490,12 @@ export class Arena {
     return true;
   }
 
-  /** Override the terrain to the value set inside {@linkcode Overrides.STARTING_TERRAIN_OVERRIDE}. */
+  /** Override the terrain to the value set inside {@linkcode activeOverrides.STARTING_TERRAIN_OVERRIDE}. */
   private overrideTerrain(): void {
-    const terrain = Overrides.STARTING_TERRAIN_OVERRIDE;
+    const terrain = activeOverrides.STARTING_TERRAIN_OVERRIDE;
     // TODO: Add a flag for permanent terrains
     this.terrain = new Terrain(terrain, 0);
-    this.eventTarget.dispatchEvent(
-      new TerrainChangedEvent(TerrainType.NONE, this.terrain.terrainType, this.terrain.turnsLeft),
-    );
+    this.eventTarget.dispatchEvent(new TerrainChangedEvent(terrain, this.terrain.turnsLeft));
     globalScene.phaseManager.unshiftNew(
       "CommonAnimPhase",
       undefined,
@@ -491,7 +507,7 @@ export class Arena {
 
   /** Sets a random terrain based on the biome */
   public setBiomeTerrain(): void {
-    if (Overrides.STARTING_TERRAIN_OVERRIDE) {
+    if (activeOverrides.STARTING_TERRAIN_OVERRIDE) {
       this.overrideTerrain();
       return;
     }
@@ -506,11 +522,42 @@ export class Arena {
     this.trySetTerrain(randomTerrain);
   }
 
+  /** @see {@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Effect} */
   public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
-    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+    if (this.terrainType === TerrainType.PSYCHIC) {
+      return (
+        !isFieldTargeted(move)
+        && !isSpreadMove(move)
+        && move.getPriority(user) > 0
+        && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+      );
+    }
+    return false;
   }
 
-  // #endregion
+  /**
+   * Compute the power multiplier applied to a grounded move from terrain.
+   * @param attackType - The {@linkcode PokemonType} of the attack
+   * @returns The multiplier to apply to move power.
+   * @remarks
+   * This excludes Misty Terrain's 50% nerf to Dragon-type moves,
+   * which depends on the _target's_ groundedness (not the user's).
+   */
+  public getTerrainPowerMultiplier(attackType: PokemonType): number {
+    if (this.terrainType === TerrainType.ELECTRIC && attackType === PokemonType.ELECTRIC) {
+      return 1.3;
+    }
+    if (this.terrainType === TerrainType.GRASSY && attackType === PokemonType.GRASS) {
+      return 1.3;
+    }
+    if (this.terrainType === TerrainType.PSYCHIC && attackType === PokemonType.PSYCHIC) {
+      return 1.3;
+    }
+    return 1;
+  }
+
+  // #endregion Terrain
+
   // #region Trainers
 
   public randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
@@ -531,7 +578,8 @@ export class Arena {
     return tierPool.length > 0 ? randSeedItem(tierPool) : TrainerType.BREEDER;
   }
 
-  // #endregion
+  // #endregion Trainers
+
   // #region Pokemon
 
   public updatePoolsForTimeOfDay(): void {
@@ -539,10 +587,12 @@ export class Arena {
     if (timeOfDay === this.lastTimeOfDay) {
       return;
     }
-    this.pokemonPool = Object.entries(allBiomes.get(this.biomeId).pokemonPool).reduce(
+
+    const currBiome = allBiomes.get(this.biomeId);
+    this.pokemonPool = Object.entries(currBiome.pokemonPool).reduce(
       (acc, [tier, pool]) => {
-        // TODO: Remove type assertion after https://github.com/pagefaultgames/pokerogue/pull/7078 is merged
-        acc[tier as `${BiomePoolTier}`] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
+        tier satisfies `${BiomePoolTier}`;
+        acc[tier] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
         return acc;
       },
       {} as Mutable<ArenaPokemonPools>,
@@ -579,9 +629,7 @@ export class Arena {
 
     let tier: BiomePoolTier;
     const forcedTier = getDailyForcedWaveBiomePoolTier(waveIndex);
-    if (forcedTier !== null) {
-      tier = forcedTier;
-    } else {
+    if (forcedTier === null) {
       const rollMax = isBossSpecies ? 64 : 512;
 
       // Luck reduces the RNG ceiling by 0.5x for bosses or 2x otherwise
@@ -589,6 +637,8 @@ export class Arena {
 
       const rngRoll = randSeedInt(rollMax - luckModifier);
       tier = (isBossSpecies ? this.generateBossBiomeTier : this.generateNonBossBiomeTier)(rngRoll);
+    } else {
+      tier = forcedTier;
     }
 
     console.log("Starting species pool tier:", BiomePoolTier[tier]);
@@ -604,7 +654,7 @@ export class Arena {
     if (tierPool.length === 0) {
       species = globalScene.randomSpecies(waveIndex, level);
     } else {
-      species = getPokemonSpecies(randSeedItem(tierPool));
+      species = speciesDataRegistry.getSpecies(randSeedItem(tierPool));
     }
 
     const regen = this.checkLegendBST(species, globalScene.gameMode.getWaveForDifficulty(waveIndex, true));
@@ -618,7 +668,7 @@ export class Arena {
     const newSpeciesId = species.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, globalScene.gameMode);
     if (newSpeciesId !== species.speciesId) {
       console.log("Replaced", SpeciesId[species.speciesId], "with", SpeciesId[newSpeciesId]);
-      species = getPokemonSpecies(newSpeciesId);
+      species = speciesDataRegistry.getSpecies(newSpeciesId);
     }
 
     return species;
@@ -643,7 +693,8 @@ export class Arena {
       : adjustedWave < 55; // Wave 25+ in daily
   }
 
-  // #endregion
+  // #endregion Pokemon
+
   // #region Arena Tags
 
   /**
@@ -743,28 +794,19 @@ export class Arena {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(globalScene.getPokemonById(sourceId));
-
-      if (existingTag instanceof EntryHazardTag) {
-        const { tagType, side, turnCount, maxDuration, layers, maxLayers } = existingTag as EntryHazardTag;
-        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers));
-      }
-
       return false;
     }
 
     // creates a new tag object
     const newTag = getArenaTag(tagType, turnCount, sourceMove, sourceId, side);
-    if (newTag) {
-      newTag.onAdd(quiet);
-      this.tags.push(newTag);
-
-      const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
-
-      this.eventTarget.dispatchEvent(
-        new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, newTag.maxDuration, layers, maxLayers),
-      );
+    if (!newTag) {
+      return false;
     }
 
+    newTag.onAdd(quiet);
+    this.tags.push(newTag);
+
+    this.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount));
     return true;
   }
 
@@ -846,31 +888,35 @@ export class Arena {
         t.onRemove();
         this.tags.splice(this.tags.indexOf(t), 1);
 
-        this.eventTarget.dispatchEvent(new TagRemovedEvent(t.tagType, t.side, t.turnCount));
+        this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(t.tagType, t.side));
       });
   }
 
+  // TODO: Remove unused boolean return
   public removeTag(tagType: ArenaTagType): boolean {
-    const tags = this.tags;
+    const { tags } = this;
     const tag = tags.find(t => t.tagType === tagType);
-    if (tag) {
-      tag.onRemove();
-      tags.splice(tags.indexOf(tag), 1);
-
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+    if (!tag) {
+      return false;
     }
-    return !!tag;
+    tag.onRemove();
+    tags.splice(tags.indexOf(tag), 1);
+
+    this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
+    return true;
   }
 
+  // TODO: Remove unused boolean return
   public removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide, quiet = false): boolean {
     const tag = this.getTagOnSide(tagType, side);
-    if (tag) {
-      tag.onRemove(quiet);
-      this.tags.splice(this.tags.indexOf(tag), 1);
-
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+    if (!tag) {
+      return false;
     }
-    return !!tag;
+    tag.onRemove(quiet);
+    this.tags.splice(this.tags.indexOf(tag), 1);
+
+    this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
+    return true;
   }
 
   /**
@@ -894,24 +940,22 @@ export class Arena {
       }
 
       tag.onRemove(quiet);
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+      this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
     }
 
     this.tags = leftoverTags;
   }
 
   public removeAllTags(): void {
-    while (this.tags.length > 0) {
-      this.tags[0].onRemove();
-      this.eventTarget.dispatchEvent(
-        new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount),
-      );
-
-      this.tags.splice(0, 1);
+    for (const tag of this.tags) {
+      tag.onRemove();
+      this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
     }
+    this.tags = [];
   }
 
-  // #endregion
+  // #endregion Arena Tags
+
   // #region Time of Day
 
   public getTimeOfDay(): TimeOfDay {
@@ -920,8 +964,8 @@ export class Arena {
         return TimeOfDay.NIGHT;
     }
 
-    if (Overrides.TIME_OF_DAY_OVERRIDE !== null) {
-      return Overrides.TIME_OF_DAY_OVERRIDE;
+    if (activeOverrides.TIME_OF_DAY_OVERRIDE !== null) {
+      return activeOverrides.TIME_OF_DAY_OVERRIDE;
     }
 
     const waveCycle = ((globalScene.currentBattle?.waveIndex ?? 0) + globalScene.waveCycleOffset) % 40;
@@ -993,22 +1037,7 @@ export class Arena {
     return [48, 48, 98];
   }
 
-  // #endregion
-
-  // TODO: replace this
-  getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
-    let weatherMultiplier = 1;
-    if (this.weather && !this.weather.isEffectSuppressed()) {
-      weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
-    }
-
-    let terrainMultiplier = 1;
-    if (this.terrain && grounded) {
-      terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
-    }
-
-    return weatherMultiplier * terrainMultiplier;
-  }
+  // #endregion Time of Day
 }
 
 // #region Helper Functions
@@ -1051,4 +1080,4 @@ export function getBiomeHasProps(biomeId: BiomeId): boolean {
   return false;
 }
 
-// #endregion
+// #endregion Helper Functions

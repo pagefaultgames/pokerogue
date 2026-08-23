@@ -71,7 +71,7 @@ export default defineConfig(async config => {
   return opts;
 });
 
-//#region Helpers
+// #region Helpers
 
 /**
  * Class for sorting test files in the desired order.
@@ -104,4 +104,4 @@ function getTestOrder(testName: string): number {
   return 3;
 }
 
-//#endregion
+// #endregion Helpers

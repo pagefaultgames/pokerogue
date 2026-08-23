@@ -1,4 +1,4 @@
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
@@ -22,7 +22,6 @@ describe("Phase - Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.scene.gameData.gender = undefined!; // just for these tests!
   });
 
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
@@ -52,7 +51,7 @@ describe("Phase - Battle Phase", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
   });
 
   it("start battle with selected team", async () => {

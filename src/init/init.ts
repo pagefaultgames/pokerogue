@@ -1,38 +1,39 @@
 import "#app/extensions"; // Setup Phaser extension methods/etc
 
 import { initAbilities } from "#abilities/init-abilities";
-import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
-import { initSpecies } from "#balance/pokemon-species";
+import { initGlobalAudioManager } from "#app/global-audio-manager";
+import { initSettingsManager } from "#app/global-settings-manager";
 import { initChallenges } from "#data/challenge";
 import { initTrainerTypeDialogue } from "#data/dialogue";
-import { initPokemonForms } from "#data/pokemon-forms";
+import { initSpeciesDataRegistry } from "#data/species-data-registry";
 import { initBiomeBgmLoopPoints } from "#init/init-biome-bgm-loop-points";
 import { initBiomeDepths } from "#init/init-biome-depths";
 import { initBiomes } from "#init/init-biomes";
 import { initCatchableSpecies } from "#init/init-catchable-species";
+import { initStarterColors } from "#init/init-starter-colors";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
 import { initModifierTypes } from "#modifiers/modifier-type";
 import { initMoves } from "#moves/move";
-import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
+import { initMysteryEncounters } from "#mystery-encounters/mystery-encounter-biomes";
 import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
 import { initStatsKeys } from "#ui/game-stats-ui-handler";
 
-export function initializeGame() {
+export async function initializeGame(): Promise<void> {
+  await initStarterColors();
   initBiomeBgmLoopPoints();
+  await initSettingsManager();
+  initSpeciesDataRegistry();
+  await initGlobalAudioManager();
   initModifierTypes();
   initModifierPools();
   initAchievements();
   initVouchers();
   initStatsKeys();
-  initPokemonPrevolutions();
-  initPokemonStarters();
   initBiomes();
   initCatchableSpecies();
   initBiomeDepths();
-  initPokemonForms();
   initTrainerTypeDialogue();
-  initSpecies();
   initMoves();
   initAbilities();
   initChallenges();

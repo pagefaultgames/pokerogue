@@ -18,7 +18,9 @@ describe("Learn Move Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.xpMultiplier(50);
+    game.override //
+      .xpMultiplier(50)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", async () => {
@@ -29,7 +31,7 @@ describe("Learn Move Phase", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("LearnMovePhase");
-    const levelMove = pokemon.getLevelMoves(5)[0];
+    const levelMove = pokemon.getLevelMoves({ startingLevel: 5 })[0];
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(pokemon.level).toBeGreaterThanOrEqual(levelReq);
@@ -56,14 +58,14 @@ describe("Learn Move Phase", () => {
     });
     await game.phaseInterceptor.to("LearnMovePhase");
 
-    const levelMove = bulbasaur.getLevelMoves(5)[0];
+    const levelMove = bulbasaur.getLevelMoves({ startingLevel: 5 })[0];
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
     // Check each of mr mime's moveslots to make sure the changed move (and ONLY the changed move) is different
     bulbasaur.getMoveset().forEach((move, index) => {
       const expectedMove: MoveId = index === moveSlotNum ? levelMoveId : prevMoveset[index];
-      expect(move?.moveId).toBe(expectedMove);
+      expect(move.moveId).toBe(expectedMove);
     });
   });
 
@@ -89,8 +91,37 @@ describe("Learn Move Phase", () => {
     });
     await game.phaseInterceptor.to("LearnMovePhase");
 
-    const levelReq = bulbasaur.getLevelMoves(5)[0][0];
+    const levelReq = bulbasaur.getLevelMoves({ startingLevel: 5 })[0][0];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
-    expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual(prevMoveset);
+    expect(bulbasaur.getMoveset().map(m => m.moveId)).toEqual(prevMoveset);
+  });
+
+  it("pressing cancel multiple times will stop learning move when level move confirmation is disabled", async () => {
+    game.settings.levelMoveConfirmation(false);
+    game.override.levelCap(9);
+
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
+
+    const bulbasaur = game.field.getPlayerPokemon();
+    const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
+
+    game.move.changeMoveset(bulbasaur, prevMoveset);
+
+    game.move.select(MoveId.SPLASH);
+    await game.doKillOpponents();
+
+    // queue up inputs to confirm dialog boxes
+    game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
+      game.scene.ui.processInput(Button.CANCEL);
+    });
+    game.onNextPrompt("LearnMovePhase", UiMode.MESSAGE, () => {
+      game.scene.ui.processInput(Button.CANCEL);
+    });
+
+    await game.phaseInterceptor.to("LearnMovePhase");
+
+    const levelReq = bulbasaur.getLevelMoves({ startingLevel: 5 })[0][0];
+    expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
+    expect(bulbasaur.getMoveset().map(m => m.moveId)).toEqual(prevMoveset);
   });
 });

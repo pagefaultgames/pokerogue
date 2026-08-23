@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { settings } from "#app/global-settings-manager";
+import { activeOverrides } from "#app/overrides";
 import { UiMode } from "#enums/ui-mode";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
@@ -25,7 +26,7 @@ const tutorialHandlers = {
   },
   [Tutorial.ACCESS_MENU]: () => {
     return new Promise<void>(resolve => {
-      if (globalScene.enableTouchControls) {
+      if (settings.general.enableTouchControls) {
         return resolve();
       }
       globalScene
@@ -120,19 +121,21 @@ const tutorialHandlers = {
 };
 
 /**
- * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done
- * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}
+ * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done. \
+ * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}. \
  * The main menu will also get disabled while the tutorial is running
- * @param tutorial the {@linkcode Tutorial} to play
+ * @param tutorial - The {@linkcode Tutorial} to play
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
-  if (!globalScene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
-    return false;
-  }
+  if (!activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+    if (!settings.general.enableTutorials) {
+      return false;
+    }
 
-  if (globalScene.gameData.getTutorialFlags()[tutorial] && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
-    return false;
+    if (globalScene.gameData.getTutorialFlags()[tutorial]) {
+      return false;
+    }
   }
 
   const handler = globalScene.ui.getHandler();
@@ -167,7 +170,7 @@ async function showTutorialOverlay(handler: UiHandler) {
   if (handler instanceof AwaitableUiHandler && handler.tutorialOverlay) {
     globalScene.tweens.add({
       targets: handler.tutorialOverlay,
-      alpha: 0.5,
+      alpha: 0.6,
       duration: 750,
       ease: "Sine.easeOut",
       onComplete: () => {

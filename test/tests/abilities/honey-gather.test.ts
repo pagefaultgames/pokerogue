@@ -1,4 +1,4 @@
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
@@ -61,7 +61,7 @@ describe("Abilities - Honey Gather", () => {
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "scene", "get").mockReturnValue(game.scene);
     // Expects next wave so run must succeed
-    vi.spyOn(Overrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);

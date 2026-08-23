@@ -1,8 +1,9 @@
 import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
-import "#plugins/i18n"; // Initializes i18n on import
+import "#init/init-manifest"; // initializes the manifest, must be done *before* i18n is initialized due to being used for caching
+import "#app/i18n"; // Initializes i18n on import
 
-import { initializeManifest } from "#app/global-manifest";
 import { InvertPostFX } from "#app/pipelines/invert";
+import { isMobile, preventDoubleTapZoom } from "#app/touch-controls";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
@@ -15,23 +16,9 @@ if (isBeta || isDev) {
   document.title += " (Beta)";
 }
 
-// Catch global errors and display them in an alert so users can report the issue.
-window.onerror = (_message, _source, _lineno, _colno, error) => {
-  console.error(error);
-  // const errorString = `Received unhandled error. Open browser console and click OK to see details.\nError: ${message}\nSource: ${source}\nLine: ${lineno}\nColumn: ${colno}\nStack: ${error.stack}`;
-  //alert(errorString);
-  // Avoids logging the error a second time.
-  return true;
-};
+preventDoubleTapZoom();
 
-// Catch global promise rejections and display them in an alert so users can report the issue.
-window.addEventListener("unhandledrejection", event => {
-  // const errorString = `Received unhandled promise rejection. Open browser console and click OK to see details.\nReason: ${event.reason}`;
-  console.error(event.reason);
-  //alert(errorString);
-});
-
-async function startGame(gameManifest?: Record<string, string>): Promise<void> {
+async function startGame(): Promise<void> {
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
   const game = new Phaser.Game({
@@ -85,19 +72,13 @@ async function startGame(gameManifest?: Record<string, string>): Promise<void> {
     scene: [LoadingScene, BattleScene],
     version,
   });
-  game.sound.pauseOnBlur = false;
-  initializeManifest(gameManifest);
+  game.sound.pauseOnBlur = isMobile();
 }
 
-let manifest: Record<string, string> | undefined;
 try {
-  const loadFonts = Promise.all([document.fonts.load("16px emerald"), document.fonts.load("10px pkmnems")]);
-  const [jsonResponse] = await Promise.all([fetch("/manifest.json").then(r => r.json()), loadFonts]);
-  manifest = jsonResponse.manifest;
+  await Promise.all([document.fonts.load("16px emerald"), document.fonts.load("10px pkmnems")]);
 } catch (err) {
-  // Manifest not found (likely local build or path error on live)
-  // TODO: Do we want actual error handling here?
-  console.log("Manifest not found:", err);
+  console.error("Error loading fonts:", err);
 } finally {
-  await startGame(manifest);
+  await startGame();
 }

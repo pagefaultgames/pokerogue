@@ -23,11 +23,17 @@ a07d2c57a44361f4ad48e024067c9b7638c0d84d
 # [Refactor] Create global scene variable (#4766)
 0107b1d47ea4a898f39dd3534fcccd4241c03470
 
+# [Refactor] Replace all instances of `integer` with `number` (#5250)
+8d043a9f5540c988d45635e06b44102eb8aae050
+
 # [Misc][Refactor][GitHub] Ditch eslint for biome, and add a formatter (#5495)
 408b66f9135004e128d7d737904facc30529c771
 
 # [Biome] Add and apply `lint/style/noNamespaceImport` (#5650)
 6f56dce7712c609dc78f7ff11650eb6a34f8f661
+
+# [Dev] Enable Biome checking of `pokemon.ts` (#5720)
+68dddbc4246aeedea3c8fdb506263c9c217caf08
 
 # [Test] Remove deprecated test funcs (#5906)
 a33638a7a36b01935e40ea876532c770b53f0994
@@ -85,3 +91,9 @@ d0ddcaa7a3a9dd262577abf60e40dcc8834faf7b
 
 # [Dev] Update Biome from `2.3.2` to `2.3.8` (#6799)
 b6bd9566e24729e4677f1afb60da159425a9f60d
+
+# misc: update imports for consistency
+a535a409fdb5097a67d6e50bad95f799eae4ed0b
+
+# test: update old tests to use `.toHaveStatusEffect` matcher
+1fa9206ac2078da41b3b85d7f13854395c488fc9

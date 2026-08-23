@@ -1,9 +1,12 @@
 import type { BattleScene } from "#app/battle-scene";
+import { settings } from "#app/global-settings-manager";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { PlayerPokemon } from "#field/pokemon";
@@ -14,7 +17,6 @@ import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -85,8 +87,9 @@ describe("SelectModifierPhase", () => {
 
   it.todo("should generate random modifiers from reroll", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
+
     scene.money = 1000000;
-    scene.shopCursorTarget = 0;
+    settings.update("display", "shopCursorTarget", ShopCursorTarget.REROLL);
 
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
@@ -187,7 +190,15 @@ describe("SelectModifierPhase", () => {
         ModifierTier.MASTER,
       ],
     };
-    const pokemon = new PlayerPokemon(getPokemonSpecies(SpeciesId.BULBASAUR), 10, undefined, 0, undefined, true, 2);
+    const pokemon = new PlayerPokemon(
+      speciesDataRegistry.getSpecies(SpeciesId.BULBASAUR),
+      10,
+      undefined,
+      0,
+      undefined,
+      true,
+      2,
+    );
 
     // Fill party with max shinies
     while (scene.getPlayerParty().length > 0) {
