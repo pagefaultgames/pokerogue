@@ -2099,7 +2099,7 @@ export function initAbilities() {
         MovePriorityInBracket.LAST,
       )
       .attr(PreventBypassSpeedChanceAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS)
-      .attr(MoveAbilityBypassAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS)
+      .attr(MoveAbilityBypassAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS)
       .build(),
     new AbBuilder(AbilityId.MINDS_EYE, 9) //
       .attr(IgnoreTypeImmunityAbAttr, PokemonType.GHOST, [PokemonType.NORMAL, PokemonType.FIGHTING])
