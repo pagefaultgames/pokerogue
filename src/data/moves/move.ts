@@ -10353,7 +10353,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
         target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1,
       )
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS),
     new SelfStatusMove(MoveId.FOLLOW_ME, PokemonType.NORMAL, -1, 20, -1, 2, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true)
       .condition(failIfSingleBattle, 3),

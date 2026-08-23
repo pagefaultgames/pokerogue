@@ -48,6 +48,7 @@ import {
   SpeciesFormChangePostMoveTrigger,
 } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
+import type { VariableMoveTypeAttr } from "#data/moves/move";
 import { getNatureStatMultiplier } from "#data/nature";
 import {
   CustomPokemonData,
@@ -147,8 +148,8 @@ import type {
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { Move } from "#types/move-types";
+import type { LevelMovesWithSource } from "#types/level-moves";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
-import type { LevelMovesWithSource } from "#types/pokemon-species";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
@@ -183,6 +184,7 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple } from "type-fest";
+import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
@@ -1975,9 +1977,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     includeRelearnerMoves?: boolean;
     learnSituation?: LearnMoveSituation;
   } = {}): LevelMovesWithSource {
-    return getLevelMoves(
-      this,
+    const context: LevelMoveContext = {
+      level: this.level,
       startingLevel,
+      pokemonSpeciesForm: this.getSpeciesForm(true),
+      pokemonFormIndex: this.formIndex,
+      fusionSpeciesForm: this.getFusionSpeciesForm(true),
+      fusionFormIndex: this.fusionFormIndex,
+    };
+    return getLevelMoves(
+      context,
       includeEvolutionMoves,
       includePrevolutionMoves,
       includeRelearnerMoves,
@@ -2582,6 +2591,37 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     return moveTypeHolder.value as PokemonType;
+  }
+
+  /**
+   * Return the type of a move, considering abilities, when used by this Pokémon
+   * for the purposes of spawning items.
+   *
+   * @param move - The move being used
+   * @returns An array of {@linkcode PokemonType}s that the move is considered to be for item spawning purposes.
+   *
+   * @remarks
+   * This method should not be used if the move has the {@linkcode VariableMoveTypeAttr} attribute.
+   */
+  public getMoveTypeForItemSpawn(move: Move): PokemonType[] {
+    if (move.hasAttr("VariableMoveTypeAttr")) {
+      return [move.type];
+    }
+    // Setting movesetGenInProgress ensures that ability suppression
+    // like gastro acid and neutralizing gas are ignored when applyAbAttrs
+    // invokes `canApplyAbility`
+    globalScene.movesetGenInProgress = true;
+    const moveTypeHolder = new ValueHolder(move.type);
+    applyAbAttrs("MoveTypeChangeAbAttr", {
+      pokemon: this,
+      move,
+      simulated: true,
+      moveType: moveTypeHolder,
+      // The `opponent` field is benign here; it's used for condition checks
+      opponent: this,
+    });
+    globalScene.movesetGenInProgress = false;
+    return [moveTypeHolder.value];
   }
 
   /**
@@ -3675,6 +3715,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         multiLensMultiplier,
       );
       fixedDamage.value = toDmgValue(fixedDamage.value * multiLensMultiplier.value);
+
+      // This return skips the rest of the calculation, so abilities that endure a hit
+      // taken at full HP (Sturdy) have to be given their chance to apply here too.
+      if (this.isFullHp() && !ignoreAbility) {
+        applyAbAttrs("PreDefendFullHpEndureAbAttr", {
+          pokemon: this,
+          opponent: source,
+          move,
+          simulated,
+          damage: fixedDamage,
+        });
+      }
 
       return {
         cancelled: false,

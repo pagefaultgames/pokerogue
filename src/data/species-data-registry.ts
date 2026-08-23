@@ -19,7 +19,8 @@ import { EggTier } from "#enums/egg-type";
 import type { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import type { SpeciesId } from "#enums/species-id";
-import type { LevelMoves, PokemonSpeciesData, SpeciesDataMap } from "#types/pokemon-species";
+import type { LevelMoves } from "#types/level-moves";
+import type { PokemonSpeciesData, SpeciesDataMap } from "#types/pokemon-species";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 
 /**

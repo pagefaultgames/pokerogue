@@ -70,7 +70,7 @@ import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
+import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-sparkle-handler";
 import { Trainer } from "#field/trainer";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import {
@@ -267,7 +267,7 @@ export class BattleScene extends SceneBase {
   public offsetGym = false;
 
   public damageNumberHandler: DamageNumberHandler;
-  private spriteSparkleHandler: PokemonSpriteSparkleHandler;
+  private spriteTeraSparkleHandler: PokemonSpriteTeraSparkleHandler;
 
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
@@ -558,7 +558,7 @@ export class BattleScene extends SceneBase {
     this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
-    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
+    this.spriteTeraSparkleHandler = new PokemonSpriteTeraSparkleHandler() //
       .setup();
 
     this.fieldUI
@@ -2078,7 +2078,7 @@ export class BattleScene extends SceneBase {
       teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined,
       isTerastallized: pokemon ? pokemon.isTerastallized : false,
     });
-    this.spriteSparkleHandler.add(sprite);
+    this.spriteTeraSparkleHandler.add(sprite);
     return sprite;
   }
 
