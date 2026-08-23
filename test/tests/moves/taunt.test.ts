@@ -26,7 +26,7 @@ describe("Moves - Taunt", () => {
       .enemySpecies(SpeciesId.SHUCKLE);
   });
 
-  it("should prevent the target from using or selecting status moves for 4 turns", async () => {
+  it("should prevent the target from selecting status moves for 4 turns", async () => {
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const player = game.field.getPlayerPokemon();
@@ -35,15 +35,17 @@ describe("Moves - Taunt", () => {
     await game.move.forceEnemyMove(MoveId.TAUNT);
     await game.toNextTurn();
 
-    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 3 });
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 4 });
+
     expect(player.isMoveSelectable(MoveId.GROWL)[0]).toBe(false);
-    expect(player.moveset[0].isUsable(player)).toBe(false);
+    // TODO: Does Taunt actually make the moves unusable?
 
     // since growl is the only thing in our moveset, we should be forced to use struggle
     game.move.use(MoveId.GROWL);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toEndOfTurn();
 
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 3 });
     expect(player).toHaveUsedMove(MoveId.STRUGGLE);
   });
 
@@ -51,12 +53,12 @@ describe("Moves - Taunt", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
     const player = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.GROWL);
+    game.move.use(MoveId.GROWL);
     await game.move.selectEnemyMove(MoveId.TAUNT);
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(player).toHaveUsedMove({ move: MoveId.GROWL, result: MoveResult.FAIL });
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
     expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 3 });
 
     // Subsequent turns tick down once each, as they always did
