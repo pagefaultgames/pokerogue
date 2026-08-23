@@ -147,8 +147,8 @@ import type {
   GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { Move } from "#types/move-types";
 import type { LevelMovesWithSource } from "#types/level-moves";
+import type { Move } from "#types/move-types";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
