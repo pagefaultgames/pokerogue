@@ -14,20 +14,32 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="getlevelmoves"><span class="tsd-kind-call-signature">getLevelMoves</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">pokemon</span><span class="tsd-signature-symbol">:</span> <a href="../classes/src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">startingLevel</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">includeEvolutionMoves</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">includePrevolutionMoves</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">includeRelearnerMoves</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">learnSituation</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_enums_learn-move-situation.LearnMoveSituation.html" class="tsd-signature-type tsd-kind-enum">LearnMoveSituation</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/src__types_pokemon-species.LevelMovesWithSource.html" class="tsd-signature-type tsd-kind-type-alias">LevelMovesWithSource</a><a href="#getlevelmoves" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getlevelmoves"><span class="tsd-kind-call-signature">getLevelMoves</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_level-moves.LevelMoveContext.html" class="tsd-signature-type tsd-kind-interface">LevelMoveContext</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">includeEvolutionMoves</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">includePrevolutionMoves</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">includeRelearnerMoves</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">learnSituation</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_enums_learn-move-situation.LearnMoveSituation.html" class="tsd-signature-type tsd-kind-enum">LearnMoveSituation</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/src__types_level-moves.LevelMovesWithSource.html" class="tsd-signature-type tsd-kind-type-alias">LevelMovesWithSource</a><a href="#getlevelmoves" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get all level moves the species form can learn</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">pokemon</span>: <a href="../classes/src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a></span></li>
-<li><span><span class="tsd-kind-parameter">startingLevel</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = pokemon.level</span></span></li>
-<li><span><span class="tsd-kind-parameter">includeEvolutionMoves</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">includePrevolutionMoves</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">includeRelearnerMoves</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">learnSituation</span>: <a href="../enums/src_enums_learn-move-situation.LearnMoveSituation.html" class="tsd-signature-type tsd-kind-enum">LearnMoveSituation</a><span class="tsd-signature-symbol"> = LearnMoveSituation.MISC</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../types/src__types_pokemon-species.LevelMovesWithSource.html" class="tsd-signature-type tsd-kind-type-alias">LevelMovesWithSource</a></h4><aside class="tsd-sources">
+<li><span><span class="tsd-kind-parameter">context</span>: <a href="../interfaces/src__types_level-moves.LevelMoveContext.html" class="tsd-signature-type tsd-kind-interface">LevelMoveContext</a></span>
+<div class="tsd-comment tsd-typography"><p>Basic information about the Pokemon to get the level moves for</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">includeEvolutionMoves</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span>
+<div class="tsd-comment tsd-typography"><p>(Default: false) Whether to include evolution moves</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">includePrevolutionMoves</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span>
+<div class="tsd-comment tsd-typography"><p>(Default: false) Whether to include moves from prevolutions</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">includeRelearnerMoves</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span>
+<div class="tsd-comment tsd-typography"><p>(Default: false) Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">learnSituation</span>: <a href="../enums/src_enums_learn-move-situation.LearnMoveSituation.html" class="tsd-signature-type tsd-kind-enum">LearnMoveSituation</a><span class="tsd-signature-symbol"> = LearnMoveSituation.MISC</span></span>
+<div class="tsd-comment tsd-typography"><p>(Default: LearnMoveSituation.MISC) The situation in which the moves are being learned</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../types/src__types_level-moves.LevelMovesWithSource.html" class="tsd-signature-type tsd-kind-type-alias">LevelMovesWithSource</a></h4><p>An array of level, moveid and source tuples, sorted by level and source.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2ac9b37ea5326aec06f3c408d3791d244d6728a1/src/field/learnsets.ts#L213">src/field/learnsets.ts:213</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/1b7a547b7902b38fbf540b0084cd4519c6b83253/src/field/learnsets.ts#L222">src/field/learnsets.ts:222</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
