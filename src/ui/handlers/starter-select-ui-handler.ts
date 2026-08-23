@@ -6,7 +6,7 @@ import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
@@ -37,7 +37,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { RibbonData } from "#system/ribbons/ribbon-data";
+import { RibbonData } from "#system/ribbon-data";
 import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type {
   AllStarterPreferences,

@@ -45,14 +45,13 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
           keepNames: true,
           // Needed to prevent import timing issues with the phaser3 rex plugins
           strictExecutionOrder: true,
-          minify: {
-            mangle: {
-              keepNames: true,
-            },
-            compress: {
-              keepNames: { class: true, function: true },
-            },
-          },
+          minify:
+            mode === "development"
+              ? "dce-only"
+              : {
+                  mangle: { keepNames: true },
+                  compress: { keepNames: { class: true, function: true } },
+                },
         },
       },
     },
