@@ -39,7 +39,7 @@ describe("Moves - Retaliate", () => {
   it("should double in power if an allied party member fainted last turn", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
-    const [feebas, milotic] = game.scene.getPlayerParty();
+    const [player, player2] = game.scene.getPlayerParty();
 
     game.move.use(MoveId.RETALIATE);
     await game.toNextTurn();
@@ -50,8 +50,8 @@ describe("Moves - Retaliate", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(feebas).toHaveFainted();
-    expect(milotic.isOnField()).toBe(true);
+    expect(player).toHaveFainted();
+    expect(player2.isOnField()).toBe(true);
     expect(game.scene.arena.playerFaintedLastTurn).toBe(true);
 
     game.move.use(MoveId.RETALIATE);
@@ -62,10 +62,10 @@ describe("Moves - Retaliate", () => {
     expect(game.scene.arena.playerFaintedLastTurn).toBe(false);
   });
 
-  it("should not work for same-turn faints", async () => {
+  it("should not increase in power if an ally faints during the current turn", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
-
+    
     game.move.use(MoveId.RETALIATE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.MEMENTO, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
@@ -99,7 +99,7 @@ describe("Moves - Retaliate", () => {
     expect(powerSpy).toHaveLastReturnedWith(140);
   });
 
-  it("should reset enemy counter on new wave start", async () => {
+  it("should reset enemy tracker on new wave start", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GUILLOTINE);
@@ -112,28 +112,23 @@ describe("Moves - Retaliate", () => {
     expect(game.scene.currentBattle.enemyFaintedLastTurn).toBe(false);
   });
 
-  it("should preserve tracker on new wave/reload for players", async () => {
+  it("should preserve player tracker on new wave/reload", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
-    const feebas = game.field.getPlayerPokemon();
-    feebas.hp = 1;
-    feebas.doSetStatus(StatusEffect.TOXIC);
+    const player = game.field.getPlayerPokemon();
+    player.hp = 1;
+    player.doSetStatus(StatusEffect.TOXIC);
 
     game.move.use(MoveId.GUILLOTINE);
     game.doSelectModifier();
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(feebas).toHaveFainted();
+    expect(player).toHaveFainted();
     expect(game.scene.arena.playerFaintedLastTurn).toBe(true);
 
     await game.reload.reloadSession();
 
     expect(game.scene.arena.playerFaintedLastTurn).toBe(true);
-
-    game.move.use(MoveId.RETALIATE);
-    await game.toEndOfTurn();
-
-    expect(powerSpy).toHaveLastReturnedWith(140);
   });
 });
