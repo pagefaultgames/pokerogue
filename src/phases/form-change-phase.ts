@@ -11,6 +11,7 @@ import { EvolutionPhase } from "#phases/evolution-phase";
 import { achvs } from "#system/achv";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { fixedInt } from "#utils/common";
+import { waitTime } from "#utils/time";
 
 export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
@@ -169,9 +170,13 @@ export class FormChangePhase extends EvolutionPhase {
       onComplete: () => {
         audioManager.playSound("se/beam");
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
-        globalScene.animations
-          .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoTintSprite, 1000)[0]
-          .then(() => this.afterCycle(preName, transformedPokemon));
+        // TODO: Investigate why creating the tween immediately causes it to not play properly,
+        // but waiting a single frame works fine
+        waitTime(1000).then(() =>
+          globalScene.animations
+            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoTintSprite)[0]
+            .then(() => this.afterCycle(preName, transformedPokemon)),
+        );
       },
     });
   }
