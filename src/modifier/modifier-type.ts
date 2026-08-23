@@ -1309,7 +1309,6 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           } else {
             types = p.getMoveTypeForItemSpawn(move);
           }
-          p.getMoveType;
           for (const type of types) {
             const currentWeight = attackMoveTypeWeights.get(type) ?? 0;
             if (currentWeight < 3) {
