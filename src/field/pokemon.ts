@@ -1,22 +1,23 @@
 import type { PreAttackModifyDamageAbAttrParams, UngroundedAbAttr } from "#abilities/ab-attrs";
 import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import { generateMoveset } from "#app/ai/ai-moveset-gen";
+import { generateMoveset } from "#ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
-import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
+import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
@@ -36,8 +37,8 @@ import {
   TarShotTag,
   TrappedTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss, isDailyForcedWaveHiddenAbility } from "#data/daily-seed/daily-run";
-import { isDailyEventSeed, isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
+import { getDailyEventSeedBoss, isDailyForcedWaveHiddenAbility } from "#data/daily-run";
+import { isDailyEventSeed, isDailyFinalBoss } from "#data/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -138,8 +139,8 @@ import type { Variant } from "#sprites/variant";
 import { populateVariantColors, variantColorCache, variantData } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { PokemonData } from "#system/pokemon-data";
-import { RibbonData } from "#system/ribbons/ribbon-data";
-import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
+import { RibbonData } from "#system/ribbon-data";
+import { awardRibbonsToSpeciesLine } from "#system/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
 import type {
@@ -3680,6 +3681,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       );
       fixedDamage.value = toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
+      // This return skips the rest of the calculation, so abilities that endure a hit
+      // taken at full HP (Sturdy) have to be given their chance to apply here too.
+      if (this.isFullHp() && !ignoreAbility) {
+        applyAbAttrs("PreDefendFullHpEndureAbAttr", {
+          pokemon: this,
+          opponent: source,
+          move,
+          simulated,
+          damage: fixedDamage,
+        });
+      }
+
       return {
         cancelled: false,
         result: HitResult.EFFECTIVE,
@@ -6379,7 +6392,11 @@ export class PlayerPokemon extends Pokemon {
    * @param lastLevel - The level of this Pokemon before the EXP increase
    */
   public async showExpGain(lastLevel: number): Promise<void> {
-    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel, globalScene.expGainsSpeed === ExpGainsSpeed.SKIP);
+    await this.battleInfo.updatePokemonExpDisplay(
+      this,
+      lastLevel,
+      settings.general.expGainsSpeed === ExpGainsSpeed.SKIP,
+    );
     await this.updateInfo();
   }
 
@@ -6755,7 +6772,7 @@ export class EnemyPokemon extends Pokemon {
               }
               // If this move is unimplemented, or the move is known to fail when used, set its target score to -20
               if (
-                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
+                (move.isUnimplemented || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;

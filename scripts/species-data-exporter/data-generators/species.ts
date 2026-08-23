@@ -6,9 +6,11 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { GrowthRate } from "#data/exp";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
+import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import variantMasterlist from "../../../assets/images/pokemon/variant/_masterlist.json";
@@ -22,11 +24,13 @@ export async function generateSpeciesData(): Promise<void> {
     const species = speciesData.species;
     const passives = speciesData.passives;
     const normalizedSpriteKey = normalizeSpriteKey(species.getSpriteKey(false));
+    const eggMoves = speciesEggMoves[speciesData.starter] as [MoveId, MoveId, MoveId, MoveId];
 
     const data: SpeciesEntry = {
       dexNum: species.speciesId,
       id: SpeciesId[species.speciesId],
       form: null,
+      formDisplayName: species.getFormNameToDisplay(),
       name: species.getName(),
       starter: SpeciesId[speciesData.starter],
       startercost: speciesData.starterCost ?? null,
@@ -43,6 +47,10 @@ export async function generateSpeciesData(): Promise<void> {
       ability2: AbilityId[species.ability2],
       hiddenAbility: AbilityId[species.abilityHidden],
       passive: typeof passives === "number" ? AbilityId[passives] : AbilityId[passives[0]],
+      eggMove1: MoveId[eggMoves[0]],
+      eggMove2: MoveId[eggMoves[1]],
+      eggMove3: MoveId[eggMoves[2]],
+      eggMove4: MoveId[eggMoves[3]],
       bst: species.baseTotal,
       hp: species.baseStats[0],
       atk: species.baseStats[1],
@@ -81,6 +89,7 @@ export async function generateSpeciesData(): Promise<void> {
         canChangeForm: Number(index) === 0 ? data.canChangeForm : null,
 
         form: form.formName,
+        formDisplayName: species.getFormNameToDisplay(Number(index)),
         name: species.getName(Number(index)),
         spriteKey: normalizedFormSpriteKey,
         formKey: form.formKey,
