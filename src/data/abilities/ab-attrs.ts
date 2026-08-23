@@ -5205,11 +5205,6 @@ export interface MoveAbilityBypassAbAttrParams extends AbAttrBaseParams {
 }
 
 export class MoveAbilityBypassAbAttr extends AbAttr {
-  /**
-   * A lambda function that determines whether abilities should be ignored.
-   * @defaultValue `() => true` (ignores all abilities)
-   */
-  // TODO: Nothing uses the pokemon parameter; remove it until something does
   private readonly moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
 
   constructor(moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean = () => true) {
