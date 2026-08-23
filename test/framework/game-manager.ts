@@ -112,8 +112,7 @@ export class GameManager {
 
     this.initDefaultOverrides();
 
-    // TODO: remove `any` assertion
-    global.fetch = vi.fn(MockFetch) as any;
+    global.fetch = vi.fn(MockFetch);
   }
 
   /**
@@ -439,7 +438,7 @@ export class GameManager {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
-    dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
+    dataStr = this.scene.gameData["convertSystemDataStr"](dataStr);
     const systemData = GameData.parseSystemData(dataStr);
     const valid = !!systemData.dexData && !!systemData.timestamp;
     if (valid) {

@@ -7,13 +7,14 @@ import {
   BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
   MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT,
 } from "#app/constants";
+import { eventBus } from "#app/event-bus";
 import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { initGlobalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
 import { LoadingScene } from "#app/loading-scene";
 import { activeOverrides } from "#app/overrides";
@@ -28,7 +29,7 @@ import { UiInputs } from "#app/ui-inputs";
 import { STARTING_WAVE } from "#balance/misc";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
-import { getDailyMysteryEncounter } from "#data/daily-seed/daily-run";
+import { getDailyMysteryEncounter } from "#data/daily-run";
 import { allMoves, biomeDepths, modifierTypes } from "#data/data-lists";
 import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
@@ -37,17 +38,12 @@ import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
-import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
-import { EaseType } from "#enums/ease-type";
-import { ExpGainsSpeed } from "#enums/exp-gains-speed";
-import { ExpNotification } from "#enums/exp-notification";
 import { FormChangeItem } from "#enums/form-change-item";
 import { GameModes } from "#enums/game-modes";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -57,7 +53,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
-import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -66,14 +61,15 @@ import { TimeOfDay } from "#enums/time-of-day";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
-import { UiTheme } from "#enums/ui-theme";
+import type { UiWindowStyle } from "#enums/ui-window-style";
+import { VolumeSetting } from "#enums/volume-setting";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
 import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
+import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-sparkle-handler";
 import { Trainer } from "#field/trainer";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import {
@@ -104,8 +100,8 @@ import {
   PokemonHeldItemModifierType,
 } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounter-biomes";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
-import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
 import { expSpriteKeys } from "#sprites/sprite-keys";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
@@ -115,11 +111,11 @@ import { achvs, ModifierAchv, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
-import { MusicPreference } from "#system/settings";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { Constructor } from "#types/common";
+import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
 import type {
@@ -129,6 +125,7 @@ import type {
   NewBattleSavedProps,
 } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
+import type { VolumeSettingsKey } from "#types/settings";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -138,7 +135,7 @@ import { PokeballTray } from "#ui/pokeball-tray";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UI } from "#ui/ui";
-import { addUiThemeOverrides } from "#ui/ui-theme";
+import { addUiThemeOverrides, updateWindowType } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
 import {
   BooleanHolder,
@@ -157,10 +154,11 @@ import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
+import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
+
 export type PokeballCounts = Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number>;
 
 export interface InfoToggle {
@@ -181,74 +179,8 @@ export class BattleScene extends SceneBase {
 
   public sessionPlayTime: number | null = null;
   public lastSavePlayTime: number | null = null;
-  // TODO: move these settings into a settings helper object
-  public gameSpeed = 1;
-  public damageNumbersMode = 0;
-  public reroll = false;
-  public shopCursorTarget: number = ShopCursorTarget.REWARDS;
-  public commandCursorMemory = false;
-  public dexForDevs = false;
-  public showMissingRibbons = false;
-  public showMovesetFlyout = true;
-  public showArenaFlyout = true;
-  public showTimeOfDayWidget = true;
-  public timeOfDayAnimation: EaseType = EaseType.NONE;
-  public showLevelUpStats = true;
-  public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
-  public enableMoveInfo = true;
-  public enableRetries = false;
-  public hideIvs = false;
-  public hideMoveSkipConfirm = false;
-  // TODO: Remove all plain numbers in place of enums or `const object` equivalents for clarity
-  /**
-   * Determines the condition for a notification should be shown for Candy Upgrades
-   * - 0 = 'Off'
-   * - 1 = 'Passives Only'
-   * - 2 = 'On'
-   */
-  public candyUpgradeNotification = 0;
-  /**
-   * Determines what type of notification is used for Candy Upgrades
-   * - 0 = 'Icon'
-   * - 1 = 'Animation'
-   */
-  public candyUpgradeDisplay = 0;
-  public moneyFormat: MoneyFormat = MoneyFormat.NORMAL;
-  public uiTheme: UiTheme = UiTheme.DEFAULT;
-  public windowType = 0;
-  public experimentalSprites = false;
-  public musicPreference: MusicPreference = MusicPreference.ALLGENS;
-  public moveAnimations = true;
-  public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
-  public skipSeenDialogues = false;
-  /**
-   * Determines if the egg hatching animation should be skipped
-   * - 0 = Never (never skip animation)
-   * - 1 = Ask (ask to skip animation when hatching 2 or more eggs)
-   * - 2 = Always (automatically skip animation when hatching 2 or more eggs)
-   */
-  public eggSkipPreference = 0;
-  /**
-   * Defines the {@linkcode ExpNotification | Experience gain display mode}.
-   * @defaultValue {@linkcode ExpNotification.DEFAULT}
-   */
-  public expParty: ExpNotification = ExpNotification.DEFAULT;
-  public hpBarSpeed = 0;
-  public fusionPaletteSwaps = true;
-  public enableTouchControls = false;
-  public enableVibration = false;
-  public showBgmBar = true;
-  public hideUsername = false;
-  /** Determines the selected battle style. */
-  public battleStyle: BattleStyle = BattleStyle.SWITCH;
-  /**
-   * Defines whether or not to show type effectiveness hints
-   * - true: Show hints for moves
-   * - false: No hints
-   */
-  public typeHints = false;
 
-  public preferBatonPass = true;
+  public reroll = false;
 
   public disableMenu = false;
 
@@ -257,7 +189,8 @@ export class BattleScene extends SceneBase {
   public sessionSlotId: number;
 
   /** Manager for the phases active in the battle scene */
-  public readonly phaseManager: PhaseManager;
+  public readonly phaseManager: PhaseManager = new PhaseManager();
+
   /**
    * Global state variable indicating AI moveset generation is in progress
    *
@@ -272,6 +205,7 @@ export class BattleScene extends SceneBase {
 
   /** A manager for the commands and moves used in the current battle. */
   public readonly turnCommandManager: TurnCommandManager = new TurnCommandManager();
+
   public field: Phaser.GameObjects.Container;
   public fieldUI: Phaser.GameObjects.Container;
   public charSprite: CharSprite;
@@ -286,6 +220,7 @@ export class BattleScene extends SceneBase {
   public arenaPlayerTransition: ArenaBase;
   public arenaEnemy: ArenaBase;
   public arenaNextEnemy: ArenaBase;
+
   public arena: Arena;
   public gameMode: GameMode;
   public score: number;
@@ -301,6 +236,7 @@ export class BattleScene extends SceneBase {
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
   /** If the previous wave was a MysteryEncounter, tracks the object with this variable. Mostly used for visual object cleanup */
   public lastMysteryEncounter?: MysteryEncounter | undefined;
+
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -314,7 +250,6 @@ export class BattleScene extends SceneBase {
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlayShown = false;
-  private shopOverlayOpacity = 0.8;
 
   public modifiers: PersistentModifier[];
   private enemyModifiers: PersistentModifier[];
@@ -325,13 +260,13 @@ export class BattleScene extends SceneBase {
   public waveSeed: string;
   public waveCycleOffset: number;
   /**
-   * Whether to offset Gym Leader waves by 10 (30, 50, 70 instead of 20, 40, 60).
+   * Whether to offset Gym Leader waves by 10 (30, 60, 90 instead of 20, 50, 80). \
    * Determined at the start of the run, and is unused for non-Classic game modes.
    */
   public offsetGym = false;
 
   public damageNumberHandler: DamageNumberHandler;
-  private spriteSparkleHandler: PokemonSpriteSparkleHandler;
+  private spriteTeraSparkleHandler: PokemonSpriteTeraSparkleHandler;
 
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
@@ -361,15 +296,61 @@ export class BattleScene extends SceneBase {
 
   constructor() {
     super("battle");
-    this.phaseManager = new PhaseManager();
+
     this.updateGameInfo();
     initGlobalScene(this);
+    this.initSettingsEventListeners();
   }
 
-  loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
-    if (experimental === undefined) {
-      experimental = this.experimentalSprites;
-    }
+  private initSettingsEventListeners(): void {
+    const updateSoundKeys = ["bgmVolume", "fieldVolume", "masterVolume", "soundEffectsVolume", "uiVolume"] as const;
+
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary
+    eventBus.on("settings/update/success", ({ key, value }: SettingsUpdateEventArgs) => {
+      if (updateSoundKeys.includes(key as VolumeSettingsKey) && typeof value === "number") {
+        const keyMap = {
+          bgmVolume: VolumeSetting.BGM,
+          fieldVolume: VolumeSetting.FIELD,
+          masterVolume: VolumeSetting.MAIN,
+          soundEffectsVolume: VolumeSetting.SE,
+          uiVolume: VolumeSetting.UI,
+        } as const satisfies Record<VolumeSettingsKey, VolumeSetting>;
+        audioManager.setVolume(keyMap[key], value);
+        return;
+      }
+
+      if (key === "enableTouchControls") {
+        const touchControls = document.getElementById("touchControls");
+        if (touchControls && typeof value === "boolean") {
+          touchControls.classList.toggle("visible", value);
+        }
+        return;
+      }
+
+      if (key === "uiWindowStyle" && typeof value === "number") {
+        updateWindowType(value as UiWindowStyle);
+        return;
+      }
+
+      if (key === "playerGender" && typeof value === "number") {
+        const female = value === PlayerGender.FEMALE;
+        this.trainer.setTexture(this.trainer.texture.key.replace(female ? "m" : "f", female ? "f" : "m"));
+        return;
+      }
+
+      if (key === "moneyFormat" && typeof value === "number") {
+        this.updateMoneyText(false);
+        return;
+      }
+
+      if (key === "shopOverlayOpacity" && typeof value === "number") {
+        this.updateShopOverlayOpacity(value);
+        return;
+      }
+    });
+  }
+
+  public loadPokemonAtlas(key: string, atlasPath: string, experimental = settings.expSpritesEnabled): void {
     const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
     if (experimental) {
       experimental = hasExpSprite(key);
@@ -390,8 +371,8 @@ export class BattleScene extends SceneBase {
    */
   public async preload(): Promise<void> {
     /**
-     * These moves serve as fallback animations for other moves without loaded animations, and
-     * must be loaded prior to game start.
+     * These moves serve as fallback animations for other moves without loaded animations,
+     * and must be loaded prior to game start.
      */
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
@@ -399,7 +380,6 @@ export class BattleScene extends SceneBase {
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
-      this.initStarterColors(),
     ]).catch(reason => {
       throw new Error(`Unexpected error during BattleScene preLoad!\nReason: ${reason}`);
     });
@@ -577,7 +557,7 @@ export class BattleScene extends SceneBase {
     this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
-    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
+    this.spriteTeraSparkleHandler = new PokemonSpriteTeraSparkleHandler() //
       .setup();
 
     this.fieldUI
@@ -616,7 +596,7 @@ export class BattleScene extends SceneBase {
       .setVisible(false);
     this.field.add([this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]);
 
-    this.trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`)
+    this.trainer = this.addFieldSprite(0, 0, `trainer_${settings.isPlayerFemale ? "f" : "m"}_back`)
       .setOrigin(0.5, 1)
       .setName("sprite-trainer");
     this.field.add(this.trainer);
@@ -710,22 +690,11 @@ export class BattleScene extends SceneBase {
     for (const k of Object.keys(otherVariantData)) {
       variantData[k] = otherVariantData[k];
     }
-    if (!this.experimentalSprites) {
+    if (!settings.expSpritesEnabled) {
       return;
     }
     const expVariantData = await cachedFetch("./images/pokemon/variant/_exp_masterlist.json").then(r => r.json());
     deepMergeSpriteData(variantData, expVariantData);
-  }
-
-  async initStarterColors(): Promise<void> {
-    if (Object.keys(starterColors).length > 0) {
-      // already initialized
-      return;
-    }
-    const sc = await cachedFetch("./starter-colors.json").then(res => res.json());
-    for (const key of Object.keys(sc)) {
-      starterColors[key] = sc[key];
-    }
   }
 
   // TODO: Add a `getPartyOnSide` function for getting the party of a pokemon
@@ -929,7 +898,7 @@ export class BattleScene extends SceneBase {
       level = activeOverrides.ENEMY_LEVEL_OVERRIDE;
     }
     if (activeOverrides.ENEMY_SPECIES_OVERRIDE) {
-      species = getPokemonSpecies(activeOverrides.ENEMY_SPECIES_OVERRIDE);
+      species = speciesDataRegistry.getSpecies(activeOverrides.ENEMY_SPECIES_OVERRIDE);
       // The fact that a Pokemon is a boss or not can change based on its Species and level
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
@@ -1209,7 +1178,7 @@ export class BattleScene extends SceneBase {
 
     this.arena.init();
 
-    this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+    this.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
     this.trainer.setPosition(406, 186);
     this.trainer.setVisible(true);
 
@@ -1546,7 +1515,7 @@ export class BattleScene extends SceneBase {
    * Returns `undefined` if the override is `null`.
    */
   private doCheckDoubleOverride(waveIndex: number): boolean | undefined {
-    switch (activeOverrides.BATTLE_STYLE_OVERRIDE) {
+    switch (activeOverrides.FIELD_SIZE_OVERRIDE) {
       case "double":
         return true;
       case "single":
@@ -1556,7 +1525,7 @@ export class BattleScene extends SceneBase {
       case "odd-doubles":
         return waveIndex % 2 === 1;
       default:
-        activeOverrides.BATTLE_STYLE_OVERRIDE satisfies null;
+        activeOverrides.FIELD_SIZE_OVERRIDE satisfies null;
         return;
     }
   }
@@ -1703,11 +1672,17 @@ export class BattleScene extends SceneBase {
     }
 
     for (const key of keysToClear) {
+      if (this.anims.exists(key)) {
+        console.log(`Removing animation for key ${key}..`);
+        this.anims.remove(key);
+      }
+
       if (this.textures.exists(key)) {
         this.textures.remove(key);
       }
     }
   }
+
   updateFieldScale(): Promise<void> {
     return new Promise(resolve => {
       const fieldScale =
@@ -2098,7 +2073,7 @@ export class BattleScene extends SceneBase {
       teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined,
       isTerastallized: pokemon ? pokemon.isTerastallized : false,
     });
-    this.spriteSparkleHandler.add(sprite);
+    this.spriteTeraSparkleHandler.add(sprite);
     return sprite;
   }
 
@@ -2133,19 +2108,18 @@ export class BattleScene extends SceneBase {
     );
   }
 
-  updateShopOverlayOpacity(value: number): void {
-    this.shopOverlayOpacity = value;
-
+  public updateShopOverlayOpacity(value: number): void {
     if (this.shopOverlayShown) {
-      this.shopOverlay.setAlpha(this.shopOverlayOpacity);
+      this.shopOverlay.setAlpha(value);
     }
   }
 
   public async showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
+
     await playTween({
       targets: this.shopOverlay,
-      alpha: this.shopOverlayOpacity,
+      alpha: settings.display.shopOverlayOpacity,
       ease: "Sine.easeOut",
       duration,
     });
@@ -2153,12 +2127,8 @@ export class BattleScene extends SceneBase {
 
   public async hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
-    await playTween({
-      targets: this.shopOverlay,
-      alpha: 0,
-      duration,
-      ease: "Cubic.easeIn",
-    });
+
+    await playTween({ targets: this.shopOverlay, alpha: 0, duration, ease: "Cubic.easeIn" });
   }
 
   showEnemyModifierBar(): void {
@@ -2184,7 +2154,7 @@ export class BattleScene extends SceneBase {
     if (this.money === undefined) {
       return;
     }
-    const formattedMoney = formatMoney(this.moneyFormat, this.money);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, this.money);
     this.moneyText.setText(i18next.t("battleScene:moneyOwned", { formattedMoney }));
     this.fieldUI.moveAbove(this.moneyText, this.luckText);
     if (forceVisible) {
@@ -2340,7 +2310,7 @@ export class BattleScene extends SceneBase {
               .map(s => {
                 if (!filterAllEvolutions) {
                   while (speciesDataRegistry.hasPrevolution(s.speciesId)) {
-                    s = getPokemonSpecies(speciesDataRegistry.getPrevolution(s.speciesId)!);
+                    s = speciesDataRegistry.getSpecies(speciesDataRegistry.getPrevolution(s.speciesId)!);
                   }
                 }
                 return s;

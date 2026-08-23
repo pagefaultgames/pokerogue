@@ -1,6 +1,7 @@
 import { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getDailyRunStarters } from "#data/daily-seed/daily-run";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -9,7 +10,7 @@ import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import type { Starter, StarterMoveset } from "#types/save-data";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /** Function to convert Blob to string */
 export function blobToString(blob: Blob): Promise<string> {
@@ -37,7 +38,7 @@ export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): 
   const starters = getTestRunStarters(speciesIds);
   const startingLevel = scene.gameMode.getStartingLevel();
   for (const starter of starters) {
-    const species = getPokemonSpecies(starter.speciesId);
+    const species = speciesDataRegistry.getSpecies(starter.speciesId);
     const starterFormIndex = starter.formIndex;
     const starterGender =
       species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;
@@ -70,7 +71,7 @@ function getTestRunStarters(speciesIds?: SpeciesId[]): Starter[] {
 
   for (const speciesId of speciesIds) {
     const starterSpeciesForm = getPokemonSpeciesForm(speciesId, 0);
-    const starterSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
+    const starterSpecies = speciesDataRegistry.getSpecies(starterSpeciesForm.speciesId);
     const pokemon = new PlayerPokemon(starterSpecies, startingLevel, undefined, 0);
     const starter: Starter = {
       speciesId,
@@ -97,7 +98,7 @@ export function initSceneWithoutEncounterPhase(scene: BattleScene, speciesIds?: 
     const starterFormIndex = starter.formIndex;
     const starterGender = Gender.MALE;
     const starterPokemon = scene.addPlayerPokemon(
-      getPokemonSpecies(starter.speciesId),
+      speciesDataRegistry.getSpecies(starter.speciesId),
       scene.gameMode.getStartingLevel(),
       starter.abilityIndex,
       starterFormIndex,

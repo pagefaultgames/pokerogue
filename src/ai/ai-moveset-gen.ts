@@ -8,8 +8,9 @@
 
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES, LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES, LEVEL_BASED_DENYLIST } from "#balance/forbidden-moves";
 import {
   BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
@@ -29,17 +30,15 @@ import {
   LEVEL_BASED_DENYLIST_THRESHOLD,
   MOVE_POWER_CEILING,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
+  RELEARN_LEVEL_REQUIREMENT,
   RELEARN_MOVE_WEIGHT,
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
-} from "#balance/moves/moveset-generation";
-import {
-  EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT,
-  getSpeciesDeniedOffensiveStat,
-} from "#balance/moves/off-stat-denylist";
-import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
-import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
+} from "#balance/moveset-generation";
+import { EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT, getSpeciesDeniedOffensiveStat } from "#balance/off-stat-denylist";
+import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/signature-moves";
+import { SUPERCEDED_MOVES } from "#balance/superceded-moves";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
@@ -58,10 +57,10 @@ import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { targetSleptOrComatoseCondition, userSleptOrComatoseCondition } from "#moves/move-condition";
 import { isWeatherInstantCharge } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
+import type { LevelMovesWithSource } from "#types/level-moves";
 import type { Move, StatStageChangeAttr } from "#types/move-types";
-import type { LevelMovesWithSource } from "#types/pokemon-species";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
-import { getPokemonSpecies, willTerastallize } from "#utils/pokemon-utils";
+import { willTerastallize } from "#utils/pokemon-utils";
 import { ValueHolder } from "#utils/value-holder";
 
 /**
@@ -84,7 +83,12 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
   let allLevelMoves: LevelMovesWithSource;
   // TODO: Investigate why there needs to be error handling here
   try {
-    allLevelMoves = pokemon.getLevelMoves(1, true, true, pokemon.hasTrainer());
+    allLevelMoves = pokemon.getLevelMoves({
+      startingLevel: 1,
+      includeEvolutionMoves: true,
+      includePrevolutionMoves: true,
+      includeRelearnerMoves: pokemon.hasTrainer(),
+    });
   } catch (e) {
     console.warn("Error encountered trying to generate moveset for %s: %s", pokemon.species.name, e);
     return movePool;
@@ -100,7 +104,7 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
     }
     const move = allMoves[id];
     // Skip unimplemented moves or moves that are already in the pool
-    if (move.name.endsWith(" (N)") || movePool.has(id)) {
+    if (move.isUnimplemented || movePool.has(id)) {
       continue;
     }
 
@@ -116,7 +120,8 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
         }
         break;
       case RELEARN_MOVE:
-        weight = hasTrainer ? RELEARN_MOVE_WEIGHT : 0;
+        weight = hasTrainer && level >= RELEARN_LEVEL_REQUIREMENT ? RELEARN_MOVE_WEIGHT : 0;
+        break;
     }
 
     movePool.set(id, weight);
@@ -161,7 +166,7 @@ function getTmPoolForSpecies(
   allowedTiers = getAllowedTmTiers(level),
 ): void {
   const [allowCommon, allowGreat, allowUltra] = allowedTiers;
-  const tms = getPokemonSpecies(speciesId).getTms(formKey);
+  const tms = speciesDataRegistry.getSpecies(speciesId).getTms(formKey);
 
   for (const tm of tms) {
     if (FORBIDDEN_TM_MOVES.has(tm) || levelPool.has(tm) || eggPool.has(tm) || tmPool.has(tm)) {
@@ -342,8 +347,15 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
  * @param isBoss - Whether the Pokémon is a boss
  * @param hasTrainer - Whether the Pokémon has a trainer
  * @param pokemon - The Pokémon having its moveset generated
+ * @param ignoreSoftBlocklists - Whether to ignore movegen blocklists that are allowed as a fallback
  */
-function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean, pokemon: Pokemon): void {
+function filterMovePool(
+  pool: Map<MoveId, number>,
+  isBoss: boolean,
+  hasTrainer: boolean,
+  pokemon: Pokemon,
+  ignoreSoftBlocklists = false,
+): void {
   const isSingles = !globalScene.currentBattle?.double;
   const level = pokemon.level;
   const blockWeatherSettingMoves =
@@ -356,19 +368,26 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
 
   for (const [moveId, weight] of pool) {
     const move = allMoves[moveId];
+    // forbid doubles only moves in singles
+    const noDoublesMovesInSingles = isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId);
+    // forbid level based denylist moves
+    const applyLevelBasedDenyList = level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId);
+    // forbid moves that use the worse offensive stat
+    const excludeWorseOffensiveStatMoves =
+      move.category !== MoveCategory.STATUS
+      && !EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT.has(moveId)
+      && worseOffensiveStatDenylist != null
+      && doesMoveMatchOffensiveCategory(move, worseOffensiveStatDenylist);
+    const isSoftBlocked =
+      !ignoreSoftBlocklists && (noDoublesMovesInSingles || applyLevelBasedDenyList || excludeWorseOffensiveStatMoves);
     if (
       weight <= 0
-      || move.name.endsWith(" (N)") // Forbid unimplemented moves
+      || move.isUnimplemented // Forbid unimplemented moves
       || move.hasAttr("SacrificialAttrOnHit") // No one gets Memento or Final Gambit
       || (isBoss && (move.hasAttr("SacrificialAttr") || move.hasAttr("HpSplitAttr"))) // Bosses never get self ko moves or Pain Split
       || (hasTrainer && move.hasAttr("OneHitKOAttr")) // trainers never get OHKO moves
       || ((isBoss || hasTrainer) // Following conditions do not apply to normal wild pokemon
-        && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
-          || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)) // forbid level based denylist moves
-          || (move.category !== MoveCategory.STATUS
-            && !EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT.has(moveId)
-            && worseOffensiveStatDenylist != null
-            && doesMoveMatchOffensiveCategory(move, worseOffensiveStatDenylist))
+        && (isSoftBlocked
           || (move.hasAttr("WeatherChangeAttr") && blockWeatherSettingMoves) // Forbid weather setting moves if the pokemon has a weather summoning or suppressing ability
           || (move.hasAttr("TerrainChangeAttr") && blockTerrainSettingMoves) // Forbid terrain setting moves if the pokemon has a terrain summoning ability
           || (hasGorillaTactics && move.category === MoveCategory.STATUS))) // Forbid status moves if pokemon has Gorilla Tactics
@@ -1233,10 +1252,15 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
 
   // Now, combine pools into one master pool.
   // The pools are kept around so we know where the move was sourced from
-  const movePool = new Map<MoveId, number>([...tmPool.entries(), ...eggMovePool.entries(), ...learnPool.entries()]);
+  let movePool = new Map<MoveId, number>([...tmPool.entries(), ...eggMovePool.entries(), ...learnPool.entries()]);
 
   // Step 2: Filter out forbidden moves
+  const unfilteredMovePool = new Map(movePool);
   filterMovePool(movePool, isBoss, hasTrainer, pokemon);
+  if (movePool.size === 0 && unfilteredMovePool.size > 0) {
+    movePool = unfilteredMovePool;
+    filterMovePool(movePool, isBoss, hasTrainer, pokemon, true);
+  }
 
   // Step 3: Adjust weights for trainers
   if (hasTrainer) {

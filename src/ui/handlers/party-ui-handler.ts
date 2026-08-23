@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
@@ -13,6 +14,7 @@ import { LearnableMoveSource } from "#enums/learnable-move-source";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PartyUiMode } from "#enums/party-ui-mode";
+import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -24,9 +26,10 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
+import { getLearnableMoveSourceIconFrame } from "#ui/learnable-move-utils";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -249,7 +252,6 @@ export class PartyUiHandler extends MessageUiHandler {
     partyContainer.add(this.optionsContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     const partyDiscardModeButton = new PartyDiscardModeButton(DISCARD_BUTTON_X, DISCARD_BUTTON_Y, this);
     partyContainer.add(partyDiscardModeButton);
@@ -1421,7 +1423,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove && globalScene.preferBatonPass) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && settings.general.preferBatonPass) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1434,7 +1436,7 @@ export class PartyUiHandler extends MessageUiHandler {
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
 
-          if (allowBatonModifierSwitch && !isBatonPassMove && !globalScene.preferBatonPass) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && !settings.general.preferBatonPass) {
             // If Pass Baton is not preferred, place it under SEND_OUT
             this.options.push(PartyOption.PASS_BATON);
           }
@@ -1639,28 +1641,7 @@ export class PartyUiHandler extends MessageUiHandler {
           optionPrefix = addTextObject(0, yCoord - 8, `${memoryMushroomExtraInfo}`, TextStyle.WINDOW).setOrigin(1, 0.5);
           this.optionsContainer.add(optionPrefix);
         } else {
-          let frameKey: string;
-          switch (learningSource) {
-            case LearnableMoveSource.EGG:
-            case LearnableMoveSource.FUSION_EGG:
-              frameKey = "common_egg";
-              break;
-            case LearnableMoveSource.PREVO:
-            case LearnableMoveSource.FUSION_PREVO:
-            case LearnableMoveSource.RELEARN:
-            case LearnableMoveSource.FUSION_RELEARN:
-            case LearnableMoveSource.EVOLUTION:
-            case LearnableMoveSource.FUSION_EVOLUTION:
-              frameKey = "big_mushroom";
-              break;
-            case LearnableMoveSource.TM:
-            case LearnableMoveSource.FUSION_TM:
-              frameKey = `tm_${memoryMushroomExtraInfo}`;
-              break;
-            default:
-              frameKey = "unknown";
-              break;
-          }
+          const frameKey = getLearnableMoveSourceIconFrame(learningSource, memoryMushroomExtraInfo as string);
           optionPrefix = globalScene.add
             .sprite(0, yCoord - 8, "items", frameKey)
             .setOrigin(0, 0.5)

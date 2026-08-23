@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
-import { TurnEndEvent } from "#events/battle-scene";
+import { NewArenaEvent, TurnEndEvent } from "#events/battle-scene";
 import type { Arena } from "#field/arena";
 import { GameManager } from "#test/framework/game-manager";
 import { mockI18next } from "#test/utils/test-utils";
@@ -153,6 +153,22 @@ describe("UI - Arena Flyout", () => {
       flyout["terrainInfo"]!.duration = 1;
       game.scene.eventTarget.dispatchEvent(new TurnEndEvent(1));
       expect(flyout["terrainInfo"]).toBeUndefined();
+    });
+
+    it("should clear the weather and terrain displays when a new arena is created", () => {
+      arenaEventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.RAIN, 5));
+      arenaEventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.GRASSY, 5));
+      expect(flyout["weatherInfo"]).toBeDefined();
+      expect(flyout["terrainInfo"]).toBeDefined();
+      expect(flyout["flyoutTextField"].text.length).toBeGreaterThan(0);
+
+      // Simulate a biome transition, which constructs a fresh `Arena` (with no
+      // weather/terrain of its own) and emits `NewArenaEvent`.
+      battleEventTarget.dispatchEvent(new NewArenaEvent());
+
+      expect(flyout["weatherInfo"]).toBeUndefined();
+      expect(flyout["terrainInfo"]).toBeUndefined();
+      expect(flyout["flyoutTextField"].text).toBe("");
     });
   });
 });

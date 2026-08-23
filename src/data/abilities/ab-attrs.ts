@@ -206,6 +206,22 @@ abstract class CancelInteractionAbAttr extends AbAttr {
   }
 }
 
+/** @sealed */
+interface UngroundedAbAttrParams extends AbAttrBaseParams {
+  isUngrounded: ValueHolder<boolean>;
+}
+
+/** @sealed */
+export class UngroundedAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  public override apply({ isUngrounded }: UngroundedAbAttrParams): void {
+    isUngrounded.value = true;
+  }
+}
+
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
   constructor() {
@@ -416,22 +432,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
-  }
-}
-
-export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
-  constructor(immuneType: PokemonType, condition?: AbAttrCondition) {
-    super(immuneType, condition);
-  }
-
-  override canApply(params: TypeMultiplierAbAttrParams): boolean {
-    const { move } = params;
-    return (
-      move.category !== MoveCategory.STATUS // TODO: make Thousand Arrows ignore Levitate in a different manner
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
-      && super.canApply(params)
-    );
   }
 }
 
@@ -3764,7 +3764,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
  * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  */
 function getForewarnPower(move: Move): number {
-  if (move.is("StatusMove")) {
+  if (move.is("StatusMove") || move.is("SelfStatusMove")) {
     return 1;
   }
 
@@ -5101,8 +5101,36 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   }
 }
 
-export class IncreasePpAbAttr extends AbAttr {
-  private declare readonly _: never;
+export interface IncreasePpUsedAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "move"> {
+  /** Holder for the amount of PP that will be consumed; can be modified by ability application */
+  readonly pp: NumberHolder;
+}
+
+/**
+ * Attribute for abilities that increase the PP consumption of received attacks.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability)}
+ */
+export class IncreasePpUsedAbAttr extends AbAttr {
+  /**
+   * The amount of PP to increase.
+   * @defaultValue `1`
+   */
+  private readonly ppIncrease: number;
+
+  constructor(ppIncrease = 1) {
+    super(false);
+
+    this.ppIncrease = ppIncrease;
+  }
+
+  public override canApply({ pokemon, opponent }: IncreasePpUsedAbAttrParams): boolean {
+    return pokemon.isOpponent(opponent);
+  }
+
+  public override apply({ pp }: IncreasePpUsedAbAttrParams): void {
+    pp.value += this.ppIncrease;
+  }
 }
 
 /** @sealed */
@@ -6072,7 +6100,6 @@ export const AbilityAttrs = Object.freeze({
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
-  AttackTypeImmunityAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -6125,7 +6152,7 @@ export const AbilityAttrs = Object.freeze({
   IllusionBreakAbAttr,
   IllusionPostBattleAbAttr,
   IllusionPreSummonAbAttr,
-  IncreasePpAbAttr,
+  IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
@@ -6281,6 +6308,7 @@ export const AbilityAttrs = Object.freeze({
   VariableMovePowerAbAttr,
   VariableMovePowerBoostAbAttr,
   WeightMultiplierAbAttr,
+  UngroundedAbAttr,
   WonderSkinAbAttr,
   AiMovegenMoveStatsAbAttr,
   SummonTerrainAiMovegenMoveStatsAbAttr,

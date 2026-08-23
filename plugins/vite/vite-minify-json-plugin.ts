@@ -7,13 +7,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import fs from "node:fs";
-import path from "node:path";
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { clearLine, moveCursor } from "node:readline";
 import chalk from "chalk";
 import type { Logger, Plugin as VitePlugin } from "vite";
 
 const NAME = "minify-public-json-files";
-const VERSION = "3.0.0";
+const VERSION = "3.1.0";
 
 /** Patterns that should be excluded, meant to be excluded at any level */
 const EXCLUDE_PATTERNS = ["REUSE.toml", ".git", "LICENSE", "README.md", "package.json", "pnpm-lock.yaml"];
@@ -46,56 +47,73 @@ export function minifyPublicJsonFiles(): VitePlugin {
       logger.info(cyan(`\t→ Plugin: ${NAME} v${VERSION}`));
     },
     async generateBundle(options): Promise<void> {
-      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: good enough
+      const clearTerminalLine = (): void => {
+        if (!process.env.CI) {
+          moveCursor(process.stdout, 0, -1);
+          clearLine(process.stdout, 0);
+        }
+      };
+
+      const minifyFile = (fullPath: string, outputFilePath: string): void => {
+        try {
+          const content = readFileSync(fullPath, "utf-8");
+          const minifiedContent = JSON.stringify(JSON.parse(content));
+          writeFileSync(outputFilePath, minifiedContent, "utf-8");
+          count++;
+        } catch (err) {
+          copyFileSync(fullPath, outputFilePath);
+          const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
+          error.stack = err.stack;
+          errors.push(error);
+        }
+      };
+
       const minifyJsonFiles = (dir: string, outDir: string): void => {
-        const files = fs.readdirSync(dir);
+        const files = readdirSync(dir);
 
         for (const file of files) {
-          const fullPath = path.join(dir, file);
-          const outputFilePath = path.join(outDir, file);
-          const stat = fs.statSync(fullPath);
+          const fullPath = join(dir, file);
+          const outputFilePath = join(outDir, file);
+          const stat = statSync(fullPath);
 
           if (skipExcludes(file)) {
+            clearTerminalLine();
             logger.info(yellow(`Skipping "${fullPath}".`));
             continue;
           }
 
           if (stat.isDirectory()) {
+            clearTerminalLine();
             logger.info(green(`Processing directory "${fullPath}".`));
+
             // Recurse into subdirectories
-            const nestedOutputDir = path.join(outDir, file);
-            fs.mkdirSync(nestedOutputDir, { recursive: true });
+            const nestedOutputDir = join(outDir, file);
+            mkdirSync(nestedOutputDir, { recursive: true });
             minifyJsonFiles(fullPath, nestedOutputDir);
             continue;
           }
+
           if (file.endsWith(".json")) {
-            try {
-              // Minify JSON file
-              const content = fs.readFileSync(fullPath, "utf-8");
-              const minifiedContent = JSON.stringify(JSON.parse(content));
-              fs.writeFileSync(outputFilePath, minifiedContent, "utf-8");
-              count++;
-            } catch (err) {
-              fs.copyFileSync(fullPath, outputFilePath);
-              const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
-              error.stack = err.stack;
-              errors.push(error);
-            }
+            minifyFile(fullPath, outputFilePath);
             continue;
           }
+
           // Copy other files as-is
-          fs.copyFileSync(fullPath, outputFilePath);
+          copyFileSync(fullPath, outputFilePath);
         }
       };
 
       logger.info(cyan("\nBeginning JSON minification."));
+      if (!process.env.CI) {
+        logger.info("");
+      }
 
-      const assetsDir = path.resolve("./assets");
-      const localesDir = path.resolve("./locales");
-      const outputDir = path.resolve(options.dir || "dist");
+      const assetsDir = resolve("./assets");
+      const localesDir = resolve("./locales");
+      const outputDir = resolve(options.dir || "dist");
 
       minifyJsonFiles(assetsDir, outputDir);
-      minifyJsonFiles(localesDir, path.join(outputDir, "locales"));
+      minifyJsonFiles(localesDir, join(outputDir, "locales"));
 
       logger.info(cyan("JSON minification complete."));
     },

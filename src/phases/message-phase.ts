@@ -1,14 +1,15 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Phase } from "#app/phase";
 
 export class MessagePhase extends Phase {
   public readonly phaseName = "MessagePhase";
   private text: string;
   // TODO: Remove null from signatures
-  private callbackDelay?: number | null | undefined;
-  private prompt?: boolean | null | undefined;
-  private promptDelay?: number | null | undefined;
-  private speaker?: string | undefined;
+  private readonly callbackDelay?: number | null | undefined;
+  private readonly prompt?: boolean | null | undefined;
+  private readonly promptDelay?: number | null | undefined;
+  private readonly speaker?: string | undefined;
 
   constructor(
     text: string,
@@ -24,9 +25,13 @@ export class MessagePhase extends Phase {
     this.prompt = prompt;
     this.promptDelay = promptDelay;
     this.speaker = speaker;
+
+    if (settings.general.manualMessageClear) {
+      this.prompt = true;
+    }
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     if (this.text.indexOf("$") > -1) {
