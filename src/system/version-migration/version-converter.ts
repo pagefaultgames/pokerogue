@@ -1,5 +1,3 @@
-// biome-ignore-all lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
-
 import { GameDataType } from "#enums/game-data-type";
 import { version } from "#package.json";
 import { SessionMigrationError } from "#system/migration-errors";
@@ -17,6 +15,8 @@ import { compareVersions, isValidVersionString, validateIsArrayOfObjects } from 
 
 // #region Migrator Imports
 
+// biome-ignore-start lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
+
 import * as v1_0_3 from "#system/v1_0_3";
 import * as v1_0_4 from "#system/v1_0_4";
 import * as v1_7_0 from "#system/v1_7_0";
@@ -29,6 +29,8 @@ import * as v1_12_0_1 from "#system/v1_12_0_1";
 import * as v1_12_0_3 from "#system/v1_12_0_3";
 import * as v1_12_0_10 from "#system/v1_12_0_10";
 import * as v1_12_1_0 from "#system/v1_12_1_0";
+
+// biome-ignore-end lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
 
 // #endregion Migrator Imports
 
@@ -113,14 +115,14 @@ const settingsMigrators = [
 
 // #region Migrator Sorting Typecheck Code
 
-// Export the types for the migrator versions to be checked inside version-types.test-d.ts.
-
 type MapToVersionNumbers<M extends readonly SaveMigrator[]> = M extends readonly [
   infer First extends SaveMigrator,
   ...infer Rest extends readonly SaveMigrator[],
 ]
   ? [First["version"], ...MapToVersionNumbers<Rest>]
   : [];
+
+// Export the types for the migrator versions to be checked inside version-types.test-d.ts.
 
 export type SystemMigratorVersions = MapToVersionNumbers<typeof systemMigrators>;
 export type SessionMigratorVersions = MapToVersionNumbers<typeof sessionMigrators>;
