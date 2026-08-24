@@ -3,8 +3,8 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import type { LegacySessionSaveData } from "#system/legacy-data";
 import { SettingKeys } from "#system/settings";
+import type { LegacySessionSaveData } from "#types/legacy-data";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 

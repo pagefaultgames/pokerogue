@@ -1,9 +1,9 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import type { LegacySessionSaveData } from "#system/legacy-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
+import type { LegacySessionSaveData } from "#types/legacy-data";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 

@@ -1,7 +1,7 @@
 import { convertModifierSaveData } from "#items/modifier-to-item-migrator-utils";
 import type { PokemonData } from "#system/pokemon-data";
-import type { LegacySessionSaveData } from "#system/version-migration/legacy-data";
 import type { HeldItemSaveData, PokemonItemMap } from "#types/held-item-data-types";
+import type { LegacySessionSaveData } from "#types/legacy-data";
 import type { SessionSaveData } from "#types/save-data";
 import type { SessionSaveMigrator } from "#types/save-migrators";
 

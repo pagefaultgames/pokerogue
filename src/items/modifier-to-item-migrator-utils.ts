@@ -10,8 +10,8 @@ import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
 import type { SpeciesStatBoosterItemId } from "#items/stat-boost";
-import type { LegacyModifierData } from "#system/version-migration/legacy-data";
 import type { PokemonItemMap } from "#types/held-item-data-types";
+import type { LegacyModifierData } from "#types/legacy-data";
 import type { TrainerItemSpecs } from "#types/trainer-item-data-types";
 
 // #region Held item conversion maps
@@ -42,7 +42,7 @@ const uniqueModifierToItem: Record<string, HeldItemId> = {
   SpeciesCritBoosterModifier: HeldItemId.LEEK,
 };
 
-// #endregion
+// #endregion Held item conversion maps
 
 // #region Trainer item conversion maps
 
@@ -91,7 +91,7 @@ const statToXItem: Record<number, TrainerItemId> = {
   [Stat.ACC]: TrainerItemId.X_ACCURACY,
 };
 
-// #endregion
+// #endregion Trainer item conversion maps
 
 // #region Form change item conversion
 

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { DexAttr } from "#enums/dex-attr";
-import type { LegacySessionSaveData } from "#system/version-migration/legacy-data";
+import type { LegacySessionSaveData } from "#types/legacy-data";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
