@@ -54,7 +54,7 @@ describe("Moves - Taunt", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.use(MoveId.GROWL);
-    await game.move.selectEnemyMove(MoveId.TAUNT);
+    await game.move.forceEnemyMove(MoveId.TAUNT);
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
