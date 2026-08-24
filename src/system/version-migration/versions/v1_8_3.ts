@@ -9,7 +9,7 @@ import type { SystemSaveMigrator } from "#types/save-migrators";
  * unlock the default form.
  * @param data - {@linkcode SystemSaveData}
  */
-const migratePichuForms: SystemSaveMigrator = {
+const migratePichuForms = {
   name: "migratePichuForms",
   version: "1.8.3",
   migrate: (data: SystemSaveData): void => {
@@ -27,6 +27,6 @@ const migratePichuForms: SystemSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [migratePichuForms] as const;
+export const systemMigrators = [migratePichuForms] as const satisfies readonly SystemSaveMigrator[];

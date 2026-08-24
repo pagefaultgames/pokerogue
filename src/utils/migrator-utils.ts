@@ -1,4 +1,6 @@
+import type { CompareVersions, VersionString } from "#types/save-migrators";
 import type { StringLiteral } from "#types/type-helpers";
+import type { TupleOf } from "type-fest";
 
 /**
  * Determine whether the object is an array of non-null objects.
@@ -44,43 +46,22 @@ export function isPropertyAnObject<const T extends string>(
   return typeof data[property] === "object" && data[property] !== null;
 }
 
-/**
- * Converts a version string into an array of numbers for use in the comparison function.
- * @param versionString - The version to convert
- * @returns An array of numbers corresponding to the input version
- * @throws An error if the version string is not valid (of the form "#.#.#[.#]")
- * @example
- * ```ts
- * extractVersion("1.2.3"); // output: [1, 2, 3, 0]
- * extractVersion("1.2.3.4"); // output: [1, 2, 3, 4]
- * extractVersion("1..2.3"); // throws error
- * extractVersion("1.2.3.4.5"); // throws error
- * ```
- */
-function extractVersion(versionString: string): number[] {
-  // https://regex101.com/r/7r1299/1
-  const regex = /^\d+\.\d+\.\d+(?:\.\d+)?$/;
-  if (!regex.test(versionString)) {
-    throw new Error(`Invalid version string (${versionString}) in version migrator!`);
-  }
-
-  const versionArray = versionString.split(".").map(v => Number.parseInt(v));
-  if (versionArray.length === 3) {
-    versionArray.push(0);
-  }
-  return versionArray;
-}
+// #region Version string utils
 
 /**
- * Compares two versions and returns whether one is newer than the other.
+ * Compare two version and returns whether one is newer than the other.
  * @param versionA - The first version to compare
  * @param versionB - The second version to compare
- * @returns The result of the comparison:
+ * @returns A 3-way comparison of the two versions:
  * - `1`: `versionA` is newer
  * - `-1`: `versionB` is newer
  * - `0`: The versions are equal
  */
-export function compareVersions(versionA: string, versionB: string): -1 | 0 | 1 {
+export function compareVersions<A extends VersionString, B extends VersionString>(
+  versionA: A,
+  versionB: B,
+): CompareVersions<A, B>;
+export function compareVersions(versionA: VersionString, versionB: VersionString): -1 | 0 | 1 {
   const a = extractVersion(versionA);
   const b = extractVersion(versionB);
 
@@ -95,3 +76,37 @@ export function compareVersions(versionA: string, versionB: string): -1 | 0 | 1 
 
   return 0;
 }
+
+/**
+ * Converts a version string into an array of numbers for use in the comparison function.
+ * @param versionString - The {@linkcode VersionString} to convert
+ * @returns A tuple of numbers corresponding to the input version
+ * @throws {Error}
+ * Throws if the version string is not a valid {@linkcode VersionString}.
+ * @example
+ * ```ts
+ * extractVersion("1.2.3"); // output: [1, 2, 3, 0]
+ * extractVersion("1.2.3.4"); // output: [1, 2, 3, 4]
+ * extractVersion("1..2.3"); // throws error
+ * extractVersion("1.2.3.4.5"); // throws error
+ * ```
+ */
+function extractVersion(versionString: VersionString): TupleOf<4, number> {
+  if (!isValidVersionString(versionString)) {
+    throw new Error(`Invalid version string (${versionString}) in version migrator!`);
+  }
+
+  const versionArray = versionString.split(".").map(v => Number.parseInt(v));
+  if (versionArray.length === 3) {
+    versionArray.push(0);
+  }
+  return versionArray as TupleOf<4, number>;
+}
+
+/** @returns Whether `s` is a valid {@linkcode VersionString}. */
+export function isValidVersionString(s: string): s is VersionString {
+  // https://regex101.com/r/7r1299/1
+  return /^\d+\.\d+\.\d+(?:\.\d+)?$/.test(s);
+}
+
+// #endregion Version string utils
