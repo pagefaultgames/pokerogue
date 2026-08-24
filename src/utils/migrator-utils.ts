@@ -53,9 +53,9 @@ export function isPropertyAnObject<const T extends string>(
  * @param versionA - The first version to compare
  * @param versionB - The second version to compare
  * @returns A 3-way comparison of the two versions:
- * - `1`: `versionA` is newer
- * - `-1`: `versionB` is newer
- * - `0`: The versions are equal
+ * - `1`: `versionA > versionB`
+ * - `0`: `versionA === versionB`
+ * - `-1`: `versionA < versionB`
  */
 export function compareVersions<A extends VersionString, B extends VersionString>(
   versionA: A,
