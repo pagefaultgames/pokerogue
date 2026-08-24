@@ -37,7 +37,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { RibbonData } from "#system/ribbon-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type {
   AllStarterPreferences,

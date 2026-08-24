@@ -26,6 +26,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
+import { getLearnableMoveSourceIconFrame } from "#ui/learnable-move-utils";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
@@ -1640,28 +1641,7 @@ export class PartyUiHandler extends MessageUiHandler {
           optionPrefix = addTextObject(0, yCoord - 8, `${memoryMushroomExtraInfo}`, TextStyle.WINDOW).setOrigin(1, 0.5);
           this.optionsContainer.add(optionPrefix);
         } else {
-          let frameKey: string;
-          switch (learningSource) {
-            case LearnableMoveSource.EGG:
-            case LearnableMoveSource.FUSION_EGG:
-              frameKey = "common_egg";
-              break;
-            case LearnableMoveSource.PREVO:
-            case LearnableMoveSource.FUSION_PREVO:
-            case LearnableMoveSource.RELEARN:
-            case LearnableMoveSource.FUSION_RELEARN:
-            case LearnableMoveSource.EVOLUTION:
-            case LearnableMoveSource.FUSION_EVOLUTION:
-              frameKey = "big_mushroom";
-              break;
-            case LearnableMoveSource.TM:
-            case LearnableMoveSource.FUSION_TM:
-              frameKey = `tm_${memoryMushroomExtraInfo}`;
-              break;
-            default:
-              frameKey = "unknown";
-              break;
-          }
+          const frameKey = getLearnableMoveSourceIconFrame(learningSource, memoryMushroomExtraInfo as string);
           optionPrefix = globalScene.add
             .sprite(0, yCoord - 8, "items", frameKey)
             .setOrigin(0, 0.5)

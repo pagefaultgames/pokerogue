@@ -12,6 +12,7 @@ import {
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
 } from "#balance/starters";
+import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allAbilities, allMoves, catchableSpecies } from "#data/data-lists";
 import { Egg } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -28,6 +29,8 @@ import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
+import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
@@ -36,16 +39,18 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
+import { getLevelMoves } from "#field/learnsets";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
-import type { LevelMoves } from "#types/pokemon-species";
+import type { LevelMovesWithSource } from "#types/level-moves";
 import type { StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
 import type { OptionSelectItem } from "#types/ui-types";
 import { BaseStatsOverlay } from "#ui/base-stats-overlay";
+import { getLearnableMoveSourceIconFrame } from "#ui/learnable-move-utils";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
@@ -261,7 +266,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private starterId: SpeciesId;
   private formIndex: number;
   private readonly speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
-  private levelMoves: LevelMoves;
+  private levelMoves: LevelMovesWithSource;
   private eggMoves: MoveId[] = [];
   private hasEggMoves: boolean[] = [];
   private tmMoves: MoveId[] = [];
@@ -827,11 +832,21 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     const allEvolutions = speciesDataRegistry.getEvolutions(this.species.speciesId);
 
+    this.levelMoves = getLevelMoves(
+      {
+        pokemonSpeciesForm: species,
+        pokemonFormIndex: formIndex,
+        level: 100,
+        startingLevel: 1,
+      },
+      true,
+      true,
+      true,
+    );
+
     if (species.forms.length > 0) {
       const form = species.forms[formIndex];
 
-      // If this form has a specific set of moves, we get them.
-      this.levelMoves = species.getLevelMoves(formKey);
       this.ability1 = form.ability1;
       this.ability2 = form.ability2 === form.ability1 ? undefined : form.ability2;
       this.abilityHidden = form.abilityHidden === form.ability1 ? undefined : form.abilityHidden;
@@ -840,7 +855,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.baseStats = form.baseStats.slice();
       this.baseTotal = form.baseTotal;
     } else {
-      this.levelMoves = species.getLevelMoves(formKey);
       this.ability1 = species.ability1;
       this.ability2 = species.ability2 === species.ability1 ? undefined : species.ability2;
       this.abilityHidden = species.abilityHidden === species.ability1 ? undefined : species.abilityHidden;
@@ -1235,23 +1249,27 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                 ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                   options: this.levelMoves
-                    .map(m => {
-                      const levelNumber = m[0] > 0 ? String(m[0]) : "";
+                    .map(([level, moveId, source]) => {
+                      const levelNumber = level > 0 ? String(level) : "";
+                      const learnedViaPrevo = source > 1; // Should be enough here as there are no tm/egg moves in the levelMoves list
                       const option: OptionSelectItem = {
-                        label: levelNumber.padStart(3, "\u2007") + " " + allMoves[m[1]].name,
+                        label: levelNumber.padStart(3, "\u2007") + " " + allMoves[moveId].name,
                         handler: () => {
                           return false;
                         },
+                        item: learnedViaPrevo ? getLearnableMoveSourceIconFrame(source) : undefined,
                         onHover: () => {
-                          this.moveInfoOverlay.show(allMoves[m[1]]);
-                          if (m[0] === 0) {
-                            this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"));
-                          } else if (m[0] === -1) {
-                            this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"));
-                          } else if (m[0] <= 5) {
-                            this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"));
+                          this.moveInfoOverlay.show(allMoves[moveId]);
+                          if (level === 0) {
+                            this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"), 0);
+                          } else if (level === -1) {
+                            this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"), 0);
+                          } else if (level <= 5) {
+                            this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"), 0);
+                          } else if (learnedViaPrevo) {
+                            this.showText(i18next.t("pokedexUiHandler:prevoRelearnMove", { level }), 0);
                           } else {
-                            this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"));
+                            this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"), 0);
                           }
                         },
                       };
@@ -1368,14 +1386,25 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                 ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                   options: this.tmMoves
-                    .map(m => {
+                    .map(moveId => {
                       const option: OptionSelectItem = {
-                        label: allMoves[m].name,
+                        label: `  ${allMoves[moveId].name}`,
                         handler: () => {
                           return false;
                         },
+                        item: getLearnableMoveSourceIconFrame(
+                          LearnableMoveSource.TM,
+                          PokemonType[allMoves[moveId].type].toLowerCase(),
+                        ),
                         onHover: () => {
-                          this.moveInfoOverlay.show(allMoves[m]);
+                          this.moveInfoOverlay.show(allMoves[moveId]);
+                          this.showText(
+                            i18next.t("pokedexUiHandler:tmMove", {
+                              number: getTmNumber(moveId),
+                              tier: i18next.t(`modifier:tier.${ModifierTier[tmPoolTiers[moveId]].toLowerCase()}`),
+                            }),
+                            0,
+                          );
                         },
                       };
                       return option;
