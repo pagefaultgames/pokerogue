@@ -7,9 +7,10 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { FormChangeItemModifierType } from "#modifiers/modifier-type";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
+import { EvolutionPhase } from "#phases/evolution-phase";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Form Change Phase", () => {
   let phaserGame: Phaser.Game;
@@ -97,6 +98,38 @@ describe("Form Change Phase", () => {
     // The form change should have occurred and ended Terastallization
     expect(gengar.getFormKey()).toBe(SpeciesFormKey.MEGA);
     expect(gengar.isTerastallized).toBe(false);
+  });
+
+  it("should end Terastallization before the form change animation is shown", async () => {
+    await game.classicMode.startBattle(SpeciesId.GENGAR);
+
+    const gengar = game.field.getPlayerPokemon();
+
+    // Terastallize the Pokemon (set the underlying field so it can be reset)
+    gengar.isTerastallized = true;
+    gengar.teraType = PokemonType.GHOST;
+
+    // The animation's sprites bake in the Pokemon's tera state when they are configured,
+    // so Terastallization has to have ended by the time the first one is set up.
+    let terastallizedAtSpriteSetup: boolean | null = null;
+    const configureSprite = EvolutionPhase.prototype["configureSprite"];
+    vi.spyOn(EvolutionPhase.prototype as any, "configureSprite").mockImplementation(function (
+      this: EvolutionPhase,
+      ...args: unknown[]
+    ) {
+      terastallizedAtSpriteSetup ??= gengar.isTerastallized;
+      return configureSprite.apply(this, args as Parameters<typeof configureSprite>);
+    });
+
+    // Give Gengar a Gengarite to trigger Mega Evolution
+    const gengarite = new FormChangeItemModifierType(FormChangeItem.GENGARITE).newModifier(gengar);
+    await game.scene.addModifier(gengarite);
+
+    game.move.select(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    expect(gengar.getFormKey()).toBe(SpeciesFormKey.MEGA);
+    expect(terastallizedAtSpriteSetup).toBe(false);
   });
 
   it("should not end Terastallization on a routine (non-Mega/Max) form change", async () => {

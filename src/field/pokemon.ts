@@ -3974,24 +3974,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * @param formKey - The form key to check; default this Pokémon's current form key
    * @returns Whether this Pokémon is in a Dynamax or Gigantamax form
    */
-  public isMax(): boolean {
+  public isMax(formKey: string = this.getFormKey()): boolean {
     const maxForms = [
       SpeciesFormKey.GIGANTAMAX,
       SpeciesFormKey.GIGANTAMAX_RAPID,
       SpeciesFormKey.GIGANTAMAX_SINGLE,
       SpeciesFormKey.ETERNAMAX,
     ] as string[];
-    return (
-      maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!))
-    );
+    return maxForms.includes(formKey) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
   }
 
   /**
+   * @param formKey - The form key to check; default this Pokémon's current form key
    * @returns Whether this Pokémon is in a Mega or Primal form
    */
-  public isMega(): boolean {
+  public isMega(formKey: string = this.getFormKey()): boolean {
     const megaForms = [
       SpeciesFormKey.MEGA,
       SpeciesFormKey.MEGA_X,
@@ -4003,10 +4003,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       SpeciesFormKey.MEGA_STRETCHY,
       SpeciesFormKey.PRIMAL,
     ] as string[];
-    return (
-      megaForms.includes(this.getFormKey())
-      || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!))
-    );
+    return megaForms.includes(formKey) || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!));
   }
 
   /**
@@ -5205,15 +5202,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * End this Pokémon's Terastallization if it has just changed into a Mega, Primal,
+   * End this Pokémon's Terastallization if it is (or is about to be) in a Mega, Primal,
    * Gigantamax, or Eternamax form, as these forms are incompatible with Terastallization.
    *
+   * @param formKey - The form key to check; default this Pokémon's current form key.
+   * Pass the *incoming* form's key to end Terastallization before the form change is applied.
+   *
    * @remarks
-   * Must be called *after* {@linkcode formIndex} has been updated so that
-   * {@linkcode isMega} and {@linkcode isMax} reflect the new form.
+   * When called without a form key, this must run *after* {@linkcode formIndex} has been updated
+   * so that {@linkcode isMega} and {@linkcode isMax} reflect the new form.
    */
-  protected resetTeraOnMajorFormChange(): void {
-    if (this.isTerastallized && (this.isMega() || this.isMax())) {
+  public resetTeraOnMajorFormChange(formKey?: string): void {
+    if (this.isTerastallized && (this.isMega(formKey) || this.isMax(formKey))) {
       this.resetTera();
     }
   }
