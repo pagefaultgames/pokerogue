@@ -79,10 +79,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       game.move.use(MoveId.SWALLOW);
       await game.toEndOfTurn();
 
-      expect(player).toHaveUsedMove({
-        move: MoveId.SWALLOW,
-        result: MoveResult.FAIL,
-      });
+      expect(player).toHaveUsedMove({ move: MoveId.SWALLOW, result: MoveResult.FAIL });
     });
 
     it("should count as a success and consume stacks despite displaying message at full HP", async () => {
@@ -96,14 +93,9 @@ describe("Moves - Swallow & Spit Up - ", () => {
       await game.toEndOfTurn();
 
       // Swallow counted as a "success" as its other effect (removing Stockpile) _did_ work
-      expect(swalot).toHaveUsedMove({
-        move: MoveId.SWALLOW,
-        result: MoveResult.SUCCESS,
-      });
+      expect(swalot).toHaveUsedMove({ move: MoveId.SWALLOW, result: MoveResult.SUCCESS });
       expect(game.textInterceptor.logs).toContain(
-        i18next.t("battle:hpIsFull", {
-          pokemonName: getPokemonNameWithAffix(swalot),
-        }),
+        i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(swalot) }),
       );
       expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
     });
@@ -150,10 +142,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       game.move.use(MoveId.SPIT_UP);
       await game.toEndOfTurn();
 
-      expect(player).toHaveUsedMove({
-        move: MoveId.SPIT_UP,
-        result: MoveResult.FAIL,
-      });
+      expect(player).toHaveUsedMove({ move: MoveId.SPIT_UP, result: MoveResult.FAIL });
     });
   });
 
@@ -175,7 +164,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
       game.move.use(MoveId.SWALLOW);
       await game.move.forceEnemyMove(MoveId.ACID_SPRAY);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       expect(player).toHaveStatStage(Stat.DEF, 0);
@@ -189,7 +178,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
       game.move.use(MoveId.STOCKPILE);
       await game.move.forceEnemyMove(MoveId.SIMPLE_BEAM);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextTurn();
 
       expect(player).toHaveStatStage(Stat.DEF, 1);
@@ -205,7 +194,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       expect(player).toHaveStatStage(Stat.SPDEF, -1);
     });
 
-    it("should invert stat drops when gaining Contrary", async () => {
+    it("should invert stat drops when the user has the ability Contrary", async () => {
       game.override.enemyAbility(AbilityId.CONTRARY);
       await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
@@ -213,7 +202,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
       game.move.use(MoveId.STOCKPILE);
       await game.move.forceEnemyMove(MoveId.ENTRAINMENT);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
       expect(player).toHaveStatStage(Stat.DEF, 1);

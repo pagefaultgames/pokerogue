@@ -111,7 +111,7 @@ describe("Move - Wish", () => {
     await game.move.forceEnemyMove(MoveId.WISH);
 
     const oldOrder = [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2];
-    await game.setTurnOrder(oldOrder);
+    game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
@@ -121,10 +121,7 @@ describe("Move - Wish", () => {
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPLASH);
 
-    // change turn order
-    // NB: this does nothing until #6779 is merged, as set order currently only affects move uses
-    // (and would not affect the order of any other phases)
-    await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("PositionalTagPhase");
 
     // all wishes should have activated and added healing phases

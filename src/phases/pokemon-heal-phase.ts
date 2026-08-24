@@ -8,7 +8,8 @@ import { CommonAnim } from "#enums/move-anims-common";
 import { HealingBoosterModifier } from "#modifiers/modifier";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { HealAchv } from "#system/achv";
-import { NumberHolder, toDmgValue } from "#utils/common";
+import { toDmgValue } from "#utils/common";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 // TODO: Refactor this - it has far too many arguments
@@ -18,7 +19,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   /** The base amount of HP to heal. */
   private readonly hpHealed: number;
   /**
-   * The message to display upon healing the target, or `undefined` to show no message.
+   * The message to display upon healing the target, or `undefined` to show no message. \
    * Will be overridden by the full HP message if {@linkcode showFullHpMessage} is set to `true`.
    */
   private message: string | undefined;
@@ -33,7 +34,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
    */
   private readonly skipAnim: boolean;
   /**
-   * Whether to revive the affected Pokemon in addition to healing.
+   * Whether to revive the affected Pokemon in addition to healing. \
    * Revives will not be affected by any Healing Charms.
    * @defaultValue `false`
    */
@@ -94,7 +95,6 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   public override start(): void {
-    // Only play animation if not skipped and target is not at full HP
     if (!this.skipAnim && !this.getPokemon().isFullHp()) {
       super.start();
     } else {
@@ -110,14 +110,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
     super.end();
   }
 
-  /**
-   * Queue healing animations for the Pokemon affected by this Phase.
-   * @returns A Promise that resolves once the healing completes.
-   */
+  /** Queue healing animations for the Pokemon affected by this Phase. */
   private async heal(): Promise<void> {
     const pokemon = this.getPokemon();
 
-    // Prevent healing off-field pokemon unless via revives
     // TODO: Revival effects shouldn't use this phase
     if (!this.revive && !pokemon.isActive(true)) {
       return;
@@ -140,9 +136,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     // TODO: Restoring PP should arguably not be the job of this phase
     if (this.fullRestorePP) {
-      pokemon.getMoveset().forEach(m => {
-        m.ppUsed = 0;
-      });
+      for (const move of pokemon.getMoveset()) {
+        move.ppUsed = 0;
+      }
     }
 
     if (this.message) {
@@ -151,18 +147,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     await pokemon.updateInfo();
   }
 
-  /**
-   * Heal the Pokemon affected by this Phase.
-   */
+  /** Heal the Pokemon affected by this Phase. */
   private doHealPokemon(): void {
     const pokemon = this.getPokemon()!;
 
-    // Avoid healing a Pokemon already at full HP
     if (this.hpHealed > 0 && pokemon.isFullHp()) {
       if (this.showFullHpMessage) {
-        this.message = i18next.t("battle:hpIsFull", {
-          pokemonName: getPokemonNameWithAffix(pokemon),
-        });
+        this.message = i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(pokemon) });
       }
       return;
     }
@@ -170,13 +161,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const healAmount = this.getHealAmount();
 
     if (healAmount < 0) {
-      // If Liquid Ooze is active, damage the user for the healing amount, then return.
       // TODO: Consider refactoring liquid ooze to not use a heal phase to do damage
       pokemon.damageAndUpdate(-healAmount, { result: HitResult.INDIRECT });
       return;
     }
 
-    // Heal the pokemon, then show damage numbers and validate achievements.
     pokemon.heal(healAmount);
     globalScene.damageNumberHandler.add(pokemon, healAmount, HitResult.HEAL);
     if (pokemon.isPlayer()) {
@@ -190,7 +179,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
    * @returns The updated healing amount post-modifications, capped at the Pokemon's maximum HP.
    * @remarks
    * The effect of Healing Charms is rounded down for parity with the closest mainline counterpart
-   * (i.e. Big Root).
+   * (e.g. Big Root).
    */
   private getHealAmount(): number {
     if (this.revive) {
@@ -200,9 +189,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
     // Apply the effect of healing charms for non-revival items before rounding down and capping at max HP
     // (or 1 below max for healing tokens).
     // Liquid Ooze damage (being negative) remains uncapped as normal.
-    const healMulti = new NumberHolder(1);
-    globalScene.applyModifiers(HealingBoosterModifier, this.player, healMulti);
+    const healMult = new ValueHolder(1);
+    globalScene.applyModifiers(HealingBoosterModifier, this.player, healMult);
     // TODO: we need to round liquid ooze dmg towards 0, not down
-    return Math.min(Math.floor(this.hpHealed * healMulti.value), this.getPokemon().getMaxHp() - +this.preventFullHeal);
+    return Math.min(Math.floor(this.hpHealed * healMult.value), this.getPokemon().getMaxHp() - +this.preventFullHeal);
   }
 }

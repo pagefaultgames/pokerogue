@@ -205,11 +205,12 @@ export class QuietFormChangePhase extends BattlePhase {
     // TODO: This eternatus boss fight code should almost certainly go in its own subclass phase
     if (globalScene.currentBattle.isClassicFinalBoss && pokemon.isEnemy()) {
       audioManager.playBgm();
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", pokemon.getBattlerIndex(), pokemon.getMaxHp(), {
-        showFullHpMessage: false,
-        healStatus: true,
-        fullRestorePP: true,
-      });
+      globalScene.phaseManager.unshiftNew(
+        "PokemonHealPhase", //
+        pokemon.getBattlerIndex(),
+        pokemon.getMaxHp(),
+        { showFullHpMessage: false, healStatus: true, fullRestorePP: true },
+      );
       // TODO: Use or create a helper function to remove all tags on a Pokemon
       pokemon.findAndRemoveTags(() => true);
       pokemon.bossSegments = 5;

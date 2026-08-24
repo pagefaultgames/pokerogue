@@ -54,7 +54,7 @@ import type {
   PokemonDefendCondition,
   PokemonStatStageChangeFunc,
 } from "#types/ability-types";
-import type { Move, StatusEffectAttr } from "#types/move-types";
+import type { Move, MoveConditionFunc, StatusEffectAttr } from "#types/move-types";
 import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
@@ -694,9 +694,12 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
     }
     const damageAmount = move.getAttrs("HitHealAttr")[0].getHealAmount(opponent, pokemon);
     pokemon.turnData.damageTaken += damageAmount;
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", opponent.getBattlerIndex(), -damageAmount, {
-      skipAnim: true,
-    });
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase", //
+      opponent.getBattlerIndex(),
+      -damageAmount,
+      { skipAnim: true },
+    );
   }
 
   public override getTriggerMessage({ opponent }: PostMoveInteractionAbAttrParams): string | null {
@@ -1242,42 +1245,32 @@ export abstract class PreAttackAbAttr extends AbAttr {
 
 export interface MoveHealBoostAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** The base amount of HP being healed, as a fraction of the recipient's maximum HP. */
-  healRatio: NumberHolder;
+  healRatio: ValueHolder<number>;
 }
 
 /**
  * Ability attribute to boost the healing potency of the user's moves.
- * Used by {@linkcode AbilityId.MEGA_LAUNCHER} to implement Heal Pulse boosting.
+ *
+ * Used by Mega Launcher to implement Heal Pulse boosting.
  */
 export class MoveHealBoostAbAttr extends AbAttr {
-  /**
-   * The amount to boost the healing by, as a multiplier of the base amount.
-   */
+  /** The amount to boost the healing by, as a multiplier of the base amount. */
   private readonly healMulti: number;
-  /**
-   * A lambda function determining whether to boost the heal amount.
-   * The ability will not be applied if this evaluates to `false`.
-   */
-  // TODO: Use a `MoveConditionFunc` maybe?
-  private readonly boostCondition: (user: Pokemon, target: Pokemon, move: Move) => boolean;
+  /** A lambda function determining whether to boost the heal amount. */
+  private readonly boostCondition: MoveConditionFunc;
 
-  constructor(
-    boostCondition: (user: Pokemon, target: Pokemon, move: Move) => boolean,
-    healMulti: number,
-    showAbility = false,
-  ) {
+  constructor(boostCondition: MoveConditionFunc, healMulti: number, showAbility = false) {
     super(showAbility);
 
     this.healMulti = healMulti;
     this.boostCondition = boostCondition;
   }
 
-  override canApply({ pokemon: user, opponent: target, move }: MoveHealBoostAbAttrParams): boolean {
-    // TODO: Should this support optional conditions?
+  public override canApply({ pokemon: user, opponent: target, move }: MoveHealBoostAbAttrParams): boolean {
     return this.boostCondition(user, target, move);
   }
 
-  override apply({ healRatio }: MoveHealBoostAbAttrParams): void {
+  public override apply({ healRatio }: MoveHealBoostAbAttrParams): void {
     healRatio.value *= this.healMulti;
   }
 }

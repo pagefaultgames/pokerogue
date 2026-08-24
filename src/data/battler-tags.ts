@@ -1476,11 +1476,7 @@ export class IngrainTag extends TrappedTag {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16),
-        {
-          message: i18next.t("battlerTags:ingrainLapse", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          }),
-        },
+        { message: i18next.t("battlerTags:ingrainLapse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }) },
       );
     }
 

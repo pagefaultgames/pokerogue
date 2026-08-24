@@ -59,14 +59,10 @@ describe("Moves - Stockpile", () => {
     game.move.use(MoveId.STOCKPILE);
     await game.toEndOfTurn();
 
-    // should have failed and did nothing
     expect(feebas).toHaveStatStage(Stat.DEF, 3);
     expect(feebas).toHaveStatStage(Stat.SPDEF, 3);
     expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.STOCKPILING, stockpiledCount: 3 });
-    expect(feebas).toHaveUsedMove({
-      move: MoveId.STOCKPILE,
-      result: MoveResult.FAIL,
-    });
+    expect(feebas).toHaveUsedMove({ move: MoveId.STOCKPILE, result: MoveResult.FAIL });
   });
 
   it("should gain stockpile stacks even when at max stat stages", async () => {

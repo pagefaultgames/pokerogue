@@ -29,7 +29,7 @@ describe("Moves - Roost", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  // NB: checks concerning Roost's healing effect are covered in test/moves/recovery-moves.test.ts
+  // NB: checks concerning Roost's healing effect are covered in tests/moves/recovery-moves.test.ts
   it("should remove the user's Flying type until end of turn", async () => {
     await game.classicMode.startBattle(SpeciesId.HAWLUCHA);
 
@@ -76,7 +76,7 @@ describe("Moves - Roost", () => {
     await game.toEndOfTurn(false);
 
     // Should remain flying type
-    expect(pidgeot).toHaveTypes([PokemonType.FLYING], {});
+    expect(pidgeot).toHaveTypes([PokemonType.FLYING]);
     expect(pidgeot.isGrounded()).toBe(false);
   });
 
