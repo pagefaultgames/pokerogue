@@ -159,9 +159,6 @@ describe("Moves - Swallow & Spit Up - ", () => {
       expect(player).toHaveStatStage(Stat.DEF, 1);
       expect(player).toHaveStatStage(Stat.SPDEF, 1);
 
-      // remove the prior stat boost phases from the log
-      game.phaseInterceptor.clearLogs();
-
       game.move.use(MoveId.SWALLOW);
       await game.move.forceEnemyMove(MoveId.ACID_SPRAY);
       game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
