@@ -223,7 +223,7 @@ function applyMigrators<D extends object>(
   saveVersion: VersionString,
 ): void {
   for (const migrator of migrators) {
-    if (compareVersions(migrator.version, saveVersion) === 1) {
+    if (compareVersions(saveVersion, migrator.version) !== -1) {
       continue;
     }
 

@@ -115,8 +115,23 @@ export interface SessionSaveMigratorIn
  * @typeParam Data - The type of data to be migrated
  */
 export interface SaveMigrator<Data extends object = any> {
+  /**
+   * The name of the migrator.
+   * Should match the migrator's purpose.
+   */
   readonly name: string;
+  /**
+   * The {@linkcode VersionString} that this migrator is intended to migrate from.
+   * Should be the version immediately preceding the version that this migrator migrates to.
+   * @remarks
+   * For example, if a migrator is intended to migrate saves from before v1.5.0 to v1.5.1+,
+   * its `version` property should be `"1.5.0"`.
+   */
   readonly version: VersionString;
+  /**
+   * Migrate the given data to the next version.
+   * @param data - The data to migrate
+   */
   readonly migrate: (data: Data) => void;
 }
 
