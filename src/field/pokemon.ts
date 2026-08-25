@@ -3974,7 +3974,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param formKey - The form key to check; default this Pokémon's current form key
+   * @param formKey - (Default `this.getFormKey()`) The form key to check
    * @returns Whether this Pokémon is in a Dynamax or Gigantamax form
    */
   public isMax(formKey: string = this.getFormKey()): boolean {
@@ -3988,7 +3988,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param formKey - The form key to check; default this Pokémon's current form key
+   * @param formKey - (Default `this.getFormKey()`) The form key to check
    * @returns Whether this Pokémon is in a Mega or Primal form
    */
   public isMega(formKey: string = this.getFormKey()): boolean {

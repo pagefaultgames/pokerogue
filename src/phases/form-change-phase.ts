@@ -15,8 +15,8 @@ import { fixedInt } from "#utils/common";
 
 export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
-  private formChange: SpeciesFormChange;
-  private modal: boolean;
+  private readonly formChange: SpeciesFormChange;
+  private readonly modal: boolean;
 
   constructor(pokemon: PlayerPokemon, formChange: SpeciesFormChange, modal: boolean) {
     super(pokemon, null, 0);

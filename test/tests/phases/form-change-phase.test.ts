@@ -69,7 +69,7 @@ describe("Form Change Phase", () => {
 
     // Give Kyogre a Blue Orb to trigger Primal Reversion
     const blueOrb = new FormChangeItemModifierType(FormChangeItem.BLUE_ORB).newModifier(kyogre);
-    await game.scene.addModifier(blueOrb);
+    game.scene.addModifier(blueOrb);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -90,7 +90,7 @@ describe("Form Change Phase", () => {
 
     // Give Gengar a Gengarite to trigger Mega Evolution
     const gengarite = new FormChangeItemModifierType(FormChangeItem.GENGARITE).newModifier(gengar);
-    await game.scene.addModifier(gengarite);
+    game.scene.addModifier(gengarite);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -123,7 +123,7 @@ describe("Form Change Phase", () => {
 
     // Give Gengar a Gengarite to trigger Mega Evolution
     const gengarite = new FormChangeItemModifierType(FormChangeItem.GENGARITE).newModifier(gengar);
-    await game.scene.addModifier(gengarite);
+    game.scene.addModifier(gengarite);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
