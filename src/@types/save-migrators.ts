@@ -121,10 +121,10 @@ export interface SaveMigrator<Data extends object = any> {
    */
   readonly name: string;
   /**
-   * The {@linkcode VersionString} that this migrator is intended to migrate from.
-   * Should be the version immediately preceding the version that this migrator migrates to.
+   * The {@linkcode VersionString} that this migrator is intended to migrate TO.
+   * Coincides with the game version that the migrator was introduced in.
    * @remarks
-   * For example, if a migrator is intended to migrate saves from before v1.5.0 to v1.5.1+,
+   * For example, if a migrator is intended to migrate saves due to breaking changes introduced in v1.5.0,
    * its `version` property should be `"1.5.0"`.
    */
   readonly version: VersionString;

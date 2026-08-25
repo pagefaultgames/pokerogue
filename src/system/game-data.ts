@@ -109,6 +109,12 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
+  /**
+   * A record tracking which migrators have been applied to the save data,
+   * timestamped by the date in Unix milliseconds.
+   * @remarks
+   * Used for backend server validation.
+   */
   public appliedMigrators: AppliedMigrators = {};
 
   /**

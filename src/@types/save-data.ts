@@ -21,7 +21,11 @@ import type { VersionString } from "#types/save-migrators";
 import type { SerializedDailyRunConfig } from "./daily-run";
 import type { DexData } from "./dex-data";
 
-export type AppliedMigrators = { [key: `${VersionString}-${string}`]: number };
+/**
+ * A record tracking which migrators have been applied to the save data,
+ * timestamped by the date in Unix milliseconds.
+ */
+export type AppliedMigrators = Partial<Record<`${VersionString}-${string}`, number>>;
 
 export interface SystemSaveData {
   trainerId: number;
