@@ -135,16 +135,12 @@ export type SettingsMigratorVersions = MapToVersionNumbers<typeof settingsMigrat
 /**
  * Convert incoming {@linkcode SystemSaveData} that has a version below the
  * current version number listed in `package.json`.
- *
- * Note that no transforms act on the {@linkcode data} if its version matches
- * the current version or if there are no migrations made between its version up
- * to the current version.
  * @param data - The {@linkcode SystemSaveData} to migrate
  */
 export function applySystemVersionMigration(data: SystemSaveData): void {
   const prevVersion = data.gameVersion;
 
-  const isCurrentVersionHigher = compareVersions(LATEST_VERSION, prevVersion) > 0;
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
   if (isCurrentVersionHigher) {
     applyMigrators(systemMigrators, data, prevVersion);
     console.log(`System data successfully migrated to v${LATEST_VERSION}!`);
@@ -154,10 +150,6 @@ export function applySystemVersionMigration(data: SystemSaveData): void {
 /**
  * Convert incoming {@linkcode SessionSaveData} that has a version below the
  * current version number listed in `package.json`.
- *
- * Note that no transforms act on the {@linkcode data} if its version matches
- * the current version or if there are no migrations made between its version up
- * to the current version.
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
 export function applySessionVersionMigration(data: Record<string, unknown> | null): void {
@@ -167,11 +159,12 @@ export function applySessionVersionMigration(data: Record<string, unknown> | nul
     || typeof data.gameVersion !== "string"
     || !isValidVersionString(data.gameVersion)
   ) {
-    console.warn("Session data is missing a valid gameVersion. Skipping migration.");
+    console.warn("Session data is invalid or missing a valid gameVersion. Skipping migration.");
     return;
   }
 
-  const isCurrentVersionHigher = compareVersions(LATEST_VERSION, data.gameVersion) > 0;
+  const prevVersion = data.gameVersion;
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
   if (isCurrentVersionHigher) {
     // Always sanitize money as a safeguard
     data.money = Math.floor(data.money as number);
@@ -188,7 +181,7 @@ export function applySessionVersionMigration(data: Record<string, unknown> | nul
       throw new SessionMigrationError("Session data has an invalid enemyParty array. Cannot migrate.");
     }
 
-    applyMigrators(sessionMigrators, data as SessionSaveMigratorIn, data.gameVersion);
+    applyMigrators(sessionMigrators, data as SessionSaveMigratorIn, prevVersion);
     console.log(`Session data successfully migrated to v${LATEST_VERSION}!`);
   }
 }
@@ -196,11 +189,11 @@ export function applySessionVersionMigration(data: Record<string, unknown> | nul
 /**
  * Convert incoming settings data that has a version below the
  * current version number listed in `package.json`.
- *
- * Note that no transforms act on the {@linkcode data} if its version matches
+ * @param data - The settings data object to migrate
+ * @remarks
+ * Note that no transforms act on the data if its version matches
  * the current version or if there are no migrations made between its version up
  * to the current version.
- * @param data - The settings data object to migrate
  */
 export function applySettingsVersionMigration(data: object): void {
   if (!data || typeof data !== "object") {
@@ -210,7 +203,7 @@ export function applySettingsVersionMigration(data: object): void {
 
   const prevVersion: VersionString = data["gameVersion"] ?? data["meta"]["gameVersion"] ?? "1.0.0";
 
-  const isCurrentVersionHigher = compareVersions(LATEST_VERSION, prevVersion) > 0;
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
   if (isCurrentVersionHigher) {
     applyMigrators(settingsMigrators, data, prevVersion);
     data["meta"]["gameVersion"] = LATEST_VERSION;
@@ -234,7 +227,7 @@ function applyMigrators<D extends object>(
   saveVersion: VersionString,
 ): void {
   for (const migrator of migrators) {
-    if (compareVersions(migrator.version, saveVersion) > 0) {
+    if (compareVersions(migrator.version, saveVersion) === 1) {
       continue;
     }
 

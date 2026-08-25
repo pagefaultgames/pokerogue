@@ -436,7 +436,7 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
-      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version as VersionString) > 0) {
+      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version as VersionString) === 1) {
         await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
 
         globalScene.time.delayedCall(fixedInt(1000), () => {
