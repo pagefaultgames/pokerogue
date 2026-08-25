@@ -1,6 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Gender, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
@@ -36,12 +37,10 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
-import { MusicPreference } from "#system/settings";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -127,11 +126,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
     // Load bgm
     let bgmKey: string;
-    if (globalScene.musicPreference === MusicPreference.GENFIVE) {
-      bgmKey = "mystery_encounter_gen_5_gts";
-    } else {
+    if (settings.musicPreferenceAllGens) {
       // Mixed option
       bgmKey = "mystery_encounter_gen_6_gts";
+    } else {
+      bgmKey = "mystery_encounter_gen_5_gts";
     }
 
     // Load possible trade options
@@ -482,7 +481,7 @@ function getPokemonTradeOptions(): Map<number, EnemyPokemon[]> {
     if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
       const generation = pokemon.species.generation;
       const tradeOptions: EnemyPokemon[] = LEGENDARY_TRADE_POOLS[generation].map(s => {
-        const pokemonSpecies = getPokemonSpecies(s);
+        const pokemonSpecies = speciesDataRegistry.getSpecies(s);
         return new EnemyPokemon(pokemonSpecies, 5, TrainerSlot.NONE, false);
       });
       tradeOptionsMap.set(pokemon.id, tradeOptions);
@@ -609,11 +608,6 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
     const tradeContainer = globalScene.fieldUI.getByName("Trade Background") as Phaser.GameObjects.Container;
     const tradeBaseBg = tradeContainer.getByName("Trade Background Image") as Phaser.GameObjects.Image;
 
-    let tradedPokemonSprite: Phaser.GameObjects.Sprite;
-    let tradedPokemonTintSprite: Phaser.GameObjects.Sprite;
-    let receivedPokemonSprite: Phaser.GameObjects.Sprite;
-    let receivedPokemonTintSprite: Phaser.GameObjects.Sprite;
-
     const getPokemonSprite = () => {
       const ret = globalScene.addPokemonSprite(
         tradedPokemon,
@@ -628,10 +622,17 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       return ret;
     };
 
-    tradeContainer.add((tradedPokemonSprite = getPokemonSprite()));
-    tradeContainer.add((tradedPokemonTintSprite = getPokemonSprite()));
-    tradeContainer.add((receivedPokemonSprite = getPokemonSprite()));
-    tradeContainer.add((receivedPokemonTintSprite = getPokemonSprite()));
+    const tradedPokemonSprite: Phaser.GameObjects.Sprite = getPokemonSprite();
+    const tradedPokemonTintSprite: Phaser.GameObjects.Sprite = getPokemonSprite();
+    const receivedPokemonSprite: Phaser.GameObjects.Sprite = getPokemonSprite();
+    const receivedPokemonTintSprite: Phaser.GameObjects.Sprite = getPokemonSprite();
+
+    tradeContainer.add([
+      tradedPokemonSprite,
+      tradedPokemonTintSprite,
+      receivedPokemonSprite,
+      receivedPokemonTintSprite,
+    ]);
 
     tradedPokemonSprite.setAlpha(0);
     tradedPokemonTintSprite.setAlpha(0);

@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
@@ -12,7 +13,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { PlayerGender } from "#enums/player-gender";
 import { MAX_POKEMON_TYPE } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -43,7 +43,7 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies, getRandomRegularPokemonType } from "#utils/pokemon-utils";
+import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** i18n namespace for encounter */
@@ -293,17 +293,11 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         enemyPokemonConfigs.push(enemyConfig);
       }
 
-      const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+      const female = settings.isPlayerFemale;
       const trainerConfig =
-        trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
-        ].clone();
+        trainerConfigs[female ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
-      const enemyPartyConfig: EnemyPartyConfig = {
-        trainerConfig,
-        pokemonConfigs: enemyPokemonConfigs,
-        female: genderIndex === PlayerGender.FEMALE,
-      };
+      const enemyPartyConfig: EnemyPartyConfig = { trainerConfig, pokemonConfigs: enemyPokemonConfigs, female };
 
       const onBeforeRewards = () => {
         // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
@@ -569,7 +563,7 @@ async function postProcessTransformedPokemon(
       isNewStarter = true;
       await showEncounterText(
         i18next.t("battle:addedAsAStarter", {
-          pokemonName: getPokemonSpecies(speciesRootForm).getName(),
+          pokemonName: speciesDataRegistry.getSpecies(speciesRootForm).getName(),
         }),
       );
     }
@@ -786,7 +780,11 @@ async function addEggMoveToNewPokemonMoveset(
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
       if (!forBattle && randomEggMoveIndex != null && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
-        await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
+        await globalScene.gameData.setEggMoveUnlocked(
+          speciesDataRegistry.getSpecies(speciesRootForm),
+          randomEggMoveIndex,
+          true,
+        );
       }
     }
   }

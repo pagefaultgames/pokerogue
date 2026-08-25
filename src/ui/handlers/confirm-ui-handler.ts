@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig } from "#types/ui-types";
 import { BaseOptionSelectUiHandler } from "#ui/base-option-select-ui-handler";
 import i18next from "i18next";
 

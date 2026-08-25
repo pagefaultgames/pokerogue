@@ -1,6 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -28,7 +29,6 @@ import { applyModifierTypeToPlayerPokemon } from "#mystery-encounters/encounter-
 import { type MysteryEncounter, MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -77,7 +77,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
     // Calculate boss mon (shiny locked)
-    const bossSpecies = getPokemonSpecies(SpeciesId.GARBODOR);
+    const bossSpecies = speciesDataRegistry.getSpecies(SpeciesId.GARBODOR);
     const pokemonConfig: EnemyPokemonConfig = {
       species: bossSpecies,
       isBoss: true,

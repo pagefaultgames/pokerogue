@@ -2,13 +2,10 @@ import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#types/ui-types";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-
-export interface ModalConfig {
-  buttonActions: ((...args: any[]) => any)[];
-}
 
 export abstract class ModalUiHandler extends UiHandler {
   protected modalContainer: Phaser.GameObjects.Container;

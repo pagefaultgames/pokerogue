@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
@@ -14,7 +15,8 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsIncrContent: Phaser.GameObjects.Text;
   private levelUpStatsValuesContent: BBCodeText;
   private nameBox: Phaser.GameObjects.NineSlice;
-  private nameText: Phaser.GameObjects.Text;
+  private nameIcon: Phaser.GameObjects.Sprite;
+  private nameText: BBCodeText;
 
   public bg: Phaser.GameObjects.Sprite;
   public commandWindow: Phaser.GameObjects.NineSlice;
@@ -33,7 +35,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    this.bg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
+    this.bg = globalScene.add.sprite(0, 0, "bg", settings.display.uiWindowStyle);
     this.bg.setName("sprite-battle-msg-bg");
     this.bg.setOrigin(0, 1);
     ui.add(this.bg);
@@ -75,14 +77,17 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBoxContainer = globalScene.add.container(0, -16);
     this.nameBoxContainer.setVisible(false);
 
-    this.nameBox = globalScene.add.nineslice(0, 0, "namebox", globalScene.windowType, 72, 16, 8, 8, 5, 5);
+    this.nameBox = globalScene.add.nineslice(0, 0, "namebox", settings.display.uiWindowStyle, 72, 16, 8, 8, 5, 5);
     this.nameBox.setOrigin(0, 0);
 
-    this.nameText = addTextObject(8, 0, "Rival", TextStyle.MESSAGE, {
-      maxLines: 1,
-    });
+    this.nameIcon = globalScene.add.sprite(8, 0, "items", "");
+    this.nameIcon.setOrigin(0, 0);
+    this.nameIcon.setVisible(false);
+
+    this.nameText = addBBCodeTextObject(8, 0, "Rival", TextStyle.MESSAGE, { maxLines: 1 });
 
     this.nameBoxContainer.add(this.nameBox);
+    this.nameBoxContainer.add(this.nameIcon);
     this.nameBoxContainer.add(this.nameText);
     messageContainer.add(this.nameBoxContainer);
 
@@ -197,7 +202,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
 
   promptLevelUpStats(partyMemberIndex: number, prevStats: number[], showTotals: boolean): Promise<void> {
     return new Promise(resolve => {
-      if (!globalScene.showLevelUpStats) {
+      if (!settings.display.showStatsOnLevelUp) {
         return resolve();
       }
       const newStats = globalScene.getPlayerParty()[partyMemberIndex].stats;
@@ -277,10 +282,21 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     return coloredText(i18next.t("battleMessageUiHandler:ivNoGood"), value > starterIvs[typeIv], value);
   }
 
-  showNameText(name: string): void {
+  showNameText(name: string, iconFrame?: string): void {
     this.nameBoxContainer.setVisible(true);
     this.nameText.setText(name);
-    this.nameBox.width = this.nameText.displayWidth + 16;
+
+    if (iconFrame) {
+      this.nameIcon.setTexture("items", iconFrame);
+      this.nameIcon.setVisible(true);
+      this.nameIcon.setScale(0.5);
+      this.nameText.x = this.nameIcon.x + this.nameIcon.displayWidth + 4;
+    } else {
+      this.nameIcon.setVisible(false);
+      this.nameText.x = 8;
+    }
+
+    this.nameBox.width = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth + 4 : 0) + 16;
   }
 
   hideNameText(): void {

@@ -13,7 +13,6 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
@@ -52,7 +51,7 @@ function createTestablePokemon(
 ): EnemyPokemon {
   const pokemon = new EnemyPokemon(speciesDataRegistry.getSpecies(speciesId), level, trainerSlot, boss);
   if (formIndex !== 0) {
-    const formIndexLength = getPokemonSpecies(speciesId)?.forms.length;
+    const formIndexLength = speciesDataRegistry.getSpecies(speciesId)?.forms.length;
     const name = speciesDataRegistry.getSpecies(speciesId).name;
     expect(formIndex, `${name} does not have a form with index ${formIndex}`).toBeLessThan(formIndexLength);
     pokemon.formIndex = formIndex;
@@ -206,7 +205,7 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
           [1, MoveId.TACKLE, LearnableMoveSource.OTHER],
           [5, MoveId.GROWL, LearnableMoveSource.OTHER],
         ]);
-        vi.spyOn(allMoves[MoveId.TACKLE], "name", "get").mockReturnValue("Tackle (N)");
+        vi.spyOn(allMoves[MoveId.TACKLE], "isUnimplemented", "get").mockReturnValue(true);
         const result = getAndWeightLevelMoves(pokemon);
         expect(result).not.toHaveKey(MoveId.TACKLE);
         expect(result).toHaveKey(MoveId.GROWL);
