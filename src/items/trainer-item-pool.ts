@@ -5,27 +5,18 @@ import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemPool, TrainerItemTieredPool } from "#types/trainer-item-data-types";
 import { pickWeightedIndex } from "#utils/common";
+import type { NonEmptyTuple } from "type-fest";
 
 export const enemyBuffTokenPool: TrainerItemTieredPool = {};
-
-function getPoolWeights(pool: TrainerItemPool, manager: TrainerItemManager): number[] {
-  return pool.map(p => {
-    if (manager.isMaxStack(p.entry)) {
-      return 0;
-    }
-    return p.weight;
-  });
-}
 
 export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: TrainerItemManager): TrainerItemId | null {
   const weights = getPoolWeights(pool, manager);
 
   const pickedIndex = pickWeightedIndex(weights);
-  if (pickedIndex == null) {
-    return null;
-  }
-
   return pool[pickedIndex].entry;
+}
+function getPoolWeights(pool: TrainerItemPool, manager: TrainerItemManager): NonEmptyTuple<number> {
+  return pool.map(({ entry, weight }) => (manager.isMaxStack(entry) ? 0 : weight));
 }
 
 export function assignEnemyBuffTokenForWave(tier: RarityTier) {
@@ -46,6 +37,7 @@ export function assignEnemyBuffTokenForWave(tier: RarityTier) {
     return;
   }
 
+  // TODO: this is hacky
   const retryCount = 50;
   let candidate = getNewTrainerItemFromPool(enemyBuffTokenPool[tier], globalScene.enemyTrainerItems);
   let r = 0;

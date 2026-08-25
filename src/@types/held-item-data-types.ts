@@ -1,10 +1,10 @@
-import { type HeldItemCategoryId, type HeldItemId, HeldItemNames } from "#enums/held-item-id";
-import type { RarityTier } from "#enums/reward-tier";
+import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { HeldItemAttr } from "#items/held-item-attr";
 import type { InferKeys } from "#types/type-helpers";
+import type { NonEmptyTuple } from "type-fest";
 
 // TODO: This file is less of a _data_ types file and more of an _everything_ types file;
 // we should rename it to clarify that intent
@@ -33,15 +33,16 @@ export interface HeldItemSpecs extends HeldItemData {
   id: HeldItemId;
 }
 
-// TODO: Move these getters with the rest of the item getters in a nice big file
+// TODO: Move these to anywhere but `@types`
 export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
   if (typeof entry !== "object" || entry === null) {
     return false;
   }
+
   return (
     typeof (entry as HeldItemSpecs).id === "number"
     && typeof (entry as HeldItemSpecs).stack === "number"
-    && (entry as HeldItemSpecs).id in HeldItemNames
+    && HeldItemId[(entry as HeldItemSpecs).id] != null
   );
 }
 
@@ -62,18 +63,17 @@ export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEn
   return entry?.id && isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
 }
 
+// TODO: This can include itself through held item pool
 interface HeldItemPoolEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   weight: number | HeldItemWeightFunc;
 }
 
-export type HeldItemPool = HeldItemPoolEntry[];
+export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
 
 export function isHeldItemPool(value: any): value is HeldItemPool {
-  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
+  return Array.isArray(value) && value.length > 0 && value.every(entry => "entry" in entry && "weight" in entry);
 }
-
-export type HeldItemTieredPool = Partial<Record<RarityTier, HeldItemPool>>;
 
 // TODO: Since this can contain a `HeldItemSpecs`, this has the potential to have 2 different "count" statistics
 // (which is useless and redundant).
@@ -82,7 +82,7 @@ interface HeldItemConfigurationEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   /**
    * The number of items to obtain, either as a numeric count or a function returning one.
-   * Must be an integer value!
+   * Must be a positive integer!
    * @defaultValue `1`
    */
   count?: number | (() => number);

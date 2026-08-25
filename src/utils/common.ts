@@ -6,6 +6,7 @@ import type { Variant } from "#sprites/variant";
 import { enumValueToKey } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 // Re-export the value holder classes for compatibility with existing imports looking over here
 // TODO: Remove these re-exports and update associated imports
@@ -448,11 +449,29 @@ export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
 
-export function pickWeightedIndex(weights: number[]): number | undefined {
-  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-  if (totalWeight <= 0) {
-    return;
+/**
+ * Pick a random index from an array of weights.
+ * @param weights - An array of weights corresponding to the indices of the items to pick from.
+ * @returns A random index picked based on the weights provided, such that each index `i` will have a `weights[i]/totalWeight` chance of being picked.
+ * @remarks
+ * The weights do not need to sum to 1; they will be normalized internally.
+ * @example
+ *
+ * @throws {Error}
+ * Thrown if any weight is non-positive or the array is empty.
+ */
+export function pickWeightedIndex(weights: NonEmptyTuple<number>): number {
+  if (weights.length === 0) {
+    throw new Error("Weights array must be non-empty!");
   }
+  const totalWeight = weights.reduce((sum, w) => {
+    if (w <= 0) {
+      throw new Error("Weights must be non-negative!");
+    }
+    return sum + w;
+  }, 0);
+
+  // invariant: totalWeight > 0 since all values are positive
 
   let r = randSeedFloat() * totalWeight;
   for (let i = 0; i < weights.length; i++) {
@@ -461,7 +480,8 @@ export function pickWeightedIndex(weights: number[]): number | undefined {
     }
     r -= weights[i];
   }
-  return;
+  // unreachable code
+  throw new Error("Unreachable code in pickWeightedIndex");
 }
 
 export function getBiomeName(biome: BiomeId | -1) {

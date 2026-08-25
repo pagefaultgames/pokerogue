@@ -4,6 +4,7 @@ import type { AllTrainerItems } from "#items/all-trainer-items";
 import type { MarkerTrainerItem, TrainerItem } from "#items/trainer-item";
 import type { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { InferKeys } from "#types/type-helpers";
+import type { NonEmptyTuple } from "type-fest";
 
 export interface TrainerItemData {
   /** The stack count of the item, or its duration for duration-based trainer items. */
@@ -35,14 +36,12 @@ interface TrainerItemPoolEntry {
   weight: number;
 }
 
-export type TrainerItemPool = TrainerItemPoolEntry[];
+export type TrainerItemPool = NonEmptyTuple<TrainerItemPoolEntry>;
 
-export type TrainerItemTieredPool = {
-  [key in RarityTier]?: TrainerItemPool;
-};
+export type TrainerItemTieredPool = Partial<Record<RarityTier, TrainerItemPool>>;
 
 export function isTrainerItemPool(value: any): value is TrainerItemPool {
-  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
+  return Array.isArray(value) && value.length > 0 && value.every(entry => "entry" in entry && "weight" in entry);
 }
 
 interface TrainerItemConfigurationEntry {

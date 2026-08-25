@@ -150,7 +150,13 @@ export type PartyItemTransferSelectCallback = (
   itemQuantity?: number,
   toCursor?: number,
 ) => void;
+// TODO: clean this up
 export type PartyRewardSpliceSelectCallback = (fromCursor: number, toCursor?: number) => void;
+/**
+ * A filter that returns the error message to display for an invalid selection, or `null` if the selection is valid.
+ *
+ * TODO: This is highly convoluted and generally painful
+ */
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
 export type PokemonItemTransferSelectFilter = (pokemon: PlayerPokemon, item: HeldItemId) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;

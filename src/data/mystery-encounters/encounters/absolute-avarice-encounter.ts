@@ -31,11 +31,12 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { HeldItemRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import type { HeldItemConfiguration, HeldItemSpecs, PokemonItemMap } from "#types/held-item-data-types";
+import type { HeldItemConfiguration, PokemonItemMap } from "#types/held-item-data-types";
 import { pickWeightedIndex, randInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -114,7 +115,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       .loadSe("Follow Me", "battle_anims", "Follow Me.wav");
 
     // Get all berries in party, with references to the pokemon
-    const berryItems = getPartyBerries();
+    // This is guaranteed to be nonempty because of the HeldItemRequirement
+    // mandating 6+ total berries
+    const berryItems = getPartyBerries() as unknown as NonEmptyTuple<PokemonItemMap>;
 
     encounter.misc = { berryItemsMap: berryItems };
 
@@ -226,24 +229,23 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const berryMap = encounter.misc.berryItemsMap as PokemonItemMap[];
+        const berryMap = encounter.misc.berryItemsMap as NonEmptyTuple<PokemonItemMap>;
 
         // Returns 2/5 of the berries stolen to each Pokemon
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
           const stolenBerries = berryMap.filter(map => map.pokemonId === pokemon.id);
-          const stolenBerryCount = stolenBerries.reduce((a, b) => a + (b.item as HeldItemSpecs).stack, 0);
-          const returnedBerryCount = Math.floor(((stolenBerryCount ?? 0) * 2) / 5);
+          const stolenBerryCount = stolenBerries.reduce((a, b) => a + b.item.stack, 0);
+          const returnedBerryCount = Math.floor((stolenBerryCount * 2) / 5);
 
-          if (returnedBerryCount > 0) {
-            for (let i = 0; i < returnedBerryCount; i++) {
-              // Shuffle remaining berry types and pop
-              const berryWeights = stolenBerries.map(b => (b.item as HeldItemSpecs).stack);
-              const which = pickWeightedIndex(berryWeights) ?? 0;
-              const randBerry = stolenBerries[which];
-              pokemon.heldItemManager.add(randBerry.item.id as HeldItemId);
-              (randBerry.item as HeldItemSpecs).stack -= 1;
-            }
+          for (let i = 0; i < returnedBerryCount; i++) {
+            // pick a random berry to recover
+
+            // type assertion justified because returnedBerryCount <= stolenBerries.length
+            const berryWeights = stolenBerries.map(b => b.item.stack) as unknown as NonEmptyTuple<number>;
+            const randBerry = stolenBerries[pickWeightedIndex(berryWeights)];
+            pokemon.heldItemManager.add(randBerry.item.id);
+            randBerry.item.stack--;
           }
         });
         await globalScene.updateItems(true);

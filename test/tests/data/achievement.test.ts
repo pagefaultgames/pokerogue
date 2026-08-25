@@ -4,15 +4,15 @@ import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import {
-    Achv,
-    AchvTier,
-    achvs,
-    DamageAchv,
-    HealAchv,
-    HeldItemAchv,
-    LevelAchv,
-    MoneyAchv,
-    RibbonAchv,
+  Achv,
+  AchvTier,
+  achvs,
+  DamageAchv,
+  HealAchv,
+  HeldItemAchv,
+  LevelAchv,
+  MoneyAchv,
+  RibbonAchv,
 } from "#system/achv";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";

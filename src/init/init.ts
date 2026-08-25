@@ -11,7 +11,7 @@ import { initBiomes } from "#init/init-biomes";
 import { initCatchableSpecies } from "#init/init-catchable-species";
 import { initHeldItems } from "#items/all-held-items";
 import { initTrainerItems } from "#items/all-trainer-items";
-import { initHeldItemPools } from "#items/init-held-item-pools";
+import { initHeldItemPools } from "#items/held-item-pool";
 import { initRewardPools } from "#items/init-reward-pools";
 import { initTrainerItemPools } from "#items/init-trainer-item-pools";
 import { initMoves } from "#moves/move";
