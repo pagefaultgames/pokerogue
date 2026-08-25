@@ -32,7 +32,7 @@ import { HitHealHeldItemAttr } from "#items/hit-heal";
 import { InstantReviveHeldItemAttr } from "#items/instant-revive";
 import { ContactItemStealChanceHeldItemAttr, TurnEndItemStealHeldItemAttr } from "#items/item-steal";
 import { MachoBraceHeldItemAttr } from "#items/macho-brace";
-import { MultiHitCountHeldItemAttr } from "#items/multi-hit";
+import { MultiHitCountHeldItemAttr, MultiHitDamageModifyHeldItemAttr } from "#items/multi-hit";
 import { NatureWeightBoosterHeldItemAttr } from "#items/nature-weight-booster";
 import { ResetNegativeStatStageHeldItemAttr } from "#items/reset-negative-stat-stage";
 import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
@@ -248,6 +248,7 @@ const heldItems = {
     .build(),
   [HeldItemId.MULTI_LENS]: new HeldItemBuilder(HeldItemId.MULTI_LENS, 2) //
     .attr(MultiHitCountHeldItemAttr)
+    .attr(MultiHitDamageModifyHeldItemAttr)
     .description("modifierType:ModifierType.PokemonMultiHitModifierType.description")
     .build(),
   [HeldItemId.GOLDEN_PUNCH]: new HeldItemBuilder(HeldItemId.GOLDEN_PUNCH, 5) //
