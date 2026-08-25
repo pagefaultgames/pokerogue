@@ -190,10 +190,6 @@ export function applySessionVersionMigration(data: Record<string, unknown> | nul
  * Convert incoming settings data that has a version below the
  * current version number listed in `package.json`.
  * @param data - The settings data object to migrate
- * @remarks
- * Note that no transforms act on the data if its version matches
- * the current version or if there are no migrations made between its version up
- * to the current version.
  */
 export function applySettingsVersionMigration(data: object): void {
   if (!data || typeof data !== "object") {
