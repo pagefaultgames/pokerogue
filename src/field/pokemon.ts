@@ -5926,7 +5926,7 @@ export class PlayerPokemon extends Pokemon {
     super(106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
     if (activeOverrides.STATUS_OVERRIDE) {
-      this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4);
+      this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4, 4);
     }
 
     if (activeOverrides.SHINY_OVERRIDE) {
@@ -6520,7 +6520,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (activeOverrides.ENEMY_STATUS_OVERRIDE) {
-      this.status = new Status(activeOverrides.ENEMY_STATUS_OVERRIDE, 0, 4);
+      this.status = new Status(activeOverrides.ENEMY_STATUS_OVERRIDE, 0, 4, 4);
     }
 
     if (activeOverrides.ENEMY_GENDER_OVERRIDE !== null) {
