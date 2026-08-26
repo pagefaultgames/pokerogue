@@ -91,13 +91,13 @@ export class PokemonHpRestoreReward extends PokemonReward {
 
   get description(): string {
     return this.restorePoints
-      ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.description", {
+      ? i18next.t("reward:pokemonHpRestore.description", {
           restorePoints: this.restorePoints,
           restorePercent: this.restorePercent,
         })
       : this.healStatus
-        ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.extra.fullyWithStatus")
-        : i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.extra.fully");
+        ? i18next.t("reward:pokemonHpRestore.extra.fullyWithStatus")
+        : i18next.t("reward:pokemonHpRestore.extra.fully");
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -135,7 +135,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonReviveModifierType.description", {
+    return i18next.t("reward:pokemonRevive.description", {
       restorePercent: this.restorePercent,
     });
   }
@@ -147,7 +147,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
 
 export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, "modifierType:ModifierType.AllPokemonFullReviveModifierType");
+    super(localeKey, iconImage, "reward:allPokemonFullRevive");
     this.id = RewardId.SACRED_ASH;
   }
 

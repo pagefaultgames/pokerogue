@@ -4,12 +4,8 @@ import i18next from "i18next";
 
 // TODO: All form change items have max stack counts of 1 - we should edit the constructor to not store it
 export class FormChangeHeldItem extends CosmeticHeldItem {
-  get name(): string {
-    return i18next.t(`modifierType:FormChangeItemId.${HeldItemNames[this.type]}`);
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
+  public override get description(): string {
+    return i18next.t("item:formChange.description");
   }
 
   get iconName(): string {

@@ -35,10 +35,10 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
 
   get description(): string {
     return this.restorePoints > -1
-      ? i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.description", {
+      ? i18next.t("reward:pokemonPpRestore.description", {
           restorePoints: this.restorePoints,
         })
-      : i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.extra.fully");
+      : i18next.t("reward:pokemonPpRestore.extra.fully");
   }
 
   /**
@@ -79,10 +79,10 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
 
   get description(): string {
     return this.restorePoints > -1
-      ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.description", {
+      ? i18next.t("reward:pokemonAllMovePpRestore.description", {
           restorePoints: this.restorePoints,
         })
-      : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.extra.fully");
+      : i18next.t("reward:pokemonAllMovePpRestore.extra.fully");
   }
 
   /**

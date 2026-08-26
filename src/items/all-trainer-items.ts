@@ -1,5 +1,4 @@
 import { allTrainerItems } from "#data/data-lists";
-import { getStatusEffectDescriptor } from "#data/status-effect";
 import type { Stat, TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
@@ -40,7 +39,7 @@ import type { TrainerItemManager } from "./trainer-item-manager";
 
 const markerItems = {
   [TrainerItemId.MAP]: new MarkerTrainerItem(TrainerItemId.MAP, 1),
-  [TrainerItemId.IV_SCANNER]: new MarkerTrainerItem(TrainerItemId.IV_SCANNER, 1),
+  [TrainerItemId.IV_SCANNER]: new MarkerTrainerItem(TrainerItemId.IV_SCANNER, 1, "scanner"), // could also fix these filenames in assets
   [TrainerItemId.LOCK_CAPSULE]: new MarkerTrainerItem(TrainerItemId.LOCK_CAPSULE, 1),
   [TrainerItemId.MEGA_BRACELET]: new MarkerTrainerItem(TrainerItemId.MEGA_BRACELET, 1),
   [TrainerItemId.DYNAMAX_BAND]: new MarkerTrainerItem(TrainerItemId.DYNAMAX_BAND, 1),
@@ -50,7 +49,7 @@ const markerItems = {
   [TrainerItemId.EXP_SHARE]: new MarkerTrainerItem(TrainerItemId.EXP_SHARE, 5),
   [TrainerItemId.EXP_BALANCE]: new MarkerTrainerItem(TrainerItemId.EXP_BALANCE, 4),
 
-  [TrainerItemId.GOLDEN_BUG_NET]: new MarkerTrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1),
+  [TrainerItemId.GOLDEN_BUG_NET]: new MarkerTrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1, "golden_net"),
 } as const satisfies Partial<Readonly<Record<TrainerItemId, MarkerTrainerItem>>>;
 
 // #endregion Marker items
@@ -123,6 +122,7 @@ const trainerItems = {
     .build(),
   [TrainerItemId.GOLDEN_POKEBALL]: new TrainerItemBuilder(TrainerItemId.GOLDEN_POKEBALL, 3) //
     .attr(ExtraRewardTrainerItemAttr)
+    .iconName("pb_gold")
     .build(),
 
   [TrainerItemId.ABILITY_CHARM]: new TrainerItemBuilder(TrainerItemId.ABILITY_CHARM, 4) //
@@ -142,9 +142,6 @@ const trainerItems = {
   [TrainerItemId.LURE]: new TrainerItemBuilder(TrainerItemId.LURE, 10) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
     .lapsing()
-    .description("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
-      battleCount: 10,
-    })
     .build(),
   [TrainerItemId.SUPER_LURE]: new TrainerItemBuilder(TrainerItemId.SUPER_LURE, 15) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
@@ -169,30 +166,15 @@ const trainerItems = {
     .build(),
   [TrainerItemId.ENEMY_ATTACK_POISON_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_POISON_CHANCE, 10) //
     .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.POISON, 0.05)
-    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
-      chancePercent: 5,
-      // TODO: This needs to use key nesting
-      statusEffect: getStatusEffectDescriptor(StatusEffect.POISON),
-    })
     .iconName("wl_antidote")
     .build(),
   [TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE, 10) //
     .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.PARALYSIS, 0.025)
     .iconName("wl_paralyze_heal")
-    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
-      chancePercent: 2.5,
-      // TODO: This needs to use key nesting
-      statusEffect: getStatusEffectDescriptor(StatusEffect.PARALYSIS),
-    })
     .build(),
   [TrainerItemId.ENEMY_ATTACK_BURN_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_BURN_CHANCE, 10) //
     .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.BURN, 0.05)
     .iconName("wl_burn_heal")
-    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
-      chancePercent: 5,
-      // TODO: This needs to use key nesting
-      statusEffect: getStatusEffectDescriptor(StatusEffect.BURN),
-    })
     .build(),
   [TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE]: new TrainerItemBuilder(
     TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE,

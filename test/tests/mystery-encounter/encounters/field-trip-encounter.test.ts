@@ -99,21 +99,11 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
-      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_attack"),
-      );
-      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_defense"),
-      );
-      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
-      );
-      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
-      );
-      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
-      );
+      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(i18next.t("item:xAttack.name"));
+      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xDefense.name"));
+      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
+      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(i18next.t("item:direHit.name"));
+      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(i18next.t("reward:rarerCandy.name"));
     });
 
     it("should leave encounter without battle", async () => {
@@ -160,21 +150,11 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
-      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"),
-      );
-      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_sp_def"),
-      );
-      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
-      );
-      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
-      );
-      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
-      );
+      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(i18next.t("item:xSpAtk.name"));
+      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xSpDef.name"));
+      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
+      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(i18next.t("item:direHit.name"));
+      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(i18next.t("reward:rarerCandy.name"));
     });
 
     it("should leave encounter without battle", async () => {
@@ -222,28 +202,17 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
-      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"),
-      );
-      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(
-        i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
-      );
+      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(i18next.t("item:xAccuracy.name"));
+      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
       expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
+        i18next.t("reward:addPokeball.name", {
           modifierCount: 5,
           pokeballName: i18next.t("pokeball:greatBall"),
         }),
       );
-      expect(i18next.t).toHaveBeenCalledWith(
-        "modifierType:ModifierType.AddPokeballModifierType.name",
-        expect.objectContaining({ modifierCount: 5 }),
-      );
-      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.IV_SCANNER.name"),
-      );
-      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
-      );
+      expect(i18next.t).toHaveBeenCalledWith("reward:addPokeball.name", expect.objectContaining({ modifierCount: 5 }));
+      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(i18next.t("item:ivScanner.name"));
+      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(i18next.t("reward:rarerCandy.name"));
     });
 
     it("should leave encounter without battle", async () => {

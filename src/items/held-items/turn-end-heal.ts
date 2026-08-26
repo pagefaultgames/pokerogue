@@ -25,7 +25,7 @@ export class TurnEndHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
-        i18next.t("modifier:turnHealApply", {
+        i18next.t("itemApply:turnHealApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           // TODO: consider removing the parameter
           typeName: this.item.name,

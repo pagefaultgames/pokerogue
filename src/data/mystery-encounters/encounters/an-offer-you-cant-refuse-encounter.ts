@@ -111,7 +111,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
     }
 
     const name = allTrainerItems[TrainerItemId.SHINY_CHARM].name;
-    encounter.setDialogueToken("itemName", name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
+    encounter.setDialogueToken("itemName", name ?? i18next.t("item:shinyCharm.name"));
     encounter.setDialogueToken("liepardName", getPokemonSpecies(SpeciesId.LIEPARD).getName());
 
     return true;
