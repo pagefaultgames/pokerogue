@@ -37,7 +37,7 @@ export function assignEnemyBuffTokenForWave(tier: RarityTier) {
     return;
   }
 
-  // TODO: this is hacky
+  // TODO: Consider filtering the pool instead of retrying 50 times in a row?
   const retryCount = 50;
   let candidate = getNewTrainerItemFromPool(enemyBuffTokenPool[tier], globalScene.enemyTrainerItems);
   let r = 0;
