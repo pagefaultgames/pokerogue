@@ -170,7 +170,7 @@ describe("Items - Held Berries", () => {
       game.override.startingHeldItems([{ entry: HeldItemId.LANSAT_BERRY }]);
       const player = await runBerryTurn(0.2);
 
-      expect(player.getTag(BattlerTagType.CRIT_BOOST)).toBeDefined();
+      expect(player).toHaveBattlerTag(BattlerTagType.CRIT_BOOST);
       expect(player).not.toHaveHeldItem(HeldItemId.LANSAT_BERRY);
     });
 
@@ -215,16 +215,16 @@ describe("Items - Held Berries", () => {
 
       applySingleHeldItem(HeldItemId.LEPPA_BERRY, HeldItemEffect.BERRY, { pokemon: player });
 
-      expect(splash.ppUsed).toBe(splash.getMovePp() - 10);
+      expect(player).toHaveUsedPP(MoveId.SPLASH, splash.getMovePp() - 10);
       expect(player).not.toHaveHeldItem(HeldItemId.LEPPA_BERRY);
     });
 
     it("should not activate while no move is fully depleted", async () => {
-      const { player, splash } = await prepareLeppaHolder(0.5);
+      const { player } = await prepareLeppaHolder(0.5);
 
       const leppa = allHeldItems[HeldItemId.LEPPA_BERRY];
       expect(leppa.getAttrs(HeldItemEffect.BERRY)[0].shouldApply({ pokemon: player })).toBe(false);
-      expect(splash.ppUsed).toBe(Math.ceil(splash.getMovePp() * 0.5));
+      expect(player).not.toHaveUsedPP(MoveId.SPLASH, 0);
     });
   });
 

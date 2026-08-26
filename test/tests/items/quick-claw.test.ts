@@ -41,11 +41,10 @@ describe("Items - Quick Claw", () => {
     game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to("MovePhase", false);
 
-    const tag = player.getTag(BattlerTagType.BYPASS_SPEED);
     if (shouldProc) {
-      expect(tag).toBeDefined();
+      expect(player).toHaveBattlerTag(BattlerTagType.BYPASS_SPEED);
     } else {
-      expect(tag).toBeUndefined();
+      expect(player).not.toHaveBattlerTag(BattlerTagType.BYPASS_SPEED);
     }
   });
 });

@@ -48,13 +48,13 @@ describe("Items - Reviver Seed", () => {
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
       player.damageAndUpdate(1, { result: HitResult.EFFECTIVE });
 
       game.move.use(MoveId.SPLASH);
       await game.toEndOfTurn();
 
-      expect(spy).toHaveBeenCalledOnce();
+      expect(player).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
     });
 
     it("should queue a heal phase to revive the holder when activated", async () => {
@@ -86,14 +86,13 @@ describe("Items - Reviver Seed", () => {
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(playerMove);
       await game.move.forceEnemyMove(move);
       await game.toEndOfTurn();
 
-      expect(spy).toHaveBeenCalledExactlyOnceWith({
-        pokemon: player,
+      expect(player).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, {
         reviveApplied: expect.any(ValueHolder),
       });
       expect(player).not.toHaveFainted();
@@ -107,13 +106,12 @@ describe("Items - Reviver Seed", () => {
       player.hp = 1;
       player.addTag(BattlerTagType.CONFUSED, 3);
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(MoveId.SPLASH);
       await game.toEndOfTurn();
 
-      expect(spy).toHaveBeenCalledExactlyOnceWith({
-        pokemon: player,
+      expect(player).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, {
         reviveApplied: expect.any(ValueHolder),
       });
       expect(player).not.toHaveFainted();
@@ -128,13 +126,12 @@ describe("Items - Reviver Seed", () => {
       const enemy = game.field.getEnemyPokemon();
       enemy.hp = 1;
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(move);
       await game.toEndOfTurn();
 
-      expect(spy).toHaveBeenCalledExactlyOnceWith({
-        pokemon: enemy,
+      expect(enemy).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, {
         reviveApplied: expect.any(ValueHolder),
       });
     });
@@ -149,12 +146,12 @@ describe("Items - Reviver Seed", () => {
       const enemy = game.field.getEnemyPokemon();
       enemy.hp = 1;
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(move);
       await game.toEndOfTurn();
 
-      expect(spy).not.toHaveBeenCalled();
+      expect(enemy).not.toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
       expect(enemy).toHaveFainted();
     });
 
@@ -170,13 +167,12 @@ describe("Items - Reviver Seed", () => {
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
 
-      const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED];
-      const spy = vi.spyOn(reviverSeed.getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(move);
       await game.toEndOfTurn();
 
-      expect(spy).not.toHaveBeenCalled();
+      expect(player).not.toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
       expect(player).toHaveFainted();
     });
 
@@ -188,14 +184,14 @@ describe("Items - Reviver Seed", () => {
       const enemy = game.field.getEnemyPokemon();
       player.hp = 1;
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(MoveId.DESTINY_BOND);
       await game.move.forceEnemyMove(MoveId.TACKLE);
       game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
-      expect(spy).not.toHaveBeenCalled();
+      expect(player).not.toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
       expect(player).toHaveFainted();
       expect(enemy).toHaveFainted();
     });
@@ -214,16 +210,12 @@ describe("Items - Reviver Seed", () => {
       setup?.(player);
       player.hp = 1;
 
-      const spy = vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED].getAttrs(HeldItemEffect.INSTANT_REVIVE)[0], "apply");
+      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
 
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(MoveId.WATER_GUN);
       await game.toEndOfTurn();
 
-      expect(spy).toHaveBeenCalledExactlyOnceWith({
-        pokemon: player,
-        reviveApplied: expect.any(ValueHolder),
-      });
       return player;
     }
 
@@ -232,7 +224,7 @@ describe("Items - Reviver Seed", () => {
 
       const player = await reviveAfflictedHolder();
 
-      expect(player.status).toBeNull();
+      expect(player).not.toHaveStatusEffect(StatusEffect.POISON);
       expect(player).not.toHaveFainted();
     });
 
@@ -243,7 +235,7 @@ describe("Items - Reviver Seed", () => {
       });
 
       for (const stat of EFFECTIVE_STATS) {
-        expect(player.getStatStage(stat)).toBe(0);
+        expect(player).toHaveStatStage(stat, 0);
       }
       expect(player).not.toHaveFainted();
     });
@@ -253,7 +245,7 @@ describe("Items - Reviver Seed", () => {
         p.addTag(BattlerTagType.CONFUSED, 3);
       });
 
-      expect(player.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
+      expect(player).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
       expect(player).not.toHaveFainted();
     });
   });

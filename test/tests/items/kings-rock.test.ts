@@ -43,11 +43,10 @@ describe("Items - King's Rock", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const tag = game.field.getEnemyPokemon().getTag(BattlerTagType.FLINCHED);
     if (shouldFlinch) {
-      expect(tag).toBeDefined();
+      expect(game.field.getEnemyPokemon()).toHaveBattlerTag(BattlerTagType.FLINCHED);
     } else {
-      expect(tag).toBeUndefined();
+      expect(game.field.getEnemyPokemon()).not.toHaveBattlerTag(BattlerTagType.FLINCHED);
     }
   });
 });

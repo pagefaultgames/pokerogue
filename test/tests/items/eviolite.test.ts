@@ -37,7 +37,7 @@ describe("Items - Eviolite", () => {
 
     const player = game.field.getPlayerPokemon();
     const baseline = player.getEffectiveStat(stat, { ignoreHeldItems: true });
-    expect(player.getEffectiveStat(stat)).toBe(Math.floor(baseline * 1.5));
+    expect(player).toHaveEffectiveStat(stat, Math.floor(baseline * 1.5));
   });
 
   it.each([Stat.DEF, Stat.SPDEF])("should not boost %s for fully evolved pokemon", async rawStat => {

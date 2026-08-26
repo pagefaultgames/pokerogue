@@ -51,7 +51,7 @@ describe("Items - Species Stat Boosters", () => {
     expect(player.getSpeciesForm(true).speciesId).toBe(species);
 
     const baseline = player.getEffectiveStat(stat, { ignoreHeldItems: true });
-    expect(player.getEffectiveStat(stat)).toBe(baseline * 2);
+    expect(player).toHaveEffectiveStat(stat, baseline * 2);
   });
 
   it.each([
@@ -68,7 +68,7 @@ describe("Items - Species Stat Boosters", () => {
 
     const player = game.field.getPlayerPokemon();
     for (const stat of EFFECTIVE_STATS) {
-      expect(player.getEffectiveStat(stat)).toBe(player.getEffectiveStat(stat, { ignoreHeldItems: true }));
+      expect(player).toHaveEffectiveStat(stat, player.getEffectiveStat(stat, { ignoreHeldItems: true }));
     }
   });
 
@@ -79,7 +79,7 @@ describe("Items - Species Stat Boosters", () => {
 
     const player = game.field.getPlayerPokemon();
     for (const stat of [Stat.DEF, Stat.SPDEF] as const satisfies readonly EffectiveStat[]) {
-      expect(player.getEffectiveStat(stat)).toBe(player.getEffectiveStat(stat, { ignoreHeldItems: true }));
+      expect(player).toHaveEffectiveStat(stat, player.getEffectiveStat(stat, { ignoreHeldItems: true }));
     }
   });
 });

@@ -39,8 +39,8 @@ describe("Items - White Herb", () => {
     await game.toEndOfTurn();
 
     // Activates reactively to charm, but should reset all negative stat stages
-    expect(player.getStatStage(Stat.ATK)).toBe(0);
-    expect(player.getStatStage(Stat.SPATK)).toBe(0);
+    expect(player).toHaveStatStage(Stat.ATK, 0);
+    expect(player).toHaveStatStage(Stat.SPATK, 0);
     expect(player).not.toHaveHeldItem(HeldItemId.WHITE_HERB);
   });
 

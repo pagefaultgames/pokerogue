@@ -41,7 +41,7 @@ describe.each([
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBe(status);
+    expect(player).toHaveStatusEffect(status);
     expect(player).toHaveHeldItem(item);
   });
 });
