@@ -39,6 +39,8 @@ describe("Items - Reviver Seed", () => {
       .startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyMoveset(MoveId.SPLASH);
+
+    vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
   });
 
   describe("Unit Tests", () => {
@@ -48,7 +50,6 @@ describe("Items - Reviver Seed", () => {
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
 
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
       player.damageAndUpdate(1, { result: HitResult.EFFECTIVE });
 
       game.move.use(MoveId.SPLASH);
@@ -77,7 +78,6 @@ describe("Items - Reviver Seed", () => {
       { moveType: "Physical Moves", move: MoveId.TACKLE },
       { moveType: "Fixed Damage Moves", move: MoveId.SEISMIC_TOSS },
       { moveType: "Final Gambit", move: MoveId.FINAL_GAMBIT },
-      // Counter only reflects if the holder was hit by a physical attack that turn
       { moveType: "Counter Moves", move: MoveId.COUNTER, playerMove: MoveId.TACKLE },
       { moveType: "OHKO Moves", move: MoveId.SHEER_COLD },
     ])("should activate when hit by $moveType", async ({ move, playerMove = MoveId.SPLASH }) => {
@@ -85,9 +85,6 @@ describe("Items - Reviver Seed", () => {
 
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
-
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(playerMove);
       await game.move.forceEnemyMove(move);
       await game.toEndOfTurn();
@@ -106,8 +103,6 @@ describe("Items - Reviver Seed", () => {
       player.hp = 1;
       player.addTag(BattlerTagType.CONFUSED, 3);
 
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(MoveId.SPLASH);
       await game.toEndOfTurn();
 
@@ -125,9 +120,6 @@ describe("Items - Reviver Seed", () => {
 
       const enemy = game.field.getEnemyPokemon();
       enemy.hp = 1;
-
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(move);
       await game.toEndOfTurn();
 
@@ -145,9 +137,6 @@ describe("Items - Reviver Seed", () => {
 
       const enemy = game.field.getEnemyPokemon();
       enemy.hp = 1;
-
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(move);
       await game.toEndOfTurn();
 
@@ -166,9 +155,6 @@ describe("Items - Reviver Seed", () => {
 
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
-
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(move);
       await game.toEndOfTurn();
 
@@ -177,15 +163,12 @@ describe("Items - Reviver Seed", () => {
     });
 
     it("should not activate the holder's reviver seed from Destiny Bond fainting", async () => {
-      game.override.startingHeldItems([]); // reset held items to nothing so user doesn't revive and not trigger Destiny Bond
+      game.override.startingHeldItems([]);
       await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
       const player = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
       player.hp = 1;
-
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(MoveId.DESTINY_BOND);
       await game.move.forceEnemyMove(MoveId.TACKLE);
       game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -209,9 +192,6 @@ describe("Items - Reviver Seed", () => {
       const player = game.field.getPlayerPokemon();
       setup?.(player);
       player.hp = 1;
-
-      vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
-
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(MoveId.WATER_GUN);
       await game.toEndOfTurn();
