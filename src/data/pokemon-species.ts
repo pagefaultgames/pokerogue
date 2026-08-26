@@ -1,4 +1,4 @@
-import { determineEnemySpecies } from "#app/ai/ai-species-gen";
+import { determineEnemySpecies } from "#ai/ai-species-gen";
 import type { GameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
@@ -6,7 +6,7 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { AnySound } from "#audio/audio-manager";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
@@ -23,8 +23,8 @@ import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
+import type { LevelMoves } from "#types/level-moves";
 import type { Localizable } from "#types/locales";
-import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
@@ -215,11 +215,11 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Get a list of all level moves for this species, including form specific moves.
-   * @param formKey - (Optional) The key for the form to be checked. Uses the base form if not specified
+   * @param form - (Optional) The key or index for the form to be checked. Uses the base form if not specified
    * @returns A list of all level moves that can be learned by this species
    */
-  public getLevelMoves(formKey?: string): LevelMoves {
-    const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, formKey);
+  public getLevelMoves(form?: string | number): LevelMoves {
+    const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, form);
     return levelMoves.sort((a, b) => a[0] - b[0]);
   }
 
@@ -1316,10 +1316,10 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   /**
    * Get a list of all level moves for this species, including form specific moves.
-   * @param formKey - (Optional) The key for the form to be checked. Uses this form if not specified
+   * @param form - (Optional) The key for the form to be checked. Uses this form if not specified
    * @returns A list of all level moves that can be learned by this species
    */
-  public override getLevelMoves(formKey?: string): LevelMoves {
-    return super.getLevelMoves(formKey ?? this.getFormKey());
+  public override getLevelMoves(form?: string | number): LevelMoves {
+    return super.getLevelMoves(form ?? this.getFormKey());
   }
 }

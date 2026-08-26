@@ -127,7 +127,7 @@ describe("Inverse Battle", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemy).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("Electric type does not get paralyzed - Nuzzle against Pikachu", async () => {
@@ -141,7 +141,7 @@ describe("Inverse Battle", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    expect(enemy).not.toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
@@ -156,7 +156,7 @@ describe("Inverse Battle", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemy).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("Anticipation should trigger on 2x effective moves", async () => {

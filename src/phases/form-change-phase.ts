@@ -15,8 +15,8 @@ import { waitTime } from "#utils/time";
 
 export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
-  private formChange: SpeciesFormChange;
-  private modal: boolean;
+  private readonly formChange: SpeciesFormChange;
+  private readonly modal: boolean;
 
   constructor(pokemon: PlayerPokemon, formChange: SpeciesFormChange, modal: boolean) {
     super(pokemon, null, 0);
@@ -28,6 +28,18 @@ export class FormChangePhase extends EvolutionPhase {
   validate(): boolean {
     // TODO: This is really dumb
     return !!this.formChange;
+  }
+
+  /**
+   * End Terastallization before the form change animation is set up, so the player does not watch a
+   * Terastallized sprite transform into an equally Terastallized Mega/Primal/Max sprite.
+   *
+   * @remarks
+   * The Pokemon's {@linkcode Pokemon.formIndex | formIndex} has not been updated yet at this point,
+   * so the check is made against the form being changed *into*.
+   */
+  protected override onBeforeSpriteSetup(): void {
+    this.pokemon.resetTeraOnMajorFormChange(this.formChange.formKey);
   }
 
   setMode(): Promise<void> {
