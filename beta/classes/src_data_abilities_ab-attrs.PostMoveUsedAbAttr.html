@@ -10,11 +10,16 @@
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="../modules/src_data_abilities_ab-attrs.html">src/data/abilities/ab-attrs</a></li>
 <li><a href="" aria-current="page">PostMoveUsedAbAttr</a></li></ul>
-<h1>Class PostMoveUsedAbAttr</h1></div>
+<h1>Class PostMoveUsedAbAttr<code class="tsd-tag">Abstract</code></h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Triggers just after a move is used either by the opponent or the player</p>
-</div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="12069">
+<div class="tsd-comment tsd-typography"><p>Attribute to trigger effects after a move is used by a different Pokémon on the field.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>This will only trigger on successful, non-Dancer induced and non-reflected move uses, the checks for which are
+performed inside the <a href="src_phases_move-effect-phase.MoveEffectPhase.html" class="tsd-kind-class"><code>MoveEffectPhase</code></a>.</p>
+</div></div></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="293929">
 <h4>Hierarchy (<a href="../hierarchy.html#src/data/abilities/ab-attrs.PostMoveUsedAbAttr">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_data_abilities_ab-attrs.AbAttr.html" class="tsd-signature-type tsd-kind-class">AbAttr</a>
@@ -23,7 +28,7 @@
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_data_abilities_ab-attrs.PostDancingMoveAbAttr.html" class="tsd-signature-type tsd-kind-class">PostDancingMoveAbAttr</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L4504">src/data/abilities/ab-attrs.ts:4504</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L4513">src/data/abilities/ab-attrs.ts:4513</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -65,7 +70,7 @@ Should be kept in parity with mainline where possible.</p>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PostMoveUsedAbAttr</a></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L141">src/data/abilities/ab-attrs.ts:141</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L142">src/data/abilities/ab-attrs.ts:142</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -81,7 +86,7 @@ Should be kept in parity with mainline where possible.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#showability">showAbility</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L116">src/data/abilities/ab-attrs.ts:116</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L117">src/data/abilities/ab-attrs.ts:117</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -98,33 +103,33 @@ Should be kept in parity with mainline where possible.</p>
 <h4 class="tsd-returns-title">Returns <a href="src_data_abilities_ab-attrs.AbAttr.html" class="tsd-signature-type tsd-kind-class">AbAttr</a></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#addcondition">addCondition</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L187">src/data/abilities/ab-attrs.ts:187</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L188">src/data/abilities/ab-attrs.ts:188</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="apply"><span>apply</span><a href="#apply" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="apply"><code class="tsd-tag">Abstract</code><span>apply</span><a href="#apply" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="apply-1"><span class="tsd-kind-call-signature">apply</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">_params</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#apply-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="apply-1"><span class="tsd-kind-call-signature">apply</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#apply-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Apply this attribute's effects without checking conditions.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">_params</span>: <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a></span></li></ul></div>
+<li><span><span class="tsd-kind-parameter">params</span>: <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-remarks">
-<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Never call this method directly!</strong> <br>
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Never call this method directly!</strong> <br>
 Use <a href="../functions/src_data_abilities_apply-ab-attrs.applyAbAttrs.html" class="tsd-kind-function"><code>applyAbAttrs</code></a> instead.</p>
 </div></div><aside class="tsd-sources">
 <p>Overrides <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#apply">apply</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L4509">src/data/abilities/ab-attrs.ts:4509</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L4519">src/data/abilities/ab-attrs.ts:4519</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="canapply"><span>can<wbr/>Apply</span><a href="#canapply" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="canapply-1"><span class="tsd-kind-call-signature">canApply</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">_params</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#canapply-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="canapply-1"><span class="tsd-kind-call-signature">canApply</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#canapply-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Check whether this attribute can have its effects successfully applied.
 Applies to <strong>all</strong> instances of the given attribute.</p>
@@ -132,13 +137,11 @@ Applies to <strong>all</strong> instances of the given attribute.</p>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">_params</span>: <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a></span>
-<div class="tsd-comment tsd-typography"><p>The parameters passed to this attribute's <a href="src_data_abilities_ab-attrs.AbAttr.html#apply" class="tsd-kind-method"><code>apply</code></a> function; must match type exactly</p>
-</div></li></ul></div>
+<li><span><span class="tsd-kind-parameter">params</span>: <a href="../interfaces/src_data_abilities_ab-attrs.PostMoveUsedAbAttrParams.html" class="tsd-signature-type tsd-kind-interface">PostMoveUsedAbAttrParams</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#canapply">canApply</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L4505">src/data/abilities/ab-attrs.ts:4505</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L4515">src/data/abilities/ab-attrs.ts:4515</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getcondition"><span>get<wbr/>Condition</span><a href="#getcondition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -158,7 +161,7 @@ Applies to <strong>all</strong> instances of the given attribute.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#getcondition">getCondition</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L183">src/data/abilities/ab-attrs.ts:183</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L184">src/data/abilities/ab-attrs.ts:184</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="gettriggermessage"><span>get<wbr/>Trigger<wbr/>Message</span><a href="#gettriggermessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -183,7 +186,7 @@ Applies to <strong>all</strong> instances of the given attribute.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#gettriggermessage">getTriggerMessage</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L162">src/data/abilities/ab-attrs.ts:162</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L163">src/data/abilities/ab-attrs.ts:163</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="is"><span>is</span><a href="#is" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -206,11 +209,11 @@ Applies to <strong>all</strong> instances of the given attribute.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-remarks">
-<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Used to avoid requiring the caller to have imported the specific attribute type, avoiding circular dependencies.</p>
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Used to avoid requiring the caller to have imported the specific attribute type, avoiding circular dependencies.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_abilities_ab-attrs.AbAttr.html">AbAttr</a>.<a href="src_data_abilities_ab-attrs.AbAttr.html#is">is</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/data/abilities/ab-attrs.ts#L129">src/data/abilities/ab-attrs.ts:129</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/data/abilities/ab-attrs.ts#L130">src/data/abilities/ab-attrs.ts:130</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

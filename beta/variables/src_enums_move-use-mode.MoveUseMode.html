@@ -17,8 +17,8 @@ Each one inherits the properties (or exclusions) of all types preceding it.
 Properties newly found on a given use mode will be <strong>bolded</strong>,
 while oddities breaking a previous trend will be listed in <em>italics</em>.</p>
 <p>Callers should refrain from performing non-equality checks on <code>MoveUseMode</code>s directly,
-instead using the available helper functions
-(<a href="../functions/src_enums_move-use-mode.isVirtual.html" class="tsd-kind-function"><code>isVirtual</code></a>, <a href="../functions/src_enums_move-use-mode.isIgnoreStatus.html" class="tsd-kind-function"><code>isIgnoreStatus</code></a>, <a href="../functions/src_enums_move-use-mode.isIgnorePP.html" class="tsd-kind-function"><code>isIgnorePP</code></a> and <a href="../functions/src_enums_move-use-mode.isReflected.html" class="tsd-kind-function"><code>isReflected</code></a>).</p>
+instead using the various available helper functions:
+(<a href="../functions/src_enums_move-use-mode.isVirtual.html" class="tsd-kind-function"><code>isVirtual</code></a>, <a href="../functions/src_enums_move-use-mode.isIgnoreStatus.html" class="tsd-kind-function"><code>isIgnoreStatus</code></a>, <a href="../functions/src_enums_move-use-mode.isIgnorePP.html" class="tsd-kind-function"><code>isIgnorePP</code></a>, <a href="../functions/src_enums_move-use-mode.isDancerCopiable.html" class="tsd-kind-function"><code>isDancerCopiable</code></a> and <a href="../functions/src_enums_move-use-mode.isReflected.html" class="tsd-kind-function"><code>isReflected</code></a>).</p>
 </div>
 <div class="tsd-type-declaration">
 <h4>Type Declaration</h4>
@@ -26,35 +26,31 @@ instead using the available helper functions
 <li class="tsd-parameter">
 <h5 id="delayed_attack"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">DELAYED_ATTACK</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">6</span></h5>
 <div class="tsd-comment tsd-typography"><p>This &quot;move&quot; was created by a transparent effect that <strong>does not count as using a move</strong>,
-such as DelayedAttackAttr | Future Sight/Doom Desire.</p>
+such as <a href="../classes/src_data_moves_move.DelayedAttackAttr.html" class="tsd-kind-class"><code>Future Sight/Doom Desire</code></a>.</p>
 <p>In addition to inheriting the cancellation ignores and copy prevention from <a href="#reflected" class="tsd-kind-property"><code>MoveUseMode.REFLECTED</code></a>,
 transparent moves are ignored by <strong>all forms of move usage checks</strong> due to <strong>not pushing to move history</strong>.</p>
-</div>
-<div class="tsd-comment tsd-typography">
-<div class="tsd-tag-todo">
-<h4 class="tsd-anchor-link" id="todo">Todo<a href="#todo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Consider other means of implementing FS/DD than this - we currently only use it
-to prevent pushing to move history and avoid re-delaying the attack portion</p>
-</div></div></li>
+</div></li>
 <li class="tsd-parameter">
 <h5 id="follow_up"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">FOLLOW_UP</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">4</span></h5>
 <div class="tsd-comment tsd-typography"><p>This move was called as part of another move's effect (such as for most <a href="https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves">Move-calling moves</a>).</p>
-<p>Follow-up moves <strong>bypass cancellation</strong> from all <strong>non-volatile status conditions</strong> and <strong>BattlerTagLapseType.MOVE-type effects</strong>
+<p>Follow-up moves <strong>bypass cancellation</strong> from all <strong>non-volatile status conditions</strong> and <strong><a href="../enums/src_enums_battler-tag-lapse-type.BattlerTagLapseType.html#move" class="tsd-kind-enum-member"><code>BattlerTagLapseType.MOVE</code></a>-type effects</strong>
 (having been checked already on the calling move).</p>
 <p>They are <em>not ignored</em> by other move-calling moves and abilities (unlike <a href="#follow_up" class="tsd-kind-property"><code>MoveUseMode.FOLLOW_UP</code></a> and <a href="#reflected" class="tsd-kind-property"><code>MoveUseMode.REFLECTED</code></a>),
 but still inherit the former's disregard for moveset-related effects.</p>
 </div></li>
 <li class="tsd-parameter">
 <h5 id="ignore_pp"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">IGNORE_PP</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">2</span></h5>
-<div class="tsd-comment tsd-typography"><p>This move was called by an effect that ignores PP, such as a consecutively executed move (e.g. Outrage).</p>
-<p>PP-ignoring moves (as their name implies) <strong>do not consume PP</strong> when used
-and <strong>will not fail</strong> if none is left prior to execution.
+<div class="tsd-comment tsd-typography"><p>This move was called by an effect that ignores PP, such as a consecutively executed move (e.g. Outrage)
+or the 2nd turn of a charging move.</p>
+<p>PP-ignoring moves (as their name implies) <strong>do not consume PP</strong> when used (including via Pressure)
+and <strong>will not fail</strong> if none is left prior to execution. <br>
 All other effects remain identical to <a href="#normal" class="tsd-kind-property"><code>MoveUseMode.NORMAL</code></a>.</p>
 <p>PP can still be reduced by other effects (such as Spite or Eerie Spell).</p>
 </div></li>
 <li class="tsd-parameter">
 <h5 id="indirect"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">INDIRECT</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">3</span></h5>
 <div class="tsd-comment tsd-typography"><p>This move was called indirectly by an out-of-turn effect other than Instruct or the user's previous move.
-Currently only used by PostDancingMoveAbAttr | Dancer.</p>
+Currently only used by <a href="../classes/src_data_abilities_ab-attrs.PostDancingMoveAbAttr.html" class="tsd-kind-class"><code>Dancer</code></a>.</p>
 <p>Indirect moves ignore PP checks similar to <a href="#ignore_pp" class="tsd-kind-property"><code>MoveUseMode.IGNORE_PP</code></a>, but additionally <strong>cannot be copied</strong>
 by all move-copying effects (barring reflection).
 They are also <strong>&quot;skipped over&quot; by most moveset and move history-related effects</strong> (PP reduction, Last Resort, etc).</p>
@@ -62,7 +58,7 @@ They are also <strong>&quot;skipped over&quot; by most moveset and move history-
 </div></li>
 <li class="tsd-parameter">
 <h5 id="normal"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">NORMAL</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">1</span></h5>
-<div class="tsd-comment tsd-typography"><p>This move was used normally (i.e. clicking on the button) or called via Instruct.
+<div class="tsd-comment tsd-typography"><p>This move was used normally (i.e. from normal command selection) or called via Instruct.
 It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.</p>
 </div></li>
 <li class="tsd-parameter">
@@ -70,11 +66,11 @@ It deducts PP from the user's moveset (failing if out of PP), and interacts norm
 <div class="tsd-comment tsd-typography"><p>This move was reflected by Magic Coat or Magic Bounce.</p>
 <p>Reflected moves ignore all the same cancellation checks as <a href="#indirect" class="tsd-kind-property"><code>MoveUseMode.INDIRECT</code></a>
 and retain the same copy prevention as <a href="#follow_up" class="tsd-kind-property"><code>MoveUseMode.FOLLOW_UP</code></a>, but additionally
-<strong>cannot be reflected by other reflecting effects</strong>.</p>
+<strong>cannot be copied by other reflecting effects or Dancer</strong>.</p>
 </div></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/enums/move-use-mode.ts#L13">src/enums/move-use-mode.ts:13</a></li>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8ebef33ea44bbec17f0fa8ee39fa74efaff55fd1/src/enums/move-use-mode.ts#L75">src/enums/move-use-mode.ts:75</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/enums/move-use-mode.ts#L17">src/enums/move-use-mode.ts:17</a></li>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/180813349eb3549ebd9b31491de29673fb91224f/src/enums/move-use-mode.ts#L80">src/enums/move-use-mode.ts:80</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
