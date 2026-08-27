@@ -567,7 +567,6 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
       !cancelled.value
       && move.getPriority(attacker) > 0
       && !move.isAllyTarget()
-      && !move.isMultiTarget()
       && attacker.isOpponent(pokemon)
     );
   }
