@@ -1311,7 +1311,7 @@ export abstract class MoveLockTag extends SerializableBattlerTag {
   }
 
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const sourceMove = this.sourceMove;
+    const { sourceMove } = this;
     const lastMove = pokemon.getLastXMoves()[0];
 
     // If the holder didn't just use this tag's move (e.g. it used another move via Dancer),
