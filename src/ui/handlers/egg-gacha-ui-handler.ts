@@ -1,4 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { IEggOptions } from "#data/egg";
@@ -8,13 +10,13 @@ import { EggTier } from "#enums/egg-type";
 import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
+import { VoucherType } from "#enums/voucher-type";
+import { getVoucherTypeIcon } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class EggGachaUiHandler extends MessageUiHandler {
@@ -23,14 +25,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaOptionsContainer: Phaser.GameObjects.Container;
   private eggGachaOptionSelectBg: Phaser.GameObjects.NineSlice;
 
-  private gachaContainers: Phaser.GameObjects.Container[];
-  private gachaKnobs: Phaser.GameObjects.Sprite[];
-  private gachaHatches: Phaser.GameObjects.Sprite[];
-  private gachaInfoContainers: Phaser.GameObjects.Container[];
+  private readonly gachaContainers: Phaser.GameObjects.Container[];
+  private readonly gachaKnobs: Phaser.GameObjects.Sprite[];
+  private readonly gachaHatches: Phaser.GameObjects.Sprite[];
+  private readonly gachaInfoContainers: Phaser.GameObjects.Container[];
   private eggGachaOverlay: Phaser.GameObjects.Rectangle;
   private eggGachaSummaryContainer: Phaser.GameObjects.Container;
 
-  private voucherCountLabels: Phaser.GameObjects.Text[];
+  private readonly voucherCountLabels: Phaser.GameObjects.Text[];
 
   private gachaCursor: number;
 
@@ -38,14 +40,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private transitioning: boolean;
   private transitionCancelled: boolean;
   private summaryFinished: boolean;
-  private defaultText: string;
+  private readonly defaultText: string;
 
   /** The tween chain playing the egg drop animation sequence */
   private eggDropTweenChain?: Phaser.Tweens.TweenChain | undefined;
 
   private scale = 0.1666666667;
 
-  private legendaryExpiration = addTextObject(0, 0, "", TextStyle.WINDOW_ALT);
+  private readonly legendaryExpiration = addTextObject(0, 0, "", TextStyle.WINDOW_ALT);
   private playTimeTimer: Phaser.Time.TimerEvent | null;
 
   constructor() {
@@ -81,7 +83,23 @@ export class EggGachaUiHandler extends MessageUiHandler {
     let pokemonIconX = -20;
     let pokemonIconY = 6;
 
-    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru", "uk", "tr", "eu"].includes(currentLanguage)) {
+    const smallTextLanguages = [
+      "de",
+      "es-ES",
+      "es-419",
+      "fr",
+      "ko",
+      "pt-BR",
+      "ja",
+      "ru",
+      "uk",
+      "tr",
+      "eu",
+      "id",
+      "vi",
+      "pl",
+    ];
+    if (smallTextLanguages.includes(currentLanguage)) {
       gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
       gachaX = 2;
       gachaY = 2;
@@ -89,7 +107,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     let legendaryLabelX = gachaX;
     let legendaryLabelY = gachaY;
-    if (["de", "es-ES", "es-419", "tr", "eu"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "tr", "eu", "pl"].includes(currentLanguage)) {
       pokemonIconX = -25;
       pokemonIconY = 10;
       legendaryLabelX = -6;
@@ -102,7 +120,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
         {
-          if (["de", "es-ES", "eu"].includes(currentLanguage)) {
+          if (["de", "es-ES", "eu", "pl"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
           }
           let xOffset = 0;
@@ -357,7 +375,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
   }
 
   private firstDropAnims(): Phaser.Types.Tweens.TweenBuilderConfig[] {
-    globalScene.playSound("se/gacha_dial");
+    audioManager.playSound("se/gacha_dial");
     return [
       // Tween 1 animates the gacha knob turning left
       {
@@ -379,14 +397,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
         dummy: 1,
         duration: this.getDelayValue(350),
         onStart: () => {
-          globalScene.playSound("se/gacha_running", { loop: true });
+          audioManager.playSound("se/gacha_running", { loop: true });
         },
       },
       // Tween 4 is another dummy tween that plays the gacha dispense sound
       {
         delay: this.getDelayValue(1250),
         onStart: () => {
-          globalScene.playSound("se/gacha_dispense");
+          audioManager.playSound("se/gacha_dispense");
         },
         targets: { dummy: 0 },
         dummy: 1,
@@ -424,7 +442,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       // Tween 2 plays the catch sound and moves the egg up a bit
       {
         onStart: () => {
-          globalScene.playSound("se/pb_catch");
+          audioManager.playSound("se/pb_catch");
           this.gachaHatches[this.gachaCursor].play("open");
         },
         targets: egg,
@@ -638,7 +656,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
    */
   private updateLegendaryGacha(): void {
     const infoContainer = this.gachaInfoContainers[GachaType.LEGENDARY];
-    const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
+    const species = speciesDataRegistry.getSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
     const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
     pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
   }

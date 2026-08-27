@@ -1,6 +1,6 @@
-import { globalManifest } from "#app/global-manifest";
-import { coerceArray } from "#utils/array";
-import { getCachedUrl } from "#utils/fetch-utils";
+import { globalManifest } from "../../src/globals/global-manifest";
+import { coerceArray } from "../../src/utils/array";
+import { getCachedUrl } from "../../src/utils/fetch-utils";
 
 export class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
   addFile(files: Phaser.Loader.File | Phaser.Loader.File[]): void {

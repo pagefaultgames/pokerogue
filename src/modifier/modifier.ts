@@ -1,8 +1,10 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
 import { allMoves, modifierTypes } from "#data/data-lists";
@@ -23,6 +25,7 @@ import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import type { VoucherType } from "#enums/voucher-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   DoubleBattleChanceBoosterModifierType,
@@ -38,7 +41,6 @@ import type {
   TerastallizeModifierType,
   TmModifierType,
 } from "#modifiers/modifier-type";
-import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/color-utils";
@@ -374,7 +376,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
         const modifierInstance = modifier as LapsingPersistentModifier;
         if (modifierInstance.getBattleCount() < modifierInstance.getMaxBattles()) {
           modifierInstance.resetBattleCount();
-          globalScene.playSound("se/restore");
+          audioManager.playSound("se/restore");
           return true;
         }
         // should never get here
@@ -1215,9 +1217,12 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * @see shouldApply
    */
   override apply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
-    const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
+    const isUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getSpeciesForm(true).speciesId);
 
-    if (pokemon.isFusion() && pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions !== isUnevolved) {
+    if (
+      pokemon.isFusion()
+      && speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId) !== isUnevolved
+    ) {
       // Half boost applied if pokemon is fused and either part of fusion is fully evolved
       statValue.value *= 1 + (this.multiplier - 1) / 2;
       return true;
@@ -1830,7 +1835,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     this.consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects
-    getBerryEffectFunc(this.berryType)(pokemon);
+    getBerryEffectFunc(this.berryType, true)(pokemon);
     applyAbAttrs("PostItemLostAbAttr", { pokemon });
 
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
@@ -2314,7 +2319,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(playerPokemon),
-      playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex],
+      playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex][1],
       LearnMoveType.MEMORY,
       cost,
     );
@@ -2331,16 +2336,16 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
    * @returns `true` if the evolution was successful
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    let matchingEvolution = Object.hasOwn(pokemonEvolutions, playerPokemon.species.speciesId)
-      ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
-        )
+    let matchingEvolution = speciesDataRegistry.hasEvolutions(playerPokemon.species.speciesId)
+      ? speciesDataRegistry
+          .getEvolutions(playerPokemon.species.speciesId)
+          .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!))
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
-      );
+      matchingEvolution = speciesDataRegistry
+        .getEvolutions(playerPokemon.fusionSpecies!.speciesId)
+        .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
       }
@@ -3160,6 +3165,16 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   }
 
   /**
+   * Checks if this item can steal and if the holder has not fainted.
+   * @param pokemon The {@linkcode Pokemon} holding this item
+   * @param target The {@linkcode Pokemon} to steal from (optional)
+   * @returns `true` if an item can be stolen; false otherwise.
+   */
+  override shouldApply(pokemon: Pokemon, target?: Pokemon): boolean {
+    return super.shouldApply(pokemon, target) && !pokemon.isFainted();
+  }
+
+  /**
    * Steals an item, chosen randomly, from a set of target Pokemon.
    * @param pokemon The {@linkcode Pokemon} holding this item
    * @param target The {@linkcode Pokemon} to steal from (optional)
@@ -3245,13 +3260,6 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   setTransferrableFalse(): void {
     this.isTransferable = false;
-  }
-
-  public override apply(pokemon: Pokemon, target?: Pokemon, ...args: unknown[]): boolean {
-    if (pokemon.isFainted()) {
-      return false;
-    }
-    return super.apply(pokemon, target, ...args);
   }
 }
 
@@ -3380,7 +3388,7 @@ export class TempExtraModifierModifier extends LapsingPersistentModifier {
         const newBattleCount = this.getMaxBattles() + modifierInstance.getBattleCount();
 
         modifierInstance.setNewBattleCount(newBattleCount);
-        globalScene.playSound("se/restore");
+        audioManager.playSound("se/restore");
         return true;
       }
     }

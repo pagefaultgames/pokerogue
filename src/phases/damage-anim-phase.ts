@@ -1,4 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -29,7 +31,7 @@ export class DamageAnimPhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO || this.damageResult === HitResult.INDIRECT_KO) {
-      if (globalScene.moveAnimations) {
+      if (settings.display.enableMoveAnimations) {
         globalScene.toggleInvert(true);
       }
       globalScene.time.delayedCall(fixedInt(1000), () => {
@@ -51,15 +53,17 @@ export class DamageAnimPhase extends PokemonPhase {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
       case HitResult.CONFUSION:
-        globalScene.playSound("se/hit");
+        audioManager.playSound("se/hit");
         break;
+      case HitResult.EXTREMELY_EFFECTIVE:
       case HitResult.SUPER_EFFECTIVE:
       case HitResult.INDIRECT_KO:
       case HitResult.ONE_HIT_KO:
-        globalScene.playSound("se/hit_strong");
+        audioManager.playSound("se/hit_strong");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        globalScene.playSound("se/hit_weak");
+      case HitResult.MOSTLY_INEFFECTIVE:
+        audioManager.playSound("se/hit_weak");
         break;
     }
 

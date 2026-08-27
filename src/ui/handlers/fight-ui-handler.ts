@@ -1,5 +1,6 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
@@ -8,6 +9,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
+import { TypeHints } from "#enums/type-hints";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -333,12 +335,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     );
     if (pokemonMove.getMove().category === MoveCategory.STATUS) {
       if (effectiveness === 0) {
-        return "0x";
+        return i18next.t("fightUiHandler:effectiveness000");
       }
-      return "1x";
+      return i18next.t("fightUiHandler:effectiveness100");
     }
 
-    return `${effectiveness}x`;
+    return i18next.t("fightUiHandler:effectivenessMultiplier", { effectiveness });
   }
 
   displayMoves() {
@@ -371,7 +373,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
    * @returns A color or undefined if the default color should be used
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    if (!globalScene.typeHints) {
+    if (settings.display.typeHintsMode === TypeHints.OFF) {
       return;
     }
 
@@ -394,9 +396,14 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       .sort((a, b) => b - a)
       .map(effectiveness => {
         if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
-          return;
+          // biome-ignore lint/complexity/noUselessUndefined: intentional
+          return undefined;
         }
-        return getTypeDamageMultiplierColor(effectiveness ?? 0, "offense");
+        return getTypeDamageMultiplierColor(
+          effectiveness ?? 0,
+          "offense",
+          settings.display.typeHintsMode === TypeHints.HIGH_CONTRAST,
+        );
       });
 
     return moveColors[0];

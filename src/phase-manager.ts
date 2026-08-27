@@ -7,11 +7,11 @@
  * @module
  */
 
-import { PHASE_START_COLOR } from "#app/constants/colors";
 import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
+import { PHASE_START_COLOR } from "#constants/colors";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";

@@ -114,8 +114,8 @@ vi.mock(import("#utils/fetch-utils"), async importOriginal => {
 
 // #region Hooks
 
-beforeAll(() => {
-  initTests();
+beforeAll(async () => {
+  await initTests();
 });
 
 afterAll(() => {

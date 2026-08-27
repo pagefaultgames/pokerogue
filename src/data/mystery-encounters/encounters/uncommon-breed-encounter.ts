@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -33,6 +34,7 @@ import { MoveRequirement, PersistentModifierRequirement } from "#mystery-encount
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import { randSeedInt } from "#utils/common";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -101,15 +103,13 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           dataSource: new PokemonData(pokemon),
           isBoss: false,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
-          mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
+          mysteryEncounterBattleEffects: (pkmn: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.statBoost`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              statChangesForBattle,
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pkmn.getBattlerIndex(),
+              changes: groupStatChange(statChangesForBattle, 1),
+              sourcePokemon: pkmn,
+            });
           },
         },
       ],
@@ -150,7 +150,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       onComplete: () => encounter.introVisuals?.playShinySparkles(),
     });
 
-    globalScene.time.delayedCall(500, () => globalScene.playSound("battle_anims/PRSFX- Spotlight2"));
+    globalScene.time.delayedCall(500, () => audioManager.playSound("battle_anims/PRSFX- Spotlight2"));
     return true;
   })
   .setLocalizationKey(`${namespace}`)

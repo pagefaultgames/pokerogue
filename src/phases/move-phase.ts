@@ -1,9 +1,8 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
+import { MOVE_COLOR } from "#constants/colors";
 import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
 import { getStatusEffectActivationText } from "#data/status-effect";
@@ -29,6 +28,7 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import type { Mutable } from "#types/type-helpers";
@@ -384,12 +384,14 @@ export class MovePhase extends PokemonPhase {
       this.thaw = true;
       return false;
     }
+    pokemon.status.incrementTurn();
     if (
       activeOverrides.STATUS_ACTIVATION_OVERRIDE === false
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!pokemon.randBattleSeedInt(5) && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || ((!pokemon.randBattleSeedInt(4) || (pokemon.status.freezeTurnsRemaining ?? 0) <= 0)
+        && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -430,7 +432,7 @@ export class MovePhase extends PokemonPhase {
     const moveName = move.getName();
     let failedText: string | undefined;
     const usability = new BooleanHolder(false);
-    if (moveName.endsWith(" (N)")) {
+    if (move.getMove().isUnimplemented) {
       failedText = i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") });
     } else if (moveId === MoveId.NONE || this.targets.length === 0) {
       this.cancel();
@@ -520,7 +522,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
+    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(8) === 0;
     if (!proc) {
       return false;
     }
@@ -651,28 +653,16 @@ export class MovePhase extends PokemonPhase {
    * Deduct PP from the move being used, accounting for Pressure and other effects.
    */
   protected usePP(): void {
-    if (!isIgnorePP(this.useMode)) {
-      const move = this.move;
-      // "commit" to using the move, deducting PP.
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
-      move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
+    if (isIgnorePP(this.useMode)) {
+      return;
     }
-  }
-
-  /**
-   * Apply PP increasing abilities (currently only {@linkcode AbilityId.PRESSURE | Pressure})
-   * on all target Pokemon.
-   * @param targets - An array containing all active Pokemon targeted by this Phase's move
-   * @returns The amount of extra PP consumed due to Pressure
-   */
-  // TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
-  // This is likely due to said ability being a stub...
-  public getPpIncreaseFromPressure(targets: Pokemon[]): number {
-    const foesWithPressure = this.pokemon
-      .getOpponents(true)
-      .filter(opponent => targets.includes(opponent) && opponent.hasAbilityWithAttr("IncreasePpAbAttr"));
-    return foesWithPressure.length;
+    const { move, pokemon: user } = this;
+    const ppHolder = new NumberHolder(1);
+    this.getActiveTargetPokemon().forEach(target => {
+      applyAbAttrs("IncreasePpUsedAbAttr", { pokemon: target, opponent: user, pp: ppHolder });
+    });
+    move.usePp(ppHolder.value);
+    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
   }
 
   /**
@@ -869,7 +859,7 @@ export class MovePhase extends PokemonPhase {
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
-    if (!failed && user.isOpponent(targets[0])) {
+    if (!failed && targets[0] != null && user.isOpponent(targets[0])) {
       const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       const cancelled = new ValueHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
@@ -935,8 +925,6 @@ export class MovePhase extends PokemonPhase {
    *     to lapse on move failure/cancellation.
    *
    *     TODO: ...this seems weird.
-   * - Lapses `AFTER_MOVE` tags:
-   *   - This handles the effects of {@linkcode MoveId.SUBSTITUTE | Substitute}
    * - Removes the second turn of charge moves
    */
   protected handlePreMoveFailures(): void {
@@ -956,7 +944,6 @@ export class MovePhase extends PokemonPhase {
     pokemon.pushMoveHistory(moveHistoryEntry);
 
     pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     // This clears out 2 turn moves after they've been used
     // TODO: Remove post move queue refactor

@@ -1,14 +1,15 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
+import type { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";
 
 export enum SettingGamepad {
-  CONTROLLER = "CONTROLLER",
-  GAMEPAD_SUPPORT = "GAMEPAD_SUPPORT",
+  CONTROLLER = "activeIndex",
+  GAMEPAD_SUPPORT = "enabled",
   BUTTON_UP = "BUTTON_UP",
   BUTTON_DOWN = "BUTTON_DOWN",
   BUTTON_LEFT = "BUTTON_LEFT",
@@ -87,9 +88,7 @@ export const settingGamepadBlackList = [
 export function setSettingGamepad(setting: SettingGamepad, value: number): boolean {
   switch (setting) {
     case SettingGamepad.GAMEPAD_SUPPORT:
-      // if we change the value of the gamepad support, we call a method in the inputController to
-      // activate or deactivate the controller listener
-      globalScene.inputController.setGamepadSupport(settingGamepadOptions[setting][value] !== "Disabled");
+      settings.update("gamepad", "enabled", settingGamepadOptions[setting][value] !== "Disabled");
       break;
     case SettingGamepad.BUTTON_ACTION:
     case SettingGamepad.BUTTON_CANCEL:
@@ -107,7 +106,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
       if (value && globalScene.ui) {
         const cancelHandler = (success = false): boolean => {
           globalScene.ui.revertMode();
-          (globalScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
+          globalScene.ui.getHandler<SettingsGamepadUiHandler>().updateBindings();
           return success;
         };
         globalScene.ui.setOverlayMode(UiMode.GAMEPAD_BINDING, {
@@ -130,16 +129,17 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
             (globalScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
             return false;
           };
-          const changeGamepadHandler = (gamepad: string) => {
+          const changeGamepadHandler = (gamepad: string, index: number) => {
             globalScene.inputController.setChosenGamepad(gamepad);
+            settings.update("gamepad", "activeIndex", index);
             cancelHandler();
             return true;
           };
           globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: [
-              ...gp.map((g: string) => ({
+              ...gp.map((g, index) => ({
                 label: truncateString(g, 30), // Truncate the gamepad name for display
-                handler: () => changeGamepadHandler(g),
+                handler: () => changeGamepadHandler(g, index),
               })),
               {
                 label: i18next.t("settings:cancelControllerChoice"),

@@ -1,8 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { speciesEggMoves } from "#balance/egg-moves";
 import { allMoves } from "#data/data-lists";
-import { getEggTierForSpecies } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Gender } from "#data/gender";
 import { PokemonType } from "#enums/pokemon-type";
@@ -12,7 +11,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import { addTextObject, updateCandyCountTextStyle } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { padInt } from "#utils/common";
-import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
 import { PokemonInfoContainer } from "./pokemon-info-container";
 
 /**
@@ -159,7 +158,7 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.displayPokemon(pokemon);
 
     super.show(pokemon, false, 1, hatchInfo.getDex(), hatchInfo.getStarterEntry(), true);
-    const colorScheme = starterColors[species.speciesId];
+    const colorScheme = getStarterColors(species.speciesId);
 
     this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
     this.pokemonCandyIcon.setVisible(true);
@@ -197,7 +196,7 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
       this.pokemonHatchedIcon.setFrame("manaphy");
     } else {
-      this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+      this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
     }
   }
 }

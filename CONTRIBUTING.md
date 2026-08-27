@@ -46,13 +46,13 @@ We have a `.devcontainer/devcontainer.json` file, meaning we are compatible with
 
 This Linux environment comes with all required dependencies needed to start working on the project.
 
-[codespaces-badge]: <https://github.com/codespaces/badge.svg>
-[codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
-[devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
-
 > [!IMPORTANT]
 > Due to quirks of devcontainer port forwarding, **you must use `pnpm start:podman`** to start a local dev server from within a devcontainer.
 > _All other instructions remain the same as local development_.
+
+[codespaces-badge]: <https://github.com/codespaces/badge.svg>
+[codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
+[devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
 ### Podman
 
@@ -68,9 +68,14 @@ For those who prefer Docker containers, see [this instructions page](./docs/podm
 
 #### Running Locally
 
-1. Run `pnpm install` from the repository root
-    - *if you run into any errors, reach out in the **#pokerogue-dev** channel on Discord*
-2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
+1. If you haven't already, clone the repository: `git clone -v --depth 1 --recurse-submodules --shallow-submodules "https://github.com/pagefaultgames/pokerogue.git" .`
+    - `--depth 1` is recommended if you don't need the full history (you probably don't), since it'll save on bandwidth and disk space by not copying the entire repo history.
+    - If you need branches other than `beta` (which you probably don't, that's the primary branch that all development is based on), \
+      add `--no-single-branch`.
+2. Run `pnpm install` from the repository root
+    - *If you run into any errors, reach out in the **#pokerogue-dev** channel on Discord*
+3. Run `pnpm start:dev` to start the game, it'll be accessible in your browser at `localhost:8000`
+    - If you encounter errors related to missing files in `locales/` or `assets/`, you'll need to run `pnpm update-submodules` first.
 
 
 ## 🚀 Getting Started
@@ -86,8 +91,8 @@ Once you have your feet under you, check out the [Issues](https://github.com/pag
 Most issues are bugs and are labeled with their area, such as `Move`, `Ability`, `UI/UX`, etc. There are also priority labels:
 - `P0`: Completely gamebreaking (very rare)
 - `P1`: Major - Game crash
-- `P2`: Minor - Incorrect (but non-crashing) move/ability/interaction
-- `P3`: No gameplay impact - typo, minor graphical error, etc.
+- `P2`: Minor - Incorrect (but non-crashing) interactions (e.g. a move that lacks or has incorrect functionality)
+- `P3`: No gameplay impact - typos, minor graphical errors, etc.
 
 Also under issues, you can take a look at the [List of Partial / Unimplemented Moves and Abilities](https://github.com/pagefaultgames/pokerogue/issues/3503) and the [Bug Board](https://github.com/orgs/pagefaultgames/projects/3). The latter is essentially the same as the issues page, so take your pick.
 
@@ -102,6 +107,7 @@ Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
+- [The Phase System](./docs/phases.md)
 - [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 

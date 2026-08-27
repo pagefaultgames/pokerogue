@@ -1,6 +1,7 @@
 import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import {
@@ -9,9 +10,8 @@ import {
   getDailyStartingBiome,
   getDailyStartingMoney,
   getDailyTrainerManipulation,
-} from "#data/daily-seed/daily-run";
-import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
-import { allSpecies } from "#data/data-lists";
+} from "#data/daily-run";
+import { parseDailySeed } from "#data/daily-seed-utils";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
@@ -22,7 +22,6 @@ import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-ba
 import type { CustomDailyRunConfig } from "#types/daily-run";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 interface GameModeConfig {
@@ -271,16 +270,17 @@ export class GameMode implements GameModeConfig {
       const eventBoss = getDailyEventSeedBoss();
       if (eventBoss?.speciesId != null) {
         // Cannot set form index here, it will be overriden when adding it as enemy pokemon.
-        return getPokemonSpecies(eventBoss.speciesId);
+        return speciesDataRegistry.getSpecies(eventBoss.speciesId);
       }
 
-      const allFinalBossSpecies = allSpecies.filter(
-        s =>
+      const allFinalBossSpecies = speciesDataRegistry.getAllSpecies().filter(s => {
+        return (
           (s.subLegendary || s.legendary || s.mythical)
           && s.baseTotal >= 600
           && s.speciesId !== SpeciesId.ETERNATUS
-          && s.speciesId !== SpeciesId.ARCEUS,
-      );
+          && s.speciesId !== SpeciesId.ARCEUS
+        );
+      });
       return randSeedItem(allFinalBossSpecies);
     }
 

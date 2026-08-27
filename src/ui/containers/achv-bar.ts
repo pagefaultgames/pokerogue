@@ -1,7 +1,9 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
-import { Achv, getAchievementDescription } from "#system/achv";
+import { Achv } from "#system/achv";
 import { Voucher } from "#system/voucher";
 import { addTextObject } from "#ui/text";
 
@@ -22,7 +24,7 @@ export class AchvBar extends Phaser.GameObjects.Container {
 
   constructor() {
     super(globalScene, globalScene.scaledCanvas.width, 0);
-    this.playerGender = globalScene.gameData.gender;
+    this.playerGender = settings.general.playerGender;
   }
 
   setup(): void {
@@ -67,10 +69,10 @@ export class AchvBar extends Phaser.GameObjects.Container {
 
     this.bg.setTexture(`achv_bar${tier ? `_${tier + 1}` : ""}`);
     this.icon.setFrame(achv.getIconImage());
-    this.titleText.setText(achv.getName(this.playerGender));
+    this.titleText.setText(achv.name);
     this.scoreText.setVisible(achv instanceof Achv);
     if (achv instanceof Achv) {
-      this.descriptionText.setText(getAchievementDescription((achv as Achv).localizationKey));
+      this.descriptionText.setText((achv as Achv).description);
     } else if (achv instanceof Voucher) {
       this.descriptionText.setText((achv as Voucher).description);
     }
@@ -96,7 +98,7 @@ export class AchvBar extends Phaser.GameObjects.Container {
     );
     this.icon.y = this.bg.height / 2 - this.icon.height / 2;
 
-    globalScene.playSound("se/achv");
+    audioManager.playSound("se/achv");
 
     globalScene.tweens.add({
       targets: this,

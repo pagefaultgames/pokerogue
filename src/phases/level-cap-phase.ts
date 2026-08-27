@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import { FieldPhase } from "#phases/field-phase";
@@ -10,7 +11,7 @@ export class LevelCapPhase extends FieldPhase {
 
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       // Sound loaded into game as is
-      globalScene.playSound("se/level_up_fanfare");
+      audioManager.playSound("se/level_up_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:levelCapUp", {
           levelCap: globalScene.getMaxExpLevel(),

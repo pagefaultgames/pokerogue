@@ -1,6 +1,8 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
@@ -29,7 +31,6 @@ import {
 } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -45,7 +46,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
@@ -164,7 +165,7 @@ async function spawnNextTrainerOrEndEncounter() {
     // Give 10x Voucher
     const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
     globalScene.addModifier(newModifier);
-    globalScene.playSound("se/item_fanfare");
+    audioManager.playSound("se/item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
     await showEncounterDialogue(`${namespace}:victory2`, `${namespace}:speaker`);
@@ -180,74 +181,78 @@ async function spawnNextTrainerOrEndEncounter() {
   }
 }
 
-function endTrainerBattleAndShowDialogue(): Promise<void> {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
-  return new Promise(async resolve => {
-    if (globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
-      // Battle is over
-      const trainer = globalScene.currentBattle.trainer;
-      if (trainer) {
-        globalScene.tweens.add({
-          targets: trainer,
-          x: "+=16",
-          y: "-=16",
-          alpha: 0,
-          ease: "Sine.easeInOut",
-          duration: 750,
-          onComplete: () => {
-            globalScene.field.remove(trainer, true);
-          },
-        });
-      }
+async function endTrainerBattleAndShowDialogue(): Promise<void> {
+  const { promise, resolve } = Promise.withResolvers<void>();
 
-      await spawnNextTrainerOrEndEncounter();
-      resolve(); // Wait for all dialogue/post battle stuff to complete before resolving
-    } else {
-      globalScene.arena.resetArenaEffects();
-      const playerField = globalScene.getPlayerField();
-      for (const pokemon of playerField) {
-        pokemon.lapseTag(BattlerTagType.COMMANDED);
-      }
-      playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
-
-      for (const pokemon of globalScene.getPlayerParty()) {
-        // Only trigger form change when Eiscue is in Noice form
-        // Hardcoded Eiscue for now in case it is fused with another pokemon
-        if (
-          pokemon.species.speciesId === SpeciesId.EISCUE
-          && pokemon.hasAbility(AbilityId.ICE_FACE)
-          && pokemon.formIndex === 1
-        ) {
-          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
-        }
-
-        // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
-        pokemon.resetBattleAndWaveData();
-        applyAbAttrs("PostBattleInitAbAttr", { pokemon });
-      }
-
-      globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
-      // Hide the trainer and init next battle
-      const trainer = globalScene.currentBattle.trainer;
-      // Unassign previous trainer from battle so it isn't destroyed before animation completes
-      globalScene.currentBattle.trainer = null;
-      await spawnNextTrainerOrEndEncounter();
-      if (trainer) {
-        globalScene.tweens.add({
-          targets: trainer,
-          x: "+=16",
-          y: "-=16",
-          alpha: 0,
-          ease: "Sine.easeInOut",
-          duration: 750,
-          onComplete: () => {
-            globalScene.field.remove(trainer, true);
-            resolve();
-          },
-        });
-      }
+  if (globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs.length === 0) {
+    // Battle is over
+    const trainer = globalScene.currentBattle.trainer;
+    if (trainer) {
+      globalScene.tweens.add({
+        targets: trainer,
+        x: "+=16",
+        y: "-=16",
+        alpha: 0,
+        ease: "Sine.easeInOut",
+        duration: 750,
+        onComplete: () => {
+          globalScene.field.remove(trainer, true);
+        },
+      });
     }
-  });
+
+    await spawnNextTrainerOrEndEncounter();
+    resolve();
+    return promise;
+  }
+
+  globalScene.arena.resetArenaEffects();
+  const playerField = globalScene.getPlayerField();
+  for (const pokemon of playerField) {
+    pokemon.lapseTag(BattlerTagType.COMMANDED);
+  }
+  playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
+
+  for (const pokemon of globalScene.getPlayerParty()) {
+    // Only trigger form change when Eiscue is in Noice form
+    // Hardcoded Eiscue for now in case it is fused with another pokemon
+    if (
+      pokemon.species.speciesId === SpeciesId.EISCUE
+      && pokemon.hasAbility(AbilityId.ICE_FACE)
+      && pokemon.formIndex === 1
+    ) {
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
+    }
+
+    // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
+    pokemon.resetBattleAndWaveData();
+    applyAbAttrs("PostBattleInitAbAttr", { pokemon });
+  }
+
+  globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
+  // Hide the trainer and init next battle
+  const trainer = globalScene.currentBattle.trainer;
+  // Unassign previous trainer from battle so it isn't destroyed before animation completes
+  globalScene.currentBattle.trainer = null;
+  await spawnNextTrainerOrEndEncounter();
+  if (trainer) {
+    globalScene.tweens.add({
+      targets: trainer,
+      x: "+=16",
+      y: "-=16",
+      alpha: 0,
+      ease: "Sine.easeInOut",
+      duration: 750,
+      onComplete: () => {
+        globalScene.field.remove(trainer, true);
+        resolve();
+      },
+    });
+  } else {
+    resolve();
+  }
+
+  return promise;
 }
 
 function getVictorTrainerConfig(): EnemyPartyConfig {
@@ -255,7 +260,7 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICTOR,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(SpeciesId.SWELLOW),
+        species: speciesDataRegistry.getSpecies(SpeciesId.SWELLOW),
         isBoss: false,
         abilityIndex: 0, // Guts
         nature: Nature.ADAMANT,
@@ -273,7 +278,7 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.OBSTAGOON),
+        species: speciesDataRegistry.getSpecies(SpeciesId.OBSTAGOON),
         isBoss: false,
         abilityIndex: 1, // Guts
         nature: Nature.ADAMANT,
@@ -299,7 +304,7 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICTORIA,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(SpeciesId.ROSERADE),
+        species: speciesDataRegistry.getSpecies(SpeciesId.ROSERADE),
         isBoss: false,
         abilityIndex: 0, // Natural Cure
         nature: Nature.CALM,
@@ -317,7 +322,7 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.GARDEVOIR),
+        species: speciesDataRegistry.getSpecies(SpeciesId.GARDEVOIR),
         isBoss: false,
         formIndex: 1,
         nature: Nature.TIMID,
@@ -348,7 +353,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VIVI,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(SpeciesId.SEAKING),
+        species: speciesDataRegistry.getSpecies(SpeciesId.SEAKING),
         isBoss: false,
         abilityIndex: 3, // Lightning Rod
         nature: Nature.ADAMANT,
@@ -367,7 +372,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.BRELOOM),
+        species: speciesDataRegistry.getSpecies(SpeciesId.BRELOOM),
         isBoss: false,
         abilityIndex: 1, // Poison Heal
         nature: Nature.JOLLY,
@@ -385,7 +390,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.CAMERUPT),
+        species: speciesDataRegistry.getSpecies(SpeciesId.CAMERUPT),
         isBoss: false,
         formIndex: 1,
         nature: Nature.CALM,
@@ -407,7 +412,7 @@ function getVickyTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICKY,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(SpeciesId.MEDICHAM),
+        species: speciesDataRegistry.getSpecies(SpeciesId.MEDICHAM),
         isBoss: false,
         formIndex: 1,
         nature: Nature.IMPISH,
@@ -428,7 +433,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VITO,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(SpeciesId.HISUI_ELECTRODE),
+        species: speciesDataRegistry.getSpecies(SpeciesId.HISUI_ELECTRODE),
         isBoss: false,
         abilityIndex: 0, // Soundproof
         nature: Nature.MODEST,
@@ -442,7 +447,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.SWALOT),
+        species: speciesDataRegistry.getSpecies(SpeciesId.SWALOT),
         isBoss: false,
         abilityIndex: 2, // Gluttony
         nature: Nature.QUIET,
@@ -495,7 +500,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.DODRIO),
+        species: speciesDataRegistry.getSpecies(SpeciesId.DODRIO),
         isBoss: false,
         abilityIndex: 2, // Tangled Feet
         nature: Nature.JOLLY,
@@ -509,7 +514,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.ALAKAZAM),
+        species: speciesDataRegistry.getSpecies(SpeciesId.ALAKAZAM),
         isBoss: false,
         formIndex: 1,
         nature: Nature.BOLD,
@@ -523,7 +528,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(SpeciesId.DARMANITAN),
+        species: speciesDataRegistry.getSpecies(SpeciesId.DARMANITAN),
         isBoss: false,
         abilityIndex: 0, // Sheer Force
         nature: Nature.IMPISH,
