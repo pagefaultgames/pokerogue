@@ -135,7 +135,7 @@ export type BattlerTagDataMap = {
 export type BattlerTagData = ObjectValues<BattlerTagDataMap>;
 
 /**
- * Dummy, typescript-only declaration to ensure that
+ * Dummy, TypeScript-only declaration to ensure that
  * {@linkcode BattlerTagTypeMap} has an entry for all `BattlerTagType`s.
  *
  * If a tag type is missing from the map, TypeScript will throw an error on this statement.

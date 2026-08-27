@@ -55,6 +55,7 @@ import type {
   PokemonDefendCondition,
   PokemonStatStageChangeFunc,
 } from "#types/ability-types";
+import { AbilityBattlerTagType } from "#types/battler-tags";
 import type { Move, StatusEffectAttr } from "#types/move-types";
 import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
@@ -3048,6 +3049,28 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
   public override apply(_params: AbAttrBaseParams): void {
     const suppressTag = globalScene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
     suppressTag.onSourceLeave(globalScene.arena);
+  }
+}
+
+/**
+ * Ability attribute used to remove battler tags when the user's ability is suppressed.
+ */
+// TODO: Should this be handled by the attributes that add the tags in the first place?
+export class PreLeaveFieldRemoveBattlerTagAbAttr extends PreLeaveFieldAbAttr {
+  /** The {@linkcode AbilityBattlerTagType} to remove. */
+  private readonly tagType: AbilityBattlerTagType;
+
+  constructor(tagType: AbilityBattlerTagType) {
+    super(false);
+    this.tagType = tagType;
+  }
+
+  public override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    return !!pokemon.getTag(this.tagType);
+  }
+
+  public override apply({pokemon}: AbAttrBaseParams): void {
+    pokemon.removeTag(this.tagType);
   }
 }
 

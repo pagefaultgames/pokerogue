@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -32,95 +33,108 @@ describe("Abilities - Gorilla Tactics", () => {
       .ability(AbilityId.GORILLA_TACTICS);
   });
 
-  it("boosts the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
+  it("should boost the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
-    const darmanitan = game.field.getPlayerPokemon();
-    const initialAtkStat = darmanitan.getStat(Stat.ATK);
+    const player = game.field.getPlayerPokemon();
+    const initialAtkStat = player.getStat(Stat.ATK);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
-    expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
+    expect(player.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
     // Other moves should be restricted
-    expect(darmanitan.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
-    expect(darmanitan.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
+    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
+    expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
 
   it("should struggle if the only usable move is disabled", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
-    const darmanitan = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
     // First turn, lock move to Growl
-    game.move.select(MoveId.GROWL);
+    game.move.use(MoveId.GROWL);
     await game.toNextTurn();
 
     // Second turn, Growl is interrupted by Disable
-    game.move.select(MoveId.GROWL);
+    game.move.use(MoveId.GROWL);
     await game.move.forceEnemyMove(MoveId.DISABLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1); // Only the effect of the first Growl should be applied
+    // Only the effect of the first Growl should be applied
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
 
     // Third turn, Struggle is used
-    game.move.select(MoveId.TACKLE);
-    await game.move.forceEnemyMove(MoveId.SPLASH); // prevent disable from being used by the enemy
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.SPLASH); // prevent disable from being used again
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
-
-    await game.toNextTurn();
-    expect(darmanitan.getLastXMoves()[0].move).toBe(MoveId.STRUGGLE);
+    await game.toEndOfTurn();
+    expect(player).toHaveUsedMove(MoveId.STRUGGLE);
   });
 
   it("should lock into calling moves, even if also in moveset", async () => {
     game.move.forceMetronomeMove(MoveId.TACKLE);
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
-    const darmanitan = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.METRONOME);
+    game.move.use(MoveId.METRONOME);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Gorilla Tactics should lock into Metronome, not tackle
-    expect(darmanitan.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
-    expect(darmanitan.hasRestrictingTag(MoveId.METRONOME)).toBe(false);
-    expect(darmanitan.getLastXMoves(-1)).toEqual([
-      expect.objectContaining({ move: MoveId.TACKLE, result: MoveResult.SUCCESS, useMode: MoveUseMode.FOLLOW_UP }),
-      expect.objectContaining({ move: MoveId.METRONOME, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL }),
-    ]);
+    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
+    expect(player.hasRestrictingTag(MoveId.METRONOME)).toBe(false);
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS, useMode: MoveUseMode.FOLLOW_UP });
+    expect(player).toHaveUsedMove({ move: MoveId.METRONOME, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL }, 1)
   });
 
   it("should activate when the opponenet protects", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
-    const darmanitan = game.field.getPlayerPokemon();
-
-    game.move.select(MoveId.TACKLE);
-    await game.move.forceEnemyMove(MoveId.PROTECT);
-
-    await game.toEndOfTurn();
-    expect(darmanitan.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
-    expect(darmanitan.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
+    const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
+    await game.toEndOfTurn();
+
+    expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
+    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
+
+    expect(enemy).toHaveFullHp();
   });
 
   it("should activate when a move is succesfully executed but misses", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
-    const darmanitan = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.move.use(MoveId.TACKLE);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
-    expect(darmanitan.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
-    expect(darmanitan.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
+    expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
+    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
   });
+
+  it("should remove all effects when disabled", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.GASTRO_ACID);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
+
+    expect(player.hasRestrictingTag(MoveId.TACKLE), "still locked into move").toBe(false);
+    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
+    expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS)
+  })
 });
