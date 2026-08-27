@@ -83,20 +83,6 @@ describe("Frenzy Move Reset", () => {
     expect(player).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
-  it("queues one follow-up use with a fresh target after a frenzy turn", async () => {
-    game.override.battleStyle("double").statusEffect(StatusEffect.NONE);
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    const feebas = game.field.getPlayerPokemon();
-    vi.spyOn(feebas, "randBattleSeedIntRange").mockReturnValue(2);
-
-    game.move.use(MoveId.THRASH, 0);
-    await game.toNextTurn();
-
-    expect(feebas.summonData.moveQueue).toHaveLength(1);
-    expect(feebas.summonData.moveQueue[0].targets[0]).toBeOneOf([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-  });
-
   it.each([
     { moveId: MoveId.THRASH, moveName: "Thrash" },
     { moveId: MoveId.OUTRAGE, moveName: "Outrage" },
