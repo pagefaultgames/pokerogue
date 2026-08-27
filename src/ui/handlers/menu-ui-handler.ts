@@ -348,6 +348,14 @@ export class MenuUiHandler extends MessageUiHandler {
         },
         keepOpen: true,
       });
+      manageDataOptions.push({
+        label: "Reset Code", // TODO: Localize
+        handler: () => {
+          ui.setOverlayMode(UiMode.RESET_CODE);
+          return true;
+        },
+        keepOpen: false,
+      });
     }
     if (isBeta || isDev) {
       manageDataOptions.push({
