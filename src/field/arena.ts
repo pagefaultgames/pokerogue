@@ -43,7 +43,7 @@ import {
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
-import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
+import { isFieldTargeted } from "#moves/move-utils";
 import type { ArenaPokemonPools, TrainerPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
