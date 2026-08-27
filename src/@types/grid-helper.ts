@@ -144,8 +144,3 @@ export interface GridScrollAnimatorConfig<TCell extends GridCell> {
   /** Redraw the grid for the scroll row the finished slide arrived at */
   commit: () => void;
 }
-
-/** Minimum type signature for an object that can ride a scroll slide (e.g. a cursor) */
-export type SlideRider = Phaser.GameObjects.GameObject &
-  Phaser.GameObjects.Components.Transform &
-  Phaser.GameObjects.Components.Mask;
