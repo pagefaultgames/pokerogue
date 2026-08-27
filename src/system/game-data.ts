@@ -9,11 +9,11 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import { bypassLogin, isBeta, isDev, systemSaveShortKeyMap } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
-import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed-utils";
 import { allMoves } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -38,6 +38,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
+import { version } from "#package.json";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { ArenaData, type SerializedArenaData } from "#system/arena-data";
@@ -46,9 +47,9 @@ import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
-import { RibbonData } from "#system/ribbons/ribbon-data";
+import { RibbonData } from "#system/ribbon-data";
 import { TrainerData } from "#system/trainer-data";
-import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-migration/version-converter";
+import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-converter";
 import { vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
@@ -65,11 +66,13 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
+import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -80,7 +83,8 @@ const ErrorMessages = {
   DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
   TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
   FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
-};
+  GAME_OUT_OF_DATE: i18next.t("gameData:gameOutOfDate"),
+} as const;
 
 export class GameData {
   public trainerId: number;
@@ -319,7 +323,7 @@ export class GameData {
   }
 
   /**
-   *
+   * Used by the admin panel when searching for user accounts.
    * @param dataStr - The raw JSON string of the `SystemSaveData`
    * @returns - A new `GameData` instance initialized with the parsed `SystemSaveData`
    */
@@ -394,7 +398,7 @@ export class GameData {
     }
   }
 
-  public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+  private async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
     // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
@@ -431,6 +435,16 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
+      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version) === 1) {
+        await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+
+        globalScene.time.delayedCall(fixedInt(1000), () => {
+          if (globalScene.ui.getMode() !== UiMode.ALERT_MODAL) {
+            globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+          }
+        });
+        return false;
+      }
       this.initParsedSystem(systemData);
       return true;
     } catch (err) {
@@ -1910,45 +1924,40 @@ export class GameData {
     return starterCount;
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies, _forSeen = false, optimistic = false): bigint {
-    let ret = 0n;
-    const dexEntry = this.dexData[species.speciesId];
-    const attr = dexEntry.caughtAttr;
-    if (optimistic) {
-      if (attr & DexAttr.SHINY) {
-        ret |= DexAttr.SHINY;
-
-        if (attr & DexAttr.VARIANT_3) {
-          ret |= DexAttr.VARIANT_3;
-        } else if (attr & DexAttr.VARIANT_2) {
-          ret |= DexAttr.VARIANT_2;
-        } else {
-          ret |= DexAttr.DEFAULT_VARIANT;
-        }
-      } else {
-        ret |= DexAttr.NON_SHINY;
-        ret |= DexAttr.DEFAULT_VARIANT;
-      }
-    } else {
-      // Default to non shiny. Fallback to shiny if it's the only thing that's unlocked
-      ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
-
-      if (attr & DexAttr.DEFAULT_VARIANT) {
-        ret |= DexAttr.DEFAULT_VARIANT;
-      } else if (attr & DexAttr.VARIANT_2) {
-        ret |= DexAttr.VARIANT_2;
-      } else if (attr & DexAttr.VARIANT_3) {
-        ret |= DexAttr.VARIANT_3;
-      } else {
-        ret |= DexAttr.DEFAULT_VARIANT;
+  getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
+    const dexAttr = this.dexData[speciesId].caughtAttr;
+    // Default is female only for species where malePercent is not null but 0
+    const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
+    const formIndex = 0;
+    let variant: Variant = 0;
+    let shiny = false;
+    // Set shiny to true if requested, OR if non-shiny version is uncaught
+    if (defaultIsShiny || !(dexAttr & DexAttr.NON_SHINY)) {
+      // Default shiny is true if caught
+      shiny = !!(dexAttr & DexAttr.SHINY);
+      // Default is the highest variant
+      if (dexAttr & DexAttr.VARIANT_3) {
+        variant = 2;
+      } else if (dexAttr & DexAttr.VARIANT_2) {
+        variant = 1;
       }
     }
-    ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
-    ret |= this.getFormAttr(this.getFormIndex(attr));
-    return ret;
+
+    return {
+      shiny,
+      female,
+      variant,
+      formIndex,
+    };
   }
 
-  getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+  /**
+   * Converts Pokédex attributes from a `bigint` to a readable {@linkcode DexAttrProps} interface.
+   *
+   * @param dexAttr - The Pokédex attribute to convert
+   * @returns the attributes in {@linkcode DexAttrProps} format
+   */
+  getDexAttrProps(dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
     let variant: Variant = 0;
@@ -1969,23 +1978,20 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies, abilityAttr?: number): number {
-    abilityAttr ??= this.starterData[species.speciesId].abilityAttr;
+  getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
+    abilityAttr ??= this.starterData[starterId].abilityAttr;
+    const species = speciesDataRegistry.getSpecies(starterId);
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
-  getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
-    dexEntry ??= this.dexData[species.speciesId];
+  getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
+    const dexEntry = this.dexData[speciesId];
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
       }
     }
     return 0 as Nature;
-  }
-
-  getSpeciesDefaultNatureAttr(species: PokemonSpecies): number {
-    return 1 << this.getSpeciesDefaultNature(species);
   }
 
   getDexAttrLuck(dexAttr: bigint): number {

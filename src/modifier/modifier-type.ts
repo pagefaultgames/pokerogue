@@ -6,9 +6,9 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
-import { tmPoolTiers } from "#balance/tm-pool-tiers";
+import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
-import { getDailyEventSeedLuck } from "#data/daily-seed/daily-run";
+import { getDailyEventSeedLuck } from "#data/daily-run";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -123,7 +123,7 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder, formatMoney, NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
@@ -1149,7 +1149,7 @@ export class TmModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TmModifierType.name", {
-      moveId: padInt(Object.keys(tmPoolTiers).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: getTmNumber(this.moveId),
       moveName: allMoves[this.moveId].name,
     });
   }
@@ -1305,7 +1305,12 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           // Account for variable type changing moves
           // Get a variable type attribute of the move
           const variableTypeAttr = move.getAttrs("VariableMoveTypeAttr")[0];
-          const types = variableTypeAttr?.getTypesForItemSpawn(p, move) ?? [move.type];
+          let types: PokemonType[];
+          if (variableTypeAttr) {
+            types = variableTypeAttr.getTypesForItemSpawn(p, move);
+          } else {
+            types = p.getMoveTypeForItemSpawn(move);
+          }
           for (const type of types) {
             const currentWeight = attackMoveTypeWeights.get(type) ?? 0;
             if (currentWeight < 3) {
@@ -1509,7 +1514,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       const tierUniqueCompatibleTms = partyMemberCompatibleTms
         .flat()
         .filter(tm => tmPoolTiers[tm] === tier)
-        .filter(tm => !allMoves[tm].name.endsWith(" (N)"))
+        .filter(tm => !allMoves[tm].isUnimplemented)
         .filter((tm, i, array) => array.indexOf(tm) === i);
       if (tierUniqueCompatibleTms.length === 0) {
         return null;

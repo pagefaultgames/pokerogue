@@ -539,6 +539,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.LIQUID_OOZE, 3) //
       .attr(ReverseDrainAbAttr)
+      .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.OVERGROW, 3) //
       .attr(LowHpMoveTypePowerBoostAbAttr, PokemonType.GRASS)
@@ -1516,9 +1517,9 @@ export function initAbilities() {
       .attr(PostDancingMoveAbAttr)
       /*
        * Incorrect interations with:
-       * Petal Dance (should not lock in or count down timer; currently does both)
-       * Flinches (due to tag being removed earlier)
-       * Failed/protected moves (should not trigger if original move is protected against)
+       * - Petal Dance (should not lock in or count down timer; currently does both)
+       * - Status moves that incorrectly fail to propagate condition checks
+       *   (includes stat stage moves as well as Teeter Dance and co.) due to moves being still considered "successful"
        */
       .edgeCase()
       .build(),

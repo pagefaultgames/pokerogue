@@ -33,7 +33,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
       globalScene.phaseManager.unshiftNew("LevelUpPhase", this.partyMemberIndex, lastLevel, newLevel);
     }
     globalScene.phaseManager.unshiftNew("HidePartyExpBarPhase");
-    pokemon.updateInfo();
+    await pokemon.updateInfo();
 
     switch (settings.general.partyExpNotificationMode) {
       case ExpNotification.SKIP:
@@ -48,12 +48,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
         // this means if we level up
         // instead of displaying the exp gain in the small frame, we display the new level
         // we use the same method for mode 0 & 1, by giving a parameter saying to display the exp or the level
-        await globalScene.partyExpBar.showPokemonExp(
-          pokemon,
-          exp.value,
-          settings.general.partyExpNotificationMode === ExpNotification.ONLY_LEVEL_UP,
-          newLevel,
-        );
+        await globalScene.partyExpBar.showPokemonExp(pokemon, exp.value, true, newLevel);
         setTimeout(() => this.end(), 800 / Math.pow(2, settings.general.expGainsSpeed));
 
         return;
@@ -61,9 +56,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
         await globalScene.partyExpBar.showPokemonExp(pokemon, exp.value, false, newLevel);
         setTimeout(() => this.end(), 500 / Math.pow(2, settings.general.expGainsSpeed));
 
-        break;
+        return;
     }
-
-    this.end();
   }
 }
