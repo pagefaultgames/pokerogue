@@ -3316,10 +3316,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether the specified Pokémon is an opponent
    * @param target - The {@linkcode Pokemon} to compare against
-   * @returns `true` if the two pokemon are opponents, `false` otherwise
+   * @returns Whether the 2 Pokemon belong to different parties
    */
   public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();
+  }
+
+  /**
+   * Check whether the specified Pokémon is an ally
+   * @param target - The {@linkcode Pokemon} to compare against
+   * @returns Whether the 2 Pokemon are on the same party
+   */
+  public isAlly(target: Pokemon): boolean {
+    return this.isPlayer() === target.isPlayer();
   }
 
   getOpponent(targetIndex: number): Pokemon | null {
