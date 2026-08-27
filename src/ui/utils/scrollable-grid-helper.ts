@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
-import type { CursorConfig, GridCell, ScrollableGridConfig } from "#types/configs/grid-helper";
+import type { CursorConfig, GridCell, ScrollableGridConfig } from "#types/grid-helper";
 import { GridScrollAnimator } from "#ui/grid-scroll-animator";
 import { ScrollBar } from "#ui/scroll-bar";
 

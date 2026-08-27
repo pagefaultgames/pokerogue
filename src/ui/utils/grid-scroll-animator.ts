@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { GridCell, GridScrollAnimatorConfig } from "#types/configs/grid-helper";
+import type { GridCell, GridScrollAnimatorConfig } from "#types/grid-helper";
 import { fixedInt } from "#utils/common";
 
 /**
