@@ -486,7 +486,7 @@ export class Arena {
   /** @see {@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Effect} */
   public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     if (this.terrainType === TerrainType.PSYCHIC) {
-      return (!isFieldTargeted(move) && move.getPriority(user) > 0 && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded()));
+      return !isFieldTargeted(move) && move.getPriority(user) > 0 && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded());
     }
     return false;
   }
