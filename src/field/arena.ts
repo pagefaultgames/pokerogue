@@ -488,7 +488,6 @@ export class Arena {
     if (this.terrainType === TerrainType.PSYCHIC) {
       return (
         !isFieldTargeted(move)
-        && !isSpreadMove(move)
         && move.getPriority(user) > 0
         && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
       );
