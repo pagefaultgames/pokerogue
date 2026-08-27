@@ -4,6 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import type { ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
+import i18next from "i18next";
 
 export class ResetCodeUiHandler extends ModalUiHandler {
   private resetCodeText: Phaser.GameObjects.Text;
@@ -26,7 +27,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   }
 
   public override getButtonLabels(): string[] {
-    return ["Show", "Close"];
+    return [i18next.t("menu:show"), i18next.t("menu:close")];
   }
 
   public override setup(): void {
@@ -69,8 +70,8 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   }
 
   private updateResetCodeText(): void {
-    const resetCode = loggedInUser?.resetCode ?? "No reset code available";
+    const resetCode = loggedInUser?.resetCode ?? i18next.t("menu:noResetCode");
     this.resetCodeText.setText(this.isCodeVisible ? resetCode : "********");
-    this.buttonLabels[0].setText(this.isCodeVisible ? "Hide" : "Show");
+    this.buttonLabels[0].setText(this.isCodeVisible ? i18next.t("menu:hide") : i18next.t("menu:show"));
   }
 }

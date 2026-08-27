@@ -349,7 +349,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       });
       manageDataOptions.push({
-        label: "Reset Code", // TODO: Localize
+        label: i18next.t("menuUiHandler:showResetCode"),
         handler: () => {
           ui.setOverlayMode(UiMode.RESET_CODE);
           return true;
