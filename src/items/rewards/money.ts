@@ -30,7 +30,7 @@ export class AddMoneyReward extends Reward {
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
 
-    return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
+    return i18next.t("reward:moneyReward.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
       moneyAmount: formattedMoney,
     });

@@ -190,7 +190,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Provides 1x Reviver Seed to each party member at end of battle
         encounter.setDialogueToken(
           "foodReward",
-          allHeldItems[HeldItemId.REVIVER_SEED].name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"),
+          allHeldItems[HeldItemId.REVIVER_SEED].name ?? i18next.t("item:reviverSeed.name"),
         );
         const givePartyPokemonReviverSeeds = () => {
           const party = globalScene.getPlayerParty();

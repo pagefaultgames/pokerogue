@@ -16,14 +16,14 @@ export class AddVoucherReward extends Reward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.AddVoucherConsumableType.name", {
+    return i18next.t("reward:addVoucher.name", {
       modifierCount: this.count,
       voucherTypeName: getVoucherTypeName(this.voucherType),
     });
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.AddVoucherConsumableType.description", {
+    return i18next.t("reward:addVoucher.description", {
       modifierCount: this.count,
       voucherTypeName: getVoucherTypeName(this.voucherType),
     });

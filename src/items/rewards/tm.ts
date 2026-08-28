@@ -31,19 +31,16 @@ export class TmReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.TmModifierType.name", {
+    return i18next.t("reward:tm.name", {
       moveId: padInt(Object.keys(tmPoolTiers).indexOf(this.moveId.toString()) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
   }
 
   get description(): string {
-    return i18next.t(
-      globalScene.enableMoveInfo
-        ? "modifierType:ModifierType.TmModifierTypeWithInfo.description"
-        : "modifierType:ModifierType.TmModifierType.description",
-      { moveName: allMoves[this.moveId].name },
-    );
+    return i18next.t(globalScene.enableMoveInfo ? "reward:tmWithInfo.description" : "reward:tm.description", {
+      moveName: allMoves[this.moveId].name,
+    });
   }
 
   /**

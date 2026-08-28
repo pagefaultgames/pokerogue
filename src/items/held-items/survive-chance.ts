@@ -22,7 +22,7 @@ export class SurviveChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffec
     surviveDamage.value = true;
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("modifier:surviveDamageApply", {
+      i18next.t("itemApply:surviveDamageApply", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         typeName: this.item.name,
       }),

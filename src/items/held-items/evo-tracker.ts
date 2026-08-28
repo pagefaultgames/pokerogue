@@ -4,7 +4,6 @@ import type { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import { CosmeticHeldItem } from "#items/held-item";
-import i18next from "i18next";
 
 /**
  * Class for cosmetic held items used to track evolution progress for certain species.
@@ -22,14 +21,6 @@ abstract class EvoTrackerHeldItem extends CosmeticHeldItem {
 }
 
 export class GimmighoulEvoTrackerHeldItem extends EvoTrackerHeldItem {
-  get name(): string {
-    return i18next.t("modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL.name");
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL.description");
-  }
-
   get iconName(): string {
     return "relic_gold";
   }
