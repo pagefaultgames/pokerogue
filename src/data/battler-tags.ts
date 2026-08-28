@@ -1367,7 +1367,7 @@ export class FrenzyTag extends MoveLockTag {
     // Only inflict confusion if the frenzy expired naturally (every use landed),
     // in which case the duration will have ticked down to 0.
     if (this.turnCount <= 0) {
-      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 4));
+      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5));
     }
   }
 }
