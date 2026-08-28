@@ -221,8 +221,6 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
 }
 
 export class MarkerTrainerItem extends TrainerItemBase {
-  private declare readonly _: never;
-
   private readonly customIconName?: string | undefined;
 
   constructor(type: TrainerItemId, maxStackCount: number, iconName?: string | undefined) {
