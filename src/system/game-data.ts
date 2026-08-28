@@ -9,11 +9,11 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import { bypassLogin, isBeta, isDev, systemSaveShortKeyMap } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
-import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed-utils";
 import { allMoves } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -38,6 +38,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
+import { version } from "#package.json";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { ArenaData, type SerializedArenaData } from "#system/arena-data";
@@ -46,9 +47,9 @@ import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
-import { RibbonData } from "#system/ribbons/ribbon-data";
+import { RibbonData } from "#system/ribbon-data";
 import { TrainerData } from "#system/trainer-data";
-import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-migration/version-converter";
+import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-converter";
 import { vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
@@ -71,6 +72,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
+import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -81,7 +83,8 @@ const ErrorMessages = {
   DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
   TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
   FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
-};
+  GAME_OUT_OF_DATE: i18next.t("gameData:gameOutOfDate"),
+} as const;
 
 export class GameData {
   public trainerId: number;
@@ -320,7 +323,7 @@ export class GameData {
   }
 
   /**
-   *
+   * Used by the admin panel when searching for user accounts.
    * @param dataStr - The raw JSON string of the `SystemSaveData`
    * @returns - A new `GameData` instance initialized with the parsed `SystemSaveData`
    */
@@ -395,7 +398,7 @@ export class GameData {
     }
   }
 
-  public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+  private async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
     // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
@@ -432,6 +435,16 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
+      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version) === 1) {
+        await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+
+        globalScene.time.delayedCall(fixedInt(1000), () => {
+          if (globalScene.ui.getMode() !== UiMode.ALERT_MODAL) {
+            globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+          }
+        });
+        return false;
+      }
       this.initParsedSystem(systemData);
       return true;
     } catch (err) {

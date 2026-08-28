@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import type { MappingSettingName } from "#types/configs/inputs";
-import { specialIconKeys, specialIcons } from "#ui/settings/special-icons";
+import type { MappingSettingName } from "#types/inputs";
+import { specialIconKeys, specialIcons } from "#ui/special-icons";
 import { addTextObject, setTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 
