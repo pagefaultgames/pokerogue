@@ -1310,9 +1310,9 @@ export abstract class MoveLockTag extends SerializableBattlerTag {
     super(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
   }
 
-  override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const { sourceMove } = this;
-    const lastMove = pokemon.getLastXMoves()[0];
+    const lastMove = pokemon.getLastXMoves().at(0);
 
     // If the holder didn't just use this tag's move (e.g. it used another move via Dancer),
     // don't advance the tag on this lapse.
@@ -1337,7 +1337,7 @@ export abstract class MoveLockTag extends SerializableBattlerTag {
    * @param pokemon - The {@linkcode Pokemon} holding this tag
    * @param move - The {@linkcode Move} queued by this tag
    * @param lastTargets - The target(s) hit by the holder's most recent use of the move
-   * @returns The target(s), by {@linkcode BattlerIndex}, for the next use of the move
+   * @returns The {@linkcode BattlerIndex}es targeted by the next use of the move.
    */
   protected getNextTargets(pokemon: Pokemon, move: Move, lastTargets: BattlerIndex[]): BattlerIndex[] {
     // Re-roll a random target each turn so frenzy moves don't lock onto a single
@@ -1361,7 +1361,7 @@ export class FrenzyTag extends MoveLockTag {
     super(BattlerTagType.FRENZY, turnCount, sourceMove);
   }
 
-  override onRemove(pokemon: Pokemon): void {
+  public override onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
     // Only inflict confusion if the frenzy expired naturally (every use landed),
