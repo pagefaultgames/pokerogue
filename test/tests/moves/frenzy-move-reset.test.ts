@@ -33,9 +33,9 @@ describe("Frenzy Move Reset", () => {
   /*
    * Thrash (or frenzy moves in general) should not continue to run if the attack fails due to paralysis or other effects.
    *
-   * With the {@linkcode MoveLockTag} design, each successful frenzy turn queues exactly one follow-up use
+   * With the `MoveLockTag` design, each successful frenzy turn queues exactly one follow-up use
    * for the next turn. If that follow-up is disrupted (e.g. paralysis), no new use is queued and the
-   * FRENZY tag is removed, freeing the Pokemon to act normally again.
+   * `FRENZY` tag is removed, freeing the Pokemon to act normally again.
    */
 
   it("should cancel the frenzy if the queued follow-up fails", async () => {
@@ -63,7 +63,6 @@ describe("Frenzy Move Reset", () => {
   });
 
   it("should confuse the user when the frenzy expires naturally", async () => {
-    game.override.statusEffect(StatusEffect.NONE);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
@@ -72,13 +71,11 @@ describe("Frenzy Move Reset", () => {
     game.move.use(MoveId.THRASH);
     await game.toNextTurn();
 
-    // Frenzy is still running
     expect(player).toHaveBattlerTag({ tagType: BattlerTagType.FRENZY, turnCount: 1 });
     expect(player).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
 
     await game.toNextTurn();
 
-    // The frenzy has run its full course uninterrupted, so the user becomes confused.
     expect(player).not.toHaveBattlerTag(BattlerTagType.FRENZY);
     expect(player).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });

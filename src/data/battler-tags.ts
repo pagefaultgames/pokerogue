@@ -1298,8 +1298,7 @@ export class NightmareTag extends SerializableBattlerTag {
 }
 
 /**
- * Base class for tags that lock the holder into repeatedly using a single move
- * (e.g. {@linkcode MoveId.THRASH | Thrash}, {@linkcode MoveId.OUTRAGE | Outrage}).
+ * Base class for tags that lock the holder into repeatedly using a single move.
  *
  * On each {@linkcode BattlerTagLapseType.AFTER_MOVE | AFTER_MOVE} lapse the tag ticks down and,
  * while still active, queues the holder's next use of the locked move with freshly-selected targets.
@@ -1350,10 +1349,10 @@ export abstract class MoveLockTag extends SerializableBattlerTag {
 }
 
 /**
- * Locks the holder into a "frenzy", forcing repeated use of the source move for 2-3 turns.
- * If the frenzy runs its full course uninterrupted, the holder becomes
- * {@linkcode BattlerTagType.CONFUSED | confused}.
- * @see {@linkcode MoveLockTag}
+ * Locks the holder into a "{@link https://bulbapedia.bulbagarden.net/wiki/Rampaging | frenzy}",
+ * forcing repeated use of the source move for 2-3 turns.
+ *
+ * If the frenzy runs its full course uninterrupted, the holder becomes confused.
  */
 export class FrenzyTag extends MoveLockTag {
   public override readonly tagType = BattlerTagType.FRENZY;
