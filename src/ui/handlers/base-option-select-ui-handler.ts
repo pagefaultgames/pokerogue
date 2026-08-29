@@ -38,6 +38,7 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
   private maxOptions: number;
 
   private repeatInput = false;
+  private maxIconWidth = 0;
 
   protected fullyInitialized: boolean;
 
@@ -100,6 +101,8 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
     }
 
     super.show(args);
+
+    this.maxIconWidth = 0;
 
     this.initOptions(config);
 
@@ -244,6 +247,17 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
       this.initializeOption(option, singleSpaceWidth, tempSprite);
     }
 
+    // If an option has an icon attached,
+    // all existing options need to be re-padded to align with the icon option
+    // if they aren't already padded appropriately.
+    let remainingOptions = configOptions.filter(o => !o.initialized);
+    while (remainingOptions.length > 0) {
+      for (const option of remainingOptions) {
+        this.initializeOption(option, singleSpaceWidth, tempSprite);
+      }
+      remainingOptions = configOptions.filter(o => !o.initialized);
+    }
+
     // Check if all options are now initialized.
     this.fullyInitialized = this.options.every(o => o.initialized);
 
@@ -275,23 +289,30 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
 
     // Measure the width of the icon(s) to show before the label
     if (option.iconsConfig) {
-      let maxIconWidth = 0;
+      const maxIconWidthBefore = this.maxIconWidth;
       for (const iconConfig of option.iconsConfig) {
         tempSprite //
           .setTexture(iconConfig.name, iconConfig.frame)
           .setScale(iconConfig.scale);
-        maxIconWidth = Math.max(maxIconWidth, tempSprite.frame.width * tempSprite.scale);
+        this.maxIconWidth = Math.max(this.maxIconWidth, tempSprite.frame.width * tempSprite.scale);
       }
       // Pad the label with as many spaces as needed to make room for the icon
-      if (maxIconWidth > 0) {
-        const neededSpaces = Math.ceil(maxIconWidth / singleSpaceWidth);
+      if (this.maxIconWidth > 0) {
+        if (this.maxIconWidth > maxIconWidthBefore) {
+          this.options.filter(o => (o.iconsWidth ?? 0) < this.maxIconWidth).forEach(o => (o.initialized = false));
+        }
+        const neededSpaces = Math.ceil(this.maxIconWidth / singleSpaceWidth);
         label = label.padStart(label.length + neededSpaces);
         // Change the label color to fit the required text style
         if (option.color != null && option.color !== DEFAULT_TEXT_STYLE) {
           label = getBBCodeFrag(label, option.color, true);
         }
       }
-      option.iconsWidth = maxIconWidth;
+      option.iconsWidth = this.maxIconWidth;
+    } else if (this.maxIconWidth) {
+      const neededSpaces = Math.ceil(this.maxIconWidth / singleSpaceWidth);
+      label = label.padStart(label.length + neededSpaces);
+      option.iconsWidth = this.maxIconWidth;
     }
 
     option.displayLabel = label;
