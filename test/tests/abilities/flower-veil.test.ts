@@ -83,7 +83,7 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {

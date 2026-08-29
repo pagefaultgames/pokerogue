@@ -137,7 +137,7 @@ describe("Transforming Effects", () => {
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.status?.effect).toBeUndefined();
+      expect(ditto).toHaveStatusEffect(StatusEffect.NONE);
       expect(ditto.getNameToRender()).not.toBe(mew.getNameToRender());
       expect(ditto.level).not.toBe(mew.level);
       expect(ditto.friendship).not.toBe(mew.friendship);

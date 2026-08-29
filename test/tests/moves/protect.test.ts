@@ -225,7 +225,7 @@ describe("Moves - Protect", () => {
     await game.toNextTurn();
 
     expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
-    expect(aggron.status?.effect).toBeUndefined(); // check that protect actually worked
+    expect(aggron).toHaveStatusEffect(StatusEffect.NONE); // check that protect actually worked
   });
 
   it("should block status moves", async () => {

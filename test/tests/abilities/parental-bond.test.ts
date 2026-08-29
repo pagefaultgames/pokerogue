@@ -327,7 +327,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.status?.effect).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not cause user to hit into Storm Drain more than once", async () => {

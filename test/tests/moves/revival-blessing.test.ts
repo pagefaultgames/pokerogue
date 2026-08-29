@@ -3,6 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
@@ -48,7 +49,7 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const revivedPokemon = game.scene.getPlayerParty()[1];
-    expect(revivedPokemon.status?.effect).toBeFalsy();
+    expect(revivedPokemon).toHaveStatusEffect(StatusEffect.NONE);
     expect(revivedPokemon.hp).toBe(Math.floor(revivedPokemon.getMaxHp() / 2));
   });
 
@@ -67,7 +68,7 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const revivedPokemon = game.scene.getEnemyParty()[1];
-    expect(revivedPokemon.status?.effect).toBeFalsy();
+    expect(revivedPokemon).toHaveStatusEffect(StatusEffect.NONE);
     expect(revivedPokemon.hp).toBe(Math.floor(revivedPokemon.getMaxHp() / 2));
   });
 

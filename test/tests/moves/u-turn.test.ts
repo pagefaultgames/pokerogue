@@ -79,7 +79,7 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.field.getPlayerPokemon();
-    expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
+    expect(playerPkm).toHaveStatusEffect(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");

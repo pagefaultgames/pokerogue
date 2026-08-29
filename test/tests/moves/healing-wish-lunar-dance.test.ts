@@ -60,7 +60,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
       expect(bulbasaur).toHaveStatusEffect(StatusEffect.BURN);
       expect(charmander.isFainted()).toBe(true);
-      expect(squirtle.status?.effect).toBeUndefined();
+      expect(squirtle).toHaveStatusEffect(StatusEffect.NONE);
     });
 
     it("should fail if the user has no non-fainted allies in their party", async () => {

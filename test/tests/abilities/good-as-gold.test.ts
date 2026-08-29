@@ -121,7 +121,7 @@ describe("Abilities - Good As Gold", () => {
     game.doSwitchPokemon(2);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(milotic.status?.effect).toBeUndefined();
+    expect(milotic).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not block field targeted effects like rain dance", async () => {

@@ -51,7 +51,7 @@ describe("Abilities - Early Bird", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
+    expect(player).toHaveStatusEffect(StatusEffect.NONE);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -70,7 +70,7 @@ describe("Abilities - Early Bird", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
+    expect(player).toHaveStatusEffect(StatusEffect.NONE);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -83,7 +83,7 @@ describe("Abilities - Early Bird", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
+    expect(player).toHaveStatusEffect(StatusEffect.NONE);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 });

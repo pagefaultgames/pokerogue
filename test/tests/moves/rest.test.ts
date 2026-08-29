@@ -57,19 +57,19 @@ describe("Move - Rest", () => {
     await game.toNextTurn();
 
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(snorlax.status?.sleepTurnsRemaining).toBe(3);
+    expect(snorlax).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 3 });
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.sleepTurnsRemaining).toBe(2);
+    expect(snorlax).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 2 });
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.sleepTurnsRemaining).toBe(1);
+    expect(snorlax).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 1 });
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.effect).toBeUndefined();
+    expect(snorlax).toHaveStatusEffect(StatusEffect.NONE);
     expect(snorlax.getStatStage(Stat.ATK)).toBe(2);
   });
 

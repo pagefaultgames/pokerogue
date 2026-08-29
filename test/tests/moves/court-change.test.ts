@@ -68,7 +68,7 @@ describe("Move - Court Change", () => {
 
     // Ninjask will not be poisoned because of Safeguard
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(ninjask.status?.effect).toBeUndefined();
+    expect(ninjask).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.COURT_CHANGE);
     await game.toEndOfTurn();

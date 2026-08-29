@@ -4,6 +4,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -104,7 +105,7 @@ describe("Moves - Gastro Acid", () => {
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
-    // Comatose should block stauts effect
-    expect(enemyPokemon.status?.effect).toBeUndefined();
+    // Comatose should block status effect
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

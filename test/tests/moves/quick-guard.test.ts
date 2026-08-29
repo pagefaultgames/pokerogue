@@ -3,6 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -62,8 +63,8 @@ describe("Moves - Quick Guard", () => {
 
     expect(charizard.hp).toBe(charizard.getMaxHp());
     expect(blastoise.hp).toBe(blastoise.getMaxHp());
-    expect(charizard.status?.effect).toBeUndefined();
-    expect(blastoise.status?.effect).toBeUndefined();
+    expect(charizard).toHaveStatusEffect(StatusEffect.NONE);
+    expect(blastoise).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should increment (but not respect) other protection moves' fail counters", async () => {

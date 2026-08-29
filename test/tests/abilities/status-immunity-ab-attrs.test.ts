@@ -50,13 +50,13 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
-    expect(karp.status?.effect).toBeUndefined();
+    expect(karp).toHaveStatusEffect(StatusEffect.NONE);
     expect(karp.canSetStatus(status)).toBe(false);
 
     game.move.use(MoveId.LUMINA_CRASH);
     await game.toEndOfTurn();
 
-    expect(karp.status?.effect).toBeUndefined();
+    expect(karp).toHaveStatusEffect(StatusEffect.NONE);
     expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -65,13 +65,13 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
 
     const feebas = game.field.getPlayerPokemon();
     feebas.doSetStatus(status);
-    expect(feebas.status?.effect).toBe(status);
+    expect(feebas).toHaveStatusEffect(status);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SKILL_SWAP);
     await game.toEndOfTurn();
 
-    expect(feebas.status?.effect).toBeUndefined();
+    expect(feebas).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   // TODO: This does not propagate failures currently
@@ -82,7 +82,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     await game.toEndOfTurn();
 
     const karp = game.field.getEnemyPokemon();
-    expect(karp.status?.effect).toBeUndefined();
+    expect(karp).toHaveStatusEffect(StatusEffect.NONE);
     expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });

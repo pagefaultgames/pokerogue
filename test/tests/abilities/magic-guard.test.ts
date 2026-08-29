@@ -106,7 +106,7 @@ describe("AbilityId - Magic Guard", () => {
 
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
-    expect(magikarp.status?.toxicTurnCount).toBe(1);
+  expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 1 });
 
     // have a few turns pass
     game.move.use(MoveId.SPLASH);
@@ -116,13 +116,13 @@ describe("AbilityId - Magic Guard", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(magikarp.status?.toxicTurnCount).toBe(4);
+    expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 4 });
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.GASTRO_ACID);
     await game.toNextTurn();
 
-    expect(magikarp.status?.toxicTurnCount).toBe(5);
+    expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 5 });
     expect(magikarp.getHpRatio(true)).toBeCloseTo(11 / 16, 1);
   });
 

@@ -86,7 +86,7 @@ describe("Status Effects", () => {
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status).toBeFalsy();
+      expect(player).toHaveStatusEffect(StatusEffect.NONE);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
     });
   });
