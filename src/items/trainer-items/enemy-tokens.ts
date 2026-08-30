@@ -90,7 +90,7 @@ export class EnemyTurnHealTrainerItemAttr extends TrainerItemAttr<typeof Trainer
       enemyPokemon.getBattlerIndex(),
       // TODO: Do we need to round this?
       Math.max(Math.floor(enemyPokemon.getMaxHp() * this.healPercent * stack), 1),
-      i18next.t("modifier:enemyTurnHealApply", {
+      i18next.t("itemApply:enemyTurnHealApply", {
         pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
       }),
       true,
@@ -159,12 +159,6 @@ export class EnemyEndureChanceTrainerItemAttr extends TrainerItemAttr<typeof Tra
 
   get iconName(): string {
     return "wl_reset_urge";
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.EnemyEndureChanceModifierType.description", {
-      chancePercent: this.chance,
-    });
   }
 
   public override apply({ pokemon: target }: PokemonParams, manager: TrainerItemManager): void {

@@ -27,7 +27,7 @@ export class HitHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.HIT_
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.turnData.totalDamageDealt / 8) * stackCount,
-        i18next.t("modifier:hitHealApply", {
+        i18next.t("itemApply:hitHealApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.item.name,
         }),

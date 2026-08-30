@@ -1,9 +1,8 @@
-import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
+import { Stat, type TempBattleStat } from "#enums/stat";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
-import { TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { NumberHolderParams } from "#types/trainer-item-parameter";
-import i18next from "i18next";
 
 export const tempStatToTrainerItem = {
   [Stat.ATK]: TrainerItemId.X_ATTACK,
@@ -16,27 +15,12 @@ export const tempStatToTrainerItem = {
 
 export class StatStageBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER> {
   public override readonly effect = TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER;
-  private readonly stat: Exclude<TempBattleStat, Stat.ACC>;
   private readonly boost: number;
 
-  constructor(stat: Exclude<TempBattleStat, Stat.ACC>, boost: number) {
+  constructor(_stat: Exclude<TempBattleStat, Stat.ACC>, boost: number) {
     super();
 
-    this.stat = stat;
     this.boost = boost;
-  }
-
-  // TODO move to builder
-  get name(): string {
-    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
-  }
-
-  get description(): string {
-    console.log();
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
-      stat: i18next.t(getStatKey(this.stat)),
-      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
-    });
   }
 
   public override apply({ numberHolder: statLevel }: NumberHolderParams): void {
@@ -47,18 +31,6 @@ export class StatStageBoosterTrainerItemAttr extends TrainerItemAttr<typeof Trai
 export class AccuracyBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_ACCURACY_BOOSTER> {
   public override readonly effect = TrainerItemEffect.TEMP_ACCURACY_BOOSTER;
 
-  get name(): string {
-    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
-  }
-
-  get description(): string {
-    console.log();
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
-      stat: i18next.t(getStatKey(Stat.ACC)),
-      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
-    });
-  }
-
   public override apply({ numberHolder: statLevel }: NumberHolderParams): void {
     const boost = 1;
     statLevel.value += boost;
@@ -67,13 +39,6 @@ export class AccuracyBoosterTrainerItemAttr extends TrainerItemAttr<typeof Train
 
 export class CritBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_CRIT_BOOSTER> {
   public override readonly effect = TrainerItemEffect.TEMP_CRIT_BOOSTER;
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
-      stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises"),
-      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.stage"),
-    });
-  }
 
   public override apply({ numberHolder: critLevel }: NumberHolderParams): void {
     critLevel.value++;

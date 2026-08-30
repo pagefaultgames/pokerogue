@@ -8,6 +8,7 @@ import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/color-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -40,11 +41,11 @@ export abstract class TrainerItemBase {
   }
 
   public get name(): string {
-    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.name`);
+    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.name`);
   }
 
   public get description(): string {
-    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.description`);
+    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.description`);
   }
 
   public get iconName(): string {
@@ -220,5 +221,15 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
 }
 
 export class MarkerTrainerItem extends TrainerItemBase {
-  private declare readonly _: never;
+  private readonly customIconName?: string | undefined;
+
+  constructor(type: TrainerItemId, maxStackCount: number, iconName?: string | undefined) {
+    super(type, maxStackCount);
+
+    this.customIconName = iconName;
+  }
+
+  public override get iconName(): string {
+    return this.customIconName ?? super.iconName;
+  }
 }

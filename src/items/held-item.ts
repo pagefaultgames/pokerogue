@@ -5,6 +5,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -36,11 +37,11 @@ export abstract class HeldItemBase {
   // TODO: Remove these defaults for non-cosmetic held items (and maybe cosmetic ones as well)
   // in favor of explicitly specifying them for each item
   public get name(): string {
-    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
+    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.name`);
   }
 
   public get description(): string {
-    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
+    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.description`);
   }
 
   public get iconName(): string {

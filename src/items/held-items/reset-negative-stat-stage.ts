@@ -23,7 +23,7 @@ export class ResetNegativeStatStageHeldItemAttr extends ConsumableHeldItemAttr<
     pokemon.summonData.statStages = pokemon.summonData.statStages.map(stage => Math.max(stage, 0));
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("modifier:resetNegativeStatStageApply", {
+      i18next.t("itemApply:resetNegativeStatStageApply", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         typeName: this.item.name,
       }),

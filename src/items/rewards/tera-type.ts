@@ -34,13 +34,13 @@ export class ChangeTeraTypeReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.name", {
+    return i18next.t("reward:changeTeraType.name", {
       teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
     });
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.description", {
+    return i18next.t("reward:changeTeraType.description", {
       teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
     });
   }
