@@ -112,13 +112,13 @@ describe("Moves - Glaive Rush", () => {
 
     game.move.select(MoveId.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
 
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
   });
 
   it("secondary effects don't activate if move fails", async () => {

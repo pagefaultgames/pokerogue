@@ -35,7 +35,7 @@ describe("Moves - Obstruct", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    expect(player.isFullHp()).toBe(true);
+    expect(player).toHaveFullHp();
     expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
   });
 
@@ -50,7 +50,7 @@ describe("Moves - Obstruct", () => {
     const enemy = game.field.getEnemyPokemon();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.isFullHp()).toBe(true);
+    expect(player).toHaveFullHp();
     expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
   });
 
@@ -64,7 +64,7 @@ describe("Moves - Obstruct", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    expect(player.isFullHp()).toBe(true);
+    expect(player).toHaveFullHp();
     expect(enemy.getStatStage(Stat.DEF)).toBe(0);
   });
 

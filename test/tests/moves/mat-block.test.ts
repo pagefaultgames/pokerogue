@@ -41,7 +41,7 @@ describe("Moves - Mat Block", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    leadPokemon.forEach(p => expect(p).toHaveFullHp());
     expect(game.textInterceptor.logs).toContain(
       i18next.t("arenaTag:matBlockApply", {
         attackName: allMoves[MoveId.TACKLE].name,

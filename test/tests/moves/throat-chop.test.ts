@@ -48,6 +48,6 @@ describe("Moves - Throat Chop", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemy.isFullHp()).toBe(false);
+    expect(enemy).not.toHaveFullHp();
   });
 });

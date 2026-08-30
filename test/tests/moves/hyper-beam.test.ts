@@ -41,7 +41,7 @@ describe("Moves - Hyper Beam", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
 
     const enemyPostAttackHp = enemyPokemon.hp;

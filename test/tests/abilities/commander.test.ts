@@ -105,7 +105,7 @@ describe("Abilities - Commander", () => {
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(dondozo, PokemonAnimType.COMMANDER_REMOVE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("source should still take damage from Poison while hidden", async () => {
@@ -123,7 +123,7 @@ describe("Abilities - Commander", () => {
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("source should still take damage from Salt Cure while hidden", async () => {
@@ -143,7 +143,7 @@ describe("Abilities - Commander", () => {
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("source should still take damage from Sandstorm while hidden", async () => {
@@ -161,7 +161,7 @@ describe("Abilities - Commander", () => {
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("should make Dondozo immune to being forced out", async () => {

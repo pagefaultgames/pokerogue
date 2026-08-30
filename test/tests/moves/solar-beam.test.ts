@@ -44,12 +44,12 @@ describe("Moves - Solar Beam", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeDefined();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
@@ -81,7 +81,7 @@ describe("Moves - Solar Beam", () => {
       MovePhaseTimingModifier.FIRST,
     );
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 

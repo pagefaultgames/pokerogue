@@ -50,7 +50,7 @@ describe("Weather - Sandstorm", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
 
@@ -69,7 +69,7 @@ describe("Weather - Sandstorm", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.scene.getField(true).forEach(pokemon => {
-      expect(pokemon.hp).toBe(pokemon.getMaxHp());
+      expect(pokemon).toHaveFullHp();
     });
   });
 

@@ -41,7 +41,7 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
+    expect(charizard).toHaveFullHp();
     expect(charizard.getStatStage(Stat.SPDEF)).toBe(0);
     expect(charizard);
   });
@@ -65,7 +65,7 @@ describe("Moves - Protect", () => {
       game.move.select(MoveId.PROTECT);
       await game.toNextTurn();
 
-      expect(charizard.hp).toBe(charizard.getMaxHp());
+      expect(charizard).toHaveFullHp();
       expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       expect(conditionSpy).toHaveLastReturnedWith(true);
     }
@@ -73,7 +73,7 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
-    expect(charizard.hp).toBeLessThan(charizard.getMaxHp());
+    expect(charizard).not.toHaveFullHp();
     expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(conditionSpy).toHaveLastReturnedWith(false);
   });
@@ -179,7 +179,7 @@ describe("Moves - Protect", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
+    expect(charizard).toHaveFullHp();
     expect(enemyPokemon.turnData.hitCount).toBe(1);
   });
 
@@ -215,7 +215,7 @@ describe("Moves - Protect", () => {
     await game.move.forceEnemyMove(MoveId.MIGHTY_CLEAVE);
     await game.toNextTurn();
 
-    expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
+    expect(aggron).not.toHaveFullHp();
 
     aggron.hp = aggron.getMaxHp();
 
@@ -224,7 +224,7 @@ describe("Moves - Protect", () => {
     await game.move.forceEnemyMove(MoveId.SPORE);
     await game.toNextTurn();
 
-    expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
+    expect(aggron).not.toHaveFullHp();
     expect(aggron).toHaveStatusEffect(StatusEffect.NONE); // check that protect actually worked
   });
 

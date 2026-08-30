@@ -59,8 +59,8 @@ describe("Moves - Crafty Shield", () => {
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.isFullHp()).toBe(false);
-    expect(blastoise.isFullHp()).toBe(false);
+    expect(charizard).not.toHaveFullHp();
+    expect(blastoise).not.toHaveFullHp();
   });
 
   it("should not block entry hazards and field-targeted moves", async () => {

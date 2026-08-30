@@ -41,8 +41,8 @@ describe("Moves - Wide Guard", () => {
     await game.move.forceEnemyMove(MoveId.GROWL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(blastoise.hp).toBe(blastoise.getMaxHp());
+    expect(charizard).toHaveFullHp();
+    expect(blastoise).toHaveFullHp();
     expect(charizard.getStatStage(Stat.ATK)).toBe(0);
     expect(blastoise.getStatStage(Stat.ATK)).toBe(0);
   });
@@ -57,8 +57,8 @@ describe("Moves - Wide Guard", () => {
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.hp).toBeLessThan(charizard.getMaxHp());
-    expect(blastoise.hp).toBeLessThan(blastoise.getMaxHp());
+    expect(charizard).not.toHaveFullHp();
+    expect(blastoise).not.toHaveFullHp();
   });
 
   it("should protect the user from its ally's multi-target move", async () => {
@@ -73,9 +73,9 @@ describe("Moves - Wide Guard", () => {
     game.move.select(MoveId.SURF, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(snorlax1.hp).toBeLessThan(snorlax1.getMaxHp());
-    expect(snorlax2.hp).toBeLessThan(snorlax2.getMaxHp());
+    expect(charizard).toHaveFullHp();
+    expect(snorlax1).not.toHaveFullHp();
+    expect(snorlax2).not.toHaveFullHp();
   });
 
   it("should increment (but not respect) other protection moves' fail counters", async () => {

@@ -77,7 +77,7 @@ describe("Moves - Pledge Moves", () => {
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
     expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.FIRE);
 
-    enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).not.toHaveFullHp());
   });
 
   it("Fire Pledge - should not combine with an enemy's Pledge move", async () => {
@@ -94,8 +94,8 @@ describe("Moves - Pledge Moves", () => {
 
     // Neither Pokemon should defer their move's effects as they would
     // if they combined moves, so both should be damaged.
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(game.scene.arena.getTag(ArenaTagType.FIRE_GRASS_PLEDGE)).toBeUndefined();
   });
 
@@ -124,7 +124,7 @@ describe("Moves - Pledge Moves", () => {
 
     const baseDmg = baseDmgMock.mock.results.at(-1)!.value;
     expect(enemyPokemon[0].getMaxHp() - enemyPokemon[0].hp).toBe(toDmgValue(baseDmg * 1.5));
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp()); // PLAYER should not have attacked
+    expect(enemyPokemon[1]).toHaveFullHp(); // PLAYER should not have attacked
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FIRE_GRASS_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
 
     const enemyStartingHp = enemyPokemon.map(p => p.hp);
@@ -155,7 +155,7 @@ describe("Moves - Pledge Moves", () => {
     }
     expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.WATER);
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(150);
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp()); // PLAYER should not have attacked
+    expect(enemyPokemon[1]).toHaveFullHp(); // PLAYER should not have attacked
     expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
 
     await game.toNextTurn();
@@ -191,7 +191,7 @@ describe("Moves - Pledge Moves", () => {
 
     expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.GRASS);
     expect(waterPledge.calculateBattlePower).toHaveLastReturnedWith(150);
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[1]).toHaveFullHp();
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
     enemyPokemon.forEach((p, i) => expect(p.getEffectiveStat(Stat.SPD)).toBe(Math.floor(enemyStartingSpd[i] / 4)));
@@ -210,8 +210,8 @@ describe("Moves - Pledge Moves", () => {
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
     }
-    expect(enemyPokemon[0].hp).toBe(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).toHaveFullHp();
+    expect(enemyPokemon[1]).not.toHaveFullHp();
   });
 
   it("Pledge Moves - 'rainbow' effect should not stack with Serene Grace when applied to flinching moves", async () => {
@@ -256,7 +256,7 @@ describe("Moves - Pledge Moves", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).toHaveFullHp());
   });
 
   it("Pledge Moves - should ignore redirection from another Pokemon's Storm Drain", async () => {
@@ -272,7 +272,7 @@ describe("Moves - Pledge Moves", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
+    expect(enemyPokemon[0]).not.toHaveFullHp();
     expect(enemyPokemon[1].getStatStage(Stat.SPATK)).toBe(0);
   });
 
@@ -289,7 +289,7 @@ describe("Moves - Pledge Moves", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     const enemyPokemon = game.scene.getEnemyField();
-    expect(enemyPokemon[0].hp).toBe(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).toHaveFullHp();
+    expect(enemyPokemon[1]).not.toHaveFullHp();
   });
 });

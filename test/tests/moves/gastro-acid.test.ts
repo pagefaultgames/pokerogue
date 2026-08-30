@@ -47,8 +47,8 @@ describe("Moves - Gastro Acid", () => {
 
     expect(enemy1.summonData.abilitySuppressed).toBe(true);
     expect(enemy2.summonData.abilitySuppressed).toBe(false);
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
-    expect(enemy2.hp).toBe(enemy2.getMaxHp());
+    expect(enemy1).not.toHaveFullHp();
+    expect(enemy2).toHaveFullHp();
   });
 
   it("should be removed on switch", async () => {
@@ -100,7 +100,7 @@ describe("Moves - Gastro Acid", () => {
     game.move.use(MoveId.WATER_GUN);
     await game.toNextTurn();
     // water gun should've dealt damage due to suppressed Water Absorb
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();

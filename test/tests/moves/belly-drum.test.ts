@@ -76,7 +76,7 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(leadPokemon).toHaveFullHp();
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
   });
 

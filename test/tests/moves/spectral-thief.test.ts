@@ -205,6 +205,6 @@ describe("Moves - Spectral Thief", () => {
 
     expect(player.getStatStage(Stat.ATK)).toEqual(0);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(3);
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
   });
 });

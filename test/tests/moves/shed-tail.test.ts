@@ -42,7 +42,7 @@ describe("Moves - Shed Tail", () => {
     const substituteTag = feebas.getTag(SubstituteTag);
 
     expect(feebas).not.toBe(magikarp);
-    expect(feebas.hp).toBe(feebas.getMaxHp());
+    expect(feebas).toHaveFullHp();
     // Note: Altered the test to be consistent with the correct HP cost :yipeevee_static:
     expect(magikarp.hp).toBe(Math.floor(magikarp.getMaxHp() / 2));
     expect(substituteTag).toBeDefined();

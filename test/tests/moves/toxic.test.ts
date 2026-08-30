@@ -79,6 +79,6 @@ describe("Moves - Toxic", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 });

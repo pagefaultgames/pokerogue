@@ -86,7 +86,7 @@ describe("Moves - Clangorous Soul", () => {
     game.move.select(MoveId.CLANGOROUS_SOUL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(leadPokemon).toHaveFullHp();
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
     expect(leadPokemon.getStatStage(Stat.DEF)).toBe(6);
     expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);

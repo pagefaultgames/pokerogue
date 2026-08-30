@@ -112,7 +112,7 @@ describe("Inverse Battle", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
   });
 
   it("Fire type does not get burned - Will-O-Wisp against Charmander", async () => {

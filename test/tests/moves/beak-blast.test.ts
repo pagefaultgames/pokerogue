@@ -93,7 +93,7 @@ describe("Moves - Beak Blast", () => {
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
   });
 

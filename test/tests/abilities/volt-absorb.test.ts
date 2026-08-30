@@ -66,7 +66,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("regardless of accuracy should not trigger on pokemon in semi invulnerable state", async () => {
@@ -85,6 +85,6 @@ describe("Abilities - Volt Absorb", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 });

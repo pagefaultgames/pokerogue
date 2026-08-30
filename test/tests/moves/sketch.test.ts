@@ -87,6 +87,6 @@ describe("Moves - Sketch", () => {
 
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(playerPokemon.moveset[0]?.moveId).toBe(MoveId.METRONOME);
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp()); // Make sure opponent actually used False Swipe
+    expect(playerPokemon).not.toHaveFullHp(); // Make sure opponent actually used False Swipe
   });
 });

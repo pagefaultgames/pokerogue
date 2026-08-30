@@ -36,7 +36,7 @@ describe("Abilities - Wind Rider", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.isFullHp()).toBe(true);
+    expect(shiftry).toHaveFullHp();
     expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
   });
 
@@ -98,13 +98,13 @@ describe("Abilities - Wind Rider", () => {
     const shiftry = game.field.getPlayerPokemon();
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(shiftry.isFullHp()).toBe(true);
+    expect(shiftry).toHaveFullHp();
 
     game.move.select(MoveId.SANDSTORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(shiftry.hp).toBeLessThan(shiftry.getMaxHp());
+    expect(shiftry).not.toHaveFullHp();
   });
 });

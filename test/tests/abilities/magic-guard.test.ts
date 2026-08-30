@@ -48,7 +48,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBe(magikarp.getMaxHp());
+    expect(magikarp).toHaveFullHp();
   });
 
   // biome-ignore format: prefer pre-2.3.6 formatting
@@ -75,7 +75,7 @@ describe("AbilityId - Magic Guard", () => {
       await game.toEndOfTurn();
 
       const magikarp = game.field.getPlayerPokemon();
-      expect(magikarp.hp).toBe(magikarp.getMaxHp());
+      expect(magikarp).toHaveFullHp();
     },
   );
 
@@ -93,7 +93,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBeLessThan(magikarp.getMaxHp());
+    expect(magikarp).not.toHaveFullHp();
   });
 
   it("should preserve toxic turn count and deal appropriate damage when disabled", async () => {
@@ -105,8 +105,8 @@ describe("AbilityId - Magic Guard", () => {
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBe(magikarp.getMaxHp());
-  expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 1 });
+    expect(magikarp).toHaveFullHp();
+    expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 1 });
 
     // have a few turns pass
     game.move.use(MoveId.SPLASH);
@@ -136,7 +136,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBe(magikarp.getMaxHp());
+    expect(magikarp).toHaveFullHp();
     expect(magikarp).toHaveStatusEffect(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
@@ -159,7 +159,7 @@ describe("AbilityId - Magic Guard", () => {
 
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
     expect(player).toHaveStatusEffect(StatusEffect.POISON);
   });
 });

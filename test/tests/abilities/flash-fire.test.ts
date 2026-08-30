@@ -37,7 +37,7 @@ describe("Abilities - Flash Fire", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(blissey.hp).toBe(blissey.getMaxHp());
+    expect(blissey).toHaveFullHp();
   });
 
   it("not activate if the Pokémon is protected from the Fire-type move", async () => {

@@ -39,7 +39,7 @@ describe("Abilities - Lightningrod", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(true);
+    expect(enemy1).toHaveFullHp();
   });
 
   it("should not redirect non-electric type moves", async () => {
@@ -53,7 +53,7 @@ describe("Abilities - Lightningrod", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(false);
+    expect(enemy1).not.toHaveFullHp();
   });
 
   it("should boost the user's spatk without damaging", async () => {
@@ -66,7 +66,7 @@ describe("Abilities - Lightningrod", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy2.isFullHp()).toBe(true);
+    expect(enemy2).toHaveFullHp();
     expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
   });
 
@@ -80,7 +80,7 @@ describe("Abilities - Lightningrod", () => {
     game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(false);
+    expect(enemy1).not.toHaveFullHp();
   });
 
   it("should redirect moves changed to electric type via ability", async () => {
@@ -93,7 +93,7 @@ describe("Abilities - Lightningrod", () => {
     game.move.use(MoveId.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(true);
+    expect(enemy1).toHaveFullHp();
     expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
   });
 });

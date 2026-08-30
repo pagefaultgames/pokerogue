@@ -71,7 +71,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
+    expect(darmanitan).not.toHaveFullHp();
 
     await game.toNextTurn();
     expect(darmanitan.getLastXMoves()[0].move).toBe(MoveId.STRUGGLE);
@@ -107,7 +107,7 @@ describe("Abilities - Gorilla Tactics", () => {
     expect(darmanitan.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect(darmanitan.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
   });
 
   it("should activate when a move is succesfully executed but misses", async () => {

@@ -79,7 +79,7 @@ describe("Moves - FILLET AWAY", () => {
     game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(leadPokemon).toHaveFullHp();
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
     expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
     expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);

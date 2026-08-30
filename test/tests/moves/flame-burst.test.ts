@@ -49,7 +49,7 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
+    expect(leftEnemy).not.toHaveFullHp();
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
   });
 
@@ -63,8 +63,8 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());
+    expect(leftEnemy).toHaveFullHp();
+    expect(rightEnemy).toHaveFullHp();
   });
 
   it("does not interact with the target ally's abilities", async () => {
@@ -77,7 +77,7 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
+    expect(leftEnemy).not.toHaveFullHp();
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
   });
 
@@ -91,8 +91,8 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());
+    expect(leftEnemy).not.toHaveFullHp();
+    expect(rightEnemy).toHaveFullHp();
   });
 
   it("ignores protection moves and Endure from the non-target pokemon", async () => {

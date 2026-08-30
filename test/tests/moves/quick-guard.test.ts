@@ -42,8 +42,8 @@ describe("Moves - Quick Guard", () => {
     await game.move.forceEnemyMove(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(blastoise.hp).toBe(blastoise.getMaxHp());
+    expect(charizard).toHaveFullHp();
+    expect(blastoise).toHaveFullHp();
   });
 
   it.each<{ name: string; move: MoveId; ability: AbilityId }>([
@@ -61,8 +61,8 @@ describe("Moves - Quick Guard", () => {
     await game.move.forceEnemyMove(move, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(blastoise.hp).toBe(blastoise.getMaxHp());
+    expect(charizard).toHaveFullHp();
+    expect(blastoise).toHaveFullHp();
     expect(charizard).toHaveStatusEffect(StatusEffect.NONE);
     expect(blastoise).toHaveStatusEffect(StatusEffect.NONE);
   });

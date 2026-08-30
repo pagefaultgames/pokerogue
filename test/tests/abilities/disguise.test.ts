@@ -87,7 +87,7 @@ describe("Abilities - Disguise", () => {
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
-    expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
+    expect(mimikyu).toHaveFullHp();
 
     game.move.use(MoveId.TOXIC_THREAD);
 
@@ -96,7 +96,7 @@ describe("Abilities - Disguise", () => {
     expect(mimikyu.formIndex).toBe(disguisedForm);
     expect(mimikyu).toHaveStatusEffect(StatusEffect.POISON);
     expect(mimikyu.getStatStage(Stat.SPD)).toBe(-2);
-    expect(mimikyu.hp).toBeLessThan(mimikyu.getMaxHp());
+    expect(mimikyu).not.toHaveFullHp();
   });
 
   it("persists form change when switched out", async () => {

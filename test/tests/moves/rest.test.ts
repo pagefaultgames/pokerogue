@@ -41,7 +41,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.hp).toBe(snorlax.getMaxHp());
+    expect(snorlax).toHaveFullHp();
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
@@ -116,7 +116,7 @@ describe("Move - Rest", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.toEndOfTurn();
 
-    expect(snorlax.isFullHp()).toBe(false);
+    expect(snorlax).not.toHaveFullHp();
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.FAIL, MoveResult.SUCCESS]);
   });
@@ -135,7 +135,7 @@ describe("Move - Rest", () => {
     await game.toNextTurn();
 
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(snorlax.isFullHp()).toBe(true);
+    expect(snorlax).toHaveFullHp();
     expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(snorlax.status!.sleepTurnsRemaining).toBeGreaterThan(1);
   });

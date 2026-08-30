@@ -42,13 +42,13 @@ describe("Moves - Dig", () => {
 
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeDefined();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
+    expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getMoveQueue()[0].move).toBe(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveQueue()).toHaveLength(0);
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
   });
@@ -82,7 +82,7 @@ describe("Moves - Dig", () => {
     game.move.select(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 

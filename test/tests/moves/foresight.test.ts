@@ -31,20 +31,20 @@ describe("Moves - Foresight", () => {
 
     game.move.select(MoveId.QUICK_ATTACK);
     await game.toNextTurn();
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
 
     game.move.select(MoveId.FORESIGHT);
     await game.toNextTurn();
     game.move.select(MoveId.QUICK_ATTACK);
     await game.toNextTurn();
 
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
     enemy.hp = enemy.getMaxHp();
 
     game.move.select(MoveId.MACH_PUNCH);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
   });
 
   it("should ignore target's evasiveness boosts", async () => {

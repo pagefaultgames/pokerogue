@@ -67,7 +67,7 @@ describe("Moves - SYRUP BOMB", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
-    expect(targetPokemon.isFullHp()).toBe(true);
+    expect(targetPokemon).toHaveFullHp();
     expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
   });

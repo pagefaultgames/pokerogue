@@ -238,7 +238,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   it("should protect the user from being trapped", async () => {
@@ -413,7 +413,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should prevent the source's Focus Punch from failing when hit", async () => {
@@ -434,7 +434,7 @@ describe("Moves - Substitute", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   it("should not allow Shell Trap to activate when attacked", async () => {
@@ -485,7 +485,7 @@ describe("Moves - Substitute", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should prevent Sappy Seed from applying its Leech Seed effect to the user", async () => {

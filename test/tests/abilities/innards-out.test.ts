@@ -53,6 +53,6 @@ describe("Abilities - Innards Out", () => {
     await game.toEndOfTurn();
 
     expect(magikarp1.isFainted()).toBe(true);
-    expect(magikarp2.getInverseHp()).toBe(0);
+    expect(magikarp2).toHaveFullHp();
   });
 });

@@ -97,7 +97,7 @@ describe("Evolution", () => {
     const totodile = game.field.getPlayerPokemon();
     const hpBefore = totodile.hp;
 
-    expect(totodile.hp).toBe(totodile.getMaxHp());
+    expect(totodile).toHaveFullHp();
 
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
@@ -107,7 +107,7 @@ describe("Evolution", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
-    expect(totodile.hp).toBe(totodile.getMaxHp());
+    expect(totodile).toHaveFullHp();
     expect(totodile.hp).toBeGreaterThan(hpBefore);
   });
 
@@ -139,7 +139,7 @@ describe("Evolution", () => {
 
     expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);
     expect(cyndaquil.hp).toBeGreaterThan(hpBefore);
-    expect(cyndaquil.hp).toBeLessThan(cyndaquil.getMaxHp());
+    expect(cyndaquil).not.toHaveFullHp();
   });
 
   it("should handle rng-based split evolution", async () => {

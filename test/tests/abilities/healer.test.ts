@@ -84,6 +84,6 @@ describe("Abilities - Healer", () => {
     await game.toNextTurn();
 
     expect(ally).toHaveStatusEffect(StatusEffect.NONE);
-    expect(ally.hp).toBe(ally.getMaxHp());
+    expect(ally).toHaveFullHp();
   });
 });

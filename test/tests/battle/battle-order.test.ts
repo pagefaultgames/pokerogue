@@ -7,6 +7,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: rework tests eventually once a helper to assert move order is added
 describe("Battle order", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -31,34 +32,30 @@ describe("Battle order", () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const playerPokemon = game.field.getPlayerPokemon();
-    const playerStartHp = playerPokemon.hp;
     const enemyPokemon = game.field.getEnemyPokemon();
-    const enemyStartHp = enemyPokemon.hp;
-
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set playerPokemon's speed to 50
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
-    game.move.select(MoveId.TACKLE);
 
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("MoveEndPhase", false);
-    expect(playerPokemon.hp).not.toEqual(playerStartHp);
-    expect(enemyPokemon.hp).toEqual(enemyStartHp);
+
+    expect(playerPokemon).not.toHaveFullHp();
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("Player faster than opponent 150 vs 50", async () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const playerPokemon = game.field.getPlayerPokemon();
-    const playerStartHp = playerPokemon.hp;
     const enemyPokemon = game.field.getEnemyPokemon();
-    const enemyStartHp = enemyPokemon.hp;
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set playerPokemon's speed to 150
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50
 
     game.move.select(MoveId.TACKLE);
-
     await game.phaseInterceptor.to("MoveEndPhase", false);
-    expect(playerPokemon.hp).toEqual(playerStartHp);
-    expect(enemyPokemon.hp).not.toEqual(enemyStartHp);
+
+    expect(playerPokemon).toHaveFullHp();
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   it("double - both opponents faster than player 50/50 vs 150/150", async () => {
@@ -66,9 +63,7 @@ describe("Battle order", () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.BLASTOISE);
 
     const playerPokemon = game.scene.getPlayerField();
-    const playerHps = playerPokemon.map(p => p.hp);
     const enemyPokemon = game.scene.getEnemyField();
-    const enemyHps = enemyPokemon.map(p => p.hp);
 
     playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50])); // set both playerPokemons' speed to 50
     enemyPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150])); // set both enemyPokemons' speed to 150
@@ -81,8 +76,8 @@ describe("Battle order", () => {
     await game.phaseInterceptor.to("MoveEndPhase", true);
     await game.phaseInterceptor.to("MoveEndPhase", false);
     for (let i = 0; i < 2; i++) {
-      expect(playerPokemon[i].hp).not.toEqual(playerHps[i]);
-      expect(enemyPokemon[i].hp).toEqual(enemyHps[i]);
+      expect(playerPokemon[i]).not.toHaveFullHp();
+      expect(enemyPokemon[i]).toHaveFullHp();
     }
   });
 
@@ -121,6 +116,6 @@ describe("Battle order", () => {
     await game.phaseInterceptor.to("MovePhase", false);
 
     const phase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
-    expect(enemyPokemon[1] === phase.pokemon || playerPokemon[1] === phase.pokemon);
+    expect(phase.pokemon, "one of the slower mons moved first").toBeOneOf([enemyPokemon[1], playerPokemon[1]]);
   });
 });

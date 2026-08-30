@@ -48,7 +48,7 @@ describe("Moves - Metal Burst", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy2.isFullHp()).toBe(false);
+    expect(enemy2).not.toHaveFullHp();
   });
 
   it("should not crash if both opponents faint before the move is used", async () => {

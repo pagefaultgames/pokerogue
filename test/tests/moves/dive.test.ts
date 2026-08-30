@@ -42,13 +42,13 @@ describe("Moves - Dive", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeDefined();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
+    expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getMoveQueue()[0].move).toBe(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
@@ -66,7 +66,7 @@ describe("Moves - Dive", () => {
     game.move.select(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -100,7 +100,7 @@ describe("Moves - Dive", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
     expect(enemyPokemon.waveData.abilitiesApplied).toContain(AbilityId.ROUGH_SKIN);
   });
 
@@ -120,7 +120,7 @@ describe("Moves - Dive", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);

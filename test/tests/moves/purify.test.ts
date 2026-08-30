@@ -43,7 +43,7 @@ describe("Moves - Purify", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
-    expect(playerPokemon.isFullHp()).toBe(true);
+    expect(playerPokemon).toHaveFullHp();
   });
 
   test("Purify does not heal if opponent doesnt have any status effect", async () => {

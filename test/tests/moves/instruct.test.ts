@@ -439,7 +439,7 @@ describe("Moves - Instruct", () => {
 
     // Klefki instruct fails due to banette being airborne, even though it got hit prior
     expect(banette.visible).toBe(false);
-    expect(banette.isFullHp()).toBe(false);
+    expect(banette).not.toHaveFullHp();
     expect(klefki.getLastXMoves()[0]).toMatchObject({
       move: MoveId.INSTRUCT,
       targets: [BattlerIndex.PLAYER],
@@ -496,7 +496,7 @@ describe("Moves - Instruct", () => {
 
     game.move.select(MoveId.BREAKING_SWIPE);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(koraidon.hp).toBe(koraidon.getMaxHp());
+    expect(koraidon).toHaveFullHp();
     expect(koraidon.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.ENEMY]);
     await game.toNextWave();
 
@@ -507,7 +507,7 @@ describe("Moves - Instruct", () => {
 
     // did not take damage since enemies died beforehand;
     // last move used hit both enemies
-    expect(koraidon.hp).toBe(koraidon.getMaxHp());
+    expect(koraidon).toHaveFullHp();
     expect(koraidon.getLastXMoves(-1)[1].targets?.sort()).toEqual([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
   });
 
@@ -527,7 +527,7 @@ describe("Moves - Instruct", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(koraidon.hp).toBe(koraidon.getMaxHp());
+    expect(koraidon).toHaveFullHp();
     expect(koraidon.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.ENEMY]);
 
     await game.toNextWave();
@@ -539,7 +539,7 @@ describe("Moves - Instruct", () => {
 
     // did not take damage since enemies died beforehand;
     // last move used hit everything around it
-    expect(koraidon.hp).toBe(koraidon.getMaxHp());
+    expect(koraidon).toHaveFullHp();
     expect(koraidon.getLastXMoves(-1)[1].targets).toHaveLength(3);
     expect(koraidon.getLastXMoves(-1)[1].targets).toEqual(
       expect.arrayContaining([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]),

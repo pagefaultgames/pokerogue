@@ -40,7 +40,7 @@ describe("Status Effects", () => {
       await game.move.forceStatusActivation(true);
       await game.toNextTurn();
 
-      expect(game.field.getEnemyPokemon().isFullHp()).toBe(true);
+      expect(game.field.getEnemyPokemon()).toHaveFullHp();
       expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     });
   });

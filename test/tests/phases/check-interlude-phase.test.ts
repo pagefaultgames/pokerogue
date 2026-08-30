@@ -54,6 +54,6 @@ describe("Check Biome End Phase", () => {
     game.move.use(MoveId.EXTREME_SPEED);
     await game.toEndOfTurn();
 
-    expect(player.hp).toBeLessThan(player.getMaxHp());
+    expect(player).not.toHaveFullHp();
   });
 });

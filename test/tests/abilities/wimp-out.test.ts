@@ -349,8 +349,8 @@ describe("Abilities - Wimp Out", () => {
     const isVisibleSec = enemySecPokemon.visible;
     const hasFledSec = enemySecPokemon.switchOutStatus;
     expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
-    expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
-    expect(enemySecPokemon.hp).toEqual(enemySecPokemon.getMaxHp());
+    expect(enemyLeadPokemon).not.toHaveFullHp();
+    expect(enemySecPokemon).toHaveFullHp();
   });
 
   it("Wimp Out will activate due to aftermath", async () => {

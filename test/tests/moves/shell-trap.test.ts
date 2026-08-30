@@ -49,7 +49,7 @@ describe("Moves - Shell Trap", () => {
     expect((movePhase as MovePhase).pokemon).toBe(playerPokemon[1]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).not.toHaveFullHp());
   });
 
   it("should fail if the user is only hit by special attacks", async () => {
@@ -72,7 +72,7 @@ describe("Moves - Shell Trap", () => {
     expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).toHaveFullHp());
   });
 
   it("should fail if the user isn't hit with any attack", async () => {
@@ -95,7 +95,7 @@ describe("Moves - Shell Trap", () => {
     expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).toHaveFullHp());
   });
 
   it("should not activate from an ally's attack", async () => {
@@ -135,6 +135,6 @@ describe("Moves - Shell Trap", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 });

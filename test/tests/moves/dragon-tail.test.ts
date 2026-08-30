@@ -65,7 +65,7 @@ describe("Moves - Dragon Tail", () => {
     const isVisible = enemyPokemon.visible;
     const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
-    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    expect(leadPokemon).not.toHaveFullHp();
   });
 
   it("should proceed without crashing in a double battle", async () => {
@@ -86,14 +86,14 @@ describe("Moves - Dragon Tail", () => {
     const isVisibleSec = enemySecPokemon.visible;
     const hasFledSec = enemySecPokemon.switchOutStatus;
     expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
-    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    expect(leadPokemon).not.toHaveFullHp();
 
     // second turn
     game.move.select(MoveId.FLAMETHROWER, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
+    expect(enemySecPokemon).not.toHaveFullHp();
   });
 
   it("should redirect targets upon opponent flee", async () => {
@@ -115,10 +115,10 @@ describe("Moves - Dragon Tail", () => {
     const isVisibleSec = enemySecPokemon.visible;
     const hasFledSec = enemySecPokemon.switchOutStatus;
     expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
-    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-    expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
-    expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
-    expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
+    expect(leadPokemon).not.toHaveFullHp();
+    expect(secPokemon).not.toHaveFullHp();
+    expect(enemyLeadPokemon).not.toHaveFullHp();
+    expect(enemySecPokemon).not.toHaveFullHp();
   });
 
   it("doesn't switch out if the target has suction cups", async () => {
@@ -130,7 +130,7 @@ describe("Moves - Dragon Tail", () => {
     game.move.select(MoveId.DRAGON_TAIL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.isFullHp()).toBe(false);
+    expect(enemy).not.toHaveFullHp();
   });
 
   it("should force a switch upon fainting an opponent normally", async () => {
@@ -143,7 +143,7 @@ describe("Moves - Dragon Tail", () => {
 
     // Make sure the enemy switched to a healthy Pokemon
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.isFullHp()).toBe(true);
+    expect(enemy).toHaveFullHp();
 
     // Make sure the enemy has a fainted Pokemon in their party and not on the field
     const faintedEnemy = game.scene.getEnemyParty().find(p => !p.isAllowedInBattle());
@@ -202,7 +202,7 @@ describe("Moves - Dragon Tail", () => {
     expect(bulbasaur.isOnField()).toBe(false);
     expect(charmander.isOnField()).toBe(true);
     expect(squirtle.isOnField()).toBe(false);
-    expect(bulbasaur.getInverseHp()).toBeGreaterThan(0);
+    expect(bulbasaur).not.toHaveFullHp();
 
     // Turn 2: Mock an RNG call that calls for switching to 2nd backup Pokemon (Squirtle)
     vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
@@ -214,7 +214,7 @@ describe("Moves - Dragon Tail", () => {
     expect(bulbasaur.isOnField()).toBe(false);
     expect(charmander.isOnField()).toBe(false);
     expect(squirtle.isOnField()).toBe(true);
-    expect(charmander.getInverseHp()).toBeGreaterThan(0);
+    expect(charmander).not.toHaveFullHp();
   });
 
   it("should not force a switch to a challenge-ineligible Pokemon", async () => {
@@ -236,7 +236,7 @@ describe("Moves - Dragon Tail", () => {
     expect(eevee.isOnField()).toBe(false);
     expect(toxapex.isOnField()).toBe(true);
     expect(primarina.isOnField()).toBe(false);
-    expect(lapras.getInverseHp()).toBeGreaterThan(0);
+    expect(lapras).not.toHaveFullHp();
   });
 
   it("should not force a switch to a fainted Pokemon", async () => {
@@ -265,7 +265,7 @@ describe("Moves - Dragon Tail", () => {
     expect(eevee.isOnField()).toBe(false);
     expect(toxapex.isOnField()).toBe(true);
     expect(primarina.isOnField()).toBe(false);
-    expect(lapras.getInverseHp()).toBeGreaterThan(0);
+    expect(lapras).not.toHaveFullHp();
   });
 
   it("should not force a switch if there are no available Pokemon to switch into", async () => {
@@ -292,6 +292,6 @@ describe("Moves - Dragon Tail", () => {
 
     expect(lapras.isOnField()).toBe(true);
     expect(eevee.isOnField()).toBe(false);
-    expect(lapras.getInverseHp()).toBeGreaterThan(0);
+    expect(lapras).not.toHaveFullHp();
   });
 });

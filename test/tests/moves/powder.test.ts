@@ -67,7 +67,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should have no effect against Pokemon with Overcoat", async () => {
@@ -81,7 +81,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not damage the target if the target has Magic Guard", async () => {
@@ -95,7 +95,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not damage the target if Primordial Sea is active", async () => {
@@ -109,7 +109,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not prevent the target from thawing out with Flame Wheel", async () => {
@@ -138,7 +138,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(enemyPokemon.summonData.types).not.toBe(PokemonType.FIRE);
   });
 
@@ -167,7 +167,7 @@ describe("Moves - Powder", () => {
 
     // player should not take damage
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
     // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
     expect(enemyPokemon.hp).toBe(
       enemyStartingHp - playerPokemon.turnData.totalDamageDealt - 2 * Math.floor(enemyPokemon.getMaxHp() / 4),
@@ -266,6 +266,6 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 });

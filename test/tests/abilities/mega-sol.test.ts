@@ -48,7 +48,7 @@ describe("Abilities - Mega Sol", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
