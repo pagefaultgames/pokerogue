@@ -236,7 +236,7 @@ function getRandomTier(): RarityTier {
   if (tierValue > 12) {
     return RarityTier.ULTRA;
   }
-  if (tierValue > 1) {
+  if (tierValue > 0) {
     return RarityTier.ROGUE;
   }
   return RarityTier.MASTER;
