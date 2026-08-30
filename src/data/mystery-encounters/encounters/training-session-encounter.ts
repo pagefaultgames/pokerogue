@@ -25,7 +25,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PokemonData } from "#system/pokemon-data";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
@@ -356,7 +356,6 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 function getEnemyConfig(playerPokemon: PlayerPokemon, segments: number): EnemyPartyConfig {
   playerPokemon.resetSummonData();
 
-  // Passes modifiers by reference
   // TODO: fix various things, like make enemy items untransferable, make sure form change items can come back
   const config = playerPokemon.heldItemManager.generateItemConfiguration();
 

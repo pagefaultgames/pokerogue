@@ -127,7 +127,7 @@ describe("Inverse Battle", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemy).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("Electric type does not get paralyzed - Nuzzle against Pikachu", async () => {
@@ -141,7 +141,7 @@ describe("Inverse Battle", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    expect(enemy).not.toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
@@ -156,7 +156,7 @@ describe("Inverse Battle", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemy).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("Anticipation should trigger on 2x effective moves", async () => {
@@ -214,5 +214,21 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
+  });
+
+  it("should nullify the Ground immunity of Flying types, but preserve immunities from other effects", async () => {
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
+
+    const enemy = game.field.getEnemyPokemon();
+
+    enemy.summonData.types = [PokemonType.FLYING];
+    expect(enemy.isGrounded()).toBe(false);
+    expect(enemy["isForciblyUngrounded"]()).toBe(false);
+    expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(2);
+
+    game.field.mockAbility(enemy, AbilityId.LEVITATE);
+
+    expect(enemy["isForciblyUngrounded"]()).toBe(true);
+    expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(0);
   });
 });

@@ -1,20 +1,22 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { NIGHT_TIME } from "#constants/game-constants";
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { getArenaTag } from "#data/arena-tag";
 import { biomeBgmLoopPoints } from "#data/biome-bgm-loop-points";
-import { getDailyForcedWaveBiomePoolTier } from "#data/daily-seed/daily-run";
+import { getDailyForcedWaveBiomePoolTier } from "#data/daily-run";
 import { allBiomes } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
-import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
+import { getTerrainAnim, getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
   getLegendaryWeatherContinuesMessage,
+  getWeatherAnim,
   getWeatherClearMessage,
   getWeatherStartMessage,
   Weather,
@@ -26,7 +28,6 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -52,7 +53,6 @@ import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { applyHeldItems } from "#utils/items";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import type { NonEmptyTuple } from "type-fest";
@@ -255,8 +255,8 @@ export class Arena {
     this.weather = new Weather(weather, 0);
 
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, 0));
-    globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
-    globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+    globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getWeatherAnim(weather));
+    globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather));
   }
 
   /**
@@ -281,13 +281,8 @@ export class Arena {
       this.weather?.isImmutable()
       && ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
     ) {
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        undefined,
-        undefined,
-        CommonAnim.SUNNY + (oldWeatherType - 1),
-      );
-      globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
+      globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getWeatherAnim(oldWeatherType));
+      globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType));
       return false;
     }
 
@@ -301,13 +296,13 @@ export class Arena {
     if (weather === WeatherType.NONE) {
       this.weather = null;
       this.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE));
-      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType));
     } else {
       this.weather = new Weather(weather, weatherDuration.value, weatherDuration.value);
       this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, weatherDuration.value));
 
-      globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
-      globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+      globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getWeatherAnim(weather));
+      globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather));
     }
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
@@ -431,12 +426,7 @@ export class Arena {
       this.terrain = new Terrain(terrain, terrainDuration.value, terrainDuration.value);
       this.eventTarget.dispatchEvent(new TerrainChangedEvent(terrain, terrainDuration.value));
       if (!ignoreAnim) {
-        globalScene.phaseManager.unshiftNew(
-          "CommonAnimPhase",
-          undefined,
-          undefined,
-          CommonAnim.MISTY_TERRAIN + (terrain - 1),
-        );
+        globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getTerrainAnim(terrain));
       }
       globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
     }
@@ -458,13 +448,8 @@ export class Arena {
     // TODO: Add a flag for permanent terrains
     this.terrain = new Terrain(terrain, 0);
     this.eventTarget.dispatchEvent(new TerrainChangedEvent(terrain, this.terrain.turnsLeft));
-    globalScene.phaseManager.unshiftNew(
-      "CommonAnimPhase",
-      undefined,
-      undefined,
-      CommonAnim.MISTY_TERRAIN + (terrain - 1),
-    );
-    globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain) ?? ""); // TODO: Remove `?? ""` when terrain-fail-msg branch removes `null` from these signatures
+    globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getTerrainAnim(terrain));
+    globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
   }
 
   /** Sets a random terrain based on the biome */
@@ -616,7 +601,7 @@ export class Arena {
     if (tierPool.length === 0) {
       species = globalScene.randomSpecies(waveIndex, level);
     } else {
-      species = getPokemonSpecies(randSeedItem(tierPool));
+      species = speciesDataRegistry.getSpecies(randSeedItem(tierPool));
     }
 
     const regen = this.checkLegendBST(species, globalScene.gameMode.getWaveForDifficulty(waveIndex, true));
@@ -630,7 +615,7 @@ export class Arena {
     const newSpeciesId = species.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, globalScene.gameMode);
     if (newSpeciesId !== species.speciesId) {
       console.log("Replaced", SpeciesId[species.speciesId], "with", SpeciesId[newSpeciesId]);
-      species = getPokemonSpecies(newSpeciesId);
+      species = speciesDataRegistry.getSpecies(newSpeciesId);
     }
 
     return species;

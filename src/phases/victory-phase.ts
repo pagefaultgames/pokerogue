@@ -59,24 +59,17 @@ export class VictoryPhase extends PokemonPhase {
         globalScene.phaseManager.pushNew("EggLapsePhase");
         if (gameMode.isClassic) {
           switch (currentWaveIndex) {
-            case ClassicFixedBossWaves.RIVAL_1:
-            case ClassicFixedBossWaves.RIVAL_2:
-            case ClassicFixedBossWaves.RIVAL_3:
-            case ClassicFixedBossWaves.RIVAL_4:
-            case ClassicFixedBossWaves.RIVAL_5:
-            case ClassicFixedBossWaves.RIVAL_6: {
-              // Get event modifiers for this wave
-              timedEventManager
-                .getFixedBattleEventRewards(currentWaveIndex)
-                .map(r => globalScene.phaseManager.pushNew("RewardPhase", r));
-              break;
-            }
             case ClassicFixedBossWaves.EVIL_BOSS_2:
               // Should get Lock Capsule on 165 before shop phase so it can be used in the reward shop
               globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.LOCK_CAPSULE);
               break;
           }
+
+          timedEventManager
+            .getFixedBattleEventRewards(currentWaveIndex)
+            .map(r => globalScene.phaseManager.pushNew("RewardPhase", r));
         }
+
         if (currentWaveIndex % 10) {
           globalScene.phaseManager.pushNew(
             "SelectRewardPhase",

@@ -22,3 +22,5 @@ export const allBiomes: DataMap<BiomeId, Biome> = new Map<BiomeId, Biome>() as D
  * @see {@linkcode AllHeldItems}
  */
 export const allHeldItems: AllHeldItems = {} as AllHeldItems;
+
+export const starterColors: { [key: string]: [string, string] } = {};

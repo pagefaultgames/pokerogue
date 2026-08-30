@@ -5,6 +5,8 @@ import type { AbilityId } from "#enums/ability-id";
 import type { EggTier } from "#enums/egg-type";
 import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
+import type { LevelMoves } from "./level-moves";
+import type { StarterSpeciesId } from "./starter-species-id";
 
 /**
  * Mapping of formIndex to passive ability for species with multiple passives.
@@ -12,8 +14,6 @@ import type { SpeciesId } from "#enums/species-id";
 interface PokemonSpeciesPassives {
   [key: number]: AbilityId;
 }
-
-export type LevelMoves = [number, MoveId][];
 
 export interface SpeciesFormLevelMoves {
   [key: string]: LevelMoves;
@@ -25,7 +25,7 @@ export interface SpeciesFormTmMoves {
 
 export interface PokemonSpeciesData {
   species: PokemonSpecies;
-  starter: SpeciesId;
+  starter: StarterSpeciesId;
   /** The starter cost. Should be omitted for non starters */
   starterCost?: number;
   evolutions: SpeciesFormEvolution[];
@@ -35,9 +35,13 @@ export interface PokemonSpeciesData {
   eggTier?: EggTier;
   /** The passive ability of the species or a mapping of its formIndex to a passive ability */
   passives: AbilityId | PokemonSpeciesPassives;
+  /** An array of level moves shared across **all** forms */
   levelMoves: LevelMoves;
+  /** Form specific level moves. Record of formKey to an array of level moves */
   formLevelMoves?: SpeciesFormLevelMoves;
+  /** An array of TM moves shared across **all** forms */
   tms: MoveId[];
+  /** Form specific TM moves. Record of `formKey` to an array of TM moves */
   formTms?: SpeciesFormTmMoves;
 }
 

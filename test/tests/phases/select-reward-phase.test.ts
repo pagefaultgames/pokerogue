@@ -1,10 +1,13 @@
 import type { BattleScene } from "#app/battle-scene";
+import { settings } from "#app/global-settings-manager";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
@@ -18,7 +21,6 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import type { RewardSpecs } from "#types/rewards";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -87,7 +89,7 @@ describe("SelectRewardPhase", () => {
   it.todo("should generate random modifiers from reroll", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
-    scene.shopCursorTarget = 0;
+    settings.update("display", "shopCursorTarget", ShopCursorTarget.REROLL);
 
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectRewardPhase");
@@ -190,8 +192,16 @@ describe("SelectRewardPhase", () => {
         RarityTier.MASTER,
       ],
     };
-    const pokemon = new PlayerPokemon(getPokemonSpecies(SpeciesId.BULBASAUR), 10, undefined, 0, undefined, true, 2);
-
+    const pokemon = new PlayerPokemon(
+      speciesDataRegistry.getSpecies(SpeciesId.BULBASAUR),
+      10,
+      undefined,
+      0,
+      undefined,
+      true,
+      2,
+    );
+    
     // Fill party with max shinies
     while (scene.getPlayerParty().length > 0) {
       scene.getPlayerParty().pop();

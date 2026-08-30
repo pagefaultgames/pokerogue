@@ -1,11 +1,12 @@
 import { Button } from "#enums/buttons";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
-import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
