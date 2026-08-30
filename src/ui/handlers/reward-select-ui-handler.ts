@@ -593,15 +593,16 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         const messageHandler = ui.getMessageHandler();
         ui.showText(reward.description);
 
-        const cost = options[this.cursor].modifierTypeOption.cost;
+        const cost = options[this.cursor].rewardOption.cost;
+        const type = options[this.cursor].rewardOption.type;
         if (cost > 0) {
           const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
           const costStyleName = cost <= globalScene.money ? "MONEY" : "PARTY_RED";
           const costText = i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney });
           const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
-          messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconImage);
+          messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconName);
         } else {
-          messageHandler.showNameText(type.name, type.iconImage);
+          messageHandler.showNameText(type.name, type.iconName);
         }
 
         if (isTmReward(reward)) {

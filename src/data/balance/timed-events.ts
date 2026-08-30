@@ -15,8 +15,8 @@ export const timedEvents: readonly TimedEvent[] = [
     startDate: new Date(Date.UTC(2026, 6, 17)),
     endDate: new Date(Date.UTC(2026, 11, 31)),
     classicWaveRewards: [
-      { wave: 115, type: "MEGA_BRACELET" },
-      { wave: 115, type: "DYNAMAX_BAND" },
+      { wave: 115, type: TrainerItemId.MEGA_BRACELET },
+      { wave: 115, type: TrainerItemId.DYNAMAX_BAND },
     ],
   },
   {
@@ -83,14 +83,14 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.ETERNAL_FLOETTE },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
-      { wave: 95, type: "MEGA_BRACELET" },
-      { wave: 95, type: "DYNAMAX_BAND" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
+      { wave: 95, type: TrainerItemId.MEGA_BRACELET },
+      { wave: 95, type: TrainerItemId.DYNAMAX_BAND },
     ],
-    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM", "MEGA_BRACELET", "DYNAMAX_BAND"],
+    dailyRunStartingItems: [TrainerItemId.ABILITY_CHARM, TrainerItemId.SHINY_CHARM, TrainerItemId.MEGA_BRACELET, TrainerItemId.DYNAMAX_BAND],
   },
   {
     name: "April Fools 2026",

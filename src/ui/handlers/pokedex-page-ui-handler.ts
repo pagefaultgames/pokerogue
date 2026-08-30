@@ -30,11 +30,11 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
-import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -1401,7 +1401,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                           this.showText(
                             i18next.t("pokedexUiHandler:tmMove", {
                               number: getTmNumber(moveId),
-                              tier: i18next.t(`modifier:tier.${ModifierTier[tmPoolTiers[moveId]].toLowerCase()}`),
+                              tier: i18next.t(`modifier:tier.${RarityTier[tmPoolTiers[moveId]].toLowerCase()}`),
                             }),
                             0,
                           );
