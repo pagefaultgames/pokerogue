@@ -145,7 +145,7 @@ import {
 import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";

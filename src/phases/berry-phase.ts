@@ -9,7 +9,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
 import type { BerryHeldItemAttr } from "#items/berry";
 import { FieldPhase } from "#phases/field-phase";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
