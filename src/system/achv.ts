@@ -190,12 +190,7 @@ export class LevelAchv extends Achv {
 }
 
 export class HeldItemAchv extends Achv {
-  constructor(
-    localizationKey: string,
-    iconImage: string,
-    score: number,
-    pokemonFunc: (pokemon: Pokemon) => boolean,
-  ) {
+  constructor(localizationKey: string, iconImage: string, score: number, pokemonFunc: (pokemon: Pokemon) => boolean) {
     super(localizationKey, iconImage, score, (args: any[]) => pokemonFunc(args[0] as Pokemon));
   }
 }
@@ -277,11 +272,7 @@ export const achvs = {
   MEGA_EVOLVE: new Achv("megaEvolve", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("gigantamax", "dynamax_band", 50),
   TERASTALLIZE: new Achv("terastallize", "tera_orb", 25),
-  STELLAR_TERASTALLIZE: new Achv(
-    "stellarTerastallize",
-    "stellar_tera_shard",
-    25,
-  ).setSecret(true),
+  STELLAR_TERASTALLIZE: new Achv("stellarTerastallize", "stellar_tera_shard", 25).setSecret(true),
   SPLICE: new Achv("splice", "dna_splicers", 50),
   MINI_BLACK_HOLE: new HeldItemAchv("miniBlackHole", "mini_black_hole", 25, pokemon =>
     pokemon.heldItemManager.hasItem(HeldItemId.MINI_BLACK_HOLE),

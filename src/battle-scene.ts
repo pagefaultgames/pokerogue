@@ -108,6 +108,7 @@ import type {
   NewBattleSavedProps,
 } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
+import type { VolumeSettingsKey } from "#types/settings";
 import {
   isTrainerItemPool,
   isTrainerItemSpecs,
@@ -116,7 +117,6 @@ import {
 } from "#types/trainer-item-data-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import type { Exact } from "#types/type-helpers";
-import type { VolumeSettingsKey } from "#types/settings";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";

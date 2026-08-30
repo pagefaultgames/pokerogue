@@ -201,7 +201,7 @@ describe("SelectRewardPhase", () => {
       true,
       2,
     );
-    
+
     // Fill party with max shinies
     while (scene.getPlayerParty().length > 0) {
       scene.getPlayerParty().pop();

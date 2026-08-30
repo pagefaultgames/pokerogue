@@ -90,7 +90,12 @@ export const timedEvents: readonly TimedEvent[] = [
       { wave: 95, type: TrainerItemId.MEGA_BRACELET },
       { wave: 95, type: TrainerItemId.DYNAMAX_BAND },
     ],
-    dailyRunStartingItems: [TrainerItemId.ABILITY_CHARM, TrainerItemId.SHINY_CHARM, TrainerItemId.MEGA_BRACELET, TrainerItemId.DYNAMAX_BAND],
+    dailyRunStartingItems: [
+      TrainerItemId.ABILITY_CHARM,
+      TrainerItemId.SHINY_CHARM,
+      TrainerItemId.MEGA_BRACELET,
+      TrainerItemId.DYNAMAX_BAND,
+    ],
   },
   {
     name: "April Fools 2026",

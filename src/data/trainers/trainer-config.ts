@@ -4884,11 +4884,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.GIGALITH], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 1; // Sand Stream
-        p.generateAndPopulateMoveset();
-      },
-      [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }]),
+      getRandomPartyMemberFunc(
+        [SpeciesId.GIGALITH],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 1; // Sand Stream
+          p.generateAndPopulateMoveset();
+        },
+        [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       1,
@@ -4943,11 +4948,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 1; // Drizzle
-        p.generateAndPopulateMoveset();
-      },
-      [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }]),
+      getRandomPartyMemberFunc(
+        [SpeciesId.PELIPPER],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 1; // Drizzle
+          p.generateAndPopulateMoveset();
+        },
+        [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       1,
@@ -4981,14 +4991,19 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       5,
-      getRandomPartyMemberFunc([SpeciesId.MILOTIC], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 0; // Marvel Scale
-        p.setBoss(true, 2);
-        p.generateAndPopulateMoveset();
-        p.gender = Gender.FEMALE;
-      },
-      //TODO: only add Toxic Orb if ability is Marvel Scale
-      [{ entry: HeldItemId.TOXIC_ORB, count: 1 }]),
+      getRandomPartyMemberFunc(
+        [SpeciesId.MILOTIC],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 0; // Marvel Scale
+          p.setBoss(true, 2);
+          p.generateAndPopulateMoveset();
+          p.gender = Gender.FEMALE;
+        },
+        //TODO: only add Toxic Orb if ability is Marvel Scale
+        [{ entry: HeldItemId.TOXIC_ORB, count: 1 }],
+      ),
     )
     .setInstantTera(5), // Tera Water Milotic
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
@@ -5508,12 +5523,17 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       2,
-      getRandomPartyMemberFunc([SpeciesId.DRAGONITE, SpeciesId.GLISCOR], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 2; // Multiscale Dragonite, Poison Heal Gliscor
-        p.generateAndPopulateMoveset();
-      },
-      //TODO: Only add TOXIC_ORB to Gliscor
-      [{ entry: HeldItemId.TOXIC_ORB, count: 1 }]),
+      getRandomPartyMemberFunc(
+        [SpeciesId.DRAGONITE, SpeciesId.GLISCOR],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 2; // Multiscale Dragonite, Poison Heal Gliscor
+          p.generateAndPopulateMoveset();
+        },
+        //TODO: Only add TOXIC_ORB to Gliscor
+        [{ entry: HeldItemId.TOXIC_ORB, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       3,
@@ -6388,14 +6408,19 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.FLYGON, SpeciesId.GLISCOR], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 2);
-        p.abilityIndex = p.species.speciesId === SpeciesId.FLYGON ? 0 : 2; // Levitate Flygon, Poison Heal Gliscor
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ULTRA_BALL;
-      },
-      //TODO: Only add Toxic Orb to Gliscor
-      [{ entry: HeldItemId.TOXIC_ORB, count: 1 }]),
+      getRandomPartyMemberFunc(
+        [SpeciesId.FLYGON, SpeciesId.GLISCOR],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.setBoss(true, 2);
+          p.abilityIndex = p.species.speciesId === SpeciesId.FLYGON ? 0 : 2; // Levitate Flygon, Poison Heal Gliscor
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.ULTRA_BALL;
+        },
+        //TODO: Only add Toxic Orb to Gliscor
+        [{ entry: HeldItemId.TOXIC_ORB, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       5,

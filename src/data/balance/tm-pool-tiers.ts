@@ -1,6 +1,6 @@
 import { MoveId } from "#enums/move-id";
-import { padInt } from "#utils/common";
 import { RarityTier } from "#enums/reward-tier";
+import { padInt } from "#utils/common";
 
 interface TmPoolTiers {
   [key: number]: Exclude<RarityTier, RarityTier.ROGUE | RarityTier.MASTER | RarityTier.LUXURY>;
