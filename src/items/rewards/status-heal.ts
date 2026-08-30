@@ -17,7 +17,7 @@ export class PokemonStatusHealReward extends PokemonReward {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");
+    return i18next.t("reward:pokemonStatusHeal.description");
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {

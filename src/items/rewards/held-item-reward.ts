@@ -23,12 +23,12 @@ export class HeldItemReward extends PokemonReward {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
         const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
         if (!maxStackCount) {
-          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
+          return i18next.t("reward:pokemonHeldItem.extra.inoperable", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
         if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
-          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
+          return i18next.t("reward:pokemonHeldItem.extra.tooMany", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }

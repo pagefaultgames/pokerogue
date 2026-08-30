@@ -88,7 +88,7 @@ export class TurnEndItemStealHeldItemAttr extends ItemTransferHeldItemAttr<typeo
   }
 
   protected override getTransferMessage({ target, pokemon }: ItemStealParams, itemId: HeldItemId): string {
-    return i18next.t("modifier:turnHeldItemTransferApply", {
+    return i18next.t("itemApply:turnHeldItemTransferApply", {
       pokemonNameWithAffix: getPokemonNameWithAffix(target),
       itemName: allHeldItems[itemId].name,
       pokemonName: pokemon.getNameToRender(),
@@ -130,7 +130,7 @@ export class ContactItemStealChanceHeldItemAttr extends ItemTransferHeldItemAttr
   }
 
   protected override getTransferMessage({ pokemon, target }: ItemStealParams, itemId: HeldItemId): string {
-    return i18next.t("modifier:contactHeldItemTransferApply", {
+    return i18next.t("itemApply:contactHeldItemTransferApply", {
       pokemonNameWithAffix: getPokemonNameWithAffix(target),
       itemName: allHeldItems[itemId].name,
       pokemonName: pokemon.getNameToRender(),

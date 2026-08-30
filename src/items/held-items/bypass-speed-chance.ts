@@ -27,7 +27,7 @@ export class BypassSpeedChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemE
     if (isCommandFight) {
       // TODO: Remove the `itemName` parameter
       globalScene.phaseManager.queueMessage(
-        i18next.t("modifier:bypassSpeedChanceApply", {
+        i18next.t("itemApply:bypassSpeedChanceApply", {
           pokemonName: getPokemonNameWithAffix(pokemon),
           itemName: this.item.name,
         }),

@@ -259,7 +259,7 @@ export class SpeciesFormEvolution {
       strings.push(i18next.t("pokemonEvolutions:atLevel", {lv: this.level}));
     }
     if (this.item) {
-      const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
+      const itemDescription = i18next.t(`item:${toCamelCase(EvolutionItem[this.item])}.name`);
       const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
       strings.push(i18next.t("pokemonEvolutions:using", {item: itemDescription, tier: rarity}));
     }

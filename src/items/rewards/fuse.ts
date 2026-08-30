@@ -16,7 +16,7 @@ export class FusePokemonReward extends PokemonReward {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.FusePokemonModifierType.description");
+    return i18next.t("reward:fusePokemon.description");
   }
 
   /**

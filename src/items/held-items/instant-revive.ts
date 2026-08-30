@@ -26,7 +26,7 @@ export class InstantReviveHeldItemAttr extends ConsumableHeldItemAttr<typeof Hel
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 2),
-        i18next.t("modifier:pokemonInstantReviveApply", {
+        i18next.t("itemApply:pokemonInstantReviveApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.item.name,
         }),

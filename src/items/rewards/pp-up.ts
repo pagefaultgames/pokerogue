@@ -29,7 +29,7 @@ export class PokemonPpUpReward extends PokemonMoveReward {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonPpUpModifierType.description", { upPoints: this.upPoints });
+    return i18next.t("reward:pokemonPpUp.description", { upPoints: this.upPoints });
   }
 
   /**

@@ -302,14 +302,10 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(
-        rewardSelectHandler.options.some(
-          opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),
-        ),
+        rewardSelectHandler.options.some(opt => opt.rewardOption.type.name === i18next.t("item:metalCoat.name")),
       ).toBe(true);
       expect(
-        rewardSelectHandler.options.some(
-          opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"),
-        ),
+        rewardSelectHandler.options.some(opt => opt.rewardOption.type.name === i18next.t("item:magnet.name")),
       ).toBe(true);
     });
   });
