@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AiType } from "#enums/ai-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -27,7 +28,6 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { STEALING_MOVES } from "#mystery-encounters/requirement-groups";
 import { randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -67,7 +67,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
     console.log(encounter);
 
     // Calculate boss mon
-    const bossSpecies = getPokemonSpecies(SpeciesId.SNORLAX);
+    const bossSpecies = speciesDataRegistry.getSpecies(SpeciesId.SNORLAX);
     const pokemonConfig: EnemyPokemonConfig = {
       species: bossSpecies,
       isBoss: true,
@@ -94,7 +94,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
     // Load animations/sfx for Snorlax fight start moves
     loadCustomMovesForEncounter([MoveId.SNORE]);
 
-    encounter.setDialogueToken("snorlaxName", getPokemonSpecies(SpeciesId.SNORLAX).getName());
+    encounter.setDialogueToken("snorlaxName", speciesDataRegistry.getSpecies(SpeciesId.SNORLAX).getName());
 
     return true;
   })
@@ -167,7 +167,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
           fillRemaining: false,
         });
         // Snorlax exp to Pokemon that did the stealing
-        setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(SpeciesId.SNORLAX).baseExp);
+        setEncounterExp(instance.primaryPokemon!.id, speciesDataRegistry.getSpecies(SpeciesId.SNORLAX).baseExp);
         leaveEncounterWithoutBattle();
       })
       .build(),

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { LEVEL_BASED_DENYLIST_THRESHOLD } from "#balance/moves/moveset-generation";
+import type { LEVEL_BASED_DENYLIST_THRESHOLD } from "#balance/moveset-generation";
 import { MoveId } from "#enums/move-id";
 
 /** Forbidden during movegen if the current battle is not a double battle */
@@ -18,6 +18,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.DECORATE,
   MoveId.DRAGON_CHEER,
   MoveId.EXPANDING_FORCE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
+  MoveId.FLORAL_HEALING,
   MoveId.FOLLOW_ME,
   MoveId.HEAL_PULSE,
   MoveId.HELPING_HAND,
@@ -42,7 +43,7 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.FALSE_SWIPE,
   MoveId.FLASH,
   MoveId.FOCUS_PUNCH,
-  MoveId.GRASSY_GLIDE, // // This needs to be adjusted to only spawn if Grassy Surge / Terrain generates with it, generally a gimmick move regardless.
+  MoveId.GRASSY_GLIDE, // This needs to be adjusted to only spawn if Grassy Surge / Terrain generates with it, generally a gimmick move regardless.
   MoveId.MISTY_EXPLOSION, // This needs to be adjusted to only spawn if Misty Surge / Terrain generates with it, generally a gimmick move regardless.
   MoveId.MEGA_PUNCH,
   MoveId.NIGHT_SHADE,
@@ -67,10 +68,12 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ABSORB,
   MoveId.ACID,
   MoveId.AIR_CUTTER,
+  MoveId.ARM_THRUST,
   MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB.
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,
   MoveId.BARRAGE,
+  MoveId.BESTOW,
   MoveId.BIDE,
   MoveId.BIND,
   MoveId.BRANCH_POKE,
@@ -124,6 +127,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.POISON_TAIL,
   MoveId.POUND,
   MoveId.POUNCE,
+  MoveId.PUNISHMENT,
   MoveId.POWDER_SNOW,
   MoveId.PSYWAVE,
   MoveId.QUICK_ATTACK,
@@ -139,13 +143,16 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SKY_ATTACK, // Only useful with Power Herb. As of now, it fluffs up a chunk of Flying type's movesets due to being high BP and high weight in generation.
   MoveId.SLAM,
   MoveId.SLUDGE,
+  MoveId.SMELLING_SALTS,
   MoveId.SMOG,
   MoveId.SONIC_BOOM,
   MoveId.SPARK,
+  MoveId.SPIDER_WEB,
   MoveId.SPIT_UP,
   MoveId.SPIKE_CANNON, // No one who has it really cares for it outside of early levels.
   MoveId.SPLASH,
   MoveId.STOMP,
+  MoveId.STRUGGLE_BUG,
   MoveId.SUBMISSION,
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
@@ -160,6 +167,8 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.TWISTER,
   MoveId.VINE_WHIP,
   MoveId.VISE_GRIP,
+  MoveId.VITAL_THROW,
+  MoveId.WAKE_UP_SLAP,
   MoveId.WATER_GUN,
   MoveId.WATER_SPORT,
   MoveId.WITHDRAW,
@@ -192,6 +201,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.BELLY_DRUM, // Currently the AI uses it without considering the battle state, leading to the AI swapping out after due to the lowered HP.
   MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will probably never be smart enough to use it correctly.
   MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, high BP causes it to spawn as random coverage often and it ends up being situational / an unused slot.
+  MoveId.SOLAR_BEAM, // Temporary deny until move gen can account for weather properly.
 
   // Recharge Moves, recommended by NightKev until improved AI / Move Generation.
   MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general. Some signature moves were omitted.

@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
@@ -16,8 +17,8 @@ import { getPlayerShopRewardOptionsForWave, isTmReward } from "#items/reward-uti
 import type { RewardSelectCallback } from "#phases/select-reward-phase";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, getRarityTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
-import { formatMoney, NumberHolder } from "#utils/common";
+import { addTextObject, getRarityTierTextTint, getTextColor, getTextStyleOptions, getTextWithColors } from "#ui/text";
+import { fixedInt, formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -87,7 +88,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     ui.add(this.transferButtonContainer);
 
     // TODO @Wlowscha: Remember to rename these locales
-    const transferButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:manageItems"), TextStyle.PARTY);
+    const transferButtonText = addTextObject(-4, -6, i18next.t("rewardSelectUiHandler:manageItems"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
@@ -97,7 +98,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
 
-    const checkButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:checkTeam"), TextStyle.PARTY);
+    const checkButtonText = addTextObject(-4, -6, i18next.t("rewardSelectUiHandler:checkTeam"), TextStyle.PARTY);
     checkButtonText.setName("text-use-btn");
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
@@ -107,7 +108,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:reroll"), TextStyle.PARTY);
+    const rerollButtonText = addTextObject(-4, -6, i18next.t("rewardSelectUiHandler:reroll"), TextStyle.PARTY);
     rerollButtonText.setName("text-reroll-btn");
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
@@ -122,7 +123,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    this.lockRarityButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:lockRarities"), TextStyle.PARTY);
+    this.lockRarityButtonText = addTextObject(-4, -6, i18next.t("rewardSelectUiHandler:lockRarities"), TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
@@ -265,8 +266,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     /* Force updateItems without pokemon held items */
     globalScene.updateItems(true, false);
 
-    /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
-    globalScene.showShopOverlay(750 * globalScene.gameSpeed);
+    globalScene.showShopOverlay(fixedInt(750));
     globalScene.updateAndShowText(750);
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
@@ -369,14 +369,20 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         // before the animations have completed, causing errors).
         Promise.allSettled([...shopAnimPromises, ...rewardAnimAllSettledPromises]).then(() => {
           const updateCursorTarget = () => {
-            if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+            if (settings.display.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
               this.setCursor(2);
-            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && !hasShop) {
+            } else if (
+              settings.display.shopCursorTarget === ShopCursorTarget.SHOP
+              && (!hasShop || this.shopOptionsRows.length === 0)
+            ) {
+              // No shop row exists to point at (e.g. the mode has no shop, or this is a
+              // boss/Gym wave where no shop items are offered). Fall back to the rewards row
+              // instead of leaving the cursor on a nonexistent shop row, which would crash.
               this.setRowCursor(ShopCursorTarget.REWARDS);
               this.setCursor(0);
             } else {
-              this.setRowCursor(globalScene.shopCursorTarget);
+              this.setRowCursor(settings.display.shopCursorTarget);
               this.setCursor(0);
             }
           };
@@ -583,32 +589,47 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       }
 
       const reward = options[this.cursor].rewardOption.type;
-      reward && ui.showText(reward.description);
-      if (isTmReward(reward)) {
-        // prepare the move overlay to be shown with the toggle
-        this.moveInfoOverlay.show(allMoves[reward.moveId]);
+      if (reward) {
+        const messageHandler = ui.getMessageHandler();
+        ui.showText(reward.description);
+
+        const cost = options[this.cursor].modifierTypeOption.cost;
+        if (cost > 0) {
+          const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
+          const costStyleName = cost <= globalScene.money ? "MONEY" : "PARTY_RED";
+          const costText = i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney });
+          const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
+          messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconImage);
+        } else {
+          messageHandler.showNameText(type.name, type.iconImage);
+        }
+
+        if (isTmReward(reward)) {
+          // prepare the move overlay to be shown with the toggle
+          this.moveInfoOverlay.show(allMoves[reward.moveId]);
+        }
       }
     } else if (cursor === 0) {
       this.cursorObj.setPosition(
         6,
-        this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4,
+        this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 11 : OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("rewardSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
-        OPTION_BUTTON_YPOSITION + 4,
+        OPTION_BUTTON_YPOSITION + 1,
       );
       // TODO @Wlowscha: Remember to rename these locales
       ui.showText(i18next.t("rewardSelectUiHandler:manageItemsDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
-        OPTION_BUTTON_YPOSITION + 4,
+        OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("rewardSelectUiHandler:checkTeamDesc"));
     } else {
-      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
+      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 1);
       ui.showText(i18next.t("rewardSelectUiHandler:lockRaritiesDesc"));
     }
 
@@ -687,7 +708,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setVisible(true);
     const canReroll = globalScene.money >= this.rerollCost;
 
-    const formattedMoney = formatMoney(globalScene.moneyFormat, this.rerollCost);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, this.rerollCost);
 
     this.rerollCostText.setText(i18next.t("rewardSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
@@ -714,8 +735,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.cursor = 0;
     this.rowCursor = 0;
 
-    /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
-    globalScene.hideShopOverlay(750 * globalScene.gameSpeed);
+    globalScene.hideShopOverlay(fixedInt(750));
     globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
@@ -1046,7 +1066,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const cost = activeOverrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.rewardOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("rewardSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false));

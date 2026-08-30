@@ -23,6 +23,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -251,7 +252,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       })
       .withPreOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const selectedPokemon = encounter.selectedOption?.primaryPokemon!;
+        const selectedPokemon = encounter.selectedOption!.primaryPokemon!;
         encounter.setDialogueToken("selectedPokemon", selectedPokemon.getNameToRender());
 
         // Reduce all PP to 2 (if they started at greater than 2)

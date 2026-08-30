@@ -1,4 +1,6 @@
 import "vitest";
+
+import type { activeOverrides } from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
 import type { BattlerTag, BattlerTagTypeMap } from "#data/battler-tags";
@@ -25,14 +27,15 @@ import type { GameManager } from "#test/framework/game-manager";
 import type { ToHaveAppliedItemOptions } from "#test/matchers/to-have-applied-item";
 import type { PartiallyFilledArenaTag } from "#test/matchers/to-have-arena-tag";
 import type { PartiallyFilledBattlerTag } from "#test/matchers/to-have-battler-tag";
-import type { ToHaveEffectiveStatOptions } from "#test/matchers/to-have-effective-stat";
 import type { ExpectedHeldItemType } from "#test/matchers/to-have-held-item";
 import type { ToHaveHpOptions } from "#test/matchers/to-have-hp";
 import type { PartiallyFilledPositionalTag } from "#test/matchers/to-have-positional-tag";
 import type { PartiallyFilledStatus } from "#test/matchers/to-have-status-effect";
 import type { ToHaveTypesOptions } from "#test/matchers/to-have-types";
 import type { PhaseString } from "#types/phase-types";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
+import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
@@ -353,7 +356,7 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon}'s effective stat equals a certain value.
    * @param stat - The {@linkcode EffectiveStat} to check
    * @param expectedValue - The expected value of `stat`; must be a non-negative integer
-   * @param options - The {@linkcode ToHaveEffectiveStatOptions | options} passed to the matcher
+   * @param options - The {@linkcode GetEffectiveStatParams | options} passed to the matcher
    * @remarks
    * This checks the value after all stat value modifications have occured.
    * If you want to query the raw stat value **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
@@ -362,7 +365,7 @@ interface PokemonMatchers {
   toHaveEffectiveStat<S extends number>(
     stat: EffectiveStat,
     expectedValue: If<IsNumericLiteral<S>, NonNegativeInteger<S>, S>,
-    options?: ToHaveEffectiveStatOptions,
+    options?: AtLeastOne<GetEffectiveStatParams>,
   ): void;
 
   /**
@@ -402,6 +405,7 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
    * @param expectedAbilityId - The `AbilityId` that should have been applied
    */
+  // TODO: Naming this `toHaveAppliedAbility` would make more sense
   toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
   /**
@@ -451,7 +455,7 @@ interface PokemonMatchers {
    * @param ppUsed - The amount of PP that should have been consumed,
    * or `all` to indicate the move should be _out_ of PP
    * @throws {Error}
-   * Fails test if the Pokemon's moveset has been set via {@linkcodeactiveOverrides.MOVESET_OVERRIDE}/{@linkcodeactiveOverrides.ENEMY_MOVESET_OVERRIDE}
+   * Fails test if the Pokemon's moveset has been set via {@linkcode activeOverrides.MOVESET_OVERRIDE}/{@linkcode activeOverrides.ENEMY_MOVESET_OVERRIDE}
    * or does not contain exactly one copy of `moveId`.
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;

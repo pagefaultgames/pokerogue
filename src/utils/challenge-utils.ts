@@ -11,8 +11,8 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { RewardOption } from "#items/reward";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { BooleanHolder, type NumberHolder } from "./common";
-import { getPokemonSpecies } from "./pokemon-utils";
 
 /**
  * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
@@ -352,26 +352,23 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
 /**
  * Apply all challenges to the given starter (and form) to check its validity.
  * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes.
- * @param species - The {@linkcode PokemonSpecies} to check the validity of.
+ * @param starterId - The {@linkcode StarterSpeciesId} of the Pokemon to check the validity of.
  * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
  * @param soft - If `true`, allow it if it could become valid through evolution or form change.
  * @returns `true` if the species is considered valid.
  */
-export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props: DexAttrProps, soft: boolean) {
+  const species = speciesDataRegistry.getSpecies(starterId);
   if (!soft) {
     const isValidForChallenge = new BooleanHolder(true);
     applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
     return isValidForChallenge.value;
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
-  const speciesToCheck = [species.speciesId];
+  const speciesToCheck: SpeciesId[] = [starterId];
   while (speciesToCheck.length > 0) {
-    const checking = speciesToCheck.pop();
-    // Linter complains if we don't handle this
-    if (!checking) {
-      return false;
-    }
-    const checkingSpecies = getPokemonSpecies(checking);
+    const checking = speciesToCheck.pop()!;
+    const checkingSpecies = speciesDataRegistry.getSpecies(checking);
     if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
       return true;
     }

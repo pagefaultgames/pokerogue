@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { supportedLngs } from "#app/i18n-supported-lngs";
+import type { SupportedLanguage } from "#system/supported-languages";
 
 //!  Can't make properties optional, because they are needed to generate the header line
 
@@ -13,6 +13,7 @@ export interface SpeciesEntry {
   dexNum: number;
   id: string;
   form: string | null;
+  formDisplayName: string;
   name: string;
   starter: string;
   startercost: number | null;
@@ -29,6 +30,10 @@ export interface SpeciesEntry {
   ability2: string;
   hiddenAbility: string;
   passive: string;
+  eggMove1: string;
+  eggMove2: string;
+  eggMove3: string;
+  eggMove4: string;
   bst: number;
   hp: number;
   atk: number;
@@ -83,7 +88,6 @@ export interface EvolutionEntry {
   evoTreasureTracker: number | null;
 }
 
-type SupportedLanguage = (typeof supportedLngs)[number];
 /** A record of localized text for each supported language */
 type TextLocalization = Record<SupportedLanguage, string | null>;
 export interface EvolutionTextEntry extends TextLocalization {
