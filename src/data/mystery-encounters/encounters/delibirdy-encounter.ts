@@ -37,17 +37,15 @@ const namespace = "mysteryEncounters/delibirdy";
 const OPTION_2_ALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins */
-const OPTION_3_DISALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
+const OPTION_3_DISALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED, HeldItemCategoryId.VITAMIN];
 
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
-async function backupOption() {
+async function backupOption(): Promise<void> {
   globalScene.getPlayerPokemon()?.heldItemManager.add(HeldItemId.SHELL_BELL);
   audioManager.playSound("item_fanfare");
   await showEncounterText(
-    i18next.t("battle:rewardGain", {
-      modifierName: allHeldItems[HeldItemId.SHELL_BELL].name,
-    }),
+    i18next.t("battle:rewardGain", { modifierName: allHeldItems[HeldItemId.SHELL_BELL].name }),
     null,
     undefined,
     true,
@@ -55,7 +53,7 @@ async function backupOption() {
   doEventReward();
 }
 
-const doEventReward = () => {
+const doEventReward = (): void => {
   const event_buff = timedEventManager.getDelibirdyBuff();
   if (event_buff.length > 0) {
     const candidates = event_buff.filter(c => {

@@ -150,7 +150,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the player's starting pokeballs
-   * @param items - The items to hold
+   * @param pokeballs - The pokeballs to give the player
    * @returns `this`
    */
   public startingPokeballs(pokeballs: Partial<PokeballCounts>): this {

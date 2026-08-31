@@ -164,7 +164,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { decodeNickname, getFusedSpeciesName } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";

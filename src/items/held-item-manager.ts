@@ -9,7 +9,8 @@ import {
 } from "#enums/held-item-id";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { ItemManager } from "#items/item-manager";
-import { type HeldItemData, type HeldItemSpecs, isHeldItemSpecs } from "#types/held-item-data-types";
+import type { HeldItemData, HeldItemSpecs } from "#types/held-item-data-types";
+import { isHeldItemSpecs } from "#utils/item-utils";
 
 /**
  * The `HeldItemManager` is a manager for a {@linkcode Pokemon}'s held items. \

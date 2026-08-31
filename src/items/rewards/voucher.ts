@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { RewardId } from "#enums/reward-id";
-import { VoucherType } from "#enums/voucher-type";
+import type { VoucherType } from "#enums/voucher-type";
 import { Reward } from "#items/reward";
 import { getVoucherTypeIcon, getVoucherTypeName } from "#system/voucher";
 import i18next from "i18next";

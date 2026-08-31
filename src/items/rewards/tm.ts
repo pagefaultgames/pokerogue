@@ -9,7 +9,7 @@ import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { padInt, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {

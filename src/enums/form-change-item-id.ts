@@ -1,10 +1,9 @@
-import type { ObjectValues } from "#types/type-helpers";
+import type { ValueOf } from "type-fest";
 
-/**
- * Enum representing all form change items.
- */
+/** Enum representing all form change items. */
 export const FormChangeItemId = {
-  // #region Mega Stones (0BXX)
+  // #region Mega Stones
+
   ABOMASITE: 0x0b01,
   ABSOLITE: 0x0b02,
   AERODACTYLITE: 0x0b03,
@@ -54,7 +53,7 @@ export const FormChangeItemId = {
   TYRANITARITE: 0x0b2f,
   VENUSAURITE: 0x0b30,
 
-  // legends Z-A Megas
+  // #region Legends Z-A Megas
 
   CLEFABLITE: 0x0b31,
   VICTREEBELITE: 0x0b32,
@@ -83,6 +82,8 @@ export const FormChangeItemId = {
   DRAMPANITE: 0x0b49,
   FALINKSITE: 0x0b4a,
 
+  // DLC Megas
+
   RAICHUNITE_X: 0x0b4b,
   RAICHUNITE_Y: 0x0b4c,
   CHIMECHITE: 0x0b4d,
@@ -103,14 +104,17 @@ export const FormChangeItemId = {
   TATSUGIRINITE: 0x0b5c,
   BAXCALIBRITE: 0x0b5d,
 
+  // #endregion Legends Z-A Megas
+
   // technically not mega stones _per se_, but close enough
 
   BLUE_ORB: 0x0b5e,
   RED_ORB: 0x0b5f,
 
-  // #endregion Mega Stones (0BXX)
+  // #endregion Mega Stones
 
-  // #region Other rare form change items (0BXX from back)
+  // #region Rare form change items
+
   ADAMANT_CRYSTAL: 0x0bff,
   LUSTROUS_GLOBE: 0x0bfe,
   GRISEOUS_CORE: 0x0bfd,
@@ -125,9 +129,10 @@ export const FormChangeItemId = {
   SHADOW_REINS_OF_UNITY: 0x0bf4,
   ULTRANECROZIUM_Z: 0x0bf3,
 
-  // #endregion Other rare form change items (0BXX)
+  // #endregion Rare form change items
 
-  // #region Less rare form change items (0DXX)
+  // #region Form change items
+
   SHARP_METEORITE: 0x0c01,
   HARD_METEORITE: 0x0c02,
   SMOOTH_METEORITE: 0x0c03,
@@ -178,6 +183,8 @@ export const FormChangeItemId = {
   DARK_MEMORY: 0x0c30,
   FAIRY_MEMORY: 0x0c31,
   NORMAL_MEMORY: 0x0c32,
+
+  // #endregion Form change items
 } as const;
 
-export type FormChangeItemId = ObjectValues<typeof FormChangeItemId>;
+export type FormChangeItemId = ValueOf<typeof FormChangeItemId>;

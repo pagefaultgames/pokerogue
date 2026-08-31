@@ -332,7 +332,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numRogue = 0;
 
         for (const m of items) {
-          const tier = getHeldItemTier(m) ?? RarityTier.ULTRA;
+          const tier = getHeldItemTier(m);
           const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
           if (tier === RarityTier.ROGUE) {
             numRogue += stack;

@@ -23,7 +23,7 @@ import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/theStrongStuff";

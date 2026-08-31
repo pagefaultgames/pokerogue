@@ -1,5 +1,4 @@
 import type { PokeballCounts } from "#app/battle-scene";
-import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
@@ -9,6 +8,7 @@ import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { Challenges } from "#enums/challenges";
 import { EggTier } from "#enums/egg-type";
+import { EvolutionItem } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -27,9 +27,9 @@ import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { Variant } from "#sprites/variant";
 import type { CustomDailyRunConfig } from "#types/daily-run";
-import { HeldItemConfiguration } from "#types/held-item-data-types";
-import { RewardSpecs } from "#types/rewards";
-import { TrainerItemConfiguration } from "#types/trainer-item-data-types";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { RewardSpecs } from "#types/rewards";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**

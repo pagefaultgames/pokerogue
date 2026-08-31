@@ -1,6 +1,6 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { EvoCondKey, EvolutionItem, SpeciesEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, SpeciesEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import {
   MeloettaFormChangePostMoveTrigger,
@@ -16,6 +16,7 @@ import {
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
+import { EvolutionItem } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";

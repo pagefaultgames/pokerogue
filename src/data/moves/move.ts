@@ -134,7 +134,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
