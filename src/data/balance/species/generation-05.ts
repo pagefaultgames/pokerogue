@@ -14580,6 +14580,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.FREEZE_DRY],
+      [RELEARN_MOVE, MoveId.ICICLE_SPEAR],
       [1, MoveId.ICY_WIND],
       [1, MoveId.NOBLE_ROAR],
       [8, MoveId.DRAGON_BREATH],
