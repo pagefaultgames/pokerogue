@@ -10,7 +10,6 @@ import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -351,32 +350,26 @@ describe("Terrain -", () => {
       );
     });
 
-    it.each<{ category: string; move: MoveId; effect: () => void }>([
-      {
-        category: "Field-targeted",
-        move: MoveId.RAIN_DANCE,
-        effect: () => {
-          expect(game).toHaveWeather(WeatherType.RAIN);
-        },
-      },
-      {
-        // TODO: Review if this is actually how it works in mainline
-        category: "Enemy-targeting spread",
-        move: MoveId.DARK_VOID,
-        effect: () => {
-          expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
-        },
-      },
-    ])("should not block $category moves that become priority", async ({ move, effect }) => {
+    it("should not block 'Field-targeted' moves that become priority", async () => {
+      game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
       await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
-      game.move.use(move);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
+      game.move.use(MoveId.RAIN_DANCE);
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
-      expect(blissey).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
-      effect();
+      expect(blissey).toHaveUsedMove({ move: MoveId.RAIN_DANCE, result: MoveResult.SUCCESS });
+    });
+
+    it("should block 'Enemy-targeting spread' moves that become priority", async () => {
+      game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
+
+      game.move.use(MoveId.DARK_VOID);
+      await game.toEndOfTurn();
+
+      const blissey = game.field.getPlayerPokemon();
+      expect(blissey).toHaveUsedMove({ move: MoveId.DARK_VOID, result: MoveResult.FAIL });
     });
 
     it("should not block non-priority moves boosted by Quick Claw/Quick Draw", async () => {

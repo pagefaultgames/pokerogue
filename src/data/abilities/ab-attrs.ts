@@ -563,13 +563,7 @@ export interface FieldPriorityMoveImmunityAbAttrParams extends AugmentMoveIntera
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
   override canApply({ move, opponent: attacker, cancelled, pokemon }: FieldPriorityMoveImmunityAbAttrParams): boolean {
-    return (
-      !cancelled.value
-      && move.getPriority(attacker) > 0
-      && !move.isAllyTarget()
-      && !move.isMultiTarget()
-      && attacker.isOpponent(pokemon)
-    );
+    return !cancelled.value && move.getPriority(attacker) > 0 && !move.isAllyTarget() && attacker.isOpponent(pokemon);
   }
 
   override apply({ cancelled }: FieldPriorityMoveImmunityAbAttrParams): void {
