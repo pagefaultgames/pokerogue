@@ -13,7 +13,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   private isCodeVisible = false;
 
   public override getModalTitle(): string {
-    return i18next.t("menu:resetCode", { username: loggedInUser?.username ?? "" });
+    return i18next.t("menu:resetCodeFor", { username: loggedInUser?.username ?? "" });
   }
 
   public override getWidth(): number {
