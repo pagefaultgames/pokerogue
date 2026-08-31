@@ -46,7 +46,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig } from "#types/ui-types";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -435,19 +435,19 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
   ])
   .build();
 
-async function handleSwapAbility() {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
-  return new Promise<boolean>(async resolve => {
-    await showEncounterDialogue(`${namespace}:option.1.applyAbilityDialogue`, `${namespace}:speaker`);
-    await showEncounterText(`${namespace}:option.1.applyAbilityMessage`);
+async function handleSwapAbility(): Promise<boolean> {
+  const { promise, resolve } = Promise.withResolvers<boolean>();
 
-    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-      displayYesNoOptions(resolve);
-    });
-  });
+  await showEncounterDialogue(`${namespace}:option.1.applyAbilityDialogue`, `${namespace}:speaker`);
+  await showEncounterText(`${namespace}:option.1.applyAbilityMessage`);
+
+  await globalScene.ui.setMode(UiMode.MESSAGE);
+  displayYesNoOptions(resolve);
+
+  return promise;
 }
 
-function displayYesNoOptions(resolve) {
+function displayYesNoOptions(resolve: { (value: boolean | PromiseLike<boolean>): void; (arg0: boolean): void }): void {
   showEncounterText(`${namespace}:option.1.abilityPrompt`, null, 500, false);
   const fullOptions = [
     {
@@ -474,8 +474,12 @@ function displayYesNoOptions(resolve) {
   globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
 }
 
-function onYesAbilitySwap(resolve) {
-  const onPokemonSelected = (pokemon: PlayerPokemon) => {
+function onYesAbilitySwap(resolve: {
+  (value: boolean | PromiseLike<boolean>): void;
+  (arg0: boolean): void;
+  (arg0: boolean): any;
+}): void {
+  const onPokemonSelected = (pokemon: PlayerPokemon): void => {
     // Do ability swap
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
@@ -484,7 +488,7 @@ function onYesAbilitySwap(resolve) {
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => resolve(true));
   };
 
-  const onPokemonNotSelected = () => {
+  const onPokemonNotSelected = (): void => {
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       displayYesNoOptions(resolve);
     });

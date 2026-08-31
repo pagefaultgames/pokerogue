@@ -46,7 +46,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
@@ -67,7 +67,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
@@ -114,7 +114,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.GRASS_PLEDGE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -148,7 +148,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -183,7 +183,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -205,7 +205,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
     // PLAYER_2 should act with a combined move immediately after PLAYER as the second move in the turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -252,7 +252,7 @@ describe("Moves - Pledge Moves", () => {
     await game.move.selectEnemyMove(MoveId.SPORE, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -268,7 +268,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 

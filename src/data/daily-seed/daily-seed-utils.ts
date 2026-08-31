@@ -210,7 +210,7 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
 export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedStarter): Starter {
   const startingLevel = globalScene.gameMode.getStartingLevel();
 
-  const isShiny = config?.variant != null;
+  const isShiny = config?.variant == null ? undefined : true;
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,

@@ -1,40 +1,35 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
+import { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
-import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
-import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
+import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/inputs";
+import type { InputsIcons, LayoutConfig } from "#types/ui-types";
 import { ScrollBar } from "#ui/scroll-bar";
 import { specialIconKeys, specialIcons } from "#ui/special-icons";
+import { TabMenu } from "#ui/tab-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
-// TODO: Strongly type the index signature aside from simply being `string`
-export interface InputsIcons {
-  [key: string]: Phaser.GameObjects.Sprite;
-}
-
-export interface LayoutConfig {
-  optionsContainer: Phaser.GameObjects.Container;
-  inputsIcons: InputsIcons;
-  settingLabels: Phaser.GameObjects.Text[];
-  optionValueLabels: Phaser.GameObjects.Text[][];
-  optionCursors: number[];
-  keys: string[];
-  bindingSettings: string[];
-}
 /**
  * Abstract class for handling UI elements related to control settings.
  */
 export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected settingsContainer: Phaser.GameObjects.Container;
   protected optionsContainer: Phaser.GameObjects.Container;
-  protected navigationContainer: NavigationMenu;
+  protected tabMenu: TabMenu;
+  protected readonly settingsTabs = [
+    { mode: UiMode.SETTINGS_GENERAL, labelKey: "settings:general" },
+    { mode: UiMode.SETTINGS_DISPLAY, labelKey: "settings:display" },
+    { mode: UiMode.SETTINGS_AUDIO, labelKey: "settings:audio" },
+    { mode: UiMode.SETTINGS_GAMEPAD, labelKey: "settings:gamepad" },
+    { mode: UiMode.SETTINGS_KEYBOARD, labelKey: "settings:keyboard" },
+  ];
 
   protected scrollBar: ScrollBar;
   protected scrollCursor: number;
@@ -66,24 +61,14 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected commonSettingsCount;
   protected textureOverride;
   protected titleSelected;
-  protected localStoragePropertyName;
   protected rowsToDisplay: number;
   protected device: Device;
 
-  abstract saveSettingToLocalStorage(setting, cursor): void;
-  abstract setSetting(setting, value: number): boolean;
+  abstract setSetting(setting: MappingSettingName, value: number): boolean;
 
   constructor(mode: UiMode | null = null) {
     super(mode);
     this.rowsToDisplay = 8;
-  }
-
-  private getLocalStorageSetting(): object {
-    // Retrieve the settings from local storage or use an empty object if none exist.
-    const settings: object = Object.hasOwn(localStorage, this.localStoragePropertyName)
-      ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!)
-      : {}; // TODO: is this bang correct?
-    return settings;
   }
 
   public override setup(): void {
@@ -98,22 +83,30 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       Phaser.Geom.Rectangle.Contains,
     );
 
-    this.navigationContainer = new NavigationMenu(0, 0);
+    const tabLabels = this.settingsTabs.map(tab => i18next.t(tab.labelKey));
+    const menuWidth = globalScene.scaledCanvas.width;
+
+    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, _newIndex => {
+      globalScene.ui.setMode(this.settingsTabs[_newIndex].mode);
+    });
+
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    if (activeIndex !== -1) {
+      this.tabMenu.setIndex(activeIndex);
+    }
+
+    const navHeight = this.tabMenu.height;
+    const navWidth = this.tabMenu.width;
 
     this.optionsBg = addWindow(
       0,
-      this.navigationContainer.height,
+      navHeight,
       globalScene.scaledCanvas.width - 2,
-      globalScene.scaledCanvas.height - 16 - this.navigationContainer.height - 2,
+      globalScene.scaledCanvas.height - 16 - navHeight - 2,
     );
     this.optionsBg.setOrigin(0, 0);
 
-    this.actionsBg = addWindow(
-      0,
-      globalScene.scaledCanvas.height - this.navigationContainer.height,
-      globalScene.scaledCanvas.width - 2,
-      22,
-    );
+    this.actionsBg = addWindow(0, globalScene.scaledCanvas.height - navHeight, globalScene.scaledCanvas.width - 2, 22);
     this.actionsBg.setOrigin(0, 0);
 
     /*
@@ -123,7 +116,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
 
     const iconAction = globalScene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
-    iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
+    iconAction.setPositionRelative(this.actionsBg, navWidth - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
     const actionText = addTextObject(0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
@@ -150,7 +143,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
 
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.actionsBg);
-    this.settingsContainer.add(this.navigationContainer);
+    this.settingsContainer.add(this.tabMenu);
     this.settingsContainer.add(iconAction);
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(iconReset);
@@ -333,15 +326,11 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       return;
     }
 
-    // Retrieve the gamepad settings from local storage or use an empty object if none exist.
-    const settings: object = this.getLocalStorageSetting();
-
     // Update the cursor for each key based on the stored settings or default cursors.
     this.keys.forEach((key, index) => {
-      this.setOptionCursor(
-        index,
-        Object.hasOwn(settings, key as string) ? settings[key as string] : this.optionCursors[index],
-      );
+      if (key === "enabled") {
+        this.setOptionCursor(index, settings.gamepad[key] ? Number(!settings.gamepad[key]) : this.optionCursors[index]);
+      }
     });
 
     // If the active configuration has no custom bindings set, exit the function early.
@@ -396,8 +385,13 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   public override show(args: any[]): boolean {
     super.show(args);
 
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    if (activeIndex !== -1) {
+      this.tabMenu.setIndex(activeIndex);
+    }
+
     this.updateNavigationDisplay();
-    NavigationManager.getInstance().updateIcons();
+    this.tabMenu.updateIcons();
     // Update the bindings for the current active gamepad configuration.
     this.updateBindings();
 
@@ -471,7 +465,6 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
     if (button === Button.CANCEL) {
       // Handle cancel button press, reverting UI mode to previous state.
       success = true;
-      NavigationManager.getInstance().reset();
       globalScene.ui.revertMode();
     } else {
       const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
@@ -559,7 +552,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
           break;
         case Button.CYCLE_FORM:
         case Button.CYCLE_SHINY:
-          success = this.navigationContainer.navigate(button);
+          success = this.tabMenu.navigate(button);
           break;
       }
     }
@@ -651,7 +644,8 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
     // Check if the setting is not part of the bindings (i.e., it's a regular setting).
     if (!this.bindingSettings.includes(setting) && !setting.includes("BUTTON_")) {
       // Get the label of the last selected option and revert its color to the default.
-      const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
+      const lastValueLabel =
+        this.optionValueLabels[settingIndex][lastCursor] ?? this.optionValueLabels[settingIndex][0];
       lastValueLabel.setColor(getTextColor(TextStyle.WINDOW));
       lastValueLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
 
@@ -659,14 +653,14 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       this.optionCursors[settingIndex] = cursor;
 
       // Change the color of the new selected option to indicate it's selected.
-      const newValueLabel = this.optionValueLabels[settingIndex][cursor];
+      const newValueLabel = this.optionValueLabels[settingIndex][cursor] ?? this.optionValueLabels[settingIndex][0];
       newValueLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
       newValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
     }
 
     // If the save flag is set, save the setting to local storage
     if (save) {
-      this.saveSettingToLocalStorage(setting, cursor);
+      this.setSetting(setting, cursor);
     }
 
     return true; // Return true to indicate the cursor was successfully updated.

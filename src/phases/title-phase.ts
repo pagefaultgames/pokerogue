@@ -8,7 +8,7 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-seed/daily-run";
+import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -20,7 +20,7 @@ import { getBiomeKey } from "#field/arena";
 import type { Modifier } from "#modifiers/modifier";
 import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { vouchers } from "#system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocalServerConnected } from "#utils/common";
 import i18next from "i18next";
@@ -183,7 +183,7 @@ export class TitlePhase extends Phase {
       {
         label: i18next.t("menu:settings"),
         handler: () => {
-          globalScene.ui.setOverlayMode(UiMode.SETTINGS);
+          globalScene.ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
           return true;
         },
         keepOpen: true,

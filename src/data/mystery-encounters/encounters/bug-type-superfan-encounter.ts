@@ -45,7 +45,7 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
@@ -667,67 +667,61 @@ function getTrainerConfigForWave(waveIndex: number) {
   return config;
 }
 
-function doBugTypeMoveTutor(): Promise<void> {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO explain
-  return new Promise<void>(async resolve => {
-    const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(`${namespace}:battleWon`, `${namespace}:speaker`);
+async function doBugTypeMoveTutor(): Promise<void> {
+  const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
+  await showEncounterDialogue(`${namespace}:battleWon`, `${namespace}:speaker`);
 
-    const moveInfoOverlay = new MoveInfoOverlay({
-      delayVisibility: false,
-      onSide: true,
-      right: true,
-      x: 1,
-      y: -MoveInfoOverlay.getHeight(true) - 1,
-      width: globalScene.scaledCanvas.width - 2,
-    });
-    globalScene.ui.add(moveInfoOverlay);
-
-    const optionSelectItems = moveOptions.map((move: PokemonMove) => {
-      const option: OptionSelectItem = {
-        label: move.getName(),
-        handler: () => {
-          moveInfoOverlay.active = false;
-          moveInfoOverlay.setVisible(false);
-          return true;
-        },
-        onHover: () => {
-          moveInfoOverlay.active = true;
-          moveInfoOverlay.show(allMoves[move.moveId]);
-        },
-      };
-      return option;
-    });
-
-    const onHoverOverCancel = () => {
-      moveInfoOverlay.active = false;
-      moveInfoOverlay.setVisible(false);
-    };
-
-    const result = await selectOptionThenPokemon(
-      optionSelectItems,
-      `${namespace}:teachMovePrompt`,
-      undefined,
-      onHoverOverCancel,
-    );
-    // let forceExit = !!result;
-    if (!result) {
-      moveInfoOverlay.active = false;
-      moveInfoOverlay.setVisible(false);
-    }
-
-    // TODO: add menu to confirm player doesn't want to teach a move?
-
-    // Option select complete, handle if they are learning a move
-    if (result && result.selectedOptionIndex < moveOptions.length) {
-      globalScene.phaseManager.unshiftNew(
-        "LearnMovePhase",
-        result.selectedPokemonIndex,
-        moveOptions[result.selectedOptionIndex].moveId,
-      );
-    }
-
-    // Complete battle and go to rewards
-    resolve();
+  const moveInfoOverlay = new MoveInfoOverlay({
+    delayVisibility: false,
+    onSide: true,
+    right: true,
+    x: 1,
+    y: -MoveInfoOverlay.getHeight(true) - 1,
+    width: globalScene.scaledCanvas.width - 2,
   });
+  globalScene.ui.add(moveInfoOverlay);
+
+  const optionSelectItems = moveOptions.map((move: PokemonMove) => {
+    const option: OptionSelectItem = {
+      label: move.getName(),
+      handler: () => {
+        moveInfoOverlay.active = false;
+        moveInfoOverlay.setVisible(false);
+        return true;
+      },
+      onHover: () => {
+        moveInfoOverlay.active = true;
+        moveInfoOverlay.show(allMoves[move.moveId]);
+      },
+    };
+    return option;
+  });
+
+  const onHoverOverCancel = () => {
+    moveInfoOverlay.active = false;
+    moveInfoOverlay.setVisible(false);
+  };
+
+  const result = await selectOptionThenPokemon(
+    optionSelectItems,
+    `${namespace}:teachMovePrompt`,
+    undefined,
+    onHoverOverCancel,
+  );
+  // let forceExit = !!result;
+  if (!result) {
+    moveInfoOverlay.active = false;
+    moveInfoOverlay.setVisible(false);
+  }
+
+  // TODO: add menu to confirm player doesn't want to teach a move?
+
+  // Option select complete, handle if they are learning a move
+  if (result && result.selectedOptionIndex < moveOptions.length) {
+    globalScene.phaseManager.unshiftNew(
+      "LearnMovePhase",
+      result.selectedPokemonIndex,
+      moveOptions[result.selectedOptionIndex].moveId,
+    );
+  }
 }
