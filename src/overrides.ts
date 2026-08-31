@@ -1,5 +1,4 @@
 import type { PokeballCounts } from "#app/battle-scene";
-import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
@@ -9,6 +8,7 @@ import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { Challenges } from "#enums/challenges";
 import { EggTier } from "#enums/egg-type";
+import { EvolutionItem } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

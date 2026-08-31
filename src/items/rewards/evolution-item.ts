@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { EvolutionItem, FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvolutionItem } from "#enums/evolution-item";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";

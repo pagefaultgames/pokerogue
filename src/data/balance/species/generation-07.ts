@@ -1,5 +1,5 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
-import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
@@ -11,6 +11,7 @@ import {
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
+import { EvolutionItem } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
