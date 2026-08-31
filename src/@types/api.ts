@@ -39,6 +39,12 @@ export interface AccountChangePwResponse {
   success: boolean;
 }
 
+export interface AccountResetPwRequest {
+  username: string;
+  resetCode: string;
+  password: string;
+}
+
 // #endregion Account API
 
 // #region Admin API

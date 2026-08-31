@@ -6,6 +6,7 @@ import type {
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
+  AccountResetPwRequest,
 } from "#types/api";
 import { removeCookie, setCookie } from "#utils/cookies";
 import { setResetCode } from "#utils/reset-code";
@@ -106,6 +107,21 @@ export class PokerogueAccountApi extends ApiBase {
       return response.text();
     } catch (err) {
       console.warn("Change password failed!", err);
+    }
+
+    return "Unknown error!";
+  }
+
+  public async resetPassword(resetPwData: AccountResetPwRequest): Promise<string | null> {
+    try {
+      const response = await this.doPost("/account/resetpw", resetPwData, "form-urlencoded");
+      if (response.ok) {
+        return null;
+      }
+      console.warn("Reset password failed!", response.status, response.statusText);
+      return response.text();
+    } catch (err) {
+      console.warn("Reset password failed!", err);
     }
 
     return "Unknown error!";
