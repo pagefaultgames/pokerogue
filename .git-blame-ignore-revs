@@ -97,3 +97,6 @@ a535a409fdb5097a67d6e50bad95f799eae4ed0b
 
 # test: update old tests to use `.toHaveStatusEffect` matcher
 1fa9206ac2078da41b3b85d7f13854395c488fc9
+
+# test: minor consistency fixes to test files (#7642)
+d40b742dd8a54bd081ccab376021ad973a08b873
