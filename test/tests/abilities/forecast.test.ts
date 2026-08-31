@@ -190,7 +190,7 @@ describe("Abilities - Forecast", () => {
 
     // First turn - Forecast is suppressed
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceHit();
 
     await game.phaseInterceptor.to("TurnEndPhase");

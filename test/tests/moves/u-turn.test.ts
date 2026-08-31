@@ -125,7 +125,7 @@ describe("Moves - U-turn", () => {
     game.move.use(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.move.forceEnemyMove(MoveId.DESTINY_BOND);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(karp).toHaveFainted();

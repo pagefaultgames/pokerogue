@@ -112,8 +112,7 @@ export class GameManager {
 
     this.initDefaultOverrides();
 
-    // TODO: remove `any` assertion
-    global.fetch = vi.fn(MockFetch) as any;
+    global.fetch = vi.fn(MockFetch);
   }
 
   /**
@@ -444,7 +443,7 @@ export class GameManager {
     const valid = !!systemData.dexData && !!systemData.timestamp;
     if (valid) {
       await updateUserInfo();
-      await this.scene.gameData.initSystem(dataStr);
+      await this.scene.gameData["initSystem"](dataStr);
     }
     return updateUserInfo();
   }

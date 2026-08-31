@@ -42,7 +42,7 @@ describe("Inverse Battle", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.THUNDERBOLT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
@@ -57,7 +57,7 @@ describe("Inverse Battle", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.THUNDERBOLT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(0.5);
@@ -72,7 +72,7 @@ describe("Inverse Battle", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.THUNDERBOLT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
@@ -109,7 +109,7 @@ describe("Inverse Battle", () => {
     const enemy = game.field.getEnemyPokemon();
     enemy.hp = enemy.getMaxHp() - 1;
     game.move.select(MoveId.WATER_GUN);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy.hp).toBe(enemy.getMaxHp());
@@ -123,11 +123,11 @@ describe("Inverse Battle", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WILL_O_WISP);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemy).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("Electric type does not get paralyzed - Nuzzle against Pikachu", async () => {
@@ -138,10 +138,10 @@ describe("Inverse Battle", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    expect(enemy).not.toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
@@ -152,11 +152,11 @@ describe("Inverse Battle", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemy).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("Anticipation should trigger on 2x effective moves", async () => {
@@ -175,7 +175,7 @@ describe("Inverse Battle", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.CONVERSION_2);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -191,7 +191,7 @@ describe("Inverse Battle", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
@@ -206,11 +206,11 @@ describe("Inverse Battle", () => {
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FORESIGHT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);

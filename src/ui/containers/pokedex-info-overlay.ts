@@ -1,5 +1,6 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { TextStyle } from "#enums/text-style";
 import { ScrollingText } from "#ui/containers/scrolling-text";
 import { fixedInt } from "#utils/common";
@@ -20,17 +21,17 @@ const DESC_HEIGHT = 48;
 export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
-  private desc: ScrollingText;
+  private readonly desc: ScrollingText;
   private descScroll: Phaser.Tweens.Tween | null = null;
 
-  private descBg: Phaser.GameObjects.NineSlice;
+  private readonly descBg: Phaser.GameObjects.NineSlice;
 
-  private options: PokedexInfoOverlaySettings;
+  private readonly options: PokedexInfoOverlaySettings;
 
-  private textMaskRect: Phaser.GameObjects.Graphics;
+  private readonly textMaskRect: Phaser.GameObjects.Graphics;
 
-  private maskPointOriginX: number;
-  private maskPointOriginY: number;
+  private readonly maskPointOriginX: number;
+  private readonly maskPointOriginY: number;
 
   constructor(options?: PokedexInfoOverlaySettings) {
     super(globalScene, options?.x, options?.y);
@@ -64,8 +65,8 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
 
   // show this component with infos for the specific move
   show(text: string): boolean {
-    if (!globalScene.enableMoveInfo) {
-      return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
+    if (!settings.display.enableMoveInfo) {
+      return false;
     }
 
     this.desc.text.setText(text ?? "");

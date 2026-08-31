@@ -58,7 +58,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
       await game.toNextTurn();
 
-      expect(bulbasaur.status?.effect).toBe(StatusEffect.BURN);
+      expect(bulbasaur).toHaveStatusEffect(StatusEffect.BURN);
       expect(charmander.isFainted()).toBe(true);
       expect(squirtle.status?.effect).toBeUndefined();
     });

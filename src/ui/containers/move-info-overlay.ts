@@ -1,5 +1,6 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { MoveCategory } from "#enums/move-category";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
@@ -136,7 +137,7 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
 
   // show this component with infos for the specific move
   show(move: Move): boolean {
-    if (!globalScene.enableMoveInfo) {
+    if (!settings.display.enableMoveInfo) {
       return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
     }
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
