@@ -149,7 +149,7 @@ describe("Abilities - Harvest", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SUPER_FANG);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     // ate 1 berry and recovered it

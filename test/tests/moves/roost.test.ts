@@ -48,7 +48,7 @@ describe("Moves - Roost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
     game.move.select(MoveId.ROOST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     // Should only be normal type, and NOT flying type
@@ -72,7 +72,7 @@ describe("Moves - Roost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
     game.move.select(MoveId.ROOST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     // Should only be normal type, and NOT flying type
@@ -96,7 +96,7 @@ describe("Moves - Roost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
     game.move.select(MoveId.ROOST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     // Should only be pure fighting type and grounded
@@ -121,7 +121,7 @@ describe("Moves - Roost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
     game.move.select(MoveId.ROOST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     // Should only be pure eletric type and grounded
@@ -145,7 +145,7 @@ describe("Moves - Roost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
     game.move.select(MoveId.BURN_UP);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     // Should only be pure flying type after burn up
@@ -180,7 +180,7 @@ describe("Moves - Roost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
     game.move.select(MoveId.DOUBLE_SHOCK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     // Should only be pure flying type after burn up
@@ -248,7 +248,7 @@ describe("Moves - Roost", () => {
 
     game.move.use(MoveId.ROOST);
     await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase"); // Trick or treat
 
     expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
@@ -274,7 +274,7 @@ describe("Moves - Roost", () => {
 
     game.move.use(MoveId.ROOST);
     await game.move.forceEnemyMove(move);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn(false);
 
     expect(player).toHaveTypes([PokemonType.NORMAL, type]);
