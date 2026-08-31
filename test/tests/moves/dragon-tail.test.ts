@@ -3,6 +3,7 @@ import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { Challenges } from "#enums/challenges";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -155,7 +156,7 @@ describe("Moves - Dragon Tail", () => {
   it("should not cause a softlock when activating an opponent trainer's reviver seed", async () => {
     game.override
       .startingWave(5)
-      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
     await game.classicMode.startBattle(SpeciesId.DRATINI);
 
@@ -172,7 +173,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should not cause a softlock when activating a player's reviver seed", async () => {
     game.override
-      .startingHeldItems([{ name: "REVIVER_SEED" }])
+      .startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyMoveset(MoveId.DRAGON_TAIL)
       .enemyLevel(1000); // To make sure Dragon Tail KO's the player
     await game.classicMode.startBattle(SpeciesId.DRATINI, SpeciesId.BULBASAUR);

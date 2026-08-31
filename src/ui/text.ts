@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { TextStyleOptions } from "#types/ui-types";
@@ -681,19 +681,19 @@ export function updateCandyCountTextStyle(
   }
 }
 
-export function getModifierTierTextTint(tier: ModifierTier): number {
+export function getRarityTierTextTint(tier: RarityTier): number {
   switch (tier) {
-    case ModifierTier.COMMON:
+    case RarityTier.COMMON:
       return 0xf8f8f8;
-    case ModifierTier.GREAT:
+    case RarityTier.GREAT:
       return 0x4998f8;
-    case ModifierTier.ULTRA:
+    case RarityTier.ULTRA:
       return 0xf8d038;
-    case ModifierTier.ROGUE:
+    case RarityTier.ROGUE:
       return 0xdb4343;
-    case ModifierTier.MASTER:
+    case RarityTier.MASTER:
       return 0xe331c5;
-    case ModifierTier.LUXURY:
+    case RarityTier.LUXURY:
       return 0xe74c18;
   }
 }
@@ -701,12 +701,12 @@ export function getModifierTierTextTint(tier: ModifierTier): number {
 export function getEggTierTextTint(tier: EggTier): number {
   switch (tier) {
     case EggTier.COMMON:
-      return getModifierTierTextTint(ModifierTier.COMMON);
+      return getRarityTierTextTint(RarityTier.COMMON);
     case EggTier.RARE:
-      return getModifierTierTextTint(ModifierTier.GREAT);
+      return getRarityTierTextTint(RarityTier.GREAT);
     case EggTier.EPIC:
-      return getModifierTierTextTint(ModifierTier.ULTRA);
+      return getRarityTierTextTint(RarityTier.ULTRA);
     case EggTier.LEGENDARY:
-      return getModifierTierTextTint(ModifierTier.MASTER);
+      return getRarityTierTextTint(RarityTier.MASTER);
   }
 }

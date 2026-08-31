@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { allBiomes } from "#data/data-lists";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
-import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#types/ui-types";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -43,7 +43,7 @@ export class SelectBiomePhase extends BattlePhase {
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
         .map(b => (Array.isArray(b) ? b[0] : b));
 
-      if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
+      if (biomes.length > 1 && globalScene.trainerItems.hasItem(TrainerItemId.MAP)) {
         const biomeSelectItems = biomes.map(b => {
           return {
             label: getBiomeName(b),
@@ -93,18 +93,17 @@ export class SelectBiomePhase extends BattlePhase {
     const nextWaveIndex = currentWaveIndex + 1;
 
     if (nextWaveIndex % 10 === 1) {
-      globalScene.applyModifiers(MoneyInterestModifier, true);
       const healStatus = new BooleanHolder(true);
       applyChallenges(ChallengeType.PARTY_HEAL, healStatus);
       if (healStatus.value) {
         globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
       } else {
         globalScene.phaseManager.unshiftNew(
-          "SelectModifierPhase",
+          "SelectRewardPhase",
           undefined,
           undefined,
           gameMode.isFixedBattle(currentWaveIndex)
-            ? gameMode.getFixedBattle(currentWaveIndex)?.customModifierRewardSettings
+            ? gameMode.getFixedBattle(currentWaveIndex)?.customRewardSettings
             : undefined,
         );
       }

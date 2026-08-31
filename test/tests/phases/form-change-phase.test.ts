@@ -1,12 +1,9 @@
-import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { FormChangeItem } from "#enums/form-change-item";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
-import { FormChangeItemModifierType } from "#modifiers/modifier-type";
-import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
 import { EvolutionPhase } from "#phases/evolution-phase";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
@@ -44,9 +41,7 @@ describe("Form Change Phase", () => {
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);
 
     // Give Zacian a Rusted Sword
-    const rustedSwordType = generateModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM)!;
-    const rustedSword = rustedSwordType.newModifier(zacian);
-    await game.scene.addModifier(rustedSword);
+    zacian.heldItemManager.add(HeldItemId.RUSTED_SWORD);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -68,8 +63,7 @@ describe("Form Change Phase", () => {
     kyogre.teraType = PokemonType.WATER;
 
     // Give Kyogre a Blue Orb to trigger Primal Reversion
-    const blueOrb = new FormChangeItemModifierType(FormChangeItem.BLUE_ORB).newModifier(kyogre);
-    game.scene.addModifier(blueOrb);
+    kyogre.heldItemManager.add(HeldItemId.BLUE_ORB);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -89,8 +83,7 @@ describe("Form Change Phase", () => {
     gengar.teraType = PokemonType.GHOST;
 
     // Give Gengar a Gengarite to trigger Mega Evolution
-    const gengarite = new FormChangeItemModifierType(FormChangeItem.GENGARITE).newModifier(gengar);
-    game.scene.addModifier(gengarite);
+    gengar.heldItemManager.add(HeldItemId.GENGARITE);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -122,8 +115,7 @@ describe("Form Change Phase", () => {
     });
 
     // Give Gengar a Gengarite to trigger Mega Evolution
-    const gengarite = new FormChangeItemModifierType(FormChangeItem.GENGARITE).newModifier(gengar);
-    game.scene.addModifier(gengarite);
+    gengar.heldItemManager.add(HeldItemId.GENGARITE);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();

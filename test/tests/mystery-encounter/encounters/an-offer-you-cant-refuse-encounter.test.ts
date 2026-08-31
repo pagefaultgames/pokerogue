@@ -7,7 +7,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import { ShinyRateBoosterModifier } from "#modifiers/modifier";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-cant-refuse-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -138,10 +138,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const itemModifier = scene.findModifier(m => m instanceof ShinyRateBoosterModifier) as ShinyRateBoosterModifier;
-
-      expect(itemModifier).toBeDefined();
-      expect(itemModifier?.stackCount).toBe(1);
+      expect(scene.trainerItems.getStack(TrainerItemId.SHINY_CHARM)).toBe(1);
     });
 
     it("Should remove the Pokemon from the party", async () => {
@@ -191,7 +188,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       const expBefore = gyarados.exp;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
 
       expect(gyarados.exp).toBe(
         expBefore + Math.floor((speciesDataRegistry.getSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
@@ -206,7 +203,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
 
       expect(abra.exp).toBe(
         expBefore + Math.floor((speciesDataRegistry.getSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),

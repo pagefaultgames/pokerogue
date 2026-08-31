@@ -144,7 +144,7 @@ const migrateModifiers: SessionSaveMigrator = {
         m.className = "ResetNegativeStatStageModifier";
       } else if (m.className === "TempBattleStatBoosterModifier") {
         const maxBattles = 5;
-        // Dire Hit no longer a part of the TempBattleStatBoosterModifierTypeGenerator
+        // Dire Hit is no longer a part of (as of 1.0.4) `TempBattleStatBoosterModifierTypeGenerator`
         if (m.typeId === "DIRE_HIT") {
           m.className = "TempCritBoosterModifier";
           m.typePregenArgs = [];

@@ -397,15 +397,21 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getEnemyModifierChance(isBoss: boolean): number {
+  getEnemyItemChance(isBoss: boolean): number {
+    const base = this.getBaseEnemyItemChance();
+
+    return isBoss ? base / 3 : base;
+  }
+
+  private getBaseEnemyItemChance(): number {
     switch (this.modeId) {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:
       case GameModes.DAILY:
-        return isBoss ? 6 : 18;
+        return 18;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
-        return isBoss ? 4 : 12;
+        return 12;
     }
   }
 

@@ -7,16 +7,17 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
 import { StatChangeSource } from "#enums/stat-change-source";
 import type { Pokemon } from "#field/pokemon";
-import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
 import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
+import { applyHeldItems } from "#utils/item-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
@@ -307,16 +308,7 @@ export class StatStageChangePhase extends PokemonPhase {
       return;
     }
 
-    const whiteHerb = globalScene.applyModifier(
-      ResetNegativeStatStageModifier,
-      this.player,
-      pokemon,
-    ) as ResetNegativeStatStageModifier;
-
-    if (whiteHerb) {
-      pokemon.loseHeldItem(whiteHerb);
-      globalScene.updateModifiers(this.player);
-    }
+    applyHeldItems(HeldItemEffect.RESET_NEGATIVE_STAT_STAGE, { pokemon });
   }
 
   /**

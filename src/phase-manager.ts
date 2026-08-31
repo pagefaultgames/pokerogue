@@ -14,7 +14,7 @@ import { PhaseTree } from "#app/phase-tree";
 import { PHASE_START_COLOR } from "#constants/colors";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
-import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
+import { AddEnemyTokenPhase } from "#phases/add-enemy-token-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
@@ -38,8 +38,8 @@ import { EvolutionPhase } from "#phases/evolution-phase";
 import { ExpPhase } from "#phases/exp-phase";
 import { FaintPhase } from "#phases/faint-phase";
 import { FormChangePhase } from "#phases/form-change-phase";
-import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-phase";
 import { GameOverPhase } from "#phases/game-over-phase";
+import { GameOverRewardPhase } from "#phases/game-over-reward-phase";
 import { HideAbilityPhase } from "#phases/hide-ability-phase";
 import { HidePartyExpBarPhase } from "#phases/hide-party-exp-bar-phase";
 import { InitEncounterPhase } from "#phases/init-encounter-phase";
@@ -49,7 +49,6 @@ import { LevelUpPhase } from "#phases/level-up-phase";
 import { LoadMoveAnimPhase } from "#phases/load-move-anim-phase";
 import { LoginPhase } from "#phases/login-phase";
 import { MessagePhase } from "#phases/message-phase";
-import { ModifierRewardPhase } from "#phases/modifier-reward-phase";
 import { MoneyRewardPhase } from "#phases/money-reward-phase";
 import { MoveAnimPhase } from "#phases/move-anim-phase";
 import { MoveChargePhase } from "#phases/move-charge-phase";
@@ -83,12 +82,13 @@ import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
 import { ResetStatusPhase } from "#phases/reset-status-phase";
 import { ReturnPhase } from "#phases/return-phase";
 import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
-import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
+import { RewardPhase } from "#phases/reward-phase";
+import { RibbonRewardPhase } from "#phases/ribbon-reward-phase";
 import { ScanIvsPhase } from "#phases/scan-ivs-phase";
 import { SelectBiomePhase } from "#phases/select-biome-phase";
 import { SelectChallengePhase } from "#phases/select-challenge-phase";
 import { SelectGenderPhase } from "#phases/select-gender-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { SelectTargetPhase } from "#phases/select-target-phase";
 import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
@@ -124,7 +124,7 @@ import type { NonEmptyTuple } from "type-fest";
  * This allows for easy creation of new phases without needing to import each phase individually.
  */
 const PHASES = Object.freeze({
-  AddEnemyBuffModifierPhase,
+  AddEnemyTokenPhase,
   AttemptCapturePhase,
   AttemptRunPhase,
   BattleEndPhase,
@@ -149,7 +149,7 @@ const PHASES = Object.freeze({
   FaintPhase,
   FormChangePhase,
   GameOverPhase,
-  GameOverModifierRewardPhase,
+  GameOverRewardPhase,
   HideAbilityPhase,
   HidePartyExpBarPhase,
   InitEncounterPhase,
@@ -159,7 +159,7 @@ const PHASES = Object.freeze({
   LoadMoveAnimPhase,
   LoginPhase,
   MessagePhase,
-  ModifierRewardPhase,
+  RewardPhase,
   MoneyRewardPhase,
   MoveAnimPhase,
   MoveChargePhase,
@@ -191,12 +191,12 @@ const PHASES = Object.freeze({
   ResetStatusPhase,
   ReturnPhase,
   RevivalBlessingPhase,
-  RibbonModifierRewardPhase,
+  RibbonRewardPhase,
   ScanIvsPhase,
   SelectBiomePhase,
   SelectChallengePhase,
   SelectGenderPhase,
-  SelectModifierPhase,
+  SelectRewardPhase,
   SelectStarterPhase,
   SelectTargetPhase,
   ShinySparklePhase,

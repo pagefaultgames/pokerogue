@@ -3,25 +3,25 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { signatureSpecies } from "#balance/signature-species";
-import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
-import type { PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
@@ -41,10 +41,11 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
-import type { ModifierTypeFunc } from "#types/modifier-types";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { SilentReward } from "#types/rewards";
 import type {
   GenAIFunc,
-  GenModifiersFunc,
+  GenTrainerItemsFunc,
   PartyMemberFunc,
   PartyMemberFuncs,
   PartyTemplateFunc,
@@ -156,9 +157,9 @@ export class TrainerConfig {
   public femaleEncounterBgm: string;
   public doubleEncounterBgm: string;
   public victoryBgm: string;
-  public genModifiersFunc: GenModifiersFunc;
+  public genTrainerItemsFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
-  public modifierRewardFuncs: ModifierTypeFunc[] = [];
+  public silentRewards: SilentReward[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};
@@ -521,8 +522,8 @@ export class TrainerConfig {
     return this;
   }
 
-  setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
-    this.genModifiersFunc = genModifiersFunc;
+  setGenTrainerItemsFunc(genTrainerItemsFunc: GenTrainerItemsFunc): TrainerConfig {
+    this.genTrainerItemsFunc = genTrainerItemsFunc;
     return this;
   }
 
@@ -532,7 +533,7 @@ export class TrainerConfig {
    * @param slot Optional, a specified slot that should be terastallized. Wraps to match party size (-1 will get the last slot and so on).
    * @returns this
    */
-  setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
+  setRandomTeraType(count: () => number, slot?: number): TrainerConfig {
     this.genAIFuncs.push((party: readonly EnemyPokemon[]) => {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === PokemonType.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length)
@@ -564,24 +565,8 @@ export class TrainerConfig {
     return this;
   }
 
-  // function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[]): PersistentModifier[] {
-  //   const ret: PersistentModifier[] = [];
-  //   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
-  //   for (let t = 0; t < Math.min(count, party.length); t++) {
-  //     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
-  //     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-  //     ret.push(modifierTypes.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
-  //   }
-  //   return ret;
-  // }
-
-  setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
+  setSilentReward(...silentRewards: SilentReward[]): TrainerConfig {
+    this.silentRewards = silentRewards;
     return this;
   }
 
@@ -715,7 +700,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("bw/victory_gym");
-    this.setRandomTeraModifiers(
+    this.setRandomTeraType(
       () => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex >= GYM_LEADER_TERA_WAVE ? 1 : 0),
       teraSlot,
     );
@@ -771,8 +756,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("bw/victory_gym");
-    this.setRandomTeraModifiers(() => 1, teraSlot);
-
+    this.setRandomTeraType(() => 1, teraSlot);
     return this;
   }
 
@@ -926,11 +910,11 @@ export class TrainerConfig {
     clone = this.battleBgm ? clone.setBattleBgm(this.battleBgm) : clone;
     clone = this.encounterBgm ? clone.setEncounterBgm(this.encounterBgm) : clone;
     clone = this.victoryBgm ? clone.setVictoryBgm(this.victoryBgm) : clone;
-    clone = this.genModifiersFunc ? clone.setGenModifiersFunc(this.genModifiersFunc) : clone;
+    clone = this.genTrainerItemsFunc ? clone.setGenTrainerItemsFunc(this.genTrainerItemsFunc) : clone;
 
-    if (this.modifierRewardFuncs) {
+    if (this.silentRewards) {
       // Clones array instead of passing ref
-      clone.modifierRewardFuncs = this.modifierRewardFuncs.slice(0);
+      clone.silentRewards = this.silentRewards.slice(0);
     }
 
     if (this.partyTemplates) {
@@ -992,6 +976,7 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
+  heldItemConfig?: HeldItemConfiguration,
 ): PartyMemberFunc {
   return (level: number, strength: PartyMemberStrength, evoThresholdKind: EvoLevelThresholdKind) => {
     let species: SpeciesId | readonly SpeciesId[] | typeof speciesPool = speciesPool;
@@ -1011,6 +996,7 @@ export function getRandomPartyMemberFunc(
       trainerSlot,
       undefined,
       false,
+      heldItemConfig,
       undefined,
       postProcess,
     );
@@ -1038,7 +1024,16 @@ function getSpeciesFilterRandomPartyMemberFunc(
         .getTrainerSpeciesForLevel(level, true, strength),
     );
 
-    return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
+    return globalScene.addEnemyPokemon(
+      species,
+      level,
+      trainerSlot,
+      undefined,
+      false,
+      undefined,
+      undefined,
+      postProcess,
+    );
   };
 }
 
@@ -4749,11 +4744,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.PIKACHU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Partner Pikachu
-        p.gender = Gender.MALE;
-        p.generateAndPopulateMoveset();
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.PIKACHU],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.formIndex = 1; // Partner Pikachu
+          p.gender = Gender.MALE;
+          p.generateAndPopulateMoveset();
+        },
+        [{ entry: HeldItemId.LIGHT_BALL, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
     .setPartyMemberFunc(
@@ -4807,17 +4808,7 @@ export const trainerConfigs: TrainerConfigs = {
         },
       ),
     )
-    .setInstantTera(0) // Tera Electric Pikachu
-    .setGenModifiersFunc(party => {
-      const pikachu = party[0];
-      return [
-        modifierTypes
-          .RARE_SPECIES_STAT_BOOSTER()
-          .generateType([], ["LIGHT_BALL"])
-          ?.withIdFromFunc(modifierTypes.RARE_SPECIES_STAT_BOOSTER)
-          .newModifier(pikachu) as SpeciesStatBoosterModifier,
-      ];
-    }),
+    .setInstantTera(0), // Tera Electric Pikachu
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t)
     .setName("Lance")
     .initForChampion(true)
@@ -4893,10 +4884,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.GIGALITH], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 1; // Sand Stream
-        p.generateAndPopulateMoveset();
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.GIGALITH],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 1; // Sand Stream
+          p.generateAndPopulateMoveset();
+        },
+        [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       1,
@@ -4941,17 +4938,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateName();
       }),
     )
-    .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
-    .setGenModifiersFunc(party => {
-      // 1 Stack Mystical Rock Gigalith
-      const gigalith = party[0];
-      return [
-        modifierTypes
-          .MYSTICAL_ROCK()
-          .withIdFromFunc(modifierTypes.MYSTICAL_ROCK)
-          .newModifier(gigalith) as PokemonHeldItemModifier,
-      ];
-    }),
+    .setInstantTera(4), // Tera Rock Regirock / Ice Regice / Steel Registeel
   [TrainerType.WALLACE]: new TrainerConfig(++t)
     .initForChampion(true)
     .setBattleBgm("battle_hoenn_champion_g5")
@@ -4961,10 +4948,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 1; // Drizzle
-        p.generateAndPopulateMoveset();
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.PELIPPER],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 1; // Drizzle
+          p.generateAndPopulateMoveset();
+        },
+        [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       1,
@@ -4998,37 +4991,21 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       5,
-      getRandomPartyMemberFunc([SpeciesId.MILOTIC], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 0; // Marvel Scale
-        p.setBoss(true, 2);
-        p.generateAndPopulateMoveset();
-        p.gender = Gender.FEMALE;
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.MILOTIC],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 0; // Marvel Scale
+          p.setBoss(true, 2);
+          p.generateAndPopulateMoveset();
+          p.gender = Gender.FEMALE;
+        },
+        //TODO: only add Toxic Orb if ability is Marvel Scale
+        [{ entry: HeldItemId.TOXIC_ORB, count: 1 }],
+      ),
     )
-    .setInstantTera(5) // Tera Water Milotic
-    .setGenModifiersFunc(party => {
-      // 1 Stack Mystical Rock Pelipper, Toxic Orb Milotic
-      const pelipper = party[0];
-      const milotic = party[5];
-      const modifiers: PokemonHeldItemModifier[] = [];
-      const pelipperRock = modifierTypes
-        .MYSTICAL_ROCK()
-        .withIdFromFunc(modifierTypes.MYSTICAL_ROCK)
-        .newModifier(pelipper) as PokemonHeldItemModifier;
-      if (pelipperRock) {
-        modifiers.push(pelipperRock);
-      }
-      if (milotic?.hasAbility(AbilityId.MARVEL_SCALE, false, true)) {
-        const miloticOrb = modifierTypes
-          .TOXIC_ORB()
-          .withIdFromFunc(modifierTypes.TOXIC_ORB)
-          .newModifier(milotic) as PokemonHeldItemModifier;
-        if (miloticOrb) {
-          modifiers.push(miloticOrb);
-        }
-      }
-      return modifiers;
-    }),
+    .setInstantTera(5), // Tera Water Milotic
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
     .initForChampion(false)
     .setBattleBgm("battle_sinnoh_champion")
@@ -5546,10 +5523,17 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       2,
-      getRandomPartyMemberFunc([SpeciesId.DRAGONITE, SpeciesId.GLISCOR], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 2; // Multiscale Dragonite, Poison Heal Gliscor
-        p.generateAndPopulateMoveset();
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.DRAGONITE, SpeciesId.GLISCOR],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.abilityIndex = 2; // Multiscale Dragonite, Poison Heal Gliscor
+          p.generateAndPopulateMoveset();
+        },
+        //TODO: Only add TOXIC_ORB to Gliscor
+        [{ entry: HeldItemId.TOXIC_ORB, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       3,
@@ -5583,21 +5567,6 @@ export const trainerConfigs: TrainerConfigs = {
         p.gender = Gender.MALE;
       }),
     )
-    .setGenModifiersFunc(party => {
-      const gliscor = party[2];
-      const modifiers: PokemonHeldItemModifier[] = [];
-      if (gliscor?.hasAbility(AbilityId.POISON_HEAL, false, true)) {
-        // If Gliscor spawned with Poison Heal, give it Toxic Orb
-        const modifier = modifierTypes
-          .TOXIC_ORB()
-          .withIdFromFunc(modifierTypes.TOXIC_ORB)
-          .newModifier(gliscor) as PokemonHeldItemModifier;
-        if (modifier) {
-          modifiers.push(modifier);
-        }
-      }
-      return modifiers;
-    })
     .setInstantTera(5), // Tera Fighting Hydrapple
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL))
@@ -5610,10 +5579,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL)
-    .setModifierRewardFuncs(
-      () => modifierTypes.SUPER_EXP_CHARM,
-      () => modifierTypes.EXP_SHARE,
-    )
+    .setSilentReward(TrainerItemId.SUPER_EXP_CHARM, TrainerItemId.EXP_SHARE)
     .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_1_POOL, 0))
     .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_1_POOL, 1)),
   [TrainerType.RIVAL_2]: new TrainerConfig(++t)
@@ -5627,7 +5593,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
-    .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
+    .setSilentReward(TrainerItemId.EXP_SHARE)
     .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_2_POOL, 0))
     .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_2_POOL, 1))
     .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_2_POOL, 2)),
@@ -5658,7 +5624,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_2")
     .setMixedBattleBgm("battle_rival_2")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_4)
-    .setModifierRewardFuncs(() => modifierTypes.TERA_ORB)
+    .setSilentReward(TrainerItemId.TERA_ORB)
     .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 0))
     .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 1))
     .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 2))
@@ -5683,23 +5649,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 3))
     .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 4))
     .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 5))
-    .setGenModifiersFunc(party => {
-      const modifiers: PokemonHeldItemModifier[] = [];
-      const bird = party[1]; // Rival's second Pokemon is always a bird Pokemon
-      switch (bird.species.speciesId) {
-        case SpeciesId.SWELLOW:
-          if (bird.hasAbility(AbilityId.GUTS, false, true)) {
-            const modifier = modifierTypes
-              .FLAME_ORB()
-              .withIdFromFunc(modifierTypes.FLAME_ORB)
-              .newModifier(bird) as PokemonHeldItemModifier;
-            if (modifier) {
-              modifiers.push(modifier);
-            }
-          }
-      }
-      return modifiers;
-    })
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_6]: new TrainerConfig(++t)
     .setName("Finn")
@@ -5719,23 +5668,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 3))
     .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 4))
     .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 5))
-    .setGenModifiersFunc(party => {
-      const modifiers: PokemonHeldItemModifier[] = [];
-      const bird = party[1]; // Rival's second Pokemon is always a bird Pokemon
-      switch (bird.species.speciesId) {
-        case SpeciesId.SWELLOW:
-          if (bird.hasAbility(AbilityId.GUTS, false, true)) {
-            const modifier = modifierTypes
-              .FLAME_ORB()
-              .withIdFromFunc(modifierTypes.FLAME_ORB)
-              .newModifier(bird) as PokemonHeldItemModifier;
-            if (modifier) {
-              modifiers.push(modifier);
-            }
-          }
-      }
-      return modifiers;
-    })
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig((t = TrainerType.ROCKET_BOSS_GIOVANNI_1))
     .setName("Giovanni")
@@ -6476,12 +6408,19 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.FLYGON, SpeciesId.GLISCOR], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 2);
-        p.abilityIndex = p.species.speciesId === SpeciesId.FLYGON ? 0 : 2; // Levitate Flygon, Poison Heal Gliscor
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ULTRA_BALL;
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.FLYGON, SpeciesId.GLISCOR],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.setBoss(true, 2);
+          p.abilityIndex = p.species.speciesId === SpeciesId.FLYGON ? 0 : 2; // Levitate Flygon, Poison Heal Gliscor
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.ULTRA_BALL;
+        },
+        //TODO: Only add Toxic Orb to Gliscor
+        [{ entry: HeldItemId.TOXIC_ORB, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(
       5,
@@ -6490,22 +6429,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
       }),
-    )
-    .setGenModifiersFunc(party => {
-      const gliscor = party[4];
-      const modifiers: PokemonHeldItemModifier[] = [];
-      if (gliscor?.hasAbility(AbilityId.POISON_HEAL, false, true)) {
-        // If Gliscor spawned with Poison Heal, give it Toxic Orb
-        const modifier = modifierTypes
-          .TOXIC_ORB()
-          .withIdFromFunc(modifierTypes.TOXIC_ORB)
-          .newModifier(gliscor) as PokemonHeldItemModifier;
-        if (modifier) {
-          modifiers.push(modifier);
-        }
-      }
-      return modifiers;
-    }),
+    ),
   [TrainerType.ROSE]: new TrainerConfig(++t)
     .setName("Rose")
     .initForEvilTeamLeader("Macro Boss", [])

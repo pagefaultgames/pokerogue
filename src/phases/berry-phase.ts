@@ -1,11 +1,15 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allHeldItems } from "#data/data-lists";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
-import { BerryUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
-import { BerryModifier } from "#modifiers/modifier";
+import type { BerryItemId } from "#items/all-held-items";
+import type { BerryHeldItemAttr } from "#items/berry";
 import { FieldPhase } from "#phases/field-phase";
+import { applyHeldItems } from "#utils/item-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
@@ -31,10 +35,15 @@ export class BerryPhase extends FieldPhase {
    * @param pokemon - The {@linkcode Pokemon} to check
    */
   eatBerries(pokemon: Pokemon): void {
-    const hasUsableBerry = !!globalScene.findModifier(
-      m => m instanceof BerryModifier && m.shouldApply(pokemon),
-      pokemon.isPlayer(),
-    );
+    // TODO: This breaks encapsulation...
+    const hasUsableBerry = pokemon.getHeldItems().some(m => {
+      return (
+        isItemInCategory(m, HeldItemCategoryId.BERRY)
+        && (allHeldItems[m as BerryItemId].getAttrs(HeldItemEffect.BERRY) satisfies readonly BerryHeldItemAttr[]).some(
+          attr => attr.shouldApply({ pokemon }),
+        )
+      );
+    });
 
     if (!hasUsableBerry) {
       return;
@@ -59,23 +68,17 @@ export class BerryPhase extends FieldPhase {
       CommonAnim.USE_ITEM,
     );
 
-    for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
-      // No need to track berries being eaten; already done inside applyModifiers
-      if (berryModifier.consumed) {
-        berryModifier.consumed = false;
-        pokemon.loseHeldItem(berryModifier);
-      }
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier));
-    }
+    applyHeldItems(HeldItemEffect.BERRY, { pokemon });
+    globalScene.updateItems(pokemon.isPlayer());
+    // TODO: This is less than ideal
     if (pokemon.queuedBerryStatChanges.length > 0) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: pokemon.getBattlerIndex(),
         changes: pokemon.queuedBerryStatChanges,
         sourcePokemon: pokemon,
       });
+      pokemon.queuedBerryStatChanges = [];
     }
-    globalScene.updateModifiers(pokemon.isPlayer());
-    pokemon.queuedBerryStatChanges = [];
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });

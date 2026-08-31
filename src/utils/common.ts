@@ -411,9 +411,25 @@ export function getShinyDescriptor(variant: Variant): string {
  * If the input isn't already an array, turns it into one.
  * @returns An array with the same type as the type of the input
  */
-export function coerceArray<T>(input: T): T extends any[] ? T : [T];
+export function coerceArray<T>(input: T): T extends readonly unknown[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
+}
+
+export function pickWeightedIndex(weights: number[]): number | undefined {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+  if (totalWeight <= 0) {
+    return;
+  }
+
+  let r = randSeedFloat() * totalWeight;
+  for (let i = 0; i < weights.length; i++) {
+    if (r < weights[i]) {
+      return i;
+    }
+    r -= weights[i];
+  }
+  return;
 }
 
 export function getBiomeName(biome: BiomeId | -1) {

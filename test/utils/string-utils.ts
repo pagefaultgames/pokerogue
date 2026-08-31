@@ -16,7 +16,7 @@ interface GetEnumStrKeyOptions {
   /**
    * If present, will be prepended to the beginning of the key name string.
    */
-  prefix?: string;
+  prefix?: string | undefined;
   /**
    * If present, will be added to the end of the key name string.
    */

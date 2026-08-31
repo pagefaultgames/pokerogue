@@ -16,7 +16,7 @@ import {
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -289,27 +289,23 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(enemyField[0].isBoss()).toBe(true);
     });
 
-    it("should have Magnet and Metal Coat in rewards after battle", async () => {
+    it("should have Magnet and Metal Coat in allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(
-        modifierSelectHandler.options.some(
-          opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),
-        ),
+        rewardSelectHandler.options.some(opt => opt.rewardOption.type.name === i18next.t("item:metalCoat.name")),
       ).toBe(true);
       expect(
-        modifierSelectHandler.options.some(
-          opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"),
-        ),
+        rewardSelectHandler.options.some(opt => opt.rewardOption.type.name === i18next.t("item:magnet.name")),
       ).toBe(true);
     });
   });

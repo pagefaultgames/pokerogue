@@ -20,7 +20,6 @@ import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon } from "#field/pokemon";
-import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -278,6 +277,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       }),
       null,
       () => {
+        const heldItemConfig = pokemon.heldItemManager.generateItemConfiguration();
         const end = () => {
           globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
           globalScene.pokemonInfoContainer.hide();
@@ -288,25 +288,21 @@ export class AttemptCapturePhase extends PokemonPhase {
           globalScene.addFaintedEnemyScore(pokemon);
           pokemon.hp = 0;
           pokemon.doSetStatus(StatusEffect.FAINT);
-          globalScene.clearEnemyHeldItemModifiers();
           pokemon.leaveField(true, true, true);
         };
         const addToParty = (slotIndex?: number) => {
           const newPokemon = pokemon.addToParty(this.pokeballType, slotIndex);
-          const modifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
           if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {
             globalScene.validateAchv(achvs.SHINY_PARTY);
           }
-          Promise.all(modifiers.map(m => globalScene.addModifier(m, true))).then(() => {
-            globalScene.updateModifiers(true);
-            removePokemon();
-            if (newPokemon) {
-              newPokemon.leaveField(true, true, false);
-              newPokemon.loadAssets().then(end);
-            } else {
-              end();
-            }
-          });
+          globalScene.updateItems(true);
+          removePokemon();
+          if (newPokemon) {
+            newPokemon.leaveField(true, true, false);
+            newPokemon.loadAssets().then(end);
+          } else {
+            end();
+          }
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
           if (!addStatus.value) {
@@ -336,6 +332,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                         pokemon.variant,
                         pokemon.ivs,
                         pokemon.nature,
+                        heldItemConfig,
                         pokemon,
                       );
                       globalScene.ui.setMode(

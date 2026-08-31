@@ -11,15 +11,15 @@ import {
   SingleTypeChallenge,
 } from "#data/challenge";
 import { Challenges } from "#enums/challenges";
+import { HeldItemId } from "#enums/held-item-id";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { getShortenedStatKey, Stat } from "#enums/stat";
-import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
+import type { Pokemon } from "#field/pokemon";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import type { Modifier } from "typescript";
 
 export enum AchvTier {
   COMMON,
@@ -189,14 +189,9 @@ export class LevelAchv extends Achv {
   }
 }
 
-export class ModifierAchv extends Achv {
-  constructor(
-    localizationKey: string,
-    iconImage: string,
-    score: number,
-    modifierFunc: (modifier: Modifier) => boolean,
-  ) {
-    super(localizationKey, iconImage, score, (args: any[]) => modifierFunc(args[0] as Modifier));
+export class HeldItemAchv extends Achv {
+  constructor(localizationKey: string, iconImage: string, score: number, pokemonFunc: (pokemon: Pokemon) => boolean) {
+    super(localizationKey, iconImage, score, (args: any[]) => pokemonFunc(args[0] as Pokemon));
   }
 }
 
@@ -279,11 +274,8 @@ export const achvs = {
   TERASTALLIZE: new Achv("terastallize", "tera_orb", 25),
   STELLAR_TERASTALLIZE: new Achv("stellarTerastallize", "stellar_tera_shard", 25).setSecret(true),
   SPLICE: new Achv("splice", "dna_splicers", 50),
-  MINI_BLACK_HOLE: new ModifierAchv(
-    "miniBlackHole",
-    "mini_black_hole",
-    25,
-    modifier => modifier instanceof TurnHeldItemTransferModifier,
+  MINI_BLACK_HOLE: new HeldItemAchv("miniBlackHole", "mini_black_hole", 25, pokemon =>
+    pokemon.heldItemManager.hasItem(HeldItemId.MINI_BLACK_HOLE),
   ).setSecret(),
   HIDDEN_ABILITY: new Achv("hiddenAbility", "ability_charm", 25),
   PERFECT_IVS: new Achv("perfectIvs", "blunder_policy", 25),

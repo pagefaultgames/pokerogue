@@ -7,11 +7,13 @@
 import { toBeAtPhase } from "#test/matchers/to-be-at-phase";
 import { toEqualUnsorted } from "#test/matchers/to-equal-unsorted";
 import { toHaveAbilityApplied } from "#test/matchers/to-have-ability-applied";
+import { toHaveAppliedItem } from "#test/matchers/to-have-applied-item";
 import { toHaveArenaTag } from "#test/matchers/to-have-arena-tag";
 import { toHaveBattlerTag } from "#test/matchers/to-have-battler-tag";
 import { toHaveEffectiveStat } from "#test/matchers/to-have-effective-stat";
 import { toHaveFainted } from "#test/matchers/to-have-fainted";
 import { toHaveFullHp } from "#test/matchers/to-have-full-hp";
+import { toHaveHeldItem } from "#test/matchers/to-have-held-item";
 import { toHaveHp } from "#test/matchers/to-have-hp";
 import { toHaveKey } from "#test/matchers/to-have-key";
 import { toHavePositionalTag } from "#test/matchers/to-have-positional-tag";
@@ -43,8 +45,10 @@ expect.extend({
   toHaveBattlerTag,
   toHaveAbilityApplied,
   toHaveHp,
+  toHaveAppliedItem,
   toHaveTakenDamage,
   toHaveFullHp,
   toHaveFainted,
   toHaveUsedPP,
+  toHaveHeldItem,
 });

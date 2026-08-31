@@ -6,6 +6,7 @@ import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -13,7 +14,6 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FieryFalloutEncounter } from "#mystery-encounters/fiery-fallout-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -171,16 +171,13 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
 
-      const leadPokemonId = scene.getPlayerParty()?.[0].id;
-      const leadPokemonItems = scene.findModifiers(
-        m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId,
-        true,
-      ) as PokemonHeldItemModifier[];
-      const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
-      expect(item).toBeDefined;
+      const hasAttackBooster = scene
+        .getPlayerParty()[0]
+        .heldItemManager.hasItem(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
+      expect(hasAttackBooster).toBe(true);
     });
   });
 
@@ -260,12 +257,13 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should give attack type boosting item to lead pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runMysteryEncounterToEnd(game, 3);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
 
-      const leadPokemonItems = scene.getPlayerParty()[0].getHeldItems() as PokemonHeldItemModifier[];
-      const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
-      expect(item).toBeDefined;
+      const hasAttackBooster = game.field
+        .getPlayerPokemon()
+        .heldItemManager.hasItem(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
+      expect(hasAttackBooster).toBe(true);
     });
 
     it("should leave encounter without battle", async () => {

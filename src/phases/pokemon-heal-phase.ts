@@ -7,7 +7,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
 import { StatusEffect } from "#enums/status-effect";
-import { HealingBoosterModifier } from "#modifiers/modifier";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { HealAchv } from "#system/achv";
 import { NumberHolder } from "#utils/common";
@@ -78,7 +78,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     if (healOrDamage) {
       const hpRestoreMultiplier = new NumberHolder(1);
       if (!this.revive) {
-        globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
+        globalScene.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
       }
       const healAmount = new NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {

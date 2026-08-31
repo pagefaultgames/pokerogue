@@ -11,18 +11,18 @@ import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { GameData } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
@@ -424,7 +424,7 @@ export abstract class Challenge {
    * @returns Whether this function did anything
    */
   // TODO: why can the item be `null`?
-  applyShopItem(shopItem: ModifierTypeOption | null, isValid: BooleanHolder): boolean {
+  applyShopItem(_shopItem: RewardOption | null, isValid: BooleanHolder): boolean {
     return false;
   }
 
@@ -435,7 +435,7 @@ export abstract class Challenge {
    * @returns Whether this function did anything
    */
   // TODO: why can the item be `null`?
-  applyWaveReward(reward: ModifierTypeOption | null, isValid: BooleanHolder): boolean {
+  applyWaveReward(_reward: RewardOption | null, isValid: BooleanHolder): boolean {
     return false;
   }
 
@@ -617,13 +617,13 @@ export class SingleGenerationChallenge extends Challenge {
           .setBattleType(BattleType.TRAINER)
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
-          .setCustomModifierRewards({
-            guaranteedModifierTiers: [
-              ModifierTier.ROGUE,
-              ModifierTier.ROGUE,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
+          .setCustomRewards({
+            guaranteedRarityTiers: [
+              RarityTier.ROGUE,
+              RarityTier.ROGUE,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });
@@ -634,14 +634,14 @@ export class SingleGenerationChallenge extends Challenge {
           .setBattleType(BattleType.TRAINER)
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
-          .setCustomModifierRewards({
-            guaranteedModifierTiers: [
-              ModifierTier.ROGUE,
-              ModifierTier.ROGUE,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
+          .setCustomRewards({
+            guaranteedRarityTiers: [
+              RarityTier.ROGUE,
+              RarityTier.ROGUE,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });
@@ -1199,12 +1199,12 @@ export class HardcoreChallenge extends Challenge {
     return false;
   }
 
-  override applyShopItem(shopItem: ModifierTypeOption | null, isValid: BooleanHolder): boolean {
+  override applyShopItem(shopItem: RewardOption | null, isValid: BooleanHolder): boolean {
     isValid.value = shopItem?.type.group !== "revive";
     return true;
   }
 
-  override applyWaveReward(reward: ModifierTypeOption | null, isValid: BooleanHolder): boolean {
+  override applyWaveReward(reward: RewardOption | null, isValid: BooleanHolder): boolean {
     return this.applyShopItem(reward, isValid);
   }
 

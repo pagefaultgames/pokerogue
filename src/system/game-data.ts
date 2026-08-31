@@ -28,15 +28,12 @@ import { GameModes } from "#enums/game-modes";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
-import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
 import { VoucherType } from "#enums/voucher-type";
 import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-// biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
-import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { version } from "#package.json";
 import type { Variant } from "#sprites/variant";
@@ -45,7 +42,6 @@ import { ArenaData, type SerializedArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
-import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbon-data";
 import { TrainerData } from "#system/trainer-data";
@@ -67,6 +63,7 @@ import type {
   VoucherUnlocks,
 } from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -761,8 +758,8 @@ export class GameData {
       dailyConfig: getSerializedDailyRunConfig(),
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      trainerItems: globalScene.trainerItems.generateSaveData(),
+      enemyTrainerItems: globalScene.enemyTrainerItems.generateSaveData(),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),
@@ -982,26 +979,11 @@ export class GameData {
 
     // #endregion Arena stuff
 
-    if (globalScene.modifiers.length > 0) {
-      console.warn("Existing modifiers not cleared on session load, deleting...");
-      globalScene.modifiers = [];
-    }
-    for (const modifierData of fromSession.modifiers) {
-      const modifier = modifierData.toModifier(Modifier[modifierData.className]);
-      if (modifier) {
-        globalScene.addModifier(modifier, true);
-      }
-    }
-    globalScene.updateModifiers(true);
+    globalScene.trainerItems.clearItems();
+    globalScene.assignTrainerItemsFromSaveData(fromSession.trainerItems, true);
 
-    for (const enemyModifierData of fromSession.enemyModifiers) {
-      const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
-      if (modifier) {
-        globalScene.addEnemyModifier(modifier, true);
-      }
-    }
-
-    globalScene.updateModifiers(false);
+    globalScene.updateItems(true);
+    globalScene.updateItems(false);
 
     await Promise.all(loadPokemonAssets);
   }
@@ -1126,25 +1108,12 @@ export class GameData {
           rawData[k] = v ? new TrainerData(v) : null;
           continue;
 
-        case "modifiers":
-        case "enemyModifiers": {
-          const ret: PersistentModifierData[] = [];
+        // TODO: Figure out what to do with this
+        case "trainerItems":
+        case "enemyTrainerItems": {
+          const ret: TrainerItemConfiguration = [];
           for (const md of v ?? []) {
-            if (md?.className === "ExpBalanceModifier") {
-              // Temporarily limit EXP Balance until it gets reworked
-              md.stackCount = Math.min(md.stackCount, 4);
-            }
-
-            if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier
-              && (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
-            ) {
-              // Discard any old "sleep/freeze chance tokens".
-              // TODO: make this migrate script
-              continue;
-            }
-
-            ret.push(new PersistentModifierData(md, k === "modifiers"));
+            ret.push(md);
           }
           rawData[k] = ret;
           continue;

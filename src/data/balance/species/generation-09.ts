@@ -1,5 +1,5 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
-import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import {
   SpeciesFormChangeAbilityTrigger,
@@ -12,7 +12,8 @@ import { SpeciesFormChange } from "#data/pokemon-forms";
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { FormChangeItem } from "#enums/form-change-item";
+import { EvolutionItem } from "#enums/evolution-item";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -3752,7 +3753,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         speciesId: SpeciesId.SCOVILLAIN,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SCOVILLAINITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.SCOVILLAINITE),
       }),
     ],
     passives: {
@@ -5473,7 +5474,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         speciesId: SpeciesId.GLIMMORA,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GLIMMORANITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.GLIMMORANITE),
       }),
     ],
     passives: {
@@ -6278,19 +6279,19 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         speciesId: SpeciesId.TATSUGIRI,
         preFormKey: "curly",
         evoFormKey: SpeciesFormKey.MEGA_CURLY,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.TATSUGIRINITE),
       }),
       new SpeciesFormChange({
         speciesId: SpeciesId.TATSUGIRI,
         preFormKey: "droopy",
         evoFormKey: SpeciesFormKey.MEGA_DROOPY,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.TATSUGIRINITE),
       }),
       new SpeciesFormChange({
         speciesId: SpeciesId.TATSUGIRI,
         preFormKey: "stretchy",
         evoFormKey: SpeciesFormKey.MEGA_STRETCHY,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.TATSUGIRINITE),
       }),
     ],
     eggTier: EggTier.RARE,
@@ -8256,7 +8257,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         speciesId: SpeciesId.BAXCALIBUR,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.BAXCALIBRITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.BAXCALIBRITE),
       }),
     ],
     passives: {
@@ -10536,21 +10537,21 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         speciesId: SpeciesId.OGERPON,
         preFormKey: "teal-mask",
         evoFormKey: "wellspring-mask",
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.WELLSPRING_MASK),
         conditions: [],
       }),
       new SpeciesFormChange({
         speciesId: SpeciesId.OGERPON,
         preFormKey: "teal-mask",
         evoFormKey: "hearthflame-mask",
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.HEARTHFLAME_MASK),
         conditions: [],
       }),
       new SpeciesFormChange({
         speciesId: SpeciesId.OGERPON,
         preFormKey: "teal-mask",
         evoFormKey: "cornerstone-mask",
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.CORNERSTONE_MASK),
         conditions: [],
       }),
       new SpeciesFormChange({

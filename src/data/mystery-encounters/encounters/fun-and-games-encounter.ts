@@ -4,10 +4,10 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import { FieldPosition } from "#enums/field-position";
+import { HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -159,7 +159,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no RewardId or exp
       await transitionMysteryEncounterIntroVisuals(true, true);
       leaveEncounterWithoutBattle(true);
       return true;
@@ -270,21 +270,21 @@ function handleNextTurn(): boolean {
     if (healthRatio < 0.03) {
       // Grand prize
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS],
+        guaranteedRewardSpecs: [HeldItemId.MULTI_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:bestResult`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS],
+        guaranteedRewardSpecs: [HeldItemId.SCOPE_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:greatResult`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS],
+        guaranteedRewardSpecs: [HeldItemId.WIDE_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:goodResult`;
@@ -376,7 +376,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
             globalScene.add.existing(pokemon);
             globalScene.field.add(pokemon);
             globalScene.animations.addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
-            globalScene.updateModifiers(true);
+            globalScene.updateItems(true);
             globalScene.updateFieldScale();
             pokemon.showInfo();
             pokemon.playAnim();
