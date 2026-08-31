@@ -87,7 +87,7 @@ describe("Move - Wish", () => {
 
     game.move.use(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH);
@@ -112,7 +112,7 @@ describe("Move - Wish", () => {
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
     // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+    game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);

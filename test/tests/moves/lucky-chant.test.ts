@@ -34,7 +34,6 @@ describe("Moves - Lucky Chant", () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
-    expect(charizard).toBeDefined();
     const critSpy = vi.spyOn(charizard, "getCriticalHitResult"); // called on the defender (ie player)
 
     game.move.select(MoveId.SPLASH);
@@ -56,8 +55,6 @@ describe("Moves - Lucky Chant", () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
-    expect(charizard).toBeDefined();
-
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -76,8 +73,6 @@ describe("Moves - Lucky Chant", () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const charizard = game.field.getPlayerPokemon();
-    expect(charizard).toBeDefined();
-
     game.move.select(MoveId.FOLLOW_ME, BattlerIndex.PLAYER);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");

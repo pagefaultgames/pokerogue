@@ -78,7 +78,7 @@ describe("Ability - Color Change", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     checkTypeChange(false);
@@ -123,7 +123,7 @@ describe("Ability - Color Change", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.DOUBLE_KICK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
     checkTypeChange(false);
     await game.phaseInterceptor.to("MoveEndPhase");

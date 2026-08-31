@@ -37,7 +37,7 @@ describe("Move - Poltergeist", () => {
     game.move.use(MoveId.DAZZLING_GLEAM);
     game.move.use(MoveId.POLTERGEIST, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
     const [_, poltergeistUser] = game.scene.getPlayerField();
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toEndOfTurn();
     // Expect poltergeist to have failed
     expect(poltergeistUser).toHaveUsedMove({ move: MoveId.POLTERGEIST, result: MoveResult.FAIL });
