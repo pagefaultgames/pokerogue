@@ -976,7 +976,6 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
-  heldItemConfig?: HeldItemConfiguration,
 ): PartyMemberFunc {
   return (level: number, strength: PartyMemberStrength, evoThresholdKind: EvoLevelThresholdKind) => {
     let species: SpeciesId | readonly SpeciesId[] | typeof speciesPool = speciesPool;
@@ -996,7 +995,7 @@ export function getRandomPartyMemberFunc(
       trainerSlot,
       undefined,
       false,
-      heldItemConfig,
+      undefined,
       undefined,
       postProcess,
     );
@@ -4752,8 +4751,8 @@ export const trainerConfigs: TrainerConfigs = {
           p.formIndex = 1; // Partner Pikachu
           p.gender = Gender.MALE;
           p.generateAndPopulateMoveset();
+          p.heldItemManager.add(HeldItemId.LIGHT_BALL);
         },
-        [{ entry: HeldItemId.LIGHT_BALL, count: 1 }],
       ),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
@@ -4887,8 +4886,8 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.GIGALITH], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 1; // Sand Stream
         p.generateAndPopulateMoveset();
-      },
-      [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }]),
+        p.heldItemManager.add(HeldItemId.MYSTICAL_ROCK);
+      }),
     )
     .setPartyMemberFunc(
       1,
@@ -4946,8 +4945,8 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 1; // Drizzle
         p.generateAndPopulateMoveset();
-      },
-      [{ entry: HeldItemId.MYSTICAL_ROCK, count: 1 }]),
+        p.heldItemManager.add(HeldItemId.MYSTICAL_ROCK);
+      }),
     )
     .setPartyMemberFunc(
       1,
@@ -4986,9 +4985,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.gender = Gender.FEMALE;
-      },
-      //TODO: only add Toxic Orb if ability is Marvel Scale
-      [{ entry: HeldItemId.TOXIC_ORB, count: 1 }]),
+        p.heldItemManager.add(HeldItemId.TOXIC_ORB);
+      }),
     )
     .setInstantTera(5), // Tera Water Milotic
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
@@ -5511,9 +5509,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.DRAGONITE, SpeciesId.GLISCOR], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 2; // Multiscale Dragonite, Poison Heal Gliscor
         p.generateAndPopulateMoveset();
-      },
-      //TODO: Only add TOXIC_ORB to Gliscor
-      [{ entry: HeldItemId.TOXIC_ORB, count: 1 }]),
+        if (p.hasSpecies(SpeciesId.GLISCOR)) {
+          p.heldItemManager.add(HeldItemId.TOXIC_ORB);
+        }
+      }),
     )
     .setPartyMemberFunc(
       3,
@@ -6393,9 +6392,10 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = p.species.speciesId === SpeciesId.FLYGON ? 0 : 2; // Levitate Flygon, Poison Heal Gliscor
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
-      },
-      //TODO: Only add Toxic Orb to Gliscor
-      [{ entry: HeldItemId.TOXIC_ORB, count: 1 }]),
+        if (p.hasSpecies(SpeciesId.GLISCOR)) {
+          p.heldItemManager.add(HeldItemId.TOXIC_ORB);
+        }
+      }),
     )
     .setPartyMemberFunc(
       5,
