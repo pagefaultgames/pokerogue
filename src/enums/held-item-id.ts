@@ -1,4 +1,4 @@
-import type { ObjectValues } from "#types/type-helpers";
+import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 import type { TrainerItemId } from "./trainer-item-id";
 
@@ -98,7 +98,7 @@ export const HeldItemId = {
   ...FormChangeItemId,
 } as const;
 
-export type HeldItemId = ObjectValues<typeof HeldItemId>;
+export type HeldItemId = ValueOf<typeof HeldItemId>;
 
 type HeldItemNameMap = {
   [k in HeldItemName as (typeof HeldItemId)[k]]: k;
@@ -136,7 +136,7 @@ export const HeldItemCategoryId = {
   FORM_CHANGE: 0x0c00,
 } as const;
 
-export type HeldItemCategoryId = ObjectValues<typeof HeldItemCategoryId>;
+export type HeldItemCategoryId = ValueOf<typeof HeldItemCategoryId>;
 
 const ITEM_CATEGORY_MASK = 0xff00;
 
