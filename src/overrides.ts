@@ -27,9 +27,9 @@ import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { Variant } from "#sprites/variant";
 import type { CustomDailyRunConfig } from "#types/daily-run";
-import { HeldItemConfiguration } from "#types/held-item-data-types";
-import { RewardSpecs } from "#types/rewards";
-import { TrainerItemConfiguration } from "#types/trainer-item-data-types";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { RewardSpecs } from "#types/rewards";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**

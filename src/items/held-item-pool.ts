@@ -10,19 +10,17 @@ import type { BerryItemId } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
-import {
-  type HeldItemConfiguration,
-  type HeldItemPool,
-  type HeldItemSaveData,
-  type HeldItemSpecs,
-  type HeldItemTieredPool,
-  type HeldItemWeights,
-  isHeldItemCategoryEntry,
-  isHeldItemPool,
-  isHeldItemSpecs,
+import type {
+  HeldItemConfiguration,
+  HeldItemPool,
+  HeldItemSaveData,
+  HeldItemSpecs,
+  HeldItemTieredPool,
+  HeldItemWeights,
 } from "#types/held-item-data-types";
 import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { isHeldItemCategoryEntry, isHeldItemPool, isHeldItemSpecs } from "#utils/item-utils";
 
 export const wildHeldItemPool: HeldItemTieredPool = {};
 

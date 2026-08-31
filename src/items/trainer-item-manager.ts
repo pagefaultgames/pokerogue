@@ -1,7 +1,8 @@
 import { allTrainerItems } from "#data/data-lists";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { ItemManager } from "#items/item-manager";
-import { isTrainerItemSpecs, type TrainerItemData, type TrainerItemSpecs } from "#types/trainer-item-data-types";
+import type { TrainerItemData, TrainerItemSpecs } from "#types/trainer-item-data-types";
+import { isTrainerItemSpecs } from "#utils/item-utils";
 
 // TODO: Remove unused methods
 export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemData> {
@@ -23,9 +24,7 @@ export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemDa
     return currentItems.filter(it => !exclude && requestedItems.some(entry => it === entry));
   }
 
-  /**
-   * Decrease the durations of all duration-based trainer items on turn end.
-   */
+  /** Decrease the durations of all duration-based trainer items on turn end. */
   // TODO: We should avoid reusing the nebulous "lapse" terminology and name this something like "decreaseDurations"/etc.
   public lapseItems(): void {
     for (const item of this.items.keys()) {
@@ -35,5 +34,5 @@ export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemDa
     }
   }
 
-  // #endregion
+  // #endregion TrainerItem-specific methods
 }

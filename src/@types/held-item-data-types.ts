@@ -1,4 +1,4 @@
-import { type HeldItemCategoryId, type HeldItemId, HeldItemNames } from "#enums/held-item-id";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
@@ -33,33 +33,15 @@ export interface HeldItemSpecs extends HeldItemData {
   id: HeldItemId;
 }
 
-// TODO: Move these getters with the rest of the item getters in a nice big file
-export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
-  if (typeof entry !== "object" || entry === null) {
-    return false;
-  }
-  return (
-    typeof (entry as HeldItemSpecs).id === "number"
-    && typeof (entry as HeldItemSpecs).stack === "number"
-    && (entry as HeldItemSpecs).id in HeldItemNames
-  );
-}
-
 // TODO: Make this generic on a subset of `HeldItemId`
 export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
 
 // TODO: Inline this into the sole place it is used
 export type HeldItemWeightFunc = (party: Pokemon[]) => number;
 
-interface HeldItemCategoryEntry extends HeldItemData {
+export interface HeldItemCategoryEntry extends HeldItemData {
   id: HeldItemCategoryId;
   customWeights?: HeldItemWeights;
-}
-
-// TODO: These predicate functions should use `unknown` instead of `any`, and should be reviewed to
-// avoid misclassifying types
-export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEntry {
-  return entry?.id && isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
 }
 
 interface HeldItemPoolEntry {
@@ -68,10 +50,6 @@ interface HeldItemPoolEntry {
 }
 
 export type HeldItemPool = HeldItemPoolEntry[];
-
-export function isHeldItemPool(value: any): value is HeldItemPool {
-  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
-}
 
 export type HeldItemTieredPool = Partial<Record<RarityTier, HeldItemPool>>;
 
