@@ -42,8 +42,6 @@ describe("Moves - Last Resort", () => {
     await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     const blissey = game.field.getPlayerPokemon();
-    expect(blissey).toBeDefined();
-
     // Last resort by itself
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");

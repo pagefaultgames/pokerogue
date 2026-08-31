@@ -79,8 +79,6 @@ describe("Abilities - Harvest", () => {
     await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     const milotic = game.field.getPlayerPokemon();
-    expect(milotic).toBeDefined();
-
     // Chug a few berries without harvest (should get tracked)
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.NUZZLE);
