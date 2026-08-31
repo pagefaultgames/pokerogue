@@ -12,7 +12,7 @@ export class NatureWeightBoosterHeldItemAttr extends HeldItemAttr<typeof HeldIte
 
   public override apply({ pokemon, multiplier }: NatureWeightBoostParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    multiplier.value += 0.1 * stackCount * Math.sign(multiplier.value);
+    multiplier.value += 0.1 * stackCount * Math.sign(multiplier.value - 1);
     return true;
   }
 }

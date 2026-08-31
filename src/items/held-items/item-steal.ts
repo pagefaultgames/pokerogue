@@ -6,7 +6,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { ItemStealParams } from "#types/held-item-parameter";
-import { coerceArray, randSeedFloat } from "#utils/common";
+import { coerceArray } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -107,13 +107,11 @@ export class ContactItemStealChanceHeldItemAttr extends ItemTransferHeldItemAttr
 > {
   public override readonly effect = HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE;
   public readonly chancePercent: number;
-  public readonly chance: number;
 
   constructor(chancePercent: number) {
     super();
 
     this.chancePercent = chancePercent;
-    this.chance = chancePercent / 100;
   }
 
   /**
@@ -128,7 +126,7 @@ export class ContactItemStealChanceHeldItemAttr extends ItemTransferHeldItemAttr
 
   protected override getTransferredItemCount({ pokemon }: ItemStealParams): number {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    return randSeedFloat() <= this.chance * stackCount ? 1 : 0;
+    return pokemon.randBattleSeedInt(100) < stackCount * this.chancePercent ? 1 : 0;
   }
 
   protected override getTransferMessage({ pokemon, target }: ItemStealParams, itemId: HeldItemId): string {

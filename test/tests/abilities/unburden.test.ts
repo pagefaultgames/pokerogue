@@ -169,8 +169,11 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when an item is stolen via grip claw", async () => {
-    game.override.startingHeldItems([{ entry: HeldItemId.GRIP_CLAW, count: 10 }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.GRIP_CLAW, count: 5 }]);
     await game.classicMode.startBattle(SpeciesId.TREECKO);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    vi.spyOn(playerPokemon, "randBattleSeedInt").mockReturnValue(0);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
