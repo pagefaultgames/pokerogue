@@ -8,7 +8,7 @@
     "target": "ES2022",
     "module": "ES2022",
     // Modifying this option requires all values to be set manually because the defaults get overridden
-    // Values other than "ES2024.Promise" taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2023.full.d.ts
+    // ES2022 stdlibs taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2022.full.d.ts
     "lib": [
       // ES2022 stdlibs
       "ES2022",
@@ -32,6 +32,7 @@
     "esModuleInterop": true,
     "sourceMap": false,
     "allowJs": false,
+    "allowImportingTsExtensions": true, // needed for Vite
     "strict": false, // TODO: Enable this eventually
     "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
@@ -53,13 +54,14 @@
     // (This also means we cannot use `composite` or project references in any capacity.)
     // See: https://github.com/microsoft/TypeScript/issues/17744
     "noEmit": true,
-    // Note: make sure more specific paths appear before less specific paths
+    //! Note: make sure more specific paths appear before less specific paths
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
+      "#ai/*": ["./src/ai/*.ts"],
       "#api/*": ["./src/api/*.ts"],
       "#audio/*": ["./src/audio/*.ts"],
       "#biomes/*": ["./src/data/balance/biomes/*.ts"],
-      "#balance/*": ["./src/data/balance/species/*.ts", "./src/data/balance/*.ts"],
+      "#balance/*": ["./src/data/balance/species/*.ts", "./src/data/balance/moves/*.ts", "./src/data/balance/*.ts"],
       "#constants/*": ["./src/constants/*.ts"],
       "#enums/*": ["./src/enums/*.ts"],
       "#events/*": ["./src/events/*.ts"],
@@ -77,8 +79,10 @@
       "#package.json": ["./package.json"],
       "#phases/*": ["./src/phases/*.ts"],
       "#plugins/*": ["./plugins/phaser/*.ts"],
+      "#queues/*": ["./src/queues/*.ts"],
       "#sprites/*": ["./src/sprites/*.ts"],
       "#system/*": [
+        "./src/system/ribbons/*.ts",
         "./src/system/settings/*.ts",
         "./src/system/version-migration/versions/*.ts",
         "./src/system/version-migration/*.ts",
@@ -95,11 +99,16 @@
         "./src/ui/*.ts"
       ],
       "#utils/*": ["./src/utils/*.ts"],
-      "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
+      "#data/*": [
+        "./src/data/daily-seed/*.ts",
+        "./src/data/pokemon-forms/*.ts",
+        "./src/data/pokemon/*.ts",
+        "./src/data/*.ts"
+      ],
 
       // these must always be last
       "#test/*": ["./test/*.ts"],
-      "#app/*": ["./src/*.ts"]
+      "#app/*": ["./src/globals/*.ts", "./src/*.ts"]
     }
   },
   // We cannot use a blanket "**/*.ts" include here excluding `scripts` because it would bar us from checking any boilerplate files,

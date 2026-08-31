@@ -40,6 +40,10 @@ export class TrainerPartyTemplate {
     return this.strength;
   }
 
+  getEvoThresholdKind(_index: number): Exclude<EvoLevelThresholdKind, typeof EvoLevelThresholdKind.WILD> {
+    return this.evoLevelThresholdKind;
+  }
+
   isSameSpecies(_index: number): boolean {
     return this.sameSpecies;
   }
@@ -73,6 +77,18 @@ export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
     }
 
     return super.getStrength(index);
+  }
+
+  getEvoThresholdKind(index: number): Exclude<EvoLevelThresholdKind, typeof EvoLevelThresholdKind.WILD> {
+    let t = 0;
+    for (const template of this.templates) {
+      if (t + template.size > index) {
+        return template.getEvoThresholdKind(index - t);
+      }
+      t += template.size;
+    }
+
+    return super.getEvoThresholdKind(index);
   }
 
   isSameSpecies(index: number): boolean {

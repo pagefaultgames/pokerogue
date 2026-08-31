@@ -33,7 +33,7 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy1 = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.GIGATON_HAMMER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
@@ -56,7 +56,7 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy1 = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.GIGATON_HAMMER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());

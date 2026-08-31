@@ -1,6 +1,10 @@
 name: Species Data Exporter
 
 on:
+  pull_request:
+    branches:
+      - main
+      - beta
   push:
     branches:
       - main
@@ -34,6 +38,7 @@ jobs:
         run: pnpm species-data:export --json --no-clean ${{ runner.debug == '1' && '--debug' || '' }}
 
       - name: Checkout or create output branch
+        if: github.event_name == 'push'
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -46,6 +51,7 @@ jobs:
           fi
 
       - name: Copy output files
+        if: github.event_name == 'push'
         run: |
           rm -rf ${BRANCH}/csv ${BRANCH}/json
           mkdir -p ${BRANCH}/csv
@@ -54,6 +60,7 @@ jobs:
           cp -r species-output/*.json ${BRANCH}/json/
 
       - name: Commit and push changes
+        if: github.event_name == 'push'
         run: |
           git add ${BRANCH}/csv/*.csv
           git add ${BRANCH}/json/*.json
@@ -64,5 +71,7 @@ jobs:
             git push origin "$OUTPUT_BRANCH"
           fi
 
-      - name: Checkout original branch # Have to switch back, so the post actions/setup-deps action doesn't fail due to missing files
+      # Have to switch back, so the post actions/setup-deps action doesn't fail due to missing files
+      - name: Checkout original branch
+        if: github.event_name == 'push'
         run: git checkout ${{ github.ref_name }}
