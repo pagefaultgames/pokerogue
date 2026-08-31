@@ -136,7 +136,7 @@ describe("Moves - Roost", () => {
 
     game.move.use(MoveId.ROOST);
     await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase"); // Trick or treat
 
     expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
@@ -162,7 +162,7 @@ describe("Moves - Roost", () => {
 
     game.move.use(MoveId.ROOST);
     await game.move.forceEnemyMove(move);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn(false);
 
     expect(player).toHaveTypes([PokemonType.NORMAL, type]);

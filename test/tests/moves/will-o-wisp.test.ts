@@ -35,7 +35,7 @@ describe("Moves - Will-O-Wisp", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WILL_O_WISP);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
 

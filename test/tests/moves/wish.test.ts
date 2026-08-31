@@ -87,7 +87,7 @@ describe("Move - Wish", () => {
 
     game.move.use(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH);

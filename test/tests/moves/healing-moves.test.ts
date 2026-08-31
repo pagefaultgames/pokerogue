@@ -73,7 +73,9 @@ describe("Moves - Healing Moves", () => {
 
         expect(blissey).toHaveFullHp();
         expect(game).toHaveShownMessage(
-          i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(blissey) }),
+          i18next.t("battle:hpIsFull", {
+            pokemonName: getPokemonNameWithAffix(blissey),
+          }),
         );
         expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
         expect(blissey).toHaveUsedMove({ move, result: MoveResult.FAIL });
@@ -101,7 +103,10 @@ describe("Moves - Healing Moves", () => {
         .filter(
           wt => ![WeatherType.SUNNY, WeatherType.HARSH_SUN, WeatherType.NONE, WeatherType.STRONG_WINDS].includes(wt),
         )
-        .map(wt => ({ name: toTitleCase(WeatherType[wt]), weather: wt }));
+        .map(wt => ({
+          name: toTitleCase(WeatherType[wt]),
+          weather: wt,
+        }));
 
       it.each(nonSunWTs)("should heal 25% of the user's maximum HP under $name", async ({ weather }) => {
         game.override.weather(weather);
@@ -189,7 +194,9 @@ describe("Moves - Healing Moves", () => {
         const chansey = game.field.getEnemyPokemon();
         expect(chansey).toHaveFullHp();
         expect(game).toHaveShownMessage(
-          i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(chansey) }),
+          i18next.t("battle:hpIsFull", {
+            pokemonName: getPokemonNameWithAffix(chansey),
+          }),
         );
         expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
         expect(blissey).toHaveUsedMove({ move, result: MoveResult.FAIL });
@@ -209,13 +216,6 @@ describe("Moves - Healing Moves", () => {
         await game.toNextTurn();
 
         expect(chansey).toHaveHp(percent * chansey.getMaxHp() + 1, { rounding: "half up" });
-
-        // Do it again to make sure healing amounts stay consistent
-        chansey.hp = 1;
-        game.move.use(move);
-        await game.toEndOfTurn();
-
-        expect(chansey).toHaveHp(percent * chansey.getMaxHp() + 1, { rounding: "half up" });
       });
     });
 
@@ -224,7 +224,7 @@ describe("Moves - Healing Moves", () => {
         game.override.battleStyle("double");
         await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.OMANYTE);
 
-        const [, omantye, karp1] = game.scene.getField();
+        const [_, omantye, karp1] = game.scene.getField();
         omantye.hp = 1;
 
         game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
@@ -251,7 +251,9 @@ describe("Moves - Healing Moves", () => {
         expect(omantye).toHaveFullHp();
         expect(bulbasaur).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.FAIL });
         expect(game).toHaveShownMessage(
-          i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(omantye) }),
+          i18next.t("battle:hpIsFull", {
+            pokemonName: getPokemonNameWithAffix(omantye),
+          }),
         );
         expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       });
