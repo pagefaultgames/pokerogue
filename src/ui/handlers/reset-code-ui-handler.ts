@@ -3,23 +3,25 @@ import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
-import { addTextObject } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import i18next from "i18next";
 
 export class ResetCodeUiHandler extends ModalUiHandler {
   private resetCodeText: Phaser.GameObjects.Text;
+  private resetCodeDescriptionText: Phaser.GameObjects.Text;
+  private resetCodeWarningText: Phaser.GameObjects.Text;
   private isCodeVisible = false;
 
   public override getModalTitle(): string {
-    return "Reset Code";
+    return i18next.t("menu:resetCode", { username: loggedInUser?.username ?? "" });
   }
 
   public override getWidth(): number {
-    return 160;
+    return 224;
   }
 
   public override getHeight(): number {
-    return 64;
+    return 80;
   }
 
   public override getMargin(): [number, number, number, number] {
@@ -33,8 +35,25 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   public override setup(): void {
     super.setup();
 
-    this.resetCodeText = addTextObject(this.getWidth() / 2, 30, "", TextStyle.WINDOW).setOrigin(0.5, 0.5);
-    this.modalContainer.add(this.resetCodeText);
+    this.resetCodeText = addTextObject(this.getWidth() / 2, 30, "", TextStyle.WINDOW).setOrigin(0.5, 0);
+    this.resetCodeDescriptionText = addTextObject(
+      this.getWidth() / 2,
+      20,
+      i18next.t("menu:resetCodeDescription"),
+      TextStyle.WINDOW,
+      { fontSize: "48px" },
+    ).setOrigin(0.5, 0);
+    this.resetCodeWarningText = addTextObject(
+      this.getWidth() / 2,
+      46,
+      i18next.t("menu:resetCodeWarning"),
+      TextStyle.WINDOW,
+      { fontSize: "48px" },
+    )
+      .setOrigin(0.5, 0)
+      .setColor(getTextColor(TextStyle.PARTY_RED));
+
+    this.modalContainer.add([this.resetCodeText, this.resetCodeDescriptionText, this.resetCodeWarningText]);
   }
 
   public override show(): boolean {

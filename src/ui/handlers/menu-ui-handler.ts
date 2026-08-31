@@ -346,7 +346,7 @@ export class MenuUiHandler extends OptionSelectUiHandler {
           ui.setOverlayMode(UiMode.RESET_CODE);
           return true;
         },
-        keepOpen: false,
+        keepOpen: true,
       });
     }
     if (isBeta || isDev) {
