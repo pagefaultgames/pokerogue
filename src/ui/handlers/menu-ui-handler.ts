@@ -354,7 +354,7 @@ export class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(UiMode.RESET_CODE);
           return true;
         },
-        keepOpen: false,
+        keepOpen: true,
       });
     }
     if (isBeta || isDev) {
