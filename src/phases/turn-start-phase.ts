@@ -9,7 +9,7 @@ import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class TurnStartPhase extends FieldPhase {

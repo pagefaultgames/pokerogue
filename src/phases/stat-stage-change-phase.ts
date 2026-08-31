@@ -17,7 +17,7 @@ import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change
 import type { Mutable } from "#types/type-helpers";
 import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 

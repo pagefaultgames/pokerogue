@@ -210,7 +210,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       female: true,
     });
 
-    const requiredItemString = REQUIRED_ITEMS.map(m => allHeldItems[m].name ?? "unknown").join("/");
+    const requiredItemString = REQUIRED_ITEMS.map(m => allHeldItems[m].name).join("/");
     encounter.setDialogueToken("requiredBugItems", requiredItemString);
 
     return true;

@@ -1,4 +1,4 @@
-import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
@@ -33,34 +33,15 @@ export interface HeldItemSpecs extends HeldItemData {
   id: HeldItemId;
 }
 
-// TODO: Move these to anywhere but `@types`
-export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
-  if (typeof entry !== "object" || entry === null) {
-    return false;
-  }
-
-  return (
-    typeof (entry as HeldItemSpecs).id === "number"
-    && typeof (entry as HeldItemSpecs).stack === "number"
-    && HeldItemId[(entry as HeldItemSpecs).id] != null
-  );
-}
-
 // TODO: Make this generic on a subset of `HeldItemId`
 export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
 
 // TODO: Inline this into the sole place it is used
 export type HeldItemWeightFunc = (party: Pokemon[]) => number;
 
-interface HeldItemCategoryEntry extends HeldItemData {
+export interface HeldItemCategoryEntry extends HeldItemData {
   id: HeldItemCategoryId;
   customWeights?: HeldItemWeights;
-}
-
-// TODO: These predicate functions should use `unknown` instead of `any`, and should be reviewed to
-// avoid misclassifying types
-export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEntry {
-  return entry?.id && isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
 }
 
 // TODO: This can include itself through held item pool
@@ -70,10 +51,6 @@ interface HeldItemPoolEntry {
 }
 
 export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
-
-export function isHeldItemPool(value: any): value is HeldItemPool {
-  return Array.isArray(value) && value.length > 0 && value.every(entry => "entry" in entry && "weight" in entry);
-}
 
 // TODO: Since this can contain a `HeldItemSpecs`, this has the potential to have 2 different "count" statistics
 // (which is useless and redundant).

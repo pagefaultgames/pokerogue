@@ -108,15 +108,10 @@ import type {
   NewBattleSavedProps,
 } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
-import {
-  isTrainerItemPool,
-  isTrainerItemSpecs,
-  type TrainerItemConfiguration,
-  type TrainerItemSaveData,
-} from "#types/trainer-item-data-types";
+import type { VolumeSettingsKey } from "#types/settings";
+import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import type { Exact } from "#types/type-helpers";
-import type { VolumeSettingsKey } from "#types/settings";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -145,7 +140,7 @@ import {
 import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems, isTrainerItemPool, isTrainerItemSpecs } from "#utils/item-utils";
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";

@@ -113,7 +113,6 @@
 
       // these must always be last
       "#test/*": ["./test/*.ts"],
-      "#test/test-utils/*": ["./test/test-utils/utils/*.ts", "./test/test-utils/*.ts"],
       "#app/*": ["./src/globals/*.ts", "./src/*.ts"]
     }
   },

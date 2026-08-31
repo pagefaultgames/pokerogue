@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { settings } from "#app/global-settings-manager";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";

@@ -56,11 +56,13 @@ export class MoveUsedEvent extends Event {
 }
 /** Container class for {@linkcode BattleSceneEventType.BERRY_USED} events */
 export class BerryUsedEvent extends Event {
-  /** The {@linkcode BerryType} being used */
   public pokemon: Pokemon;
+  /** The {@linkcode BerryType} being used */
   public berryType: BerryType;
+
   constructor(pokemon: Pokemon, berryType: BerryType) {
     super(BattleSceneEventType.BERRY_USED);
+
     this.pokemon = pokemon;
     this.berryType = berryType;
   }

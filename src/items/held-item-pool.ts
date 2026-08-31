@@ -9,18 +9,16 @@ import type { BerryItemId } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
-import {
-  type HeldItemConfiguration,
-  type HeldItemPool,
-  type HeldItemSaveData,
-  type HeldItemSpecs,
-  type HeldItemWeights,
-  isHeldItemCategoryEntry,
-  isHeldItemPool,
-  isHeldItemSpecs,
+import type {
+  HeldItemConfiguration,
+  HeldItemPool,
+  HeldItemSaveData,
+  HeldItemSpecs,
+  HeldItemWeights,
 } from "#types/held-item-data-types";
 import type { Mutable } from "#types/type-helpers";
 import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { isHeldItemCategoryEntry, isHeldItemPool, isHeldItemSpecs } from "#utils/item-utils";
 import type { NonEmptyTuple } from "type-fest";
 
 /**

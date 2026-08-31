@@ -52,7 +52,7 @@ import type { TypedEventTarget } from "#types/typed-event-target";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import type { NonEmptyTuple } from "type-fest";

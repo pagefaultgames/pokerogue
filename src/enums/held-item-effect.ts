@@ -1,8 +1,6 @@
-import type { ObjectValues } from "#types/type-helpers";
+import type { ValueOf } from "type-fest";
 
-/**
- * Enum representing the various "categories" of item effects that can be applied.
- */
+/** Enum representing the various "categories" of item effects that can be applied. */
 export const HeldItemEffect = {
   ATTACK_TYPE_BOOST: 1,
   TURN_END_HEAL: 2,
@@ -34,11 +32,9 @@ export const HeldItemEffect = {
   MACHO_BRACE: 51,
 } as const;
 
-export type HeldItemEffect = ObjectValues<typeof HeldItemEffect>;
+export type HeldItemEffect = ValueOf<typeof HeldItemEffect>;
 
-/**
- * Type matching held item effects to their names.
- */
+/** Type matching held item effects to their names. */
 export type HeldItemEffectNames = {
   [k in keyof typeof HeldItemEffect as (typeof HeldItemEffect)[k]]: k;
 };
