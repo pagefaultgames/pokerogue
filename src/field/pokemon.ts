@@ -3312,10 +3312,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether the specified Pokémon is an opponent
    * @param target - The {@linkcode Pokemon} to compare against
-   * @returns `true` if the two pokemon are opponents, `false` otherwise
+   * @returns Whether the 2 Pokemon belong to different parties
    */
   public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();
+  }
+
+  /**
+   * Check whether the specified Pokémon is an ally
+   * @param target - The {@linkcode Pokemon} to compare against
+   * @returns Whether the 2 Pokemon are on the same party
+   */
+  public isAlly(target: Pokemon): boolean {
+    return this.isPlayer() === target.isPlayer();
   }
 
   getOpponent(targetIndex: number): Pokemon | null {
@@ -4085,24 +4094,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * @param formKey - (Default `this.getFormKey()`) The form key to check
    * @returns Whether this Pokémon is in a Dynamax or Gigantamax form
    */
-  public isMax(): boolean {
+  public isMax(formKey: string = this.getFormKey()): boolean {
     const maxForms = [
       SpeciesFormKey.GIGANTAMAX,
       SpeciesFormKey.GIGANTAMAX_RAPID,
       SpeciesFormKey.GIGANTAMAX_SINGLE,
       SpeciesFormKey.ETERNAMAX,
     ] as string[];
-    return (
-      maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!))
-    );
+    return maxForms.includes(formKey) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
   }
 
   /**
+   * @param formKey - (Default `this.getFormKey()`) The form key to check
    * @returns Whether this Pokémon is in a Mega or Primal form
    */
-  public isMega(): boolean {
+  public isMega(formKey: string = this.getFormKey()): boolean {
     const megaForms = [
       SpeciesFormKey.MEGA,
       SpeciesFormKey.MEGA_X,
@@ -4114,10 +4123,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       SpeciesFormKey.MEGA_STRETCHY,
       SpeciesFormKey.PRIMAL,
     ] as string[];
-    return (
-      megaForms.includes(this.getFormKey())
-      || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!))
-    );
+    return megaForms.includes(formKey) || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!));
   }
 
   /**
@@ -4566,6 +4572,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       );
       this.abilityIndex = abilityCount - 1;
     }
+
+    this.resetTeraOnMajorFormChange();
 
     globalScene.gameData.setPokemonSeen(this, false);
     this.setScale(this.getSpriteScale());
@@ -5310,6 +5318,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * End this Pokémon's Terastallization if it is (or is about to be) in a Mega, Primal,
+   * Gigantamax, or Eternamax form, as these forms are incompatible with Terastallization.
+   *
+   * @param formKey - The form key to check; default this Pokémon's current form key.
+   * Pass the *incoming* form's key to end Terastallization before the form change is applied.
+   *
+   * @remarks
+   * When called without a form key, this must run *after* {@linkcode formIndex} has been updated
+   * so that {@linkcode isMega} and {@linkcode isMax} reflect the new form.
+   */
+  public resetTeraOnMajorFormChange(formKey?: string): void {
+    if (this.isTerastallized && (this.isMega(formKey) || this.isMax(formKey))) {
+      this.resetTera();
+    }
+  }
+
+  /**
    * Clear this Pokémon's transient turn data
    */
   resetTurnData(): void {
@@ -5906,7 +5931,7 @@ export class PlayerPokemon extends Pokemon {
     super(106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
     if (activeOverrides.STATUS_OVERRIDE) {
-      this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4);
+      this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4, 4);
     }
 
     if (activeOverrides.SHINY_OVERRIDE) {
@@ -6286,6 +6311,8 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       }
 
+      this.resetTeraOnMajorFormChange();
+
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
@@ -6467,7 +6494,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (activeOverrides.ENEMY_STATUS_OVERRIDE) {
-      this.status = new Status(activeOverrides.ENEMY_STATUS_OVERRIDE, 0, 4);
+      this.status = new Status(activeOverrides.ENEMY_STATUS_OVERRIDE, 0, 4, 4);
     }
 
     if (activeOverrides.ENEMY_GENDER_OVERRIDE !== null) {
