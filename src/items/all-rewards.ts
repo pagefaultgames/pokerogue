@@ -2,7 +2,7 @@ import { PokeballType } from "#enums/pokeball";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { VoucherType } from "#system/voucher";
+import { VoucherType } from "#enums/voucher-type";
 import { EmptyReward, type Reward, type RewardGenerator } from "./reward";
 import { EvolutionItemRewardGenerator } from "./rewards/evolution-item";
 import { FormChangeItemRewardGenerator } from "./rewards/form-change";

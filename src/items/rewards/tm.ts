@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { tmPoolTiers } from "#balance/tm-pool-tiers";
+import { settings } from "#app/global-settings-manager";
+import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allMoves } from "#data/data-lists";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
@@ -8,7 +9,7 @@ import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { padInt, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {
@@ -32,13 +33,13 @@ export class TmReward extends PokemonReward {
 
   get name(): string {
     return i18next.t("reward:tm.name", {
-      moveId: padInt(Object.keys(tmPoolTiers).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: getTmNumber(this.moveId),
       moveName: allMoves[this.moveId].name,
     });
   }
 
   get description(): string {
-    return i18next.t(globalScene.enableMoveInfo ? "reward:tmWithInfo.description" : "reward:tm.description", {
+    return i18next.t(settings.display.enableMoveInfo ? "reward:tmWithInfo.description" : "reward:tm.description", {
       moveName: allMoves[this.moveId].name,
     });
   }
@@ -73,11 +74,11 @@ export class TmRewardGenerator extends RewardGenerator {
     }
 
     const party = globalScene.getPlayerParty();
-    const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true));
+    const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
     const tierUniqueCompatibleTms = partyMemberCompatibleTms
       .flat()
       .filter(tm => tmPoolTiers[tm] === this.tier)
-      .filter(tm => !allMoves[tm].name.endsWith(" (N)"))
+      .filter(tm => !allMoves[tm].isUnimplemented)
       .filter((tm, i, array) => array.indexOf(tm) === i);
     if (tierUniqueCompatibleTms.length === 0) {
       return null;

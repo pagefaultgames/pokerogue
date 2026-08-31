@@ -8,7 +8,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig, SaveSlotSelectCallback } from "#types/ui-types";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -23,8 +23,6 @@ export enum SaveSlotUiMode {
   LOAD,
   SAVE,
 }
-
-export type SaveSlotSelectCallback = (cursor: number) => void;
 
 export class SaveSlotSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectContainer: Phaser.GameObjects.Container;

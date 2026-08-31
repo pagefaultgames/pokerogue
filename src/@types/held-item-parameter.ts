@@ -1,4 +1,4 @@
-import { HeldItemEffect } from "#enums/held-item-effect";
+import type { HeldItemEffect } from "#enums/held-item-effect";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { Stat } from "#enums/stat";

@@ -5,12 +5,6 @@ import type { Move } from "#moves/move";
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {
   /**
-   * Triggers when the corresponding setting is changed
-   * @see {@linkcode CandyUpgradeNotificationChangedEvent}
-   */
-  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
-
-  /**
    * Triggers when a move is successfully used
    * @see {@linkcode MoveUsedEvent}
    */
@@ -44,17 +38,6 @@ export enum BattleSceneEventType {
   NEW_ARENA = "onNewArena",
 }
 
-/** Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events */
-export class CandyUpgradeNotificationChangedEvent extends Event {
-  /** The new value the setting was changed to */
-  public newValue: number;
-  constructor(newValue: number) {
-    super(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED);
-
-    this.newValue = newValue;
-  }
-}
-
 /** Container class for {@linkcode BattleSceneEventType.MOVE_USED} events */
 export class MoveUsedEvent extends Event {
   /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
@@ -73,11 +56,13 @@ export class MoveUsedEvent extends Event {
 }
 /** Container class for {@linkcode BattleSceneEventType.BERRY_USED} events */
 export class BerryUsedEvent extends Event {
-  /** The {@linkcode BerryType} being used */
   public pokemon: Pokemon;
+  /** The {@linkcode BerryType} being used */
   public berryType: BerryType;
+
   constructor(pokemon: Pokemon, berryType: BerryType) {
     super(BattleSceneEventType.BERRY_USED);
+
     this.pokemon = pokemon;
     this.berryType = berryType;
   }

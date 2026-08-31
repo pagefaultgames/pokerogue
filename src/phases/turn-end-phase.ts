@@ -9,7 +9,7 @@ import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { FieldPhase } from "#phases/field-phase";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {

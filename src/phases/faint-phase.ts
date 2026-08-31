@@ -18,7 +18,7 @@ import { SwitchType } from "#enums/switch-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";

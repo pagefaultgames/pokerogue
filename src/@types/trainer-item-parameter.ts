@@ -1,4 +1,4 @@
-import { TrainerItemEffect } from "#enums/trainer-item-effect";
+import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { Pokemon } from "#field/pokemon";
 import type { BooleanHolder, NumberHolder } from "#utils/common";
 

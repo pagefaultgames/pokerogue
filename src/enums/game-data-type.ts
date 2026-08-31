@@ -8,4 +8,5 @@ export enum GameDataType {
   TUTORIALS,
   SEEN_DIALOGUES,
   RUN_HISTORY,
+  MAPPING_CONFIG,
 }

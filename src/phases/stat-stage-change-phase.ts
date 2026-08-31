@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { OctolockTag } from "#data/battler-tags";
@@ -16,7 +17,7 @@ import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change
 import type { Mutable } from "#types/type-helpers";
 import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
@@ -45,10 +46,15 @@ export class StatStageChangePhase extends PokemonPhase {
     this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
   }
 
+  // @ts-expect-error: TODO: the return type of `PokemonPhase#getPokemon` is wrong
+  public override getPokemon(): Pokemon | undefined {
+    return super.getPokemon();
+  }
+
   public override start(): void {
     const pokemon = this.getPokemon();
 
-    if (!pokemon.isActive(true)) {
+    if (!pokemon?.isActive(true)) {
       this.end();
       return;
     }
@@ -68,7 +74,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const applied = this.getAppliedChanges(pokemon);
     this.options.onChange?.(pokemon, applied);
 
-    if (applied.some(c => c.stages !== 0) && globalScene.moveAnimations) {
+    if (applied.some(c => c.stages !== 0) && settings.display.enableMoveAnimations) {
       this.playStatChangeAnimation(pokemon).then(() => this.applyStatChangesAndEnd(pokemon, applied));
     } else {
       this.applyStatChangesAndEnd(pokemon, applied);
@@ -275,7 +281,10 @@ export class StatStageChangePhase extends PokemonPhase {
    * otherwise not significant beyond faster animation.
    */
   private triggerReactionAbilities(pokemon: Pokemon): void {
-    if (this.options.changes.some(c => c.stages > 0)) {
+    if (
+      this.options.sourceEffectType !== StatChangeSource.OPPORTUNIST
+      && this.options.changes.some(c => c.stages > 0)
+    ) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
         applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, changes: this.options.changes });
       }

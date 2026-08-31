@@ -63,6 +63,7 @@ import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MultiHitType } from "#enums/multi-hit-type";
 import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -83,6 +84,7 @@ import {
   invalidMirrorMoveMoves,
   invalidSketchMoves,
   invalidSleepTalkMoves,
+  invalidTelekinesisSpecies,
 } from "#moves/invalid-moves";
 import {
   consecutiveUseRestriction,
@@ -103,7 +105,7 @@ import {
   upperHandCondition,
   userSleptOrComatoseCondition,
 } from "#moves/move-condition";
-import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
+import { getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
@@ -118,7 +120,7 @@ import type {
 } from "#types/move-types";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -132,7 +134,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
@@ -237,6 +239,8 @@ export abstract class Move implements Localizable {
     return this._allyTargetDefault;
   }
   private nameAppend = "";
+
+  public readonly isUnimplemented: boolean = false;
 
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
@@ -445,32 +449,29 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Checks if the target is immune to this Move's type.
-   * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
+   * Checks if the target is immune to this Move, based on one of its types.
+   * Currently looks at cases of:
+   * - Grass types with powder moves
+   * - Dark types with moves affected by Prankster
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param type - The {@linkcode PokemonType} of the target
-   * @returns Whether the move is blocked by the target's type.
+   * @returns Whether the move is blocked due to the target's typing. \
    * Self-targeted moves will return `false` regardless of circumstances.
    */
-  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
+  public isTypeImmune(user: Pokemon, target: Pokemon): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
 
-    switch (type) {
-      case PokemonType.GRASS:
-        if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
-          return true;
-        }
-        break;
-      case PokemonType.DARK:
-        if (user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target)) {
-          return true;
-        }
-        break;
+    let typeImmune = false;
+    if (target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true })) {
+      typeImmune ||= this.hasFlag(MoveFlags.POWDER_MOVE);
     }
-    return false;
+    if (target.isOfType(PokemonType.DARK, { returnOriginalTypesIfStellar: true })) {
+      typeImmune ||=
+        user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target);
+    }
+    return typeImmune;
   }
 
   /**
@@ -631,6 +632,7 @@ export abstract class Move implements Localizable {
    */
   unimplemented(): this {
     this.nameAppend += " (N)";
+    (this as Mutable<this>).isUnimplemented = true;
     return this;
   }
 
@@ -1967,6 +1969,7 @@ export class CritOnlyAttr extends MoveAttr {
   }
 }
 
+// TODO: Fix subclasses to actually extend from `getDamage`
 export class FixedDamageAttr extends MoveAttr {
   private readonly damage: number;
 
@@ -5950,7 +5953,7 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!(moveType instanceof ValueHolder)) {
       return false;
     }
 
@@ -6336,9 +6339,8 @@ export class NihilLightAttr extends MoveTypeChartOverrideAttr {
 
 /**
  * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
- * to cause it to deal a fixed 1x damage against all ungrounded flying types.
+ * to cause it to deal a fixed 1x damage against airborne flying types that would otherwise be immune to the move.
  */
-// TODO: Add mention in #5950 about this disabling groundedness-based immunities (once implemented)
 export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAttr {
   public override apply(
     _user: Pokemon,
@@ -6347,7 +6349,9 @@ export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAtt
     args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
   ): boolean {
     const [multiplier, types] = args;
-    if (target.isGrounded() || !types.includes(PokemonType.FLYING)) {
+    // Thousand Arrows deals super-effective damage to flying types in Inverse Battles
+    // https://replay.pokemonshowdown.com/gen9nationaldex-2536869784-17h3xwyxhlb6uaj6n30acyyligy93s6pw
+    if (target.isGrounded(true) || !types.includes(PokemonType.FLYING) || multiplier.value > 0) {
       return false;
     }
     multiplier.value = 1;
@@ -6523,40 +6527,6 @@ export class BypassRedirectAttr extends MoveAttr {
   }
 }
 
-export class FrenzyAttr extends MoveEffectAttr {
-  constructor() {
-    super(true, { lastHitOnly: true });
-  }
-
-  canApply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]) {
-    return !(this.selfTarget ? user : target).isFainted();
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    // TODO: Disable if used via dancer
-    // TODO: Add support for moves that don't add the frenzy tag (Uproar, Rollout, etc.)
-
-    // If frenzy is not active, add a tag and push 1-2 extra turns of attacks to the user's move queue.
-    // Otherwise, tick down the existing tag.
-    if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
-      const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
-      for (let i = 0; i < turnCount; i++) {
-        user.pushMoveQueue({ move: move.id, targets: [target.getBattlerIndex()], useMode: MoveUseMode.IGNORE_PP });
-      }
-      user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
-    } else {
-      applyMoveAttrs("AddBattlerTagAttr", user, target, move, args);
-      user.lapseTag(BattlerTagType.FRENZY);
-    }
-
-    return true;
-  }
-}
-
 /**
  * Attribute that grants {@link https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn | semi-invulnerability} to the user during
  * the associated move's charging phase. Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
@@ -6629,7 +6599,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc | null {
-    return this.failOnOverlap ? (user, target, _move) => !(this.selfTarget ? user : target).getTag(this.tagType) : null;
+    // TODO: This should consider whether the tag can be added successfully
+    return this.failOnOverlap ? (user, target) => !(this.selfTarget ? user : target).getTag(this.tagType) : null;
   }
 
   getTagTargetBenefitScore(): number {
@@ -6703,28 +6674,39 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Adds the appropriate battler tag for Smack Down and Thousand arrows
+ * Attribute to add the `IGNORE_FLYING` BattlerTag to the target.
+ *
+ * Does nothing if the target was not already ungrounded.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Smack_Down_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move)}
  */
 export class FallDownAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true);
+    super(BattlerTagType.IGNORE_FLYING, false, false, 0, 0, true);
   }
 
-  /**
-   * Adds Grounded Tag to the target and checks if fallDown message should be displayed
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} targeted by the move
-   * @param move the {@linkcode Move} invoking this effect
-   * @param args n/a
-   * @returns `true` if the effect successfully applies; `false` otherwise
-   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.isGrounded()) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }),
-      );
+    // Smack Down and similar only apply their effects if the target is already ungrounded,
+    // barring any prior semi-invulnerability.
+    if (target.isGrounded(true)) {
+      return false;
     }
-    return super.apply(user, target, move, args);
+
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    target.removeTag(BattlerTagType.FLOATING);
+    target.removeTag(BattlerTagType.TELEKINESIS);
+    if (target.getTag(BattlerTagType.FLYING)) {
+      target.removeTag(BattlerTagType.FLYING);
+      target.addTag(BattlerTagType.INTERRUPTED);
+    }
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }),
+    );
+    return true;
   }
 }
 
@@ -7492,6 +7474,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         .getAttrs("ForceSwitchOutAttr")
         .find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
+      // Dondozo with an allied Tatsugiri in its mouth cannot switch or be forced out
+      const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
+      if (commandedTag?.getSourcePokemon()?.isActive(true)) {
+        return false;
+      }
+
       if (!this.selfSwitch) {
         if (move.hitsSubstitute(user, target)) {
           return false;
@@ -7505,12 +7493,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           if (remainingPokemon.length <= 1) {
             return false;
           }
-        }
-
-        // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
-        const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
-        if (commandedTag?.getSourcePokemon()?.isActive(true)) {
-          return false;
         }
 
         if (
@@ -8130,7 +8112,7 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
    */
   protected isMoveAllowed(move: MoveId): boolean {
     const valid = new BooleanHolder(
-      move !== MoveId.NONE && !this.invalidMoves.has(move) && !allMoves[move].name.endsWith(" (N)"),
+      move !== MoveId.NONE && !this.invalidMoves.has(move) && !allMoves[move].isUnimplemented,
     );
     applyChallenges(ChallengeType.POKEMON_MOVE, move, valid);
     return valid.value;
@@ -9053,24 +9035,29 @@ export class ForceLastAttr extends MoveEffectAttr {
   }
 }
 
-const failOnBossCondition: MoveConditionFunc = (_user, target, _move) => !target.isBossImmune();
+// #region Condition functions
 
-const failIfSingleBattle: MoveConditionFunc = (_user, _target, _move) => globalScene.currentBattle.double;
+const failOnGroundedCondition: MoveConditionFunc = (_user, target) => !target.getTag(BattlerTagType.IGNORE_FLYING);
+
+const failOnBossCondition: MoveConditionFunc = (_user, target) => !target.isBossImmune();
+
+const failIfSingleBattle: MoveConditionFunc = () => globalScene.currentBattle.double;
 
 const failIfLastCondition: MoveConditionFunc = () => globalScene.phaseManager.hasPhaseOfType("MovePhase");
 
-const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, _target: Pokemon, _move: Move) => {
+const failIfLastInPartyCondition: MoveConditionFunc = user => {
   const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
   return party.some(pokemon => pokemon.isActive() && !pokemon.isOnField());
 };
 
-const failIfGhostTypeCondition: MoveConditionFunc = (_user: Pokemon, target: Pokemon, _move: Move) =>
-  !target.isOfType(PokemonType.GHOST);
+const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.isOfType(PokemonType.GHOST);
 
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
   target.heldItemManager.getTransferableHeldItems().length > 0;
 
-const attackedByItemMessageFunc = (_user: Pokemon, target: Pokemon, _move: Move) => {
+// #endregion Condition functions
+
+const attackedByItemMessageFunc: MoveMessageFunc = (_user, target) => {
   if (target == null) {
     // Fix bug when used against targets that have both fainted
     return "";
@@ -9200,8 +9187,26 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Map of Move attributes to their respective classes. Used for instanceof checks.
+ * Attribute to apply the effects of the move Rage.
+ *
+ * If the user is attacked while rage is active, they will gain +1 atk boost.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Rage_(move)}
  */
+export class RageAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
+  }
+
+  public override apply(user: Pokemon, _target: Pokemon, move: Move): boolean {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("moveTriggers:rageIsBuilding", { pokemonName: getPokemonNameWithAffix(user) }),
+    );
+    user.addTag(BattlerTagType.RAGE, undefined, move.id, user.id);
+    return true;
+  }
+}
+
+/** Map of Move attributes to their respective classes. Used for instanceof checks. */
 const MoveAttrs = Object.freeze({
   MoveEffectAttr,
   MoveHeaderAttr,
@@ -9353,7 +9358,6 @@ const MoveAttrs = Object.freeze({
   NoEffectAttr,
   TypelessAttr,
   BypassRedirectAttr,
-  FrenzyAttr,
   SemiInvulnerableAttr,
   LeechSeedAttr,
   FallDownAttr,
@@ -9416,6 +9420,7 @@ const MoveAttrs = Object.freeze({
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
   PartingShotAttr,
+  RageAttr,
 });
 
 /** Map of of move attribute names to their constructors */
@@ -9515,9 +9520,7 @@ export function initMoves() {
       .attr(RecoilAttr)
       .recklessMove(),
     new AttackMove(MoveId.THRASH, PokemonType.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 1)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(MoveId.DOUBLE_EDGE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 1)
       .attr(RecoilAttr, false, 0.33)
@@ -9651,9 +9654,7 @@ export function initMoves() {
       .powderMove()
       .reflectable(),
     new AttackMove(MoveId.PETAL_DANCE, PokemonType.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .makesContact()
       .danceMove()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -9711,7 +9712,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPD], 2, true),
     new AttackMove(MoveId.QUICK_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 1),
     new AttackMove(MoveId.RAGE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, 0, 1) //
-      .partial(), // No effect implemented
+      .attr(RageAttr),
     new SelfStatusMove(MoveId.TELEPORT, PokemonType.PSYCHIC, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr, true)
       .hidesUser()
@@ -10050,9 +10051,7 @@ export function initMoves() {
         }),
       ),
     new AttackMove(MoveId.OUTRAGE, PokemonType.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(MoveId.SANDSTORM, PokemonType.ROCK, -1, 5, -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -10240,7 +10239,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       // Does not lock the user, does not stop Pokemon from sleeping
-      // Likely can make use of FrenzyAttr and an ArenaTag (just without the FrenzyMissFunc)
+      // Likely can make use of a MoveLockTag and an ArenaTag
       .partial(),
     new SelfStatusMove(MoveId.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3, 3)
@@ -10304,7 +10303,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
         target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1,
       )
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS),
     new SelfStatusMove(MoveId.FOLLOW_ME, PokemonType.NORMAL, -1, 20, -1, 2, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true)
       .condition(failIfSingleBattle, 3),
@@ -10336,10 +10335,10 @@ export function initMoves() {
       .triageMove(),
     new SelfStatusMove(MoveId.ASSIST, PokemonType.NORMAL, -1, 20, -1, 0, 3) //
       .attr(RandomMovesetMoveAttr, invalidAssistMoves, true),
-    new SelfStatusMove(MoveId.INGRAIN, PokemonType.GRASS, -1, 20, -1, 0, 3)
+    new SelfStatusMove(MoveId.INGRAIN, PokemonType.GRASS, -1, 20, -1, 0, 3) //
       .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, true)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLOATING], true),
+      // NB: We add the IGNORE_FLYING tag directly to avoid removing Telekinesis' accuracy boost
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, true),
     new AttackMove(MoveId.SUPERPOWER, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 3) //
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF], -1, true),
     new SelfStatusMove(MoveId.MAGIC_COAT, PokemonType.PSYCHIC, -1, 15, -1, 4, 3)
@@ -10606,10 +10605,9 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ROOSTED, true, false)
       .triageMove(),
     new StatusMove(MoveId.GRAVITY, PokemonType.PSYCHIC, -1, 5, -1, 0, 4)
-      .ignoresProtect()
-      .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
-      .condition(() => !globalScene.arena.hasTag(ArenaTagType.GRAVITY))
-      .target(MoveTarget.BOTH_SIDES),
+      .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5, true)
+      .target(MoveTarget.BOTH_SIDES)
+      .ignoresProtect(),
     new StatusMove(MoveId.MIRACLE_EYE, PokemonType.PSYCHIC, -1, 40, -1, 0, 4)
       .attr(ExposedMoveAttr, BattlerTagType.IGNORE_DARK)
       .ignoresSubstitute()
@@ -10741,13 +10739,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(MoveId.MAGNET_RISE, PokemonType.ELECTRIC, -1, 10, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, true, true, 5)
-      .condition(
-        user =>
-          [BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN].every(
-            tag => !user.getTag(tag),
-          ),
-        3,
-      )
+      .condition(failOnGroundedCondition)
       .affectedByGravity(),
     new AttackMove(MoveId.FLARE_BLITZ, PokemonType.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
@@ -10988,29 +10980,22 @@ export function initMoves() {
       .powderMove()
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(MoveId.TELEKINESIS, PokemonType.PSYCHIC, -1, 15, -1, 0, 5)
-      .affectedByGravity()
-      .condition(
-        (_user, target, _move) =>
-          ![
-            SpeciesId.DIGLETT,
-            SpeciesId.DUGTRIO,
-            SpeciesId.ALOLA_DIGLETT,
-            SpeciesId.ALOLA_DUGTRIO,
-            SpeciesId.SANDYGAST,
-            SpeciesId.PALOSSAND,
-            SpeciesId.WIGLETT,
-            SpeciesId.WUGTRIO,
-          ].includes(target.species.speciesId),
-      )
-      .condition(
-        (_user, target, _move) => !(target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === "mega"),
-      )
-      .condition(
-        (_user, target, _move) =>
-          target.getTag(BattlerTagType.INGRAIN) == null && target.getTag(BattlerTagType.IGNORE_FLYING) == null,
-      )
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, false, true, 3)
+      .condition((_user, target) => {
+        // NB: Telekinesis ignores Transform-based overrides
+        const { speciesId } = target.species;
+        if (invalidTelekinesisSpecies.has(speciesId)) {
+          return false;
+        }
+        if (speciesId !== SpeciesId.GENGAR) {
+          return true;
+        }
+        // Gengar is only forbidden in its Mega or (PKR-exclusive) GMax forms
+        const formKey = target.getFormKey();
+        return !(formKey === SpeciesFormKey.MEGA || formKey === SpeciesFormKey.GIGANTAMAX);
+      })
+      .condition(failOnGroundedCondition)
+      .affectedByGravity()
       .reflectable(),
     new StatusMove(MoveId.MAGIC_ROOM, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
@@ -11018,8 +11003,6 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(MoveId.SMACK_DOWN, PokemonType.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, -1, 0, 5)
       .attr(FallDownAttr)
-      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS])
       .attr(HitsTagAttr, BattlerTagType.FLYING)
       .makesContact(false),
     new AttackMove(MoveId.STORM_THROW, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5) //
@@ -11523,9 +11506,6 @@ export function initMoves() {
       .attr(NeutralDamageAgainstFlyingTypeAttr)
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
-      .attr(HitsTagAttr, BattlerTagType.FLOATING)
-      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.THOUSAND_WAVES, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 6)
@@ -12115,9 +12095,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPDEF], -1),
     new AttackMove(MoveId.GRAV_APPLE, PokemonType.GRASS, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [Stat.DEF], -1)
-      .attr(MovePowerMultiplierAttr, (_user, _target, _move) =>
-        globalScene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1,
-      )
+      .attr(MovePowerMultiplierAttr, () => (globalScene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1))
       .makesContact(false),
     new AttackMove(MoveId.SPIRIT_BREAK, PokemonType.FAIRY, MoveCategory.PHYSICAL, 75, 100, 15, 100, 0, 8) //
       .attr(StatStageChangeAttr, [Stat.SPATK], -1),
@@ -12269,9 +12247,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPATK], 1, true),
     new AttackMove(MoveId.RAGING_FURY, PokemonType.FIRE, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .makesContact(false)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(MoveId.WAVE_CRASH, PokemonType.WATER, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .attr(RecoilAttr, false, 0.33)

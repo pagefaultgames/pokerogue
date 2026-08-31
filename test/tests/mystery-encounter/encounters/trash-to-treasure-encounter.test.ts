@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import * as BattleAnims from "#data/battle-anims";
 import { BiomeId } from "#enums/biome-id";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
@@ -13,7 +14,7 @@ import { UiMode } from "#enums/ui-mode";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";
@@ -22,7 +23,6 @@ import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import * as Utils from "#utils/common";
 import { randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -80,7 +80,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     TrashToTreasureEncounter.populateDialogueTokensFromRequirements();
     const onInitResult = onInit!();
 
-    const bossSpecies = getPokemonSpecies(SpeciesId.GARBODOR);
+    const bossSpecies = speciesDataRegistry.getSpecies(SpeciesId.GARBODOR);
     const pokemonConfig: EnemyPokemonConfig = {
       species: bossSpecies,
       isBoss: true,

@@ -1,9 +1,10 @@
 import { MoveId } from "#enums/move-id";
 import { RarityTier } from "#enums/reward-tier";
+import { padInt } from "#utils/common";
 
-type TmPoolTiers = {
-  [key in MoveId]?: Exclude<RarityTier, RarityTier.ROGUE | RarityTier.MASTER | RarityTier.LUXURY>;
-};
+interface TmPoolTiers {
+  [key: number]: Exclude<RarityTier, RarityTier.ROGUE | RarityTier.MASTER | RarityTier.LUXURY>;
+}
 
 export const tmPoolTiers: TmPoolTiers = {
   [MoveId.MEGA_PUNCH]: RarityTier.GREAT,
@@ -326,3 +327,12 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.PSYCHIC_NOISE]: RarityTier.GREAT,
   [MoveId.UPPER_HAND]: RarityTier.COMMON,
 };
+
+/**
+ * Get the TM number for a given move ID.
+ * @param moveId - The MoveId for which to retrieve the TM number
+ * @returns The TM number as a string or `null` if the move is not in the TM pool
+ */
+export function getTmNumber(moveId: MoveId): string | null {
+  return padInt(Object.keys(tmPoolTiers).indexOf(moveId.toString()) + 1, 3);
+}

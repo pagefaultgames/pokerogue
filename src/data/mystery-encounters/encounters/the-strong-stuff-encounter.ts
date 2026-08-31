@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -24,7 +25,6 @@ import {
 } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
@@ -86,7 +86,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       disableSwitch: true,
       pokemonConfigs: [
         {
-          species: getPokemonSpecies(SpeciesId.SHUCKLE),
+          species: speciesDataRegistry.getSpecies(SpeciesId.SHUCKLE),
           isBoss: true,
           bossSegments: 5,
           shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
@@ -117,7 +117,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
 
     loadCustomMovesForEncounter([MoveId.GASTRO_ACID, MoveId.STEALTH_ROCK]);
 
-    encounter.setDialogueToken("shuckleName", getPokemonSpecies(SpeciesId.SHUCKLE).getName());
+    encounter.setDialogueToken("shuckleName", speciesDataRegistry.getSpecies(SpeciesId.SHUCKLE).getName());
 
     return true;
   })

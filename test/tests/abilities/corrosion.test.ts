@@ -41,7 +41,7 @@ describe("Abilities - Corrosion", () => {
     game.move.use(MoveId.POISON_GAS);
     await game.toEndOfTurn();
 
-    expect(enemy.status?.effect).toBe(StatusEffect.POISON);
+    expect(enemy).toHaveStatusEffect(StatusEffect.POISON);
   });
 
   it("should not affect Toxic Spikes", async () => {
@@ -66,7 +66,7 @@ describe("Abilities - Corrosion", () => {
     game.move.use(MoveId.TOXIC);
     await game.toEndOfTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.TOXIC);
     expect(playerPokemon.status?.effect).toBeUndefined();
   });
 
@@ -80,6 +80,6 @@ describe("Abilities - Corrosion", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(salazzle.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(salazzle).toHaveStatusEffect(StatusEffect.TOXIC);
   });
 });

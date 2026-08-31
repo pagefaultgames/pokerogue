@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
@@ -219,7 +220,7 @@ export class RunInfoUiHandler extends UiHandler {
    *
    */
   private async parseRunResult() {
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex];
     const runResultTextStyle = this.isVictory ? TextStyle.PERFECT_IV : TextStyle.SUMMARY_RED;
     const runResultTitle = this.isVictory
@@ -612,7 +613,7 @@ export class RunInfoUiHandler extends UiHandler {
     });
     const runTime = getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    const runMoney = formatMoney(globalScene.moneyFormat, this.runInfo.money);
+    const runMoney = formatMoney(settings.display.moneyFormat, this.runInfo.money);
     const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false);
     runInfoText.appendText(
       `[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney: runMoney })}[/color]`,
@@ -952,7 +953,7 @@ export class RunInfoUiHandler extends UiHandler {
    */
   private createVictorySplash(): void {
     this.endCardContainer = globalScene.add.container(0, 0);
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = settings.general.playerGender;
     const isFemale = genderIndex === PlayerGender.FEMALE;
     const endCard = globalScene.add.image(0, 0, `end_${isFemale ? "f" : "m"}`);
     endCard.setOrigin(0);
@@ -974,7 +975,7 @@ export class RunInfoUiHandler extends UiHandler {
    * This could be adapted into a public-facing method for victory screens. Perhaps.
    */
   private createHallofFame(): void {
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = settings.general.playerGender;
     const isFemale = genderIndex === PlayerGender.FEMALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
     // Issue Note (08-05-2024): It seems as if fused pokemon do not appear with the averaged color b/c pokemonData's loadAsset requires there to be some active battle?

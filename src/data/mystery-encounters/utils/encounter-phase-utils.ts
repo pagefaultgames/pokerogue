@@ -2,6 +2,7 @@ import type { Battle } from "#app/battle";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE } from "#balance/rates";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
@@ -18,6 +19,7 @@ import { FieldPosition } from "#enums/field-position";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -38,13 +40,11 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /**
@@ -964,16 +964,13 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
 
   if (eventChance && eventEncounters.length > 0 && (eventChance === 100 || randSeedInt(100) < eventChance)) {
     const eventEncounter = randSeedItem(eventEncounters);
-    const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(
-      level,
-      !eventEncounter.blockEvolution,
-      isBoss,
-      globalScene.gameMode,
-    );
+    const levelSpecies = speciesDataRegistry
+      .getSpecies(eventEncounter.species)
+      .getWildSpeciesForLevel(level, !eventEncounter.blockEvolution, isBoss, globalScene.gameMode);
     if (params.isEventEncounter) {
       params.isEventEncounter.value = true;
     }
-    bossSpecies = getPokemonSpecies(levelSpecies);
+    bossSpecies = speciesDataRegistry.getSpecies(levelSpecies);
     formIndex = eventEncounter.formIndex;
   } else if (speciesFunction) {
     bossSpecies = speciesFunction();

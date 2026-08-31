@@ -1,7 +1,7 @@
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { BattlerTag } from "#data/battler-tags";
 import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
 import type { Gender } from "#data/gender";
-import { PokemonMove } from "#data/moves/pokemon-move";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import type { TypeDamageMultiplier } from "#data/type";
 import type { AbilityId } from "#enums/ability-id";
@@ -12,13 +12,14 @@ import type { PokemonType, RegularPokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
 import type { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
@@ -32,9 +33,6 @@ export class CustomPokemonData {
   public passive: AbilityId | -1;
   public nature: Nature | -1;
   public types: (RegularPokemonType | null)[];
-  /** @deprecated Left in for save migration, do not use */
-  // TODO: Remove this once pre-session migration is implemented
-  public hitsRecCount: number | null = null;
 
   constructor(data?: CustomPokemonData | Partial<CustomPokemonData>) {
     this.spriteScale = data?.spriteScale ?? -1;
@@ -42,7 +40,6 @@ export class CustomPokemonData {
     this.passive = data?.passive ?? -1;
     this.nature = data?.nature ?? -1;
     this.types = data?.types ?? [];
-    this.hitsRecCount = data?.hitsRecCount ?? null;
   }
 }
 
@@ -179,10 +176,10 @@ export class PokemonSummonData {
         if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
-              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies.speciesId);
+              illusionData.fusionSpecies = speciesDataRegistry.getSpecies(illusionData.fusionSpecies.speciesId);
               break;
             case "number":
-              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies);
+              illusionData.fusionSpecies = speciesDataRegistry.getSpecies(illusionData.fusionSpecies);
               break;
             default:
               illusionData.fusionSpecies = undefined;
@@ -284,8 +281,6 @@ export class PokemonTempSummonData {
  * Resets at the start of a new battle (but not on switch).
  */
 export class PokemonBattleData {
-  /** @deprecated Left in for save migration; use {@linkcode PokemonSummonData.hitCount} */
-  public hitCount = 0;
   /**
    * Whether this Pokemon has eaten a berry this battle
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Belch_(move)}
@@ -299,7 +294,6 @@ export class PokemonBattleData {
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
     if (source != null) {
-      this.hitCount = source.hitCount ?? 0;
       this.hasEatenBerry = source.hasEatenBerry ?? false;
       this.berriesEaten = source.berriesEaten ?? [];
     }

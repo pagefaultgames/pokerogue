@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
@@ -40,9 +41,9 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig } from "#types/ui-types";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies, getRandomRegularPokemonType } from "#utils/pokemon-utils";
+import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -152,13 +153,13 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
       pokemonConfigs: [
         // Overrides first 2 pokemon to be Mr. Mime and Blacephalon
         {
-          species: getPokemonSpecies(SpeciesId.MR_MIME),
+          species: speciesDataRegistry.getSpecies(SpeciesId.MR_MIME),
           isBoss: true,
           moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
         },
         {
           // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
-          species: getPokemonSpecies(SpeciesId.BLACEPHALON),
+          species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
           customPokemonData: new CustomPokemonData({
             ability,
             types: [firstType, secondType],
@@ -173,7 +174,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
     // Load animations/sfx for start of fight moves
     loadCustomMovesForEncounter([MoveId.ROLE_PLAY, MoveId.TAUNT]);
 
-    encounter.setDialogueToken("blacephalonName", getPokemonSpecies(SpeciesId.BLACEPHALON).getName());
+    encounter.setDialogueToken("blacephalonName", speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON).getName());
 
     return true;
   })
@@ -331,7 +332,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numRogue = 0;
 
         for (const m of items) {
-          const tier = getHeldItemTier(m) ?? RarityTier.ULTRA;
+          const tier = getHeldItemTier(m);
           const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
           if (tier === RarityTier.ROGUE) {
             numRogue += stack;
@@ -460,19 +461,19 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
   ])
   .build();
 
-async function handleSwapAbility() {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
-  return new Promise<boolean>(async resolve => {
-    await showEncounterDialogue(`${namespace}:option.1.applyAbilityDialogue`, `${namespace}:speaker`);
-    await showEncounterText(`${namespace}:option.1.applyAbilityMessage`);
+async function handleSwapAbility(): Promise<boolean> {
+  const { promise, resolve } = Promise.withResolvers<boolean>();
 
-    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-      displayYesNoOptions(resolve);
-    });
-  });
+  await showEncounterDialogue(`${namespace}:option.1.applyAbilityDialogue`, `${namespace}:speaker`);
+  await showEncounterText(`${namespace}:option.1.applyAbilityMessage`);
+
+  await globalScene.ui.setMode(UiMode.MESSAGE);
+  displayYesNoOptions(resolve);
+
+  return promise;
 }
 
-function displayYesNoOptions(resolve) {
+function displayYesNoOptions(resolve: { (value: boolean | PromiseLike<boolean>): void; (arg0: boolean): void }): void {
   showEncounterText(`${namespace}:option.1.abilityPrompt`, null, 500, false);
   const fullOptions = [
     {
@@ -499,8 +500,12 @@ function displayYesNoOptions(resolve) {
   globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
 }
 
-function onYesAbilitySwap(resolve) {
-  const onPokemonSelected = (pokemon: PlayerPokemon) => {
+function onYesAbilitySwap(resolve: {
+  (value: boolean | PromiseLike<boolean>): void;
+  (arg0: boolean): void;
+  (arg0: boolean): any;
+}): void {
+  const onPokemonSelected = (pokemon: PlayerPokemon): void => {
     // Do ability swap
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
@@ -509,7 +514,7 @@ function onYesAbilitySwap(resolve) {
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => resolve(true));
   };
 
-  const onPokemonNotSelected = () => {
+  const onPokemonNotSelected = (): void => {
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       displayYesNoOptions(resolve);
     });

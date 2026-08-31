@@ -1,8 +1,10 @@
-import type { determineEnemySpecies } from "#app/ai/ai-species-gen";
+import type { determineEnemySpecies } from "#ai/ai-species-gen";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems, allMoves } from "#data/data-lists";
 import { type Gender, getGenderSymbol } from "#data/gender";
 import type { BiomeId } from "#enums/biome-id";
+import { EvolutionItem } from "#enums/evolution-item";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
@@ -16,59 +18,8 @@ import type { EvoLevelThreshold } from "#types/species-gen-types";
 import { coerceArray } from "#utils/array";
 import { randSeedInt } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-
-export enum EvolutionItem {
-  NONE,
-
-  LINKING_CORD,
-  SUN_STONE,
-  MOON_STONE,
-  LEAF_STONE,
-  FIRE_STONE,
-  WATER_STONE,
-  THUNDER_STONE,
-  ICE_STONE,
-  DUSK_STONE,
-  DAWN_STONE,
-  SHINY_STONE,
-  CRACKED_POT,
-  SWEET_APPLE,
-  TART_APPLE,
-  STRAWBERRY_SWEET,
-  UNREMARKABLE_TEACUP,
-  UPGRADE,
-  DUBIOUS_DISC,
-  DRAGON_SCALE,
-  PRISM_SCALE,
-  RAZOR_CLAW,
-  RAZOR_FANG,
-  OVAL_STONE,
-  REAPER_CLOTH,
-  ELECTIRIZER,
-  MAGMARIZER,
-  PROTECTOR,
-  SACHET,
-  WHIPPED_DREAM,
-  SYRUPY_APPLE,
-  CHIPPED_POT,
-  GALARICA_CUFF,
-  GALARICA_WREATH,
-  AUSPICIOUS_ARMOR,
-  MALICIOUS_ARMOR,
-  MASTERPIECE_TEACUP,
-  SUN_FLUTE,
-  MOON_FLUTE,
-
-  BLACK_AUGURITE = 51,
-  PEAT_BLOCK,
-  METAL_ALLOY,
-  SCROLL_OF_DARKNESS,
-  SCROLL_OF_WATERS,
-  LEADERS_CREST
-}
 
 const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
 type TyrogueMove = (typeof tyrogueMoves)[number];
@@ -143,7 +94,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return i18next.t("pokemonEvolutions:treasure");
         case EvoCondKey.SPECIES_CAUGHT:
-          return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
+          return i18next.t("pokemonEvolutions:caught", {species: speciesDataRegistry.getSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(allHeldItems[cond.itemKey].name)}`);
         case EvoCondKey.RANDOM_FORM:

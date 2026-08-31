@@ -106,7 +106,7 @@ export class SpeciesFormChangeTimeOfDayTrigger extends SpeciesFormChangeTrigger 
   }
 
   get description(): string {
-    return i18next.t("pokemonEvolutions:orms.timeOfDay");
+    return i18next.t("pokemonEvolutions:forms.timeOfDay");
   }
 
   canChange(_pokemon: Pokemon): boolean {

@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
-import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
+import { type BattlerTag, CritBoostTag, SemiInvulnerableTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allHeldItems, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
@@ -47,6 +47,7 @@ import type { BerryItemId } from "#items/all-held-items";
 import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
+import type { HitCheckEntry, MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MoveReflectPhase } from "#phases/move-reflect-phase";
 import type {
   AbAttrCondition,
@@ -205,6 +206,22 @@ abstract class CancelInteractionAbAttr extends AbAttr {
 
   override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
+  }
+}
+
+/** @sealed */
+interface UngroundedAbAttrParams extends AbAttrBaseParams {
+  isUngrounded: ValueHolder<boolean>;
+}
+
+/** @sealed */
+export class UngroundedAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  public override apply({ isUngrounded }: UngroundedAbAttrParams): void {
+    isUngrounded.value = true;
   }
 }
 
@@ -418,22 +435,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
-  }
-}
-
-export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
-  constructor(immuneType: PokemonType, condition?: AbAttrCondition) {
-    super(immuneType, condition);
-  }
-
-  override canApply(params: TypeMultiplierAbAttrParams): boolean {
-    const { move } = params;
-    return (
-      move.category !== MoveCategory.STATUS // TODO: make Thousand Arrows ignore Levitate in a different manner
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
-      && super.canApply(params)
-    );
   }
 }
 
@@ -930,7 +931,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 export class PostDefendApplyStatusEffectAbAttr extends PostDefendAbAttr {
   private readonly chance: number;
   private readonly contactRequired: boolean;
-  private readonly effects: readonly StatusEffect[];
+  public readonly effects: readonly StatusEffect[];
 
   constructor(chance: number, contactRequired = true, ...effects: StatusEffect[]) {
     super(true);
@@ -1842,9 +1843,9 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
 }
 
 export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
-  private readonly contactRequired: boolean;
+  public readonly contactRequired: boolean;
   private readonly chance: number;
-  private readonly effects: readonly StatusEffect[];
+  public readonly effects: readonly StatusEffect[];
 
   constructor(contactRequired: boolean, chance: number, ...effects: StatusEffect[]) {
     super();
@@ -3752,7 +3753,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
  * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  */
 function getForewarnPower(move: Move): number {
-  if (move.is("StatusMove")) {
+  if (move.is("StatusMove") || move.is("SelfStatusMove")) {
     return 1;
   }
 
@@ -4468,80 +4469,88 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Rework into taking a partial and/or readonly copy of the current move in flight
 export interface PostMoveUsedAbAttrParams extends AbAttrBaseParams {
-  /** The move that was used */
-  move: PokemonMove;
-  /** The source of the move */
-  source: Pokemon;
-  /** The targets of the move */
-  targets: BattlerIndex[];
+  /** The move that was used. */
+  readonly move: Move;
+  /** The Pokemon that initially used the move. */
+  readonly source: Pokemon;
+  /** The inital targets of the move */
+  readonly targets: readonly BattlerIndex[];
+  /** The hit check results for each target */
+  readonly hitChecks: readonly HitCheckEntry[];
 }
 
-/** Triggers just after a move is used either by the opponent or the player */
-export class PostMoveUsedAbAttr extends AbAttr {
-  canApply(_params: Closed<PostMoveUsedAbAttrParams>): boolean {
+/**
+ * Attribute to trigger effects after a move is used by a different Pokémon on the field.
+ * @remarks
+ * This will only trigger on successful, non-Dancer induced and non-reflected move uses, the checks for which are
+ * performed inside the {@linkcode MoveEffectPhase}.
+ */
+abstract class PostMoveUsedAbAttr extends AbAttr {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract method
+  public override canApply(params: Closed<PostMoveUsedAbAttrParams>): boolean {
     return true;
   }
 
-  apply(_params: Closed<PostMoveUsedAbAttrParams>): void {}
+  public abstract override apply(params: Closed<PostMoveUsedAbAttrParams>): void;
 }
 
-/** Triggers after a dance move is used either by the opponent or the player */
+/**
+ * Ability attribute to implement the effect of {@link https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability) | Dancer}. \
+ * Dancer triggers whenever another Pokemon uses a dance move, copying it against either the original user or the move's original target as applicable.
+ */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  override canApply({ source, pokemon }: PostMoveUsedAbAttrParams): boolean {
-    /** Tags that prevent Dancer from replicating the move */
-    const forbiddenTags = [
-      BattlerTagType.FLYING,
-      BattlerTagType.UNDERWATER,
-      BattlerTagType.UNDERGROUND,
-      BattlerTagType.HIDDEN,
-    ];
-    // The move to replicate cannot come from the Dancer
-    return (
-      source.getBattlerIndex() !== pokemon.getBattlerIndex()
-      && !pokemon.summonData.tags.some(tag => forbiddenTags.includes(tag.tagType))
+  public override canApply({ pokemon, move }: PostMoveUsedAbAttrParams): boolean {
+    return move.hasFlag(MoveFlags.DANCE_MOVE) && !pokemon.getTag(SemiInvulnerableTag);
+  }
+  public override apply(params: PostMoveUsedAbAttrParams): void {
+    const { pokemon, move } = params;
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      this.getMoveTargets(params),
+      new PokemonMove(move.id),
+      MoveUseMode.INDIRECT,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 
-  override apply({ source, pokemon, move, targets, simulated }: PostMoveUsedAbAttrParams): void {
-    if (!simulated) {
-      // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
-        const target = this.getTarget(pokemon, source, targets);
-        globalScene.phaseManager.unshiftNew(
-          "MovePhase",
-          pokemon,
-          target,
-          move,
-          MoveUseMode.INDIRECT,
-          MovePhaseTimingModifier.FIRST,
-        );
-      } else if (move.getMove().is("SelfStatusMove")) {
-        // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.phaseManager.unshiftNew(
-          "MovePhase",
-          pokemon,
-          [pokemon.getBattlerIndex()],
-          move,
-          MoveUseMode.INDIRECT,
-          MovePhaseTimingModifier.FIRST,
-        );
-      }
-    }
-  }
-
   /**
-   * Get the correct targets of Dancer ability
-   *
-   * @param dancer - Pokémon with Dancer ability
-   * @param source - The user of the dancing move
-   * @param targets - Targets of the dancing move
+   * Helper function to compute the correct targets of Dancer's copied move use.
+   * @param params - The parameters passed to the ability attribute
+   * @returns The modified set of targets to use
    */
-  private getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]): BattlerIndex[] {
-    if (dancer.isPlayer()) {
-      return source.isPlayer() ? targets : [source.getBattlerIndex()];
+  private getMoveTargets({ pokemon, source, move, targets }: PostMoveUsedAbAttrParams): BattlerIndex[] {
+    if (move.isMultiTarget()) {
+      return getMoveTargets(pokemon, move.id).targets;
     }
-    return source.isPlayer() ? [source.getBattlerIndex()] : targets;
+
+    // Self-targeted status moves (Swords Dance & co.) are always replicated on the user.
+    if (move.is("SelfStatusMove")) {
+      return [pokemon.getBattlerIndex()];
+    }
+
+    // Attack moves are unleashed on the source of the dance UNLESS they are an ally attacking an enemy
+    // (in which case we retain the prior move's targeting)
+    if (!(pokemon.isAlly(source) && !targets.includes(pokemon.getBattlerIndex()))) {
+      targets = [source.getBattlerIndex()];
+    }
+
+    // Attempt to redirect to the prior target's partner if fainted and not our own ally.
+    // TODO: There should _really_ be a helper for this...
+    const firstTarget = globalScene.getField()[targets[0]];
+    const ally = firstTarget.getAlly();
+    if (
+      globalScene.currentBattle.double
+      && firstTarget.isFainted()
+      && firstTarget.isOpponent(pokemon)
+      && ally?.isActive()
+    ) {
+      return [ally.getBattlerIndex()];
+    }
+
+    return targets.slice();
   }
 }
 
@@ -5078,8 +5087,36 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   }
 }
 
-export class IncreasePpAbAttr extends AbAttr {
-  private declare readonly _: never;
+export interface IncreasePpUsedAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "move"> {
+  /** Holder for the amount of PP that will be consumed; can be modified by ability application */
+  readonly pp: NumberHolder;
+}
+
+/**
+ * Attribute for abilities that increase the PP consumption of received attacks.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability)}
+ */
+export class IncreasePpUsedAbAttr extends AbAttr {
+  /**
+   * The amount of PP to increase.
+   * @defaultValue `1`
+   */
+  private readonly ppIncrease: number;
+
+  constructor(ppIncrease = 1) {
+    super(false);
+
+    this.ppIncrease = ppIncrease;
+  }
+
+  public override canApply({ pokemon, opponent }: IncreasePpUsedAbAttrParams): boolean {
+    return pokemon.isOpponent(opponent);
+  }
+
+  public override apply({ pp }: IncreasePpUsedAbAttrParams): void {
+    pp.value += this.ppIncrease;
+  }
 }
 
 /** @sealed */
@@ -6044,7 +6081,6 @@ export const AbilityAttrs = Object.freeze({
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
-  AttackTypeImmunityAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -6097,7 +6133,7 @@ export const AbilityAttrs = Object.freeze({
   IllusionBreakAbAttr,
   IllusionPostBattleAbAttr,
   IllusionPreSummonAbAttr,
-  IncreasePpAbAttr,
+  IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
@@ -6253,6 +6289,7 @@ export const AbilityAttrs = Object.freeze({
   VariableMovePowerAbAttr,
   VariableMovePowerBoostAbAttr,
   WeightMultiplierAbAttr,
+  UngroundedAbAttr,
   WonderSkinAbAttr,
   AiMovegenMoveStatsAbAttr,
   SummonTerrainAiMovegenMoveStatsAbAttr,
