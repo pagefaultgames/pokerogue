@@ -14,14 +14,14 @@
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A Phase represents a discrete chunk of game logic that must be completed.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="56480">
+<section class="tsd-panel tsd-hierarchy" data-refl="56243">
 <h4>Hierarchy (<a href="../hierarchy.html#src/phases/pokemon-heal-phase.PokemonHealPhase">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_phases_common-anim-phase.CommonAnimPhase.html" class="tsd-signature-type tsd-kind-class">CommonAnimPhase</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">PokemonHealPhase</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L17">src/phases/pokemon-heal-phase.ts:17</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L16">src/phases/pokemon-heal-phase.ts:16</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -48,9 +48,12 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-index-list"><a href="#end" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a>
+<div class="tsd-index-list"><a href="#dohealpokemon" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>do<wbr/>Heal<wbr/>Pokemon</span></a>
+<a href="#end" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a>
 <a href="#executeforall" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>For<wbr/>All</span></a>
+<a href="#gethealamount" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Heal<wbr/>Amount</span></a>
 <a href="#getpokemon" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pokemon</span></a>
+<a href="#heal" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>heal</span></a>
 <a href="#hideenemytrainer" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide<wbr/>Enemy<wbr/>Trainer</span></a>
 <a href="#is" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is</span></a>
 <a href="#setanimation" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Animation</span></a>
@@ -64,24 +67,18 @@
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorpokemonhealphase"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PokemonHealPhase</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">battlerIndex</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_enums_battler-index.BattlerIndex.html" class="tsd-signature-type tsd-kind-enum">BattlerIndex</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">hpHealed</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">message</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">showFullHpMessage</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">skipAnim</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">revive</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">healStatus</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">preventFullHeal</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">fullRestorePP</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PokemonHealPhase</a><a href="#constructorpokemonhealphase" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorpokemonhealphase"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PokemonHealPhase</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">battlerIndex</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_enums_battler-index.BattlerIndex.html" class="tsd-signature-type tsd-kind-enum">BattlerIndex</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">hpHealed</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">fullRestorePP</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">healStatus</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">preventFullHeal</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">revive</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">showFullHpMessage</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">skipAnim</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PokemonHealPhase</a><a href="#constructorpokemonhealphase" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">battlerIndex</span>: <a href="../enums/src_enums_battler-index.BattlerIndex.html" class="tsd-signature-type tsd-kind-enum">BattlerIndex</a></span></li>
 <li><span><span class="tsd-kind-parameter">hpHealed</span>: <span class="tsd-signature-type">number</span></span></li>
-<li><span><span class="tsd-kind-parameter">message</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
-<li><span><span class="tsd-kind-parameter">showFullHpMessage</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></span></li>
-<li><span><span class="tsd-kind-parameter">skipAnim</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">revive</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">healStatus</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">preventFullHeal</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li>
-<li><span><span class="tsd-kind-parameter">fullRestorePP</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li></ul></div>
+<li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">fullRestorePP</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">healStatus</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">preventFullHeal</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">revive</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">showFullHpMessage</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">skipAnim</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PokemonHealPhase</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L28">src/phases/pokemon-heal-phase.ts:28</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L64">src/phases/pokemon-heal-phase.ts:64</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -93,7 +90,7 @@ TODO: Make this either use IDs or <code>BattlerIndex</code>es, not a weird mix o
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#battlerindex">battlerIndex</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-phase.ts#L11">src/phases/pokemon-phase.ts:11</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-phase.ts#L11">src/phases/pokemon-phase.ts:11</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="fieldindex"><span>field<wbr/>Index</span><a href="#fieldindex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">fieldIndex</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -103,27 +100,45 @@ TODO: Make this either use IDs or <code>BattlerIndex</code>es, not a weird mix o
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#fieldindex">fieldIndex</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-phase.ts#L15">src/phases/pokemon-phase.ts:15</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-phase.ts#L15">src/phases/pokemon-phase.ts:15</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="fullrestorepp"><code class="tsd-tag">Private</code><span>full<wbr/>Restore<wbr/>PP</span><a href="#fullrestorepp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">fullRestorePP</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="fullrestorepp"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>full<wbr/>Restore<wbr/>PP</span><a href="#fullrestorepp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">fullRestorePP</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether to fully restore PP upon healing.
+Used solely for Lunar Dance.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-defaultValue">
+<h4 class="tsd-anchor-link" id="default-value">Default Value<a href="#default-value" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>false</code></p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L26">src/phases/pokemon-heal-phase.ts:26</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L62">src/phases/pokemon-heal-phase.ts:62</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="healstatus"><code class="tsd-tag">Private</code><span>heal<wbr/>Status</span><a href="#healstatus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">healStatus</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="healstatus"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>heal<wbr/>Status</span><a href="#healstatus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">healStatus</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether to heal the affected Pokemon's status condition.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-defaultValue">
+<h4 class="tsd-anchor-link" id="default-value-1">Default Value<a href="#default-value-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>false</code></p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L24">src/phases/pokemon-heal-phase.ts:24</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L49">src/phases/pokemon-heal-phase.ts:49</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="hphealed"><code class="tsd-tag">Private</code><span>hp<wbr/>Healed</span><a href="#hphealed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">hpHealed</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="hphealed"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>hp<wbr/>Healed</span><a href="#hphealed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">hpHealed</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The base amount of HP to heal.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L19">src/phases/pokemon-heal-phase.ts:19</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L20">src/phases/pokemon-heal-phase.ts:20</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="message"><code class="tsd-tag">Private</code><span>message</span><a href="#message" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></div>
+<div class="tsd-comment tsd-typography"><p>The message to display upon healing the target, or <code>undefined</code> to show no message. <br>
+Will be overridden by the full HP message if <a href="#showfullhpmessage" class="tsd-kind-property"><code>showFullHpMessage</code></a> is set to <code>true</code>.</p>
+</div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L20">src/phases/pokemon-heal-phase.ts:20</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L25">src/phases/pokemon-heal-phase.ts:25</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="phasename"><code class="tsd-tag">Readonly</code><span>phase<wbr/>Name</span><a href="#phasename" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">phaseName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;PokemonHealPhase&quot;</span></div>
@@ -131,45 +146,81 @@ TODO: Make this either use IDs or <code>BattlerIndex</code>es, not a weird mix o
 </div><aside class="tsd-sources">
 <p>Overrides <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#phasename">phaseName</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L18">src/phases/pokemon-heal-phase.ts:18</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L17">src/phases/pokemon-heal-phase.ts:17</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="player"><span>player</span><a href="#player" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">player</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#player">player</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-phase.ts#L13">src/phases/pokemon-phase.ts:13</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-phase.ts#L13">src/phases/pokemon-phase.ts:13</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="preventfullheal"><code class="tsd-tag">Private</code><span>prevent<wbr/>Full<wbr/>Heal</span><a href="#preventfullheal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">preventFullHeal</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="preventfullheal"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>prevent<wbr/>Full<wbr/>Heal</span><a href="#preventfullheal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">preventFullHeal</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether to prevent fully healing affected Pokemon, leaving them 1 HP below full instead.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-defaultValue">
+<h4 class="tsd-anchor-link" id="default-value-2">Default Value<a href="#default-value-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>false</code></p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L25">src/phases/pokemon-heal-phase.ts:25</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L54">src/phases/pokemon-heal-phase.ts:54</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="revive"><code class="tsd-tag">Private</code><span>revive</span><a href="#revive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">revive</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="revive"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>revive</span><a href="#revive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">revive</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether to revive the affected Pokemon in addition to healing. <br>
+Revives will not be affected by any Healing Charms.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-defaultValue">
+<h4 class="tsd-anchor-link" id="default-value-3">Default Value<a href="#default-value-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>false</code></p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L23">src/phases/pokemon-heal-phase.ts:23</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L43">src/phases/pokemon-heal-phase.ts:43</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="showfullhpmessage"><code class="tsd-tag">Private</code><span>show<wbr/>Full<wbr/>Hp<wbr/>Message</span><a href="#showfullhpmessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">showFullHpMessage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="showfullhpmessage"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>show<wbr/>Full<wbr/>Hp<wbr/>Message</span><a href="#showfullhpmessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">showFullHpMessage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether to show a failure message upon healing a Pokemon already at full HP.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-defaultValue">
+<h4 class="tsd-anchor-link" id="default-value-4">Default Value<a href="#default-value-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>true</code></p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L21">src/phases/pokemon-heal-phase.ts:21</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L30">src/phases/pokemon-heal-phase.ts:30</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="skipanim"><code class="tsd-tag">Private</code><span>skip<wbr/>Anim</span><a href="#skipanim" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">skipAnim</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="skipanim"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>skip<wbr/>Anim</span><a href="#skipanim" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">skipAnim</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether to skip showing the healing animation.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-defaultValue">
+<h4 class="tsd-anchor-link" id="default-value-5">Default Value<a href="#default-value-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>false</code></p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L22">src/phases/pokemon-heal-phase.ts:22</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L35">src/phases/pokemon-heal-phase.ts:35</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="dohealpokemon"><code class="tsd-tag">Private</code><span>do<wbr/>Heal<wbr/>Pokemon</span><a href="#dohealpokemon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="dohealpokemon-1"><span class="tsd-kind-call-signature">doHealPokemon</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#dohealpokemon-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Heal the Pokemon affected by this Phase.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L151">src/phases/pokemon-heal-phase.ts:151</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="end"><span>end</span><a href="#end" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="end-1"><span class="tsd-kind-call-signature">end</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#end-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="end-1"><span class="tsd-kind-call-signature">end</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#end-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>End the current phase and start the next one.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-remarks">
 <h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Phases that override <code>end()</code> are responsible for calling <code>super.end()</code> themselves (after any async operations resolve).
@@ -177,7 +228,7 @@ Additionally, attempting to call this function multiple times from the same Phas
 </div></div><aside class="tsd-sources">
 <p>Overrides <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#end">end</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L59">src/phases/pokemon-heal-phase.ts:59</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L108">src/phases/pokemon-heal-phase.ts:108</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="executeforall"><span>execute<wbr/>For<wbr/>All</span><a href="#executeforall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -191,7 +242,24 @@ Additionally, attempting to call this function multiple times from the same Phas
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#executeforall">executeForAll</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/field-phase.ts#L9">src/phases/field-phase.ts:9</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/field-phase.ts#L9">src/phases/field-phase.ts:9</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="gethealamount"><code class="tsd-tag">Private</code><span>get<wbr/>Heal<wbr/>Amount</span><a href="#gethealamount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="gethealamount-1"><span class="tsd-kind-call-signature">getHealAmount</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#gethealamount-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Calculate the amount of HP to be healed during this Phase.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The updated healing amount post-modifications, capped at the Pokemon's maximum HP.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The effect of Healing Charms is rounded down for parity with the closest mainline counterpart
+(e.g. Big Root).</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L184">src/phases/pokemon-heal-phase.ts:184</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getpokemon"><span>get<wbr/>Pokemon</span><a href="#getpokemon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -201,7 +269,18 @@ Additionally, attempting to call this function multiple times from the same Phas
 <h4 class="tsd-returns-title">Returns <a href="src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#getpokemon">getPokemon</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-phase.ts#L38">src/phases/pokemon-phase.ts:38</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-phase.ts#L38">src/phases/pokemon-phase.ts:38</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="heal"><code class="tsd-tag">Private</code><span>heal</span><a href="#heal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="heal-1"><span class="tsd-kind-call-signature">heal</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#heal-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Queue healing animations for the Pokemon affected by this Phase.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L114">src/phases/pokemon-heal-phase.ts:114</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="hideenemytrainer"><span>hide<wbr/>Enemy<wbr/>Trainer</span><a href="#hideenemytrainer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -211,7 +290,7 @@ Additionally, attempting to call this function multiple times from the same Phas
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#hideenemytrainer">hideEnemyTrainer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/battle-phase.ts#L33">src/phases/battle-phase.ts:33</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/battle-phase.ts#L33">src/phases/battle-phase.ts:33</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="is"><span>is</span><a href="#is" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -234,12 +313,12 @@ Additionally, attempting to call this function multiple times from the same Phas
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-remarks">
-<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>This does not check for subclasses! It only checks if the phase is <em>exactly</em> the given type.
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>This does not check for subclasses! It only checks if the phase is <em>exactly</em> the given type.
 This method exists to avoid circular import issues, as using <code>instanceof</code> would require importing each phase.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#is">is</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phase.ts#L43">src/phase.ts:43</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phase.ts#L43">src/phase.ts:43</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="setanimation"><span>set<wbr/>Animation</span><a href="#setanimation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -253,7 +332,7 @@ This method exists to avoid circular import issues, as using <code>instanceof</c
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#setanimation">setAnimation</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/common-anim-phase.ts#L23">src/phases/common-anim-phase.ts:23</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/common-anim-phase.ts#L23">src/phases/common-anim-phase.ts:23</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="showenemytrainer"><span>show<wbr/>Enemy<wbr/>Trainer</span><a href="#showenemytrainer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -267,7 +346,7 @@ This method exists to avoid circular import issues, as using <code>instanceof</c
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#showenemytrainer">showEnemyTrainer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/battle-phase.ts#L6">src/phases/battle-phase.ts:6</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/battle-phase.ts#L6">src/phases/battle-phase.ts:6</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="start"><span>start</span><a href="#start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -280,7 +359,7 @@ Called automatically by the <a href="src_phase-manager.PhaseManager.html" class=
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_phases_common-anim-phase.CommonAnimPhase.html">CommonAnimPhase</a>.<a href="src_phases_common-anim-phase.CommonAnimPhase.html#start">start</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/2c86b96abb83abf912e73e8bde64aa9a0b4a52a9/src/phases/pokemon-heal-phase.ts#L51">src/phases/pokemon-heal-phase.ts:51</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/acb38ef2d3b05073c7eeb886c5673ca3bbc52daf/src/phases/pokemon-heal-phase.ts#L97">src/phases/pokemon-heal-phase.ts:97</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -302,7 +381,7 @@ Called automatically by the <a href="src_phase-manager.PhaseManager.html" class=
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#battlerindex" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>battler<wbr/>Index</span></a><a href="#fieldindex" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>field<wbr/>Index</span></a><a href="#fullrestorepp" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>full<wbr/>Restore<wbr/>PP</span></a><a href="#healstatus" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>heal<wbr/>Status</span></a><a href="#hphealed" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>hp<wbr/>Healed</span></a><a href="#message" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>message</span></a><a href="#phasename"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>phase<wbr/>Name</span></a><a href="#player" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>player</span></a><a href="#preventfullheal" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>prevent<wbr/>Full<wbr/>Heal</span></a><a href="#revive" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>revive</span></a><a href="#showfullhpmessage" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>show<wbr/>Full<wbr/>Hp<wbr/>Message</span></a><a href="#skipanim" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>skip<wbr/>Anim</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#end"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a><a href="#executeforall" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>For<wbr/>All</span></a><a href="#getpokemon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pokemon</span></a><a href="#hideenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide<wbr/>Enemy<wbr/>Trainer</span></a><a href="#is" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is</span></a><a href="#setanimation" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Animation</span></a><a href="#showenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Enemy<wbr/>Trainer</span></a><a href="#start"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>start</span></a></div></details></div></details></div>
+<div><a href="#dohealpokemon" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>do<wbr/>Heal<wbr/>Pokemon</span></a><a href="#end"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a><a href="#executeforall" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>execute<wbr/>For<wbr/>All</span></a><a href="#gethealamount" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Heal<wbr/>Amount</span></a><a href="#getpokemon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pokemon</span></a><a href="#heal" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>heal</span></a><a href="#hideenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide<wbr/>Enemy<wbr/>Trainer</span></a><a href="#is" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is</span></a><a href="#setanimation" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Animation</span></a><a href="#showenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Enemy<wbr/>Trainer</span></a><a href="#start"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>start</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
 <nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
