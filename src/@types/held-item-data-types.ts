@@ -67,6 +67,7 @@ interface HeldItemConfigurationEntry {
 
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];
 
+// TODO: If this is an internal type, we can (and should) just shove a reference to the pokemon inside instead of the ID
 export interface PokemonItemMap {
   item: HeldItemSpecs;
   pokemonId: number;

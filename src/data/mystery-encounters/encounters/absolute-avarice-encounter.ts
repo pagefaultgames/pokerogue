@@ -17,7 +17,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intro";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import { getPartyBerries } from "#items/item-utility";
+import { getPartyItemsInCategory } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -115,9 +115,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       .loadSe("Follow Me", "battle_anims", "Follow Me.wav");
 
     // Get all berries in party, with references to the pokemon
-    // This is guaranteed to be nonempty because of the HeldItemRequirement
+    // This is guaranteed to be non-empty because of the HeldItemRequirement
     // mandating 6+ total berries
-    const berryItems = getPartyBerries() as unknown as NonEmptyTuple<PokemonItemMap>;
+    const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as NonEmptyTuple<PokemonItemMap>;
 
     encounter.misc = { berryItemsMap: berryItems };
 
@@ -166,9 +166,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Remove the berries from the party
     // Session has been safely saved at this point, so data won't be lost
-    const berryItems = getPartyBerries();
+    const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     berryItems.forEach(map => {
-      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id as HeldItemId);
+      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id);
     });
 
     globalScene.updateItems(true);

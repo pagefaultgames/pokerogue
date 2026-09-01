@@ -215,7 +215,6 @@ function determineItemPool(pool: HeldItemTieredPool, upgradeCount = 0): HeldItem
     console.warn("Tier pool for %d lacks items!", tier);
   }
 
-  // TODO: The while loop here is in theory useless
   while (tier > 0 && (pool[tier] == null || pool[tier]!.length === 0)) {
     tier--;
   }
