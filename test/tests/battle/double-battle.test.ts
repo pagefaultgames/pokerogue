@@ -3,6 +3,7 @@ import { Phase } from "#app/phase";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -10,6 +11,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
+import { PostSummonActivateAbilityPhase } from "#phases/post-summon-activate-ability-phase";
 import { GameManager } from "#test/framework/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -127,7 +129,7 @@ describe("Double Battles", () => {
     }
   });
 
-  it("should trigger multiple switches in speed order without swapping phases", async () => {
+  it("should trigger multiple switches in speed order without shuffling phases", async () => {
     game.override.battleStyle("double").battleType(BattleType.TRAINER);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.POLITOED, SpeciesId.MILOTIC);
 
@@ -135,7 +137,7 @@ describe("Double Battles", () => {
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(player2, AbilityId.SWIFT_SWIM);
     game.field.mockAbility(player3, AbilityId.DRIZZLE);
-    // TODO: change to just set the stats array maybe?
+    // NB: These need to be mocks as stats get recomputed copiously often (more than they arguably should be)
     vi.spyOn(player1, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 100 : player1.stats[stat]));
     vi.spyOn(player2, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 40 : player2.stats[stat]));
     vi.spyOn(player3, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 10 : player3.stats[stat]));
@@ -148,7 +150,12 @@ describe("Double Battles", () => {
     // (thus making any BattlerIndex-based references inaccurate)
     const phases: ["RecallPhase" | "SwitchPhase" | "SummonPhase" | "PostSummonPhase", string][] = [];
     vi.spyOn(Phase.prototype, "start").mockImplementation(function (this: Phase) {
-      if (this.is("RecallPhase") || this.is("SwitchPhase") || this.is("SummonPhase") || this.is("PostSummonPhase")) {
+      if (
+        this.is("RecallPhase")
+        || this.is("SwitchPhase")
+        || this.is("SummonPhase")
+        || (this.is("PostSummonPhase") && !(this instanceof PostSummonActivateAbilityPhase))
+      ) {
         phases.push([this.phaseName, this.getPokemon().name]);
       }
     });
@@ -204,7 +211,7 @@ describe("Double Battles", () => {
     game.move.changeMoveset(p1, [MoveId.THUNDERBOLT, MoveId.ROAR]);
     game.move.changeMoveset(p2, [MoveId.SPLASH]);
 
-    game.move.select(MoveId.THUNDERBOLT, 0, 2 );
+    game.move.select(MoveId.THUNDERBOLT, 0, 2);
     game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
