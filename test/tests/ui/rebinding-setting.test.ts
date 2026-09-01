@@ -306,14 +306,14 @@ describe("Test Rebinding", () => {
 
   it("Swap alt with a key not binded yet", () => {
     inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("ALT_BUTTON_UP");
-    inGame.whenWePressOnKeyboard("J").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inTheSettingMenu
       .whenCursorIsOnSetting("ALT_BUTTON_UP")
       .iconDisplayedIs("KEY_W")
-      .weWantThisBindInstead("J")
+      .weWantThisBindInstead("B")
       .confirm();
     inGame.whenWePressOnKeyboard("W").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").weShouldTriggerTheButton("ALT_BUTTON_UP");
+    inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("ALT_BUTTON_UP");
   });
 
   it("Delete blacklisted bind", () => {
@@ -331,14 +331,14 @@ describe("Test Rebinding", () => {
   it("Delete bind then assign a not yet binded button", () => {
     inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inTheSettingMenu
       .whenCursorIsOnSetting("ALT_BUTTON_LEFT")
       .thereShouldBeNoIcon()
-      .weWantThisBindInstead("J")
+      .weWantThisBindInstead("B")
       .confirm();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
+    inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
   });
   it("swap 2 bind, than delete 1 bind than assign another bind", () => {
     inGame.whenWePressOnKeyboard("R").weShouldTriggerTheButton("BUTTON_CYCLE_SHINY");
@@ -373,12 +373,12 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("BUTTON_CYCLE_SHINY");
     inGame.whenWePressOnKeyboard("S").weShouldTriggerTheButton("ALT_BUTTON_DOWN");
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
     inTheSettingMenu
       .whenCursorIsOnSetting("ALT_BUTTON_DOWN")
       .iconDisplayedIs("KEY_S")
-      .weWantThisBindInstead("J")
+      .weWantThisBindInstead("B")
       .confirm();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
@@ -386,39 +386,39 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("BUTTON_CYCLE_SHINY");
     inGame.whenWePressOnKeyboard("S").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").weShouldTriggerTheButton("ALT_BUTTON_DOWN");
+    inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("ALT_BUTTON_DOWN");
   });
 
   it("Delete bind then assign not already existing button", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
-    inGame.whenWePressOnKeyboard("J").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
     inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
     inTheSettingMenu
       .whenCursorIsOnSetting("ALT_BUTTON_LEFT")
       .thereShouldBeNoIcon()
-      .weWantThisBindInstead("J")
+      .weWantThisBindInstead("B")
       .confirm();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
+    inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
   });
 
   it("change alt bind to not already existing button, than another one alt bind with another not already existing button", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("ALT_BUTTON_RIGHT");
-    inGame.whenWePressOnKeyboard("J").nothingShouldHappen();
+    inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("U").nothingShouldHappen();
     inTheSettingMenu
       .whenCursorIsOnSetting("ALT_BUTTON_LEFT")
       .iconDisplayedIs("KEY_A")
-      .weWantThisBindInstead("J")
+      .weWantThisBindInstead("B")
       .confirm();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("ALT_BUTTON_RIGHT");
-    inGame.whenWePressOnKeyboard("J").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
+    inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
     inGame.whenWePressOnKeyboard("U").nothingShouldHappen();
     inTheSettingMenu
       .whenCursorIsOnSetting("ALT_BUTTON_RIGHT")
@@ -427,7 +427,7 @@ describe("Test Rebinding", () => {
       .confirm();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
-    inGame.whenWePressOnKeyboard("J").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
+    inGame.whenWePressOnKeyboard("B").weShouldTriggerTheButton("ALT_BUTTON_LEFT");
     inGame.whenWePressOnKeyboard("U").weShouldTriggerTheButton("ALT_BUTTON_RIGHT");
   });
 
