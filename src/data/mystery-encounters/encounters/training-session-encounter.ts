@@ -189,10 +189,9 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           // Return the options for nature selection
           return getEnumValues(Nature).map((nature: Nature) => {
             const newNature = !globalScene.gameData.checkSpeciesNatureUnlocked(pokemon.species, nature);
+            const naturePrefix = newNature ? "(+) " : "";
             const option: OptionSelectItem = {
-              label: newNature
-                ? "(+) " + getNatureName(nature, true, true, true)
-                : getNatureName(nature, true, true, true),
+              label: naturePrefix + getNatureName(nature, true, true, true),
               style: newNature ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
               handler: () => {
                 // Pokemon and second option selected
