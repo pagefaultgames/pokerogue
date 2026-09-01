@@ -95,4 +95,25 @@ describe("Phases - Quiet Form Change Phase", () => {
     expect(castform).not.toHaveAbilityApplied(AbilityId.SNOW_WARNING);
     expect(castform).not.toHaveAbilityApplied(AbilityId.CLOUD_NINE);
   });
+
+  it("should not trigger on-summon abilities when recalling a pokemon that form-changes on leave", async () => {
+    const SUNSHINE_FORM = 1;
+    const OVERCAST_FORM = 0;
+
+    game.override.starterForms({ [SpeciesId.CHERRIM]: SUNSHINE_FORM });
+
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.MAGIKARP);
+
+    const cherrim = game.field.getPlayerPokemon();
+    expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
+    expect(cherrim.getPassiveAbility().id).toBe(AbilityId.CHLOROPHYLL);
+    expect(game.scene.arena.weather).toBeUndefined();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(cherrim.formIndex).toBe(OVERCAST_FORM);
+    expect(cherrim.getPassiveAbility().id).toBe(AbilityId.DROUGHT);
+    expect(game.scene.arena.weather).toBeUndefined();
+  });
 });
