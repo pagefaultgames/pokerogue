@@ -167,7 +167,7 @@ describe.each([
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FURY_SWIPES);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
 
     await game.phaseInterceptor.to("MoveEffectPhase");

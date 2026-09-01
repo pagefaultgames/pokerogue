@@ -90,7 +90,7 @@ describe("Move - Laser Focus", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.INSTRUCT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(critSpy).toHaveReturnedTimes(2);

@@ -5,7 +5,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
-import type { TimedEvent } from "#types/events";
+import type { TimedEvent } from "#types/game-events";
 
 export const timedEvents: readonly TimedEvent[] = [
   {

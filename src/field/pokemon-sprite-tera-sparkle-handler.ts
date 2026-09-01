@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
 import { Pokemon } from "#field/pokemon";
-import { coerceArray } from "#utils/array";
 import { fixedInt, randInt } from "#utils/common";
 
-export class PokemonSpriteSparkleHandler {
+export class PokemonSpriteTeraSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;
 
   private counterTween?: Phaser.Tweens.Tween | undefined;
 
-  setup(): this {
+  public setup(): this {
     this.sprites = new Set();
+
     this.counterTween = globalScene.tweens.addCounter({
       duration: fixedInt(200),
       from: 0,
@@ -18,15 +18,20 @@ export class PokemonSpriteSparkleHandler {
       repeat: -1,
       onRepeat: () => this.onLapse(),
     });
+
     return this;
   }
 
-  onLapse(): void {
-    Array.from(this.sprites.values())
-      .filter(s => !s.scene)
-      .map(s => this.sprites.delete(s));
+  private onLapse(): void {
+    for (const sprite of this.sprites.values()) {
+      if (!sprite.scene) {
+        this.sprites.delete(sprite);
+      }
+    }
+
     for (const s of this.sprites.values()) {
-      if (!s.pipelineData["teraColor"] || !(s.pipelineData["teraColor"] as number[]).find(c => c)) {
+      const teraColorData: number[] | undefined = s.pipelineData["teraColor"];
+      if (!teraColorData?.some(c => c)) {
         continue;
       }
       if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer)) {
@@ -35,21 +40,26 @@ export class PokemonSpriteSparkleHandler {
       if (!(s.parentContainer instanceof Pokemon) || !(s.parentContainer as Pokemon).isTerastallized) {
         continue;
       }
+
       const pokemon = s.parentContainer instanceof Pokemon ? (s.parentContainer as Pokemon) : null;
       const parent = (pokemon || s).parentContainer;
       const texture = s.texture;
-      const [width, height] = [texture.source[0].width, texture.source[0].height];
-      const [pixelX, pixelY] = [randInt(width), randInt(height)];
+      const { width, height } = texture.source[0];
+      const pixelX = randInt(width);
+      const pixelY = randInt(height);
       const ratioX = s.width / width;
       const ratioY = s.height / height;
       const pixel = texture.manager.getPixel(pixelX, pixelY, texture.key, "__BASE");
+
       if (pixel?.alpha) {
-        const [xOffset, yOffset] = [-s.originX * s.width, -s.originY * s.height];
+        const xOffset = -s.originX * s.width;
+        const yOffset = -s.originY * s.height;
         const sparkle = globalScene.addFieldSprite(
-          (pokemon?.x || 0) + s.x + pixelX * ratioX + xOffset,
-          (pokemon?.y || 0) + s.y + pixelY * ratioY + yOffset,
+          (pokemon?.x ?? 0) + s.x + pixelX * ratioX + xOffset,
+          (pokemon?.y ?? 0) + s.y + pixelY * ratioY + yOffset,
           "tera_sparkle",
         );
+
         sparkle.pipelineData["ignoreTimeTint"] = s.pipelineData["ignoreTimeTint"];
         sparkle.setName("sprite-tera-sparkle");
         sparkle.play("tera_sparkle");
@@ -59,8 +69,7 @@ export class PokemonSpriteSparkleHandler {
     }
   }
 
-  add(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
-    sprites = coerceArray(sprites);
+  public add(...sprites: Phaser.GameObjects.Sprite[]): void {
     for (const s of sprites) {
       if (this.sprites.has(s)) {
         continue;
@@ -69,20 +78,19 @@ export class PokemonSpriteSparkleHandler {
     }
   }
 
-  remove(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
-    sprites = coerceArray(sprites);
+  public remove(...sprites: Phaser.GameObjects.Sprite[]): void {
     for (const s of sprites) {
       this.sprites.delete(s);
     }
   }
 
-  removeAll(): void {
+  public removeAll(): void {
     for (const s of this.sprites.values()) {
       this.sprites.delete(s);
     }
   }
 
-  destroy(): void {
+  public destroy(): void {
     this.removeAll();
     if (this.counterTween) {
       this.counterTween.destroy();

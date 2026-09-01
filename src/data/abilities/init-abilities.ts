@@ -6,7 +6,6 @@ import {
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
-  AttackTypeImmunityAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -65,6 +64,7 @@ import {
   MoveAbilityBypassAbAttr,
   MoveDamageBoostAbAttr,
   MoveEffectChanceMultiplierAbAttr,
+  MoveHealBoostAbAttr,
   MoveImmunityAbAttr,
   MoveImmunityStatStageChangeAbAttr,
   MovePowerBoostAbAttr,
@@ -175,6 +175,7 @@ import {
   TypeImmunityAddBattlerTagAbAttr,
   TypeImmunityHealAbAttr,
   TypeImmunityStatStageChangeAbAttr,
+  UngroundedAbAttr,
   UserFieldBattlerTagImmunityAbAttr,
   UserFieldMoveTypePowerBoostAbAttr,
   UserFieldStatusEffectImmunityAbAttr,
@@ -184,7 +185,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag, ProtectedTag } from "#data/battler-tags";
+import { ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -340,11 +341,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.LEVITATE, 3) //
-      .attr(
-        AttackTypeImmunityAbAttr,
-        PokemonType.GROUND,
-        (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
-      )
+      .attr(UngroundedAbAttr)
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.EFFECT_SPORE, 3) //
@@ -543,6 +540,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.LIQUID_OOZE, 3) //
       .attr(ReverseDrainAbAttr)
+      .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.OVERGROW, 3) //
       .attr(LowHpMoveTypePowerBoostAbAttr, PokemonType.GRASS)
@@ -1210,6 +1208,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.MEGA_LAUNCHER, 6) //
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5)
+      .attr(MoveHealBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5)
       .build(),
     new AbBuilder(AbilityId.GRASS_PELT, 6) //
       .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), StatMultiplierAbAttr, Stat.DEF, 1.5)
@@ -1520,9 +1519,9 @@ export function initAbilities() {
       .attr(PostDancingMoveAbAttr)
       /*
        * Incorrect interations with:
-       * Petal Dance (should not lock in or count down timer; currently does both)
-       * Flinches (due to tag being removed earlier)
-       * Failed/protected moves (should not trigger if original move is protected against)
+       * - Petal Dance (should not lock in or count down timer; currently does both)
+       * - Status moves that incorrectly fail to propagate condition checks
+       *   (includes stat stage moves as well as Teeter Dance and co.) due to moves being still considered "successful"
        */
       .edgeCase()
       .build(),
@@ -1593,6 +1592,7 @@ export function initAbilities() {
           powerMult.value *= 0.5;
         }
         if (
+          // TODO: apply the ability
           pokemon.hasAbility(AbilityId.LEVITATE)
           || pokemon.hasAbility(AbilityId.EELEVATE)
           || pokemon.isOfType(PokemonType.FLYING)
@@ -2180,11 +2180,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.EELEVATE, 9) //
-      .attr(
-        AttackTypeImmunityAbAttr,
-        PokemonType.GROUND,
-        (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
-      )
+      .attr(UngroundedAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
       .ignorable()
       .build(),

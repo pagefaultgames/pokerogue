@@ -62,7 +62,7 @@ describe("Move - Teleport", () => {
       game.move.use(MoveId.FAIRY_LOCK);
 
       await game.move.selectEnemyMove(MoveId.TELEPORT);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
       expect(enemy.getLastXMoves()[0].result, "should fail while trapped").toBe(MoveResult.FAIL);
     });
@@ -77,7 +77,7 @@ describe("Move - Teleport", () => {
     game.move.use(MoveId.FAIRY_LOCK);
 
     await game.move.selectEnemyMove(MoveId.TELEPORT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.isOnField(), "should not be on the field").toBe(false);
   });
@@ -91,7 +91,7 @@ describe("Move - Teleport", () => {
     game.move.use(MoveId.FAIRY_LOCK);
 
     await game.move.selectEnemyMove(MoveId.TELEPORT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.isOnField(), "should not be on the field").toBe(false);
   });

@@ -1,5 +1,6 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
@@ -372,7 +373,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
    * @returns A color or undefined if the default color should be used
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    if (globalScene.typeHints === TypeHints.OFF) {
+    if (settings.display.typeHintsMode === TypeHints.OFF) {
       return;
     }
 
@@ -395,12 +396,13 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       .sort((a, b) => b - a)
       .map(effectiveness => {
         if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
-          return;
+          // biome-ignore lint/complexity/noUselessUndefined: intentional
+          return undefined;
         }
         return getTypeDamageMultiplierColor(
           effectiveness ?? 0,
           "offense",
-          globalScene.typeHints === TypeHints.HIGH_CONTRAST,
+          settings.display.typeHintsMode === TypeHints.HIGH_CONTRAST,
         );
       });
 

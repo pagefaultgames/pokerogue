@@ -128,7 +128,7 @@ describe("Moves - Reflecting effects", () => {
       // turn 1
       game.move.use(MoveId.ENCORE);
       await game.move.forceEnemyMove(MoveId.TACKLE);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
@@ -137,7 +137,7 @@ describe("Moves - Reflecting effects", () => {
       playerAbilitySpy.mockRestore();
 
       game.move.use(MoveId.GROWL);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
       expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
@@ -237,7 +237,7 @@ describe("Moves - Reflecting effects", () => {
       // Turn 1: use charm while enemy is airborne; misses
       game.move.use(MoveId.CHARM);
       await game.move.forceEnemyMove(MoveId.FLY);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
       expect(feebas).toHaveStatStage(Stat.ATK, 0);
@@ -247,7 +247,7 @@ describe("Moves - Reflecting effects", () => {
       game.field.mockAbility(feebas, AbilityId.NO_GUARD);
 
       game.move.use(MoveId.CHARM);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
       expect(feebas).toHaveStatStage(Stat.ATK, 0);
@@ -281,7 +281,7 @@ describe("Moves - Reflecting effects", () => {
 
       game.move.use(MoveId.GROWL);
       await game.move.forceEnemyMove(MoveId.SURGING_STRIKES);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
       const enemy = game.field.getEnemyPokemon();
