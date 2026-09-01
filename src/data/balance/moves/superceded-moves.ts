@@ -533,6 +533,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.STRUGGLE_BUG]: [MoveId.BUG_BUZZ, MoveId.POLLEN_PUFF],
   [MoveId.SWIFT]: [MoveId.TRI_ATTACK, MoveId.UPROAR, MoveId.HYPER_VOICE, MoveId.TECHNO_BLAST, MoveId.BOOMBURST],
   [MoveId.TACKLE]: NORMAL_40BP_REPLACEMENTS,
+  [MoveId.TAKE_DOWN]: [MoveId.DOUBLE_EDGE, MoveId.HEAD_CHARGE],
   [MoveId.THUNDER_FANG]: [
     MoveId.THUNDER_PUNCH,
     MoveId.FUSION_BOLT,
