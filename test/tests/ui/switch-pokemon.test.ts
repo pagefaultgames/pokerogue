@@ -61,23 +61,6 @@ describe("UI - Switch Mode Button", () => {
     expect(game.scene.getPlayerParty()[1]).toBe(firstPokemon);
   });
 
-  it("should switch using the swap pokemon key in single battles", async () => {
-    await setupBattle("single");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
-    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
-    const party = game.scene.getPlayerParty();
-    const firstPokemon = party[0];
-    const secondPokemon = party[1];
-
-    partyHandler.setCursor(0);
-    partyHandler.processInput(Button.SWAP_POKEMON);
-    partyHandler.setCursor(1);
-    partyHandler.processInput(Button.ACTION);
-
-    expect(game.scene.getPlayerParty()[0]).toBe(secondPokemon);
-    expect(game.scene.getPlayerParty()[1]).toBe(firstPokemon);
-  });
-
   it("should switch using the switch option in double battles", async () => {
     await setupBattle("double");
     await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
@@ -90,23 +73,6 @@ describe("UI - Switch Mode Button", () => {
     partyHandler.processInput(Button.ACTION);
     partyHandler.setCursor(1);
     partyHandler.processInput(Button.ACTION);
-    partyHandler.setCursor(1);
-    partyHandler.processInput(Button.ACTION);
-
-    expect(game.scene.getPlayerParty()[0]).toBe(secondPokemon);
-    expect(game.scene.getPlayerParty()[1]).toBe(firstPokemon);
-  });
-
-  it("should switch using the swap pokemon key in double battles", async () => {
-    await setupBattle("double");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
-    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
-    const party = game.scene.getPlayerParty();
-    const firstPokemon = party[0];
-    const secondPokemon = party[1];
-
-    partyHandler.setCursor(0);
-    partyHandler.processInput(Button.SWAP_POKEMON);
     partyHandler.setCursor(1);
     partyHandler.processInput(Button.ACTION);
 

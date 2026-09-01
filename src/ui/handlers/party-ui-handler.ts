@@ -42,10 +42,6 @@ const DISCARD_BUTTON_X = 60;
 const DISCARD_BUTTON_X_DOUBLES = 64;
 const DISCARD_BUTTON_Y = -73;
 const DISCARD_BUTTON_Y_DOUBLES = -58;
-const SWITCH_MODE_BUTTON_X = 60;
-const SWITCH_MODE_BUTTON_X_DOUBLES = 64;
-const SWITCH_MODE_BUTTON_Y = -73;
-const SWITCH_MODE_BUTTON_Y_DOUBLES = -58;
 
 const isManageLayoutMode = (partyUiMode: PartyUiMode) =>
   partyUiMode === PartyUiMode.MODIFIER_TRANSFER
@@ -107,7 +103,6 @@ export class PartyUiHandler extends MessageUiHandler {
   private partySlots: PartySlot[];
   private partyCancelButton: PartyCancelButton;
   private partyDiscardModeButton: PartyDiscardModeButton;
-  private partySwitchModeButton: PartySwitchModeButton;
   private partyMessageBox: Phaser.GameObjects.NineSlice;
   private moveInfoOverlay: MoveInfoOverlay;
 
@@ -271,10 +266,6 @@ export class PartyUiHandler extends MessageUiHandler {
     partyContainer.add(partyDiscardModeButton);
     this.partyDiscardModeButton = partyDiscardModeButton;
 
-    const partySwitchModeButton = new PartySwitchModeButton(SWITCH_MODE_BUTTON_X, SWITCH_MODE_BUTTON_Y);
-    partyContainer.add(partySwitchModeButton);
-    this.partySwitchModeButton = partySwitchModeButton;
-
     // prepare move overlay
     this.moveInfoOverlay = new MoveInfoOverlay({
       top: true,
@@ -327,18 +318,12 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partySwitchMode = false;
     this.partySwitchCursor = -1;
-    this.partySwitchModeButton.setActiveState(false);
     this.populatePartySlots();
     // If we are currently transferring items, set the icon to its proper state and reveal the button.
     if (this.isItemManageMode()) {
       this.partyDiscardModeButton.toggleIcon(
         this.partyUiMode as typeof PartyUiMode.MODIFIER_TRANSFER | typeof PartyUiMode.DISCARD,
       );
-      this.partySwitchModeButton.clear();
-    } else if (this.partyUiMode === PartyUiMode.CHECK) {
-      this.partySwitchModeButton.show(globalScene.currentBattle.double);
-    } else {
-      this.partySwitchModeButton.clear();
     }
     this.showPartyText();
     this.setCursor(0);
@@ -978,22 +963,6 @@ export class PartyUiHandler extends MessageUiHandler {
       return success;
     }
 
-    if (button === Button.SWAP_POKEMON) {
-      if (this.partyUiMode === PartyUiMode.CHECK && this.cursor < 6) {
-        if (this.partySwitchCursor < 0) {
-          this.startPartySwitchSelection(this.cursor);
-        } else if (this.cursor === this.partySwitchCursor) {
-          this.clearPartySwitchSelection();
-        } else {
-          this.swapPartyMembers(this.partySwitchCursor, this.cursor);
-          this.clearPartySwitchSelection();
-        }
-        ui.playSelect();
-        return true;
-      }
-      return false;
-    }
-
     if (button === Button.ACTION) {
       return this.processPartyActionInput();
     }
@@ -1265,22 +1234,14 @@ export class PartyUiHandler extends MessageUiHandler {
       } else if (this.lastCursor === 6) {
         this.partyCancelButton.deselect();
       } else if (this.lastCursor === 7) {
-        if (this.partyUiMode === PartyUiMode.CHECK) {
-          this.partySwitchModeButton.deselect();
-        } else {
-          this.partyDiscardModeButton.deselect();
-        }
+        this.partyDiscardModeButton.deselect();
       }
       if (cursor < 6) {
         this.partySlots[cursor].select();
       } else if (cursor === 6) {
         this.partyCancelButton.select();
       } else if (cursor === 7) {
-        if (this.partyUiMode === PartyUiMode.CHECK) {
-          this.partySwitchModeButton.select();
-        } else {
-          this.partyDiscardModeButton.select();
-        }
+        this.partyDiscardModeButton.select();
       }
     }
     return changed;
@@ -1849,7 +1810,6 @@ export class PartyUiHandler extends MessageUiHandler {
   private startPartySwitch(startCursor = this.cursor): void {
     this.partySwitchMode = true;
     this.partySwitchCursor = startCursor;
-    this.partySwitchModeButton.setActiveState(true);
     if (this.partySwitchCursor >= 0) {
       this.partySlots[this.partySwitchCursor].setTransfer(true);
     }
@@ -1861,7 +1821,6 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     this.partySwitchMode = false;
     this.partySwitchCursor = -1;
-    this.partySwitchModeButton.setActiveState(false);
     this.showPartyText();
   }
 
@@ -2512,96 +2471,5 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
     this.transferIcon.setVisible(false);
     this.discardIcon.setVisible(false);
     this.textBox.setVisible(false);
-  }
-}
-
-class PartySwitchModeButton extends Phaser.GameObjects.Container {
-  private static readonly ACTIVE_TINT = 0x40c8f8;
-  private static readonly ACTIVE_TEXT_COLOR = "#40c8f8";
-  private static readonly ACTIVE_TEXT_SHADOW = "#006090";
-  private selected: boolean;
-  private isActive: boolean;
-  private icon: Phaser.GameObjects.Sprite;
-  private textBox: Phaser.GameObjects.Text;
-
-  constructor(x: number, y: number) {
-    super(globalScene, x, y);
-
-    this.setup();
-  }
-
-  setup() {
-    this.icon = globalScene.add.sprite(0, 0, "party_transfer");
-    this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:switchMode"), TextStyle.PARTY);
-
-    this.add(this.icon);
-    this.add(this.textBox);
-
-    this.clear();
-  }
-
-  show(isDoubleBattle: boolean): void {
-    this.setActive(true).setVisible(true);
-    this.icon.setVisible(true);
-    this.textBox.setVisible(true);
-    this.selected = false;
-    this.isActive = false;
-    this.icon.setFrame("normal");
-    this.applyActiveState();
-    this.textBox.setText(i18next.t("partyUiHandler:switchMode"));
-    this.icon.displayWidth = this.textBox.text.length * 9 + 3;
-    this.setPosition(
-      isDoubleBattle ? SWITCH_MODE_BUTTON_X_DOUBLES : SWITCH_MODE_BUTTON_X,
-      isDoubleBattle ? SWITCH_MODE_BUTTON_Y_DOUBLES : SWITCH_MODE_BUTTON_Y,
-    );
-  }
-
-  select(): void {
-    if (this.selected) {
-      return;
-    }
-
-    this.selected = true;
-    this.icon.setFrame("selected");
-  }
-
-  deselect(): void {
-    if (!this.selected) {
-      return;
-    }
-
-    this.selected = false;
-    this.icon.setFrame("normal");
-    this.applyActiveState();
-  }
-
-  setActiveState(isActive: boolean): void {
-    if (this.isActive === isActive) {
-      return;
-    }
-
-    this.isActive = isActive;
-    this.applyActiveState();
-  }
-
-  private applyActiveState(): void {
-    if (this.isActive) {
-      this.icon.setTint(PartySwitchModeButton.ACTIVE_TINT);
-      this.textBox.setColor(PartySwitchModeButton.ACTIVE_TEXT_COLOR);
-      this.textBox.setShadowColor(PartySwitchModeButton.ACTIVE_TEXT_SHADOW);
-      return;
-    }
-
-    this.icon.clearTint();
-    this.textBox.setColor(getTextColor(TextStyle.PARTY, false));
-    this.textBox.setShadowColor(getTextColor(TextStyle.PARTY, true));
-  }
-
-  clear(): void {
-    this.setActive(false).setVisible(false);
-    this.icon?.setVisible(false);
-    this.textBox?.setVisible(false);
-    this.selected = false;
-    this.isActive = false;
   }
 }
