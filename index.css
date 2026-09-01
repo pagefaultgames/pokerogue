@@ -257,12 +257,6 @@ input:-internal-autofill-selected {
   display: none;
 }
 
-/* Show #apadSwapPokemon only in check team */
-#touchControls:not([data-ui-mode="PARTY"]) #apadSwapPokemon,
-#touchControls[data-ui-mode="PARTY"]:not([data-party-mode="CHECK"]) #apadSwapPokemon {
-  display: none;
-}
-
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
 #touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],

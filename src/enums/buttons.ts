@@ -8,7 +8,6 @@ export enum Button {
   CANCEL,
   MENU,
   STATS,
-  SWAP_POKEMON,
   CYCLE_SHINY,
   CYCLE_FORM,
   CYCLE_GENDER,

@@ -18,7 +18,6 @@ export enum SettingGamepad {
   BUTTON_CANCEL = "BUTTON_CANCEL",
   BUTTON_MENU = "BUTTON_MENU",
   BUTTON_STATS = "BUTTON_STATS",
-  BUTTON_SWAP_POKEMON = "BUTTON_SWAP_POKEMON",
   BUTTON_CYCLE_FORM = "BUTTON_CYCLE_FORM",
   BUTTON_CYCLE_SHINY = "BUTTON_CYCLE_SHINY",
   BUTTON_CYCLE_GENDER = "BUTTON_CYCLE_GENDER",
@@ -46,7 +45,6 @@ export const settingGamepadOptions = {
   [SettingGamepad.BUTTON_CANCEL]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
   [SettingGamepad.BUTTON_MENU]: [`KEY ${Button.MENU.toString()}`, pressAction],
   [SettingGamepad.BUTTON_STATS]: [`KEY ${Button.STATS.toString()}`, pressAction],
-  [SettingGamepad.BUTTON_SWAP_POKEMON]: [`KEY ${Button.SWAP_POKEMON.toString()}`, pressAction],
   [SettingGamepad.BUTTON_CYCLE_FORM]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
   [SettingGamepad.BUTTON_CYCLE_SHINY]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
   [SettingGamepad.BUTTON_CYCLE_GENDER]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
@@ -69,7 +67,6 @@ export const settingGamepadDefaults = {
   [SettingGamepad.BUTTON_CANCEL]: 0,
   [SettingGamepad.BUTTON_MENU]: 0,
   [SettingGamepad.BUTTON_STATS]: 0,
-  [SettingGamepad.BUTTON_SWAP_POKEMON]: 0,
   [SettingGamepad.BUTTON_CYCLE_FORM]: 0,
   [SettingGamepad.BUTTON_CYCLE_SHINY]: 0,
   [SettingGamepad.BUTTON_CYCLE_GENDER]: 0,
@@ -97,7 +94,6 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
     case SettingGamepad.BUTTON_CANCEL:
     case SettingGamepad.BUTTON_MENU:
     case SettingGamepad.BUTTON_STATS:
-    case SettingGamepad.BUTTON_SWAP_POKEMON:
     case SettingGamepad.BUTTON_CYCLE_SHINY:
     case SettingGamepad.BUTTON_CYCLE_FORM:
     case SettingGamepad.BUTTON_CYCLE_GENDER:

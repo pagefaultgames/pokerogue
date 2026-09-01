@@ -23,7 +23,6 @@ export enum SettingKeyboard {
   ALT_BUTTON_MENU = "ALT_BUTTON_MENU",
   BUTTON_STATS = "BUTTON_STATS",
   ALT_BUTTON_STATS = "ALT_BUTTON_STATS",
-  BUTTON_SWAP_POKEMON = "BUTTON_SWAP_POKEMON",
   BUTTON_CYCLE_FORM = "BUTTON_CYCLE_FORM",
   ALT_BUTTON_CYCLE_FORM = "ALT_BUTTON_CYCLE_FORM",
   BUTTON_CYCLE_SHINY = "BUTTON_CYCLE_SHINY",
@@ -66,7 +65,6 @@ export const settingKeyboardOptions = {
   [SettingKeyboard.ALT_BUTTON_MENU]: [`KEY ${Button.MENU.toString()}`, pressAction],
   [SettingKeyboard.BUTTON_STATS]: [`KEY ${Button.STATS.toString()}`, pressAction],
   [SettingKeyboard.ALT_BUTTON_STATS]: [`KEY ${Button.STATS.toString()}`, pressAction],
-  [SettingKeyboard.BUTTON_SWAP_POKEMON]: [`KEY ${Button.SWAP_POKEMON.toString()}`, pressAction],
   [SettingKeyboard.BUTTON_CYCLE_FORM]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
   [SettingKeyboard.ALT_BUTTON_CYCLE_FORM]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
   [SettingKeyboard.BUTTON_CYCLE_SHINY]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
@@ -107,7 +105,6 @@ export const settingKeyboardDefaults = {
   [SettingKeyboard.ALT_BUTTON_MENU]: 0,
   [SettingKeyboard.BUTTON_STATS]: 0,
   [SettingKeyboard.ALT_BUTTON_STATS]: 0,
-  [SettingKeyboard.BUTTON_SWAP_POKEMON]: 0,
   [SettingKeyboard.BUTTON_CYCLE_FORM]: 0,
   [SettingKeyboard.ALT_BUTTON_CYCLE_FORM]: 0,
   [SettingKeyboard.BUTTON_CYCLE_SHINY]: 0,
@@ -149,7 +146,6 @@ export function setSettingKeyboard(setting: SettingKeyboard, value: number): boo
     case SettingKeyboard.BUTTON_CANCEL:
     case SettingKeyboard.BUTTON_MENU:
     case SettingKeyboard.BUTTON_STATS:
-    case SettingKeyboard.BUTTON_SWAP_POKEMON:
     case SettingKeyboard.BUTTON_CYCLE_SHINY:
     case SettingKeyboard.BUTTON_CYCLE_FORM:
     case SettingKeyboard.BUTTON_CYCLE_GENDER:
