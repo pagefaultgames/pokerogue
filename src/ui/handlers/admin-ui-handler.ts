@@ -360,7 +360,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
         return { adminSearchResult, error: true, errorType };
       }
-      adminInfo.resetCode = adminInfo.resetCode ?? "abcedf";
+      adminInfo.resetCode = adminInfo.resetCode || "N/A";
       if (adminInfo.systemData) {
         const rawSystem = JSON.stringify(adminInfo.systemData);
         try {
