@@ -82,7 +82,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.BURN_UP);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       expect(magmar).toHaveTypes(PokemonType.UNKNOWN);
@@ -155,7 +155,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.POWER_SPLIT);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -205,7 +205,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.MEMENTO);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextWave();
 
       expect(game).toBeAtPhase("CommandPhase");
@@ -235,7 +235,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.MEMENTO);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextWave();
 
       expect(game).toBeAtPhase("CommandPhase");

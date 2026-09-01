@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { SpeciesId } from "#enums/species-id";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 
 /**
  * Award one or more ribbons to a species and its pre-evolutions

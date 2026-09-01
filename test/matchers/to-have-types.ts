@@ -78,7 +78,7 @@ export function toHaveTypes(
   const pkmName = getPokemonNameWithAffix(received);
 
   if (mode === "oneOf") {
-    const pass = actualSorted.some(v => expectedSorted.includes(v));
+    const pass = actualSorted.some(v => expectedSorted.some(e => this.equals(v, e)));
 
     return {
       pass,
