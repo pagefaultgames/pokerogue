@@ -611,11 +611,9 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.CHILLING_WATER,
   ],
   [MoveId.WATER_PULSE]: [
-    MoveId.SURF,
-    MoveId.SCALD,
+    // Currently restrictive due to Clawitzer, set to only signature moves for now
     MoveId.STEAM_ERUPTION,
     MoveId.SPARKLING_ARIA,
-    MoveId.SPLISHY_SPLASH,
     MoveId.SNIPE_SHOT,
   ],
   [MoveId.WING_ATTACK]: [MoveId.DRILL_PECK, MoveId.AERIAL_ACE, MoveId.PLUCK, MoveId.FLOATY_FALL],
