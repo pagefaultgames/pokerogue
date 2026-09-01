@@ -10,6 +10,8 @@ const ERR_USERNAME: string = "invalid username";
 const ERR_PASSWORD: string = "invalid password";
 const ERR_ACCOUNT_EXIST: string = "account doesn't exist";
 const ERR_PASSWORD_MATCH: string = "password doesn't match";
+const ERR_GENERATE_TOKEN: string = "failed to generate token";
+const ERR_ADD_SESSION: string = "failed to add account session";
 
 export class LoginFormUiHandler extends OAuthProvidersUiHandler {
   constructor(mode: UiMode | null = null) {
@@ -40,6 +42,11 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
       return "";
     }
 
+    const colonIndex = error.indexOf(":");
+    if (colonIndex > 0) {
+      error = error.slice(0, colonIndex);
+    }
+
     switch (error) {
       case ERR_USERNAME:
         return i18next.t("menu:invalidLoginUsername");
@@ -49,6 +56,10 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
         return i18next.t("menu:accountNonExistent");
       case ERR_PASSWORD_MATCH:
         return i18next.t("menu:unmatchingPassword");
+      case ERR_GENERATE_TOKEN:
+        return i18next.t("menu:serverErrorGenerateToken");
+      case ERR_ADD_SESSION:
+        return i18next.t("menu:serverErrorAddSession");
     }
 
     return super.getReadableErrorMessage(error);

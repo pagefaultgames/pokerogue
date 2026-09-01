@@ -36,6 +36,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
     if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
     }
+    // TODO: Consider replacing server error strings with numeric error codes for better maintainability
     switch (error) {
       case "invalid username":
         return i18next.t("menu:invalidRegisterUsername");
@@ -43,6 +44,10 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
         return i18next.t("menu:invalidRegisterPassword");
       case "failed to add account record":
         return i18next.t("menu:usernameAlreadyUsed");
+      case "failed to generate uuid":
+        return i18next.t("menu:serverErrorGenerateUuid");
+      case "failed to generate salt":
+        return i18next.t("menu:serverErrorGenerateSalt");
     }
 
     return super.getReadableErrorMessage(error);
