@@ -117,7 +117,7 @@ import { isEnemy } from "#utils/pokemon-utils";
 import type { queueBattlerEntrancePhases } from "#utils/switch-utils";
 import type { NonEmptyTuple } from "type-fest";
 
-//#region Constants
+// #region Constants and Interfaces
 
 /**
  * Object that holds all of the phase constructors.
@@ -238,7 +238,7 @@ const turnEndPhases: readonly PhaseString[] = [
 
 interface BattlerEntranceParams extends SummonPhaseOptions {
   /**
-   * String denoting when to add the phase.
+   * String denoting when to add the phases.
    * Possible values are:
    *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
    *  - `"delayed"`: Adds the phase via {@linkcode PhaseManager.pushPhase} to run after all phases finish running.
@@ -282,7 +282,8 @@ interface BattlerSwitchOutParams {
   // TODO: Convert to IntClosedRange<0, 5> | `-1` in the wimp out code duplication PR
   switchInIndex?: number | undefined;
 }
-//#endregion Constants
+
+// #endregion Constants and Interfaces
 
 /**
  * The `PhaseManager` is responsible for managing the phases in the Battle Scene.
