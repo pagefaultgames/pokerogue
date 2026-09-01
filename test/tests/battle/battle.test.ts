@@ -1,6 +1,8 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { activeOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -179,5 +181,19 @@ describe("Phase - Battle Phase", () => {
       () => game.isCurrentPhase("NextEncounterPhase"),
     );
     await game.phaseInterceptor.to("SwitchPhase");
+  });
+
+  it("should completely bypass the modifier select phase on a standard run away", async () => {
+    game.override.enemySpecies(SpeciesId.MAGIKARP).enemyMoveset([MoveId.SPLASH]).battleStyle("single");
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+
+    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
+
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
+    commandPhase.handleCommand(Command.RUN, 0);
+
+    await game.phaseInterceptor.to("NewBattlePhase");
+
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
   });
 });

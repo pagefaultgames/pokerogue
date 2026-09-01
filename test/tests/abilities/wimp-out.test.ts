@@ -374,7 +374,8 @@ describe("Abilities - Wimp Out", () => {
     game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, MoveId.STEALTH_ROCK, 0, ArenaTagSide.ENEMY);
     game.scene.arena.addTag(ArenaTagType.SPIKES, 1, MoveId.SPIKES, 0, ArenaTagSide.ENEMY);
     game.override.enemySpecies(SpeciesId.CENTISKORCH).enemyAbility(AbilityId.WIMP_OUT).startingWave(4);
-    await game.classicMode.startBattle(SpeciesId.TYRUNT);
+    await game.classicMode.runToSummon(SpeciesId.TYRUNT);
+    await game.phaseInterceptor.to("BattleEndPhase");
 
     expect(game.phaseInterceptor.log).not.toContain("MovePhase");
     expect(game.phaseInterceptor.log).toContain("BattleEndPhase");
