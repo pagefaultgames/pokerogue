@@ -36,15 +36,16 @@ export interface HeldItemSpecs extends HeldItemData {
 // TODO: Make this generic on a subset of `HeldItemId`
 export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
 
-// TODO: Inline this into the sole place it is used
-export type HeldItemWeightFunc = (party: Pokemon[]) => number;
+type HeldItemWeightFunc =
+  /** @param pokemon - The `Pokemon` receiving the item */
+  (pokemon: Pokemon) => number;
 
 export interface HeldItemCategoryEntry extends HeldItemData {
   id: HeldItemCategoryId;
   customWeights?: HeldItemWeights;
 }
 
-// TODO: This can include itself through held item pool
+// TODO: This can include itself through held item pool and is a bit overly expressive
 interface HeldItemPoolEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   weight: number | HeldItemWeightFunc;

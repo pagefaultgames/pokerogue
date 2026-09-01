@@ -274,7 +274,7 @@ function assignItemsFromCategory(id: HeldItemCategoryId, pokemon: Pokemon, count
 
 // TODO: Explain what this function returning `null` even means,
 // and whether it should be allowed to accept invalid categories at all
-// (possibly tightening the kind of items placeable inside pools as a result)
+// (possibly tightening the kind of item categories placeable inside pools as a result)
 export function getNewHeldItemFromCategory(
   id: HeldItemCategoryId,
   pokemon: Pokemon | Pokemon[],
@@ -395,7 +395,7 @@ function getNewHeldItemFromPool(
 
 function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): NonEmptyTuple<number> {
   return pool.map(p => {
-    const weight = typeof p.weight === "function" ? p.weight([pokemon]) : p.weight;
+    const weight = typeof p.weight === "function" ? p.weight(pokemon) : p.weight;
 
     // filter out items at max stack count
     if (typeof p.entry === "number" && !isCategoryId(p.entry) && pokemon.heldItemManager.isMaxStack(p.entry)) {
