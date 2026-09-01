@@ -1984,10 +1984,13 @@ export class GameData {
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
+  /**
+   * Checks whether a species has a specified ability index unlocked for its starter
+   * @param species The species to check
+   * @param abilityIndex The ability index to check
+   * @returns Whether that starter has that ability index unlocked
+   */
   checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
-    if (!this.isRootSpeciesUnlocked(species) || abilityIndex > 2) {
-      return true;
-    }
     const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
     return !!(abilityAttr & (1 << abilityIndex));
   }
@@ -2016,6 +2019,12 @@ export class GameData {
     return ret;
   }
 
+  /**
+   * Quickly checks if a species has a particular nature unlocked
+   * @param species The species to check
+   * @param nature The Nature to look for
+   * @returns Whether that species has the specified nature unlocked
+   */
   checkSpeciesNatureUnlocked(species: PokemonSpecies, nature: Nature): boolean {
     const dexEntry = this.dexData[species.speciesId];
     return !!(dexEntry.natureAttr & (1 << (nature + 1)));
