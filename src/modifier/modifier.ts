@@ -25,6 +25,7 @@ import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import type { VoucherType } from "#enums/voucher-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   DoubleBattleChanceBoosterModifierType,
@@ -40,7 +41,6 @@ import type {
   TerastallizeModifierType,
   TmModifierType,
 } from "#modifiers/modifier-type";
-import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/color-utils";
@@ -1647,11 +1647,12 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16) * this.stackCount,
-        i18next.t("modifier:turnHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-        true,
+        {
+          message: i18next.t("modifier:turnHealApply", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            typeName: this.type.name,
+          }),
+        },
       );
       return true;
     }
@@ -1737,16 +1738,16 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
-      // TODO: this shouldn't be undefined AFAIK
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount,
-        i18next.t("modifier:hitHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-        true,
+        toDmgValue((pokemon.turnData.totalDamageDealt * this.stackCount) / 8),
+        {
+          message: i18next.t("modifier:hitHealApply", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            typeName: this.type.name,
+          }),
+        },
       );
     }
 
@@ -1835,7 +1836,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     this.consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects
-    getBerryEffectFunc(this.berryType)(pokemon);
+    getBerryEffectFunc(this.berryType, true)(pokemon);
     applyAbAttrs("PostItemLostAbAttr", { pokemon });
 
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
@@ -1905,20 +1906,22 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     // Restore the Pokemon to half HP
+    // TODO: This should not use a phase to revive pokemon
     globalScene.phaseManager.unshiftNew(
       "PokemonHealPhase",
       pokemon.getBattlerIndex(),
       toDmgValue(pokemon.getMaxHp() / 2),
-      i18next.t("modifier:pokemonInstantReviveApply", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: this.type.name,
-      }),
-      false,
-      false,
-      true,
+      {
+        message: i18next.t("modifier:pokemonInstantReviveApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          typeName: this.type.name,
+        }),
+        revive: true,
+      },
     );
 
     // Remove the Pokemon's FAINT status
+    // TODO: Remove call to `resetStatus` once StatusEffect.FAINT is canned
     pokemon.resetStatus(true, false, true, false);
 
     for (const p of pokemon.getAlliesGenerator()) {
@@ -2319,7 +2322,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(playerPokemon),
-      playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex],
+      playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex][1],
       LearnMoveType.MEMORY,
       cost,
     );
@@ -3165,6 +3168,16 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   }
 
   /**
+   * Checks if this item can steal and if the holder has not fainted.
+   * @param pokemon The {@linkcode Pokemon} holding this item
+   * @param target The {@linkcode Pokemon} to steal from (optional)
+   * @returns `true` if an item can be stolen; false otherwise.
+   */
+  override shouldApply(pokemon: Pokemon, target?: Pokemon): boolean {
+    return super.shouldApply(pokemon, target) && !pokemon.isFainted();
+  }
+
+  /**
    * Steals an item, chosen randomly, from a set of target Pokemon.
    * @param pokemon The {@linkcode Pokemon} holding this item
    * @param target The {@linkcode Pokemon} to steal from (optional)
@@ -3250,13 +3263,6 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   setTransferrableFalse(): void {
     this.isTransferable = false;
-  }
-
-  public override apply(pokemon: Pokemon, target?: Pokemon, ...args: unknown[]): boolean {
-    if (pokemon.isFainted()) {
-      return false;
-    }
-    return super.apply(pokemon, target, ...args);
   }
 }
 
@@ -3518,24 +3524,24 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(enemyPokemon: Pokemon): boolean {
-    if (!enemyPokemon.isFullHp()) {
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        enemyPokemon.getBattlerIndex(),
-        Math.max(Math.floor(enemyPokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1),
-        i18next.t("modifier:enemyTurnHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
-        }),
-        true,
-        false,
-        false,
-        false,
-        true,
-      );
-      return true;
+    if (enemyPokemon.isFullHp()) {
+      return false;
     }
 
-    return false;
+    // Prevent healing to full from healing tokens
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      enemyPokemon.getBattlerIndex(),
+      (enemyPokemon.getMaxHp() * this.stackCount * this.healPercent) / 100,
+      {
+        message: i18next.t("modifier:enemyTurnHealApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
+        }),
+        preventFullHeal: true,
+      },
+    );
+
+    return true;
   }
 
   getMaxStackCount(): number {

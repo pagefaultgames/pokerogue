@@ -1,8 +1,8 @@
 import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { getStarterValueFriendshipCap } from "#balance/starters";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { getGenderColor, getGenderSymbol } from "#data/gender";
@@ -12,7 +12,6 @@ import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
-import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -30,7 +29,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getDexNumber } from "#utils/pokemon-utils";
+import { getDexNumber, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -174,7 +173,7 @@ export class SummaryUiHandler extends UiHandler {
     );
     this.summaryContainer.add(this.pokemonSprite);
 
-    this.nameText = addTextObject(6, -54, "", TextStyle.SUMMARY);
+    this.nameText = addTextObject(6, -53, "", TextStyle.SUMMARY);
     this.nameText.setOrigin(0, 0);
     this.summaryContainer.add(this.nameText);
 
@@ -217,7 +216,7 @@ export class SummaryUiHandler extends UiHandler {
     this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.candyShadow);
 
-    this.candyCountText = addTextObject(20, -146, "x0", TextStyle.WINDOW_ALT, {
+    this.candyCountText = addTextObject(20, -146, "×0", TextStyle.WINDOW_ALT, {
       fontSize: "76px",
     });
     this.candyCountText.setOrigin(0, 0);
@@ -238,7 +237,7 @@ export class SummaryUiHandler extends UiHandler {
     this.friendshipShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.friendshipShadow);
 
-    this.friendshipText = addTextObject(20, -66, "x0", TextStyle.WINDOW_ALT, {
+    this.friendshipText = addTextObject(20, -66, "×0", TextStyle.WINDOW_ALT, {
       fontSize: "76px",
     });
     this.friendshipText.setOrigin(0, 0);
@@ -290,7 +289,7 @@ export class SummaryUiHandler extends UiHandler {
     this.moveEffectContainerTitle.setOrigin(0, 0.5);
     this.moveEffectContainer.add(this.moveEffectContainerTitle);
 
-    const moveEffectLabels = addTextObject(8, 12, i18next.t("pokemonSummary:powerAccuracyCategory"), TextStyle.SUMMARY);
+    const moveEffectLabels = addTextObject(8, 13, i18next.t("pokemonSummary:powerAccuracyCategory"), TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
     moveEffectLabels.setOrigin(0, 0);
 
@@ -375,7 +374,7 @@ export class SummaryUiHandler extends UiHandler {
 
     this.shinyOverlay.setVisible(this.pokemon.isShiny());
 
-    const colorScheme = starterColors[this.pokemon.species.getRootSpeciesId()];
+    const colorScheme = getStarterColors(this.pokemon.species.getRootSpeciesId());
     this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
@@ -384,12 +383,10 @@ export class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(
       getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
     );
+
     const spriteKey = this.pokemon.getSpriteKey(true);
-    try {
-      this.pokemonSprite.play(spriteKey);
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    this.pokemonSprite.play(spriteKey);
+
     this.pokemonSprite
       .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
       .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
@@ -700,7 +697,7 @@ export class SummaryUiHandler extends UiHandler {
       const selectedMove = this.getSelectedMove();
 
       if (selectedMove) {
-        this.moveDescriptionText.setY(84);
+        this.moveDescriptionText.setY(74);
         this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : "---");
         this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : "---");
         this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
@@ -717,14 +714,14 @@ export class SummaryUiHandler extends UiHandler {
         this.descriptionScrollTween = null;
       }
 
-      if (moveDescriptionLineCount > 3) {
+      if (moveDescriptionLineCount > 4) {
         this.descriptionScrollTween = globalScene.tweens.add({
           targets: this.moveDescriptionText,
           delay: fixedInt(2000),
           loop: -1,
           hold: fixedInt(2000),
-          duration: fixedInt((moveDescriptionLineCount - 3) * 2000),
-          y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
+          duration: fixedInt((moveDescriptionLineCount - 4) * 2000),
+          y: `-=${14.83 * (moveDescriptionLineCount - 4)}`,
         });
       }
 
@@ -836,12 +833,10 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
-        const otColor =
-          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
-        const usernameReplacement =
-          globalScene.gameData.gender === PlayerGender.FEMALE
-            ? i18next.t("trainerNames:playerF")
-            : i18next.t("trainerNames:playerM");
+        const otColor = settings.isPlayerFemale ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement = settings.isPlayerFemale
+          ? i18next.t("trainerNames:playerF")
+          : i18next.t("trainerNames:playerM");
 
         const profileContainerProfileTitle = globalScene.add //
           .image(7, 4, getLocalizedSpriteKey("summary_profile_profile_title")) // Pixel text 'PROFILE'
@@ -851,35 +846,35 @@ export class SummaryUiHandler extends UiHandler {
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
-          12,
+          10,
           `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
-            globalScene.hideUsername
+            settings.display.hideUsername
               ? usernameReplacement
-              : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
+              : loggedInUser?.username || i18next.t("pokemonSummary:unknownTrainer"),
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerText);
 
-        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
+        const idToDisplay = settings.display.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
-          12,
+          10,
           i18next.t("pokemonSummary:idNo", { idNo: idToDisplay }),
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerIdText);
 
-        const typeLabel = addTextObject(7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
+        const typeLabel = addTextObject(7, 27, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
         const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = tera
-            ? globalScene.add.sprite(xCoord, 42, "type_tera")
-            : globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
+            ? globalScene.add.sprite(xCoord, 41, "type_tera")
+            : globalScene.add.sprite(xCoord, 41, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
           if (tera) {
             typeIcon.setScale(0.5);
             const typeRgb = getTypeRgb(type);
@@ -902,7 +897,7 @@ export class SummaryUiHandler extends UiHandler {
         if (this.pokemon?.getLuck()) {
           const luckLabelText = addTextObject(
             141,
-            28,
+            27,
             i18next.t("common:luckIndicator"),
             TextStyle.WINDOW_ALT,
           ).setOrigin(0, 0);
@@ -910,7 +905,7 @@ export class SummaryUiHandler extends UiHandler {
 
           const luckText = addTextObject(
             141 + luckLabelText.displayWidth + 2,
-            28,
+            27,
             this.pokemon.getLuck().toString(),
             TextStyle.LUCK_VALUE,
           );
@@ -977,7 +972,7 @@ export class SummaryUiHandler extends UiHandler {
           descriptionTextMaskRect.setScale(6);
           descriptionTextMaskRect.fillStyle(0xffffff);
           descriptionTextMaskRect.beginPath();
-          descriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
+          descriptionTextMaskRect.fillRect(110, 90, 206, 31);
 
           const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
 
@@ -1120,7 +1115,7 @@ export class SummaryUiHandler extends UiHandler {
         itemModifiers.forEach((item, i) => {
           const icon = item.getIcon(true);
 
-          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 10);
+          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 11);
           this.statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
@@ -1189,14 +1184,6 @@ export class SummaryUiHandler extends UiHandler {
         this.movesContainerMovesTitle.setOrigin(0, 0.5);
         this.movesContainer.add(this.movesContainerMovesTitle);
 
-        this.movesContainerDescriptionsTitle = globalScene.add.image(
-          2,
-          78,
-          getLocalizedSpriteKey("summary_moves_descriptions_title"),
-        ); // Pixel text 'DESCRIPTIONS'
-        this.movesContainerDescriptionsTitle.setOrigin(0, 0.5);
-        this.movesContainer.add(this.movesContainerDescriptionsTitle);
-
         this.extraMoveRowContainer = globalScene.add.container(0, 64);
         this.extraMoveRowContainer.setVisible(false);
         this.movesContainer.add(this.extraMoveRowContainer);
@@ -1204,6 +1191,14 @@ export class SummaryUiHandler extends UiHandler {
         const extraRowOverlay = globalScene.add.image(-2, 1, "summary_moves_overlay_row");
         extraRowOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowOverlay);
+
+        this.movesContainerDescriptionsTitle = globalScene.add.image(
+          2,
+          69,
+          getLocalizedSpriteKey("summary_moves_descriptions_title"),
+        ); // Pixel text 'DESCRIPTIONS'
+        this.movesContainerDescriptionsTitle.setOrigin(0, 0.5);
+        this.movesContainer.add(this.movesContainerDescriptionsTitle);
 
         const extraRowText = addTextObject(
           35,
@@ -1273,14 +1268,14 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
+        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1252 } });
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});
         moveDescriptionTextMaskRect.setScale(6);
         moveDescriptionTextMaskRect.fillStyle(0xffffff);
         moveDescriptionTextMaskRect.beginPath();
-        moveDescriptionTextMaskRect.fillRect(112, 130, 202, 46);
+        moveDescriptionTextMaskRect.fillRect(112, 121, 205, 59);
 
         const moveDescriptionTextMask = moveDescriptionTextMaskRect.createGeometryMask();
 

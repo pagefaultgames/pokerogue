@@ -1,5 +1,8 @@
+import { DAILY_BOSS_LEVEL } from "#app/constants";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
+import { isDailyFinalBoss } from "#data/daily-seed-utils";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -18,7 +21,6 @@ import { Trainer } from "#field/trainer";
 import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
-import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { NewBattleResolvedProps } from "#types/new-battle-props";
 import type { TurnMove } from "#types/turn-move";
@@ -104,6 +106,8 @@ export class Battle {
    */
   public failedRunAway = false;
 
+  public successfulRun = false;
+
   constructor(
     gameMode: GameMode,
     { waveIndex, battleType, trainer, mysteryEncounterType, double = false }: NewBattleResolvedProps,
@@ -127,6 +131,9 @@ export class Battle {
   }
 
   public getLevelForWave(): number {
+    if (isDailyFinalBoss(this.waveIndex)) {
+      return DAILY_BOSS_LEVEL;
+    }
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
@@ -249,7 +256,7 @@ export class Battle {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer.getEncounterMessages().length > 0) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }
-      if (globalScene.musicPreference === MusicPreference.GENFIVE) {
+      if (!settings.musicPreferenceAllGens) {
         return this.trainer?.getBattleBgm() ?? null;
       }
       return this.trainer?.getMixedBattleBgm() ?? null;
@@ -276,7 +283,7 @@ export class Battle {
         || pokemon.species.mythical
         || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeId !== BiomeId.END)
       ) {
-        if (globalScene.musicPreference === MusicPreference.GENFIVE) {
+        if (!settings.musicPreferenceAllGens) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.ARTICUNO:
             case SpeciesId.ZAPDOS:
@@ -300,7 +307,7 @@ export class Battle {
               return "battle_legendary_unova";
           }
         }
-        if (globalScene.musicPreference === MusicPreference.ALLGENS) {
+        if (settings.musicPreferenceAllGens) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.ARTICUNO:
             case SpeciesId.ZAPDOS:

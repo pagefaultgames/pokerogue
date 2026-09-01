@@ -20,6 +20,8 @@ import type { TrainerData } from "#system/trainer-data";
 import type { SerializedDailyRunConfig } from "./daily-run";
 import type { DexData } from "./dex-data";
 
+export type AppliedMigrators = { [key: string]: number };
+
 export interface SystemSaveData {
   trainerId: number;
   secretId: number;
@@ -36,6 +38,7 @@ export interface SystemSaveData {
   timestamp: number;
   eggPity: number[];
   unlockPity: number[];
+  appliedMigrators: AppliedMigrators;
 }
 
 export interface SessionSaveData {
@@ -98,17 +101,20 @@ export interface StarterMoveData {
   [key: number]: StarterMoveset | StarterFormMoveData;
 }
 
-export interface StarterAttributes {
-  nature?: number | undefined;
-  ability?: number | undefined;
-  variant?: number | undefined;
-  form?: number | undefined;
-  female?: boolean | undefined;
-  shiny?: boolean | undefined;
+/** The starter's current attributes (such as selected nature, nickname, etc). */
+export interface StarterPreferences {
+  abilityIndex?: number | undefined;
   favorite?: boolean | undefined;
+  female?: boolean | undefined;
+  formIndex?: number | undefined;
+  nature?: number | undefined;
   nickname?: string | undefined;
+  shiny?: boolean | undefined;
   tera?: PokemonType | undefined;
+  variant?: Variant | undefined;
 }
+
+export type AllStarterPreferences = Partial<Record<SpeciesId, StarterPreferences | undefined>>;
 
 export interface DexAttrProps {
   shiny: boolean;

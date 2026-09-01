@@ -3,9 +3,11 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Teleport", () => {
   let phaserGame: Phaser.Game;
@@ -30,6 +32,19 @@ describe("Move - Teleport", () => {
       .startingLevel(100)
       .enemyLevel(100);
   });
+
+  async function getModifierShopHandler(): Promise<ModifierSelectUiHandler> {
+    await game.phaseInterceptor.to("BattleEndPhase");
+    await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
+
+    const currentPhase = game.scene.phaseManager.getCurrentPhase()?.phaseName;
+    expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
+
+    await game.phaseInterceptor.to("SelectModifierPhase");
+    await vi.waitUntil(() => game.scene.ui.getMode() === UiMode.MODIFIER_SELECT);
+
+    return game.scene.ui.getHandler() as ModifierSelectUiHandler;
+  }
 
   describe("used by a wild pokemon", () => {
     it("should fail in a double battle", async () => {
@@ -62,7 +77,7 @@ describe("Move - Teleport", () => {
       game.move.use(MoveId.FAIRY_LOCK);
 
       await game.move.selectEnemyMove(MoveId.TELEPORT);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
       expect(enemy.getLastXMoves()[0].result, "should fail while trapped").toBe(MoveResult.FAIL);
     });
@@ -77,7 +92,7 @@ describe("Move - Teleport", () => {
     game.move.use(MoveId.FAIRY_LOCK);
 
     await game.move.selectEnemyMove(MoveId.TELEPORT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.isOnField(), "should not be on the field").toBe(false);
   });
@@ -91,8 +106,19 @@ describe("Move - Teleport", () => {
     game.move.use(MoveId.FAIRY_LOCK);
 
     await game.move.selectEnemyMove(MoveId.TELEPORT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.isOnField(), "should not be on the field").toBe(false);
+  });
+
+  it("should offer no rewards on enemy-initiated flee (Teleport)", async () => {
+    game.override.enemySpecies(SpeciesId.ABRA).enemyMoveset([MoveId.TELEPORT]).battleStyle("single");
+    await game.classicMode.startBattle(SpeciesId.ABRA);
+
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.TELEPORT);
+
+    const handler = await getModifierShopHandler();
+    expect(handler.options.length).toBe(0);
   });
 });

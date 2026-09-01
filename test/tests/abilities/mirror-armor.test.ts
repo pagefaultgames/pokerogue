@@ -1,4 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -7,6 +9,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+// TODO: modernize this test file
 describe("Ability - Mirror Armor", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -289,5 +292,27 @@ describe("Ability - Mirror Armor", () => {
     expect(enemy2.getStatStage(Stat.SPD)).toBe(0);
     expect(player1.getStatStage(Stat.SPD)).toBe(0);
     expect(player2.getStatStage(Stat.SPD)).toBe(0);
+  });
+
+  it("doesn't crash if activated by Sticky Web when the Sticky Web user is off the field", async () => {
+    game.override //
+      .enemyAbility(AbilityId.MIRROR_ARMOR)
+      .enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+
+    game.move.use(MoveId.STICKY_WEB);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.field.getEnemyPokemon().hp = 1;
+
+    game.move.use(MoveId.AERIAL_ACE);
+    await game.toNextWave();
+
+    expect(game).toHaveArenaTag(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.SPD, 0);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.SPD, 0);
   });
 });

@@ -391,10 +391,6 @@ const SLOT_3_FINAL = [
 function postProcessSlot4Fight3(pokemon: EnemyPokemon): void {
   pokemon.level = SLOT_4_FIGHT_3_LEVEL;
   switch (pokemon.species.speciesId) {
-    case SpeciesId.BASCULIN:
-      // White
-      pokemon.formIndex = 2;
-      return;
     case SpeciesId.ROTOM: {
       // Heat, Wash, Mow
       const newIndex = randSeedItem([1, 2, 5]);
@@ -445,7 +441,7 @@ const SLOT_4_FIGHT_3 = [
   [SpeciesId.POLTEAGEIST, SpeciesId.SINISTCHA],
   SpeciesId.COPPERAJAH,
   SpeciesId.KLEAVOR,
-  SpeciesId.BASCULIN,
+  SpeciesId.HISUI_BASCULIN,
   SpeciesId.HISUI_SNEASEL,
   SpeciesId.HISUI_QWILFISH,
   SpeciesId.PAWMOT,
@@ -466,10 +462,17 @@ const SLOT_4_FIGHT_3 = [
 function postProcessSlot4Fight4(pokemon: EnemyPokemon, level = SLOT_4_FIGHT_4_LEVEL): void {
   pokemon.level = level;
   switch (pokemon.species.speciesId) {
-    case SpeciesId.BASCULEGION:
+    case SpeciesId.BASCULEGION: {
+      // TODO: Determine whether `randSeedItem` should even be used here instead of checking the gender
+      const oldFormIndex = pokemon.formIndex;
       // Male, Female
       pokemon.formIndex = randSeedItem([0, 1]);
+      // If form changed, need to re-generate moveset.
+      if (pokemon.formIndex !== oldFormIndex) {
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
+    }
     case SpeciesId.ROTOM: {
       // Heat, Wash, Mow
       const newIndex = randSeedItem([1, 2, 5]);

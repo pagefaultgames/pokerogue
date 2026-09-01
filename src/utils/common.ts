@@ -3,6 +3,7 @@ import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supported-languages";
 import { enumValueToKey } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -319,48 +320,12 @@ export function fixedInt(value: number): number {
 }
 
 /**
- * This function returns `true` if all localized images used by the game have been added for the given language.
- *
- * If the lang is not in the function, it usually means that lang is going to use the default english version
- *
- * English itself counts as not available
+ * This function checks if all localized images used by the game have been added for the given language.
+ * @param key - The language key (e.g. "ko").
+ * @returns Whether the given language is supported and has localized sprites.
  */
-export function hasAllLocalizedSprites(lang?: string): boolean {
-  // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
-  if (!lang) {
-    lang = i18next.resolvedLanguage;
-  }
-
-  switch (lang) {
-    case "es-ES":
-    case "es-419":
-    case "eu":
-    case "fr":
-    case "da":
-    case "de":
-    case "it":
-    case "zh-Hans":
-    case "zh-Hant":
-    case "pt-BR":
-    case "ro":
-    case "th":
-    case "tr":
-    case "ko":
-    case "ja":
-    case "ca":
-    case "ru":
-    case "id":
-    case "hi":
-    case "tl":
-    case "nb-NO":
-    case "sv":
-    case "uk":
-    case "vi":
-    case "pl":
-      return true;
-    default:
-      return false;
-  }
+export function hasAllLocalizedSprites(key: string): boolean {
+  return !!SUPPORTED_LANGUAGE_ENTRIES[key as SupportedLanguage]?.hasAllLocalizedImages;
 }
 
 /**
@@ -412,7 +377,8 @@ export function toDmgValue(value: number, minValue = 1) {
  * @returns the localized sprite key
  */
 export function getLocalizedSpriteKey(baseKey: string) {
-  return `${baseKey}${hasAllLocalizedSprites(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+  const lang = i18next.resolvedLanguage ?? "en";
+  return `${baseKey}${lang !== "en" && hasAllLocalizedSprites(lang) ? `_${i18next.resolvedLanguage}` : ""}`;
 }
 
 /**

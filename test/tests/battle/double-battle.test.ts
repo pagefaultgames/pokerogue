@@ -8,7 +8,9 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
+import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -31,6 +33,19 @@ describe("Double Battles", () => {
       .enemyMoveset(MoveId.SPLASH)
       .ability(AbilityId.BALL_FETCH);
   });
+
+  async function getModifierShopHandler(): Promise<ModifierSelectUiHandler> {
+    await game.phaseInterceptor.to("BattleEndPhase");
+    await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
+
+    const currentPhase = game.scene.phaseManager.getCurrentPhase()?.phaseName;
+    expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
+
+    await game.phaseInterceptor.to("SelectModifierPhase");
+    await vi.waitUntil(() => game.scene.ui.getMode() === UiMode.MODIFIER_SELECT);
+
+    return game.scene.ui.getHandler() as ModifierSelectUiHandler;
+  }
 
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
@@ -88,6 +103,44 @@ describe("Double Battles", () => {
 
     expect(doubleCount).toBe(1);
     expect(singleCount).toBe(DOUBLE_CHANCE - 1);
+  });
+
+  it("should offer no rewards when both opponents flee and zero are defeated", async () => {
+    game.override.battleStyle("double").enemySpecies(SpeciesId.MAGIKARP).enemyMoveset([MoveId.SPLASH]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
+
+    const [p1, p2] = game.scene.getPlayerParty();
+    game.move.changeMoveset(p1, [MoveId.ROAR]);
+    game.move.changeMoveset(p2, [MoveId.SPLASH]);
+
+    game.move.select(MoveId.ROAR, 0, 2);
+    game.move.select(MoveId.SPLASH, 1);
+    await game.toNextTurn();
+
+    game.move.select(MoveId.ROAR, 0, 3);
+    game.move.select(MoveId.SPLASH, 1);
+
+    const handler = await getModifierShopHandler();
+    expect(handler.options.length).toBe(0);
+  });
+
+  it("should offer normal rewards when one opponent is defeated and the other flees", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
+
+    const [p1, p2] = game.scene.getPlayerParty();
+    game.move.changeMoveset(p1, [MoveId.THUNDERBOLT, MoveId.ROAR]);
+    game.move.changeMoveset(p2, [MoveId.SPLASH]);
+
+    game.move.select(MoveId.THUNDERBOLT, 0, 2);
+    game.move.select(MoveId.SPLASH, 1);
+    await game.toNextTurn();
+
+    game.move.select(MoveId.ROAR, 0, 3);
+    game.move.select(MoveId.SPLASH, 1);
+
+    const handler = await getModifierShopHandler();
+    expect(handler.options.length).toBe(3);
   });
 
   it("won't queue multiple `BattleEndPhase`s/etc if the last 2 enemy Pokemon are defeated simultaneously in a trainer battle", async () => {

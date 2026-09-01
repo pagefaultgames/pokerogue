@@ -16,7 +16,6 @@ import type { Starter, StarterMoveset } from "#types/save-data";
 import type { TupleRange } from "#types/type-helpers";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import {
   getDailyRunStarter,
   isDailyEventSeed,
@@ -54,8 +53,8 @@ export function getDailyRunStarters(): StarterTuple {
             // make sure there are no duplicate starters from the same line
             !starters.some(st => s === st.speciesId || speciesDataRegistry.getStarter(s) === st.speciesId),
         );
-        const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
-        const starterSpecies = getPokemonSpecies(
+        const randPkmSpecies = speciesDataRegistry.getSpecies(randSeedItem(costSpecies));
+        const starterSpecies = speciesDataRegistry.getSpecies(
           randPkmSpecies.getTrainerSpeciesForLevel(
             startingLevel,
             true,
@@ -172,7 +171,7 @@ function getDailyEventSeedStarters(): StarterTuple | null {
       return null;
     }
 
-    const species = getPokemonSpecies(starterConfig.speciesId);
+    const species = speciesDataRegistry.getSpecies(starterConfig.speciesId);
 
     const starter = getDailyRunStarter(species, starterConfig);
 
@@ -221,7 +220,7 @@ export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | n
     return null;
   }
 
-  return getPokemonSpecies(forcedWave.speciesId);
+  return speciesDataRegistry.getSpecies(forcedWave.speciesId);
 }
 
 /**

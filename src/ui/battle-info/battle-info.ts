@@ -1,16 +1,16 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getTypeRgb } from "#data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 /**
@@ -265,7 +265,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.hpLabel);
 
     this.levelNumbersContainer = globalScene.add
-      .container(9.5, globalScene.uiTheme === UiTheme.LEGACY ? 0 : -0.5)
+      .container(9.5, settings.isLegacyTheme ? 0 : -0.5)
       .setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 
@@ -359,7 +359,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
           globalScene.ui.showTooltip(
             "",
             i18next.t("fightUiHandler:teraHover", {
-              type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.lastTeraType])}`),
+              type: i18next.t(getPokemonTypeLocaleKey(this.lastTeraType)),
             }),
           );
         }
@@ -541,7 +541,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   /** Update the pokemonHp bar */
   protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant?: boolean): void {
     let duration = instant ? 0 : Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000);
-    const speed = globalScene.hpBarSpeed;
+    const speed = settings.general.hpBarSpeed;
     if (speed) {
       duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
     }
@@ -566,7 +566,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
     const promise = new Promise<void>(r => (resolve = r));
-    if (!globalScene) {
+
+    if (!globalScene || !this.active) {
       return resolve();
     }
 
