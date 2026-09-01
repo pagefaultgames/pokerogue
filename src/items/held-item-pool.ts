@@ -1,4 +1,3 @@
-import { IS_TEST, isBeta } from "#constants/app-constants";
 import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
@@ -122,13 +121,13 @@ export function initHeldItemPools(): void {
 // #endregion Initialization
 
 export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
+  const DAILY_RUN_ITEMS_PER_POKEMON = 3;
+  const pool = getHeldItemPool(HeldItemPoolType.DAILY_STARTER);
   for (const p of party) {
-    for (let m = 0; m < 3; m++) {
-      const tierValue = randSeedInt(64);
+    for (let m = 0; m < DAILY_RUN_ITEMS_PER_POKEMON; m++) {
+      const tier = getDailyRarityTier();
 
-      const tier = getDailyRarityTier(tierValue);
-
-      const item = getNewHeldItemFromPool(getHeldItemPool(HeldItemPoolType.DAILY_STARTER)[tier], p, party);
+      const item = getNewHeldItemFromPool(pool[tier], p, party);
       if (item) {
         p.heldItemManager.add(item);
       }
@@ -137,11 +136,11 @@ export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
 }
 
 /**
- * Generate a random item rarity tier for a daily run starter held item.
- * @param roll - A random integer value between 0 and 64 (exclusive)
- * @returns The corresponding rarity tier for the given random roll.
+ * Generate a random item rarity for a daily run starter held item.
+ * @returns The corresponding rarity tier to be used.
  */
-function getDailyRarityTier(roll: number): RarityTier {
+function getDailyRarityTier(): RarityTier {
+  const roll = randSeedInt(64);
   if (roll > 25) {
     return RarityTier.COMMON;
   }
@@ -184,11 +183,8 @@ export function assignEnemyHeldItemsForWave(
   }
 
   for (let i = 0; i < count; i++) {
-    const item = getNewHeldItemFromTieredPool(
-      getHeldItemPool(poolType),
-      enemy,
-      upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
-    );
+    const upgraded = upgradeChance > 0 && randSeedInt(upgradeChance) === 0 ? 1 : 0;
+    const item = getNewHeldItemFromTieredPool(getHeldItemPool(poolType), enemy, upgraded);
     if (item) {
       enemy.heldItemManager.add(item);
     }
@@ -209,15 +205,8 @@ function getNewHeldItemFromTieredPool(
   return getNewHeldItemFromPool(tierPool, pokemon);
 }
 
-function determineItemPool(pool: HeldItemTieredPool, upgradeCount = 0): HeldItemPool {
-  let tier = getRandomTier() + upgradeCount;
-  if ((isBeta || IS_TEST) && (pool[tier] == null || pool[tier].length === 0)) {
-    console.warn("Tier pool for %d lacks items!", tier);
-  }
-
-  while (tier > 0 && (pool[tier] == null || pool[tier]!.length === 0)) {
-    tier--;
-  }
+function determineItemPool(pool: HeldItemTieredPool, upgradeCount: number): HeldItemPool {
+  const tier = Phaser.Math.Clamp(getRandomTier() + upgradeCount, RarityTier.COMMON, RarityTier.MASTER) as RarityTier;
   return pool[tier];
 }
 
@@ -284,7 +273,8 @@ function assignItemsFromCategory(id: HeldItemCategoryId, pokemon: Pokemon, count
 }
 
 // TODO: Explain what this function returning `null` even means,
-// and whether it should be allowed to return invalid categories at all
+// and whether it should be allowed to accept invalid categories at all
+// (possibly tightening the kind of items placeable inside pools as a result)
 export function getNewHeldItemFromCategory(
   id: HeldItemCategoryId,
   pokemon: Pokemon | Pokemon[],
@@ -301,15 +291,6 @@ export function getNewHeldItemFromCategory(
     default:
       return null;
   }
-}
-
-// TODO: Handle form change items
-export function saveDataToConfig(saveData: HeldItemSaveData): HeldItemConfiguration {
-  const config: HeldItemConfiguration = [];
-  for (const specs of saveData) {
-    config.push({ entry: specs, count: 1 });
-  }
-  return config;
 }
 
 export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
@@ -423,4 +404,10 @@ function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): NonEmptyTuple<num
 
     return weight;
   });
+}
+
+// TODO: Handle form change items
+// TODO: This is duplicated from `HeldItemManager.generateSaveData` - should be a single source of truth
+export function saveDataToConfig(saveData: HeldItemSaveData): HeldItemConfiguration {
+  return saveData.map(specs => ({ entry: specs, count: 1 }));
 }
