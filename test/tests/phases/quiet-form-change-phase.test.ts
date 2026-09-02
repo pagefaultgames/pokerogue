@@ -107,13 +107,13 @@ describe("Phases - Quiet Form Change Phase", () => {
     const cherrim = game.field.getPlayerPokemon();
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
     expect(cherrim.getPassiveAbility().id).toBe(AbilityId.CHLOROPHYLL);
-    expect(game.scene.arena.weather).toBeUndefined();
+    expect(game).toHaveWeather(WeatherType.NONE);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
     expect(cherrim.formIndex).toBe(OVERCAST_FORM);
     expect(cherrim.getPassiveAbility().id).toBe(AbilityId.DROUGHT);
-    expect(game.scene.arena.weather).toBeUndefined();
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 });

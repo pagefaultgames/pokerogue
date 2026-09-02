@@ -41,7 +41,7 @@ describe("Moves - Quash", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     // will be sunny if player_2 moved last because of quash, rainy otherwise
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("fails if the target has already moved", async () => {
@@ -101,7 +101,7 @@ describe("Moves - Quash", () => {
     await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("respects trick room", async () => {
@@ -122,6 +122,6 @@ describe("Moves - Quash", () => {
     await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+    expect(game).toHaveWeather(WeatherType.RAIN);
   });
 });

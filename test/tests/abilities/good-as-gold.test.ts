@@ -131,6 +131,6 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+    expect(game).toHaveWeather(WeatherType.RAIN);
   });
 });

@@ -3,6 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -47,7 +48,7 @@ describe("Test Ability Swapping", () => {
     game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.weather?.weatherType).toBeUndefined();
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should not activate passive abilities", async () => {
