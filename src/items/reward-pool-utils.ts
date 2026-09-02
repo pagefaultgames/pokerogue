@@ -6,6 +6,7 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { RewardPool, RewardPoolWeights, RewardSpecs } from "#types/rewards";
 import { pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
+import type { NonEmptyTuple } from "type-fest";
 import type { RewardOption } from "./reward";
 import { rewardPool, rewardPoolWeights } from "./reward-pools";
 import { generateRewardOptionFromId, isTrainerItemId } from "./reward-utils";
@@ -27,6 +28,8 @@ by `getRewardOptionWithRetry`, which also checks existing rewards to minimize th
 
 This will allow more customization in creating pools for challenges, MEs etc.
 */
+
+// TODO: These still overwhelmingly need cleaning up (such as by removing retries, etc etc)
 
 export interface CustomRewardSettings {
   guaranteedRarityTiers?: RarityTier[];
@@ -266,11 +269,8 @@ function getNewRewardOption(
   }
 
   const tierWeights = weights[tier];
-  const index = pickWeightedIndex(tierWeights);
-
-  if (index === undefined) {
-    return null;
-  }
+  // TODO: `tierWeights` is inferred as a normal array here; tighten construction so this assertion is unnecessary.
+  const index = pickWeightedIndex(tierWeights as NonEmptyTuple<number>);
 
   const rewardOption = generateRewardOptionFromId(pool[tier][index].id, 0, tier, upgradeCount);
   if (rewardOption === null) {

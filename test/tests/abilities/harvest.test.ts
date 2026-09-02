@@ -2,13 +2,13 @@ import { PostTurnRestoreBerryAbAttr } from "#abilities/ab-attrs";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BerryType } from "#enums/berry-type";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { WeatherType } from "#enums/weather-type";
-import { getPartyBerries } from "#items/item-utility";
+import { getPartyItemsInCategory } from "#items/item-utility";
 import { GameManager } from "#test/framework/game-manager";
 import type { PokemonItemMap } from "#types/held-item-data-types";
 import Phaser from "phaser";
@@ -20,7 +20,7 @@ describe("Abilities - Harvest", () => {
 
   /** Check whether the player's Modifiers contains the specified berries and nothing else. */
   function expectBerriesContaining(berries: PokemonItemMap[]): void {
-    const actualBerries = getPartyBerries();
+    const actualBerries = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     expect(actualBerries).toEqual(berries);
   }
 
@@ -53,7 +53,7 @@ describe("Abilities - Harvest", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.NUZZLE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(getPartyBerries()).toHaveLength(0);
+    expect(getPartyItemsInCategory(HeldItemCategoryId.BERRY)).toHaveLength(0);
     expect(game.field.getPlayerPokemon().battleData.berriesEaten).toHaveLength(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -83,7 +83,7 @@ describe("Abilities - Harvest", () => {
     await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toEqualUnsorted([BerryType.ENIGMA, BerryType.LUM]);
-    expect(getPartyBerries()).toHaveLength(2);
+    expect(getPartyItemsInCategory(HeldItemCategoryId.BERRY)).toHaveLength(2);
 
     // Give ourselves harvest and disable enemy neut gas,
     // but force our roll to fail so we don't accidentally recover anything
@@ -100,7 +100,7 @@ describe("Abilities - Harvest", () => {
       BerryType.ENIGMA,
       BerryType.LUM,
     ]);
-    expect(getPartyBerries()).toHaveLength(0);
+    expect(getPartyItemsInCategory(HeldItemCategoryId.BERRY)).toHaveLength(0);
 
     // proc a high roll and we _should_ get a berry back!
     game.move.select(MoveId.SPLASH);
@@ -108,7 +108,7 @@ describe("Abilities - Harvest", () => {
     await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toHaveLength(3);
-    expect(getPartyBerries()).toHaveLength(1);
+    expect(getPartyItemsInCategory(HeldItemCategoryId.BERRY)).toHaveLength(1);
   });
 
   it("remembers berries eaten array across waves", async () => {
@@ -277,7 +277,7 @@ describe("Abilities - Harvest", () => {
       // pluck triggers harvest for neither side
       expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
       expect(game.scene.getEnemyPokemon()?.battleData.berriesEaten).toEqual([]);
-      expect(getPartyBerries()).toEqual([]);
+      expect(getPartyItemsInCategory(HeldItemCategoryId.BERRY)).toEqual([]);
     });
 
     it("cannot restore berries preserved via Berry Pouch", async () => {
@@ -328,7 +328,7 @@ describe("Abilities - Harvest", () => {
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(game.field.getPlayerPokemon().battleData.berriesEaten).toBe([]);
-      expect(getPartyBerries()).toEqual([]);
+      expect(getPartyItemsInCategory(HeldItemCategoryId.BERRY)).toEqual([]);
     });
 
     // TODO: Enable once Nat Gift gets implemented...???

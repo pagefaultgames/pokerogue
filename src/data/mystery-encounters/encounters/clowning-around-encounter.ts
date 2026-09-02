@@ -41,6 +41,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { HeldItemPool } from "#types/held-item-data-types";
 import type { OptionSelectConfig } from "#types/ui-types";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
@@ -523,7 +524,7 @@ function onYesAbilitySwap(resolve: {
   selectPokemonForOption(onPokemonSelected, onPokemonNotSelected);
 }
 
-const ultraPool = [
+const ultraPool: HeldItemPool = [
   { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 1 },
   { entry: HeldItemId.REVIVER_SEED, weight: 1 },
   { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
@@ -531,7 +532,7 @@ const ultraPool = [
   { entry: HeldItemId.WIDE_LENS, weight: 1 },
 ];
 
-const roguePool = [
+const roguePool: HeldItemPool = [
   { entry: HeldItemId.LEFTOVERS, weight: 1 },
   { entry: HeldItemId.SHELL_BELL, weight: 1 },
   { entry: HeldItemId.SOUL_DEW, weight: 1 },

@@ -1,6 +1,5 @@
 import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
-import type { TrainerItemId } from "./trainer-item-id";
 
 // TODO: make category the lower 2 bytes - makes it easier to add more items (and/or change category to first nibble)
 // TODO: Create subsets of HeldItemId for different types of items
@@ -157,4 +156,4 @@ export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemC
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
 
-declare const EnsureHeldItemsAndTrainerItemsDontOverlap: (HeldItemId & TrainerItemId) | 1;
+// TODO: Add type test to make sure held items and trainer item IDs don't overlap with either themselves, each other or categories

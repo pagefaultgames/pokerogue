@@ -1,10 +1,10 @@
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
-import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { HeldItemAttr } from "#items/held-item-attr";
 import type { InferKeys } from "#types/type-helpers";
+import type { NonEmptyTuple } from "type-fest";
 
 // TODO: This file is less of a _data_ types file and more of an _everything_ types file;
 // we should rename it to clarify that intent
@@ -36,22 +36,22 @@ export interface HeldItemSpecs extends HeldItemData {
 // TODO: Make this generic on a subset of `HeldItemId`
 export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
 
-// TODO: Inline this into the sole place it is used
-export type HeldItemWeightFunc = (party: Pokemon[]) => number;
+type HeldItemWeightFunc =
+  /** @param pokemon - The `Pokemon` receiving the item */
+  (pokemon: Pokemon) => number;
 
 export interface HeldItemCategoryEntry extends HeldItemData {
   id: HeldItemCategoryId;
   customWeights?: HeldItemWeights;
 }
 
+// TODO: This can include itself through held item pool and is a bit overly expressive
 interface HeldItemPoolEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   weight: number | HeldItemWeightFunc;
 }
 
-export type HeldItemPool = HeldItemPoolEntry[];
-
-export type HeldItemTieredPool = Partial<Record<RarityTier, HeldItemPool>>;
+export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
 
 // TODO: Since this can contain a `HeldItemSpecs`, this has the potential to have 2 different "count" statistics
 // (which is useless and redundant).
@@ -60,7 +60,7 @@ interface HeldItemConfigurationEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   /**
    * The number of items to obtain, either as a numeric count or a function returning one.
-   * Must be an integer value!
+   * Must be a positive integer!
    * @defaultValue `1`
    */
   count?: number | (() => number);
@@ -68,6 +68,7 @@ interface HeldItemConfigurationEntry {
 
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];
 
+// TODO: If this is an internal type, we can (and should) just shove a reference to the pokemon inside instead of the ID
 export interface PokemonItemMap {
   item: HeldItemSpecs;
   pokemonId: number;

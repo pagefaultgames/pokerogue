@@ -135,6 +135,7 @@ export abstract class PokemonReward extends Reward {
 }
 
 export abstract class PokemonMoveReward extends PokemonReward {
+  // TODO: This is unsafe and breaks LSP
   public moveSelectFilter: PokemonMoveSelectFilter | undefined;
 
   constructor(
