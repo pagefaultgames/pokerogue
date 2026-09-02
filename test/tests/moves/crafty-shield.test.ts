@@ -43,8 +43,8 @@ describe("Moves - Crafty Shield", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(0);
+    expect(charizard).toHaveStatStage(Stat.ATK, 0);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not protect the user and allies from attack moves", async () => {
@@ -111,14 +111,14 @@ describe("Moves - Crafty Shield", () => {
     game.move.use(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(2);
+    expect(charizard).toHaveStatStage(Stat.ATK, 0);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 2);
 
     game.move.use(MoveId.HOWL, BattlerIndex.PLAYER);
     game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.getStatStage(Stat.ATK)).toBe(1);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(3);
+    expect(charizard).toHaveStatStage(Stat.ATK, 1);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 3);
   });
 });

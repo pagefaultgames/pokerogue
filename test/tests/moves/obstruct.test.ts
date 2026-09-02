@@ -36,7 +36,7 @@ describe("Moves - Obstruct", () => {
     const enemy = game.field.getEnemyPokemon();
 
     expect(player).toHaveFullHp();
-    expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
+    expect(enemy).toHaveStatStage(Stat.DEF, -2);
   });
 
   it("bypasses accuracy checks when applying protection and defense reduction", async () => {
@@ -51,7 +51,7 @@ describe("Moves - Obstruct", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player).toHaveFullHp();
-    expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
+    expect(enemy).toHaveStatStage(Stat.DEF, -2);
   });
 
   it("protects from non-contact damaging moves and doesn't lower the opponent's defense by 2 stages", async () => {
@@ -65,7 +65,7 @@ describe("Moves - Obstruct", () => {
     const enemy = game.field.getEnemyPokemon();
 
     expect(player).toHaveFullHp();
-    expect(enemy.getStatStage(Stat.DEF)).toBe(0);
+    expect(enemy).toHaveStatStage(Stat.DEF, 0);
   });
 
   it("doesn't protect from status moves", async () => {
@@ -77,7 +77,7 @@ describe("Moves - Obstruct", () => {
 
     const player = game.field.getPlayerPokemon();
 
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
+    expect(player).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("doesn't reduce the stats of an opponent with Clear Body/etc", async () => {
@@ -87,6 +87,6 @@ describe("Moves - Obstruct", () => {
     game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.DEF)).toBe(0);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.DEF, 0);
   });
 });

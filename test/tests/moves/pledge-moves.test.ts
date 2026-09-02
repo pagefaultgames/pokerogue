@@ -165,7 +165,7 @@ describe("Moves - Pledge Moves", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     // Rainbow effect should increase Fiery Dance's chance of raising Sp. Atk to 100%
-    expect(playerPokemon[0].getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon[0]).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("Water Pledge - should combine with Grass Pledge to form a 150-power Grass-type attack that creates a 'swamp'", async () => {
@@ -273,7 +273,7 @@ describe("Moves - Pledge Moves", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon[0]).not.toHaveFullHp();
-    expect(enemyPokemon[1].getStatStage(Stat.SPATK)).toBe(0);
+    expect(enemyPokemon[1]).toHaveStatStage(Stat.SPATK, 0);
   });
 
   it("Pledge Moves - should not ignore redirection from another Pokemon's Follow Me", async () => {

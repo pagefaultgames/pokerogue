@@ -43,13 +43,13 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGING);
     expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
     const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.ELECTRO_SHOT);
@@ -70,7 +70,7 @@ describe("Moves - Electro Shot", () => {
     game.move.select(MoveId.ELECTRO_SHOT);
 
     await game.phaseInterceptor.to("MoveEffectPhase", false);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
@@ -93,6 +93,6 @@ describe("Moves - Electro Shot", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     expect(playerPokemon.turnData.hitCount).toBe(1);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
   });
 });

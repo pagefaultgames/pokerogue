@@ -43,8 +43,8 @@ describe("Moves - Wide Guard", () => {
 
     expect(charizard).toHaveFullHp();
     expect(blastoise).toHaveFullHp();
-    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(0);
+    expect(charizard).toHaveStatStage(Stat.ATK, 0);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not protect the user and allies from single-target moves", async () => {

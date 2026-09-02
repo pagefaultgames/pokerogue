@@ -109,7 +109,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
     expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
   });
 
@@ -167,7 +167,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("shouldn't block moves that target the user's side of the field", async () => {
@@ -272,7 +272,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.DEF)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.DEF, 0);
   });
 
   it("should protect the user from being afflicted with status effects", async () => {
@@ -359,7 +359,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should prevent the user from becoming confused", async () => {
@@ -377,7 +377,7 @@ describe("Moves - Substitute", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should transfer to the switched in Pokemon when the source uses Baton Pass", async () => {

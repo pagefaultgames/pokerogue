@@ -42,11 +42,11 @@ describe("Moves - Clangorous Soul", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(1);
-    expect(leadPokemon.getStatStage(Stat.DEF)).toBe(1);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(1);
-    expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(1);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 1);
+    expect(leadPokemon).toHaveStatStage(Stat.DEF, 1);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 1);
+    expect(leadPokemon).toHaveStatStage(Stat.SPDEF, 1);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("will still take effect if one or more of the involved stat stages are not at max", async () => {
@@ -65,11 +65,11 @@ describe("Moves - Clangorous Soul", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.DEF)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(5);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.DEF, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPDEF, 5);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("fails if all stat stages involved are at max", async () => {
@@ -87,11 +87,11 @@ describe("Moves - Clangorous Soul", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon).toHaveFullHp();
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.DEF)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.DEF, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPDEF, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 6);
   });
 
   it("fails if the user's health is less than 1/3", async () => {
@@ -105,10 +105,10 @@ describe("Moves - Clangorous Soul", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(leadPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(leadPokemon.getStatStage(Stat.SPDEF)).toBe(0);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
+    expect(leadPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 0);
+    expect(leadPokemon).toHaveStatStage(Stat.SPDEF, 0);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 0);
   });
 });

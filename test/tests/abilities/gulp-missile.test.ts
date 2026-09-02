@@ -151,7 +151,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
-    expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
+    expect(enemy).toHaveStatStage(Stat.DEF, -1);
     expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
@@ -212,7 +212,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.hp).toBe(enemyHpPreEffect);
-    expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
+    expect(enemy).toHaveStatStage(Stat.DEF, -1);
     expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
@@ -229,7 +229,7 @@ describe("Abilities - Gulp Missile", () => {
     expect(cramorant).toHaveFainted();
     expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.DEF)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.DEF, -1);
   });
 
   it("doesn't trigger if user is behind a substitute", async () => {

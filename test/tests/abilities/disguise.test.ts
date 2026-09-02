@@ -95,7 +95,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
     expect(mimikyu).toHaveStatusEffect(StatusEffect.POISON);
-    expect(mimikyu.getStatStage(Stat.SPD)).toBe(-2);
+    expect(mimikyu).toHaveStatStage(Stat.SPD, -2);
     expect(mimikyu).not.toHaveFullHp();
   });
 

@@ -632,7 +632,7 @@ describe("Moves - Instruct", () => {
     await game.toEndOfTurn();
 
     expect(enemy1.getLastXMoves(-1).map(m => m.move)).toEqual([MoveId.NONE, MoveId.NONE, MoveId.NONE, MoveId.ABSORB]);
-    expect(enemy1.getStatStage(Stat.SPD)).toBe(3);
+    expect(enemy1).toHaveStatStage(Stat.SPD, 3);
     expect(player2.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemy2.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });

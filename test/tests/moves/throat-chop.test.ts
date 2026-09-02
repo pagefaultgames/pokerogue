@@ -38,7 +38,7 @@ describe("Moves - Throat Chop", () => {
 
     // First turn, move is interrupted
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
 
     // Second turn, struggle if no valid moves
     await game.toNextTurn();

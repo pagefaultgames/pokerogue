@@ -70,7 +70,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
     expect(snorlax).toHaveStatusEffect(StatusEffect.NONE);
-    expect(snorlax.getStatStage(Stat.ATK)).toBe(2);
+    expect(snorlax).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should preserve non-volatile status conditions", async () => {

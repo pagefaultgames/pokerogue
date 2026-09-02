@@ -137,8 +137,8 @@ describe("Abilities - Cud Chew", () => {
       // previous berries eaten and deleted from summon data as remaining eaten berries move to replace them
       expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.LIECHI, BerryType.LIECHI]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
-      expect(farigiraf.getStatStage(Stat.SPATK)).toBe(6); // 3+0+3
-      expect(farigiraf.getStatStage(Stat.ATK)).toBe(4); // 1+2+1
+      expect(farigiraf).toHaveStatStage(Stat.SPATK, 6); // 3+0+3
+      expect(farigiraf).toHaveStatStage(Stat.ATK, 4); // 1+2+1
     });
 
     it("should reset both arrays on switch", async () => {
@@ -267,7 +267,7 @@ describe("Abilities - Cud Chew", () => {
       await game.toNextTurn();
 
       // berry effect triggered twice - once for bug bite, once for cud chew
-      expect(farigiraf.getStatStage(Stat.SPATK)).toBe(2);
+      expect(farigiraf).toHaveStatStage(Stat.SPATK, 2);
     });
 
     it("works with Ripen", async () => {

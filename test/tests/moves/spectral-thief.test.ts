@@ -93,8 +93,8 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(-6);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(player).toHaveStatStage(Stat.ATK, -6);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should steal double the stat stages with Simple", async () => {
@@ -111,8 +111,8 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(6);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(player).toHaveStatStage(Stat.ATK, 6);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should steal the stat stages through Clear Body", async () => {
@@ -129,8 +129,8 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(3);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(player).toHaveStatStage(Stat.ATK, 3);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should steal the stat stages through White Smoke", async () => {
@@ -147,8 +147,8 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(3);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(player).toHaveStatStage(Stat.ATK, 3);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should steal the stat stages through Hyper Cutter", async () => {
@@ -165,8 +165,8 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(3);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(player).toHaveStatStage(Stat.ATK, 3);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should bypass Substitute", async () => {
@@ -184,8 +184,8 @@ describe("Moves - Spectral Thief", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(3);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(player).toHaveStatStage(Stat.ATK, 3);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp() - 1);
   });
 
@@ -203,8 +203,8 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getStatStage(Stat.ATK)).toEqual(0);
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(3);
+    expect(player).toHaveStatStage(Stat.ATK, 0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 3);
     expect(enemy).toHaveFullHp();
   });
 });

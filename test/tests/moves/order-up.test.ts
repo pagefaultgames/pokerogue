@@ -59,7 +59,7 @@ describe("Moves - Order Up", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       const affectedStats: EffectiveStat[] = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
-      affectedStats.forEach(st => expect(dondozo.getStatStage(st)).toBe(st === stat ? 3 : 2));
+      affectedStats.forEach(st => expect(dondozo).toHaveStatStage(st, st === stat ? 3 : 2));
     },
   );
 });

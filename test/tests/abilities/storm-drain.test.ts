@@ -69,7 +69,7 @@ describe("Abilities - Storm Drain", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy2).toHaveFullHp();
-    expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
+    expect(enemy2).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("should not redirect moves changed from water type via ability", async () => {
@@ -98,6 +98,6 @@ describe("Abilities - Storm Drain", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1).toHaveFullHp();
-    expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
+    expect(enemy2).toHaveStatStage(Stat.SPATK, 1);
   });
 });

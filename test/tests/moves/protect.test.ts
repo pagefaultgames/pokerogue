@@ -42,7 +42,7 @@ describe("Moves - Protect", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(charizard).toHaveFullHp();
-    expect(charizard.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(charizard).toHaveStatStage(Stat.SPDEF, 0);
     expect(charizard);
   });
 

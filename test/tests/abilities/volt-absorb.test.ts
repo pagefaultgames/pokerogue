@@ -43,7 +43,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPDEF, 1);
     expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGED);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });

@@ -37,24 +37,24 @@ describe("Moves - SYRUP BOMB", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const targetPokemon = game.field.getEnemyPokemon();
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.SYRUP_BOMB);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
     expect(targetPokemon).toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-1);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, -1);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(targetPokemon).toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-2);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, -2);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(targetPokemon).not.toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-3);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, -3);
   });
 
   it("does not affect Pokemon with the ability Bulletproof", async () => {
@@ -69,7 +69,7 @@ describe("Moves - SYRUP BOMB", () => {
     await game.toNextTurn();
     expect(targetPokemon).toHaveFullHp();
     expect(targetPokemon).not.toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, 0);
   });
 
   it("stops lowering the target's speed if the user leaves the field", async () => {
@@ -83,6 +83,6 @@ describe("Moves - SYRUP BOMB", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPD)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.SPD, -1);
   });
 });

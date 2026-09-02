@@ -44,6 +44,6 @@ describe("Abilities - Trace", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 });

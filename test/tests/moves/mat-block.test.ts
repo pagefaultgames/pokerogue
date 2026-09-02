@@ -61,7 +61,7 @@ describe("Moves - Mat Block", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
+    leadPokemon.forEach(p => expect(p).toHaveStatStage(Stat.ATK, -2));
   });
 
   // first turn behavior covered inside first-turn-moves.test.ts

@@ -63,7 +63,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1); // Only the effect of the first Growl should be applied
+    expect(enemy).toHaveStatStage(Stat.ATK, -1); // Only the effect of the first Growl should be applied
 
     // Third turn, Struggle is used
     game.move.select(MoveId.TACKLE);

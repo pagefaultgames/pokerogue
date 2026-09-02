@@ -46,7 +46,7 @@ describe("Abilities - Good As Gold", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(player.waveData.abilitiesApplied).toContain(AbilityId.GOOD_AS_GOLD);
-    expect(player.getStatStage(Stat.ATK)).toBe(0);
+    expect(player).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should block memento and prevent the user from fainting", async () => {
@@ -56,7 +56,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.field.getPlayerPokemon()).not.toHaveFainted();
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
@@ -77,7 +77,7 @@ describe("Abilities - Good As Gold", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(good_as_gold.getAbility().id).toBe(AbilityId.GOOD_AS_GOLD);
-    expect(good_as_gold.getStatStage(Stat.ATK)).toBe(0);
+    expect(good_as_gold).toHaveStatStage(Stat.ATK, 0);
     expect(game).toHaveArenaTag(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
     expect(game).toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
   });

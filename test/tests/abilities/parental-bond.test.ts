@@ -71,7 +71,7 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should not apply to Status moves", async () => {
@@ -85,7 +85,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should not apply to multi-hit moves", async () => {
@@ -341,7 +341,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {

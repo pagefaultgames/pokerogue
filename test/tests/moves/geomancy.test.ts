@@ -39,11 +39,11 @@ describe("Moves - Geomancy", () => {
     game.move.select(MoveId.GEOMANCY);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(0));
+    affectedStats.forEach(stat => expect(player).toHaveStatStage(stat, 0));
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(2));
+    affectedStats.forEach(stat => expect(player).toHaveStatStage(stat, 2));
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
@@ -65,7 +65,7 @@ describe("Moves - Geomancy", () => {
     await game.toNextWave();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(2));
+    affectedStats.forEach(stat => expect(player).toHaveStatStage(stat, 2));
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 

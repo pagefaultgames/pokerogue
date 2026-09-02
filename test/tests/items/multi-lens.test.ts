@@ -81,7 +81,7 @@ describe("Items - Multi Lens", () => {
     game.move.select(MoveId.TRAILBLAZE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 2);
   });
 
   it("should not enhance multi-hit moves", async () => {

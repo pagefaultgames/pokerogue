@@ -51,7 +51,7 @@ describe("Moves - Secret Power", () => {
     game.move.select(MoveId.SECRET_POWER);
     await game.move.selectEnemyMove(MoveId.MISTY_TERRAIN);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPATK, -1);
   });
 
   it("Secret Power's effect chance is doubled by Serene Grace, but not by the 'rainbow' effect from Fire/Water Pledge", async () => {

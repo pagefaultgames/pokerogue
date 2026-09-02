@@ -193,7 +193,7 @@ describe("Transforming Effects", () => {
       game.phaseInterceptor.clearLogs();
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+      expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
       expect(game.phaseInterceptor.log).toContain("StatStageChangePhase");
     });
 

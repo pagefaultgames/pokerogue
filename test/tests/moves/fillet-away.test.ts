@@ -43,9 +43,9 @@ describe("Moves - FILLET AWAY", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(2);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 2);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 2);
   });
 
   test("still takes effect if one or more of the involved stat stages are not at max", async () => {
@@ -62,9 +62,9 @@ describe("Moves - FILLET AWAY", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(5);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 5);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 2);
   });
 
   test("fails if all stat stages involved are at max", async () => {
@@ -80,9 +80,9 @@ describe("Moves - FILLET AWAY", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon).toHaveFullHp();
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(6);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 6);
   });
 
   test("fails if the user's health is less than 1/2", async () => {
@@ -96,8 +96,8 @@ describe("Moves - FILLET AWAY", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(leadPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 0);
+    expect(leadPokemon).toHaveStatStage(Stat.SPD, 0);
   });
 });

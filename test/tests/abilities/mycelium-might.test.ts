@@ -51,7 +51,7 @@ describe("Abilities - Mycelium Might", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
@@ -69,7 +69,7 @@ describe("Abilities - Mycelium Might", () => {
     expect(player).toHaveFullHp();
     await game.phaseInterceptor.to("TurnEndPhase");
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should not affect non-status moves", async () => {

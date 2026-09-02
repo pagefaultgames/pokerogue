@@ -169,6 +169,6 @@ describe("Moves - Disable", () => {
     expect.soft(shuckle.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect.soft(shuckle.hasRestrictingTag(MoveId.SWORDS_DANCE)).toBe(false);
     expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
-    expect(shuckle.getStatStage(Stat.ATK)).toBe(4);
+    expect(shuckle).toHaveStatStage(Stat.ATK, 4);
   });
 });

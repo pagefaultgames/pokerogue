@@ -39,7 +39,7 @@ describe("Ability - Anger Point", () => {
     vi.spyOn(enemy, "getCriticalHitResult").mockReturnValueOnce(true);
     game.move.select(MoveId.FALSE_SWIPE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(6);
+    expect(enemy).toHaveStatStage(Stat.ATK, 6);
   });
 
   it("should only proc once when a multi-hit move crits on the first hit", async () => {
@@ -69,6 +69,6 @@ describe("Ability - Anger Point", () => {
     enemy.setStatStage(Stat.ATK, 6);
     game.move.select(MoveId.FALSE_SWIPE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-6);
+    expect(enemy).toHaveStatStage(Stat.ATK, -6);
   });
 });
