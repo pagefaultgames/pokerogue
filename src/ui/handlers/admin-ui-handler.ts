@@ -269,7 +269,7 @@ export class AdminUiHandler extends FormModalUiHandler {
     const icon = globalScene.add.image(
       inputContainer.x + nineSlice!.width + this.buttonGap,
       inputContainer.y + Math.floor(nineSlice!.height / 2),
-      "icon_lock", // TODO: replace with new icon later
+      "unown_closed",
     );
     icon
       .setName("adminBtn_resetCodeVisibility")
@@ -280,6 +280,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         const input = this.inputs[inputIndex];
         (input.node as HTMLInputElement).type = this.isResetCodeVisible ? "text" : "password";
         input.setText(this.isResetCodeVisible ? this.adminResult.resetCode : "********");
+        icon.setTexture(this.isResetCodeVisible ? "unown_open" : "unown_closed");
       });
 
     this.addInteractionHoverEffect(icon);
