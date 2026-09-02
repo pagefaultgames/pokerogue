@@ -149,4 +149,14 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyModifyEvolutions}
    */
   MODIFY_EVOLUTIONS,
+  /**
+   * Challenges which modify the innate abilities of a species
+   * @see {@linkcode Challenge.applySpeciesAbilityModify}
+   */
+  SPECIES_ABILITY_MODIFY,
+  /**
+   * Challenges which modify the passive ability of a species
+   * @see {@linkcode Challenge.applyPassiveAbilityModify}
+   */
+  PASSIVE_ABILITY_MODIFY,
 }
