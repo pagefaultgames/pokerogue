@@ -70,10 +70,9 @@ describe("Moves - Secret Power", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    let rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
+    const rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)!;
     expect(rainbowEffect).toBeDefined();
 
-    rainbowEffect = rainbowEffect!;
     vi.spyOn(rainbowEffect, "apply");
 
     game.move.select(MoveId.SECRET_POWER, 0, BattlerIndex.ENEMY);

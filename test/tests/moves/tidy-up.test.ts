@@ -43,12 +43,12 @@ describe("Moves - Tidy Up", () => {
     game.scene.arena.addTag(tagType, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
     game.scene.arena.addTag(tagType, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.ENEMY);
 
-    expect(game.scene.arena.getTag(tagType)).toBeDefined();
+    expect(game).toHaveArenaTag(tagType);
 
     game.move.use(MoveId.TIDY_UP);
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.getTag(tagType)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(tagType);
   });
 
   it("should clear substitutes from all pokemon", async () => {

@@ -111,14 +111,14 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       expect(bulbasaur).toHaveFainted();
       expect(charmander).toHaveFullHp();
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
-      expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
+      expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
       // Switch to damaged Squirtle. HW/LD's effect should activate
       game.doSwitchPokemon(2);
       await game.toEndOfTurn();
 
       expect(squirtle).toHaveFullHp();
-      expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeUndefined();
+      expect(game).not.toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
       // Set Charmander's HP to 1, then switch back to Charmander.
       // HW/LD shouldn't activate again
@@ -147,7 +147,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       expect(bulbasaur).toHaveFainted();
       expect(charmander).toHaveFullHp();
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
-      expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
+      expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
       // Use HW/LD again, sending in Squirtle. HW/LD should activate and heal Squirtle
       game.move.use(moveId);
@@ -206,7 +206,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     expect(bulbasaur).toHaveFainted();
     expect(charmander).toHaveFullHp();
     expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
-    expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
     game.move.use(MoveId.HEALING_WISH);
     game.doSelectPartyPokemon(2);
@@ -215,7 +215,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     // Lunar Dance should apply first since it was used first, restoring Squirtle's HP and PP
     expect(squirtle).toHaveFullHp();
     squirtle.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(0));
-    expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
     game.doSwitchPokemon(3);
     await game.toEndOfTurn();
@@ -223,6 +223,6 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     // Healing Wish should apply on the next switch, restoring Pikachu's HP
     expect(pikachu).toHaveFullHp();
     pikachu.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(1));
-    expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.PENDING_HEAL);
   });
 });
