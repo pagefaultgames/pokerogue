@@ -35,7 +35,7 @@ describe("Abilities - Innards Out", () => {
     game.move.use(MoveId.X_SCISSOR);
     await game.toEndOfTurn();
 
-    expect(magikarp.isFainted()).toBe(true);
+    expect(magikarp).toHaveFainted();
     const feebas = game.field.getPlayerPokemon();
     expect(feebas.getInverseHp()).toBe(20);
   });
@@ -52,7 +52,7 @@ describe("Abilities - Innards Out", () => {
     await game.move.forceEnemyMove(MoveId.SURF);
     await game.toEndOfTurn();
 
-    expect(magikarp1.isFainted()).toBe(true);
+    expect(magikarp1).toHaveFainted();
     expect(magikarp2).toHaveFullHp();
   });
 });

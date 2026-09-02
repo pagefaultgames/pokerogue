@@ -221,7 +221,7 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(enemyPokemon.hp).toBeGreaterThan(0);
+    expect(enemyPokemon).not.toHaveFainted();
     expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(true);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);

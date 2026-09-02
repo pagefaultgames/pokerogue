@@ -46,8 +46,8 @@ describe("Abilities - Quick Draw", () => {
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("FaintPhase", false);
 
-    expect(pokemon.isFainted()).toBe(false);
-    expect(enemy.isFainted()).toBe(true);
+    expect(pokemon).not.toHaveFainted();
+    expect(enemy).toHaveFainted();
     expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
   });
 
@@ -63,8 +63,8 @@ describe("Abilities - Quick Draw", () => {
     game.move.select(MoveId.TAIL_WHIP);
     await game.phaseInterceptor.to("FaintPhase", false);
 
-    expect(pokemon.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(false);
+    expect(pokemon).toHaveFainted();
+    expect(enemy).not.toHaveFainted();
     expect(pokemon.waveData.abilitiesApplied).not.toContain(AbilityId.QUICK_DRAW);
   });
 
@@ -82,8 +82,8 @@ describe("Abilities - Quick Draw", () => {
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("FaintPhase", false);
 
-    expect(pokemon.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(false);
+    expect(pokemon).toHaveFainted();
+    expect(enemy).not.toHaveFainted();
     expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
   });
 });

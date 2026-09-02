@@ -110,12 +110,12 @@ describe("Moves - Fell Stinger", () => {
 
     //  Turn 2: enemy Endures Fell Stinger, then dies to Salt Cure
     await game.toNextTurn();
-    expect(leftEnemy.isFainted()).toBe(false);
+    expect(leftEnemy).not.toHaveFainted();
     leftEnemy.heal(leftEnemy.getMaxHp());
     game.move.select(MoveId.FELL_STINGER);
     await game.toNextTurn();
 
-    expect(leftEnemy.isFainted()).toBe(true);
+    expect(leftEnemy).toHaveFainted();
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
@@ -133,12 +133,12 @@ describe("Moves - Fell Stinger", () => {
 
     // Turn 2: enemy Endures Fell Stinger, then dies to Bind
     await game.toNextTurn();
-    expect(leftEnemy.isFainted()).toBe(false);
+    expect(leftEnemy).not.toHaveFainted();
     leftEnemy.heal(leftEnemy.getMaxHp());
     game.move.select(MoveId.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
     await game.toNextTurn();
 
-    expect(leftEnemy.isFainted()).toBe(true);
+    expect(leftEnemy).toHaveFainted();
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 
@@ -156,12 +156,12 @@ describe("Moves - Fell Stinger", () => {
 
     // Turn 2: enemy Endures Fell Stinger, then dies to Leech Seed
     await game.toNextTurn();
-    expect(leftEnemy.isFainted()).toBe(false);
+    expect(leftEnemy).not.toHaveFainted();
     leftEnemy.heal(leftEnemy.getMaxHp());
     game.move.select(MoveId.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
     await game.toNextTurn();
 
-    expect(leftEnemy.isFainted()).toBe(true);
+    expect(leftEnemy).toHaveFainted();
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
   });
 

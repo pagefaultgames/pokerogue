@@ -75,6 +75,6 @@ describe("Moves - Endure", () => {
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy).toHaveFainted();
   });
 });

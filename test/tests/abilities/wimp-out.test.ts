@@ -46,7 +46,7 @@ describe("Abilities - Wimp Out", () => {
     expect(pokemon1.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
     expect(pokemon2.species.speciesId).toBe(SpeciesId.WIMPOD);
-    expect(pokemon2.isFainted()).toBe(false);
+    expect(pokemon2).not.toHaveFainted();
     expect(pokemon2.getHpRatio()).toBeLessThan(0.5);
   }
 
@@ -58,7 +58,7 @@ describe("Abilities - Wimp Out", () => {
     expect(pokemon2.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
     expect(pokemon1.species.speciesId).toBe(SpeciesId.WIMPOD);
-    expect(pokemon1.isFainted()).toBe(false);
+    expect(pokemon1).not.toHaveFainted();
     expect(pokemon1.getHpRatio()).toBeLessThan(0.5);
   }
 
@@ -513,8 +513,8 @@ describe("Abilities - Wimp Out", () => {
 
     expect(wimpod0.hp).toBeGreaterThan(0);
     expect(wimpod0.switchOutStatus).toBe(true);
-    expect(wimpod0.isFainted()).toBe(false);
-    expect(wimpod1.isFainted()).toBe(true);
+    expect(wimpod0).not.toHaveFainted();
+    expect(wimpod1).toHaveFainted();
 
     await game.toNextWave();
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);

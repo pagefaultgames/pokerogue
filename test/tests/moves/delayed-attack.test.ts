@@ -242,7 +242,7 @@ describe("Moves - Delayed Attacks", () => {
     await game.killPokemon(enemy2);
     await game.toNextTurn();
 
-    expect(enemy2.isFainted()).toBe(true);
+    expect(enemy2).toHaveFainted();
     expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     expect(game).toHavePositionalTag({

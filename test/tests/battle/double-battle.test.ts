@@ -59,7 +59,7 @@ describe("Double Battles", () => {
     for (const pokemon of game.scene.getPlayerField()) {
       pokemon.hp = 0;
       pokemon.status = new Status(StatusEffect.FAINT);
-      expect(pokemon.isFainted()).toBe(true);
+      expect(pokemon).toHaveFainted();
     }
 
     await game.doKillOpponents();

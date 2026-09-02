@@ -248,7 +248,7 @@ describe("Moves - Dragon Tail", () => {
     // Turn 1: Eevee faints
     eevee.hp = 0;
     eevee.status = new Status(StatusEffect.FAINT);
-    expect(eevee.isFainted()).toBe(true);
+    expect(eevee).toHaveFainted();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
@@ -277,7 +277,7 @@ describe("Moves - Dragon Tail", () => {
     // Turn 1: Eevee faints
     eevee.hp = 0;
     eevee.status = new Status(StatusEffect.FAINT);
-    expect(eevee.isFainted()).toBe(true);
+    expect(eevee).toHaveFainted();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();

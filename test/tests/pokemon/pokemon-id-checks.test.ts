@@ -69,7 +69,7 @@ describe("Field - Pokemon ID Checks", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(player.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(true);
+    expect(player).toHaveFainted();
+    expect(enemy).toHaveFainted();
   });
 });

@@ -69,8 +69,8 @@ describe("Moves - Metal Burst", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFainted()).toBe(true);
-    expect(enemy2.isFainted()).toBe(true);
+    expect(enemy1).toHaveFainted();
+    expect(enemy2).toHaveFainted();
     expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
 });

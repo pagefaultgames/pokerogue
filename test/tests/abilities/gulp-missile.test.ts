@@ -226,7 +226,7 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("FaintPhase");
 
-    expect(cramorant.hp).toBe(0);
+    expect(cramorant).toHaveFainted();
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
     expect(game.field.getEnemyPokemon().getStatStage(Stat.DEF)).toBe(-1);

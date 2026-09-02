@@ -57,7 +57,7 @@ describe("Moves - Make It Rain", () => {
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
@@ -75,7 +75,7 @@ describe("Moves - Make It Rain", () => {
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
-    enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
+    enemyPokemon.forEach(p => expect(p).toHaveFainted());
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 

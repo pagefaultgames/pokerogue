@@ -41,7 +41,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       await game.toNextTurn();
 
       expect(bulbasaur).toHaveFullHp();
-      expect(charmander.isFainted()).toBe(true);
+      expect(charmander).toHaveFainted();
       expect(squirtle).toHaveFullHp();
     });
 
@@ -57,7 +57,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       await game.toNextTurn();
 
       expect(bulbasaur).toHaveStatusEffect(StatusEffect.BURN);
-      expect(charmander.isFainted()).toBe(true);
+      expect(charmander).toHaveFainted();
       expect(squirtle).toHaveStatusEffect(StatusEffect.NONE);
     });
 
@@ -71,7 +71,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.doSelectPartyPokemon(1);
       await game.toNextTurn();
 
-      expect(bulbasaur.isFainted()).toBe(true);
+      expect(bulbasaur).toHaveFainted();
       expect(charmander.isActive(true)).toBe(true);
 
       game.move.use(moveId);
@@ -108,7 +108,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       await game.toNextTurn();
 
       // Bulbasaur fainted and stored a healing effect
-      expect(bulbasaur.isFainted()).toBe(true);
+      expect(bulbasaur).toHaveFainted();
       expect(charmander).toHaveFullHp();
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
@@ -144,8 +144,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.move.use(moveId);
       game.doSelectPartyPokemon(1);
       await game.toNextTurn();
-      expect(bulbasaur.isFainted()).toBe(true);
-  expect(charmander).toHaveFullHp();
+      expect(bulbasaur).toHaveFainted();
       expect(charmander).toHaveFullHp();
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
@@ -154,7 +153,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.move.use(moveId);
       game.doSelectPartyPokemon(2);
       await game.toNextTurn();
-      expect(charmander.isFainted()).toBe(true);
+      expect(charmander).toHaveFainted();
       expect(squirtle).toHaveFullHp();
       expect(squirtle).toHaveFullHp();
 
@@ -182,7 +181,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
-    expect(charmander.isFainted()).toBeTruthy();
+  expect(charmander).toHaveFainted();
     bulbasaur.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(0));
   });
 
@@ -204,7 +203,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     game.move.use(MoveId.LUNAR_DANCE);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
-    expect(bulbasaur.isFainted()).toBe(true);
+    expect(bulbasaur).toHaveFainted();
     expect(charmander).toHaveFullHp();
     expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
     expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();

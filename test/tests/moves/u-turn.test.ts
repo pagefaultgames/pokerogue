@@ -94,7 +94,7 @@ describe("Moves - U-turn", () => {
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy).toHaveFainted();
 
     // Check that U-Turn forced a switch
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");

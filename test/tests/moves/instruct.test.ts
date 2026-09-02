@@ -224,8 +224,8 @@ describe("Moves - Instruct", () => {
       ]),
     );
     const [karp1, karp2] = game.scene.getEnemyField();
-    expect(karp1.isFainted()).toBe(true);
-    expect(karp2.isFainted()).toBe(true);
+    expect(karp1).toHaveFainted();
+    expect(karp2).toHaveFainted();
   });
 
   it("should allow for dancer copying of instructed dance move", async () => {

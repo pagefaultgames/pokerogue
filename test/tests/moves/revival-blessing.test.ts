@@ -102,12 +102,12 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(feebas.isFainted()).toBe(true);
+    expect(feebas).toHaveFainted();
 
     game.doSelectPartyPokemon(0, "RevivalBlessingPhase");
     await game.toNextTurn();
 
-    expect(feebas.isFainted()).toBe(false);
+    expect(feebas).not.toHaveFainted();
     expect(feebas.hp).toBe(toDmgValue(0.5 * feebas.getMaxHp()));
     expect(game.field.getPlayerPokemon()).toBe(feebas);
   });

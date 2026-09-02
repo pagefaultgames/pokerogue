@@ -55,7 +55,7 @@ describe("Abilities - Good As Gold", () => {
 
     game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().isFainted()).toBe(false);
+    expect(game.field.getPlayerPokemon()).not.toHaveFainted();
     expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 

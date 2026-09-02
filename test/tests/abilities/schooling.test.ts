@@ -37,7 +37,7 @@ describe("Abilities - SCHOOLING", () => {
 
     wishiwashi.hp = 0;
     wishiwashi.status = new Status(StatusEffect.FAINT);
-    expect(wishiwashi.isFainted()).toBe(true);
+    expect(wishiwashi).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
