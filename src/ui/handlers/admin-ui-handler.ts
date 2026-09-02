@@ -19,6 +19,7 @@ export class AdminUiHandler extends FormModalUiHandler {
   private config: ModalConfig;
 
   private tempGameData: GameData | null = null;
+  private isResetCodeVisible = false;
 
   private readonly buttonGap = 10;
   /** @returns "[field] is required" */
@@ -80,7 +81,7 @@ export class AdminUiHandler extends FormModalUiHandler {
             label: "Google ID",
             isReadOnly: (this.adminResult?.googleId ?? "") !== "",
           },
-          { label: "Reset Code", isReadOnly: true },
+          { label: "Reset Code", isPassword: true, isReadOnly: true },
           { label: "Last played", isReadOnly: true },
           { label: "Registered", isReadOnly: true },
         ];
@@ -102,6 +103,7 @@ export class AdminUiHandler extends FormModalUiHandler {
   show(args: any[]): boolean {
     this.config = args[0] as ModalConfig; // config
     this.adminMode = args[1] as AdminMode; // admin mode
+    this.isResetCodeVisible = false;
     this.adminResult = args[2] ?? {
       username: "",
       discordId: "",
@@ -206,6 +208,11 @@ export class AdminUiHandler extends FormModalUiHandler {
       const aR = field.key;
       const value = adminResult[aR] as string | undefined;
       this.inputs[i].setText(value ?? "");
+      if (aR === "resetCode") {
+        this.addResetCodeVisibilityToggle(i);
+        // Hide if the user has a code or not by always showing teh full 8 asterisks
+        this.inputs[i].setText(this.isResetCodeVisible ? adminResult.resetCode : "********");
+      }
       if (field.linkable) {
         // this is here to add the icons for linking/unlinking of google/discord IDs
         const nineSlice = this.inputContainers[i].list.find(
@@ -252,6 +259,31 @@ export class AdminUiHandler extends FormModalUiHandler {
         this.modalContainer.add(img);
       }
     }
+  }
+
+  private addResetCodeVisibilityToggle(inputIndex: number) {
+    const inputContainer = this.inputContainers[inputIndex];
+    const nineSlice = inputContainer.list.find(
+      (item): item is Phaser.GameObjects.NineSlice => item.type === "NineSlice",
+    );
+    const icon = globalScene.add.image(
+      inputContainer.x + nineSlice!.width + this.buttonGap,
+      inputContainer.y + Math.floor(nineSlice!.height / 2),
+      "icon_lock", // TODO: replace with new icon later
+    );
+    icon
+      .setName("adminBtn_resetCodeVisibility")
+      .setOrigin()
+      .setInteractive()
+      .on("pointerdown", () => {
+        this.isResetCodeVisible = !this.isResetCodeVisible;
+        const input = this.inputs[inputIndex];
+        (input.node as HTMLInputElement).type = this.isResetCodeVisible ? "text" : "password";
+        input.setText(this.isResetCodeVisible ? this.adminResult.resetCode : "********");
+      });
+
+    this.addInteractionHoverEffect(icon);
+    this.modalContainer.add(icon);
   }
 
   /**
