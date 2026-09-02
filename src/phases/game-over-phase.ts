@@ -137,7 +137,8 @@ export class GameOverPhase extends BattlePhase {
     const { gameMode } = globalScene;
     const { challenges, isClassic } = gameMode;
 
-    if (challenges.some(c => [Challenges.MOVESET_RANDOMIZER].includes(c.id) && c.value > 0)) {
+    const ribbonBlockChallenges = [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER];
+    if (challenges.some(c => ribbonBlockChallenges.includes(c.id) && c.value > 0)) {
       return;
     }
 

@@ -5,9 +5,10 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
-import { allMoves } from "#data/data-lists";
+import { allAbilities, allMoves } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
+import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
@@ -39,6 +40,7 @@ import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -519,6 +521,26 @@ export abstract class Challenge {
    * @returns Whether this modification was applied
    */
   public applyModifyEvolutions(pokemon: Pokemon, evos: SpeciesFormEvolution[]): boolean {
+    return false;
+  }
+
+  /**
+   * Modifies the innate abilities of a species
+   * @param speciesId - The ID of the species whose abilties are being modified
+   * @param abilityId - A holder for the ability ID
+   * @returns Whether this modification was applied
+   */
+  public applySpeciesAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
+    return false;
+  }
+
+  /**
+   * Modifies the passive ability of a species
+   * @param speciesId - The ID of the species whose passive ability is being modified
+   * @param abilityId - A holder for the ability ID
+   * @returns Whether this modification was applied
+   */
+  public applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
     return false;
   }
 
@@ -1554,6 +1576,104 @@ export class MovesetRandomizerChallenge extends Challenge {
   }
 }
 
+export class AbilityRandomizerChallenge extends Challenge {
+  // Challenge values:
+  // 1 - Randomize abilities
+  // 2 - Randomize abilities and passives
+  constructor() {
+    super(Challenges.ABILITY_RANDOMIZER, 2);
+  }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.RANDOMIZER;
+  }
+
+  private static _validAbilityIds: AbilityId[];
+
+  private get validAbilityIds(): AbilityId[] {
+    // it's necessary to do it this way due to the static variable
+    // being initialized before the `allAbilities` array is
+    if (!AbilityRandomizerChallenge._validAbilityIds) {
+      const formChangeAbilities = [
+        AbilityId.DISGUISE, // can be removed if/when it gets changed to work on any Pokemon
+        AbilityId.FORECAST,
+        AbilityId.GULP_MISSILE,
+        AbilityId.HUNGER_SWITCH,
+        AbilityId.ICE_FACE, // can be removed if/when it gets changed to work on any Pokemon
+        AbilityId.MULTITYPE,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.RKS_SYSTEM,
+        AbilityId.SCHOOLING,
+        AbilityId.SHIELDS_DOWN,
+        AbilityId.STANCE_CHANGE,
+        AbilityId.TERA_SHIFT,
+        AbilityId.ZEN_MODE,
+        AbilityId.ZERO_TO_HERO,
+      ];
+      const negativeAbilities = [
+        AbilityId.DEFEATIST,
+        AbilityId.KLUTZ,
+        AbilityId.NORMALIZE,
+        AbilityId.SLOW_START,
+        AbilityId.STALL,
+        AbilityId.WIMP_OUT, // Emergency Exit by itself is okay, Wimp Out is removed to not double up
+      ];
+      const disallowedAbilities = [AbilityId.NONE, AbilityId.COMMANDER, ...formChangeAbilities, ...negativeAbilities];
+      AbilityRandomizerChallenge._validAbilityIds = getEnumValues(AbilityId) //
+        .filter(v => !disallowedAbilities.includes(v) && !allAbilities[v].unimplemented);
+    }
+    return AbilityRandomizerChallenge._validAbilityIds;
+  }
+
+  public override applySpeciesAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>): boolean {
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    if (
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    const seedOffset = 500 * speciesId + abilityId.value;
+
+    globalScene.executeWithSeedOffset(() => {
+      abilityId.value = randSeedItem(this.validAbilityIds);
+    }, seedOffset);
+
+    return true;
+  }
+
+  public override applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>): boolean {
+    if (this.value < 2) {
+      return false;
+    }
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    if (
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    const seedOffset = 500 * speciesId + abilityId.value;
+
+    globalScene.executeWithSeedOffset(() => {
+      abilityId.value = randSeedItem(this.validAbilityIds);
+    }, seedOffset);
+
+    return true;
+  }
+
+  public static override loadChallenge(source: Challenge | any): Challenge {
+    const newChallenge = new AbilityRandomizerChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
 /**
  * @param source - A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
  * @returns The challenge in question.
@@ -1586,6 +1706,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return PassivesChallenge.loadChallenge(source);
     case Challenges.MOVESET_RANDOMIZER:
       return MovesetRandomizerChallenge.loadChallenge(source);
+    case Challenges.ABILITY_RANDOMIZER:
+      return AbilityRandomizerChallenge.loadChallenge(source);
     default:
       challengeId satisfies never;
       throw new Error("Unknown challenge copied");
@@ -1606,5 +1728,6 @@ export function initChallenges() {
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
     new MovesetRandomizerChallenge(),
+    new AbilityRandomizerChallenge(),
   );
 }
