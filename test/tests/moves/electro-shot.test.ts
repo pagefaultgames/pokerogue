@@ -52,8 +52,7 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.ELECTRO_SHOT);
-    expect(playerElectroShot?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.ELECTRO_SHOT, 1);
   });
 
   it.each([
@@ -78,8 +77,7 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.ELECTRO_SHOT);
-    expect(playerElectroShot?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.ELECTRO_SHOT, 1);
   });
 
   it("should only increase Sp. Atk once with Multi-Lens", async () => {

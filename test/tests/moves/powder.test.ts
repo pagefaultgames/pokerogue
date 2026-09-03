@@ -44,7 +44,7 @@ describe("Moves - Powder", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
-    expect(enemyPokemon.moveset[0].ppUsed).toBe(1);
+    expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 1);
 
     await game.toNextTurn();
 
@@ -53,7 +53,7 @@ describe("Moves - Powder", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
-    expect(enemyPokemon.moveset[0].ppUsed).toBe(2);
+    expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 2);
   });
 
   it("should have no effect against Grass-type Pokemon", async () => {

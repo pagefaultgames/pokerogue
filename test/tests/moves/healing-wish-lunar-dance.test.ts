@@ -181,8 +181,8 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
-  expect(charmander).toHaveFainted();
-    bulbasaur.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(0));
+    expect(charmander).toHaveFainted();
+    bulbasaur.getMoveset().forEach(mv => expect(bulbasaur).toHaveUsedPP(mv.moveId, 0));
   });
 
   it("should stack with each other", async () => {
@@ -214,7 +214,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
     // Lunar Dance should apply first since it was used first, restoring Squirtle's HP and PP
     expect(squirtle).toHaveFullHp();
-    squirtle.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(0));
+    squirtle.getMoveset().forEach(mv => expect(squirtle).toHaveUsedPP(mv.moveId, 0));
     expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
     game.doSwitchPokemon(3);
@@ -222,7 +222,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
     // Healing Wish should apply on the next switch, restoring Pikachu's HP
     expect(pikachu).toHaveFullHp();
-    pikachu.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(1));
+    pikachu.getMoveset().forEach(mv => expect(pikachu).toHaveUsedPP(mv.moveId, 1));
     expect(game).not.toHaveArenaTag(ArenaTagType.PENDING_HEAL);
   });
 });

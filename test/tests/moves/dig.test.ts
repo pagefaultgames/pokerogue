@@ -64,11 +64,10 @@ describe("Moves - Dig", () => {
     game.move.select(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const playerDig = playerPokemon.getMoveset().find(mv => mv?.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(0);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 0);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerDig?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 1);
   });
 
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
@@ -99,8 +98,7 @@ describe("Moves - Dig", () => {
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
-    const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 1);
   });
 
   it("should cause the user to take double damage from Earthquake", async () => {

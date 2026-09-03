@@ -51,8 +51,7 @@ describe("Moves - Dive", () => {
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
 
-    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
-    expect(playerDive?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIVE, 1);
   });
 
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
@@ -83,8 +82,7 @@ describe("Moves - Dive", () => {
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
     expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
-    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
-    expect(playerDive?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIVE, 1);
   });
 
   it("should trigger on-contact post-defend ability effects", async () => {
@@ -123,7 +121,6 @@ describe("Moves - Dive", () => {
     expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
 
-    const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
-    expect(playerDive?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIVE, 1);
   });
 });

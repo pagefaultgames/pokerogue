@@ -53,8 +53,7 @@ describe("Moves - Solar Beam", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.SOLAR_BEAM);
-    expect(playerSolarBeam?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.SOLAR_BEAM, 1);
   });
 
   it.each([
@@ -85,8 +84,7 @@ describe("Moves - Solar Beam", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.SOLAR_BEAM);
-    expect(playerSolarBeam?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.SOLAR_BEAM, 1);
   });
 
   it.each([

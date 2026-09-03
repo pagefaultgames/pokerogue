@@ -47,8 +47,7 @@ describe("Moves - Geomancy", () => {
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === MoveId.GEOMANCY);
-    expect(playerGeomancy?.ppUsed).toBe(1);
+    expect(player).toHaveUsedPP(MoveId.GEOMANCY, 1);
   });
 
   it("should execute over 2 turns between waves", async () => {
@@ -69,7 +68,6 @@ describe("Moves - Geomancy", () => {
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === MoveId.GEOMANCY);
-    expect(playerGeomancy?.ppUsed).toBe(1);
+    expect(player).toHaveUsedPP(MoveId.GEOMANCY, 1);
   });
 });

@@ -73,14 +73,13 @@ describe("Moves - Quash", () => {
     game.move.select(MoveId.OUTRAGE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const outrageMove = rattata.getMoveset().find(m => m.moveId === MoveId.OUTRAGE);
-    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
 
     game.move.select(MoveId.QUASH, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
     expect(rattata.getLastXMoves()[0]).toMatchObject({
       move: MoveId.OUTRAGE,
       result: MoveResult.SUCCESS,
