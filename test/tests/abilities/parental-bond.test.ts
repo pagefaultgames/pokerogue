@@ -222,11 +222,11 @@ describe("Abilities - Parental Bond", () => {
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
     expect(enemyPokemon).not.toHaveFainted();
-    expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(true);
+    expect(leadPokemon).toHaveTypes(PokemonType.FIRE, { mode: "superset" });
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(false);
+    expect(leadPokemon).not.toHaveTypes(PokemonType.FIRE, { mode: "superset" });
   });
 
   it("Hyper Beam boosted by this ability should strike twice, then recharge", async () => {

@@ -67,7 +67,6 @@ describe("Spec - Pokemon", () => {
 
   it("should not share tms between different forms", async () => {
     game.override.starterForms({ [SpeciesId.ROTOM]: 4 });
-
     await game.classicMode.startBattle(SpeciesId.ROTOM);
 
     const fanRotom = game.field.getPlayerPokemon();
@@ -104,21 +103,16 @@ describe("Spec - Pokemon", () => {
     it("Fusing two mons with a single type", async () => {
       game.override.starterFusionSpecies(SpeciesId.CHARMANDER);
       await game.classicMode.startBattle(SpeciesId.ABRA);
+
       const pokemon = game.field.getPlayerPokemon();
 
-      let types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.FIRE], { mode: "ordered" });
 
       pokemon.customPokemonData.types = [null, PokemonType.NORMAL];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.FIRE], { mode: "ordered" });
 
       pokemon.customPokemonData.types = [PokemonType.NORMAL, null];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.NORMAL);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.NORMAL, PokemonType.FIRE], { mode: "ordered" });
 
       if (!pokemon.fusionCustomPokemonData) {
         pokemon.fusionCustomPokemonData = new CustomPokemonData();
@@ -126,50 +120,38 @@ describe("Spec - Pokemon", () => {
       pokemon.customPokemonData.types = [];
 
       pokemon.fusionCustomPokemonData.types = [null, PokemonType.NORMAL];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.NORMAL);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.NORMAL], { mode: "ordered" });
 
       pokemon.fusionCustomPokemonData.types = [PokemonType.NORMAL, null];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.NORMAL);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.NORMAL], { mode: "ordered" });
 
       pokemon.customPokemonData.types = [PokemonType.NORMAL, null];
       pokemon.fusionCustomPokemonData.types = [null, PokemonType.NORMAL];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.NORMAL);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.NORMAL, PokemonType.FIRE], { mode: "ordered" });
     });
 
     it("Fusing two mons with same single type", async () => {
       game.override.starterFusionSpecies(SpeciesId.DROWZEE);
       await game.classicMode.startBattle(SpeciesId.ABRA);
-      const pokemon = game.field.getPlayerPokemon();
 
-      const types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types.length).toBe(1);
+      const pokemon = game.field.getPlayerPokemon();
+      expect(pokemon).toHaveTypes(PokemonType.PSYCHIC);
     });
 
     it("Fusing mons with one and two types", async () => {
       game.override.starterFusionSpecies(SpeciesId.HOUNDOUR);
       await game.classicMode.startBattle(SpeciesId.CHARMANDER);
-      const pokemon = game.field.getPlayerPokemon();
 
-      const types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.FIRE);
-      expect(types[1]).toBe(PokemonType.DARK);
+      const pokemon = game.field.getPlayerPokemon();
+      expect(pokemon).toHaveTypes([PokemonType.FIRE, PokemonType.DARK], { mode: "ordered" });
     });
 
     it("Fusing mons with two and one types", async () => {
       game.override.starterFusionSpecies(SpeciesId.CHARMANDER);
       await game.classicMode.startBattle(SpeciesId.NUMEL);
-      const pokemon = game.field.getPlayerPokemon();
 
-      const types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.FIRE);
-      expect(types[1]).toBe(PokemonType.GROUND);
+      const pokemon = game.field.getPlayerPokemon();
+      expect(pokemon).toHaveTypes([PokemonType.GROUND, PokemonType.FIRE], { mode: "ordered" });
     });
 
     it("Fusing two mons with two types", async () => {
@@ -177,46 +159,32 @@ describe("Spec - Pokemon", () => {
       await game.classicMode.startBattle(SpeciesId.NATU);
       const pokemon = game.field.getPlayerPokemon();
 
-      let types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.FIRE], { mode: "ordered" });
 
       // Natu Psychic/Grass
       pokemon.customPokemonData.types = [null, PokemonType.GRASS];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.FIRE], { mode: "ordered" });
 
       // Natu Grass/Flying
       pokemon.customPokemonData.types = [PokemonType.GRASS, null];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.GRASS);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.GRASS, PokemonType.FIRE], { mode: "ordered" });
 
-      if (!pokemon.fusionCustomPokemonData) {
-        pokemon.fusionCustomPokemonData = new CustomPokemonData();
-      }
+      pokemon.fusionCustomPokemonData ??= new CustomPokemonData();
       pokemon.customPokemonData.types = [];
 
       // Houndour Dark/Grass
       pokemon.fusionCustomPokemonData.types = [null, PokemonType.GRASS];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.GRASS);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.GRASS], { mode: "ordered" });
 
       // Houndour Grass/Fire
       pokemon.fusionCustomPokemonData.types = [PokemonType.GRASS, null];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types[1]).toBe(PokemonType.FIRE);
+      expect(pokemon).toHaveTypes([PokemonType.PSYCHIC, PokemonType.FIRE], { mode: "ordered" });
 
       // Natu Grass/Flying
       // Houndour Dark/Grass
       pokemon.customPokemonData.types = [PokemonType.GRASS, null];
       pokemon.fusionCustomPokemonData.types = [null, PokemonType.GRASS];
-      types = pokemon.getTypes();
-      expect(types[0]).toBe(PokemonType.GRASS);
-      expect(types[1]).toBe(PokemonType.DARK);
+      expect(pokemon).toHaveTypes([PokemonType.GRASS, PokemonType.DARK], { mode: "ordered" });
     });
   });
 

@@ -179,7 +179,7 @@ describe("Inverse Battle", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getTypes()[0]).toBe(PokemonType.DRAGON);
+    expect(player).toHaveTypes([PokemonType.DRAGON]);
   });
 
   it("Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {
