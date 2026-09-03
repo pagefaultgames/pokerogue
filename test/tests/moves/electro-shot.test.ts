@@ -84,7 +84,7 @@ describe("Moves - Electro Shot", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.ELECTRO_SHOT);
+    game.move.use(MoveId.ELECTRO_SHOT);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(playerPokemon.turnData.hitCount).toBe(1);

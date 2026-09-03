@@ -154,6 +154,8 @@ describe("Moves - Protect", () => {
     expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
+    await game.toNextTurn();
+
     expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.SUCCESS });
   });
 

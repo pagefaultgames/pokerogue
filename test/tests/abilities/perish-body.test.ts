@@ -91,14 +91,13 @@ describe("Abilities - Perish Song", () => {
       .startingWave(5);
     await game.classicMode.startBattle(SpeciesId.CURSOLA);
 
-    const cursola = game.field.getPlayerPokemon();
-    const magikarp = game.field.getEnemyPokemon();
-
     game.move.select(MoveId.WHIRLWIND);
     await game.move.selectEnemyMove(MoveId.PERISH_SONG);
     await game.toNextTurn();
 
+    const cursola = game.field.getPlayerPokemon();
     expect(cursola).toHaveBattlerTag({ tagType: BattlerTagType.PERISH_SONG, turnCount: 3 });
+    const magikarp = game.field.getEnemyPokemon();
     expect(magikarp).not.toHaveBattlerTag(BattlerTagType.PERISH_SONG);
 
     game.move.select(MoveId.SPLASH);

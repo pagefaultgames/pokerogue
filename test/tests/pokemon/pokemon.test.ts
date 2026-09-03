@@ -151,7 +151,7 @@ describe("Spec - Pokemon", () => {
       await game.classicMode.startBattle(SpeciesId.NUMEL);
 
       const pokemon = game.field.getPlayerPokemon();
-      expect(pokemon).toHaveTypes([PokemonType.GROUND, PokemonType.FIRE], { mode: "ordered" });
+      expect(pokemon).toHaveTypes([PokemonType.FIRE, PokemonType.GROUND], { mode: "ordered" });
     });
 
     it("Fusing two mons with two types", async () => {

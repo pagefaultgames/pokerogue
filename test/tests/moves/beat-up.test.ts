@@ -38,15 +38,16 @@ describe("Moves - Beat Up", () => {
       SpeciesId.EEVEE,
     );
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    -game.move.select(MoveId.BEAT_UP);
+    game.move.select(MoveId.BEAT_UP);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
+    const playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.turnData.hitCount).toBe(6);
 
     await game.toEndOfTurn();
 
-    expect(playerPokemon).not.toHaveFullHp();
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).not.toHaveFullHp();
   });
 
   it("should not count player Pokemon with status effects towards hit count", async () => {

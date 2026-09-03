@@ -21,7 +21,6 @@ describe("Moves - Geomancy", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.GEOMANCY)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -36,7 +35,7 @@ describe("Moves - Geomancy", () => {
     const player = game.field.getPlayerPokemon();
     const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
-    game.move.select(MoveId.GEOMANCY);
+    game.move.use(MoveId.GEOMANCY);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     affectedStats.forEach(stat => expect(player).toHaveStatStage(stat, 0));
@@ -55,7 +54,7 @@ describe("Moves - Geomancy", () => {
     const player = game.field.getPlayerPokemon();
     const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
-    game.move.select(MoveId.GEOMANCY);
+    game.move.use(MoveId.GEOMANCY);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     await game.doKillOpponents();
