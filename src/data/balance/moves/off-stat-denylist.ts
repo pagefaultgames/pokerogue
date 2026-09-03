@@ -120,6 +120,7 @@ const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST: Readonly<Partial<Record<SpeciesId, 
   //#endregion physical deny list
 
   //#region special deny list
+  [SpeciesId.AERODACTYL]: DENY_SPECIAL_MOVES,
   [SpeciesId.AGGRON]: DENY_SPECIAL_MOVES,
   [SpeciesId.ALOLA_DUGTRIO]: DENY_SPECIAL_MOVES,
   [SpeciesId.ALOLA_GOLEM]: DENY_SPECIAL_MOVES,
