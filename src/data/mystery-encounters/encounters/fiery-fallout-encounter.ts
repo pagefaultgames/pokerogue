@@ -295,10 +295,7 @@ function giveLeadPokemonAttackTypeBoostItem() {
   const leadPokemon = globalScene.getPlayerParty()[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
-    let item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon);
-    if (!item) {
-      item = HeldItemId.CHARCOAL;
-    }
+    const item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon) ?? HeldItemId.CHARCOAL;
     leadPokemon.heldItemManager.add(item);
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;
