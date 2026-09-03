@@ -350,7 +350,7 @@ describe("Terrain -", () => {
       );
     });
 
-    it("should not block 'Field-targeted' moves that become priority", async () => {
+    it("should not block field-targeted moves that become priority", async () => {
       game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
       await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
@@ -361,7 +361,7 @@ describe("Terrain -", () => {
       expect(blissey).toHaveUsedMove({ move: MoveId.RAIN_DANCE, result: MoveResult.SUCCESS });
     });
 
-    it("should block 'Enemy-targeting spread' moves that become priority", async () => {
+    it("should block enemy-targeting spread moves that become priority", async () => {
       game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
       await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
@@ -377,12 +377,14 @@ describe("Terrain -", () => {
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addTag(BattlerTagType.BYPASS_SPEED);
+
       expect(allMoves[MoveId.POUND].getPriority(feebas)).toBe(0);
       expect(allMoves[MoveId.POUND].getPriorityModifier(feebas)).toBe(MovePriorityInBracket.FIRST);
 
       game.move.use(MoveId.POUND);
       await game.toEndOfTurn();
 
+      expect(feebas).toHaveUsedMove({ move: MoveId.POUND, result: MoveResult.SUCCESS });
       const shuckle = game.field.getEnemyPokemon();
       expect(shuckle).not.toHaveFullHp();
     });
@@ -392,12 +394,14 @@ describe("Terrain -", () => {
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addTag(BattlerTagType.BYPASS_SPEED);
+
       expect(allMoves[MoveId.QUICK_ATTACK].getPriority(feebas)).toBe(1);
       expect(allMoves[MoveId.QUICK_ATTACK].getPriorityModifier(feebas)).toBe(MovePriorityInBracket.FIRST);
 
       game.move.use(MoveId.QUICK_ATTACK);
       await game.toEndOfTurn();
 
+      expect(feebas).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
       const shuckle = game.field.getEnemyPokemon();
       expect(shuckle).toHaveFullHp();
     });

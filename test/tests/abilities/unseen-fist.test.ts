@@ -1,12 +1,13 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Unseen Fist", () => {
+describe("Ability - Unseen Fist", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -21,65 +22,95 @@ describe("Abilities - Unseen Fist", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.UNSEEN_FIST)
-      .enemySpecies(SpeciesId.SNORLAX)
-      .enemyMoveset(MoveId.PROTECT)
+      .enemySpecies(SpeciesId.BLISSEY)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
-  it("should cause a contact move to ignore Protect", async () =>
-    await testUnseenFistHitResult(game, MoveId.QUICK_ATTACK, MoveId.PROTECT, true));
+  async function testUnseenFistHitResult(
+    attackMove: MoveId,
+    protectMove: MoveId,
+    shouldSucceed: boolean,
+  ): Promise<void> {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-  it("should not cause a non-contact move to ignore Protect", async () =>
-    await testUnseenFistHitResult(game, MoveId.ABSORB, MoveId.PROTECT, false));
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(attackMove);
+    await game.move.forceEnemyMove(protectMove);
+    await game.toEndOfTurn();
+
+    if (shouldSucceed) {
+      expect(player).toHaveUsedMove({ move: attackMove, result: MoveResult.SUCCESS });
+    } else {
+      expect(player).toHaveUsedMove({ move: attackMove, result: MoveResult.FAIL });
+    }
+  }
+
+  it("should cause contact moves to ignore Protect", async () => {
+    await testUnseenFistHitResult(MoveId.QUICK_ATTACK, MoveId.PROTECT, true);
+  });
+
+  it("should not cause non-contact moves to ignore Protect", async () => {
+    await testUnseenFistHitResult(MoveId.ABSORB, MoveId.PROTECT, false);
+  });
 
   it("should not apply if the source has Long Reach", async () => {
     game.override.passiveAbility(AbilityId.LONG_REACH);
-    await testUnseenFistHitResult(game, MoveId.QUICK_ATTACK, MoveId.PROTECT, false);
+    await testUnseenFistHitResult(MoveId.QUICK_ATTACK, MoveId.PROTECT, false);
   });
 
-  it("should cause a contact move to ignore Wide Guard", async () =>
-    await testUnseenFistHitResult(game, MoveId.BREAKING_SWIPE, MoveId.WIDE_GUARD, true));
+  it("should cause contact moves to ignore Wide Guard", async () => {
+    await testUnseenFistHitResult(MoveId.BREAKING_SWIPE, MoveId.WIDE_GUARD, true);
+  });
 
-  it("should not cause a non-contact move to ignore Wide Guard", async () =>
-    await testUnseenFistHitResult(game, MoveId.BULLDOZE, MoveId.WIDE_GUARD, false));
+  it("should not cause non-contact moves to ignore Wide Guard", async () => {
+    await testUnseenFistHitResult(MoveId.BULLDOZE, MoveId.WIDE_GUARD, false);
+  });
 
-  it("should cause a contact move to ignore Protect, but not Substitute", async () => {
-    game.override.enemyLevel(1).moveset([MoveId.TACKLE]);
-
+  it("should not ignore Substitute", async () => {
+    game.override.enemyLevel(1);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    enemy.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemy.id);
 
-    game.move.select(MoveId.TACKLE);
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("BerryPhase", false);
-
-    expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
+    expect(enemy).toHaveFullHp();
   });
+
+  it("should deal 25% damage when hitting through protection effects", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
+    const hpLost = enemy.getInverseHp();
+
+    enemy.hp = enemy.getMaxHp();
+
+    // do it with unseen fist active
+    // TODO: This would be far easier if actual damage multi funcs were added
+
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
+    expect(enemy).toHaveTakenDamage(hpLost * 0.25);
+  });
+
+  // TODO: Review what the mainline behaviour here is
+  it.todo("should deal normal damage for moves that normally bypass Protect");
 });
-
-async function testUnseenFistHitResult(
-  game: GameManager,
-  attackMove: MoveId,
-  protectMove: MoveId,
-  shouldSucceed = true,
-): Promise<void> {
-  game.override.moveset([attackMove]).enemyMoveset(protectMove);
-
-  await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-  const enemyPokemon = game.field.getEnemyPokemon();
-  const enemyStartingHp = enemyPokemon.hp;
-
-  game.move.select(attackMove);
-  await game.phaseInterceptor.to("TurnEndPhase", false);
-
-  if (shouldSucceed) {
-    expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-  } else {
-    expect(enemyPokemon.hp).toBe(enemyStartingHp);
-  }
-}
