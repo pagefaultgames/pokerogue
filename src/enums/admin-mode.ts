@@ -2,7 +2,7 @@ export const AdminMode = Object.freeze({
   LINK: 0,
   SEARCH: 1,
   ADMIN: 2,
-});
+} as const);
 
 export type AdminMode = (typeof AdminMode)[keyof typeof AdminMode];
 

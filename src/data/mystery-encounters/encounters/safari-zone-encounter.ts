@@ -286,7 +286,7 @@ async function summonSafariPokemon() {
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
-  let pokemon: any;
+  let pokemon!: EnemyPokemon;
   globalScene.executeWithSeedOffset(
     () => {
       console.log("Event chance %d", eventChance.value);

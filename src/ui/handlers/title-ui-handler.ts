@@ -175,7 +175,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     }
 
     const scaledHeight = globalScene.scaledCanvas.height;
-    const windowHeight = this.getWindowHeight();
+    const windowHeight = this.windowHeight;
 
     this.updateUsername();
 

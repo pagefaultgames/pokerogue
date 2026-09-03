@@ -40,8 +40,8 @@ export abstract class AwaitableUiHandler extends UiHandler {
         globalScene,
         -1,
         -1,
-        globalScene.scaledCanvas.width,
-        globalScene.scaledCanvas.height,
+        globalScene.scaledCanvas.width + 2,
+        globalScene.scaledCanvas.height + 2,
         0x070707,
       );
       this.tutorialOverlay.setName("tutorial-overlay");

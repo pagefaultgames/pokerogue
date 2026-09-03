@@ -26,7 +26,7 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { AllStarterPreferences, DexAttrProps, StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
-import type { OptionSelectConfig } from "#types/ui-types";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -231,7 +231,6 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   protected blockInput = false;
 
-  protected manageDataConfig: OptionSelectConfig;
   protected optionSelectText: Phaser.GameObjects.Text;
   protected scale = 0.1666666667;
 
@@ -2327,25 +2326,22 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.blockInput = true;
     const ui = this.getUi();
 
-    const cancel = () => {
-      ui.setMode(UiMode.POKEDEX, "refresh");
-      this.clearText();
-      this.blockInput = false;
+    const confirmExitConfig: ConfirmModeConfig = {
+      yesHandler: () => {
+        ui.setMode(UiMode.POKEDEX, "refresh");
+        this.clearText();
+        this.clear();
+        ui.revertMode();
+      },
+      noHandler: () => {
+        ui.setMode(UiMode.POKEDEX, "refresh");
+        this.clearText();
+        this.blockInput = false;
+      },
+      yOffset: 29,
     };
     ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
-          ui.setMode(UiMode.POKEDEX, "refresh");
-          this.clearText();
-          this.clear();
-          ui.revertMode();
-        },
-        cancel,
-        null,
-        null,
-        19,
-      );
+      ui.setModeWithoutClear(UiMode.CONFIRM, confirmExitConfig);
     });
 
     return true;

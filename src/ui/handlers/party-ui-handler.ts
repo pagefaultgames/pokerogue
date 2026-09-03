@@ -26,6 +26,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { getLearnableMoveSourceIconFrame } from "#ui/learnable-move-utils";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
@@ -363,19 +364,15 @@ export class PartyUiHandler extends MessageUiHandler {
       }),
       null,
       () => {
-        ui.setModeWithoutClear(
-          UiMode.CONFIRM,
-          () => {
+        const options: ConfirmModeConfig = {
+          yesHandler: () => {
             const fusionName = pokemon.getName();
             pokemon.unfuse().then(() => {
               this.clearPartySlots();
               this.populatePartySlots();
               ui.setMode(UiMode.PARTY);
               this.showText(
-                i18next.t("partyUiHandler:wasReverted", {
-                  fusionName,
-                  pokemonName: pokemon.getName(false),
-                }),
+                i18next.t("partyUiHandler:wasReverted", { fusionName, pokemonName: pokemon.getName(false) }),
                 undefined,
                 () => {
                   ui.setMode(UiMode.PARTY);
@@ -386,11 +383,12 @@ export class PartyUiHandler extends MessageUiHandler {
               );
             });
           },
-          () => {
+          noHandler: () => {
             ui.setMode(UiMode.PARTY);
             this.showText("", 0);
           },
-        );
+        };
+        ui.setModeWithoutClear(UiMode.CONFIRM, options);
       },
     );
     return true;
@@ -407,24 +405,22 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     if (this.cursor >= globalScene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
       this.blockInput = true;
+      const options: ConfirmModeConfig = {
+        yesHandler: () => {
+          ui.setMode(UiMode.PARTY);
+          this.doRelease(this.cursor);
+        },
+        noHandler: () => {
+          ui.setMode(UiMode.PARTY);
+          this.showText("", 0);
+        },
+      };
       this.showText(
-        i18next.t("partyUiHandler:releaseConfirmation", {
-          pokemonName: getPokemonNameWithAffix(pokemon, false),
-        }),
+        i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon, false) }),
         null,
         () => {
           this.blockInput = false;
-          ui.setModeWithoutClear(
-            UiMode.CONFIRM,
-            () => {
-              ui.setMode(UiMode.PARTY);
-              this.doRelease(this.cursor);
-            },
-            () => {
-              ui.setMode(UiMode.PARTY);
-              this.showText("", 0);
-            },
-          );
+          ui.setModeWithoutClear(UiMode.CONFIRM, options);
         },
       );
     } else {
@@ -643,17 +639,17 @@ export class PartyUiHandler extends MessageUiHandler {
     this.blockInput = true;
     this.showText(i18next.t("partyUiHandler:discardConfirmation"), null, () => {
       this.blockInput = false;
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
+      const discardConfirmConfig: ConfirmModeConfig = {
+        yesHandler: () => {
           ui.setMode(UiMode.PARTY);
           this.doDiscard(option, pokemon);
         },
-        () => {
+        noHandler: () => {
           ui.setMode(UiMode.PARTY);
           this.showPartyText();
         },
-      );
+      };
+      ui.setModeWithoutClear(UiMode.CONFIRM, discardConfirmConfig);
     });
 
     return true;
