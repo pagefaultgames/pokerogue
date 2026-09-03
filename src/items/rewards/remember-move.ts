@@ -30,7 +30,7 @@ export class RememberMoveReward extends PokemonReward {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(pokemon as PlayerPokemon),
-      pokemon.getLearnableLevelMoves()[moveIndex],
+      pokemon.getLearnableLevelMoves()[moveIndex][1],
       LearnMoveType.MEMORY,
       cost,
     );

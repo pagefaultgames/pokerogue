@@ -42,7 +42,7 @@ export class PokemonLevelIncrementReward extends PokemonReward {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
-    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", { levels });
+    return i18next.t("reward:pokemonLevelIncrement.description", { levels });
   }
 
   /**
@@ -63,7 +63,7 @@ export class AllPokemonLevelIncrementReward extends Reward {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
-    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description", { levels });
+    return i18next.t("reward:allPokemonLevelIncrement.description", { levels });
   }
 
   apply(): boolean {

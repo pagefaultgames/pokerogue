@@ -1,9 +1,10 @@
-import { HeldItemEffect } from "#enums/held-item-effect";
+import type { HeldItemEffect } from "#enums/held-item-effect";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import type { BooleanHolder, NumberHolder } from "#utils/common";
+import type { ValueHolder } from "#utils/value-holder";
 
 // TODO: Make all these readonly
 
@@ -69,7 +70,13 @@ export interface FriendshipBoostParams extends DefaultHeldItemParams {
 
 export interface HitHealParams extends DefaultHeldItemParams {}
 
-export interface InstantReviveParams extends DefaultHeldItemParams {}
+export interface InstantReviveParams extends DefaultHeldItemParams {
+  /**
+   * Set to `true` by applied attributes that queue a revive, allowing callers
+   * (i.e. {@linkcode FaintPhase}) to skip faint handling.
+   */
+  reviveApplied?: ValueHolder<boolean>;
+}
 
 export interface ItemStealParams extends DefaultHeldItemParams {
   /** The pokemon to steal from (optional) */

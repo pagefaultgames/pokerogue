@@ -1,12 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { EvolutionItem, FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvolutionItem } from "#enums/evolution-item";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class EvolutionItemReward extends PokemonReward {
@@ -42,11 +44,11 @@ export class EvolutionItemReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
+    return i18next.t(`item:${toCamelCase(EvolutionItem[this.evolutionItem])}.name`);
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
+    return i18next.t("reward:evolutionItem.description");
   }
 
   /**

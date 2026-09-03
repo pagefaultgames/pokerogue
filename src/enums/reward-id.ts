@@ -1,4 +1,4 @@
-import type { ObjectValues } from "#types/type-helpers";
+import type { ValueOf } from "type-fest";
 
 export const RewardId = {
   NONE: 0x0000,
@@ -68,7 +68,7 @@ export const RewardId = {
   RARE_FORM_CHANGE_ITEM: 0x2e02,
 } as const;
 
-export type RewardId = ObjectValues<typeof RewardId>;
+export type RewardId = ValueOf<typeof RewardId>;
 
 // TODO: These are incorrect and do not match up with the actual reward IDs...
 export const RewardCategoryId = {
@@ -90,7 +90,7 @@ export const RewardCategoryId = {
   FORM_CHANGE_ITEM: 0x0f00,
 } as const;
 
-export type RewardCategoryId = ObjectValues<typeof RewardCategoryId>;
+export type RewardCategoryId = ValueOf<typeof RewardCategoryId>;
 
 const ITEM_CATEGORY_MASK = 0xff00;
 

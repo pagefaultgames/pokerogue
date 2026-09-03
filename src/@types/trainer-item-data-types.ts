@@ -1,9 +1,10 @@
 import type { RarityTier } from "#enums/reward-tier";
-import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
+import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { AllTrainerItems } from "#items/all-trainer-items";
 import type { MarkerTrainerItem, TrainerItem } from "#items/trainer-item";
 import type { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { InferKeys } from "#types/type-helpers";
+import type { NonEmptyTuple } from "type-fest";
 
 export interface TrainerItemData {
   /** The stack count of the item, or its duration for duration-based trainer items. */
@@ -18,32 +19,14 @@ export interface TrainerItemSpecs extends TrainerItemData {
   id: TrainerItemId;
 }
 
-// TODO: This should emphatically not be in "#types"
-export function isTrainerItemSpecs(entry: unknown): entry is TrainerItemSpecs {
-  if (typeof entry !== "object" || entry === null) {
-    return false;
-  }
-  return (
-    typeof (entry as TrainerItemSpecs).id === "number"
-    && typeof (entry as TrainerItemSpecs).stack === "number"
-    && (entry as TrainerItemSpecs).id in TrainerItemNames
-  );
-}
-
 interface TrainerItemPoolEntry {
   entry: TrainerItemId;
   weight: number;
 }
 
-export type TrainerItemPool = TrainerItemPoolEntry[];
+export type TrainerItemPool = NonEmptyTuple<TrainerItemPoolEntry>;
 
-export type TrainerItemTieredPool = {
-  [key in RarityTier]?: TrainerItemPool;
-};
-
-export function isTrainerItemPool(value: any): value is TrainerItemPool {
-  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
-}
+export type TrainerItemTieredPool = Partial<Record<RarityTier, TrainerItemPool>>;
 
 interface TrainerItemConfigurationEntry {
   entry: TrainerItemId | TrainerItemSpecs;

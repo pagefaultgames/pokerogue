@@ -29,7 +29,6 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -476,20 +475,21 @@ function getPartyConfig(): EnemyPartyConfig {
   breederConfig.name = i18next.t(trainerNameKey);
 
   // First mon is *always* this special cleffa
-  const cleffaSpecies =
+  const cleffaSpeciesId =
     waveIndex < FIRST_STAGE_EVOLUTION_WAVE
       ? SpeciesId.CLEFFA
       : waveIndex < FINAL_STAGE_EVOLUTION_WAVE
         ? SpeciesId.CLEFAIRY
         : SpeciesId.CLEFABLE;
+  const cleffaSpecies = speciesDataRegistry.getSpecies(cleffaSpeciesId);
   const baseConfig: EnemyPartyConfig = {
     trainerType: TrainerType.EXPERT_POKEMON_BREEDER,
     pokemonConfigs: [
       {
         nickname: i18next.t(`${namespace}:cleffa1Nickname`, {
-          speciesName: getPokemonSpecies(cleffaSpecies).getName(),
+          speciesName: cleffaSpecies.getName(),
         }),
-        species: getPokemonSpecies(cleffaSpecies),
+        species: cleffaSpecies,
         isBoss: false,
         abilityIndex: 1, // Magic Guard
         shiny: false,
@@ -513,9 +513,9 @@ function getPartyConfig(): EnemyPartyConfig {
     baseConfig.pokemonConfigs!.push(
       {
         nickname: i18next.t(`${namespace}:cleffa2Nickname`, {
-          speciesName: getPokemonSpecies(cleffaSpecies).getName(),
+          speciesName: cleffaSpecies.getName(),
         }),
-        species: getPokemonSpecies(cleffaSpecies),
+        species: cleffaSpecies,
         isBoss: false,
         abilityIndex: 1, // Magic Guard
         shiny: true,
@@ -533,9 +533,9 @@ function getPartyConfig(): EnemyPartyConfig {
       },
       {
         nickname: i18next.t(`${namespace}:cleffa3Nickname`, {
-          speciesName: getPokemonSpecies(cleffaSpecies).getName(),
+          speciesName: cleffaSpecies.getName(),
         }),
-        species: getPokemonSpecies(cleffaSpecies),
+        species: cleffaSpecies,
         isBoss: false,
         abilityIndex: 2, // Friend Guard / Unaware
         shiny: true,
@@ -560,7 +560,7 @@ function getPartyConfig(): EnemyPartyConfig {
 
     baseConfig.pokemonConfigs!.push(
       {
-        species: getPokemonSpecies(pool1Species),
+        species: speciesDataRegistry.getSpecies(pool1Species),
         isBoss: false,
         heldItemConfig: [
           {
@@ -570,7 +570,7 @@ function getPartyConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(pool2Species),
+        species: speciesDataRegistry.getSpecies(pool2Species),
         isBoss: false,
         heldItemConfig: [
           {

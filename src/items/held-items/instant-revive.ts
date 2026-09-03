@@ -16,14 +16,17 @@ import i18next from "i18next";
 export class InstantReviveHeldItemAttr extends ConsumableHeldItemAttr<typeof HeldItemEffect.INSTANT_REVIVE> {
   public override readonly effect = HeldItemEffect.INSTANT_REVIVE;
 
-  public override apply({ pokemon }: InstantReviveParams): void {
+  public override apply({ pokemon, reviveApplied }: InstantReviveParams): void {
+    if (reviveApplied) {
+      reviveApplied.value = true;
+    }
     // TODO: Since this should be the only place `revive=true` is passed to `PokemonHealPhase`, we can remove it
     // later on
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 2),
-        i18next.t("modifier:pokemonInstantReviveApply", {
+        i18next.t("itemApply:pokemonInstantReviveApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.item.name,
         }),

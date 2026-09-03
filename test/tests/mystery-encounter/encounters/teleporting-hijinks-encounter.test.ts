@@ -6,7 +6,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { TeleportingHijinksEncounter } from "#mystery-encounters/teleporting-hijinks-encounter";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
@@ -302,14 +302,10 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(
-        rewardSelectHandler.options.some(
-          opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),
-        ),
+        rewardSelectHandler.options.some(opt => opt.rewardOption.type.name === i18next.t("item:metalCoat.name")),
       ).toBe(true);
       expect(
-        rewardSelectHandler.options.some(
-          opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"),
-        ),
+        rewardSelectHandler.options.some(opt => opt.rewardOption.type.name === i18next.t("item:magnet.name")),
       ).toBe(true);
     });
   });

@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { HeldItemId } from "#enums/held-item-id";
 import type { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
@@ -28,9 +29,9 @@ export class AddMoneyReward extends Reward {
   get description(): string {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
-    const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, moneyAmount.value);
 
-    return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
+    return i18next.t("reward:moneyReward.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
       moneyAmount: formattedMoney,
     });

@@ -18,8 +18,9 @@ import { SwitchType } from "#enums/switch-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { applyHeldItems } from "#utils/items";
+import { applyHeldItems } from "#utils/item-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
@@ -61,7 +62,12 @@ export class FaintPhase extends PokemonPhase {
     faintPokemon.resetSummonData();
 
     if (!this.preventInstantRevive) {
-      applyHeldItems(HeldItemEffect.INSTANT_REVIVE, { pokemon: faintPokemon });
+      const reviveApplied = new ValueHolder(false);
+      applyHeldItems(HeldItemEffect.INSTANT_REVIVE, { pokemon: faintPokemon, reviveApplied });
+      if (reviveApplied.value) {
+        this.end();
+        return;
+      }
     }
 
     /**

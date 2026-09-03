@@ -2,34 +2,13 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt } from "#utils/common";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-
-export interface OptionSelectConfig {
-  xOffset?: number;
-  yOffset?: number;
-  options: OptionSelectItem[];
-  maxOptions?: number;
-  delay?: number;
-  noCancel?: boolean;
-  supportHover?: boolean;
-}
-
-export interface OptionSelectItem {
-  label: string;
-  handler: () => boolean;
-  onHover?: () => void;
-  skip?: boolean;
-  keepOpen?: boolean;
-  overrideSound?: boolean;
-  style?: TextStyle;
-  item?: string;
-  itemArgs?: any[];
-}
 
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
@@ -115,6 +94,8 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
         ? this.getOptionsWithScroll()
         : options;
 
+    const hasItem = options.some(option => option.item !== undefined);
+
     // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
     // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
     const optionsForWidth = globalScene.ui.getMode() === UiMode.AUTO_COMPLETE ? optionsWithScroll : options;
@@ -122,10 +103,9 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
       0,
       0,
       optionsForWidth
-        .map(o =>
-          o.item
-            ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]    ${o.label}[/color][/shadow]`
-            : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]${o.label}[/color][/shadow]`,
+        .map(
+          o =>
+            `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]${hasItem ? "    " : ""}${o.label}[/color][/shadow]`,
         )
         .join("\n"),
       TextStyle.WINDOW,
@@ -147,15 +127,13 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
 
     // Now that the container and background widths are established, we can set up the proper text restricted to visible options
     this.textContent = optionsWithScroll
-      .map(o =>
-        o.item
-          ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]    ${o.label}[/color][/shadow]`
-          : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]${o.label}[/color][/shadow]`,
+      .map(
+        o =>
+          `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]${hasItem ? "    " : ""}${o.label}[/color][/shadow]`,
       )
       .join("\n");
     this.optionSelectText.setText(this.textContent);
-
-    options.forEach((option: OptionSelectItem, i: number) => {
+    optionsWithScroll.forEach((option: OptionSelectItem, i: number) => {
       if (option.item) {
         const itemIcon = globalScene.add.sprite(0, 0, "items", option.item);
         itemIcon.setScale(3 * this.scale);

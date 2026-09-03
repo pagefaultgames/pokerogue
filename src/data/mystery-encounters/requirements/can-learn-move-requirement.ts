@@ -70,7 +70,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
   }
 
   private getPokemonLevelMoves(pkm: PlayerPokemon): MoveId[] {
-    return pkm.getLevelMoves().map(([_level, move]) => move);
+    return pkm.getLevelMoves().map(([_level, move, _source]) => move);
   }
 
   private getAllPokemonMoves(pkm: PlayerPokemon): MoveId[] {

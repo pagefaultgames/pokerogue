@@ -68,13 +68,9 @@ export function doPokemonTransformationSequence(
     pokemonEvoTintSprite.setVisible(false);
     pokemonEvoTintSprite.setTintFill(0xffffff);
 
-    [pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite].map(sprite => {
+    [pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite].forEach(sprite => {
       const spriteKey = previousPokemon.getSpriteKey(true);
-      try {
-        sprite.play(spriteKey);
-      } catch (err: unknown) {
-        console.error(`Failed to play animation for ${spriteKey}`, err);
-      }
+      sprite.play(spriteKey);
 
       sprite.setPipeline(globalScene.spritePipeline, {
         tone: [0.0, 0.0, 0.0, 0.0],
@@ -86,7 +82,7 @@ export function doPokemonTransformationSequence(
       sprite.setPipelineData("spriteKey", previousPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", previousPokemon.shiny);
       sprite.setPipelineData("variant", previousPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].map(k => {
+      ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (previousPokemon.summonData.speciesForm) {
           k += "Base";
         }
@@ -94,19 +90,15 @@ export function doPokemonTransformationSequence(
       });
     });
 
-    [pokemonEvoSprite, pokemonEvoTintSprite].map(sprite => {
+    [pokemonEvoSprite, pokemonEvoTintSprite].forEach(sprite => {
       const spriteKey = transformPokemon.getSpriteKey(true);
-      try {
-        sprite.play(spriteKey);
-      } catch (err: unknown) {
-        console.error(`Failed to play animation for ${spriteKey}`, err);
-      }
+      sprite.play(spriteKey);
 
       sprite.setPipelineData("ignoreTimeTint", true);
       sprite.setPipelineData("spriteKey", transformPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", transformPokemon.shiny);
       sprite.setPipelineData("variant", transformPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].map(k => {
+      ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (transformPokemon.summonData.speciesForm) {
           k += "Base";
         }

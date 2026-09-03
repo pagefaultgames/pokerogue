@@ -4,15 +4,15 @@ import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import {
-    Achv,
-    AchvTier,
-    achvs,
-    DamageAchv,
-    HealAchv,
-    HeldItemAchv,
-    LevelAchv,
-    MoneyAchv,
-    RibbonAchv,
+  Achv,
+  AchvTier,
+  achvs,
+  DamageAchv,
+  HealAchv,
+  HeldItemAchv,
+  LevelAchv,
+  MoneyAchv,
+  RibbonAchv,
 } from "#system/achv";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
@@ -23,11 +23,7 @@ describe("Achv", () => {
   let achv: Achv;
 
   beforeEach(() => {
-    achv = new Achv("", "This is a test achievement", "test_icon", 10);
-  });
-
-  it("should have the correct description", () => {
-    expect(achv.getDescription()).toBe("This is a test achievement");
+    achv = new Achv("", "test_icon", 10);
   });
 
   it("should have the correct icon image", () => {
@@ -49,11 +45,11 @@ describe("Achv", () => {
   });
 
   it("should return the correct tier based on the score", () => {
-    const achv1 = new Achv("", "Test Description", "test_icon", 10);
-    const achv2 = new Achv("", "Test Description", "test_icon", 25);
-    const achv3 = new Achv("", "Test Description", "test_icon", 50);
-    const achv4 = new Achv("", "Test Description", "test_icon", 75);
-    const achv5 = new Achv("", "Test Description", "test_icon", 100);
+    const achv1 = new Achv("", "test_icon", 10);
+    const achv2 = new Achv("", "test_icon", 25);
+    const achv3 = new Achv("", "test_icon", 50);
+    const achv4 = new Achv("", "test_icon", 75);
+    const achv5 = new Achv("", "test_icon", 100);
 
     expect(achv1.getTier()).toBe(AchvTier.COMMON);
     expect(achv2.getTier()).toBe(AchvTier.GREAT);
@@ -64,7 +60,7 @@ describe("Achv", () => {
 
   it("should validate the achievement based on the condition function", () => {
     const conditionFunc = vi.fn(args => args[0] === 10);
-    const achv2 = new Achv("", "Test Description", "test_icon", 10, conditionFunc);
+    const achv2 = new Achv("", "test_icon", 10, conditionFunc);
 
     expect(achv2.validate([5])).toBe(false);
     expect(achv2.validate([10])).toBe(true);
@@ -194,7 +190,7 @@ describe("LevelAchv", () => {
 
 describe("HeldItemAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const heldItemAchv = new HeldItemAchv("", "Test Description", "modifier_icon", 10, () => true);
+    const heldItemAchv = new HeldItemAchv("", "modifier_icon", 10, () => true);
     expect(heldItemAchv).toBeInstanceOf(HeldItemAchv);
     expect(heldItemAchv instanceof Achv).toBe(true);
   });

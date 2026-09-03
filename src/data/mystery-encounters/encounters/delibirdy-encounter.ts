@@ -2,6 +2,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -25,9 +26,8 @@ import {
   HoldingItemRequirement,
   MoneyRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { randSeedItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -37,17 +37,15 @@ const namespace = "mysteryEncounters/delibirdy";
 const OPTION_2_ALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins */
-const OPTION_3_DISALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
+const OPTION_3_DISALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED, HeldItemCategoryId.VITAMIN];
 
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
-async function backupOption() {
+async function backupOption(): Promise<void> {
   globalScene.getPlayerPokemon()?.heldItemManager.add(HeldItemId.SHELL_BELL);
   audioManager.playSound("item_fanfare");
   await showEncounterText(
-    i18next.t("battle:rewardGain", {
-      modifierName: allHeldItems[HeldItemId.SHELL_BELL].name,
-    }),
+    i18next.t("battle:rewardGain", { modifierName: allHeldItems[HeldItemId.SHELL_BELL].name }),
     null,
     undefined,
     true,
@@ -55,7 +53,7 @@ async function backupOption() {
   doEventReward();
 }
 
-const doEventReward = () => {
+const doEventReward = (): void => {
   const event_buff = timedEventManager.getDelibirdyBuff();
   if (event_buff.length > 0) {
     const candidates = event_buff.filter(c => {
@@ -136,7 +134,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    encounter.setDialogueToken("delibirdName", getPokemonSpecies(SpeciesId.DELIBIRD).getName());
+    encounter.setDialogueToken("delibirdName", speciesDataRegistry.getSpecies(SpeciesId.DELIBIRD).getName());
     return true;
   })
   .withOnVisualsStart(() => {

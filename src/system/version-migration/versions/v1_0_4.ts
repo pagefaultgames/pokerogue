@@ -1,18 +1,17 @@
 import { defaultStarterSpecies } from "#app/constants";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import { SettingKeys } from "#system/settings";
-import type { LegacySessionSaveData } from "#types/legacy-data";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /**
  * Migrate ability starter data if empty for caught species.
  * @param data - {@linkcode SystemSaveData}
  */
 const migrateAbilityData: SystemSaveMigrator = {
+  name: "migrateAbilityData",
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
@@ -30,6 +29,7 @@ const migrateAbilityData: SystemSaveMigrator = {
  * @param data - {@linkcode SystemSaveData}
  */
 const fixLegendaryStats: SystemSaveMigrator = {
+  name: "fixLegendaryStats",
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (
@@ -79,6 +79,7 @@ const fixLegendaryStats: SystemSaveMigrator = {
  * @param data - {@linkcode SystemSaveData}
  */
 const fixStarterData: SystemSaveMigrator = {
+  name: "fixStarterData",
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData != null) {
@@ -101,17 +102,17 @@ export const systemMigrators: readonly SystemSaveMigrator[] = [
 ] as const;
 
 /**
- * Migrate from `REROLL_TARGET` property to {@linkcode SettingKeys.Shop_Cursor_Target}
+ * Migrate from `"REROLL_TARGET"` property to `"SHOP_CURSOR_TARGET"`
  * @param data - The `settings` object
  */
 const fixRerollTarget: SettingsSaveMigrator = {
+  name: "fixRerollTarget",
   version: "1.0.4",
   migrate: (data: object): void => {
-    if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, SettingKeys.Shop_Cursor_Target)) {
-      data[SettingKeys.Shop_Cursor_Target] = data["REROLL_TARGET"];
+    if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, "SHOP_CURSOR_TARGET")) {
+      data["SHOP_CURSOR_TARGET"] = data["REROLL_TARGET"];
       // biome-ignore lint/performance/noDelete: intentional
       delete data["REROLL_TARGET"];
-      localStorage.setItem("settings", JSON.stringify(data));
     }
   },
 };
@@ -125,11 +126,18 @@ export const settingsMigrators: readonly SettingsSaveMigrator[] = [fixRerollTarg
  *  @param data - {@linkcode SessionSaveData}
  */
 const migrateModifiers: SessionSaveMigrator = {
+  name: "migrateModifiers",
   version: "1.0.4",
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary?
-  migrate: (data: SessionSaveData): void => {
-    const legacyData = data as LegacySessionSaveData;
-    for (const m of legacyData.modifiers) {
+  migrate: data => {
+    if (!validateIsArrayOfObjects(data.modifiers)) {
+      console.warn("Malformed modifiers in save data, skipping 1.0.4 item migrator");
+      return;
+    }
+    for (const m of data.modifiers) {
+      if (!Array.isArray(m.args)) {
+        continue;
+      }
       if (m.className === "PokemonBaseStatModifier") {
         m.className = "BaseStatModifier";
       } else if (m.className === "PokemonResetNegativeStatStageModifier") {
@@ -142,17 +150,17 @@ const migrateModifiers: SessionSaveMigrator = {
           m.typePregenArgs = [];
 
           // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
-          m.args = [maxBattles, Math.min(m.args[1], maxBattles)];
+          m.args = [maxBattles, Math.min((m.args as [number, number])[1], maxBattles)];
         } else {
           m.className = "TempStatStageBoosterModifier";
           m.typeId = "TEMP_STAT_STAGE_BOOSTER";
 
           // Migration from TempBattleStat to Stat
-          const newStat = m.typePregenArgs[0] + 1;
-          m.typePregenArgs[0] = newStat;
+          const newStat = (m.typePregenArgs as [number])[0] + 1;
+          (m.typePregenArgs as [number])[0] = newStat;
 
           // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
-          m.args = [newStat, maxBattles, Math.min(m.args[1], maxBattles)];
+          m.args = [newStat, maxBattles, Math.min((m.args as [number, number])[1], maxBattles)];
         }
       } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
         let maxBattles: number;
@@ -173,33 +181,40 @@ const migrateModifiers: SessionSaveMigrator = {
       }
     }
 
-    for (const m of legacyData.enemyModifiers) {
-      if (m.className === "PokemonBaseStatModifier") {
-        m.className = "BaseStatModifier";
-      } else if (m.className === "PokemonResetNegativeStatStageModifier") {
-        m.className = "ResetNegativeStatStageModifier";
+    if (validateIsArrayOfObjects(data.enemyModifiers)) {
+      for (const m of data.enemyModifiers) {
+        if (m.className === "PokemonBaseStatModifier") {
+          m.className = "BaseStatModifier";
+        } else if (m.className === "PokemonResetNegativeStatStageModifier") {
+          m.className = "ResetNegativeStatStageModifier";
+        }
       }
     }
   },
 };
 
 const migrateCustomPokemonData: SessionSaveMigrator = {
+  name: "migrateCustomPokemonData",
   version: "1.0.4",
-  migrate: (data: SessionSaveData): void => {
-    // Fix Pokemon nature overrides and custom data migration
+  migrate: data => {
     for (const pokemon of data.party) {
-      if (pokemon["mysteryEncounterPokemonData"]) {
-        pokemon.customPokemonData = new CustomPokemonData(pokemon["mysteryEncounterPokemonData"]);
-        pokemon["mysteryEncounterPokemonData"] = null;
+      if (pokemon.mysteryEncounterPokemonData) {
+        pokemon.customPokemonData = pokemon.mysteryEncounterPokemonData;
+        // biome-ignore lint/performance/noDelete: intentional
+        delete pokemon.mysteryEncounterPokemonData;
       }
-      if (pokemon["fusionMysteryEncounterPokemonData"]) {
-        pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterPokemonData"]);
-        pokemon["fusionMysteryEncounterPokemonData"] = null;
+      if (pokemon.fusionMysteryEncounterPokemonData) {
+        pokemon.fusionCustomPokemonData = pokemon.fusionMysteryEncounterPokemonData;
+        // biome-ignore lint/performance/noDelete: intentional
+        delete pokemon.fusionMysteryEncounterPokemonData;
       }
-      pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
-      if (pokemon["natureOverride"] != null && pokemon["natureOverride"] >= 0) {
-        pokemon.customPokemonData.nature = pokemon["natureOverride"];
-        pokemon["natureOverride"] = -1;
+
+      pokemon.customPokemonData ??= {};
+      const natureOverride: number | undefined = pokemon.natureOverride as number | undefined;
+      if (natureOverride != null && natureOverride !== -1) {
+        (pokemon.customPokemonData as { nature: number }).nature = natureOverride;
+        // biome-ignore lint/performance/noDelete: intentional
+        delete pokemon.natureOverride;
       }
     }
   },

@@ -3,9 +3,11 @@ import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supported-languages";
 import { enumValueToKey } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 // Re-export the value holder classes for compatibility with existing imports looking over here
 // TODO: Remove these re-exports and update associated imports
@@ -319,46 +321,12 @@ export function fixedInt(value: number): number {
 }
 
 /**
- * This function returns `true` if all localized images used by the game have been added for the given language.
- *
- * If the lang is not in the function, it usually means that lang is going to use the default english version
- *
- * English itself counts as not available
+ * This function checks if all localized images used by the game have been added for the given language.
+ * @param key - The language key (e.g. "ko").
+ * @returns Whether the given language is supported and has localized sprites.
  */
-export function hasAllLocalizedSprites(lang?: string): boolean {
-  // IMPORTANT - ONLY ADD YOUR LANG HERE IF YOU'VE ALREADY ADDED ALL THE NECESSARY IMAGES
-  if (!lang) {
-    lang = i18next.resolvedLanguage;
-  }
-
-  switch (lang) {
-    case "es-ES":
-    case "es-419":
-    case "eu":
-    case "fr":
-    case "da":
-    case "de":
-    case "it":
-    case "zh-Hans":
-    case "zh-Hant":
-    case "pt-BR":
-    case "th":
-    case "tr":
-    case "ko":
-    case "ja":
-    case "ca":
-    case "ru":
-    case "id":
-    case "hi":
-    case "tl":
-    case "sv":
-    case "uk":
-    case "vi":
-    case "pl":
-      return true;
-    default:
-      return false;
-  }
+export function hasAllLocalizedSprites(key: string): boolean {
+  return !!SUPPORTED_LANGUAGE_ENTRIES[key as SupportedLanguage]?.hasAllLocalizedImages;
 }
 
 /**
@@ -410,7 +378,8 @@ export function toDmgValue(value: number, minValue = 1) {
  * @returns the localized sprite key
  */
 export function getLocalizedSpriteKey(baseKey: string) {
-  return `${baseKey}${hasAllLocalizedSprites(i18next.resolvedLanguage) ? `_${i18next.resolvedLanguage}` : ""}`;
+  const lang = i18next.resolvedLanguage ?? "en";
+  return `${baseKey}${lang !== "en" && hasAllLocalizedSprites(lang) ? `_${i18next.resolvedLanguage}` : ""}`;
 }
 
 /**
@@ -448,11 +417,29 @@ export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
 
-export function pickWeightedIndex(weights: number[]): number | undefined {
-  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-  if (totalWeight <= 0) {
-    return;
+/**
+ * Pick a random index from an array of weights.
+ * @param weights - An array of weights corresponding to the indices of the items to pick from.
+ * @returns A random index picked based on the weights provided, such that each index `i` will have a `weights[i]/totalWeight` chance of being picked.
+ * @remarks
+ * The weights do not need to sum to 1; they will be normalized internally.
+ * @example
+ *
+ * @throws {Error}
+ * Thrown if any weight is non-positive or the array is empty.
+ */
+export function pickWeightedIndex(weights: NonEmptyTuple<number>): number {
+  if (weights.length === 0) {
+    throw new Error("Weights array must be non-empty!");
   }
+  const totalWeight = weights.reduce((sum, w) => {
+    if (w <= 0) {
+      throw new Error("Weights must be non-negative!");
+    }
+    return sum + w;
+  }, 0);
+
+  // invariant: totalWeight > 0 since all values are positive
 
   let r = randSeedFloat() * totalWeight;
   for (let i = 0; i < weights.length; i++) {
@@ -461,7 +448,8 @@ export function pickWeightedIndex(weights: number[]): number | undefined {
     }
     r -= weights[i];
   }
-  return;
+  // unreachable code
+  throw new Error("Unreachable code in pickWeightedIndex");
 }
 
 export function getBiomeName(biome: BiomeId | -1) {

@@ -17,14 +17,14 @@ export class AddPokeballReward extends Reward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
+    return i18next.t("reward:addPokeball.name", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
     });
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
+    return i18next.t("reward:addPokeball.description", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
       catchRate:

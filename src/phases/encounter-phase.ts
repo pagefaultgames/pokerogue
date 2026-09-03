@@ -2,6 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -11,6 +12,7 @@ import { getNatureName } from "#data/nature";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { Challenges } from "#enums/challenges";
 import { FieldPosition } from "#enums/field-position";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
@@ -116,6 +118,7 @@ export class EncounterPhase extends BattlePhase {
             level,
             TrainerSlot.NONE,
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
+            this.isEncounterShinyLocked(),
           );
           if (globalScene.currentBattle.isClassicFinalBoss) {
             battle.enemyParty[e].ivs.fill(31);
@@ -296,6 +299,16 @@ export class EncounterPhase extends BattlePhase {
         }
       });
     });
+  }
+
+  /**
+   * @returns `true` if the current encounter should be shiny locked, `false` otherwise
+   */
+  private isEncounterShinyLocked(): boolean {
+    const endAndIllegalMode =
+      globalScene.arena.biomeId === BiomeId.END
+      && (globalScene.gameMode.isEndless || globalScene.gameMode.hasChallenge(Challenges.FRESH_START));
+    return endAndIllegalMode;
   }
 
   private incrementMysteryEncounterChance(): void {
@@ -602,7 +615,7 @@ export class EncounterPhase extends BattlePhase {
               : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const cycleCountNoOrdinal = count.toLocaleString();
-          const genderIndex = gameData.gender ?? PlayerGender.UNSET;
+          const genderIndex = settings.general.playerGender;
           const genderStr = PlayerGender[genderIndex].toLowerCase();
           const encounterDialogue = i18next.t(localizationKey, {
             context: genderStr,

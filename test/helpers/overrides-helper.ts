@@ -1,7 +1,7 @@
 import type { PokeballCounts } from "#app/battle-scene";
 import { OVERRIDES_COLOR } from "#app/constants/colors";
 import { TerrainType } from "#app/data/terrain";
-import { activeOverrides, type BattleStyleOverride, type RandomTrainerOverride } from "#app/overrides";
+import { activeOverrides, type FieldSizeOverride, type RandomTrainerOverride } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
@@ -150,7 +150,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the player's starting pokeballs
-   * @param items - The items to hold
+   * @param pokeballs - The pokeballs to give the player
    * @returns `this`
    */
   public startingPokeballs(pokeballs: Partial<PokeballCounts>): this {
@@ -478,13 +478,13 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle style (e.g., single or double).
-   * @param battleStyle - The {@linkcode BattleStyleOverride} to set, or `null` to disable the override
+   * Override the number of pokemon on the field (aka overriding the battle to be singles or doubles).
+   * @param fieldSize - The {@linkcode FieldSizeOverride} to set, or `null` to disable the override
    * @returns `this`
    */
-  public battleStyle(battleStyle: BattleStyleOverride | null): this {
-    vi.spyOn(activeOverrides, "BATTLE_STYLE_OVERRIDE", "get").mockReturnValue(battleStyle);
-    this.log(battleStyle === null ? "Battle type override disabled!" : `Battle type set to ${battleStyle}!`);
+  public battleStyle(fieldSize: FieldSizeOverride | null): this {
+    vi.spyOn(activeOverrides, "FIELD_SIZE_OVERRIDE", "get").mockReturnValue(fieldSize);
+    this.log(fieldSize === null ? "Field size override disabled!" : `Field size set to ${fieldSize}!`);
     return this;
   }
 

@@ -6,10 +6,10 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
-import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
+import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { AccuracyBoosterHeldItemAttr } from "#items/accuracy-booster";
 import { AttackTypeBoostHeldItemAttr, attackTypeToHeldItem } from "#items/attack-type-booster";
@@ -32,7 +32,7 @@ import { HitHealHeldItemAttr } from "#items/hit-heal";
 import { InstantReviveHeldItemAttr } from "#items/instant-revive";
 import { ContactItemStealChanceHeldItemAttr, TurnEndItemStealHeldItemAttr } from "#items/item-steal";
 import { MachoBraceHeldItemAttr } from "#items/macho-brace";
-import { MultiHitCountHeldItemAttr } from "#items/multi-hit";
+import { MultiHitCountHeldItemAttr, MultiHitDamageModifyHeldItemAttr } from "#items/multi-hit";
 import { NatureWeightBoosterHeldItemAttr } from "#items/nature-weight-booster";
 import { ResetNegativeStatStageHeldItemAttr } from "#items/reset-negative-stat-stage";
 import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
@@ -97,8 +97,6 @@ const berryItems = getEnumValues(BerryType).reduce(
     berryId satisfies BerryItemId;
     ret[berryId] = new HeldItemBuilder(berryId, maxStackCount) //
       .attr(BerryHeldItemAttr, berry)
-      .name(`berry:${BerryType[berry].toLowerCase()}.name`)
-      .description(`berry:${BerryType[berry].toLowerCase()}.effect`)
       .iconName(`${BerryType[berry].toLowerCase()}_berry`)
       .build();
     return ret;
@@ -118,10 +116,6 @@ const typeBoostHeldItems = (
       .unstealable()
       .untransferable()
       .unsuppressable()
-      .name(`modifierType:AttackTypeBoosterItem.${HeldItemNames[id].toLowerCase()}`)
-      .description("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-        moveType: `$t(pokemonInfo:Type.${PokemonType[pokemonType]})`,
-      })
       .build();
     return ret;
   },
@@ -139,10 +133,6 @@ const vitaminItems = PERMANENT_STATS.reduce(
       .unstealable()
       .untransferable()
       .unsuppressable()
-      .name(`modifierType:BaseStatBoosterItem.${statBoostItems[stat]}`)
-      .description("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
-        stat: `$t(${getStatKey(stat)})`,
-      })
       .iconName(statBoostItems[stat])
       .build();
     return ret;
@@ -209,15 +199,12 @@ const heldItems = {
 
   [HeldItemId.LUCKY_EGG]: new HeldItemBuilder(HeldItemId.LUCKY_EGG, 99) //
     .attr(ExpBoosterHeldItemAttr, 40)
-    .description("modifierType:ModifierType.PokemonExpBoosterModifierType.description", { boostPercent: 40 })
     .build(),
   [HeldItemId.GOLDEN_EGG]: new HeldItemBuilder(HeldItemId.GOLDEN_EGG, 99) //
     .attr(ExpBoosterHeldItemAttr, 100)
-    .description("modifierType:ModifierType.PokemonExpBoosterModifierType.description", { boostPercent: 100 })
     .build(),
   [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3) //
     .attr(FriendshipBoosterHeldItemAttr)
-    .description("modifierType:ModifierType.PokemonFriendshipBoosterModifierType.description")
     .build(),
 
   [HeldItemId.LEFTOVERS]: new HeldItemBuilder(HeldItemId.LEFTOVERS, 4) //
@@ -225,8 +212,6 @@ const heldItems = {
     .build(),
   [HeldItemId.SHELL_BELL]: new HeldItemBuilder(HeldItemId.SHELL_BELL, 4) //
     .attr(HitHealHeldItemAttr)
-    .name("modifierType:ModifierType.SHELL_BELL.name")
-    .description("modifierType:ModifierType.SHELL_BELL.description")
     .iconName("shell_bell")
     .build(),
 
@@ -248,7 +233,7 @@ const heldItems = {
     .build(),
   [HeldItemId.MULTI_LENS]: new HeldItemBuilder(HeldItemId.MULTI_LENS, 2) //
     .attr(MultiHitCountHeldItemAttr)
-    .description("modifierType:ModifierType.PokemonMultiHitModifierType.description")
+    .attr(MultiHitDamageModifyHeldItemAttr)
     .build(),
   [HeldItemId.GOLDEN_PUNCH]: new HeldItemBuilder(HeldItemId.GOLDEN_PUNCH, 5) //
     .attr(DamageMoneyRewardHeldItemAttr)
@@ -258,13 +243,9 @@ const heldItems = {
     .build(),
   [HeldItemId.GRIP_CLAW]: new HeldItemBuilder(HeldItemId.GRIP_CLAW, 5) //
     .attr(ContactItemStealChanceHeldItemAttr, 10)
-    .description("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
-      chancePercent: 10,
-    })
     .build(),
   [HeldItemId.MINI_BLACK_HOLE]: new HeldItemBuilder(HeldItemId.MINI_BLACK_HOLE, 1) //
     .attr(TurnEndItemStealHeldItemAttr)
-    .description("modifierType:ModifierType.TurnHeldItemTransferModifierType.description")
     .unstealable()
     .untransferable()
     .build(),
@@ -281,8 +262,7 @@ const heldItems = {
     .unstealable()
     .untransferable()
     .unsuppressable()
-    .name("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name")
-    .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
+    .description("item:shuckleJuiceGood.description")
     .iconName("berry_juice_good")
     .build(),
   [HeldItemId.SHUCKLE_JUICE_BAD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_BAD, 1) //
@@ -290,8 +270,7 @@ const heldItems = {
     .unstealable()
     .untransferable()
     .unsuppressable()
-    .name("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name")
-    .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description")
+    .description("item:shuckleJuiceBad.description")
     .iconName("berry_juice_bad")
     .build(),
   [HeldItemId.OLD_GATEAU]: new HeldItemBuilder(HeldItemId.OLD_GATEAU, 1) //
@@ -299,12 +278,9 @@ const heldItems = {
     .unstealable()
     .untransferable()
     .unsuppressable()
-    .description("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description")
     .build(),
   [HeldItemId.MACHO_BRACE]: new HeldItemBuilder(HeldItemId.MACHO_BRACE, 50) //
     .attr(MachoBraceHeldItemAttr)
-    .name("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.name")
-    .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.description")
     .unstealable()
     .untransferable()
     .unsuppressable()

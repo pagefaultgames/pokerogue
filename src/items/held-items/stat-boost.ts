@@ -63,10 +63,12 @@ export class EvolutionStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
 
   public override apply({ pokemon, statHolder }: StatBoostParams): void {
     const isUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getSpeciesForm(true).speciesId);
-    const isFusionUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId);
+    const isFusion = pokemon.isFusion();
+    const isFusionUnevolved =
+      isFusion && speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId);
 
     let boost = this.multiplier - 1;
-    if (pokemon.isFusion() && isFusionUnevolved !== isUnevolved) {
+    if (isFusion && isFusionUnevolved !== isUnevolved) {
       // Halve the boost if 1/2 of a fused pokemon is unevolved.
       boost /= 2;
     }

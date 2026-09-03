@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -16,7 +17,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intro";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import { getPartyBerries } from "#items/item-utility";
+import { getPartyItemsInCategory } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -31,11 +32,11 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { HeldItemRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import type { HeldItemConfiguration, HeldItemSpecs, PokemonItemMap } from "#types/held-item-data-types";
+import type { HeldItemConfiguration, PokemonItemMap } from "#types/held-item-data-types";
 import { pickWeightedIndex, randInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -114,7 +115,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       .loadSe("Follow Me", "battle_anims", "Follow Me.wav");
 
     // Get all berries in party, with references to the pokemon
-    const berryItems = getPartyBerries();
+    // This is guaranteed to be non-empty because of the HeldItemRequirement
+    // mandating 6+ total berries
+    const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as NonEmptyTuple<PokemonItemMap>;
 
     encounter.misc = { berryItemsMap: berryItems };
 
@@ -133,7 +136,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       levelAdditiveModifier: 1,
       pokemonConfigs: [
         {
-          species: getPokemonSpecies(SpeciesId.GREEDENT),
+          species: speciesDataRegistry.getSpecies(SpeciesId.GREEDENT),
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
@@ -153,7 +156,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     };
 
     encounter.enemyPartyConfigs = [config];
-    encounter.setDialogueToken("greedentName", getPokemonSpecies(SpeciesId.GREEDENT).getName());
+    encounter.setDialogueToken("greedentName", speciesDataRegistry.getSpecies(SpeciesId.GREEDENT).getName());
 
     return true;
   })
@@ -163,9 +166,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Remove the berries from the party
     // Session has been safely saved at this point, so data won't be lost
-    const berryItems = getPartyBerries();
+    const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     berryItems.forEach(map => {
-      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id as HeldItemId);
+      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id);
     });
 
     globalScene.updateItems(true);
@@ -190,7 +193,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Provides 1x Reviver Seed to each party member at end of battle
         encounter.setDialogueToken(
           "foodReward",
-          allHeldItems[HeldItemId.REVIVER_SEED].name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"),
+          allHeldItems[HeldItemId.REVIVER_SEED].name ?? i18next.t("item:reviverSeed.name"),
         );
         const givePartyPokemonReviverSeeds = () => {
           const party = globalScene.getPlayerParty();
@@ -226,24 +229,23 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const berryMap = encounter.misc.berryItemsMap as PokemonItemMap[];
+        const berryMap = encounter.misc.berryItemsMap as NonEmptyTuple<PokemonItemMap>;
 
         // Returns 2/5 of the berries stolen to each Pokemon
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
           const stolenBerries = berryMap.filter(map => map.pokemonId === pokemon.id);
-          const stolenBerryCount = stolenBerries.reduce((a, b) => a + (b.item as HeldItemSpecs).stack, 0);
-          const returnedBerryCount = Math.floor(((stolenBerryCount ?? 0) * 2) / 5);
+          const stolenBerryCount = stolenBerries.reduce((a, b) => a + b.item.stack, 0);
+          const returnedBerryCount = Math.floor((stolenBerryCount * 2) / 5);
 
-          if (returnedBerryCount > 0) {
-            for (let i = 0; i < returnedBerryCount; i++) {
-              // Shuffle remaining berry types and pop
-              const berryWeights = stolenBerries.map(b => (b.item as HeldItemSpecs).stack);
-              const which = pickWeightedIndex(berryWeights) ?? 0;
-              const randBerry = stolenBerries[which];
-              pokemon.heldItemManager.add(randBerry.item.id as HeldItemId);
-              (randBerry.item as HeldItemSpecs).stack -= 1;
-            }
+          for (let i = 0; i < returnedBerryCount; i++) {
+            // pick a random berry to recover
+
+            // type assertion justified because returnedBerryCount <= stolenBerries.length
+            const berryWeights = stolenBerries.map(b => b.item.stack) as unknown as NonEmptyTuple<number>;
+            const randBerry = stolenBerries[pickWeightedIndex(berryWeights)];
+            pokemon.heldItemManager.add(randBerry.item.id);
+            randBerry.item.stack--;
           }
         });
         await globalScene.updateItems(true);
@@ -274,7 +276,13 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Let it have the food
         // Greedent joins the team, level equal to 2 below highest party member (shiny locked)
         const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-        const greedent = new EnemyPokemon(getPokemonSpecies(SpeciesId.GREEDENT), level, TrainerSlot.NONE, false, true);
+        const greedent = new EnemyPokemon(
+          speciesDataRegistry.getSpecies(SpeciesId.GREEDENT),
+          level,
+          TrainerSlot.NONE,
+          false,
+          true,
+        );
         greedent.moveset = [
           new PokemonMove(MoveId.THRASH),
           new PokemonMove(MoveId.BODY_PRESS),

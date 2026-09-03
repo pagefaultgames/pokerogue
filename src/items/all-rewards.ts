@@ -2,7 +2,7 @@ import { PokeballType } from "#enums/pokeball";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { VoucherType } from "#system/voucher";
+import { VoucherType } from "#enums/voucher-type";
 import { EmptyReward, type Reward, type RewardGenerator } from "./reward";
 import { EvolutionItemRewardGenerator } from "./rewards/evolution-item";
 import { FormChangeItemRewardGenerator } from "./rewards/form-change";
@@ -45,61 +45,55 @@ export const allRewards = {
 
   // Money rewards
   [RewardId.NUGGET]: new AddMoneyReward(
-    "modifierType:ModifierType.NUGGET",
+    "reward:nugget",
     "nugget",
     1,
-    "modifierType:ModifierType.MoneyRewardModifierType.extra.small",
+    "reward:moneyReward.extra.small",
     RewardId.NUGGET,
   ),
   [RewardId.BIG_NUGGET]: new AddMoneyReward(
-    "modifierType:ModifierType.BIG_NUGGET",
+    "reward:bigNugget",
     "big_nugget",
     2.5,
-    "modifierType:ModifierType.MoneyRewardModifierType.extra.moderate",
+    "reward:moneyReward.extra.moderate",
     RewardId.BIG_NUGGET,
   ),
   [RewardId.RELIC_GOLD]: new AddMoneyReward(
-    "modifierType:ModifierType.RELIC_GOLD",
+    "reward:relicGold",
     "relic_gold",
     10,
-    "modifierType:ModifierType.MoneyRewardModifierType.extra.large",
+    "reward:moneyReward.extra.large",
     RewardId.RELIC_GOLD,
   ),
 
   // Party-wide consumables
-  [RewardId.RARER_CANDY]: new AllPokemonLevelIncrementReward("modifierType:ModifierType.RARER_CANDY", "rarer_candy"),
-  [RewardId.SACRED_ASH]: new AllPokemonFullReviveReward("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
+  [RewardId.RARER_CANDY]: new AllPokemonLevelIncrementReward("reward:rarerCandy", "rarer_candy"),
+  [RewardId.SACRED_ASH]: new AllPokemonFullReviveReward("reward:sacredAsh", "sacred_ash"),
 
   // Pokemon consumables
-  [RewardId.RARE_CANDY]: new PokemonLevelIncrementReward("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
+  [RewardId.RARE_CANDY]: new PokemonLevelIncrementReward("reward:rareCandy", "rare_candy"),
 
   [RewardId.EVOLUTION_ITEM]: new EvolutionItemRewardGenerator(false),
   [RewardId.RARE_EVOLUTION_ITEM]: new EvolutionItemRewardGenerator(true),
 
-  [RewardId.POTION]: new PokemonHpRestoreReward("modifierType:ModifierType.POTION", "potion", RewardId.POTION, 20, 10),
+  [RewardId.POTION]: new PokemonHpRestoreReward("reward:potion", "potion", RewardId.POTION, 20, 10),
   [RewardId.SUPER_POTION]: new PokemonHpRestoreReward(
-    "modifierType:ModifierType.SUPER_POTION",
+    "reward:superPotion",
     "super_potion",
     RewardId.SUPER_POTION,
     50,
     25,
   ),
   [RewardId.HYPER_POTION]: new PokemonHpRestoreReward(
-    "modifierType:ModifierType.HYPER_POTION",
+    "reward:hyperPotion",
     "hyper_potion",
     RewardId.HYPER_POTION,
     200,
     50,
   ),
-  [RewardId.MAX_POTION]: new PokemonHpRestoreReward(
-    "modifierType:ModifierType.MAX_POTION",
-    "max_potion",
-    RewardId.MAX_POTION,
-    0,
-    100,
-  ),
+  [RewardId.MAX_POTION]: new PokemonHpRestoreReward("reward:maxPotion", "max_potion", RewardId.MAX_POTION, 0, 100),
   [RewardId.FULL_RESTORE]: new PokemonHpRestoreReward(
-    "modifierType:ModifierType.FULL_RESTORE",
+    "reward:fullRestore",
     "full_restore",
     RewardId.FULL_RESTORE,
     0,
@@ -107,39 +101,19 @@ export const allRewards = {
     true,
   ),
 
-  [RewardId.REVIVE]: new PokemonReviveReward("modifierType:ModifierType.REVIVE", "revive", RewardId.REVIVE, 50),
-  [RewardId.MAX_REVIVE]: new PokemonReviveReward(
-    "modifierType:ModifierType.MAX_REVIVE",
-    "max_revive",
-    RewardId.MAX_REVIVE,
-    100,
-  ),
+  [RewardId.REVIVE]: new PokemonReviveReward("reward:revive", "revive", RewardId.REVIVE, 50),
+  [RewardId.MAX_REVIVE]: new PokemonReviveReward("reward:maxRevive", "max_revive", RewardId.MAX_REVIVE, 100),
 
-  [RewardId.FULL_HEAL]: new PokemonStatusHealReward("modifierType:ModifierType.FULL_HEAL", "full_heal"),
+  [RewardId.FULL_HEAL]: new PokemonStatusHealReward("reward:fullHeal", "full_heal"),
 
-  [RewardId.ETHER]: new PokemonPpRestoreReward("modifierType:ModifierType.ETHER", "ether", RewardId.ETHER, 10),
-  [RewardId.MAX_ETHER]: new PokemonPpRestoreReward(
-    "modifierType:ModifierType.MAX_ETHER",
-    "max_ether",
-    RewardId.MAX_ETHER,
-    -1,
-  ),
+  [RewardId.ETHER]: new PokemonPpRestoreReward("reward:ether", "ether", RewardId.ETHER, 10),
+  [RewardId.MAX_ETHER]: new PokemonPpRestoreReward("reward:maxEther", "max_ether", RewardId.MAX_ETHER, -1),
 
-  [RewardId.ELIXIR]: new PokemonAllMovePpRestoreReward(
-    "modifierType:ModifierType.ELIXIR",
-    "elixir",
-    RewardId.ELIXIR,
-    10,
-  ),
-  [RewardId.MAX_ELIXIR]: new PokemonAllMovePpRestoreReward(
-    "modifierType:ModifierType.MAX_ELIXIR",
-    "max_elixir",
-    RewardId.MAX_ELIXIR,
-    -1,
-  ),
+  [RewardId.ELIXIR]: new PokemonAllMovePpRestoreReward("reward:elixir", "elixir", RewardId.ELIXIR, 10),
+  [RewardId.MAX_ELIXIR]: new PokemonAllMovePpRestoreReward("reward:maxElixir", "max_elixir", RewardId.MAX_ELIXIR, -1),
 
-  [RewardId.PP_UP]: new PokemonPpUpReward("modifierType:ModifierType.PP_UP", "pp_up", RewardId.PP_UP, 1),
-  [RewardId.PP_MAX]: new PokemonPpUpReward("modifierType:ModifierType.PP_MAX", "pp_max", RewardId.PP_MAX, 3),
+  [RewardId.PP_UP]: new PokemonPpUpReward("reward:ppUp", "pp_up", RewardId.PP_UP, 1),
+  [RewardId.PP_MAX]: new PokemonPpUpReward("reward:ppMax", "pp_max", RewardId.PP_MAX, 3),
 
   [RewardId.MINT]: new MintRewardGenerator(),
 
@@ -149,9 +123,9 @@ export const allRewards = {
   [RewardId.TM_GREAT]: new TmRewardGenerator(RarityTier.GREAT),
   [RewardId.TM_ULTRA]: new TmRewardGenerator(RarityTier.ULTRA),
 
-  [RewardId.MEMORY_MUSHROOM]: new RememberMoveReward("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
+  [RewardId.MEMORY_MUSHROOM]: new RememberMoveReward("reward:memoryMushroom", "big_mushroom"),
 
-  [RewardId.DNA_SPLICERS]: new FusePokemonReward("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
+  [RewardId.DNA_SPLICERS]: new FusePokemonReward("reward:dnaSplicers", "dna_splicers"),
 
   // Form change items
   [RewardId.FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(false),

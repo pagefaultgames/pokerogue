@@ -79,13 +79,20 @@ export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends Extr
 
   const params = {
     ...options,
-    pokemon: received,
   } as unknown as Partial<HeldItemEffectParamMap[E]>;
 
-  const calls = (item.apply as unknown as MockInstance<typeof item.apply>).mock.calls;
+  const applyCalls = (item.apply as unknown as MockInstance<typeof item.apply>).mock.calls;
+  const matchingCalls = applyCalls.filter(([, callParams]) => callParams.pokemon === received);
+  // Only consider matching pokemon (above), but we strip the pokemon when comparing
+  // as deep comparisons of Pokemon objects are prohibitively expensive
+  const calls = matchingCalls.map(([callEffect, callParams]) => {
+    const { pokemon: _pokemon, ...rest } = callParams;
+    return [callEffect, rest];
+  });
+
   const pass = this.equals(
     calls,
-    [effect, params],
+    [[effect, params]],
     [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality],
   );
 

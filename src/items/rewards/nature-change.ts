@@ -35,13 +35,13 @@ export class PokemonNatureChangeReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.name", {
+    return i18next.t("reward:pokemonNatureChange.name", {
       natureName: getNatureName(this.nature),
     });
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.description", {
+    return i18next.t("reward:pokemonNatureChange.description", {
       natureName: getNatureName(this.nature, true, true, true),
     });
   }
