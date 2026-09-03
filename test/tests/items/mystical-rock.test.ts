@@ -43,13 +43,10 @@ describe("Items - Mystical Rock", () => {
   it("should increase terrain duration by +2 turns per stack", async () => {
     await game.classicMode.startBattle(SpeciesId.GASTLY);
 
-    game.move.select(MoveId.GRASSY_TERRAIN);
-
+    game.move.use(MoveId.GRASSY_TERRAIN);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const terrain = globalScene.arena.terrain;
-
-    expect(terrain).toBeDefined();
-    expect(terrain!.turnsLeft).toBe(9);
+    expect(game).toHaveTerrain(TerrainType.GRASSY);
+    expect(game.scene.arena.terrain?.turnsLeft).toBe(9);
   });
 });
