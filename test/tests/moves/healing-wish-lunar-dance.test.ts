@@ -77,8 +77,8 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.move.use(moveId);
       await game.toEndOfTurn();
 
-  expect(charmander).toHaveFullHp();
-  expect(charmander).toHaveUsedMove({ move: moveId, result: MoveResult.FAIL });
+      expect(charmander).toHaveFullHp();
+      expect(charmander).toHaveUsedMove({ move: moveId, result: MoveResult.FAIL });
     });
 
     it("should fail if the user has no challenge-eligible allies", async () => {

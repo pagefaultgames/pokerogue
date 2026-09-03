@@ -1,4 +1,3 @@
-import { globalScene } from "#app/global-scene";
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
