@@ -164,7 +164,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
-    expect(game.field.getEnemyPokemon().waveData.abilitiesApplied).toContain(AbilityId.ANTICIPATION);
+    expect(game.field.getEnemyPokemon()).toHaveAbilityApplied(AbilityId.ANTICIPATION);
   });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {

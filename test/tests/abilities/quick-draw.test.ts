@@ -48,7 +48,7 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon).not.toHaveFainted();
     expect(enemy).toHaveFainted();
-    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
+    expect(pokemon).toHaveAbilityApplied(AbilityId.QUICK_DRAW);
   });
 
   it("is not triggered by non damaging moves", async () => {
@@ -65,17 +65,15 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon).toHaveFainted();
     expect(enemy).not.toHaveFainted();
-    expect(pokemon.waveData.abilitiesApplied).not.toContain(AbilityId.QUICK_DRAW);
+    expect(pokemon).not.toHaveAbilityApplied(AbilityId.QUICK_DRAW);
   });
 
   it("does not increase priority", async () => {
     game.override.enemyMoveset([MoveId.EXTREME_SPEED]);
-
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
-
     pokemon.hp = 1;
     enemy.hp = 1;
 
@@ -84,6 +82,6 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon).toHaveFainted();
     expect(enemy).not.toHaveFainted();
-    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
+    expect(pokemon).toHaveAbilityApplied(AbilityId.QUICK_DRAW);
   });
 });

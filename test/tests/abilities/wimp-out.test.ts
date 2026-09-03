@@ -151,7 +151,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("SwitchSummonPhase", false);
 
-    expect(wimpod.waveData.abilitiesApplied).not.toContain(AbilityId.WIMP_OUT);
+    expect(wimpod).not.toHaveAbilityApplied(AbilityId.WIMP_OUT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

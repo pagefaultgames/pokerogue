@@ -42,10 +42,9 @@ describe("Abilities - Good As Gold", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
-
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(player.waveData.abilitiesApplied).toContain(AbilityId.GOOD_AS_GOLD);
+    expect(player).toHaveAbilityApplied(AbilityId.GOOD_AS_GOLD);
     expect(player).toHaveStatStage(Stat.ATK, 0);
   });
 
@@ -55,6 +54,7 @@ describe("Abilities - Good As Gold", () => {
 
     game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
+
     expect(game.field.getPlayerPokemon()).not.toHaveFainted();
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
   });
@@ -76,6 +76,7 @@ describe("Abilities - Good As Gold", () => {
     await game.move.selectEnemyMove(MoveId.HAZE);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
+
     expect(good_as_gold.getAbility().id).toBe(AbilityId.GOOD_AS_GOLD);
     expect(good_as_gold).toHaveStatStage(Stat.ATK, 0);
     expect(game).toHaveArenaTag(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
@@ -116,11 +117,13 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.SPLASH, 0);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
+
     expect(milotic).toHaveStatusEffect(StatusEffect.BURN);
 
     game.doSwitchPokemon(2);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
+
     expect(milotic).toHaveStatusEffect(StatusEffect.NONE);
   });
 

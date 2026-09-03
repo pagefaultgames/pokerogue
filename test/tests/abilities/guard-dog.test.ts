@@ -28,8 +28,9 @@ describe("Ability - Guard Dog", () => {
     await game.classicMode.startBattle(SpeciesId.MABOSSTIFF);
 
     const mabostiff = game.field.getPlayerPokemon();
+
+    expect(mabostiff).toHaveAbilityApplied(AbilityId.GUARD_DOG);
     expect(mabostiff).toHaveStatStage(Stat.ATK, 1);
-    expect(mabostiff.waveData.abilitiesApplied.has(AbilityId.GUARD_DOG)).toBe(true);
     expect(game.phaseInterceptor.log.filter(l => l === "StatStageChangePhase")).toHaveLength(1);
   });
 });
