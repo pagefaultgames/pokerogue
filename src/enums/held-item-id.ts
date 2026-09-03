@@ -138,6 +138,22 @@ export const HeldItemCategoryId = {
 
 export type HeldItemCategoryId = ValueOf<typeof HeldItemCategoryId>;
 
+type HeldItemCategoryNameMap = {
+  [k in HeldItemCategoryName as (typeof HeldItemCategoryId)[k]]: k;
+};
+
+type HeldItemCategoryName = keyof typeof HeldItemCategoryId;
+
+export const HeldItemCategoryNames = Object.freeze(
+  Object.entries(HeldItemCategoryId).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<HeldItemCategoryId, HeldItemCategoryName>,
+  ),
+) as HeldItemCategoryNameMap;
+
 const ITEM_CATEGORY_MASK = 0xff00;
 
 export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
@@ -178,7 +194,7 @@ function getHeldItemCategoryKey(itemId: HeldItemId): string {
         // can't put this in the switch because the category is shared with soothe bell
         return "item:pokemonExpBooster.description";
       }
-      return `item:${toCamelCase(HeldItemCategoryId[itemId])}.description`;
+      return `item:${toCamelCase(HeldItemCategoryNames[category])}.description`;
   }
 }
 
