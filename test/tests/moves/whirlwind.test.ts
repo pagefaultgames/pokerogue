@@ -51,7 +51,7 @@ describe("Moves - Whirlwind", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(staraptor.findTag(t => t.tagType === BattlerTagType.FLYING)).toBeDefined();
+    expect(staraptor).toHaveBattlerTag(BattlerTagType.FLYING);
     expect(game.field.getEnemyPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
   });
 

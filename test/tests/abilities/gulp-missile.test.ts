@@ -56,7 +56,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(cramorant.getHpRatio()).toBeGreaterThanOrEqual(0.5);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
@@ -70,7 +70,7 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_PIKACHU);
     expect(cramorant.formIndex).toBe(GORGING_FORM);
   });
 
@@ -85,8 +85,8 @@ describe("Abilities - Gulp Missile", () => {
     await game.toNextTurn(); // form change is delayed until after end of turn
 
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
+    expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
+    expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_PIKACHU);
   });
 
   it("changes form during Dive's charge turn", async () => {
@@ -96,7 +96,7 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.DIVE);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
@@ -123,12 +123,12 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
@@ -145,14 +145,14 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
     expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
+    expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
 
@@ -169,14 +169,14 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_PIKACHU);
     expect(cramorant.formIndex).toBe(GORGING_FORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
     expect(enemy).toHaveStatusEffect(StatusEffect.PARALYSIS);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
+    expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_PIKACHU);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
 
@@ -189,7 +189,7 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.DIVE);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
@@ -206,14 +206,14 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     const enemyHpPreEffect = enemy.hp;
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.hp).toBe(enemyHpPreEffect);
     expect(enemy.getStatStage(Stat.DEF)).toBe(-1);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
+    expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
 
@@ -227,7 +227,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("FaintPhase");
 
     expect(cramorant).toHaveFainted();
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeUndefined();
+    expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
     expect(game.field.getEnemyPokemon().getStatStage(Stat.DEF)).toBe(-1);
   });
@@ -260,13 +260,13 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(cramorant.hasAbility(AbilityId.GULP_MISSILE)).toBe(true);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 
@@ -280,13 +280,13 @@ describe("Abilities - Gulp Missile", () => {
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(cramorant.hasAbility(AbilityId.GULP_MISSILE)).toBe(true);
-    expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)).toBeDefined();
+    expect(cramorant).toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(GULPING_FORM);
   });
 

@@ -84,11 +84,12 @@ describe("Moves - Baton Pass", () => {
     game.move.select(MoveId.BATON_PASS);
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(player1.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeTruthy();
+
+    expect(player1).toHaveBattlerTag(BattlerTagType.SALT_CURED);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(player2.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
+    expect(player2).toHaveBattlerTag(BattlerTagType.SALT_CURED);
   });
 
   it("doesn't allow binding effects from the user to persist", async () => {
@@ -104,13 +105,13 @@ describe("Moves - Baton Pass", () => {
 
     await game.toNextTurn();
 
-    expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
+    expect(enemy).toHaveBattlerTag(BattlerTagType.FIRE_SPIN);
 
     game.move.select(MoveId.BATON_PASS);
 
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeUndefined();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.FIRE_SPIN);
   });
 });

@@ -203,7 +203,7 @@ describe("Abilities - Unburden", () => {
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
     expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed);
-    expect(playerPokemon.getTag(BattlerTagType.UNBURDEN)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNBURDEN);
   });
 
   it("should activate when a move that consumes a berry is used", async () => {

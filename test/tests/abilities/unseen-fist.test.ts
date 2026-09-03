@@ -56,7 +56,7 @@ describe("Abilities - Unseen Fist", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     expect(enemyPokemon).toHaveFullHp();
   });
 });

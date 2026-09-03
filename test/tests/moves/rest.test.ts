@@ -83,7 +83,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.getTag(BattlerTagType.CONFUSED)).toBeDefined();
+    expect(snorlax).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
   it.each<{ name: string; status?: StatusEffect; ability?: AbilityId; dmg?: number }>([

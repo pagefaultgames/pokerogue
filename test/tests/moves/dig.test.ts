@@ -40,14 +40,14 @@ describe("Moves - Dig", () => {
     game.move.select(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeDefined();
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
     expect(playerPokemon).toHaveFullHp();
     expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getMoveQueue()[0].move).toBe(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveQueue()).toHaveLength(0);
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
@@ -96,7 +96,7 @@ describe("Moves - Dig", () => {
     game.move.select(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);

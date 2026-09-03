@@ -40,14 +40,14 @@ describe("Moves - Dive", () => {
     game.move.select(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeDefined();
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.UNDERWATER);
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
     expect(playerPokemon).toHaveFullHp();
     expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getMoveQueue()[0].move).toBe(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
 
@@ -80,7 +80,7 @@ describe("Moves - Dive", () => {
     game.move.select(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
     expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
@@ -121,7 +121,7 @@ describe("Moves - Dive", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon).toHaveFullHp();
-    expect(playerPokemon.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
     expect(playerDive?.ppUsed).toBe(1);

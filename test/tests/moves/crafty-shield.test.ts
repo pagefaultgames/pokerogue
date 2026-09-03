@@ -76,8 +76,8 @@ describe("Moves - Crafty Shield", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game).toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
-    expect(charizard.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
-    expect(blastoise.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
+    expect(charizard).toHaveBattlerTag(BattlerTagType.PERISH_SONG);
+    expect(blastoise).toHaveBattlerTag(BattlerTagType.PERISH_SONG);
   });
 
   it("should protect the user and allies from moves that ignore other protection", async () => {
@@ -94,8 +94,8 @@ describe("Moves - Crafty Shield", () => {
 
     await game.toEndOfTurn();
 
-    expect(charizard.getTag(BattlerTagType.CURSED)).toBeUndefined();
-    expect(blastoise.getTag(BattlerTagType.CURSED)).toBeUndefined();
+    expect(charizard).not.toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(blastoise).not.toHaveBattlerTag(BattlerTagType.CURSED);
 
     const [dusknoir1, dusknoir2] = game.scene.getEnemyField();
     expect(dusknoir1).toHaveFullHp();

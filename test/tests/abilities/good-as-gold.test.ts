@@ -100,7 +100,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(game.scene.getPlayerField()[1].getTag(BattlerTagType.HELPING_HAND)).toBeUndefined();
+    expect(game.scene.getPlayerField()[1]).not.toHaveBattlerTag(BattlerTagType.HELPING_HAND);
   });
 
   // TODO: re-enable when heal bell is fixed

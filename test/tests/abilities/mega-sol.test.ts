@@ -47,7 +47,7 @@ describe("Abilities - Mega Sol", () => {
     game.move.use(MoveId.SOLAR_BEAM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });

@@ -242,11 +242,11 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.RECHARGING);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.RECHARGING);
   });
 
   it("Anchor Shot boosted by this ability should only trap the target after the second hit", async () => {
@@ -263,14 +263,14 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 
   it("Smack Down boosted by this ability should only ground the target after the second hit", async () => {

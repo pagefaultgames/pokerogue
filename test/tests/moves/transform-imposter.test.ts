@@ -116,8 +116,8 @@ describe("Transforming Effects", () => {
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.getTag(BattlerTagType.SEEDED)).toBeDefined();
-      expect(ditto.getTag(BattlerTagType.CONFUSED)).toBeDefined();
+      expect(ditto).toHaveBattlerTag(BattlerTagType.SEEDED);
+      expect(ditto).toHaveBattlerTag(BattlerTagType.CONFUSED);
     });
 
     // TODO: This is not implemented

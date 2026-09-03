@@ -43,17 +43,17 @@ describe("Moves - SYRUP BOMB", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
+    expect(targetPokemon).toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-1);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
+    expect(targetPokemon).toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-2);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
+    expect(targetPokemon).not.toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-3);
   });
 
@@ -68,7 +68,7 @@ describe("Moves - SYRUP BOMB", () => {
     await game.move.forceHit();
     await game.toNextTurn();
     expect(targetPokemon).toHaveFullHp();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
+    expect(targetPokemon).not.toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
   });
 

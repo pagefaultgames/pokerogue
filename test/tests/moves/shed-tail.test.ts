@@ -1,5 +1,5 @@
-import { SubstituteTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -39,14 +39,12 @@ describe("Moves - Shed Tail", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     const feebas = game.field.getPlayerPokemon();
-    const substituteTag = feebas.getTag(SubstituteTag);
 
     expect(feebas).not.toBe(magikarp);
     expect(feebas).toHaveFullHp();
     // Note: Altered the test to be consistent with the correct HP cost :yipeevee_static:
     expect(magikarp.hp).toBe(Math.floor(magikarp.getMaxHp() / 2));
-    expect(substituteTag).toBeDefined();
-    expect(substituteTag?.hp).toBe(Math.floor(magikarp.getMaxHp() / 4));
+    expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.SUBSTITUTE, hp: Math.floor(magikarp.getMaxHp() / 4) });
   });
 
   it("should fail if no ally is available to switch in", async () => {

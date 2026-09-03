@@ -37,9 +37,7 @@ describe("Moves - Stockpile", () => {
       game.move.use(MoveId.STOCKPILE);
       await game.toNextTurn();
 
-      const stockpilingTag = feebas.getTag(BattlerTagType.STOCKPILING)!;
-      expect(stockpilingTag).toBeDefined();
-      expect(stockpilingTag.stockpiledCount).toBe(i);
+      expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.STOCKPILING, stockpiledCount: i });
       expect(feebas).toHaveStatStage(Stat.DEF, i as 1 | 2 | 3);
       expect(feebas).toHaveStatStage(Stat.SPDEF, i as 1 | 2 | 3);
     }

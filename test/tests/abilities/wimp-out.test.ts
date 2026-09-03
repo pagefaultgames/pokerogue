@@ -113,8 +113,8 @@ describe("Abilities - Wimp Out", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.field.getPlayerPokemon().getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(game.scene.getPlayerParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(game.scene.getPlayerParty()[1]).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
     confirmSwitch();
   });
 
