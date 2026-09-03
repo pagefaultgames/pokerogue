@@ -127,6 +127,7 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
     this.options = (config.options ?? []).map(option => {
       return {
         ...option,
+        color: option.color ?? DEFAULT_TEXT_STYLE,
         initialized: false,
         displayLabel: option.label,
         selectable: option.selectable ?? true,
@@ -311,9 +312,7 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
       option.iconsWidth = this.maxIconWidth;
     }
 
-    if (option.color != null && option.color !== DEFAULT_TEXT_STYLE) {
-      label = getBBCodeFrag(label, option.color, true);
-    }
+    label = getBBCodeFrag(label, option.color, true);
 
     option.displayLabel = label;
     option.initialized = true;
