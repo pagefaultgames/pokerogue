@@ -48,7 +48,10 @@ export class EvolutionItemReward extends PokemonReward {
   }
 
   get description(): string {
-    return i18next.t("reward:evolutionItem.description");
+    return i18next.t([
+      `item:${toCamelCase(EvolutionItem[this.evolutionItem])}.description`,
+      "reward:evolutionItem.description",
+    ]);
   }
 
   /**

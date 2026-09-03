@@ -8,14 +8,44 @@ import { HitResult } from "#enums/hit-result";
 import { type BattleStat, Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
-import i18next from "i18next";
+import i18next, { type TOptions } from "i18next";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`item:${BerryType[berryType].toLowerCase()}.name`);
 }
 
+interface BerryDescriptionOptions extends TOptions {
+  healPercent?: number;
+  thresholdPercent?: number;
+  restorePp?: number;
+}
+
+export function getBerryDescriptionOptions(berryType: BerryType): BerryDescriptionOptions {
+  switch (berryType) {
+    case BerryType.SITRUS:
+      return { healPercent: 25, thresholdPercent: 50 };
+    case BerryType.ENIGMA:
+      return { healPercent: 25 };
+    case BerryType.LIECHI:
+    case BerryType.GANLON:
+    case BerryType.PETAYA:
+    case BerryType.APICOT:
+    case BerryType.SALAC:
+    case BerryType.LANSAT:
+    case BerryType.STARF:
+      return { thresholdPercent: 25 };
+    case BerryType.LEPPA:
+      return { restorePp: 10 };
+    default:
+      return {};
+  }
+}
+
 export function getBerryEffectDescription(berryType: BerryType): string {
-  return i18next.t(`item:${BerryType[berryType].toLowerCase()}.description`);
+  return i18next.t(
+    [`item:${BerryType[berryType].toLowerCase()}.description`, "item:berry.description"],
+    getBerryDescriptionOptions(berryType),
+  );
 }
 
 export type BerryPredicate = (pokemon: Pokemon) => boolean;
