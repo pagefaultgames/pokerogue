@@ -102,7 +102,10 @@ export interface OptionSelectItem {
    * If multiple icons are given they will be overlayed.
    */
   readonly iconsConfig?: OptionSelectIconConfig[] | undefined;
-  /** Optional {@linkcode TextStyle} to give the item a custom color */
+  /**
+   * Optional {@linkcode TextStyle} to give the item a custom color.
+   * @defaultValue {@linkcode TextStyle.WINDOW}
+   */
   readonly color?: TextStyle;
   /**
    * Whether to allow selecting the item
@@ -119,6 +122,11 @@ export interface UIOptionSelectItem extends OptionSelectItem {
   initialized: boolean;
   displayLabel: string;
   iconsWidth?: number;
+  /**
+   * {@linkcode TextStyle} to give the item a custom color.
+   * @defaultValue {@linkcode TextStyle.WINDOW}
+   */
+  readonly color: TextStyle;
 }
 
 /**
