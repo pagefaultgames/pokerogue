@@ -2,6 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import type { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
@@ -33,8 +34,8 @@ describe("Battle order", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set playerPokemon's speed to 50
-    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
+    playerPokemon.setStat(Stat.SPD, 50);
+    enemyPokemon.setStat(Stat.SPD, 150);
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -48,8 +49,8 @@ describe("Battle order", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set playerPokemon's speed to 150
-    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50
+    playerPokemon.setStat(Stat.SPD, 150);
+    enemyPokemon.setStat(Stat.SPD, 50);
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -62,11 +63,12 @@ describe("Battle order", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.BLASTOISE);
 
-    const playerPokemon = game.scene.getPlayerField();
-    const enemyPokemon = game.scene.getEnemyField();
-
-    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50])); // set both playerPokemons' speed to 50
-    enemyPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150])); // set both enemyPokemons' speed to 150
+    const [player1, player2] = game.scene.getPlayerField();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    player1.setStat(Stat.SPD, 50);
+    player2.setStat(Stat.SPD, 50);
+    enemy1.setStat(Stat.SPD, 150);
+    enemy2.setStat(Stat.SPD, 150);
 
     game.move.select(MoveId.TACKLE);
     game.move.select(MoveId.TACKLE, 1);
@@ -75,10 +77,11 @@ describe("Battle order", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", true);
     await game.phaseInterceptor.to("MoveEndPhase", false);
-    for (let i = 0; i < 2; i++) {
-      expect(playerPokemon[i]).not.toHaveFullHp();
-      expect(enemyPokemon[i]).toHaveFullHp();
-    }
+
+    expect(player1).not.toHaveFullHp();
+    expect(player2).not.toHaveFullHp();
+    expect(enemy1).toHaveFullHp();
+    expect(enemy2).toHaveFullHp();
   });
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {

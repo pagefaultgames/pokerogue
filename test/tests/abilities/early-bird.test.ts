@@ -46,7 +46,7 @@ describe("Abilities - Early Bird", () => {
     await game.toNextTurn();
 
     expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.FAIL });
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -65,7 +65,7 @@ describe("Abilities - Early Bird", () => {
     await game.toNextTurn();
 
     expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.FAIL });
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();

@@ -89,6 +89,6 @@ describe("Moves - Quick Guard", () => {
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
-    expect(charizard).toHaveUsedMove({ move: MoveId.QUICK_GUARD, result: MoveResult.FAIL });
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
   });
 });

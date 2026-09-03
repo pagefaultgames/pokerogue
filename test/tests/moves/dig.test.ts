@@ -22,7 +22,6 @@ describe("Moves - Dig", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.DIG)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -37,7 +36,7 @@ describe("Moves - Dig", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
@@ -55,13 +54,12 @@ describe("Moves - Dig", () => {
 
   // TODO: Verify this on cartridge double battles
   it.todo("should deduct PP only on the 2nd turn of the move", async () => {
-    game.override.moveset([]);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.changeMoveset(playerPokemon, MoveId.DIG);
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 0);
@@ -70,6 +68,7 @@ describe("Moves - Dig", () => {
     expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 1);
   });
 
+  // TODO: This should be in a no guard test file
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
 
@@ -78,7 +77,7 @@ describe("Moves - Dig", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).not.toHaveFullHp();
@@ -92,7 +91,7 @@ describe("Moves - Dig", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
@@ -112,7 +111,7 @@ describe("Moves - Dig", () => {
       move: allMoves[MoveId.EARTHQUAKE],
     }).damage;
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");

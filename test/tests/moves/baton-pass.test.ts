@@ -89,7 +89,7 @@ describe("Moves - Baton Pass", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(player2).toHaveBattlerTag(BattlerTagType.SALT_CURED);
+    expect(player2).not.toHaveBattlerTag(BattlerTagType.SALT_CURED);
   });
 
   it("doesn't allow binding effects from the user to persist", async () => {

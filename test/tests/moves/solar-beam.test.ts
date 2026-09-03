@@ -12,6 +12,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: Merge with other charging moves
 describe("Moves - Solar Beam", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -25,7 +26,6 @@ describe("Moves - Solar Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.SOLAR_BEAM)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -40,7 +40,7 @@ describe("Moves - Solar Beam", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.SOLAR_BEAM);
+    game.move.use(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGING);
@@ -68,7 +68,7 @@ describe("Moves - Solar Beam", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
     const unshiftNewSpy = vi.spyOn(game.scene.phaseManager, "unshiftNew");
 
-    game.move.select(MoveId.SOLAR_BEAM);
+    game.move.use(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(unshiftNewSpy).toHaveBeenCalledWith(
@@ -99,7 +99,7 @@ describe("Moves - Solar Beam", () => {
 
     vi.spyOn(solarBeam, "calculateBattlePower");
 
-    game.move.select(MoveId.SOLAR_BEAM);
+    game.move.use(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("TurnEndPhase");

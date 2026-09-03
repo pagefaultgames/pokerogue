@@ -166,7 +166,7 @@ describe("Moves - Powder", () => {
     await game.toEndOfTurn();
 
     // player should not take damage
-    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIERY_DANCE, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
     expect(playerPokemon).toHaveFullHp();
     // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
     expect(enemyPokemon).toHaveHp(

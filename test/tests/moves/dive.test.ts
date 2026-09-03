@@ -22,7 +22,6 @@ describe("Moves - Dive", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.DIVE)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -37,7 +36,7 @@ describe("Moves - Dive", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIVE);
+    game.move.use(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).toHaveBattlerTag(BattlerTagType.UNDERWATER);
@@ -62,7 +61,7 @@ describe("Moves - Dive", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIVE);
+    game.move.use(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).not.toHaveFullHp();
@@ -76,7 +75,7 @@ describe("Moves - Dive", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.DIVE);
+    game.move.use(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
@@ -93,7 +92,7 @@ describe("Moves - Dive", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIVE);
+    game.move.use(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -104,13 +103,12 @@ describe("Moves - Dive", () => {
 
   it("should cancel attack after Harsh Sunlight is set", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIVE);
+    game.move.use(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("TurnStartPhase", false);

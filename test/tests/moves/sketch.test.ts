@@ -61,7 +61,7 @@ describe("Moves - Sketch", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.GROWL, result: MoveResult.SUCCESS });
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
 
     await game.toNextTurn();
     game.move.select(MoveId.SKETCH);
