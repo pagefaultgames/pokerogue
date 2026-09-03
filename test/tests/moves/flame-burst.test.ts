@@ -50,7 +50,7 @@ describe("Moves - Flame Burst", () => {
     await game.toEndOfTurn();
 
     expect(leftEnemy).not.toHaveFullHp();
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
+    expect(rightEnemy).toHaveTakenDamage(getEffectDamage(rightEnemy));
   });
 
   it("does not inflict damage to the target's ally if the target was not affected by Flame Burst", async () => {
@@ -78,7 +78,7 @@ describe("Moves - Flame Burst", () => {
     await game.toEndOfTurn();
 
     expect(leftEnemy).not.toHaveFullHp();
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
+    expect(rightEnemy).toHaveTakenDamage(getEffectDamage(rightEnemy));
   });
 
   it("effect damage is prevented by Magic Guard", async () => {

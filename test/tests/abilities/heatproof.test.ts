@@ -3,7 +3,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
-import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -62,6 +61,6 @@ describe("Abilities - Heatproof", () => {
     await game.toNextTurn();
 
     // Normal burn damage is /16
-    expect(enemy.hp).toBe(enemy.getMaxHp() - toDmgValue(enemy.getMaxHp() / 32));
+    expect(enemy).toHaveTakenDamage(enemy.getMaxHp() / 32);
   });
 });

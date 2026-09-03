@@ -7,7 +7,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
-import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -148,8 +147,7 @@ describe("AbilityId - Magic Guard", () => {
     game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
 
-    const burntDmg = blissey.getInverseHp();
-    expect(burntDmg).toBeCloseTo(toDmgValue(prevDmg / 2), 0);
+    expect(blissey).toHaveTakenDamage(prevDmg / 2);
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {

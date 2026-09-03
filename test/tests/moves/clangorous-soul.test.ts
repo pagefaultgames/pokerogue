@@ -41,7 +41,7 @@ describe("Moves - Clangorous Soul", () => {
     game.move.select(MoveId.CLANGOROUS_SOUL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 1);
     expect(leadPokemon).toHaveStatStage(Stat.DEF, 1);
     expect(leadPokemon).toHaveStatStage(Stat.SPATK, 1);
@@ -64,7 +64,7 @@ describe("Moves - Clangorous Soul", () => {
     game.move.select(MoveId.CLANGOROUS_SOUL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
     expect(leadPokemon).toHaveStatStage(Stat.DEF, 6);
     expect(leadPokemon).toHaveStatStage(Stat.SPATK, 6);

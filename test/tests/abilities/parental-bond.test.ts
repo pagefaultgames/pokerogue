@@ -142,7 +142,7 @@ describe("Abilities - Parental Bond", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 80);
+    expect(enemyPokemon).toHaveTakenDamage(80);
   });
 
   it("should not apply multiplier to counter moves", async () => {
@@ -160,7 +160,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 4 * playerDamage);
+    expect(enemyPokemon).toHaveTakenDamage(4 * playerDamage);
   });
 
   it("should not apply to multi-target moves", async () => {

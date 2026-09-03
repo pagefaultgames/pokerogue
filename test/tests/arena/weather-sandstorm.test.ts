@@ -35,7 +35,7 @@ describe("Weather - Sandstorm", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.scene.getField(true).forEach(pokemon => {
-      expect(pokemon.hp).toBe(pokemon.getMaxHp() - Math.max(Math.floor(pokemon.getMaxHp() / 16), 1));
+      expect(pokemon).toHaveTakenDamage(Math.max(Math.floor(pokemon.getMaxHp() / 16), 1));
     });
   });
 
@@ -51,7 +51,7 @@ describe("Weather - Sandstorm", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     expect(playerPokemon).toHaveFullHp();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
+    expect(enemyPokemon).toHaveTakenDamage(Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
 
   it("does not inflict damage to Rock, Ground and Steel type Pokemon", async () => {

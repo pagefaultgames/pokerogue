@@ -42,7 +42,7 @@ describe("Moves - FILLET AWAY", () => {
     game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
     expect(leadPokemon).toHaveStatStage(Stat.SPATK, 2);
     expect(leadPokemon).toHaveStatStage(Stat.SPD, 2);
@@ -61,7 +61,7 @@ describe("Moves - FILLET AWAY", () => {
     game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
     expect(leadPokemon).toHaveStatStage(Stat.SPATK, 5);
     expect(leadPokemon).toHaveStatStage(Stat.SPD, 2);

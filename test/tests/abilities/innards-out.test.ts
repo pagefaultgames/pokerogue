@@ -27,7 +27,7 @@ describe("Abilities - Innards Out", () => {
       .startingLevel(100);
   });
 
-  it("should damage opppnents that faint the ability holder for equal damage", async () => {
+  it("should damage opponents that faint the ability holder for equal damage", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const magikarp = game.field.getEnemyPokemon();
@@ -37,7 +37,7 @@ describe("Abilities - Innards Out", () => {
 
     expect(magikarp).toHaveFainted();
     const feebas = game.field.getPlayerPokemon();
-    expect(feebas.getInverseHp()).toBe(20);
+    expect(feebas).toHaveTakenDamage(20);
   });
 
   it("should not damage an ally in Double Battles", async () => {

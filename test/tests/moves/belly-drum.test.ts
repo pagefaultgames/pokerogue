@@ -44,7 +44,7 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
   });
 
@@ -61,7 +61,7 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
     expect(leadPokemon).toHaveStatStage(Stat.SPATK, 6);
   });
