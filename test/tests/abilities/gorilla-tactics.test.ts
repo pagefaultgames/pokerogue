@@ -33,22 +33,20 @@ describe("Abilities - Gorilla Tactics", () => {
       .ability(AbilityId.GORILLA_TACTICS);
   });
 
-  it("should boost the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
+  it("should boost the ability holder's Attack stat by 50%, but limit it to using only one move", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const player = game.field.getPlayerPokemon();
-    const initialAtkStat = player.getStat(Stat.ATK);
 
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
-    expect(player.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
-    // Other moves should be restricted
+    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK) * 1.5);
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
 
-  it("should struggle if the only usable move is disabled", async () => {
+  it("should Struggle if the only usable move is disabled", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const player = game.field.getPlayerPokemon();
@@ -77,7 +75,7 @@ describe("Abilities - Gorilla Tactics", () => {
     expect(player).toHaveUsedMove(MoveId.STRUGGLE);
   });
 
-  it("should lock into calling moves, even if also in moveset", async () => {
+  it("should lock into calling moves", async () => {
     game.move.forceMetronomeMove(MoveId.TACKLE);
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
@@ -90,10 +88,13 @@ describe("Abilities - Gorilla Tactics", () => {
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.METRONOME)).toBe(false);
     expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS, useMode: MoveUseMode.FOLLOW_UP });
-    expect(player).toHaveUsedMove({ move: MoveId.METRONOME, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL }, 1)
+    expect(player).toHaveUsedMove(
+      { move: MoveId.METRONOME, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL },
+      1,
+    );
   });
 
-  it("should activate when the opponenet protects", async () => {
+  it("should activate when the opponent protects", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const player = game.field.getPlayerPokemon();
@@ -105,11 +106,10 @@ describe("Abilities - Gorilla Tactics", () => {
 
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
-
     expect(enemy).toHaveFullHp();
   });
 
-  it("should activate when a move is succesfully executed but misses", async () => {
+  it("should activate when a move is successfully executed but misses", async () => {
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const player = game.field.getPlayerPokemon();
@@ -123,7 +123,7 @@ describe("Abilities - Gorilla Tactics", () => {
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
   });
 
-  it("should remove all effects when disabled", async () => {
+  it("should remove all effects upon being suppressed", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
@@ -135,6 +135,6 @@ describe("Abilities - Gorilla Tactics", () => {
 
     expect(player.hasRestrictingTag(MoveId.TACKLE), "still locked into move").toBe(false);
     expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
-    expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS)
-  })
+    expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
+  });
 });

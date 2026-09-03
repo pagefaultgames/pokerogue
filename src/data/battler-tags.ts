@@ -87,19 +87,19 @@ import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type {
-    AbilityBattlerTagType,
-    BattlerTagData,
-    ContactSetStatusProtectedTagType,
-    ContactStatStageChangeProtectedTagType,
-    CritStageBoostTagType,
-    EndureTagType,
-    HighestStatBoostTagType,
-    MoveRestrictionBattlerTagType,
-    ProtectionBattlerTagType,
-    RemovedTypeTagType,
-    SemiInvulnerableTagType,
-    TrappingBattlerTagType,
-    TypeBoostTagType,
+  AbilityBattlerTagType,
+  BattlerTagData,
+  ContactSetStatusProtectedTagType,
+  ContactStatStageChangeProtectedTagType,
+  CritStageBoostTagType,
+  EndureTagType,
+  HighestStatBoostTagType,
+  MoveRestrictionBattlerTagType,
+  ProtectionBattlerTagType,
+  RemovedTypeTagType,
+  SemiInvulnerableTagType,
+  TrappingBattlerTagType,
+  TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Constructor } from "#types/common";
 import type { StatChange, StatStageChangeCallback } from "#types/stat-change";

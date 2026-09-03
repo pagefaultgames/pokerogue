@@ -55,7 +55,7 @@ import type {
   PokemonDefendCondition,
   PokemonStatStageChangeFunc,
 } from "#types/ability-types";
-import { AbilityBattlerTagType } from "#types/battler-tags";
+import type { AbilityBattlerTagType } from "#types/battler-tags";
 import type { Move, StatusEffectAttr } from "#types/move-types";
 import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
@@ -3069,7 +3069,7 @@ export class PreLeaveFieldRemoveBattlerTagAbAttr extends PreLeaveFieldAbAttr {
     return !!pokemon.getTag(this.tagType);
   }
 
-  public override apply({pokemon}: AbAttrBaseParams): void {
+  public override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.removeTag(this.tagType);
   }
 }
