@@ -49,7 +49,7 @@ describe("Moves - Hyper Beam", () => {
     /** Game should progress without a new command from the player */
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
+    expect(enemyPokemon).toHaveHp(enemyPostAttackHp);
     expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.RECHARGING);
 
     game.move.select(MoveId.TACKLE);

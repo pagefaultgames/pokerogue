@@ -125,7 +125,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       charmander.hp = 1;
       game.doSwitchPokemon(2);
       await game.toEndOfTurn();
-      expect(charmander.hp).toBe(1);
+      expect(charmander).toHaveHp(1);
     });
 
     it("should only store one charge of the effect at a time", async () => {

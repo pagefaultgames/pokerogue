@@ -51,7 +51,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
+    expect(leadPokemon).toHaveHp(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
   });
 
   it("should redirect enemy attack damage to the Substitute doll", async () => {
@@ -65,13 +65,13 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
+    expect(leadPokemon).toHaveHp(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
     expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     const postSubHp = leadPokemon.hp;
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.hp).toBe(postSubHp);
+    expect(leadPokemon).toHaveHp(postSubHp);
     expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
   });
 
@@ -88,13 +88,13 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
+    expect(leadPokemon).toHaveHp(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
     expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     const postSubHp = leadPokemon.hp;
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.hp).toBe(postSubHp);
+    expect(leadPokemon).toHaveHp(postSubHp);
     expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
   });
 
@@ -343,7 +343,7 @@ describe("Moves - Substitute", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.getHeldItems().length).toBe(1);
-    expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
+    expect(enemyPokemon).toHaveHp(enemyPostAttackHp);
   });
 
   it("should prevent the user's stats from being reset by Clear Smog", async () => {

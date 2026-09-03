@@ -50,7 +50,7 @@ describe("Moves - Revival Blessing", () => {
 
     const revivedPokemon = game.scene.getPlayerParty()[1];
     expect(revivedPokemon).toHaveStatusEffect(StatusEffect.NONE);
-    expect(revivedPokemon.hp).toBe(Math.floor(revivedPokemon.getMaxHp() / 2));
+    expect(revivedPokemon).toHaveHp(revivedPokemon.getMaxHp() / 2);
   });
 
   it("should revive a random fainted enemy when used by an enemy Trainer", async () => {
@@ -69,7 +69,7 @@ describe("Moves - Revival Blessing", () => {
 
     const revivedPokemon = game.scene.getEnemyParty()[1];
     expect(revivedPokemon).toHaveStatusEffect(StatusEffect.NONE);
-    expect(revivedPokemon.hp).toBe(Math.floor(revivedPokemon.getMaxHp() / 2));
+    expect(revivedPokemon).toHaveHp(revivedPokemon.getMaxHp() / 2);
   });
 
   it("should fail when there are no fainted Pokemon to target", async () => {
@@ -108,7 +108,7 @@ describe("Moves - Revival Blessing", () => {
     await game.toNextTurn();
 
     expect(feebas).not.toHaveFainted();
-    expect(feebas.hp).toBe(toDmgValue(0.5 * feebas.getMaxHp()));
+    expect(feebas).toHaveHp(toDmgValue(0.5 * feebas.getMaxHp()));
     expect(game.field.getPlayerPokemon()).toBe(feebas);
   });
 

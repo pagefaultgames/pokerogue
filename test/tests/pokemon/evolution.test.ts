@@ -102,7 +102,7 @@ describe("Evolution", () => {
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
 
-    expect(golem.hp).toBe(1);
+    expect(golem).toHaveHp(1);
 
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
@@ -127,12 +127,12 @@ describe("Evolution", () => {
     const hpBefore = cyndaquil.hp;
     const maxHpBefore = cyndaquil.getMaxHp();
 
-    expect(cyndaquil.hp).toBe(Math.floor(cyndaquil.getMaxHp() / 2));
+    expect(cyndaquil).toHaveHp(cyndaquil.getMaxHp() / 2);
 
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
 
-    expect(golem.hp).toBe(1);
+    expect(golem).toHaveHp(1);
 
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
@@ -181,7 +181,7 @@ describe("Evolution", () => {
 
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
-    expect(golem.hp).toBe(1);
+    expect(golem).toHaveHp(1);
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("EndEvolutionPhase");

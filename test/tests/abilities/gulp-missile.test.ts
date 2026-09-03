@@ -211,7 +211,7 @@ describe("Abilities - Gulp Missile", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.hp).toBe(enemyHpPreEffect);
+    expect(enemy).toHaveHp(enemyHpPreEffect);
     expect(enemy).toHaveStatStage(Stat.DEF, -1);
     expect(cramorant).not.toHaveBattlerTag(BattlerTagType.GULP_MISSILE_ARROKUDA);
     expect(cramorant.formIndex).toBe(NORMAL_FORM);

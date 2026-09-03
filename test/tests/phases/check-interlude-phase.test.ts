@@ -42,7 +42,7 @@ describe("Check Biome End Phase", () => {
     game.move.use(MoveId.EXTREME_SPEED);
     await game.toEndOfTurn();
 
-    expect(player.hp).toBe(1);
+    expect(player).toHaveHp(1);
   });
 
   it("should not prevent end of turn effects when transitioning waves within a biome", async () => {

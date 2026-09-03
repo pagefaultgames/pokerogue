@@ -118,7 +118,7 @@ describe("Moves - Shell Trap", () => {
     const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    enemyPokemon.forEach((p, i) => expect(p.hp).toBe(enemyStartingHp[i]));
+    enemyPokemon.forEach((p, i) => expect(p).toHaveHp(enemyStartingHp[i]));
   });
 
   it("should not activate from a subsequent physical attack", async () => {

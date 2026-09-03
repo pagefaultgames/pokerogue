@@ -158,7 +158,7 @@ describe("Abilities - Cud Chew", () => {
       // summonData got cleared due to switch, turnData got cleared due to turn end
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
-      expect(farigiraf.hp).toEqual(turn1Hp);
+      expect(farigiraf).toHaveHp(turn1Hp);
 
       game.doSwitchPokemon(1);
       await game.toNextTurn();
@@ -166,7 +166,7 @@ describe("Abilities - Cud Chew", () => {
       // TurnData gets cleared while switching in
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
-      expect(farigiraf.hp).toEqual(turn1Hp);
+      expect(farigiraf).toHaveHp(turn1Hp);
     });
 
     it("clears array if disabled", async () => {

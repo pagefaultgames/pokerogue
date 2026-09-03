@@ -42,9 +42,7 @@ describe("Moves - U-turn", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // assert
-    expect(game.scene.getPlayerParty()[1].hp).toEqual(
-      Math.floor(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp),
-    );
+    expect(game.scene.getPlayerParty()[1]).toHaveHp(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });

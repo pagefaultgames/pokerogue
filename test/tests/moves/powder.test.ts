@@ -43,7 +43,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 1);
 
     await game.toNextTurn();
@@ -52,7 +52,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 2);
   });
 
@@ -124,7 +124,7 @@ describe("Moves - Powder", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.FREEZE);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FLAME_WHEEL, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should not allow a target with Protean to change to Fire type", async () => {
@@ -169,7 +169,7 @@ describe("Moves - Powder", () => {
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIERY_DANCE, result: MoveResult.FAIL });
     expect(playerPokemon).toHaveFullHp();
     // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
-    expect(enemyPokemon.hp).toBe(
+    expect(enemyPokemon).toHaveHp(
       enemyStartingHp - playerPokemon.turnData.totalDamageDealt - 2 * Math.floor(enemyPokemon.getMaxHp() / 4),
     );
   });
@@ -186,7 +186,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIERY_DANCE, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(playerPokemon).toHaveUsedMove(MoveId.POWDER);
   });
 
@@ -201,7 +201,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.REVELATION_DANCE, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should cancel Shell Trap and damage the target, even if the move would fail", async () => {
@@ -215,7 +215,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.SHELL_TRAP, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should cancel Grass Pledge if used after ally's Fire Pledge", async () => {
@@ -232,7 +232,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.GRASS_PLEDGE, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should cancel Fire Pledge if used before ally's Water Pledge", async () => {
@@ -249,7 +249,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIRE_PLEDGE, result: MoveResult.FAIL });
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should NOT cancel Fire Pledge if used after ally's Water Pledge", async () => {

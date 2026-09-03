@@ -198,7 +198,7 @@ describe("Boss Pokemon / Shields", () => {
 
     // Enemy survived with Sturdy
     expect(enemyPokemon.bossSegmentIndex).toBe(0);
-    expect(enemyPokemon.hp).toBe(1);
+    expect(enemyPokemon).toHaveHp(1);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
   });
 

@@ -72,7 +72,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(wimpod.hp).toEqual(Math.floor(wimpod.getMaxHp() * 0.33 + 1));
+    expect(wimpod).toHaveHp(wimpod.getMaxHp() * 0.33 + 1);
     confirmSwitch();
   });
 
@@ -99,7 +99,7 @@ describe("Abilities - Wimp Out", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(wimpod.hp).toEqual(1);
+    expect(wimpod).toHaveHp(1);
     confirmNoSwitch();
   });
 

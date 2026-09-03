@@ -127,7 +127,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
     if (charizard.getMaxHp() % 2 === 1) {
       expect(charizard.hp).toBeGreaterThan(charizard.getMaxHp() / 2);
     } else {
-      expect(charizard.hp).toBe(charizard.getMaxHp() / 2);
+      expect(charizard).toHaveHp(charizard.getMaxHp() / 2);
     }
   });
 });

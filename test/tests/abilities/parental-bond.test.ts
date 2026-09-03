@@ -205,7 +205,7 @@ describe("Abilities - Parental Bond", () => {
     // This test will time out if the user faints
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() / 2));
+    expect(leadPokemon).toHaveHp(Math.ceil(leadPokemon.getMaxHp() / 2));
   });
 
   it("Burn Up only removes type after the second strike", async () => {

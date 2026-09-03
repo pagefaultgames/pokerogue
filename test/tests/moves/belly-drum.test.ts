@@ -90,7 +90,7 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
+    expect(leadPokemon).toHaveHp(hpLost - PREDAMAGE);
     expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 });
