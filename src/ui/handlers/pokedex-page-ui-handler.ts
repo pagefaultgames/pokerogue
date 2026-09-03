@@ -1310,12 +1310,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   handler: () => false, // Non-selectable, but handler is required
                   onHover: () => this.moveInfoOverlay.clear(), // No hover behavior for titles
                 },
-                ...this.eggMoves.slice(0, 3).map((m, i) => ({
-                  label: allMoves[m].name,
-                  style: this.hasEggMoves[i] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
-                  handler: () => false,
-                  onHover: () => this.moveInfoOverlay.show(allMoves[m]),
-                })),
+                ...this.eggMoves.slice(0, 3).map((m, i) => {
+                  // TS won't fully typecheck the object here unless it's put into a buffer const
+                  const item: OptionSelectItem = {
+                    label: allMoves[m].name,
+                    color: this.hasEggMoves[i] ? TextStyle.SETTINGS_VALUE : TextStyle.SHADOW_TEXT,
+                    handler: () => false,
+                    onHover: () => this.moveInfoOverlay.show(allMoves[m]),
+                  };
+                  return item;
+                }),
                 {
                   label: i18next.t("pokedexUiHandler:rare"),
                   selectable: false,

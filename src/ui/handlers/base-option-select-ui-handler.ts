@@ -303,16 +303,16 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
         }
         const neededSpaces = Math.ceil(this.maxIconWidth / singleSpaceWidth);
         label = label.padStart(label.length + neededSpaces);
-        // Change the label color to fit the required text style
-        if (option.color != null && option.color !== DEFAULT_TEXT_STYLE) {
-          label = getBBCodeFrag(label, option.color, true);
-        }
       }
       option.iconsWidth = this.maxIconWidth;
     } else if (this.maxIconWidth) {
       const neededSpaces = Math.ceil(this.maxIconWidth / singleSpaceWidth);
       label = label.padStart(label.length + neededSpaces);
       option.iconsWidth = this.maxIconWidth;
+    }
+
+    if (option.color != null && option.color !== DEFAULT_TEXT_STYLE) {
+      label = getBBCodeFrag(label, option.color, true);
     }
 
     option.displayLabel = label;
