@@ -62,11 +62,11 @@ describe.each([
   it("should not block self-targeted increased priority moves", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.use(MoveId.PROTECT);
+    game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.PROTECT);
     await game.toEndOfTurn();
 
-    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
     expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
   });
 

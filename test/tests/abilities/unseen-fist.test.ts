@@ -43,7 +43,7 @@ describe("Ability - Unseen Fist", () => {
     if (shouldSucceed) {
       expect(player).toHaveUsedMove({ move: attackMove, result: MoveResult.SUCCESS });
     } else {
-      expect(player).toHaveUsedMove({ move: attackMove, result: MoveResult.FAIL });
+      expect(player).toHaveUsedMove({ move: attackMove, result: MoveResult.MISS });
     }
   }
 

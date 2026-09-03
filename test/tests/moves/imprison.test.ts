@@ -113,8 +113,8 @@ describe("Moves - Imprison", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toNextTurn();
 
-    expect(player1).toHaveBattlerTag(BattlerTagType.IMPRISON);
-    expect(player2).toHaveBattlerTag(BattlerTagType.IMPRISON);
+    expect(enemy1).toHaveBattlerTag(BattlerTagType.IMPRISON);
+    expect(enemy2).toHaveBattlerTag(BattlerTagType.IMPRISON);
     expect(enemy1).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
     expect(enemy2).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
 

@@ -67,7 +67,7 @@ describe("Abilities - Dry Skin", () => {
 
     // first turn w/o dry skin
     game.move.use(MoveId.FLAMETHROWER);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
     const initialDmg = enemy.getInverseHp();
 
     enemy.hp = enemy.getMaxHp();

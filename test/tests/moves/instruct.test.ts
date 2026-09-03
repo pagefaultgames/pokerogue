@@ -167,7 +167,7 @@ describe("Moves - Instruct", () => {
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    instructSuccess(enemy, MoveId.SONIC_BOOM);
+    expect(enemy).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
   });
 
   it("should fail if the target's move is out of PP", async () => {
@@ -198,15 +198,12 @@ describe("Moves - Instruct", () => {
     await game.toEndOfTurn();
 
     const player = game.field.getPlayerPokemon();
-    expect(player).toHaveUsedMove(
-      {
-        move: MoveId.THUNDERBOLT,
-        result: MoveResult.SUCCESS,
-        targets: [BattlerIndex.ENEMY],
-        useMode: MoveUseMode.NORMAL,
-      },
-      1,
-    );
+    expect(player).toHaveUsedMove({
+      move: MoveId.THUNDERBOLT,
+      result: MoveResult.SUCCESS,
+      targets: [BattlerIndex.ENEMY],
+      useMode: MoveUseMode.NORMAL,
+    });
     expect(player).toHaveUsedMove(
       {
         result: MoveResult.SUCCESS,
@@ -522,11 +519,14 @@ describe("Moves - Instruct", () => {
     game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    // last move used hit all 3 other combatants
-    expect(koraidon).toHaveUsedMove({
-      move: MoveId.BRUTAL_SWING,
-      targets: [BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
-    });
+    // instructed attack hit all 3 other combatants
+    expect(koraidon).toHaveUsedMove(
+      {
+        move: MoveId.BRUTAL_SWING,
+        targets: [BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
+      },
+      1,
+    );
   });
 
   it("should cause multi-hit moves to hit the appropriate number of times in singles", async () => {
