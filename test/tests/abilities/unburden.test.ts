@@ -69,7 +69,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
   });
 
   it("should activate when a berry is eaten, even if Berry Pouch preserves the berry", async () => {
@@ -85,7 +85,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBe(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
   });
 
   it("should activate for the target, and not the stealer, when a berry is stolen", async () => {
@@ -102,8 +102,8 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(enemyPokemon)).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(initialEnemySpeed * 2);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPD, initialEnemySpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed);
   });
 
   it("should activate when an item is knocked off", async () => {
@@ -118,7 +118,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(enemyPokemon)).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(initialEnemySpeed * 2);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPD, initialEnemySpeed * 2);
   });
 
   it("should activate when an item is stolen via attacking ability", async () => {
@@ -134,7 +134,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(enemyPokemon)).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(initialEnemySpeed * 2);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPD, initialEnemySpeed * 2);
   });
 
   it("should activate when an item is stolen via defending ability", async () => {
@@ -150,7 +150,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
   });
 
   it("should activate when an item is stolen via move", async () => {
@@ -166,7 +166,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(enemyPokemon)).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(initialEnemySpeed * 2);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPD, initialEnemySpeed * 2);
   });
 
   it("should activate when an item is stolen via grip claw", async () => {
@@ -186,7 +186,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(enemyPokemon)).toBeLessThan(enemyHeldItemCt);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(initialEnemySpeed * 2);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPD, initialEnemySpeed * 2);
   });
 
   it("should not activate when a neutralizing ability is present", async () => {
@@ -202,7 +202,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed);
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNBURDEN);
   });
 
@@ -220,7 +220,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItemCt);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
   });
 
   it("should deactivate temporarily when a neutralizing gas user is on the field", async () => {
@@ -241,7 +241,7 @@ describe("Abilities - Unburden", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(getHeldItemCount(treecko)).toBeLessThan(playerHeldItems);
-    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(treecko).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
 
     // Turn 2: Switch Meowth to Weezing, activating Neutralizing Gas
     await game.toNextTurn();
@@ -250,7 +250,7 @@ describe("Abilities - Unburden", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(getHeldItemCount(treecko)).toBeLessThan(playerHeldItems);
-    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed);
+    expect(treecko).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed);
 
     // Turn 3: Switch Weezing to Meowth, deactivating Neutralizing Gas
     await game.toNextTurn();
@@ -259,7 +259,7 @@ describe("Abilities - Unburden", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(getHeldItemCount(treecko)).toBeLessThan(playerHeldItems);
-    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(treecko).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
   });
 
   it("should not activate when passing a baton to a teammate switching in", async () => {
@@ -279,8 +279,8 @@ describe("Abilities - Unburden", () => {
 
     expect(getHeldItemCount(treecko)).toBe(0);
     expect(getHeldItemCount(purrloin)).toBe(1);
-    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialTreeckoSpeed);
-    expect(purrloin.getEffectiveStat(Stat.SPD)).toBe(initialPurrloinSpeed);
+    expect(treecko).toHaveEffectiveStat(Stat.SPD, initialTreeckoSpeed);
+    expect(purrloin).toHaveEffectiveStat(Stat.SPD, initialPurrloinSpeed);
     expect(unburdenAttr.apply).not.toHaveBeenCalled();
   });
 
@@ -298,7 +298,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
 
     // Turn 2: Get hit by Worry Seed, deactivating Unburden
     game.move.select(MoveId.SPLASH);
@@ -306,7 +306,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed);
   });
 
   it("should activate when a reviver seed is used", async () => {
@@ -322,7 +322,7 @@ describe("Abilities - Unburden", () => {
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
-    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(initialPlayerSpeed * 2);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPD, initialPlayerSpeed * 2);
   });
 
   // test for `.bypassFaint()` - singles
@@ -346,7 +346,7 @@ describe("Abilities - Unburden", () => {
 
     expect(game.field.getPlayerPokemon()).toBe(treecko);
     expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
-    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
+    expect(treecko).toHaveEffectiveStat(Stat.SPD, initialSpeed);
   });
 
   // test for `.bypassFaint()` - doubles
@@ -372,6 +372,6 @@ describe("Abilities - Unburden", () => {
 
     expect(game.field.getPlayerPokemon()).toBe(treecko);
     expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
-    expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
+    expect(treecko).toHaveEffectiveStat(Stat.SPD, initialSpeed);
   });
 });

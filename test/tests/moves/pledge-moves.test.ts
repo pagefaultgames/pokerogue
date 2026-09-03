@@ -194,7 +194,7 @@ describe("Moves - Pledge Moves", () => {
     expect(enemyPokemon[1]).toHaveFullHp();
 
     expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
-    enemyPokemon.forEach((p, i) => expect(p.getEffectiveStat(Stat.SPD)).toBe(Math.floor(enemyStartingSpd[i] / 4)));
+    enemyPokemon.forEach((p, i) => expect(p).toHaveEffectiveStat(Stat.SPD, Math.floor(enemyStartingSpd[i] / 4)));
   });
 
   it("Pledge Moves - should alter turn order when used in combination", async () => {

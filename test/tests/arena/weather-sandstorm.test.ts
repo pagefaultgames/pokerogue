@@ -78,10 +78,10 @@ describe("Weather - Sandstorm", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const playerSpdef = playerPokemon.getStat(Stat.SPDEF);
-    expect(playerPokemon.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(playerSpdef * 1.5));
+    expect(playerPokemon).toHaveEffectiveStat(Stat.SPDEF, Math.floor(playerSpdef * 1.5));
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const enemySpdef = enemyPokemon.getStat(Stat.SPDEF);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPDEF)).toBe(enemySpdef);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPDEF, enemySpdef);
   });
 });

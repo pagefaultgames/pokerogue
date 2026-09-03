@@ -44,7 +44,7 @@ describe("Move - Court Change", () => {
 
     // enemy team will be in the swamp and slowed
     expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) / 4);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPD, enemyPokemon.getStat(Stat.SPD) / 4);
 
     game.move.use(MoveId.COURT_CHANGE);
     game.move.use(MoveId.SPLASH, 1);
@@ -53,7 +53,7 @@ describe("Move - Court Change", () => {
     // own team should now be in the swamp and slowed
     expect(game).not.toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
     expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.PLAYER);
-    expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) / 4);
+    expect(regieleki).toHaveEffectiveStat(Stat.SPD, regieleki.getStat(Stat.SPD) / 4);
   });
 
   it("should swap safeguard to the enemy side ", async () => {

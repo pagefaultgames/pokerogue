@@ -37,7 +37,7 @@ describe("Ability Duplication", () => {
 
     magikarp.summonData.abilitySuppressed = true;
 
-    expect(magikarp.getEffectiveStat(Stat.ATK)).toBe(magikarpAttack / 2);
+    expect(magikarp).toHaveEffectiveStat(Stat.ATK, magikarpAttack / 2);
   });
 
   it("huge power should stack with pure power", async () => {
@@ -50,6 +50,6 @@ describe("Ability Duplication", () => {
 
     magikarp.summonData.abilitySuppressed = true;
 
-    expect(magikarp.getEffectiveStat(Stat.ATK)).toBe(magikarpAttack / 4);
+    expect(magikarp).toHaveEffectiveStat(Stat.ATK, magikarpAttack / 4);
   });
 });
