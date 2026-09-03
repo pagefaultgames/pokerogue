@@ -57,7 +57,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     await game.toEndOfTurn();
 
     expect(karp).toHaveStatusEffect(StatusEffect.NONE);
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.LUMINA_CRASH, result: MoveResult.SUCCESS });
   });
 
   it(`should cure ${statusStr} upon being gained`, async () => {
@@ -83,6 +83,6 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
 
     const karp = game.field.getEnemyPokemon();
     expect(karp).toHaveStatusEffect(StatusEffect.NONE);
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.FAIL });
   });
 });

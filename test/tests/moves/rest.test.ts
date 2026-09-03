@@ -102,7 +102,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(snorlax).toHaveUsedMove({ move: MoveId.REST, result: MoveResult.FAIL });
   });
 
   it("should fail if called while already asleep", async () => {
@@ -136,7 +136,7 @@ describe("Move - Rest", () => {
 
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax).toHaveFullHp();
-    expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(snorlax).toHaveUsedMove({ move: MoveId.REST, result: MoveResult.SUCCESS });
     expect(snorlax.status!.sleepTurnsRemaining).toBeGreaterThan(1);
   });
 });

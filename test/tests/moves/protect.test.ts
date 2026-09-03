@@ -66,7 +66,7 @@ describe("Moves - Protect", () => {
       await game.toNextTurn();
 
       expect(charizard).toHaveFullHp();
-      expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
       expect(conditionSpy).toHaveLastReturnedWith(true);
     }
 
@@ -74,7 +74,7 @@ describe("Moves - Protect", () => {
     await game.toNextTurn();
 
     expect(charizard).not.toHaveFullHp();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
     expect(conditionSpy).toHaveLastReturnedWith(false);
   });
 
@@ -97,7 +97,7 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
   });
 
   it("should reset fail chance on move failure", async () => {
@@ -109,15 +109,15 @@ describe("Moves - Protect", () => {
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.SUCCESS });
   });
 
   it("should reset fail chance on using another move", async () => {
@@ -129,14 +129,14 @@ describe("Moves - Protect", () => {
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
   });
 
   it("should reset fail chance on starting a new wave", async () => {
@@ -151,10 +151,10 @@ describe("Moves - Protect", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.doKillOpponents();
     await game.toNextWave();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.SUCCESS });
   });
 
   it("should not be blocked by Psychic Terrain", async () => {
@@ -165,7 +165,7 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
   });
 
   it("should stop subsequent hits of multi-hit moves", async () => {
@@ -194,8 +194,8 @@ describe("Moves - Protect", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
   });
 
   it("should not block Protection-bypassing moves or Future Sight", async () => {

@@ -84,7 +84,7 @@ describe("Moves - Gastro Acid", () => {
     game.move.use(MoveId.GASTRO_ACID);
     await game.toNextTurn();
 
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.GASTRO_ACID, result: MoveResult.FAIL });
   });
 
   it("should suppress target's passive even if its main ability is unsuppressable", async () => {

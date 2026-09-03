@@ -41,7 +41,7 @@ describe("Status Effects", () => {
       await game.toNextTurn();
 
       expect(game.field.getEnemyPokemon()).toHaveFullHp();
-      expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+      expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
     });
   });
 
@@ -81,13 +81,13 @@ describe("Status Effects", () => {
       await game.toNextTurn();
 
       expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
-      expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+      expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.FAIL });
 
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
       expect(player).toHaveStatusEffect(StatusEffect.NONE);
-      expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+      expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
     });
   });
 

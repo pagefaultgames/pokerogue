@@ -58,7 +58,7 @@ describe("Move - Teleport", () => {
       await game.move.selectEnemyMove(MoveId.TELEPORT);
       await game.move.selectEnemyMove(MoveId.MEMENTO, 1);
       await game.toEndOfTurn();
-      expect(enemy1.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(enemy1).toHaveUsedMove({ move: MoveId.TELEPORT, result: MoveResult.FAIL });
       expect(enemy2.isOnField()).toBe(false);
 
       // Fail teleport even if the other enemy faints
@@ -66,7 +66,7 @@ describe("Move - Teleport", () => {
       game.move.select(MoveId.SPLASH, 1);
       await game.move.selectEnemyMove(MoveId.TELEPORT);
       await game.toEndOfTurn();
-      expect(enemy1.getLastXMoves()[0].result, "should fail even if last remaining pokemon").toBe(MoveResult.FAIL);
+      expect(enemy1).toHaveUsedMove({ move: MoveId.TELEPORT, result: MoveResult.FAIL });
     });
 
     it("should fail if used by a wild pokemon under a trapping effect", async () => {
@@ -79,7 +79,7 @@ describe("Move - Teleport", () => {
       await game.move.selectEnemyMove(MoveId.TELEPORT);
       game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
-      expect(enemy.getLastXMoves()[0].result, "should fail while trapped").toBe(MoveResult.FAIL);
+      expect(enemy, "should fail while trapped").toHaveUsedMove({ move: MoveId.TELEPORT, result: MoveResult.FAIL });
     });
   });
 

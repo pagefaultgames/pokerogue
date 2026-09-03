@@ -58,10 +58,7 @@ describe("Moves - Disable", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(playerMon.getLastXMoves()[0]).toMatchObject({
-      move: MoveId.DISABLE,
-      result: MoveResult.FAIL,
-    });
+    expect(playerMon).toHaveUsedMove({ move: MoveId.DISABLE, result: MoveResult.FAIL });
     expect(enemyMon.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
 
@@ -93,8 +90,8 @@ describe("Moves - Disable", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyMon.getLastXMoves()[0].move).toBe(MoveId.STRUGGLE);
+    expect(playerMon).toHaveUsedMove({ move: MoveId.DISABLE, result: MoveResult.FAIL });
+    expect(enemyMon).toHaveUsedMove(MoveId.STRUGGLE);
     expect(enemyMon.hasRestrictingTag(MoveId.STRUGGLE)).toBe(false);
   });
 
@@ -168,7 +165,7 @@ describe("Moves - Disable", () => {
     const shuckle = game.field.getEnemyPokemon();
     expect.soft(shuckle.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect.soft(shuckle.hasRestrictingTag(MoveId.SWORDS_DANCE)).toBe(false);
-    expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
+    expect(shuckle).toHaveUsedMove({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
     expect(shuckle).toHaveStatStage(Stat.ATK, 4);
   });
 });

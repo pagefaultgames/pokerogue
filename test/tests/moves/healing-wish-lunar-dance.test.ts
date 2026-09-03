@@ -78,7 +78,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       await game.toEndOfTurn();
 
   expect(charmander).toHaveFullHp();
-      expect(charmander.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  expect(charmander).toHaveUsedMove({ move: moveId, result: MoveResult.FAIL });
     });
 
     it("should fail if the user has no challenge-eligible allies", async () => {
@@ -93,7 +93,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       await game.toNextTurn();
 
       expect(raticate).toHaveFullHp();
-      expect(raticate.getLastXMoves()[0].result).toEqual(MoveResult.FAIL);
+      expect(raticate).toHaveUsedMove({ move: moveId, result: MoveResult.FAIL });
     });
 
     it("should store its effect if the switched-in Pokemon would be unaffected", async () => {

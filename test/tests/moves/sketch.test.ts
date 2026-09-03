@@ -37,7 +37,7 @@ describe("Moves - Sketch", () => {
 
     game.move.select(MoveId.SKETCH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SKETCH, result: MoveResult.FAIL });
     const moveSlot0 = playerPokemon.getMoveset()[0]!;
     expect(moveSlot0.moveId).toBe(MoveId.SKETCH);
     expect(moveSlot0.getPpRatio()).toBe(0);
@@ -45,7 +45,7 @@ describe("Moves - Sketch", () => {
     await game.toNextTurn();
     game.move.select(MoveId.SKETCH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SKETCH, result: MoveResult.SUCCESS });
     expect(playerPokemon.moveset[0]?.moveId).toBe(MoveId.SPLASH);
     expect(playerPokemon.moveset[1]?.moveId).toBe(MoveId.SKETCH);
   });
@@ -61,13 +61,13 @@ describe("Moves - Sketch", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.GROWL, result: MoveResult.SUCCESS });
 
     await game.toNextTurn();
     game.move.select(MoveId.SKETCH);
     await game.move.forceStatusActivation(true);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SKETCH, result: MoveResult.SUCCESS });
     expect(playerPokemon.moveset[0]?.moveId).toBe(MoveId.SPLASH);
     expect(playerPokemon.moveset[1]?.moveId).toBe(MoveId.GROWL);
   });
@@ -85,7 +85,7 @@ describe("Moves - Sketch", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SKETCH, result: MoveResult.SUCCESS });
     expect(playerPokemon.moveset[0]?.moveId).toBe(MoveId.METRONOME);
     expect(playerPokemon).not.toHaveFullHp(); // Make sure opponent actually used False Swipe
   });

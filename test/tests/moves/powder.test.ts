@@ -42,7 +42,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 1);
 
@@ -51,7 +51,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 2);
   });
@@ -66,7 +66,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
     expect(enemyPokemon).toHaveFullHp();
   });
 
@@ -80,7 +80,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
     expect(enemyPokemon).toHaveFullHp();
   });
 
@@ -94,7 +94,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
     expect(enemyPokemon).toHaveFullHp();
   });
 
@@ -108,7 +108,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
     expect(enemyPokemon).toHaveFullHp();
   });
 
@@ -123,7 +123,7 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.FREEZE);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FLAME_WHEEL, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
@@ -137,7 +137,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
     expect(enemyPokemon).not.toHaveFullHp();
     expect(enemyPokemon.summonData.types).not.toBe(PokemonType.FIRE);
   });
@@ -166,7 +166,7 @@ describe("Moves - Powder", () => {
     await game.toEndOfTurn();
 
     // player should not take damage
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIERY_DANCE, result: MoveResult.FAIL });
     expect(playerPokemon).toHaveFullHp();
     // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
     expect(enemyPokemon.hp).toBe(
@@ -185,9 +185,9 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIERY_DANCE, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
-    expect(playerPokemon.getLastXMoves()[0].move).toBe(MoveId.POWDER);
+    expect(playerPokemon).toHaveUsedMove(MoveId.POWDER);
   });
 
   it("should cancel Revelation Dance if it becomes a Fire-type move", async () => {
@@ -200,7 +200,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.REVELATION_DANCE, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
@@ -214,7 +214,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.SHELL_TRAP, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
@@ -231,7 +231,7 @@ describe("Moves - Powder", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.GRASS_PLEDGE, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
@@ -248,7 +248,7 @@ describe("Moves - Powder", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIRE_PLEDGE, result: MoveResult.FAIL });
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
@@ -265,7 +265,7 @@ describe("Moves - Powder", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIRE_PLEDGE, result: MoveResult.SUCCESS });
     expect(enemyPokemon).toHaveFullHp();
   });
 });

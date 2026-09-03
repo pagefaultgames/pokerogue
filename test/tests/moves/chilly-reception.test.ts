@@ -55,7 +55,7 @@ describe("Moves - Chilly Reception", () => {
 
     expect(game).toHaveWeather(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.CHILLY_RECEPTION, result: MoveResult.SUCCESS });
   });
 
   it("should still switch out even if weather cannot be changed", async () => {
@@ -72,7 +72,7 @@ describe("Moves - Chilly Reception", () => {
     game.doSelectPartyPokemon(1);
     // TODO: Uncomment lines once wimp out PR fixes force switches to not reset summon data immediately
     //  await game.phaseInterceptor.to("SwitchSummonPhase", false);
-    //  expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    //  expect(slowking).toHaveUsedMove({ move: MoveId.CHILLY_RECEPTION, result: MoveResult.SUCCESS });
 
     await game.toEndOfTurn();
 
@@ -100,7 +100,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game).toHaveWeather(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon()).toBe(slowking);
-    expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(slowking).toHaveUsedMove({ move: MoveId.CHILLY_RECEPTION, result: MoveResult.FAIL });
     expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );

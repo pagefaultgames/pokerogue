@@ -78,17 +78,17 @@ describe("Moves - Quick Guard", () => {
     game.move.select(MoveId.QUICK_GUARD);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.QUICK_GUARD, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.QUICK_GUARD);
     await game.toNextTurn();
 
     // ignored fail chance
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.QUICK_GUARD, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.QUICK_GUARD, result: MoveResult.FAIL });
   });
 });

@@ -296,7 +296,7 @@ describe("Transforming Effects", () => {
       await game.toEndOfTurn();
 
       const ditto = game.field.getPlayerPokemon();
-      expect(ditto.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(ditto).toHaveUsedMove({ move: MoveId.TRANSFORM, result: MoveResult.FAIL });
       expect(game.phaseInterceptor.log).not.toContain("PokemonTransformPhase");
     });
   });

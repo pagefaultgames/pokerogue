@@ -71,6 +71,6 @@ describe("Moves - Metal Burst", () => {
 
     expect(enemy1).toHaveFainted();
     expect(enemy2).toHaveFainted();
-    expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.METAL_BURST, result: MoveResult.FAIL });
   });
 });

@@ -134,7 +134,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SHELL_TRAP, result: MoveResult.FAIL });
     expect(enemyPokemon).toHaveFullHp();
   });
 });

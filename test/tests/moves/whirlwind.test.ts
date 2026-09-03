@@ -52,7 +52,7 @@ describe("Moves - Whirlwind", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(staraptor).toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(game.field.getEnemyPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
+    expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move, result: MoveResult.MISS });
   });
 
   it("should force switches randomly", async () => {
@@ -239,6 +239,6 @@ describe("Moves - Whirlwind", () => {
     game.move.select(MoveId.WHIRLWIND);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(user.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(user).toHaveUsedMove({ move: MoveId.WHIRLWIND, result: MoveResult.SUCCESS });
   });
 });

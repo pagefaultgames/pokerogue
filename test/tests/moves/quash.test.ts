@@ -52,7 +52,7 @@ describe("Moves - Quash", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerField()[1]).toHaveUsedMove({ move: MoveId.QUASH, result: MoveResult.FAIL });
   });
 
   // TODO: Enable once rampaging moves and move queue are fixed.
@@ -78,9 +78,9 @@ describe("Moves - Quash", () => {
     game.move.select(MoveId.QUASH, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(accelgor).toHaveUsedMove({ move: MoveId.QUASH, result: MoveResult.SUCCESS });
     expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
-    expect(rattata.getLastXMoves()[0]).toMatchObject({
+    expect(rattata).toHaveUsedMove({
       move: MoveId.OUTRAGE,
       result: MoveResult.SUCCESS,
       useMode: MoveUseMode.IGNORE_PP,

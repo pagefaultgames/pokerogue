@@ -105,13 +105,13 @@ describe("Moves - Delayed Attacks", () => {
 
     expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
     const bronzong = game.field.getPlayerPokemon();
-    expect(bronzong.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
+    expect(bronzong).toHaveUsedMove({ move: MoveId.FUTURE_SIGHT, result: MoveResult.OTHER });
 
     game.move.use(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
-    expect(bronzong.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(bronzong).toHaveUsedMove({ move: MoveId.FUTURE_SIGHT, result: MoveResult.FAIL });
   });
 
   it("should still be delayed when called by other moves", async () => {
@@ -144,8 +144,8 @@ describe("Moves - Delayed Attacks", () => {
     expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 2);
     expect(enemy1).toHaveFullHp();
     expect(enemy2).toHaveFullHp();
-    expect(karp.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
+    expect(karp).toHaveUsedMove({ move: MoveId.FUTURE_SIGHT, result: MoveResult.OTHER });
+    expect(feebas).toHaveUsedMove({ move: MoveId.FUTURE_SIGHT, result: MoveResult.OTHER });
 
     await passTurns(2);
 

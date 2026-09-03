@@ -89,18 +89,18 @@ describe("Moves - Wide Guard", () => {
     game.move.select(MoveId.WIDE_GUARD);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.WIDE_GUARD, result: MoveResult.SUCCESS });
 
     // ignored fail chance
     game.move.select(MoveId.WIDE_GUARD);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.WIDE_GUARD, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
     // ignored fail chance
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
   });
 });

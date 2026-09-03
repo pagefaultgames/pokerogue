@@ -58,7 +58,7 @@ describe("Moves - Shed Tail", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     expect(magikarp.isOnField()).toBeTruthy();
-    expect(magikarp.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(magikarp).toHaveUsedMove({ move: MoveId.SHED_TAIL, result: MoveResult.FAIL });
   });
 
   it("should show the correct failure message between 26-50% HP", async () => {

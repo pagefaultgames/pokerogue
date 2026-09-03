@@ -45,13 +45,13 @@ describe("Moves - Solar Beam", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGING);
     expect(enemyPokemon).toHaveFullHp();
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.OTHER });
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.SUCCESS });
 
     expect(playerPokemon).toHaveUsedPP(MoveId.SOLAR_BEAM, 1);
   });
@@ -82,7 +82,7 @@ describe("Moves - Solar Beam", () => {
     expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
     expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.SUCCESS });
 
     expect(playerPokemon).toHaveUsedPP(MoveId.SOLAR_BEAM, 1);
   });
