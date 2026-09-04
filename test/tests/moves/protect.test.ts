@@ -157,7 +157,7 @@ describe("Moves - Protect", () => {
     game.move.use(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
-    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
   });
 
   // TODO: this is probably more deserving inside the psychic terrain tests
