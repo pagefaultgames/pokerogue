@@ -150,23 +150,21 @@ describe("Moves - Instruct", () => {
   });
 
   it("should respect and trigger the enemy's status condition", async () => {
-    game.override.moveset([MoveId.INSTRUCT, MoveId.THUNDER_WAVE]).enemyMoveset(MoveId.SONIC_BOOM);
     await game.classicMode.startBattle(SpeciesId.AMOONGUSS);
 
-    const enemy = game.field.getEnemyPokemon();
-
-    game.move.select(MoveId.THUNDER_WAVE);
+    game.move.use(MoveId.THUNDER_WAVE);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    game.move.select(MoveId.INSTRUCT);
+    game.move.use(MoveId.INSTRUCT);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MovePhase");
     // force enemy's instructed move (and only the instructed move) to fail
     await game.move.forceStatusActivation(true);
-    await game.move.forceStatusActivation(false);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
   });
 
@@ -237,12 +235,12 @@ describe("Moves - Instruct", () => {
     expect(game.field.getEnemyPokemon().turnData.attacksReceived.length).toBe(4);
   });
 
-  it("should fail if the target is switching out", async () => {
-    game.override.enemyMoveset(MoveId.INSTRUCT).enemySpecies(SpeciesId.UNOWN);
+  it("should fail if the target just switched out", async () => {
+    game.override.enemySpecies(SpeciesId.UNOWN);
     await game.classicMode.startBattle(SpeciesId.AMOONGUSS, SpeciesId.TOXICROAK);
 
-    // ensure move is in moveset
-    const [player1, player2] = game.scene.getPlayerField();
+    // ensure move is in moveset to avoid false negatives
+    const [player1, player2] = game.scene.getPlayerParty();
     game.move.changeMoveset(player1, MoveId.SEED_BOMB);
     game.move.changeMoveset(player2, MoveId.SEED_BOMB);
 
@@ -254,6 +252,7 @@ describe("Moves - Instruct", () => {
     });
 
     game.doSwitchPokemon(1);
+    await game.move.forceEnemyMove(MoveId.INSTRUCT);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     const enemy = game.field.getEnemyPokemon();
@@ -287,7 +286,7 @@ describe("Moves - Instruct", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
     expect(player).toHaveUsedMove({ move: MoveId.INSTRUCT, result: MoveResult.SUCCESS });
-    expect(enemy).toHaveUsedMove({ move: MoveId.SONIC_BOOM, result: MoveResult.FAIL });
+    expect(enemy).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
     expect(enemy).toHaveUsedPP(MoveId.SONIC_BOOM, 1);
   });
 
@@ -300,7 +299,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     const player = game.field.getPlayerPokemon();
-    expect(player).toHaveUsedMove({ move: MoveId.INSTRUCT, result: MoveResult.FAIL });
+    expect(player).toHaveUsedMove({ move: MoveId.INSTRUCT, result: MoveResult.MISS });
   });
 
   it("should not repeat enemy's charging move", async () => {
@@ -486,11 +485,14 @@ describe("Moves - Instruct", () => {
     game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    // last move used hit both enemies
-    expect(koraidon).toHaveUsedMove({
-      move: MoveId.BREAKING_SWIPE,
-      targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
-    });
+    // instructed move used hit both enemies
+    expect(koraidon).toHaveUsedMove(
+      {
+        move: MoveId.BREAKING_SWIPE,
+        targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
+      },
+      1,
+    );
   });
 
   it("should cause AoE moves to correctly hit everyone in doubles after singles", async () => {

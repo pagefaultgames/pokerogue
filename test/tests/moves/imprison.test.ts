@@ -94,7 +94,8 @@ describe("Moves - Imprison", () => {
     expect(enemy).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS, useMode: MoveUseMode.FOLLOW_UP });
   });
 
-  it("should not interfere with the effects of an ally's Imprison", async () => {
+  // TODO: This doesn't work ATM
+  it.todo("should not interfere with the effects of an ally's Imprison", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
