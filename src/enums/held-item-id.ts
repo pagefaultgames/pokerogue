@@ -2,7 +2,6 @@ import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 
 // TODO: make category the lower 2 bytes - makes it easier to add more items (and/or change category to first nibble)
-// TODO: Create subsets of HeldItemId for different types of items
 export const HeldItemId = {
   // Berries
   SITRUS_BERRY: 0x0101,
