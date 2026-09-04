@@ -84,43 +84,7 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
     expect(feebas).not.toHaveAbilityApplied(ability);
   });
 
-  // TODO: Merge into below test case once latter bug is fixed;
-  // this regression test is extremely similar to the one below but skips checks that would fail the test
-
-  it("should only proc once for multi-hits with parental bond", async () => {
-    game.override.enemyAbility(AbilityId.PARENTAL_BOND);
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    const feebas = game.field.getPlayerPokemon();
-    feebas.hp = toDmgValue(feebas.getMaxHp() / 2) + 2;
-    const applySpy = vi.spyOn(feebas.waveData.abilitiesApplied, "add");
-
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    expect(feebas.getHpRatio()).toBeLessThan(0.5);
-
-    // Fake the 2nd hit to always do 1 damage.
-    // This checks for a bug where the ability would only look at the first hit's damage for HP thresholds
-    // and potentially proc twice
-    vi.spyOn(feebas, "getBaseDamage").mockReturnValue(1);
-
-    await game.toEndOfTurn();
-
-    expect(feebas).toHaveAbilityApplied(ability);
-    // TODO: Currently Anger Shell technically activates its ability twice due to its stat increases & drops both using a separate attribute.
-    // Fix once stat changing effects are reworked to allow changing multiple stats in differing amounts.
-    expect(applySpy).toHaveBeenCalledTimes(ability === AbilityId.ANGER_SHELL ? 2 : 1);
-    for (const [statStr, stage] of Object.entries(stages)) {
-      const stat = Number(statStr) as BattleStat;
-      expect(feebas).toHaveStatStage(stat, stage);
-    }
-  });
-
-  // TODO: This is not implemented yet for lack of multi-hit damage aggregates
   it("should only trigger once after all multi-strike hits finish", async () => {
-    game.override.enemyMoveset([MoveId.BULLET_SEED]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
@@ -128,6 +92,15 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.BULLET_SEED);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(feebas.getHpRatio()).toBeLessThan(0.5);
+
+    // Fake the 2nd hit and onwards to always do 1 damage.
+    // This checks for a bug where the ability would only look at the first hit's damage for HP thresholds
+    // and potentially proc twice
+    vi.spyOn(feebas, "getBaseDamage").mockReturnValue(1);
+
     await game.toEndOfTurn();
 
     // Should only have triggered once, after all hits completed
