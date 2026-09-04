@@ -4610,6 +4610,28 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
 }
 
 /**
+ * Helper function to check for exceptions that shouldn't boost Stomping Tantrum's power.
+ * @param user - The Pokemon using Stomping Tantrum.
+ * @param target - The enemy Pokemon.
+ * @returns Whether a relevant exception case is present.
+ * @todo Implement a check for whether move failure was due to the target using a Protect-like move
+ */
+const isStompingTantrumExceptionFunc = (user: Pokemon, target: Pokemon): boolean => {
+  const enemyLastMoveUsed = target.getLastXMoves(2)[1] as TurnMove | undefined;
+  const isLastEnemyMoveSkyDrop =
+    enemyLastMoveUsed
+    && (enemyLastMoveUsed.targets[0] === user.getBattlerIndex()
+      || enemyLastMoveUsed.targets[1] === user.getBattlerIndex())
+    && enemyLastMoveUsed.move === MoveId.SKY_DROP
+    && enemyLastMoveUsed.result === MoveResult.OTHER;
+
+  if (isLastEnemyMoveSkyDrop) {
+    return true;
+  }
+  return false;
+};
+
+/**
  * Helper function to calculate the the base power of an ally's hit when using Beat Up.
  * @param user The Pokemon that used Beat Up.
  * @param allyIndex The party position of the ally contributing to Beat Up.
@@ -11797,11 +11819,24 @@ export function initMoves() {
       .bitingMove()
       .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
-      .attr(MovePowerMultiplierAttr, user => {
+      .attr(MovePowerMultiplierAttr, (user, target) => {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
-        const lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
+        // Exceptions include after being targeted with Sky Drop and after recharging
+        let lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
+        const thirdMostRecentMove = user.getLastXMoves(3)[2] as TurnMove | undefined;
+        if (thirdMostRecentMove && allMoves[thirdMostRecentMove.move].hasAttr("RechargeAttr")) {
+          lastNonDancerMove = thirdMostRecentMove;
+        }
+        const enemyIsException = isStompingTantrumExceptionFunc(user, target);
+        let enemyTwoIsException = false;
+        const enemyTwo = target.getAlly();
+        if (enemyTwo) {
+          enemyTwoIsException = isStompingTantrumExceptionFunc(user, enemyTwo);
+        }
         return lastNonDancerMove
           && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL)
+          && !enemyIsException
+          && !enemyTwoIsException
           ? 2
           : 1;
       })
