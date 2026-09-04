@@ -20,32 +20,30 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
   public pokeballIcon: Phaser.GameObjects.Image;
   public eggMoveIcon: Phaser.GameObjects.Image;
 
+  private readonly iconAnimHandler: PokemonIconAnimHelper;
+  /** Whether the current hatch is a new catch, shiny/variant or form, i.e. whether it idles animated */
+  private isNewUnlock = false;
+  /** Whether this cell is the one the grid cursor is currently on */
+  private highlighted = false;
+
   /**
+   * @param iconAnimHandler the {@linkcode PokemonIconAnimHelper} driving this container's icon animation
    * @param x x position
    * @param y y position
-   * @param hatchData the {@linkcode EggHatchData} to load the icons and sprites for
    */
-  constructor(x: number, y: number, hatchData: EggHatchData) {
+  constructor(iconAnimHandler: PokemonIconAnimHelper, x = 0, y = 0) {
     super(globalScene, x, y);
 
-    const displayPokemon = hatchData.pokemon;
-    this.species = displayPokemon.species;
+    this.iconAnimHandler = iconAnimHandler;
 
     const offset = 2;
     const rightSideX = 12;
-    const species = displayPokemon.species;
-    const female = displayPokemon.gender === Gender.FEMALE;
-    const formIndex = displayPokemon.formIndex;
-    const variant = displayPokemon.variant;
-    const isShiny = displayPokemon.shiny;
 
-    // Pokemon sprite
-    const pokemonIcon = globalScene.add.sprite(-offset, offset, species.getIconAtlasKey(formIndex, isShiny, variant));
+    // Placeholder sprites, `setHatchData` should be called before display
+    const pokemonIcon = globalScene.add.sprite(-offset, offset, "pokemon_icons_0");
     pokemonIcon.setScale(0.5);
     pokemonIcon.setOrigin(0, 0);
-    pokemonIcon.setFrame(species.getIconId(female, formIndex, isShiny, variant));
     this.icon = pokemonIcon;
-    this.checkIconId(female, formIndex, isShiny, variant);
     this.add(this.icon);
 
     // Shiny icon
@@ -77,13 +75,9 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Update the Pokemon's sprite and icons based on new hatch data
-   * Animates the pokemon icon if it has a new form or shiny variant
-   *
    * @param hatchData the {@linkcode EggHatchData} to base the icons on
-   * @param iconAnimHandler the {@linkcode PokemonIconAnimHelper} to use to animate the sprites
    */
-  updateAndAnimate(hatchData: EggHatchData, iconAnimHandler: PokemonIconAnimHelper) {
+  setHatchData(hatchData: EggHatchData): void {
     const displayPokemon = hatchData.pokemon;
     this.species = displayPokemon.species;
 
@@ -110,12 +104,35 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
     this.hiddenAbilityIcon.setVisible(displayPokemon.abilityIndex === 2);
     this.pokeballIcon.setVisible(!caughtAttr || newForm);
 
-    // add animation to the Pokemon sprite for new unlocks (new catch, new shiny or new form)
-    if (!caughtAttr || newShinyOrVariant || newForm) {
-      iconAnimHandler.addOrUpdate(this.icon, PokemonIconAnimMode.PASSIVE);
-    } else {
-      iconAnimHandler.addOrUpdate(this.icon, PokemonIconAnimMode.NONE);
+    this.isNewUnlock = !caughtAttr || newShinyOrVariant || newForm;
+    this.highlighted = false;
+    this.applyAnimMode();
+  }
+
+  /**
+   * @param highlighted - whether this container is the selected one
+   */
+  setHighlighted(highlighted: boolean): void {
+    if (this.highlighted === highlighted) {
+      return;
     }
+    this.highlighted = highlighted;
+    this.applyAnimMode();
+  }
+
+  /**
+   * Push the animation mode implied by the current hatch data and highlight state onto the icon.
+   */
+  private applyAnimMode(): void {
+    if (this.highlighted) {
+      this.iconAnimHandler.addOrUpdate(this.icon, PokemonIconAnimMode.ACTIVE);
+      return;
+    }
+    if (this.isNewUnlock) {
+      this.iconAnimHandler.addOrUpdate(this.icon, PokemonIconAnimMode.PASSIVE);
+      return;
+    }
+    this.iconAnimHandler.addOrUpdate(this.icon, PokemonIconAnimMode.NONE);
   }
 
   /**

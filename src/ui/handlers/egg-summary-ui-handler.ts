@@ -5,13 +5,11 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Button } from "#enums/buttons";
 import { EggSkipPreference } from "#enums/egg-skip-preference";
-import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { UiMode } from "#enums/ui-mode";
 import { HatchedPokemonContainer } from "#ui/hatched-pokemon-container";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
 import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
-import { ScrollBar } from "#ui/scroll-bar";
 import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
 
 const iconContainerX = 112;
@@ -28,12 +26,8 @@ const iconSize = 18;
 export class EggSummaryUiHandler extends MessageUiHandler {
   /** holds all elements in the scene */
   private eggHatchContainer: Phaser.GameObjects.Container;
-  /** holds the icon containers and info container */
+  /** holds the grid helper and info container */
   private summaryContainer: Phaser.GameObjects.Container;
-  /** container for the each pokemon sprites and icons */
-  private pokemonIconsContainer: Phaser.GameObjects.Container;
-  /** list of the containers added to pokemonIconsContainer for easier access */
-  private pokemonContainers: HatchedPokemonContainer[];
 
   /** hatch info container that displays the current pokemon / hatch (main element on left hand side) */
   private infoContainer: PokemonHatchInfoContainer;
@@ -42,8 +36,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
   private eggHatchBg: Phaser.GameObjects.Image;
   private eggHatchData: EggHatchData[];
 
-  private scrollGridHandler: ScrollableGridHelper;
-  private cursorObj: Phaser.GameObjects.Image;
+  private gridHelper: ScrollableGridHelper<HatchedPokemonContainer, EggHatchData>;
 
   /** used to add a delay before which it is not possible to exit the summary */
   private blockExit: boolean;
@@ -77,13 +70,36 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setOrigin(0, 0);
     this.eggHatchContainer.add(this.eggHatchBg);
 
-    this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
-    this.cursorObj.setOrigin(0, 0);
-    this.summaryContainer.add(this.cursorObj);
-
-    this.pokemonContainers = [];
-    this.pokemonIconsContainer = globalScene.add.container(iconContainerX, iconContainerY);
-    this.summaryContainer.add(this.pokemonIconsContainer);
+    this.gridHelper = new ScrollableGridHelper<HatchedPokemonContainer, EggHatchData>(iconContainerX, iconContainerY, {
+      rows: numRows,
+      columns: numCols,
+      scrollBar: {
+        offsetX: -3,
+        offsetY: 2,
+        width: 4,
+        height: globalScene.scaledCanvas.height - 20,
+      },
+      cells: {
+        spacingX: iconSize,
+        spacingY: iconSize,
+        createCell: () => new HatchedPokemonContainer(this.iconAnimHandler),
+        renderCell: (cell, hatchData) => cell.setHatchData(hatchData),
+      },
+      cursor: {
+        offsetX: -1,
+        offsetY: 1,
+        texture: "select_cursor",
+        width: iconSize,
+        height: iconSize,
+        behindCells: true,
+      },
+      onItemSelected: (cell, hatchData, previous) => {
+        previous?.cell.setHighlighted(false);
+        cell.setHighlighted(true);
+        this.infoContainer.showHatchInfo(hatchData);
+      },
+    });
+    this.summaryContainer.add(this.gridHelper);
 
     this.infoContainer = new PokemonHatchInfoContainer(this.summaryContainer);
     this.infoContainer.setup();
@@ -91,31 +107,18 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.infoContainer.setVisible(true);
     this.summaryContainer.add(this.infoContainer);
 
-    const scrollBar = new ScrollBar(
-      iconContainerX + numCols * iconSize,
-      iconContainerY + 3,
-      4,
-      globalScene.scaledCanvas.height - 20,
-      numRows,
-    );
-    this.summaryContainer.add(scrollBar);
-
-    this.scrollGridHandler = new ScrollableGridHelper(this, numRows, numCols)
-      .withScrollBar(scrollBar)
-      .withUpdateGridCallBack(() => this.updatePokemonIcons())
-      .withUpdateSingleElementCallback((i: number) => this.infoContainer.showHatchInfo(this.eggHatchData[i]));
-
     this.cursor = -1;
   }
 
   clear() {
     super.clear();
-    this.scrollGridHandler.reset();
+    // Drop the items first: this hides every cell and clears the grid's record of the current
+    // selection, so the cells sit idle until the next show() hands them new hatch data
+    this.gridHelper.setItems([]);
+    this.gridHelper.reset();
     this.cursor = -1;
 
     this.summaryContainer.setVisible(false);
-    this.pokemonIconsContainer.removeAll(true);
-    this.pokemonContainers = [];
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
 
@@ -137,7 +140,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     });
     // Clears eggHatchData in EggSummaryUiHandler
     this.eggHatchData.length = 0;
-    // Removes Pokemon icons in EggSummaryUiHandler
+    // Detaches the Pokemon icons from the animation handler; they re-register on the next render
     this.iconAnimHandler.removeAll();
   }
 
@@ -174,9 +177,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setVisible(true);
     this.infoContainer.hideDisplayPokemon();
 
-    this.scrollGridHandler.setTotalElements(this.eggHatchData.length);
-    this.updatePokemonIcons();
-    this.setCursor(0);
+    this.gridHelper.setItems(this.eggHatchData);
 
     audioManager.replaceBgmUntilEnd("bw/evolution_fanfare");
 
@@ -187,34 +188,6 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     globalScene.time.delayedCall(exitBlockingDuration, () => (this.blockExit = false));
 
     return true;
-  }
-
-  /**
-   * Show the grid of Pokemon icons
-   */
-  private updatePokemonIcons(): void {
-    const itemOffset = this.scrollGridHandler.getItemOffset();
-    const eggsToShow = Math.min(numRows * numCols, this.eggHatchData.length - itemOffset);
-
-    for (let i = 0; i < numRows * numCols; i++) {
-      const hatchData = this.eggHatchData[i + itemOffset];
-      let hatchContainer = this.pokemonContainers[i];
-
-      if (i < eggsToShow) {
-        if (!hatchContainer) {
-          const x = (i % numCols) * iconSize;
-          const y = Math.floor(i / numCols) * iconSize;
-          hatchContainer = new HatchedPokemonContainer(x, y, hatchData).setVisible(false);
-          this.pokemonContainers.push(hatchContainer);
-          this.pokemonIconsContainer.add(hatchContainer);
-        }
-        hatchContainer.setVisible(true);
-        hatchContainer.updateAndAnimate(hatchData, this.iconAnimHandler);
-      } else if (hatchContainer) {
-        hatchContainer.setVisible(false);
-        this.iconAnimHandler.addOrUpdate(hatchContainer.icon, PokemonIconAnimMode.NONE);
-      }
-    }
   }
 
   processInput(button: Button): boolean {
@@ -233,7 +206,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
         success = true;
       }
     } else {
-      this.scrollGridHandler.processInput(button);
+      success = this.gridHelper.processInput(button);
     }
 
     if (success) {
@@ -243,29 +216,5 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     }
 
     return success || error;
-  }
-
-  setCursor(cursor: number): boolean {
-    let changed = false;
-
-    const lastCursor = this.cursor;
-
-    changed = super.setCursor(cursor);
-
-    if (changed) {
-      this.cursorObj.setPosition(
-        iconContainerX - 1 + iconSize * (cursor % numCols),
-        iconContainerY + 1 + iconSize * Math.floor(cursor / numCols),
-      );
-
-      if (lastCursor > -1) {
-        this.iconAnimHandler.addOrUpdate(this.pokemonContainers[lastCursor].icon, PokemonIconAnimMode.NONE);
-      }
-      this.iconAnimHandler.addOrUpdate(this.pokemonContainers[cursor].icon, PokemonIconAnimMode.ACTIVE);
-
-      this.infoContainer.showHatchInfo(this.eggHatchData[cursor + this.scrollGridHandler.getItemOffset()]);
-    }
-
-    return changed;
   }
 }

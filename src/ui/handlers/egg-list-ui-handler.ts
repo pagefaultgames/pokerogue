@@ -1,33 +1,28 @@
 import { globalScene } from "#app/global-scene";
+import type { Egg } from "#data/egg";
 import { Button } from "#enums/buttons";
 import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
-import { ScrollBar } from "#ui/scroll-bar";
 import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
-export class EggListUiHandler extends MessageUiHandler {
-  private readonly ROWS = 9;
-  private readonly COLUMNS = 11;
+const ROWS = 9;
+const COLS = 11;
 
+export class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;
-  private eggListIconContainer: Phaser.GameObjects.Container;
-  private eggIcons: Phaser.GameObjects.Sprite[];
   private eggSprite: Phaser.GameObjects.Sprite;
   private eggNameText: Phaser.GameObjects.Text;
   private eggDateText: Phaser.GameObjects.Text;
   private eggHatchWavesText: Phaser.GameObjects.Text;
   private eggGachaInfoText: Phaser.GameObjects.Text;
-  private eggListMessageBoxContainer: Phaser.GameObjects.Container;
 
-  private cursorObj: Phaser.GameObjects.Image;
-  private scrollGridHandler: ScrollableGridHelper;
-
+  private gridHelper: ScrollableGridHelper<Phaser.GameObjects.Sprite, Egg>;
   private iconAnimHandler: PokemonIconAnimHelper;
 
   constructor() {
@@ -49,33 +44,33 @@ export class EggListUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHelper();
 
     this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY).setOrigin(0);
-
     this.eggDateText = addTextObject(8, 91, "", TextStyle.EGG_LIST);
-
     this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
-
     this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
-
-    this.eggListIconContainer = globalScene.add.container(113, 5);
-
-    this.cursorObj = globalScene.add.image(0, 0, "select_cursor").setOrigin(0);
-
     this.eggSprite = globalScene.add.sprite(54, 37, "egg");
 
-    const scrollBar = new ScrollBar(310, 5, 4, 170, this.ROWS);
-
-    this.scrollGridHandler = new ScrollableGridHelper(this, this.ROWS, this.COLUMNS)
-      .withScrollBar(scrollBar)
-      .withUpdateGridCallBack(() => this.updateEggIcons())
-      .withUpdateSingleElementCallback((i: number) => this.setEggDetails(i));
-
-    this.eggListMessageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height).setVisible(false);
-
-    const eggListMessageBox = addWindow(1, -1, 318, 28).setOrigin(0, 1);
-    this.eggListMessageBoxContainer.add(eggListMessageBox);
-
-    // Message isn't used, but is expected to exist as this subclasses MessageUiHandler
-    this.message = addTextObject(8, -8, "", TextStyle.WINDOW, { maxLines: 1 }).setActive(false).setVisible(false);
+    this.gridHelper = new ScrollableGridHelper<Phaser.GameObjects.Sprite, Egg>(111, 7, {
+      rows: ROWS,
+      columns: COLS,
+      scrollBar: { offsetX: -1, offsetY: -2, width: 4, height: 170 },
+      cells: {
+        spacingX: 18,
+        spacingY: 18,
+        createCell: () => globalScene.add.sprite(0, 0, "egg_icons").setScale(0.5).setOrigin(0),
+        renderCell: (cell, egg) => {
+          cell.setFrame(egg.getKey());
+          this.iconAnimHandler.addOrUpdate(cell, PokemonIconAnimMode.NONE);
+        },
+      },
+      cursor: { offsetX: 1, texture: "select_cursor", width: 18, height: 18 },
+      onItemSelected: (cell, egg, previous) => {
+        if (previous) {
+          this.iconAnimHandler.addOrUpdate(previous.cell, PokemonIconAnimMode.NONE);
+        }
+        this.iconAnimHandler.addOrUpdate(cell, PokemonIconAnimMode.ACTIVE);
+        this.showEggDetails(egg);
+      },
+    });
 
     this.cursor = -1;
 
@@ -90,72 +85,26 @@ export class EggListUiHandler extends MessageUiHandler {
       this.eggDateText,
       this.eggHatchWavesText,
       this.eggGachaInfoText,
-      this.eggListIconContainer,
-      this.cursorObj,
+      this.gridHelper,
       this.eggSprite,
-      scrollBar,
     ]);
   }
 
   override show(args: any[]): boolean {
     super.show(args);
 
-    this.initEggIcons();
-
     this.getUi().bringToTop(this.eggListContainer);
-
     this.eggListContainer.setVisible(true);
 
-    this.scrollGridHandler.setTotalElements(globalScene.gameData.eggs.length);
-
-    this.updateEggIcons();
-    this.setCursor(0);
+    this.gridHelper.setItems(globalScene.gameData.eggs);
 
     return true;
   }
 
   /**
-   * Create the grid of egg icons to display
+   * Update the information panel for the given egg.
    */
-  private initEggIcons() {
-    this.eggIcons = [];
-    for (let i = 0; i < Math.min(this.ROWS * this.COLUMNS, globalScene.gameData.eggs.length); i++) {
-      const x = (i % this.COLUMNS) * 18;
-      const y = Math.floor(i / this.COLUMNS) * 18;
-      const icon = globalScene.add
-        .sprite(x - 2, y + 2, "egg_icons")
-        .setScale(0.5)
-        .setOrigin(0);
-      this.eggListIconContainer.add(icon);
-      this.eggIcons.push(icon);
-    }
-  }
-
-  /**
-   * Show the grid of egg icons
-   */
-  private updateEggIcons() {
-    const indexOffset = this.scrollGridHandler.getItemOffset();
-    const eggsToShow = Math.min(this.eggIcons.length, globalScene.gameData.eggs.length - indexOffset);
-    this.eggIcons.forEach((icon, i) => {
-      if (i !== this.cursor) {
-        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
-      }
-      if (i < eggsToShow) {
-        const egg = globalScene.gameData.eggs[i + indexOffset];
-        icon.setFrame(egg.getKey()).setVisible(true);
-      } else {
-        icon.setVisible(false);
-      }
-    });
-  }
-
-  /**
-   * Update the information panel with the information of the given egg
-   * @param index which egg in the list to display the info for
-   */
-  private setEggDetails(index: number): void {
-    const egg = globalScene.gameData.eggs[index];
+  private showEggDetails(egg: Egg): void {
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
     this.eggNameText.setText(`${i18next.t("egg:egg")} (${egg.getEggDescriptor()})`);
     this.eggDateText.setText(
@@ -179,7 +128,7 @@ export class EggListUiHandler extends MessageUiHandler {
       ui.revertMode();
       success = true;
     } else {
-      success = this.scrollGridHandler.processInput(button);
+      success = this.gridHelper.processInput(button);
     }
 
     if (success) {
@@ -189,35 +138,12 @@ export class EggListUiHandler extends MessageUiHandler {
     return success;
   }
 
-  setCursor(cursor: number): boolean {
-    let changed = false;
-
-    const lastCursor = this.cursor;
-
-    changed = super.setCursor(cursor);
-
-    if (changed) {
-      const icon = this.eggIcons[cursor];
-      this.cursorObj.setPositionRelative(icon, 114, 5);
-
-      if (lastCursor > -1) {
-        this.iconAnimHandler.addOrUpdate(this.eggIcons[lastCursor], PokemonIconAnimMode.NONE);
-      }
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.ACTIVE);
-
-      this.setEggDetails(cursor + this.scrollGridHandler.getItemOffset());
-    }
-
-    return changed;
-  }
-
   clear(): void {
     super.clear();
-    this.scrollGridHandler.reset();
+    this.gridHelper.setItems([]);
+    this.gridHelper.reset();
     this.cursor = -1;
     this.eggListContainer.setVisible(false);
     this.iconAnimHandler.removeAll();
-    this.eggListIconContainer.removeAll(true);
-    this.eggIcons = [];
   }
 }
