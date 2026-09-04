@@ -48,6 +48,8 @@ import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RegistrationFormUiHandler } from "#ui/registration-form-ui-handler";
 import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import { RenameRunFormUiHandler } from "#ui/rename-run-ui-handler";
+import { ResetCodeUiHandler } from "#ui/reset-code-ui-handler";
+import { ResetPasswordFormUiHandler } from "#ui/reset-password-form-ui-handler";
 import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
@@ -108,6 +110,8 @@ const noTransitionModes = [
   UiMode.RUN_INFO,
   UiMode.CHANGE_PASSWORD_FORM,
   UiMode.ALERT_MODAL,
+  UiMode.RESET_CODE,
+  UiMode.RESET_PASSWORD_FORM,
 ];
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
@@ -183,6 +187,8 @@ export class UI extends Phaser.GameObjects.Container {
       new MysteryEncounterUiHandler(),
       new ChangePasswordFormUiHandler(),
       new AlertModalUiHandler(),
+      new ResetCodeUiHandler(),
+      new ResetPasswordFormUiHandler(),
     ];
   }
 

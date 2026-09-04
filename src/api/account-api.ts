@@ -6,8 +6,10 @@ import type {
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
+  AccountResetPwRequest,
 } from "#types/api";
 import { removeCookie, setCookie } from "#utils/cookies";
+import { setResetCode } from "#utils/reset-code";
 
 /** A wrapper for PokéRogue account API requests. */
 export class PokerogueAccountApi extends ApiBase {
@@ -21,6 +23,7 @@ export class PokerogueAccountApi extends ApiBase {
 
       if (response.ok) {
         const resData = (await response.json()) as AccountInfoResponse;
+        setResetCode(resData.username, resData.resetCode);
         return [resData, response.status];
       }
       console.warn("Could not get account info!", response.status, response.statusText);
@@ -104,6 +107,21 @@ export class PokerogueAccountApi extends ApiBase {
       return response.text();
     } catch (err) {
       console.warn("Change password failed!", err);
+    }
+
+    return "Unknown error!";
+  }
+
+  public async resetPassword(resetPwData: AccountResetPwRequest): Promise<string | null> {
+    try {
+      const response = await this.doPost("/account/resetpw", resetPwData, "form-urlencoded");
+      if (response.ok) {
+        return null;
+      }
+      console.warn("Reset password failed!", response.status, response.statusText);
+      return response.text();
+    } catch (err) {
+      console.warn("Reset password failed!", err);
     }
 
     return "Unknown error!";

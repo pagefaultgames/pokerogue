@@ -6,6 +6,7 @@ export interface UserInfo {
   discordId: string;
   googleId: string;
   hasAdminRole: boolean;
+  resetCode: string;
 }
 
 export interface TitleStatsResponse {
@@ -38,6 +39,12 @@ export interface AccountChangePwResponse {
   success: boolean;
 }
 
+export interface AccountResetPwRequest {
+  username: string;
+  resetCode: string;
+  password: string;
+}
+
 // #endregion Account API
 
 // #region Admin API
@@ -58,6 +65,7 @@ export interface SearchAccountResponse {
   username: string;
   discordId: string;
   googleId: string;
+  resetCode: string;
   lastLoggedIn: string;
   registered: string;
   systemData?: SystemSaveData;
