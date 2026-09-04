@@ -50,8 +50,8 @@ export abstract class HeldItemBase {
    * @defaultValue `"se/restore"`
    *
    * @privateRemarks
-   * The default value is arbitrary from before the modifier rework. We may want to
-   * revisit it at some point.
+   * The default value is arbitrary from before the modifier rework.
+   * We may want to revisit it at some point.
    */
   public get soundName(): string {
     return "se/restore";
