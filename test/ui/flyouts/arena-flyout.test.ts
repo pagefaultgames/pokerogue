@@ -134,7 +134,7 @@ describe("UI - Arena Flyout", () => {
       { name: "Heavy Rain", weatherType: WeatherType.HEAVY_RAIN },
       { name: "Strong Winds", weatherType: WeatherType.STRONG_WINDS },
     ])("should not display a turn count for $name", ({ weatherType }) => {
-      const arena = game.scene.arena;
+      const { arena } = game.scene;
       // Set the weather via the arena with a user (as the primal weather abilities do),
       // rather than by dispatching a synthetic event
       expect(arena.trySetWeather(weatherType, game.field.getPlayerPokemon())).toBe(true);
