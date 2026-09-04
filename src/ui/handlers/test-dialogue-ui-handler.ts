@@ -83,7 +83,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (
         ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase())
-        && ui.getMode() === UiMode.AUTO_COMPLETE
+        && ui.mode === UiMode.AUTO_COMPLETE
       ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
@@ -93,7 +93,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
 
     input.on("textchange", (inputObject, evt: InputEvent) => {
       // Delete autocomplete.
-      if (ui.getMode() === UiMode.AUTO_COMPLETE) {
+      if (ui.mode === UiMode.AUTO_COMPLETE) {
         ui.revertMode();
       }
 
@@ -142,7 +142,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
         this.inputs[0].text = args[1];
       }
       this.submitAction = () => {
-        if (ui.getMode() === UiMode.TEST_DIALOGUE) {
+        if (ui.mode === UiMode.TEST_DIALOGUE) {
           this.sanitizeInputs();
           const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
           config.buttonActions[0](sanitizedName);
