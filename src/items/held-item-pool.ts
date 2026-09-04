@@ -167,14 +167,25 @@ function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
   }
 }
 
-// TODO: Add proper documentation to this function (once it fully works...)
+/**
+ * Assign randomly generated held items to an enemy Pokemon.
+ * @param waveIndex - Index of the current wave
+ * @param count - Max number of held items the enemy should end up holding (including existing items)
+ * @param enemy - The {@linkcode EnemyPokemon} to receive the items
+ * @param poolType - Which tiered pool to draw from ({@linkcode HeldItemPoolType.WILD | WILD} or {@linkcode HeldItemPoolType.TRAINER | TRAINER})
+ * @param upgradeChanceDivisor - If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
+ * to be bumped up one rarity tier. `0` (default) disables tier upgrades.
+ *
+ * @privateRemarks
+ * The `waveIndex` parameter currently only exists to assign black hole on X000 waves,
+ * but can be used for any other wave-specific items if needed.
+ */
 export function assignEnemyHeldItemsForWave(
   waveIndex: number,
   count: number,
   enemy: EnemyPokemon,
   poolType: HeldItemPoolType.WILD | HeldItemPoolType.TRAINER,
-  // TODO: This isn't a 'chance' (X%), it's a divisor (1 in X)
-  upgradeChance = 0,
+  upgradeChanceDivisor = 0,
 ): void {
   const existingItemCount = enemy.heldItemManager.getItemCount();
   count -= existingItemCount;
@@ -183,14 +194,13 @@ export function assignEnemyHeldItemsForWave(
   }
 
   for (let i = 0; i < count; i++) {
-    const upgraded = upgradeChance > 0 && randSeedInt(upgradeChance) === 0 ? 1 : 0;
+    const upgraded = upgradeChanceDivisor > 0 && randSeedInt(upgradeChanceDivisor) === 0 ? 1 : 0;
     const item = getNewHeldItemFromTieredPool(getHeldItemPool(poolType), enemy, upgraded);
     if (item) {
       enemy.heldItemManager.add(item);
     }
   }
 
-  // TODO: Why is this handled here of all places...
   if (!(waveIndex % 1000)) {
     enemy.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
   }
