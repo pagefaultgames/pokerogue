@@ -3394,7 +3394,7 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   protected getTargetHeldBerries(target: Pokemon): BerryItemId[] {
-    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
+    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY)) as BerryItemId[];
   }
 
   /**
