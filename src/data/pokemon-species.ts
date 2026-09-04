@@ -10,6 +10,7 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { MoveId } from "#enums/move-id";
@@ -27,12 +28,15 @@ import type { LevelMoves } from "#types/level-moves";
 import type { Localizable } from "#types/locales";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { applyChallenges } from "#utils/challenge-utils";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
 import { randSeedFloat } from "#utils/common";
 import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
+import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
+import type { If, IsNumericLiteral } from "type-fest";
 
 export enum Region {
   NORMAL,
@@ -159,6 +163,7 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
+  // TODO: This is pointless. Remove these getters and make the fields public.
   get generation(): number {
     return this._generation;
   }
@@ -179,38 +184,41 @@ export abstract class PokemonSpeciesForm {
     return this.type1 === type || (this.type2 !== null && this.type2 === type);
   }
 
-  /**
-   * Method to get the total number of abilities a Pokemon species has.
-   * @returns Number of abilities
-   */
-  getAbilityCount(): number {
+  /** @returns The total number of abilities a Pokemon species has */
+  public getAbilityCount(): number {
     return this.abilityHidden === AbilityId.NONE ? 2 : 3;
   }
 
   /**
    * Method to get the ability of a Pokemon species.
-   * @param abilityIndex Which ability to get (should only be 0-2)
+   * @param abilityIndex - Which ability to get (should only be 0-2)
    * @returns The id of the Ability
    */
-  getAbility(abilityIndex: number): AbilityId {
-    let ret: AbilityId;
+  public getAbility<I extends number>(abilityIndex: If<IsNumericLiteral<I>, 0 | 1 | 2, I>): AbilityId {
+    const abilityId = new ValueHolder(AbilityId.NONE);
+
     if (abilityIndex === 0) {
-      ret = this.ability1;
+      abilityId.value = this.ability1;
     } else if (abilityIndex === 1) {
-      ret = this.ability2;
+      abilityId.value = this.ability2;
     } else {
-      ret = this.abilityHidden;
+      abilityId.value = this.abilityHidden;
     }
-    return ret;
+
+    applyChallenges(ChallengeType.SPECIES_ABILITY_MODIFY, this.speciesId, abilityId);
+
+    return abilityId.value;
   }
 
   /**
    * Method to get the passive ability of a Pokemon species
-   * @param formIndex The form index to use, defaults to form for this species instance
+   * @param formIndex - The form index to use, defaults to form for this species instance
    * @returns The id of the ability
    */
-  getPassiveAbility(formIndex = this.formIndex): AbilityId {
-    return speciesDataRegistry.getPassive(this.speciesId, formIndex);
+  public getPassiveAbility(formIndex = this.formIndex): AbilityId {
+    const abilityId = new ValueHolder(speciesDataRegistry.getPassive(this.speciesId, formIndex));
+    applyChallenges(ChallengeType.PASSIVE_ABILITY_MODIFY, this.speciesId, abilityId);
+    return abilityId.value;
   }
 
   /**
@@ -220,6 +228,7 @@ export abstract class PokemonSpeciesForm {
    */
   public getLevelMoves(form?: string | number): LevelMoves {
     const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, form);
+    applyChallenges(ChallengeType.LEVEL_UP_MOVESET, this, levelMoves);
     return levelMoves.sort((a, b) => a[0] - b[0]);
   }
 

@@ -1,7 +1,8 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import type { PokemonSpecies } from "#data/pokemon-species";
+import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
+import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
@@ -10,9 +11,11 @@ import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import type { DexEntry } from "#types/dex-data";
+import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
-import { BooleanHolder, type NumberHolder } from "./common";
+import { BooleanHolder, type NumberHolder } from "#utils/common";
+import type { ValueHolder } from "#utils/value-holder";
 
 /**
  * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
@@ -269,6 +272,79 @@ export function applyChallenges(
  */
 export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE, status: BooleanHolder): boolean;
 
+/**
+ * Apply all challenges that modify a Pokemon's moveset after generation
+ * @param challengeType - {@linkcode ChallengeType.MOVESET_MODIFY}
+ * @param pokemon - The Pokemon whose moveset is being modified
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(challengeType: ChallengeType.MOVESET_MODIFY, pokemon: Pokemon): boolean;
+
+/**
+ * Apply all challenges that modify a species' level up moveset
+ * @param challengeType - {@linkcode ChallengeType.LEVEL_UP_MOVESET}
+ * @param species - The species whose level up moveset is being modified
+ * @param levelMoves - The level up moveset being modified
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.LEVEL_UP_MOVESET,
+  species: PokemonSpeciesForm,
+  levelMoves: LevelMoves,
+): boolean;
+
+/**
+ * Apply all challenges that modify a player Pokemon's TM compatibility list
+ * @param challengeType - {@linkcode ChallengeType.PLAYER_TM_COMPATIBILITY}
+ * @param pokemon - The player Pokemon whose TM compatibility is being modified
+ * @param tms - A `Set` containing the list of compatible TMs
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.PLAYER_TM_COMPATIBILITY,
+  pokemon: PlayerPokemon,
+  tms: Set<MoveId>,
+): boolean;
+
+/**
+ * Apply all challenges that modify an enemy Pokemon's TM compatibility list
+ * @param challengeType - {@linkcode ChallengeType.ENEMY_TM_COMPATIBILITY}
+ * @param pokemon - The enemy Pokemon whose TM compatibility is being modified
+ * @param tmList - The Pokemon's TM compatibility list
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.ENEMY_TM_COMPATIBILITY,
+  pokemon: Pokemon,
+  tmList: Map<MoveId, number>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the innate abilities of a species
+ * @param challengeType - {@linkcode ChallengeType.SPECIES_ABILITY_MODIFY}
+ * @param species - The ID of the species whose abilities are being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SPECIES_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the passive ability of a species
+ * @param challengeType - {@linkcode ChallengeType.PASSIVE_ABILITY_MODIFY}
+ * @param speciesId - The ID of the species whose passive ability is being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.PASSIVE_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -342,6 +418,27 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           break;
         case ChallengeType.PREVENT_REVIVE:
           ret ||= c.applyPreventRevive(args[0]);
+          break;
+        case ChallengeType.MOVESET_MODIFY:
+          ret ||= c.applyMovesetModify(args[0]);
+          break;
+        case ChallengeType.LEVEL_UP_MOVESET:
+          ret ||= c.applyLevelUpMoveset(args[0], args[1]);
+          break;
+        case ChallengeType.PLAYER_TM_COMPATIBILITY:
+          ret ||= c.applyPlayerTMCompatibility(args[0], args[1]);
+          break;
+        case ChallengeType.ENEMY_TM_COMPATIBILITY:
+          ret ||= c.applyEnemyTMCompatibility(args[0], args[1]);
+          break;
+        case ChallengeType.SPECIES_ABILITY_MODIFY:
+          ret ||= c.applySpeciesAbilityModify(args[0], args[1]);
+          break;
+        case ChallengeType.PASSIVE_ABILITY_MODIFY:
+          ret ||= c.applyPassiveAbilityModify(args[0], args[1]);
+          break;
+        default:
+          challengeType satisfies never;
           break;
       }
     }
