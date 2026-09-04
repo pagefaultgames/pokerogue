@@ -1,3 +1,4 @@
+import { toCamelCase } from "#utils/strings";
 import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 
@@ -106,7 +107,6 @@ type HeldItemNameMap = {
 type HeldItemName = keyof typeof HeldItemId;
 
 /** `const object` mapping all held item IDs to their respective names. */
-// TODO: This stores names as UPPER_SNAKE_CASE, but the locales are in PascalCase...
 export const HeldItemNames = Object.freeze(
   Object.entries(HeldItemId).reduce(
     // Use a type-safe reducer to force number keys and values
@@ -137,6 +137,22 @@ export const HeldItemCategoryId = {
 
 export type HeldItemCategoryId = ValueOf<typeof HeldItemCategoryId>;
 
+type HeldItemCategoryNameMap = {
+  [k in HeldItemCategoryName as (typeof HeldItemCategoryId)[k]]: k;
+};
+
+type HeldItemCategoryName = keyof typeof HeldItemCategoryId;
+
+export const HeldItemCategoryNames = Object.freeze(
+  Object.entries(HeldItemCategoryId).reduce(
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {} as Record<HeldItemCategoryId, HeldItemCategoryName>,
+  ),
+) as HeldItemCategoryNameMap;
+
 const ITEM_CATEGORY_MASK = 0xff00;
 
 export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
@@ -154,6 +170,45 @@ export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryI
 
 export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemCategoryId | HeldItemId)[]): boolean {
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
+}
+
+/**
+ * Compute the locales key of the category of the provided held item.
+ * @param itemId - The ID of the item
+ * @returns The locales key of the category associated with the item
+ *
+ * @remarks
+ * There is not a locales entry for every category and this function does not
+ * verify that one exists. As a result, category keys should only be used as fallbacks
+ * for item-specific keys. This allows using one category key instead of individually
+ * defined keys for repetitive items (i.e. x items) without code changes.
+ */
+function getHeldItemCategoryKey(itemId: HeldItemId): string {
+  const category = getHeldItemCategory(itemId);
+  switch (category) {
+    case HeldItemCategoryId.RARE_FORM_CHANGE:
+      return "item:formChange.description";
+    default:
+      if (itemId === HeldItemId.LUCKY_EGG || itemId === HeldItemId.GOLDEN_EGG) {
+        // can't put this in the switch because the category is shared with soothe bell
+        return "item:pokemonExpBooster.description";
+      }
+      return `item:${toCamelCase(HeldItemCategoryNames[category])}.description`;
+  }
+}
+
+/**
+ * Resolve a {@linkcode HeldItemId} into an [itemKey, categoryKey] tuple.
+ * @param itemId - The ID of the item
+ * @param customKey - A key to use instead of the default derived from {@linkcode HeldItemNames}
+ * @returns The [itemKey, categoryKey] tuple
+ */
+export function resolveHeldItemDescriptionKey(
+  itemId: HeldItemId,
+  customKey?: string,
+): [itemKey: string, categoryKey: string] {
+  const itemKey = customKey ?? `item:${toCamelCase(HeldItemNames[itemId])}.description`;
+  return [itemKey, getHeldItemCategoryKey(itemId)];
 }
 
 // TODO: Add type test to make sure held items and trainer item IDs don't overlap with either themselves, each other or categories

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { HeldItemEffect } from "#enums/held-item-effect";
-import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
+import { type HeldItemId, HeldItemNames, resolveHeldItemDescriptionKey } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { HeldItemBuilder } from "#items/held-item-builder";
@@ -41,7 +41,7 @@ export abstract class HeldItemBase {
   }
 
   public get description(): string {
-    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.description`);
+    return i18next.t(resolveHeldItemDescriptionKey(this.type));
   }
 
   public get iconName(): string {

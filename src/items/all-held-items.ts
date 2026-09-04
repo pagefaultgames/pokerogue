@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import { getBerryDescriptionOptions } from "#data/berry";
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
@@ -40,6 +41,8 @@ import { SurviveChanceHeldItemAttr } from "#items/survive-chance";
 import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
+import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
 
 // #region Types
 // TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
@@ -97,6 +100,7 @@ const berryItems = getEnumValues(BerryType).reduce(
     berryId satisfies BerryItemId;
     ret[berryId] = new HeldItemBuilder(berryId, maxStackCount) //
       .attr(BerryHeldItemAttr, berry)
+      .description({ options: getBerryDescriptionOptions(berry) })
       .iconName(`${BerryType[berry].toLowerCase()}_berry`)
       .build();
     return ret;
@@ -113,6 +117,12 @@ const typeBoostHeldItems = (
     const id = attackTypeToHeldItem[pokemonType] satisfies TypeBoostItemId;
     ret[id] = new HeldItemBuilder(id, 99) //
       .attr(AttackTypeBoostHeldItemAttr, pokemonType, 0.2)
+      .description({
+        options: {
+          type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[pokemonType])}`),
+          boostPercent: 20,
+        },
+      })
       .unstealable()
       .untransferable()
       .unsuppressable()
@@ -130,6 +140,12 @@ const vitaminItems = PERMANENT_STATS.reduce(
     id satisfies BaseStatItemId;
     ret[id] = new HeldItemBuilder(id, 30) //
       .attr(BaseStatMultiplyHeldItemAttr, stat)
+      .description({
+        options: {
+          stat: i18next.t(`pokemonInfo:stat.${toCamelCase(Stat[stat])}`),
+          boostPercent: 10,
+        },
+      })
       .unstealable()
       .untransferable()
       .unsuppressable()
@@ -199,50 +215,66 @@ const heldItems = {
 
   [HeldItemId.LUCKY_EGG]: new HeldItemBuilder(HeldItemId.LUCKY_EGG, 99) //
     .attr(ExpBoosterHeldItemAttr, 40)
+    .description({ options: { boostPercent: 40 } })
     .build(),
   [HeldItemId.GOLDEN_EGG]: new HeldItemBuilder(HeldItemId.GOLDEN_EGG, 99) //
     .attr(ExpBoosterHeldItemAttr, 100)
+    .description({ options: { boostPercent: 100 } })
     .build(),
   [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3) //
     .attr(FriendshipBoosterHeldItemAttr)
+    .description({ options: { boostPercent: 50 } })
     .build(),
 
   [HeldItemId.LEFTOVERS]: new HeldItemBuilder(HeldItemId.LEFTOVERS, 4) //
     .attr(TurnEndHealHeldItemAttr)
+    .description({ options: { healDenominator: 16 } })
     .build(),
   [HeldItemId.SHELL_BELL]: new HeldItemBuilder(HeldItemId.SHELL_BELL, 4) //
     .attr(HitHealHeldItemAttr)
+    .description({ options: { healDenominator: 8 } })
     .iconName("shell_bell")
     .build(),
 
-  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(), //
+  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5) //
+    .attr(SurviveChanceHeldItemAttr)
+    .description({ options: { chancePercent: 10, hp: 1 } })
+    .build(),
   [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
     .attr(BypassSpeedChanceHeldItemAttr)
+    .description({ options: { chancePercent: 10 } })
     .build(),
   [HeldItemId.KINGS_ROCK]: new HeldItemBuilder(HeldItemId.KINGS_ROCK, 3) //
     .attr(FlinchChanceHeldItemAttr, 10)
+    .description({ options: { chancePercent: 10 } })
     .build(),
   [HeldItemId.MYSTICAL_ROCK]: new HeldItemBuilder(HeldItemId.MYSTICAL_ROCK, 2) //
     .attr(FieldEffectHeldItemAttr)
+    .description({ options: { turns: 2 } })
     .build(),
   [HeldItemId.SOUL_DEW]: new HeldItemBuilder(HeldItemId.SOUL_DEW, 10) //
     .attr(NatureWeightBoosterHeldItemAttr)
+    .description({ options: { boostPercent: 10 } })
     .build(),
   [HeldItemId.WIDE_LENS]: new HeldItemBuilder(HeldItemId.WIDE_LENS, 3) //
     .attr(AccuracyBoosterHeldItemAttr, 5)
+    .description({ options: { accuracy: 5 } })
     .build(),
   [HeldItemId.MULTI_LENS]: new HeldItemBuilder(HeldItemId.MULTI_LENS, 2) //
     .attr(MultiHitCountHeldItemAttr)
     .attr(MultiHitDamageModifyHeldItemAttr)
+    .description({ options: { damagePercent: 25 } })
     .build(),
   [HeldItemId.GOLDEN_PUNCH]: new HeldItemBuilder(HeldItemId.GOLDEN_PUNCH, 5) //
     .attr(DamageMoneyRewardHeldItemAttr)
+    .description({ options: { moneyPercent: 50 } })
     .build(),
   [HeldItemId.BATON]: new HeldItemBuilder(HeldItemId.BATON, 1) //
     .attr(BatonHeldItemAttr)
     .build(),
   [HeldItemId.GRIP_CLAW]: new HeldItemBuilder(HeldItemId.GRIP_CLAW, 5) //
     .attr(ContactItemStealChanceHeldItemAttr, 10)
+    .description({ options: { chancePercent: 10 } })
     .build(),
   [HeldItemId.MINI_BLACK_HOLE]: new HeldItemBuilder(HeldItemId.MINI_BLACK_HOLE, 1) //
     .attr(TurnEndItemStealHeldItemAttr)
@@ -262,7 +294,6 @@ const heldItems = {
     .unstealable()
     .untransferable()
     .unsuppressable()
-    .description("item:shuckleJuiceGood.description")
     .iconName("berry_juice_good")
     .build(),
   [HeldItemId.SHUCKLE_JUICE_BAD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_BAD, 1) //
@@ -270,7 +301,6 @@ const heldItems = {
     .unstealable()
     .untransferable()
     .unsuppressable()
-    .description("item:shuckleJuiceBad.description")
     .iconName("berry_juice_bad")
     .build(),
   [HeldItemId.OLD_GATEAU]: new HeldItemBuilder(HeldItemId.OLD_GATEAU, 1) //

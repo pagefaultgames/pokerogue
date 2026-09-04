@@ -1,9 +1,11 @@
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
-import type { TrainerItemId } from "#enums/trainer-item-id";
+import { resolveTrainerItemDescriptionKey, type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import { TrainerItem } from "#items/trainer-item";
 import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
 import type { DataMap } from "#types/common";
 import type { ErrorType } from "#types/error-type";
+import type { ItemLocaleConfig } from "#types/locales";
+import { toCamelCase } from "#utils/strings";
 import type i18next from "i18next";
 import type { Constructor } from "type-fest";
 
@@ -102,26 +104,28 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
   // #region Localization
 
   /**
-   * Set this item's name localization parameters.
-   * @param params - The parameters to pass to `i18next.t` when localizing this item's name
+   * Set this item's name localization configuration.
+   * @param config - The localization configuration object
    * @returns `this`
    * @remarks
    * If this method is not called, the item will use the default localization key provided by `TrainerItemBase`.
    */
-  public name(...params: Parameters<typeof i18next.t>): this {
-    this.nameParams = params;
+  public name(config: ItemLocaleConfig): this {
+    const key = config.key ?? `item:${toCamelCase(TrainerItemNames[this.id])}.name`;
+    this.nameParams = config.options == null ? [key] : [key, config.options];
     return this;
   }
 
   /**
-   * Set this item's description localization parameters.
-   * @param params - The parameters to pass to `i18next.t` when localizing this item's description
+   * Set this item's description localization configuration.
+   * @param config - The localization configuration object
    * @returns `this`
    * @remarks
    * If this method is not called, the item will use the default localization key provided by `TrainerItemBase`.
    */
-  public description(...params: Parameters<typeof i18next.t>): this {
-    this.descriptionParams = params;
+  public description(config: ItemLocaleConfig): this {
+    const key = resolveTrainerItemDescriptionKey(this.id, config.key);
+    this.descriptionParams = config.options == null ? [key] : [key, config.options];
     return this;
   }
 

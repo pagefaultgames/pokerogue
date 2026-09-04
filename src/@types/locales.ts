@@ -1,5 +1,12 @@
+import type { TOptions } from "i18next";
+
 export interface Localizable {
   localize(): void;
+}
+
+export interface ItemLocaleConfig {
+  key?: string;
+  options?: TOptions;
 }
 
 export interface SimpleTranslationEntries {

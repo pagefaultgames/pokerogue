@@ -1,3 +1,5 @@
+import { toCamelCase } from "#utils/strings";
+
 export const TrainerItemId = {
   MAP: 0x1001,
   IV_SCANNER: 0x1002,
@@ -64,3 +66,40 @@ export const TrainerItemNames: Record<TrainerItemValue, TrainerItemName> = Objec
   },
   {} as Record<TrainerItemValue, TrainerItemName>,
 );
+
+/**
+ * Compute the locales key of the category of the provided trainer item.
+ * @param itemId - The ID of the trainer item
+ * @returns The locales key of the category, or `undefined` if it doesn't exist
+ *
+ * @remarks
+ * Unlike held items, these are not automatically derived (there is no category enum).
+ */
+function getTrainerItemCategoryKey(itemId: TrainerItemId): string | undefined {
+  if (itemId >= TrainerItemId.LURE && itemId <= TrainerItemId.MAX_LURE) {
+    return "item:doubleBattleChanceBooster.description";
+  }
+  if (itemId >= TrainerItemId.X_ATTACK && itemId <= TrainerItemId.X_ACCURACY) {
+    return "item:tempStatStageBooster.description";
+  }
+  if (itemId >= TrainerItemId.EXP_CHARM && itemId <= TrainerItemId.GOLDEN_EXP_CHARM) {
+    return "item:expBooster.description";
+  }
+  if (
+    itemId === TrainerItemId.ENEMY_ATTACK_POISON_CHANCE
+    || itemId === TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE
+    || itemId === TrainerItemId.ENEMY_ATTACK_BURN_CHANCE
+  ) {
+    return "item:enemyAttackStatusEffectChance.description";
+  }
+}
+
+export function resolveTrainerItemDescriptionKey(
+  itemId: TrainerItemId,
+  customKey?: string,
+): [itemKey: string, categoryKey?: string] {
+  const itemKey = customKey ?? `item:${toCamelCase(TrainerItemNames[itemId])}.description`;
+  const categoryKey = getTrainerItemCategoryKey(itemId);
+
+  return categoryKey == null ? [itemKey] : [itemKey, categoryKey];
+}

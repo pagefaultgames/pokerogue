@@ -1,5 +1,6 @@
 import { allTrainerItems } from "#data/data-lists";
-import type { Stat, TempBattleStat } from "#enums/stat";
+import { getStatusEffectDescriptor } from "#data/status-effect";
+import { Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
@@ -33,6 +34,8 @@ import {
 } from "#items/trainer-items/x-items";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import type { Mutable } from "#types/type-helpers";
+import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
 import type { TrainerItemManager } from "./trainer-item-manager";
 
 // #region Marker items
@@ -45,8 +48,12 @@ const markerItems = {
   [TrainerItemId.DYNAMAX_BAND]: new MarkerTrainerItem(TrainerItemId.DYNAMAX_BAND, 1),
   [TrainerItemId.TERA_ORB]: new MarkerTrainerItem(TrainerItemId.TERA_ORB, 1),
 
-  [TrainerItemId.OVAL_CHARM]: new MarkerTrainerItem(TrainerItemId.OVAL_CHARM, 5),
-  [TrainerItemId.EXP_SHARE]: new MarkerTrainerItem(TrainerItemId.EXP_SHARE, 5),
+  [TrainerItemId.OVAL_CHARM]: new MarkerTrainerItem(TrainerItemId.OVAL_CHARM, 5, undefined, {
+    options: { boostPercent: 10 },
+  }),
+  [TrainerItemId.EXP_SHARE]: new MarkerTrainerItem(TrainerItemId.EXP_SHARE, 5, undefined, {
+    options: { sharePercent: 20 },
+  }),
   [TrainerItemId.EXP_BALANCE]: new MarkerTrainerItem(TrainerItemId.EXP_BALANCE, 4),
 
   [TrainerItemId.GOLDEN_BUG_NET]: new MarkerTrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1, "golden_net"),
@@ -70,11 +77,25 @@ const xItems = Object.entries(tempStatToTrainerItem)
       if (trainerItemType === TrainerItemId.X_ACCURACY) {
         acc[trainerItemType] = new TrainerItemBuilder(TrainerItemId.X_ACCURACY, 5) //
           .attr(AccuracyBoosterTrainerItemAttr)
+          .description({
+            options: {
+              stat: i18next.t(`pokemonInfo:stat.${toCamelCase(Stat[stat])}`),
+              boostPercent: 20,
+              battleCount: 5,
+            },
+          })
           .lapsing()
           .build();
       } else {
         acc[trainerItemType] = new TrainerItemBuilder(trainerItemType, 5) //
           .attr(StatStageBoosterTrainerItemAttr, stat as Exclude<TempBattleStat, Stat.ACC>, 0.3)
+          .description({
+            options: {
+              stat: i18next.t(`pokemonInfo:stat.${toCamelCase(Stat[stat])}`),
+              boostPercent: 20,
+              battleCount: 5,
+            },
+          })
           .lapsing()
           .build();
       }
@@ -93,35 +114,50 @@ const trainerItems = {
   ...xItems,
   [TrainerItemId.DIRE_HIT]: new TrainerItemBuilder(TrainerItemId.DIRE_HIT, 5) //
     .attr(CritBoosterTrainerItemAttr)
+    .description({
+      options: {
+        stat: i18next.t("item:direHit.extra.raises"),
+        stages: 1,
+        battleCount: 5,
+      },
+    })
     .lapsing()
     .build(),
 
   [TrainerItemId.CANDY_JAR]: new TrainerItemBuilder(TrainerItemId.CANDY_JAR, 99) //
     .attr(LevelIncrementBoosterTrainerItemAttr)
+    .description({ options: { levels: 1 } })
     .build(),
   [TrainerItemId.BERRY_POUCH]: new TrainerItemBuilder(TrainerItemId.BERRY_POUCH, 3) //
     .attr(PreserveBerryTrainerItemAttr)
+    .description({ options: { chancePercent: 30 } })
     .build(),
 
   [TrainerItemId.HEALING_CHARM]: new TrainerItemBuilder(TrainerItemId.HEALING_CHARM, 5) //
     .attr(HealingBoosterTrainerItemAttr, 0.1)
+    .description({ options: { boostPercent: 10 } })
     .build(),
 
   [TrainerItemId.EXP_CHARM]: new TrainerItemBuilder(TrainerItemId.EXP_CHARM, 99) //
     .attr(ExpBoosterTrainerItemAttr, 25)
+    .description({ options: { boostPercent: 25 } })
     .build(),
   [TrainerItemId.SUPER_EXP_CHARM]: new TrainerItemBuilder(TrainerItemId.SUPER_EXP_CHARM, 30) //
     .attr(ExpBoosterTrainerItemAttr, 60)
+    .description({ options: { boostPercent: 60 } })
     .build(),
   [TrainerItemId.GOLDEN_EXP_CHARM]: new TrainerItemBuilder(TrainerItemId.GOLDEN_EXP_CHARM, 10) //
     .attr(ExpBoosterTrainerItemAttr, 100)
+    .description({ options: { boostPercent: 100 } })
     .build(),
 
   [TrainerItemId.AMULET_COIN]: new TrainerItemBuilder(TrainerItemId.AMULET_COIN, 5) //
     .attr(MoneyMultiplierTrainerItemAttr)
+    .description({ options: { boostPercent: 20 } })
     .build(),
   [TrainerItemId.GOLDEN_POKEBALL]: new TrainerItemBuilder(TrainerItemId.GOLDEN_POKEBALL, 3) //
     .attr(ExtraRewardTrainerItemAttr)
+    .description({ options: { count: 1 } })
     .iconName("pb_gold")
     .build(),
 
@@ -141,39 +177,54 @@ const trainerItems = {
 
   [TrainerItemId.LURE]: new TrainerItemBuilder(TrainerItemId.LURE, 10) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .description({ options: { battleCount: 10 } })
     .lapsing()
     .build(),
   [TrainerItemId.SUPER_LURE]: new TrainerItemBuilder(TrainerItemId.SUPER_LURE, 15) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .description({ options: { battleCount: 15 } })
     .lapsing()
     .build(),
   [TrainerItemId.MAX_LURE]: new TrainerItemBuilder(TrainerItemId.MAX_LURE, 30) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .description({ options: { battleCount: 30 } })
     .lapsing()
     .build(),
 
   [TrainerItemId.ENEMY_DAMAGE_BOOSTER]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_BOOSTER, 999) //
     .attr(EnemyDamageBoosterTrainerItemAttr, 0.05)
+    .description({ options: { boostPercent: 5 } })
     .iconName("wl_item_drop")
     .build(),
   [TrainerItemId.ENEMY_DAMAGE_REDUCTION]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_REDUCTION, 999) //
     .attr(EnemyDamageReducerTrainerItemAttr, 0.025)
+    .description({ options: { reductionPercent: 2.5 } })
     .iconName("wl_guard_spec")
     .build(),
   [TrainerItemId.ENEMY_HEAL]: new TrainerItemBuilder(TrainerItemId.ENEMY_HEAL, 10) //
     .attr(EnemyTurnHealTrainerItemAttr, 2)
+    .description({ options: { healPercent: 2 } })
     .iconName("wl_potion")
     .build(),
   [TrainerItemId.ENEMY_ATTACK_POISON_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_POISON_CHANCE, 10) //
     .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.POISON, 0.05)
+    .description({
+      options: { chancePercent: 5, statusEffect: getStatusEffectDescriptor(StatusEffect.POISON) },
+    })
     .iconName("wl_antidote")
     .build(),
   [TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE, 10) //
     .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.PARALYSIS, 0.025)
+    .description({
+      options: { chancePercent: 2.5, statusEffect: getStatusEffectDescriptor(StatusEffect.PARALYSIS) },
+    })
     .iconName("wl_paralyze_heal")
     .build(),
   [TrainerItemId.ENEMY_ATTACK_BURN_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_BURN_CHANCE, 10) //
     .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.BURN, 0.05)
+    .description({
+      options: { chancePercent: 5, statusEffect: getStatusEffectDescriptor(StatusEffect.BURN) },
+    })
     .iconName("wl_burn_heal")
     .build(),
   [TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE]: new TrainerItemBuilder(
@@ -181,13 +232,16 @@ const trainerItems = {
     10,
   )
     .attr(EnemyStatusEffectHealChanceTrainerItemAttr, 0.025)
+    .description({ options: { chancePercent: 2.5 } })
     .iconName("wl_full_heal")
     .build(),
   [TrainerItemId.ENEMY_ENDURE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ENDURE_CHANCE, 10) //
     .attr(EnemyEndureChanceTrainerItemAttr)
+    .description({ options: { chancePercent: 2 } })
     .build(),
   [TrainerItemId.ENEMY_FUSED_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_FUSED_CHANCE, 10) //
     .attr(EnemyFusionChanceTrainerItemAttr)
+    .description({ options: { chancePercent: 1 } })
     .build(),
 } as const satisfies Readonly<Record<TrainerItemId, MarkerTrainerItem | TrainerItem>>;
 

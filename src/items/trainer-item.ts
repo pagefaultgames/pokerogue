@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
-import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
+import { resolveTrainerItemDescriptionKey, type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
 import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
+import type { ItemLocaleConfig } from "#types/locales";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/color-utils";
@@ -45,7 +46,7 @@ export abstract class TrainerItemBase {
   }
 
   public get description(): string {
-    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.description`);
+    return i18next.t(resolveTrainerItemDescriptionKey(this.type));
   }
 
   public get iconName(): string {
@@ -222,11 +223,25 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
 
 export class MarkerTrainerItem extends TrainerItemBase {
   private readonly customIconName?: string | undefined;
+  private readonly descriptionParams?: Parameters<typeof i18next.t> | undefined;
 
-  constructor(type: TrainerItemId, maxStackCount: number, iconName?: string | undefined) {
+  constructor(
+    type: TrainerItemId,
+    maxStackCount: number,
+    iconName?: string | undefined,
+    descriptionConfig?: ItemLocaleConfig | undefined,
+  ) {
     super(type, maxStackCount);
 
     this.customIconName = iconName;
+    if (descriptionConfig) {
+      const key = resolveTrainerItemDescriptionKey(type, descriptionConfig.key);
+      this.descriptionParams = descriptionConfig.options == null ? [key] : [key, descriptionConfig.options];
+    }
+  }
+
+  public override get description(): string {
+    return this.descriptionParams ? i18next.t(...this.descriptionParams) : super.description;
   }
 
   public override get iconName(): string {
