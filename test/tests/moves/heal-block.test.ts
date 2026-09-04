@@ -122,7 +122,7 @@ describe("Move - Heal Block", () => {
     );
 
     // nobody actually got healed
-    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
   });
 
   it("shouldn't stop Leech Seed from dealing damage, but should nullify healing", async () => {

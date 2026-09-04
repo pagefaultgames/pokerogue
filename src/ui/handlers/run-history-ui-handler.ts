@@ -37,10 +37,6 @@ export class RunHistoryUiHandler extends MessageUiHandler {
 
   private runContainerInitialY: number;
 
-  constructor() {
-    super(UiMode.RUN_HISTORY);
-  }
-
   override setup() {
     const ui = this.getUi();
 

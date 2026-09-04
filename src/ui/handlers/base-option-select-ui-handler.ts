@@ -14,6 +14,9 @@ const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
 
 export abstract class BaseOptionSelectUiHandler extends UiHandler {
+  /** Used to set the name of {@linkcode optionSelectContainer} */
+  protected readonly mode: UiMode;
+
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
@@ -36,6 +39,12 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
   protected textContent: string;
 
+  constructor(mode: UiMode = UiMode.OPTION_SELECT) {
+    super();
+
+    this.mode = mode;
+  }
+
   protected abstract getWindowWidth(): number;
 
   protected getWindowHeight(): number {
@@ -46,7 +55,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -48);
-    this.optionSelectContainer.setName(`option-select-${this.mode ? UiMode[this.mode] : "UNKNOWN"}`);
+    this.optionSelectContainer.setName(`option-select-${UiMode[this.mode]}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
@@ -98,7 +107,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
 
     // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
     // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
-    const optionsForWidth = globalScene.ui.getMode() === UiMode.AUTO_COMPLETE ? optionsWithScroll : options;
+    const optionsForWidth = globalScene.ui.mode === UiMode.AUTO_COMPLETE ? optionsWithScroll : options;
     this.optionSelectText = addBBCodeTextObject(
       0,
       0,
@@ -225,7 +234,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
       } else {
         ui.playError();
       }
-    } else if (button === Button.SUBMIT && ui.getMode() === UiMode.AUTO_COMPLETE) {
+    } else if (button === Button.SUBMIT && ui.mode === UiMode.AUTO_COMPLETE) {
       // this is here to differentiate between a Button.SUBMIT vs Button.ACTION within the autocomplete handler
       // this is here because Button.ACTION is picked up as z on the keyboard, meaning if you're typing and hit z, it'll select the option you've chosen
       success = true;
