@@ -6854,17 +6854,22 @@ export class EnemyPokemon extends Pokemon {
                 /**
                  * Attack moves are given extra multipliers to their base benefit score based on
                  * the move's type effectiveness against the target and whether the move is a STAB move.
+                 * Account for redirect abilities (Storm Drain, Lightning Rod) in doubles:
+                 * score against the Pokemon that would actually receive the move.
                  */
-                const effectiveness = target.getMoveEffectiveness(
+                const effectiveTarget = globalScene.currentBattle.double
+                  ? this.getEffectiveTarget(move.id, target)
+                  : target;
+                const effectiveness = effectiveTarget.getMoveEffectiveness(
                   this,
                   move,
-                  !target.waveData.abilityRevealed,
+                  !effectiveTarget.waveData.abilityRevealed,
                   undefined,
                   undefined,
                   true,
                 );
 
-                if (target.isPlayer() !== this.isPlayer()) {
+                if (effectiveTarget.isPlayer() !== this.isPlayer()) {
                   targetScore *= effectiveness;
                   if (this.isOfType(move.type)) {
                     targetScore *= 1.5;
@@ -7030,6 +7035,35 @@ export class EnemyPokemon extends Pokemon {
     });
 
     return [sortedBenefitScores[targetIndex][0]];
+  }
+
+  /**
+   * Simulates redirect resolution for AI move scoring.
+   * Returns the Pokemon that would actually receive the move after
+   * redirect abilities (Storm Drain, Lightning Rod) are applied.
+   */
+  private getEffectiveTarget(moveId: MoveId, intendedTarget: Pokemon): Pokemon {
+    const move = allMoves[moveId];
+    if (move.moveTarget !== MoveTarget.NEAR_OTHER && move.moveTarget !== MoveTarget.OTHER) {
+      return intendedTarget;
+    }
+
+    const redirectTarget = new NumberHolder(intendedTarget.getBattlerIndex());
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (pokemon !== this) {
+        applyAbAttrs("RedirectMoveAbAttr", {
+          pokemon,
+          moveId,
+          targetIndex: redirectTarget,
+          sourcePokemon: this,
+        });
+      }
+    }
+
+    if (redirectTarget.value !== intendedTarget.getBattlerIndex()) {
+      return globalScene.getField()[redirectTarget.value];
+    }
+    return intendedTarget;
   }
 
   override isPlayer(): this is PlayerPokemon {
