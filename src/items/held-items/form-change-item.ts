@@ -9,6 +9,6 @@ export class FormChangeHeldItem extends CosmeticHeldItem {
   }
 
   get iconName(): string {
-    return HeldItemNames[this.type].toLowerCase();
+    return HeldItemNames[this.id].toLowerCase();
   }
 }

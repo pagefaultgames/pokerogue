@@ -13,8 +13,7 @@ import type { NonEmptyTuple } from "type-fest";
  * Base class for all held items, both functional and cosmetic.
  */
 export abstract class HeldItemBase {
-  // TODO: Rename parameter to `id` or similar
-  public readonly type: HeldItemId;
+  public readonly id: HeldItemId;
   public readonly maxStackCount: number;
 
   /**
@@ -36,15 +35,15 @@ export abstract class HeldItemBase {
   // TODO: Remove these defaults for non-cosmetic held items (and maybe cosmetic ones as well)
   // in favor of explicitly specifying them for each item
   public get name(): string {
-    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.name`);
+    return i18next.t(`item:${toCamelCase(HeldItemNames[this.id])}.name`);
   }
 
   public get description(): string {
-    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.description`);
+    return i18next.t(`item:${toCamelCase(HeldItemNames[this.id])}.description`);
   }
 
   public get iconName(): string {
-    return `${HeldItemNames[this.type]?.toLowerCase()}`;
+    return `${HeldItemNames[this.id]?.toLowerCase()}`;
   }
 
   /**
@@ -57,7 +56,7 @@ export abstract class HeldItemBase {
   }
 
   constructor(type: HeldItemId, maxStackCount = 1) {
-    this.type = type;
+    this.id = type;
     this.maxStackCount = maxStackCount;
   }
 
@@ -116,7 +115,7 @@ export abstract class HeldItemBase {
   }
 
   getStackCount(pokemon: Pokemon): number {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getStack(this.id);
     return stackCount;
   }
 

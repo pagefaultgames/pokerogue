@@ -13,7 +13,7 @@ import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
 export abstract class TrainerItemBase {
-  public readonly type: TrainerItemId;
+  public readonly id: TrainerItemId;
 
   /**
    * Private backing property for `maxStackCount`
@@ -35,21 +35,21 @@ export abstract class TrainerItemBase {
   public readonly isLapsing: boolean;
 
   constructor(type: TrainerItemId, maxStackCount: number | (() => number), isLapsing = false) {
-    this.type = type;
+    this.id = type;
     this.#maxStackCount = maxStackCount;
     this.isLapsing = isLapsing;
   }
 
   public get name(): string {
-    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.name`);
+    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.id])}.name`);
   }
 
   public get description(): string {
-    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.description`);
+    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.id])}.description`);
   }
 
   public get iconName(): string {
-    return `${TrainerItemNames[this.type]?.toLowerCase()}`;
+    return `${TrainerItemNames[this.id]?.toLowerCase()}`;
   }
 
   public createIcon(stackCount: number): Phaser.GameObjects.Container {
