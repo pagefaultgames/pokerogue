@@ -22,9 +22,7 @@ overrides:
   yaml@>=2.0.0 <2.8.3: '>=2.8.3'
 
 patchedDependencies:
-  '@material/material-color-utilities':
-    hash: a7c4bd77eeb4f5d318cbab031556e5f87c153cb12d8788ae0bdc42f2c63cb83a
-    path: patches/@material__material-color-utilities.patch
+  '@material/material-color-utilities': a7c4bd77eeb4f5d318cbab031556e5f87c153cb12d8788ae0bdc42f2c63cb83a
 
 importers:
 
