@@ -248,19 +248,19 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
       } else {
         pokemon.heldItemManager.add(entry, actualCount);
       }
-      return;
+      continue;
     }
 
     if (isHeldItemSpecs(entry)) {
       pokemon.heldItemManager.add(entry);
-      return;
+      continue;
     }
 
     // TODO: Overly permissive type - this should not be able to take a HeldItemCategoryEntry if
     // the result would be analogous to passing the category directly
     if (isHeldItemCategoryEntry(entry)) {
       assignItemsFromCategory(entry.id, pokemon, actualCount);
-      return;
+      continue;
     }
 
     entry satisfies HeldItemPool;
