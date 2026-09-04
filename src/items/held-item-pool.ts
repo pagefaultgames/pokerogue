@@ -42,7 +42,7 @@ function initWildHeldItemPool() {
     { entry: HeldItemCategoryId.BERRY, weight: 1 },
   ];
   (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
-    { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
+    { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
   ];
   (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
     { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
@@ -58,10 +58,10 @@ function initWildHeldItemPool() {
 function initTrainerHeldItemPool() {
   (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
     { entry: HeldItemCategoryId.BERRY, weight: 8 },
-    { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 },
+    { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
   ];
   (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
-    { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 },
+    { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
   ];
   (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
     { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
@@ -87,7 +87,7 @@ function initTrainerHeldItemPool() {
  */
 function initDailyStarterRewardPool(): void {
   (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
-    { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
+    { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
     { entry: HeldItemCategoryId.BERRY, weight: 3 },
   ];
   (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
