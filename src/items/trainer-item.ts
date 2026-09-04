@@ -18,15 +18,7 @@ export abstract class TrainerItemBase {
   /**
    * Private backing property for `maxStackCount`
    */
-  // TODO: This is added for the SOLE purpose of supporting endure tokens' dynamic max stack count.
-  readonly #maxStackCount: number | (() => number);
-  public get maxStackCount(): number {
-    return typeof this.#maxStackCount === "function" ? this.#maxStackCount() : this.#maxStackCount;
-  }
-  // TODO: Remove as we now expose the base property
-  getMaxStackCount(): number {
-    return this.maxStackCount;
-  }
+  public readonly maxStackCount: number;
 
   /**
    * Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts).
@@ -34,9 +26,9 @@ export abstract class TrainerItemBase {
    */
   public readonly isLapsing: boolean;
 
-  constructor(type: TrainerItemId, maxStackCount: number | (() => number), isLapsing = false) {
+  constructor(type: TrainerItemId, maxStackCount: number, isLapsing = false) {
     this.id = type;
-    this.#maxStackCount = maxStackCount;
+    this.maxStackCount = maxStackCount;
     this.isLapsing = isLapsing;
   }
 
@@ -71,7 +63,7 @@ export abstract class TrainerItemBase {
     if (this.isLapsing) {
       // Generate the text with a linearly interpolated hue based on remaining duration
       // Ranges from #f2dbd9 / #822017 (≈ 0% duration) to #d9f2db / #178220 (100% duration)
-      const hue = Math.floor(120 * (stackCount / this.getMaxStackCount()) + 5);
+      const hue = Math.floor(120 * (stackCount / this.maxStackCount) + 5);
       const typeHex = hslToHex(hue, 0.5, 0.9);
       const strokeHex = hslToHex(hue, 0.7, 0.3);
 
@@ -84,7 +76,7 @@ export abstract class TrainerItemBase {
         .setOrigin(1, 0);
     }
 
-    if (this.getMaxStackCount() === 1 || stackCount < 1) {
+    if (this.maxStackCount === 1 || stackCount < 1) {
       return;
     }
 
@@ -92,7 +84,7 @@ export abstract class TrainerItemBase {
       .bitmapText(10, 15, "item-count", stackCount.toString(), 11)
       .setLetterSpacing(-0.5)
       .setOrigin(0);
-    if (stackCount >= this.getMaxStackCount()) {
+    if (stackCount >= this.maxStackCount) {
       text.setTint(0xf89890);
     }
 
