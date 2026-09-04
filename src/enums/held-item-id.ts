@@ -203,7 +203,10 @@ function getHeldItemCategoryKey(itemId: HeldItemId): string {
  * @param customKey - A key to use instead of the default derived from {@linkcode HeldItemNames}
  * @returns The [itemKey, categoryKey] tuple
  */
-export function resolveHeldItemDescriptionKey(itemId: HeldItemId, customKey?: string): [string, string] {
+export function resolveHeldItemDescriptionKey(
+  itemId: HeldItemId,
+  customKey?: string,
+): [itemKey: string, categoryKey: string] {
   const itemKey = customKey ?? `item:${toCamelCase(HeldItemNames[itemId])}.description`;
   return [itemKey, getHeldItemCategoryKey(itemId)];
 }

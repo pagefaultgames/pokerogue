@@ -94,7 +94,10 @@ function getTrainerItemCategoryKey(itemId: TrainerItemId): string | undefined {
   }
 }
 
-export function resolveTrainerItemDescriptionKey(itemId: TrainerItemId, customKey?: string): string[] {
+export function resolveTrainerItemDescriptionKey(
+  itemId: TrainerItemId,
+  customKey?: string,
+): [itemKey: string, categoryKey?: string] {
   const itemKey = customKey ?? `item:${toCamelCase(TrainerItemNames[itemId])}.description`;
   const categoryKey = getTrainerItemCategoryKey(itemId);
 

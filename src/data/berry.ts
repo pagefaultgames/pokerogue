@@ -8,6 +8,7 @@ import { HitResult } from "#enums/hit-result";
 import { type BattleStat, Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next, { type TOptions } from "i18next";
 
 export function getBerryName(berryType: BerryType): string {
@@ -43,7 +44,7 @@ export function getBerryDescriptionOptions(berryType: BerryType): BerryDescripti
 
 export function getBerryEffectDescription(berryType: BerryType): string {
   return i18next.t(
-    [`item:${BerryType[berryType].toLowerCase()}.description`, "item:berry.description"],
+    [`item:${toCamelCase(BerryType[berryType])}.description`, "item:berry.description"],
     getBerryDescriptionOptions(berryType),
   );
 }
