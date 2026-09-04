@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
@@ -40,6 +41,16 @@ describe("Test Battle Phase", () => {
     await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.mode).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
+  });
+
+  it("keeps double wild bosses with equal BST from dropping below 2 segments", async () => {
+    game.override.enemySpecies(SpeciesId.GUMSHOOS).battleStyle("double").battleType(BattleType.WILD).startingWave(80);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
+
+    const enemyField = game.scene.getEnemyField();
+    expect(enemyField).toHaveLength(2);
+    expect(enemyField.every(enemyPokemon => enemyPokemon.species.speciesId === SpeciesId.GUMSHOOS)).toBe(true);
+    expect(enemyField.every(enemyPokemon => enemyPokemon.bossSegments === 2)).toBe(true);
   });
 
   it("startBattle 2vs2 trainer", async () => {
