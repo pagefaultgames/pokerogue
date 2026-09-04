@@ -4568,7 +4568,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     await this.loadAssets();
     this.calculateStats();
-    globalScene.updateItems(this.isPlayer());
+    globalScene.updateItemBar(this.isPlayer());
     await Promise.all([this.updateInfo(this.isFainted()), globalScene.updateFieldScale()]);
   }
 
@@ -6285,7 +6285,7 @@ export class PlayerPokemon extends Pokemon {
         heldItems.forEach(item => {
           newPokemon.heldItemManager.add(item, this.heldItemManager.getStack(item));
         });
-        globalScene.updateItems(true);
+        globalScene.updateItemBar(true);
       }
     }
   }
@@ -6331,7 +6331,7 @@ export class PlayerPokemon extends Pokemon {
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
-          globalScene.updateItems(true);
+          globalScene.updateItemBar(true);
           this.updateInfo(true).then(() => resolve());
         });
       };
@@ -6399,7 +6399,7 @@ export class PlayerPokemon extends Pokemon {
     for (const item of fusedPartyMemberHeldItems) {
       globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getStack(item), true, false);
     }
-    globalScene.updateItems(true);
+    globalScene.updateItemBar(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
     const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
     pokemon

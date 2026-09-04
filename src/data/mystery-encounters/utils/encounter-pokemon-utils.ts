@@ -634,7 +634,7 @@ export async function catchPokemon(
         if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === 6) {
           globalScene.validateAchv(achvs.SHINY_PARTY);
         }
-        globalScene.updateItems(true);
+        globalScene.updateItemBar(true);
         removePokemon();
         if (newPokemon) {
           newPokemon.loadAssets().then(end);

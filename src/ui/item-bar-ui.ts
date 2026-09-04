@@ -20,9 +20,11 @@ export class ItemBar extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Method to update content displayed in {@linkcode ItemBar}
-   * @param {PersistentItem[]} items - The list of items to be displayed in the {@linkcode ItemBar}
-   * @param {boolean} hideHeldItems - If set to "true", only items not assigned to a Pokémon are displayed
+   * Update the bar to include the provided trainer items and the items from each
+   * provided Pokemon.
+   * @param trainerItems - The {@linkcode TrainerItemManager} for the trainer to use
+   * @param pokemonA - (Optional) The first Pokemon whose items should be drawn to the bar
+   * @param pokemonB - (Optional) The second Pokemon whose items should be drawn to the bar
    */
   updateItems(trainerItems: TrainerItemManager, pokemonA?: Pokemon, pokemonB?: Pokemon) {
     this.removeAll(true);

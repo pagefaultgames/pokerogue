@@ -264,7 +264,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       .reduce((max, current) => Math.max(current, max), 0);
 
     /* Force updateItems without pokemon held items */
-    globalScene.updateItems(true, false);
+    globalScene.updateItemBar(true, false);
 
     globalScene.showShopOverlay(fixedInt(750));
     globalScene.updateAndShowText(750);
@@ -740,7 +740,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
-    globalScene.updateItems(true);
+    globalScene.updateItemBar(true);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);

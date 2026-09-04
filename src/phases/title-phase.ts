@@ -287,7 +287,7 @@ export class TitlePhase extends Phase {
         // TODO: This needs to account for timed event manager fixed items
         assignDailyRunStarterHeldItems(party);
 
-        globalScene.updateItems(true);
+        globalScene.updateItemBar(true);
 
         Promise.all(loadPokemonAssets).then(async () => {
           globalScene.time.delayedCall(500, () => audioManager.playBgm());

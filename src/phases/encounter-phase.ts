@@ -325,7 +325,7 @@ export class EncounterPhase extends BattlePhase {
 
   protected doEncounter(): void {
     audioManager.playBgm(undefined, true);
-    globalScene.updateItems(false);
+    globalScene.updateItemBar(false);
     globalScene.setFieldScale(1);
 
     for (const pokemon of globalScene.getPlayerParty()) {
@@ -355,7 +355,7 @@ export class EncounterPhase extends BattlePhase {
         }
       },
     });
-    globalScene.updateItems(false);
+    globalScene.updateItemBar(false);
 
     const encounterIntroVisuals = globalScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (encounterIntroVisuals) {

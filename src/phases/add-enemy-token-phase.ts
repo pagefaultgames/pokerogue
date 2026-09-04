@@ -20,7 +20,7 @@ export class AddEnemyTokenPhase extends Phase {
       assignEnemyBuffTokenForWave(tier);
     }
 
-    globalScene.updateItems(false);
+    globalScene.updateItemBar(false);
 
     this.end();
   }

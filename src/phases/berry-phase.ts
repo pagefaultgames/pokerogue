@@ -69,7 +69,7 @@ export class BerryPhase extends FieldPhase {
     );
 
     applyHeldItems(HeldItemEffect.BERRY, { pokemon });
-    globalScene.updateItems(pokemon.isPlayer());
+    globalScene.updateItemBar(pokemon.isPlayer());
     // TODO: This is less than ideal
     if (pokemon.queuedBerryStatChanges.length > 0) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {

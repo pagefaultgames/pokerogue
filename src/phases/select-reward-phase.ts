@@ -173,7 +173,7 @@ export class SelectRewardPhase extends BattlePhase {
       }
     } else {
       globalScene.applyReward(reward, {}, true);
-      globalScene.updateItems(true);
+      globalScene.updateItemBar(true);
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
       super.end();

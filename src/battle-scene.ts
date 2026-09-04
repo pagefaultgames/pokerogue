@@ -969,7 +969,7 @@ export class BattleScene extends SceneBase {
       this.field.remove(pokemon, true);
       pokemon.destroy();
     }
-    this.updateItems(true);
+    this.updateItemBar(true);
   }
 
   addPokemonIcon(
@@ -2441,7 +2441,7 @@ export class BattleScene extends SceneBase {
     }
 
     if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-      this.updateItems(source.isPlayer());
+      this.updateItemBar(source.isPlayer());
     }
 
     // TODO: held items don't have sounds
@@ -2562,7 +2562,7 @@ export class BattleScene extends SceneBase {
         upgradeChance,
       );
     }
-    this.updateItems(false);
+    this.updateItemBar(false);
   }
 
   /**
@@ -2573,7 +2573,7 @@ export class BattleScene extends SceneBase {
     for (const p of this.getEnemyParty()) {
       p.heldItemManager.clearItems();
     }
-    this.updateItems(false);
+    this.updateItemBar(false);
     this.updateUIPositions();
   }
 
@@ -2586,7 +2586,7 @@ export class BattleScene extends SceneBase {
     for (const p of this.getEnemyParty()) {
       p.heldItemManager.clearItems();
     }
-    this.updateItems(false);
+    this.updateItemBar(false);
     this.updateUIPositions();
   }
 
@@ -2594,14 +2594,15 @@ export class BattleScene extends SceneBase {
     [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
 
-  // TODO: Document this
-  updateItems(player = true, showHeldItems = true): void {
+  /**
+   * Update the item bar for the given side.
+   * @param player - Whether to use the player (`true`) or enemy side
+   * @param showHeldItems - Whether to include the held items of the first Pokemon in the party
+   */
+  updateItemBar(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
-
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
-
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
-
     const bar = player ? this.itemBar : this.enemyItemBar;
 
     if (showHeldItems) {
@@ -3034,7 +3035,7 @@ export class BattleScene extends SceneBase {
           const hasMachoBrace = partyMember.heldItemManager.hasItem(HeldItemId.MACHO_BRACE);
           if (hasMachoBrace) {
             partyMember.heldItemManager.add(HeldItemId.MACHO_BRACE);
-            this.updateItems(true);
+            this.updateItemBar(true);
             partyMember.updateInfo();
           }
         }
