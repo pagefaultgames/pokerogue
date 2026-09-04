@@ -61,11 +61,6 @@ export abstract class HeldItemBase {
     this.maxStackCount = maxStackCount;
   }
 
-  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
-  getMaxStackCount(): number {
-    return this.maxStackCount;
-  }
-
   createSummaryIcon(pokemon?: Pokemon, overrideStackCount?: number): Phaser.GameObjects.Container {
     const stackCount = overrideStackCount ?? (pokemon ? this.getStackCount(pokemon) : 0);
 
@@ -99,7 +94,7 @@ export abstract class HeldItemBase {
   }
 
   getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
-    if (this.getMaxStackCount() === 1) {
+    if (this.maxStackCount === 1) {
       return null;
     }
 
@@ -107,7 +102,7 @@ export abstract class HeldItemBase {
       .bitmapText(10, 15, "item-count", stackCount.toString(), 11)
       .setLetterSpacing(-0.5)
       .setOrigin(0);
-    if (stackCount >= this.getMaxStackCount()) {
+    if (stackCount >= this.maxStackCount) {
       // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114955458
       text.setTint(0xf89890);
     }

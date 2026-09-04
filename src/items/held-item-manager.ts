@@ -20,7 +20,7 @@ import { isHeldItemSpecs } from "#utils/item-utils";
 export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: HeldItemId): number {
-    return (allHeldItems[id] satisfies HeldItem | CosmeticHeldItem).getMaxStackCount();
+    return (allHeldItems[id] satisfies HeldItem | CosmeticHeldItem).maxStackCount;
   }
 
   protected override isSpecs(entry: unknown): entry is HeldItemSpecs {

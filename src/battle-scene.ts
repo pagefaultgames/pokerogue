@@ -2420,7 +2420,7 @@ export class BattleScene extends SceneBase {
     const itemStack = source.heldItemManager.getStack(heldItemId);
     const matchingItemStack = target.heldItemManager.getStack(heldItemId);
 
-    const maxStackCount = allHeldItems[heldItemId].getMaxStackCount();
+    const maxStackCount = allHeldItems[heldItemId].maxStackCount;
     if (matchingItemStack >= maxStackCount) {
       return false;
     }
@@ -2467,7 +2467,7 @@ export class BattleScene extends SceneBase {
     const itemStack = source.heldItemManager.getStack(heldItemId);
     const matchingItemStack = target.heldItemManager.getStack(heldItemId);
 
-    const maxStackCount = allHeldItems[heldItemId].getMaxStackCount();
+    const maxStackCount = allHeldItems[heldItemId].maxStackCount;
     if (matchingItemStack >= maxStackCount) {
       return false;
     }
