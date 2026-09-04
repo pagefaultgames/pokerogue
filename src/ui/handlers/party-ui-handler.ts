@@ -43,6 +43,11 @@ const DISCARD_BUTTON_X_DOUBLES = 64;
 const DISCARD_BUTTON_Y = -73;
 const DISCARD_BUTTON_Y_DOUBLES = -58;
 
+const isManageLayoutMode = (partyUiMode: PartyUiMode) =>
+  partyUiMode === PartyUiMode.MODIFIER_TRANSFER
+  || partyUiMode === PartyUiMode.DISCARD
+  || partyUiMode === PartyUiMode.CHECK;
+
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
 export enum PartyOption {
@@ -62,6 +67,7 @@ export enum PartyOption {
   RENAME,
   SELECT,
   DISCARD,
+  SWITCH,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -122,6 +128,9 @@ export class PartyUiHandler extends MessageUiHandler {
   private transferQuantitiesMax: number[];
   /** Whether to transfer all items */
   private transferAll: boolean;
+
+  private partySwitchMode = false;
+  private partySwitchCursor = -1;
 
   private lastCursor = 0;
   private lastLeftPokemonCursor = 0;
@@ -279,6 +288,11 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyUiMode = args[0] as PartyUiMode;
 
+    const touchControls = document?.getElementById("touchControls");
+    if (touchControls) {
+      touchControls.dataset.partyMode = PartyUiMode[this.partyUiMode];
+    }
+
     this.fieldIndex = args.length > 1 ? (args[1] as number) : -1;
 
     this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : undefined;
@@ -292,12 +306,14 @@ export class PartyUiHandler extends MessageUiHandler {
     this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
-    if (this.isItemManageMode()) {
+    if (isManageLayoutMode(this.partyUiMode)) {
       this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double_manage" : ""}`);
     } else {
       this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double" : ""}`);
     }
 
+    this.partySwitchMode = false;
+    this.partySwitchCursor = -1;
     this.populatePartySlots();
     // If we are currently transferring items, set the icon to its proper state and reveal the button.
     if (this.isItemManageMode()) {
@@ -749,6 +765,13 @@ export class PartyUiHandler extends MessageUiHandler {
       return this.processOptionMenuInput(Button.CANCEL);
     }
 
+    if (this.partyUiMode === PartyUiMode.CHECK && option === PartyOption.SWITCH) {
+      this.clearOptions();
+      this.startPartySwitchSelection(this.cursor);
+      ui.playSelect();
+      return true;
+    }
+
     // If the input has been already processed we are done, otherwise move on until the correct option is found
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
@@ -966,6 +989,42 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private processPartyActionInput(): boolean {
     const ui = this.getUi();
+    if (
+      this.partyUiMode === PartyUiMode.CHECK
+      && !this.partySwitchMode
+      && this.partySwitchCursor >= 0
+      && this.cursor < 6
+    ) {
+      if (this.cursor === this.partySwitchCursor) {
+        this.clearPartySwitchSelection();
+      } else {
+        this.swapPartyMembers(this.partySwitchCursor, this.cursor);
+        this.clearPartySwitchSelection();
+      }
+      ui.playSelect();
+      return true;
+    }
+    if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchMode) {
+      if (this.cursor < 6) {
+        if (this.partySwitchCursor < 0) {
+          this.partySwitchCursor = this.cursor;
+          this.partySlots[this.partySwitchCursor].setTransfer(true);
+        } else if (this.cursor === this.partySwitchCursor) {
+          this.clearPartySwitchSelection();
+        } else {
+          this.swapPartyMembers(this.partySwitchCursor, this.cursor);
+          this.clearPartySwitchSelection();
+        }
+        ui.playSelect();
+        return true;
+      }
+      if (this.cursor === 7) {
+        this.clearPartySwitch();
+        ui.playSelect();
+        return true;
+      }
+      return false;
+    }
     if (this.cursor < 6) {
       if (
         (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode)
@@ -988,6 +1047,15 @@ export class PartyUiHandler extends MessageUiHandler {
     // Toggle item transfer mode to discard items or vice versa
     // Prevent changing mode, when currently transfering an item
     if (this.cursor === 7 && !this.transferMode) {
+      if (this.partyUiMode === PartyUiMode.CHECK) {
+        if (this.partySwitchMode) {
+          this.clearPartySwitch();
+        } else {
+          this.startPartySwitch(-1);
+        }
+        ui.playSelect();
+        return true;
+      }
       switch (this.partyUiMode) {
         case PartyUiMode.DISCARD:
           this.partyUiMode = PartyUiMode.MODIFIER_TRANSFER;
@@ -1016,6 +1084,9 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private processPartyCancelInput(): boolean {
     const ui = this.getUi();
+    if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchMode) {
+      this.clearPartySwitchSelection();
+    }
     if (
       (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE)
       && this.transferMode
@@ -1055,7 +1126,7 @@ export class PartyUiHandler extends MessageUiHandler {
       // The following logic serves to ensure its menu behaviour matches its in-game position,
       // being selected when scrolling up from the first inactive party member or down from the last active one.
       case Button.UP:
-        if (this.isItemManageMode()) {
+        if (this.isItemManageMode() || this.partyUiMode === PartyUiMode.CHECK) {
           if (this.cursor === 1) {
             success = this.setCursor(globalScene.currentBattle.double ? 0 : 7);
             break;
@@ -1076,7 +1147,7 @@ export class PartyUiHandler extends MessageUiHandler {
         success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
         break;
       case Button.DOWN:
-        if (this.isItemManageMode()) {
+        if (this.isItemManageMode() || this.partyUiMode === PartyUiMode.CHECK) {
           if (this.cursor === 0) {
             success = this.setCursor(globalScene.currentBattle.double && slotCount > 1 ? 1 : 7);
             break;
@@ -1096,7 +1167,9 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case Button.LEFT:
         if (this.cursor === 6) {
-          success = this.setCursor(this.isItemManageMode() ? 7 : this.lastLeftPokemonCursor);
+          success = this.setCursor(
+            this.isItemManageMode() || this.partyUiMode === PartyUiMode.CHECK ? 7 : this.lastLeftPokemonCursor,
+          );
         }
         if (this.cursor >= battlerCount && this.cursor < 6) {
           success = this.setCursor(this.lastLeftPokemonCursor);
@@ -1470,6 +1543,9 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.CHECK:
         this.addCommonOptions(pokemon);
+        if (globalScene.getPlayerParty().length >= 2) {
+          this.options.splice(1, 0, PartyOption.SWITCH);
+        }
         if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
           if (pokemon.isFusion()) {
             this.options.push(PartyOption.UNSPLICE);
@@ -1727,6 +1803,51 @@ export class PartyUiHandler extends MessageUiHandler {
     }
   }
 
+  private startPartySwitch(startCursor = this.cursor): void {
+    this.partySwitchMode = true;
+    this.partySwitchCursor = startCursor;
+    if (this.partySwitchCursor >= 0) {
+      this.partySlots[this.partySwitchCursor].setTransfer(true);
+    }
+  }
+
+  private clearPartySwitch(): void {
+    if (this.partySwitchCursor >= 0) {
+      this.partySlots[this.partySwitchCursor].setTransfer(false);
+    }
+    this.partySwitchMode = false;
+    this.partySwitchCursor = -1;
+    this.showPartyText();
+  }
+
+  private clearPartySwitchSelection(): void {
+    if (this.partySwitchCursor >= 0) {
+      this.partySlots[this.partySwitchCursor].setTransfer(false);
+    }
+    this.partySwitchCursor = -1;
+    this.showPartyText();
+  }
+
+  private startPartySwitchSelection(startCursor: number): void {
+    this.partySwitchCursor = startCursor;
+    if (this.partySwitchCursor >= 0) {
+      this.partySlots[this.partySwitchCursor].setTransfer(true);
+    }
+    this.showPartyText();
+  }
+
+  private swapPartyMembers(firstIndex: number, secondIndex: number): void {
+    if (firstIndex < 0 || secondIndex < 0 || firstIndex === secondIndex) {
+      return;
+    }
+    const party = globalScene.getPlayerParty();
+    [party[firstIndex], party[secondIndex]] = [party[secondIndex], party[firstIndex]];
+    this.cursor = secondIndex;
+    this.clearPartySlots();
+    this.populatePartySlots();
+    this.showPartyText();
+  }
+
   doRelease(slotIndex: number): void {
     this.showText(
       this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getPlayerParty()[slotIndex], false)),
@@ -1860,6 +1981,11 @@ export class PartyUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear();
     this.partyContainer.setVisible(false);
     this.clearPartySlots();
+
+    const touchControls = document?.getElementById("touchControls");
+    if (touchControls) {
+      delete touchControls.dataset.partyMode;
+    }
   }
 
   clearPartySlots() {
@@ -1897,7 +2023,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   ) {
     const isBenched = slotIndex >= globalScene.currentBattle.getBattlerCount();
     const isDoubleBattle = globalScene.currentBattle.double;
-    const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
+    const isItemManageMode = isManageLayoutMode(partyUiMode);
 
     /*
      * Here we determine the position of the slot.
@@ -1934,7 +2060,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
-    const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
+    const isItemManageMode = isManageLayoutMode(partyUiMode);
 
     this.slotBgKey = this.isBenched
       ? "party_slot"
