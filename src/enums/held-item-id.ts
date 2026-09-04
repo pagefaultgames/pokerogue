@@ -106,7 +106,6 @@ type HeldItemNameMap = {
 type HeldItemName = keyof typeof HeldItemId;
 
 /** `const object` mapping all held item IDs to their respective names. */
-// TODO: This stores names as UPPER_SNAKE_CASE, but the locales are in PascalCase...
 export const HeldItemNames = Object.freeze(
   Object.entries(HeldItemId).reduce(
     // Use a type-safe reducer to force number keys and values
