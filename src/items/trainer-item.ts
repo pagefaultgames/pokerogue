@@ -98,11 +98,6 @@ export abstract class TrainerItemBase {
 
     return text;
   }
-
-  // TODO: This is unused
-  getScoreMultiplier(): number {
-    return 1;
-  }
 }
 
 /**
