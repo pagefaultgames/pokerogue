@@ -37,7 +37,7 @@ describe("Move - Roar", () => {
     expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-    await vi.waitUntil(() => game.scene.ui.getMode() === UiMode.MODIFIER_SELECT);
+    await vi.waitUntil(() => game.scene.ui.mode === UiMode.MODIFIER_SELECT);
 
     return game.scene.ui.getHandler() as ModifierSelectUiHandler;
   }
@@ -70,7 +70,7 @@ describe("Move - Roar", () => {
     const enemyIdAfter = game.field.getEnemyPokemon().id;
 
     expect(enemyIdAfter).not.toBe(enemyIdBefore);
-    expect(game.scene.ui.getMode()).not.toBe(UiMode.MODIFIER_SELECT);
+    expect(game.scene.ui.mode).not.toBe(UiMode.MODIFIER_SELECT);
     expect(game.field.getEnemyPokemon()).not.toHaveFainted();
   });
 });

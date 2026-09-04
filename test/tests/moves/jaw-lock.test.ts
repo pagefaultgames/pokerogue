@@ -123,9 +123,8 @@ describe("Moves - Jaw Lock", () => {
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemyPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)?.sourceId).toBe(enemyPokemon[0].id);
+    expect(enemyPokemon[1]).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(playerPokemon).toHaveBattlerTag({ tagType: BattlerTagType.TRAPPED, sourceId: enemyPokemon[0].id });
   });
 
   it("should not trap either pokemon if the target is protected", async () => {

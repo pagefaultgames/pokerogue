@@ -83,7 +83,7 @@ describe("Abilities - Dancer", () => {
 
     expect(oricorio).toHaveAbilityApplied(AbilityId.DANCER);
     expect(shuckle).toHaveAbilityApplied(AbilityId.DANCER);
-    expect(game.phaseInterceptor.log).toContain("DancerPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("DancerPhase");
 
     // shpuldn't use PP if copied move is also in moveset
     expect(oricorio).toHaveUsedPP(MoveId.SWORDS_DANCE, 1);

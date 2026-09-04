@@ -31,6 +31,6 @@ describe("Ability - Guard Dog", () => {
 
     expect(mabostiff).toHaveAbilityApplied(AbilityId.GUARD_DOG);
     expect(mabostiff).toHaveStatStage(Stat.ATK, 1);
-    expect(game.phaseInterceptor.log.filter(l => l === "StatStageChangePhase")).toHaveLength(1);
+    expect(game.phaseInterceptor.phaseLog.filter(l => l === "StatStageChangePhase")).toHaveLength(1);
   });
 });

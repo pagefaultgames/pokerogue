@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
-import { UiMode } from "#enums/ui-mode";
 import { UiHandler } from "#ui/ui-handler";
 
 export class EggHatchSceneUiHandler extends UiHandler {
@@ -13,10 +12,6 @@ export class EggHatchSceneUiHandler extends UiHandler {
    * - {@linkcode EggEventType.EGG_COUNT_CHANGED} {@linkcode EggCountChangedEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
-
-  constructor() {
-    super(UiMode.EGG_HATCH_SCENE);
-  }
 
   setup() {
     this.eggHatchContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);

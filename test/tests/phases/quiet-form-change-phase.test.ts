@@ -43,7 +43,7 @@ describe("Phases - Quiet Form Change Phase", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.phaseInterceptor.log).toContain("QuietFormChangePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("QuietFormChangePhase");
     expect(morpeko.getFormKey()).toBe("hangry");
     expect(morpeko.getPassiveAbility().id).toBe(AbilityId.INTIMIDATE);
     expect(morpeko).toHaveAbilityApplied(AbilityId.INTIMIDATE);
@@ -54,7 +54,7 @@ describe("Phases - Quiet Form Change Phase", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.phaseInterceptor.log).toContain("QuietFormChangePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("QuietFormChangePhase");
     expect(morpeko.getFormKey()).toBe("full-belly");
     expect(morpeko.getPassiveAbility().id).toBe(AbilityId.INTREPID_SWORD);
     expect(morpeko).toHaveAbilityApplied(AbilityId.INTREPID_SWORD);
@@ -87,7 +87,7 @@ describe("Phases - Quiet Form Change Phase", () => {
     await game.toEndOfTurn();
 
     // normal -> water -> fire -> water -> STOP
-    expect(game.phaseInterceptor.log).toContain("QuietFormChangePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("QuietFormChangePhase");
     expect(castform.getFormKey()).toBe("rainy");
     expect(game).toHaveWeather(WeatherType.RAIN);
     expect(castform).toHaveAbilityApplied(AbilityId.DRIZZLE);

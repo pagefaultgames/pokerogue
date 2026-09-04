@@ -41,7 +41,7 @@ describe("Move - Teleport", () => {
     expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-    await vi.waitUntil(() => game.scene.ui.getMode() === UiMode.MODIFIER_SELECT);
+    await vi.waitUntil(() => game.scene.ui.mode === UiMode.MODIFIER_SELECT);
 
     return game.scene.ui.getHandler() as ModifierSelectUiHandler;
   }

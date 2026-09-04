@@ -35,7 +35,7 @@ describe("Abilities - Synchronize", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("sets the status of the source pokemon to Paralysis when paralyzed by it", async () => {
@@ -46,7 +46,7 @@ describe("Abilities - Synchronize", () => {
 
     expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.PARALYSIS);
     expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.PARALYSIS);
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("ShowAbilityPhase");
   });
 
   it("does not trigger on Sleep", async () => {
@@ -58,7 +58,7 @@ describe("Abilities - Synchronize", () => {
 
     expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
     expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("does not trigger when Pokemon is statused by Toxic Spikes", async () => {
@@ -74,7 +74,7 @@ describe("Abilities - Synchronize", () => {
 
     expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.POISON);
     expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.NONE);
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("shows ability even if it fails to set the status of the opponent Pokemon", async () => {
@@ -85,6 +85,6 @@ describe("Abilities - Synchronize", () => {
 
     expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
     expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.PARALYSIS);
-    expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("ShowAbilityPhase");
   });
 });

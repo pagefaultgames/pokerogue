@@ -279,7 +279,7 @@ export class SerializableBattlerTag extends BattlerTag {
  * @see BattlerTagTypeMap
  */
 interface GenericSerializableBattlerTag<T extends BattlerTagType> extends SerializableBattlerTag {
-  tagType: T;
+  readonly tagType: T;
 }
 
 /**

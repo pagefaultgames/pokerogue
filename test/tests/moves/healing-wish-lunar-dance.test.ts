@@ -110,7 +110,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       // Bulbasaur fainted and stored a healing effect
       expect(bulbasaur).toHaveFainted();
       expect(charmander).toHaveFullHp();
-      expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
       expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
       // Switch to damaged Squirtle. HW/LD's effect should activate
@@ -146,7 +146,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       await game.toNextTurn();
       expect(bulbasaur).toHaveFainted();
       expect(charmander).toHaveFullHp();
-      expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
       expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
       // Use HW/LD again, sending in Squirtle. HW/LD should activate and heal Squirtle
@@ -205,7 +205,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     await game.toNextTurn();
     expect(bulbasaur).toHaveFainted();
     expect(charmander).toHaveFullHp();
-    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
     expect(game).toHaveArenaTag(ArenaTagType.PENDING_HEAL);
 
     game.move.use(MoveId.HEALING_WISH);
