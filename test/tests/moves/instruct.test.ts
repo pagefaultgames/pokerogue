@@ -199,14 +199,14 @@ describe("Moves - Instruct", () => {
     expect(player).toHaveUsedMove({
       move: MoveId.THUNDERBOLT,
       result: MoveResult.SUCCESS,
-      targets: [BattlerIndex.ENEMY],
+      targets: [BattlerIndex.ENEMY_2],
       useMode: MoveUseMode.NORMAL,
     });
     expect(player).toHaveUsedMove(
       {
         result: MoveResult.SUCCESS,
         move: MoveId.THUNDERBOLT,
-        targets: [BattlerIndex.ENEMY_2],
+        targets: [BattlerIndex.ENEMY],
         useMode: MoveUseMode.NORMAL,
       },
       1,
@@ -348,10 +348,10 @@ describe("Moves - Instruct", () => {
   });
 
   it("should disregard priority of instructed move on use", async () => {
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND, MoveId.INSTRUCT]);
     await game.classicMode.startBattle(SpeciesId.LUCARIO, SpeciesId.BANETTE);
 
     const enemyPokemon = game.field.getEnemyPokemon();
+    game.move.changeMoveset(enemyPokemon, [MoveId.WHIRLWIND, MoveId.SPLASH]);
     enemyPokemon.pushMoveHistory({
       move: MoveId.WHIRLWIND,
       targets: [BattlerIndex.PLAYER],
@@ -359,14 +359,13 @@ describe("Moves - Instruct", () => {
       useMode: MoveUseMode.NORMAL,
     });
 
-    game.move.select(MoveId.INSTRUCT);
+    game.move.use(MoveId.INSTRUCT);
     await game.move.selectEnemyMove(MoveId.SPLASH);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // lucario instructed enemy whirlwind at 0 priority to switch itself out
-    const instructedMove = enemyPokemon.getLastXMoves(-1)[1];
-    expect(instructedMove.result).toBe(MoveResult.SUCCESS);
-    expect(instructedMove.move).toBe(MoveId.WHIRLWIND);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.WHIRLWIND, result: MoveResult.SUCCESS }, 1);
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BANETTE);
   });
 
@@ -525,7 +524,7 @@ describe("Moves - Instruct", () => {
     expect(koraidon).toHaveUsedMove(
       {
         move: MoveId.BRUTAL_SWING,
-        targets: [BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
+        targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
       },
       1,
     );

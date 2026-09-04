@@ -25,7 +25,8 @@ describe("Abilities - Dry Skin", () => {
       .enemyAbility(AbilityId.DRY_SKIN)
       .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(SpeciesId.CHARMANDER)
-      .ability(AbilityId.BALL_FETCH);
+      .ability(AbilityId.BALL_FETCH)
+      .enemyLevel(100);
   });
 
   it.each([
@@ -35,11 +36,10 @@ describe("Abilities - Dry Skin", () => {
     game.override.weather(weather);
     await game.classicMode.startBattle(SpeciesId.CHANDELURE);
 
-    const enemy = game.field.getEnemyPokemon();
-
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy).toHaveTakenDamage(enemy.getMaxHp() / 8);
   });
 
