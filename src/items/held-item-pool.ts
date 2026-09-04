@@ -334,8 +334,6 @@ export function getNewAttackTypeBoosterHeldItem(
 ): HeldItemId | null {
   const party = coerceArray(pokemon);
 
-  // TODO: make this consider moves or abilities that change types
-
   const attackMoveTypes = party
     .values()
     .flatMap(p =>
