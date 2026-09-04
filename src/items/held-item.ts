@@ -4,6 +4,7 @@ import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { HeldItemBuilder } from "#items/held-item-builder";
+import { MAX_STACK_COUNT_TINT } from "#items/item-utility";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -103,8 +104,7 @@ export abstract class HeldItemBase {
       .setLetterSpacing(-0.5)
       .setOrigin(0);
     if (stackCount >= this.maxStackCount) {
-      // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114955458
-      text.setTint(0xf89890);
+      text.setTint(MAX_STACK_COUNT_TINT);
     }
 
     return text;

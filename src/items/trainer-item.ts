@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
+import { MAX_STACK_COUNT_TINT } from "#items/item-utility";
 import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
 import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
@@ -85,7 +86,7 @@ export abstract class TrainerItemBase {
       .setLetterSpacing(-0.5)
       .setOrigin(0);
     if (stackCount >= this.maxStackCount) {
-      text.setTint(0xf89890);
+      text.setTint(MAX_STACK_COUNT_TINT);
     }
 
     return text;
