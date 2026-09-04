@@ -524,7 +524,7 @@ describe("Moves - Instruct", () => {
     expect(koraidon).toHaveUsedMove(
       {
         move: MoveId.BRUTAL_SWING,
-        targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
+        targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2],
       },
       1,
     );
