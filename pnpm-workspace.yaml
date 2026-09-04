@@ -28,3 +28,5 @@ patchedDependencies:
 shellEmulator: true
 
 dedupePeers: true
+
+engineStrict: false # required because pnpm10 obeys settings in `.npmrc` if no value is specified in this file
