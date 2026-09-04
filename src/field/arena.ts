@@ -298,7 +298,11 @@ export class Arena {
       globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType));
     } else {
       this.weather = new Weather(weather, weatherDuration.value, weatherDuration.value);
-      this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, weatherDuration.value));
+      // Use the durations stored on the `Weather` itself, as immutable weathers (Harsh Sun, etc.) ignore
+      // the passed-in duration and last indefinitely.
+      this.eventTarget.dispatchEvent(
+        new WeatherChangedEvent(weather, this.weather.turnsLeft, this.weather.maxDuration),
+      );
 
       globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getWeatherAnim(weather));
       globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather));
