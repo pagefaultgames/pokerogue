@@ -59,16 +59,6 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.items.has(itemType) && allHeldItems[itemType].isTransferable;
   }
 
-  // Use for tests if necessary to go over stack limit
-  // TODO: Remove - this is solely used for grip claw, and any tests that require exceeding the stack limit can simply access the underlying map
-  // (not that exceeding the stack limit should be a thing we test for anyways; a more appropriate approach would be stubbing out relevant functions)
-  public setStack(itemType: HeldItemId, stack: number): void {
-    const item = this.items.get(itemType);
-    if (item) {
-      item.stack = stack;
-    }
-  }
-
   public filterRequestedItems(
     requestedItems: (HeldItemCategoryId | HeldItemId)[],
     transferableOnly = true,
