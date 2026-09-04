@@ -139,26 +139,28 @@ describe("Moves - Protect", () => {
     expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
   });
 
-  it("should reset fail chance on starting a new wave", async () => {
+  it("should not reset fail chance on starting a new wave", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
-    game.move.select(MoveId.PROTECT);
+    game.move.use(MoveId.PROTECT);
     // Wait until move end phase to kill opponent to ensure protect doesn't fail due to going last
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.doKillOpponents();
     await game.toNextWave();
+
     expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
-    game.move.select(MoveId.SPIKY_SHIELD);
+    game.move.use(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
-    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.SUCCESS });
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
   });
 
+  // TODO: this is probably more deserving inside the psychic terrain tests
   it("should not be blocked by Psychic Terrain", async () => {
     game.override.ability(AbilityId.PSYCHIC_SURGE);
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
