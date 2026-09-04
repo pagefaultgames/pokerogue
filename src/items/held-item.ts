@@ -16,7 +16,6 @@ export abstract class HeldItemBase {
   // TODO: Rename parameter to `id` or similar
   public readonly type: HeldItemId;
   public readonly maxStackCount: number;
-  // TODO: Consider converting these to a bitmask for efficiency
 
   /**
    * Whether this item can be transferred to another {@linkcode Pokemon}.
