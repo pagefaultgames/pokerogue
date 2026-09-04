@@ -14,7 +14,7 @@
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A basic abstract class to act as a holder and processor for UI elements.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="77946">
+<section class="tsd-panel tsd-hierarchy" data-refl="77940">
 <h4>Hierarchy (<a href="../hierarchy.html#src/ui/handlers/awaitable-ui-handler.AwaitableUiHandler">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_ui_handlers_ui-handler.UiHandler.html" class="tsd-signature-type tsd-kind-class">UiHandler</a>
@@ -24,7 +24,7 @@
 <li class="tsd-hierarchy-item"><a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html" class="tsd-signature-type tsd-kind-class">MessageUiHandler</a></li>
 <li class="tsd-hierarchy-item"><a href="src_ui_handlers_modifier-select-ui-handler.ModifierSelectUiHandler.html" class="tsd-signature-type tsd-kind-class">ModifierSelectUiHandler</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L8">src/ui/handlers/awaitable-ui-handler.ts:8</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L7">src/ui/handlers/awaitable-ui-handler.ts:7</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -39,7 +39,6 @@
 <div class="tsd-index-list"><a href="#active" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a>
 <a href="#awaitingactioninput" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>awaiting<wbr/>Action<wbr/>Input</span></a>
 <a href="#cursor" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor</span></a>
-<a href="#mode" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>mode</span></a>
 <a href="#onactioninput" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>on<wbr/>Action<wbr/>Input</span></a>
 <a href="#tutorialactive" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Active</span></a>
 <a href="#tutorialoverlay" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Overlay</span></a>
@@ -65,16 +64,10 @@
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorawaitableuihandler"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">AwaitableUiHandler</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">mode</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_enums_ui-mode.UiMode.html" class="tsd-signature-type tsd-kind-enum">UiMode</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">AwaitableUiHandler</a><a href="#constructorawaitableuihandler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorawaitableuihandler"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">AwaitableUiHandler</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">AwaitableUiHandler</a><a href="#constructorawaitableuihandler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">mode</span>: <a href="../enums/src_enums_ui-mode.UiMode.html" class="tsd-signature-type tsd-kind-enum">UiMode</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> = null</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">AwaitableUiHandler</a></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#constructor">constructor</a></p>
-<ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L16">src/ui/handlers/awaitable-ui-handler.ts:16</a></li></ul></aside></div></li></ul></section></section></details>
+<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#constructor">constructor</a></p></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -83,39 +76,33 @@
 <div class="tsd-signature"><span class="tsd-kind-property">active</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#active">active</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L11">src/ui/handlers/ui-handler.ts:11</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L9">src/ui/handlers/ui-handler.ts:9</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="awaitingactioninput"><code class="tsd-tag">Protected</code><span>awaiting<wbr/>Action<wbr/>Input</span><a href="#awaitingactioninput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">awaitingActionInput</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L9">src/ui/handlers/awaitable-ui-handler.ts:9</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L8">src/ui/handlers/awaitable-ui-handler.ts:8</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="cursor"><code class="tsd-tag">Protected</code><span>cursor</span><a href="#cursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">cursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#cursor">cursor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L10">src/ui/handlers/ui-handler.ts:10</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
-<h3 class="tsd-anchor-link" id="mode"><code class="tsd-tag">Protected</code><span>mode</span><a href="#mode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">mode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#mode">mode</a></p>
-<ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L9">src/ui/handlers/ui-handler.ts:9</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L8">src/ui/handlers/ui-handler.ts:8</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="onactioninput"><code class="tsd-tag">Protected</code><span>on<wbr/>Action<wbr/>Input</span><a href="#onactioninput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">onActionInput</span><span class="tsd-signature-symbol">:</span> <a href="../types/src__types_type-helpers.AnyFn.html" class="tsd-signature-type tsd-kind-type-alias">AnyFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L12">src/ui/handlers/awaitable-ui-handler.ts:12</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L11">src/ui/handlers/awaitable-ui-handler.ts:11</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="tutorialactive"><span>tutorial<wbr/>Active</span><a href="#tutorialactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">tutorialActive</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L13">src/ui/handlers/awaitable-ui-handler.ts:13</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L12">src/ui/handlers/awaitable-ui-handler.ts:12</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="tutorialoverlay"><span>tutorial<wbr/>Overlay</span><a href="#tutorialoverlay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">tutorialOverlay</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Rectangle</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L14">src/ui/handlers/awaitable-ui-handler.ts:14</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L13">src/ui/handlers/awaitable-ui-handler.ts:13</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -128,7 +115,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#clear">clear</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L56">src/ui/handlers/ui-handler.ts:56</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L47">src/ui/handlers/ui-handler.ts:47</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -141,7 +128,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#destroy">destroy</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L63">src/ui/handlers/ui-handler.ts:63</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L54">src/ui/handlers/ui-handler.ts:54</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getcursor"><span>get<wbr/>Cursor</span><a href="#getcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -151,7 +138,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#getcursor">getCursor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L34">src/ui/handlers/ui-handler.ts:34</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L25">src/ui/handlers/ui-handler.ts:25</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getui"><span>get<wbr/>Ui</span><a href="#getui" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -161,7 +148,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <a href="src_ui_ui.UI.html" class="tsd-signature-type tsd-kind-class">UI</a></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#getui">getUi</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L30">src/ui/handlers/ui-handler.ts:30</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L21">src/ui/handlers/ui-handler.ts:21</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="inittutorialoverlay"><span>init<wbr/>Tutorial<wbr/>Overlay</span><a href="#inittutorialoverlay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -178,7 +165,7 @@ Called when BattleScene is reset</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L37">src/ui/handlers/awaitable-ui-handler.ts:37</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L32">src/ui/handlers/awaitable-ui-handler.ts:32</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="processinput"><code class="tsd-tag">Abstract</code><span>process<wbr/>Input</span><a href="#processinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -192,7 +179,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#processinput">processInput</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L28">src/ui/handlers/ui-handler.ts:28</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L19">src/ui/handlers/ui-handler.ts:19</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="processtutorialinput"><span>process<wbr/>Tutorial<wbr/>Input</span><a href="#processtutorialinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -205,7 +192,7 @@ Called when BattleScene is reset</p>
 <li><span><span class="tsd-kind-parameter">button</span>: <a href="../enums/src_enums_buttons.Button.html" class="tsd-signature-type tsd-kind-enum">Button</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/awaitable-ui-handler.ts#L20">src/ui/handlers/awaitable-ui-handler.ts:20</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/awaitable-ui-handler.ts#L15">src/ui/handlers/awaitable-ui-handler.ts:15</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="setcursor"><span>set<wbr/>Cursor</span><a href="#setcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -219,7 +206,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#setcursor">setCursor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L38">src/ui/handlers/ui-handler.ts:38</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L29">src/ui/handlers/ui-handler.ts:29</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="setmousecursorstyle"><code class="tsd-tag">Protected</code><span>set<wbr/>Mouse<wbr/>Cursor<wbr/>Style</span><a href="#setmousecursorstyle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -241,7 +228,7 @@ Called when BattleScene is reset</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#setmousecursorstyle">setMouseCursorStyle</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L52">src/ui/handlers/ui-handler.ts:52</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L43">src/ui/handlers/ui-handler.ts:43</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="setup"><code class="tsd-tag">Abstract</code><span>setup</span><a href="#setup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -251,7 +238,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#setup">setup</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L20">src/ui/handlers/ui-handler.ts:20</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L11">src/ui/handlers/ui-handler.ts:11</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="show"><span>show</span><a href="#show" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -265,7 +252,7 @@ Called when BattleScene is reset</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#show">show</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/f8fcc375cf5d7f65c20d6814c14c765f2e600a80/src/ui/handlers/ui-handler.ts#L22">src/ui/handlers/ui-handler.ts:22</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/c8eebbdfd0d1a589b65867972e967ced30d92823/src/ui/handlers/ui-handler.ts#L13">src/ui/handlers/ui-handler.ts:13</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -285,7 +272,7 @@ Called when BattleScene is reset</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#active" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a><a href="#awaitingactioninput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>awaiting<wbr/>Action<wbr/>Input</span></a><a href="#cursor" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor</span></a><a href="#mode" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>mode</span></a><a href="#onactioninput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>on<wbr/>Action<wbr/>Input</span></a><a href="#tutorialactive"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Active</span></a><a href="#tutorialoverlay"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Overlay</span></a></div></details>
+<div><a href="#active" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a><a href="#awaitingactioninput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>awaiting<wbr/>Action<wbr/>Input</span></a><a href="#cursor" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor</span></a><a href="#onactioninput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>on<wbr/>Action<wbr/>Input</span></a><a href="#tutorialactive"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Active</span></a><a href="#tutorialoverlay"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Overlay</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
 <div><a href="#clear" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear</span></a><a href="#destroy" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#getcursor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Cursor</span></a><a href="#getui" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Ui</span></a><a href="#inittutorialoverlay"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Tutorial<wbr/>Overlay</span></a><a href="#processinput" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Input</span></a><a href="#processtutorialinput"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Tutorial<wbr/>Input</span></a><a href="#setcursor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Cursor</span></a><a href="#setmousecursorstyle" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Mouse<wbr/>Cursor<wbr/>Style</span></a><a href="#setup" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup</span></a><a href="#show" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show</span></a></div></details></div></details></div>
 <div class="site-menu">
