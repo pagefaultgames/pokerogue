@@ -1,3 +1,4 @@
+import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 
@@ -153,4 +154,14 @@ export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemC
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
 
-// TODO: Add type test to make sure held items and trainer item IDs don't overlap with either themselves, each other or categories
+type Assert<T extends true> = T;
+
+// biome-ignore lint/correctness/noUnusedVariables: Compile time verifier
+type EnsureNoIdCollision = [
+  // No held item ID equals a held item category ID
+  Assert<HeldItemId & HeldItemCategoryId>,
+  // No held item ID equals a trainer item ID
+  Assert<HeldItemId & TrainerItemId>,
+  // No trainer item ID equals a held item category ID
+  Assert<TrainerItemId & HeldItemCategoryId>,
+];
