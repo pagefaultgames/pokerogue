@@ -10,6 +10,7 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { MoveId } from "#enums/move-id";
@@ -27,6 +28,7 @@ import type { LevelMoves } from "#types/level-moves";
 import type { Localizable } from "#types/locales";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { applyChallenges } from "#utils/challenge-utils";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
 import { randSeedFloat } from "#utils/common";
 import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -159,6 +161,7 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
+  // TODO: This is pointless. Remove these getters and make the fields public.
   get generation(): number {
     return this._generation;
   }
@@ -220,6 +223,7 @@ export abstract class PokemonSpeciesForm {
    */
   public getLevelMoves(form?: string | number): LevelMoves {
     const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, form);
+    applyChallenges(ChallengeType.LEVEL_UP_MOVESET, this, levelMoves);
     return levelMoves.sort((a, b) => a[0] - b[0]);
   }
 
