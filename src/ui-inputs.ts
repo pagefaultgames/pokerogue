@@ -186,7 +186,7 @@ export class UiInputs {
     if (globalScene.disableMenu) {
       return;
     }
-    switch (globalScene.ui?.getMode()) {
+    switch (globalScene.ui?.mode) {
       // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
       case UiMode.MESSAGE: {
         const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
@@ -237,7 +237,7 @@ export class UiInputs {
   private buttonSpeedChange(up = true): void {
     const { ui } = globalScene;
 
-    if (SETTINGS_UI_MODES.includes(ui?.getMode())) {
+    if (SETTINGS_UI_MODES.includes(ui?.mode)) {
       return;
     }
 

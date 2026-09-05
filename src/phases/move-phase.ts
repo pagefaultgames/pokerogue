@@ -26,7 +26,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
@@ -37,6 +36,7 @@ import { enumValueToKey } from "#utils/enums";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type { Writable } from "type-fest";
 
 export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
@@ -785,9 +785,7 @@ export class MovePhase extends PokemonPhase {
     /* Clear out any two turn moves once they've been used.
     TODO: Refactor move queues and remove this assignment;
     Move queues should be handled by the calling `CommandPhase` or a manager for it */
-
-    // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
-    this.useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
+    (this as Writable<MovePhase>).useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
 
     if (!charging && user.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
       user.lapseTag(BattlerTagType.CHARGING);
@@ -817,7 +815,7 @@ export class MovePhase extends PokemonPhase {
     */
 
     // Currently, we only do the libero/protean type change here
-
+    // TODO: Investigate whether PokemonTypeChangeAbAttr can drop the "opponent" parameter
     applyAbAttrs("PokemonTypeChangeAbAttr", { pokemon: user, move, opponent });
 
     // TODO: Move this to the Move effect phase where it belongs.
@@ -879,24 +877,10 @@ export class MovePhase extends PokemonPhase {
 
   /** Execute the current move and apply its effects. */
   private executeMove() {
-    const user = this.pokemon;
+    const { pokemon: user, targets } = this;
     const move = this.move.getMove();
-    const targets = this.targets;
-
-    // Trigger ability-based user type changes, display move text and then execute move effects.
-    // TODO: Investigate whether PokemonTypeChangeAbAttr can drop the "opponent" parameter
 
     globalScene.phaseManager.unshiftNew("MoveEffectPhase", user.getBattlerIndex(), targets, move, this.useMode);
-
-    // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note the MoveUseMode check here prevents an infinite Dancer loop.
-    // TODO: This needs to go at the end of `MoveEffectPhase` to check move results
-    const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
-    if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
-      for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
-        applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: user, targets });
-      }
-    }
   }
 
   /**
@@ -940,8 +924,6 @@ export class MovePhase extends PokemonPhase {
    *     to lapse on move failure/cancellation.
    *
    *     TODO: ...this seems weird.
-   * - Lapses `AFTER_MOVE` tags:
-   *   - This handles the effects of {@linkcode MoveId.SUBSTITUTE | Substitute}
    * - Removes the second turn of charge moves
    */
   protected handlePreMoveFailures(): void {
@@ -951,17 +933,12 @@ export class MovePhase extends PokemonPhase {
 
     const pokemon = this.pokemon;
 
-    if (this.cancelled && pokemon.summonData.tags.some(t => t.tagType === BattlerTagType.FRENZY)) {
-      frenzyMissFunc(pokemon, this.move.getMove());
-    }
-
     const moveHistoryEntry = this.moveHistoryEntry;
     // TODO: probably redundant; everything that sets `failed/cancelled` changes the history entry
     moveHistoryEntry.result = MoveResult.FAIL;
     pokemon.pushMoveHistory(moveHistoryEntry);
 
     pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     // This clears out 2 turn moves after they've been used
     // TODO: Remove post move queue refactor

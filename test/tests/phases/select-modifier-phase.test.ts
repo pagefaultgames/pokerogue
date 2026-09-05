@@ -49,7 +49,7 @@ describe("SelectModifierPhase", () => {
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
   });
 
   it("should generate random modifiers", async () => {
@@ -57,7 +57,7 @@ describe("SelectModifierPhase", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
@@ -96,7 +96,7 @@ describe("SelectModifierPhase", () => {
 
     // TODO: nagivate the ui to reroll somehow
     //const smphase = scene.phaseManager.getCurrentPhase() as SelectModifierPhase;
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
@@ -105,7 +105,7 @@ describe("SelectModifierPhase", () => {
     modifierSelectHandler.processInput(Button.ACTION);
 
     expect(scene.money).toBe(1000000 - 250);
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     expect(modifierSelectHandler.options.length).toEqual(3);
   });
 
@@ -123,7 +123,7 @@ describe("SelectModifierPhase", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
@@ -132,7 +132,7 @@ describe("SelectModifierPhase", () => {
 
     // TODO: nagivate ui to reroll with lock capsule enabled
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     expect(modifierSelectHandler.options.length).toEqual(3);
     // Reroll with lock can still upgrade
     expect(
@@ -166,7 +166,7 @@ describe("SelectModifierPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
@@ -211,7 +211,7 @@ describe("SelectModifierPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
@@ -250,7 +250,7 @@ describe("SelectModifierPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
@@ -274,7 +274,7 @@ describe("SelectModifierPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;

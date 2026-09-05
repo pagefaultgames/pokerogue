@@ -38,6 +38,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
+import { version } from "#package.json";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { ArenaData, type SerializedArenaData } from "#system/arena-data";
@@ -71,6 +72,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
+import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -81,7 +83,8 @@ const ErrorMessages = {
   DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
   TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
   FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
-};
+  GAME_OUT_OF_DATE: i18next.t("gameData:gameOutOfDate"),
+} as const;
 
 export class GameData {
   public trainerId: number;
@@ -244,7 +247,7 @@ export class GameData {
     globalScene.time.delayedCall(fixedInt(1000), () => {
       // on the pokedex page, which changes the UiMode after calling this so the
       // user never sees the alert modal.
-      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+      if (globalScene.ui.mode === UiMode.ALERT_MODAL) {
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       } else {
         globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
@@ -320,7 +323,7 @@ export class GameData {
   }
 
   /**
-   *
+   * Used by the admin panel when searching for user accounts.
    * @param dataStr - The raw JSON string of the `SystemSaveData`
    * @returns - A new `GameData` instance initialized with the parsed `SystemSaveData`
    */
@@ -395,7 +398,7 @@ export class GameData {
     }
   }
 
-  public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+  private async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
     // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
@@ -432,6 +435,16 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
+      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version) === 1) {
+        await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+
+        globalScene.time.delayedCall(fixedInt(1000), () => {
+          if (globalScene.ui.mode !== UiMode.ALERT_MODAL) {
+            globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+          }
+        });
+        return false;
+      }
       this.initParsedSystem(systemData);
       return true;
     } catch (err) {
@@ -1971,6 +1984,17 @@ export class GameData {
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
+  /**
+   * Checks whether a species has a specified ability index unlocked for its starter
+   * @param species - The species to check
+   * @param abilityIndex - The ability index to check
+   * @returns Whether that starter has that ability index unlocked
+   */
+  public checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
+    const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
+    return !!(abilityAttr & (1 << abilityIndex));
+  }
+
   getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
     const dexEntry = this.dexData[speciesId];
     for (let n = 0; n < 25; n++) {
@@ -1993,6 +2017,17 @@ export class GameData {
       }
     }
     return ret;
+  }
+
+  /**
+   * Checks if a species has a particular nature unlocked
+   * @param species - The species to check
+   * @param nature - The Nature to look for
+   * @returns Whether that species has the specified nature unlocked
+   */
+  public checkSpeciesNatureUnlocked(species: PokemonSpecies, nature: Nature): boolean {
+    const dexEntry = this.dexData[species.speciesId];
+    return !!(dexEntry.natureAttr & (1 << (nature + 1)));
   }
 
   /**

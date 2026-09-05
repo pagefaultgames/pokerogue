@@ -51,11 +51,11 @@ import type {
   TrainerConfigs,
   TrainerTierPools,
 } from "#types/trainer-funcs";
-import type { Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import type { Writable } from "type-fest";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -442,7 +442,7 @@ export class TrainerConfig {
    * @see {@linkcode allowEggMoves}
    */
   public setEggMovesAllowed(): this {
-    (this as Mutable<this>).allowEggMoves = true;
+    (this as Writable<TrainerConfig>).allowEggMoves = true;
     return this;
   }
 
@@ -453,7 +453,7 @@ export class TrainerConfig {
    */
   public setBoss(): TrainerConfig {
     this.isBoss = true;
-    (this as Mutable<this>).allowEggMoves = true;
+    (this as Writable<TrainerConfig>).allowEggMoves = true;
     return this;
   }
 
