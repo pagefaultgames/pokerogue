@@ -41,7 +41,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
-    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchPhase");
     expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
@@ -54,7 +54,7 @@ describe("Moves - Chilly Reception", () => {
     await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -79,7 +79,7 @@ describe("Moves - Chilly Reception", () => {
     await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
   });
@@ -102,7 +102,7 @@ describe("Moves - Chilly Reception", () => {
     await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon()).toBe(slowking);
     expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(game).toHaveShownMessage(
@@ -123,7 +123,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
-    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchPhase");
     expect(game).not.toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );

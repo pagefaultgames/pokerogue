@@ -327,10 +327,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private ribbonContainer: RibbonTray;
   private isRibbonTrayOpen = false;
 
-  constructor() {
-    super(UiMode.POKEDEX_PAGE);
-  }
-
   public override setup() {
     const ui = this.getUi();
     const currentLanguage = i18next.resolvedLanguage ?? "en";

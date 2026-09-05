@@ -122,7 +122,7 @@ import type {
 } from "#types/move-types";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor, Mutable } from "#types/type-helpers";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -142,6 +142,7 @@ import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type { Writable } from "type-fest";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -633,7 +634,7 @@ export abstract class Move implements Localizable {
    */
   unimplemented(): this {
     this.nameAppend += " (N)";
-    (this as Mutable<this>).isUnimplemented = true;
+    (this as Writable<Move>).isUnimplemented = true;
     return this;
   }
 

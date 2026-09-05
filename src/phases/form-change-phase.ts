@@ -209,7 +209,7 @@ export class FormChangePhase extends EvolutionPhase {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (this.modal) {
       globalScene.ui.revertMode().then(() => {
-        if (globalScene.ui.getMode() === UiMode.PARTY) {
+        if (globalScene.ui.mode === UiMode.PARTY) {
           const partyUiHandler = globalScene.ui.getHandler() as PartyUiHandler;
           partyUiHandler.clearPartySlots();
           partyUiHandler.populatePartySlots();
