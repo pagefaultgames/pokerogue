@@ -1,4 +1,4 @@
-import type { SessionSaveMigrator } from "#types/save-migrators";
+import type { SessionSaveMigrator, SessionSaveMigratorIn } from "#types/save-migrators";
 
 function updatePokemonMoveset(data: Record<string, unknown>): void {
   if (typeof data.customPokemonData !== "object" || data.customPokemonData === null) {
@@ -20,15 +20,14 @@ function updatePokemonMoveset(data: Record<string, unknown>): void {
 /**
  * Migrate all lingering rage fist data inside `CustomPokemonData`,
  * as well as enforcing default values across the board.
- * @param data - {@linkcode SystemSaveData}
  */
-const migratePartyData: SessionSaveMigrator = {
+const migratePartyData = {
   name: "migratePartyData",
   version: "1.9.0",
-  migrate: data => {
+  migrate: (data: SessionSaveMigratorIn): void => {
     data.party.forEach(updatePokemonMoveset);
     data.enemyParty.forEach(updatePokemonMoveset);
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [migratePartyData] as const;
+export const sessionMigrators = [migratePartyData] as const satisfies readonly SessionSaveMigrator[];

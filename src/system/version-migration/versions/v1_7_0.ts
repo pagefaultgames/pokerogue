@@ -10,9 +10,8 @@ import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
  * unlock the default form.
- * @param data - {@linkcode SystemSaveData}
  */
-const migrateUnselectableForms: SystemSaveMigrator = {
+const migrateUnselectableForms = {
   name: "migrateUnselectableForms",
   version: "1.7.0",
   migrate: (data: SystemSaveData): void => {
@@ -37,15 +36,15 @@ const migrateUnselectableForms: SystemSaveMigrator = {
       });
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectableForms] as const;
+export const systemMigrators = [migrateUnselectableForms] as const satisfies readonly SystemSaveMigrator[];
 
 function isArrayOfAtLeastTwo(arr: unknown): arr is unknown[] {
   return Array.isArray(arr) && arr.length >= 2;
 }
 
-const migrateTera: SessionSaveMigrator = {
+const migrateTera = {
   name: "migrateTera",
   version: "1.7.0",
   migrate: data => {
@@ -114,6 +113,6 @@ const migrateTera: SessionSaveMigrator = {
       }
     });
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [migrateTera] as const;
+export const sessionMigrators = [migrateTera] as const satisfies readonly SessionSaveMigrator[];
