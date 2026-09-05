@@ -21,7 +21,7 @@ export class HeldItemReward extends PokemonReward {
       "",
       (pokemon: PlayerPokemon) => {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
-        const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
+        const maxStackCount = allHeldItems[this.itemId].maxStackCount;
         if (!maxStackCount) {
           return i18next.t("reward:pokemonHeldItem.extra.inoperable", {
             pokemonName: getPokemonNameWithAffix(pokemon),

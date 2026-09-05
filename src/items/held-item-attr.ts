@@ -103,7 +103,7 @@ export abstract class ConsumableHeldItemAttr<E extends HeldItemEffect = HeldItem
     if (remove) {
       pokemon.heldItemManager.remove(this.type, 1);
       // TODO: Turn this into updateItemBar or something
-      globalScene.updateItems(pokemon.isPlayer());
+      globalScene.updateItemBar(pokemon.isPlayer());
     }
     if (unburden) {
       applyAbAttrs("PostItemLostAbAttr", { pokemon });

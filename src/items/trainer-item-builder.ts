@@ -25,7 +25,7 @@ import type { Constructor } from "type-fest";
  */
 export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
   public readonly id: TrainerItemId;
-  public readonly maxStackCount: number | (() => number);
+  public readonly maxStackCount: number;
 
   /**
    * Whether the item should lapse over time, decreasing its stack count each wave until fully depleted.
@@ -53,7 +53,7 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
    * @param id - The {@linkcode TrainerItemId} of the item to build
    * @param maxStackCount - The maximum stack count of the item to build, or a function that returns it
    */
-  constructor(id: TrainerItemId, maxStackCount: number | (() => number)) {
+  constructor(id: TrainerItemId, maxStackCount: number) {
     this.id = id;
     this.maxStackCount = maxStackCount;
   }

@@ -63,7 +63,7 @@ export class BattleEndPhase extends BattlePhase {
 
     globalScene.trainerItems.lapseItems();
 
-    globalScene.updateItems();
+    globalScene.updateItemBar();
     this.end();
   }
 }

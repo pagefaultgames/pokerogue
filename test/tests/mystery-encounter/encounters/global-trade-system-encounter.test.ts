@@ -212,7 +212,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       // Set 2 Soul Dew on party lead
       game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW, 2);
-      await scene.updateItems(true);
+      await scene.updateItemBar(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       expect(game).toBeAtPhase("SelectRewardPhase");
@@ -235,7 +235,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       // Set 1 Soul Dew on party lead
       game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW, 1);
-      await scene.updateItems(true);
+      await scene.updateItemBar(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 

@@ -30,7 +30,7 @@ export type TrainerItemTieredPool = Partial<Record<RarityTier, TrainerItemPool>>
 
 interface TrainerItemConfigurationEntry {
   entry: TrainerItemId | TrainerItemSpecs;
-  count?: number | (() => number);
+  count?: number;
 }
 
 export type TrainerItemConfiguration = TrainerItemConfigurationEntry[];
