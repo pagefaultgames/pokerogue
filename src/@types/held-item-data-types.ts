@@ -9,16 +9,14 @@ import type { NonEmptyTuple } from "type-fest";
 // TODO: This file is less of a _data_ types file and more of an _everything_ types file;
 // we should rename it to clarify that intent
 
+/**
+ * Runtime data for a particular held item.
+ */
 export interface HeldItemData {
   /**
    * Number of items in the stack, can also be used to track cooldown
    */
   stack: number;
-  /**
-   * Whether this item is currently disabled.
-   * @defaultValue `false`
-   */
-  disabled?: boolean;
   /**
    * Whether a form change is active.
    * TODO: This is only temporary to make things work, form change rework should get rid of it.
@@ -39,17 +37,35 @@ export interface HeldItemSpecs extends HeldItemData {
   id: HeldItemId;
 }
 
+/**
+ * A mapping of held item IDs to numeric weights for weighted random selection.
+ * Used to customize selection odds within item categories.
+ */
 export type HeldItemWeights<T extends HeldItemId = HeldItemId> = Partial<Record<T, number>>;
 
-type HeldItemWeightFunc =
-  /** @param pokemon - The `Pokemon` receiving the item */
-  (pokemon: Pokemon) => number;
+/**
+ * Calculate the selection weight of an entry in a {@linkcode HeldItemPool}.
+ * @param pokemon - The `Pokemon` receiving the item
+ * @returns The numeric weight for the item pool entry
+ */
+type HeldItemPoolWeightFunc = (pokemon: Pokemon) => number;
 
+/**
+ * A selectable entry in a held item pool.
+ * @see `getNewHeldItemFromPool` (held-item-pool.ts)
+ *
+ * @privateRemarks
+ * It is feasible in the future to be more permissive about the types
+ * allowed here in `entry` (nested pools, etc.). Doing so is not needed
+ * in the base system and requires care to be taken in the full pipeline
+ * to ensure the additional/recursive cases are handled.
+ */
 interface HeldItemPoolEntry {
   entry: HeldItemId | GeneratableHeldItemCategoryId;
-  weight: number | HeldItemWeightFunc;
+  weight: number | HeldItemPoolWeightFunc;
 }
 
+/** A non-empty tuple of {@linkcode HeldItemPoolEntry} */
 export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
 
 /**
@@ -77,6 +93,7 @@ export interface PokemonItemMap {
   pokemonId: number;
 }
 
+/** Alias for an array of {@linkcode HeldItemSpecs} */
 export type HeldItemSaveData = HeldItemSpecs[];
 
 /** Union type of all `HeldItemId`s whose corresponding items cannot be applied. */

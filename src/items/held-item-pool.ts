@@ -10,7 +10,7 @@ import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
 import type { HeldItemConfiguration, HeldItemPool, HeldItemWeights } from "#types/held-item-data-types";
 import type { Mutable } from "#types/type-helpers";
-import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { pickWeightedIndex, randSeedInt } from "#utils/common";
 import type { NonEmptyTuple } from "type-fest";
 
 /**
@@ -252,29 +252,41 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
 
 function assignItemsFromCategory(id: GeneratableHeldItemCategoryId, pokemon: Pokemon, count: number) {
   for (let i = 0; i < count; i++) {
-    const newItem = getNewHeldItemFromCategory(id, pokemon, undefined, pokemon);
+    const newItem = getNewHeldItemFromCategory(id, pokemon);
     if (newItem) {
       pokemon.heldItemManager.add(newItem);
     }
   }
 }
 
-// TODO: Explain what this function returning `null` even means,
-// and whether it should be allowed to accept invalid categories at all
-// (possibly tightening the kind of item categories placeable inside pools as a result)
+/**
+ * Generate a new held item from the provided category
+ * @param id - The id of the category to generate from
+ * @param target - The pokemon receiving the item (to check max stacks, etc.)
+ * @param party - The party of the side receiving the item (used for type boosters)
+ * @param customWeights - Custom weights to use when generating the item
+ * @returns - The {@linkcode HeldItemId} of the chosen item
+ *
+ * @remarks
+ * The `target` and `party` parameters are used only for determining what item to generate
+ * (i.e. the item is not automatically given to `target`). To generate an item only considering the target,
+ * leave `party` empty. It is safe (deduplicated) to pass a target and party containing the target.
+ */
 export function getNewHeldItemFromCategory(
   id: GeneratableHeldItemCategoryId,
-  pokemon: Pokemon | Pokemon[],
+  target: Pokemon,
+  party: Pokemon[] = [],
   customWeights: HeldItemWeights = {},
-  target?: Pokemon,
 ): HeldItemId {
+  const unifiedParty = party.includes(target) ? [...party] : [target, ...party];
+
   switch (id) {
     case HeldItemCategoryId.BERRY:
       return getNewBerryHeldItem(customWeights, target);
     case HeldItemCategoryId.VITAMIN:
       return getNewVitaminHeldItem(customWeights, target);
     case HeldItemCategoryId.TYPE_ATTACK_BOOSTER:
-      return getNewAttackTypeBoosterHeldItem(pokemon, customWeights, target);
+      return getNewAttackTypeBoosterHeldItem(target, unifiedParty, customWeights);
   }
 }
 
@@ -303,12 +315,10 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
 }
 
 export function getNewAttackTypeBoosterHeldItem(
-  pokemon: Pokemon | Pokemon[],
-  customWeights: HeldItemWeights = {},
   target?: Pokemon,
+  party: Pokemon[] = [],
+  customWeights: HeldItemWeights = {},
 ): HeldItemId {
-  const party = coerceArray(pokemon);
-
   const attackMoveTypes = party
     .values()
     .flatMap(p =>
@@ -346,14 +356,14 @@ export function getNewAttackTypeBoosterHeldItem(
   return attackTypeToHeldItem[types[pickedIndex]];
 }
 
-function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Pokemon[]): HeldItemId {
-  const weights = getPoolWeights(pool, pokemon);
+function getNewHeldItemFromPool(pool: HeldItemPool, target: Pokemon, party?: Pokemon[]): HeldItemId {
+  const weights = getPoolWeights(pool, target);
 
   const pickedIndex = pickWeightedIndex(weights);
   const { entry } = pool[pickedIndex];
 
   if (isCategoryId(entry)) {
-    return getNewHeldItemFromCategory(entry, party ?? pokemon, {}, pokemon);
+    return getNewHeldItemFromCategory(entry, target, party);
   }
   return entry;
 }
