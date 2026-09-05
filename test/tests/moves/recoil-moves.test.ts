@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -23,11 +24,12 @@ describe("Moves - Recoil Moves", () => {
       .enemySpecies(SpeciesId.PIDOVE)
       .startingLevel(1)
       .enemyLevel(100)
-      .enemyMoveset(MoveId.SUBSTITUTE)
       .criticalHits(false)
       .ability(AbilityId.NO_GUARD)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
+
+  // TODO: Add test checking the recoil amounts based on damage taken (for everything but struggle)
 
   it.each([
     { moveName: "Double Edge", moveId: MoveId.DOUBLE_EDGE },
@@ -43,38 +45,41 @@ describe("Moves - Recoil Moves", () => {
     { moveName: "Wave Crash", moveId: MoveId.WAVE_CRASH },
     { moveName: "Wild Charge", moveId: MoveId.WILD_CHARGE },
     { moveName: "Wood Hammer", moveId: MoveId.WOOD_HAMMER },
-  ])("$moveName causes recoil damage when hitting a substitute", async ({ moveId }) => {
+  ])("$moveName should cause recoil damage when hitting a substitute", async ({ moveId }) => {
     await game.classicMode.startBattle(SpeciesId.TOGEPI);
 
     game.move.use(moveId);
+    await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase"); // Pidove substitute
 
-    const pidove = game.field.getEnemyPokemon();
-    const subTag = pidove.getTag(BattlerTagType.SUBSTITUTE)!;
+    const enemy = game.field.getEnemyPokemon();
+    const subTag = enemy.getTag(BattlerTagType.SUBSTITUTE)!;
     expect(subTag).toBeDefined();
     const subInitialHp = subTag.hp;
 
     await game.phaseInterceptor.to("MoveEndPhase"); // player attack
 
-    expect(subTag.hp).toBeLessThan(subInitialHp);
+    expect(subTag.hp).toBeLessThan(subInitialHp); // make sure the substitute took damage (not vacuously true)
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    const player = game.field.getPlayerPokemon();
+    expect(player).not.toHaveFullHp();
   });
 
-  it("causes recoil damage when hitting a substitute in a double battle", async () => {
+  it("should cause recoil damage when hitting a substitute in a double battle", async () => {
     game.override.battleStyle("double");
-
     await game.classicMode.startBattle(SpeciesId.TOGEPI, SpeciesId.TOGEPI);
 
-    const [playerPokemon1, playerPokemon2] = game.scene.getPlayerField();
+    const [player1, player2] = game.scene.getPlayerField();
 
-    game.move.use(MoveId.DOUBLE_EDGE, 0);
-    game.move.use(MoveId.DOUBLE_EDGE, 1);
+    game.move.use(MoveId.DOUBLE_EDGE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.DOUBLE_EDGE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
+    await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
+    await game.toEndOfTurn();
 
-    await game.toNextTurn();
-
-    expect(playerPokemon1.hp).toBeLessThan(playerPokemon1.getMaxHp());
-    expect(playerPokemon2.hp).toBeLessThan(playerPokemon2.getMaxHp());
+    expect(player1).not.toHaveFullHp();
+    expect(player2).not.toHaveFullHp();
   });
 });
