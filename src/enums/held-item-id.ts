@@ -135,6 +135,12 @@ export const HeldItemCategoryId = {
 
 export type HeldItemCategoryId = ValueOf<typeof HeldItemCategoryId>;
 
+/** The subset of {@linkcode HeldItemCategoryId}s that {@linkcode getNewHeldItemFromCategory} can roll. */
+export type GeneratableHeldItemCategoryId =
+  | typeof HeldItemCategoryId.BERRY
+  | typeof HeldItemCategoryId.VITAMIN
+  | typeof HeldItemCategoryId.TYPE_ATTACK_BOOSTER;
+
 const ITEM_CATEGORY_MASK = 0xff00;
 
 export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {

@@ -1,4 +1,4 @@
-import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import type { GeneratableHeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
@@ -33,21 +33,14 @@ export interface HeldItemSpecs extends HeldItemData {
   id: HeldItemId;
 }
 
-// TODO: Make this generic on a subset of `HeldItemId`
-export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
+export type HeldItemWeights<T extends HeldItemId = HeldItemId> = Partial<Record<T, number>>;
 
 type HeldItemWeightFunc =
   /** @param pokemon - The `Pokemon` receiving the item */
   (pokemon: Pokemon) => number;
 
-export interface HeldItemCategoryEntry extends HeldItemData {
-  id: HeldItemCategoryId;
-  customWeights?: HeldItemWeights;
-}
-
-// TODO: This can include itself through held item pool and is a bit overly expressive
 interface HeldItemPoolEntry {
-  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
+  entry: HeldItemId | GeneratableHeldItemCategoryId;
   weight: number | HeldItemWeightFunc;
 }
 
@@ -57,13 +50,12 @@ export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
 // (which is useless and redundant).
 // Why this should be able to hold specs is dubious at best.
 interface HeldItemConfigurationEntry {
-  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
+  entry: HeldItemId | GeneratableHeldItemCategoryId | HeldItemPool;
   /**
-   * The number of items to obtain, either as a numeric count or a function returning one.
-   * Must be a positive integer!
+   * The number of items to obtain - must be a positive integer!
    * @defaultValue `1`
    */
-  count?: number | (() => number);
+  count?: number;
 }
 
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];

@@ -1,4 +1,4 @@
-import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
+import { type GeneratableHeldItemCategoryId, HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
@@ -17,7 +17,7 @@ import type {
 } from "#types/held-item-data-types";
 import type { Mutable } from "#types/type-helpers";
 import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
-import { isHeldItemCategoryEntry, isHeldItemPool, isHeldItemSpecs } from "#utils/item-utils";
+import { isHeldItemSpecs } from "#utils/item-utils";
 import type { NonEmptyTuple } from "type-fest";
 
 /**
@@ -240,7 +240,7 @@ function getRandomTier(): RarityTier {
 
 export function assignItemsFromConfiguration(config: HeldItemConfiguration, pokemon: Pokemon) {
   for (const { entry, count } of config) {
-    const actualCount = typeof count === "function" ? count() : (count ?? 1);
+    const actualCount = count ?? 1;
 
     if (typeof entry === "number") {
       if (isCategoryId(entry)) {
@@ -256,13 +256,6 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
       continue;
     }
 
-    // TODO: Overly permissive type - this should not be able to take a HeldItemCategoryEntry if
-    // the result would be analogous to passing the category directly
-    if (isHeldItemCategoryEntry(entry)) {
-      assignItemsFromCategory(entry.id, pokemon, actualCount);
-      continue;
-    }
-
     entry satisfies HeldItemPool;
     for (let i = 0; i < actualCount; i++) {
       const newItem = getNewHeldItemFromPool(entry, pokemon);
@@ -273,7 +266,7 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
   }
 }
 
-function assignItemsFromCategory(id: HeldItemCategoryId, pokemon: Pokemon, count: number) {
+function assignItemsFromCategory(id: GeneratableHeldItemCategoryId, pokemon: Pokemon, count: number) {
   for (let i = 0; i < count; i++) {
     const newItem = getNewHeldItemFromCategory(id, pokemon, undefined, pokemon);
     if (newItem) {
@@ -286,11 +279,11 @@ function assignItemsFromCategory(id: HeldItemCategoryId, pokemon: Pokemon, count
 // and whether it should be allowed to accept invalid categories at all
 // (possibly tightening the kind of item categories placeable inside pools as a result)
 export function getNewHeldItemFromCategory(
-  id: HeldItemCategoryId,
+  id: GeneratableHeldItemCategoryId,
   pokemon: Pokemon | Pokemon[],
   customWeights: HeldItemWeights = {},
   target?: Pokemon,
-): HeldItemId | null {
+): HeldItemId {
   switch (id) {
     case HeldItemCategoryId.BERRY:
       return getNewBerryHeldItem(customWeights, target);
@@ -298,8 +291,6 @@ export function getNewHeldItemFromCategory(
       return getNewVitaminHeldItem(customWeights, target);
     case HeldItemCategoryId.TYPE_ATTACK_BOOSTER:
       return getNewAttackTypeBoosterHeldItem(pokemon, customWeights, target);
-    default:
-      return null;
   }
 }
 
@@ -331,7 +322,7 @@ export function getNewAttackTypeBoosterHeldItem(
   pokemon: Pokemon | Pokemon[],
   customWeights: HeldItemWeights = {},
   target?: Pokemon,
-): HeldItemId | null {
+): HeldItemId {
   const party = coerceArray(pokemon);
 
   const attackMoveTypes = party
@@ -346,7 +337,8 @@ export function getNewAttackTypeBoosterHeldItem(
     .toArray();
 
   if (attackMoveTypes.length === 0) {
-    return null;
+    // Fallback to avoid bubbling `null` through the entire item generation chain
+    return attackTypeToHeldItem[PokemonType.NORMAL];
   }
 
   const attackMoveTypeWeights = attackMoveTypes.reduce((map, type) => {
@@ -370,35 +362,16 @@ export function getNewAttackTypeBoosterHeldItem(
   return attackTypeToHeldItem[types[pickedIndex]];
 }
 
-function getNewHeldItemFromPool(
-  pool: HeldItemPool,
-  pokemon: Pokemon,
-  party?: Pokemon[],
-): HeldItemId | HeldItemSpecs | null {
+function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Pokemon[]): HeldItemId {
   const weights = getPoolWeights(pool, pokemon);
 
   const pickedIndex = pickWeightedIndex(weights);
   const { entry } = pool[pickedIndex];
 
-  if (typeof entry === "number") {
-    if (isCategoryId(entry)) {
-      // TODO: This is the only thing that can return `null` directly;
-      // we should simply make held item pools unable to contain values that would result in a failed input
-
-      return getNewHeldItemFromCategory(entry, party ?? pokemon, {}, pokemon);
-    }
-    return entry;
+  if (isCategoryId(entry)) {
+    return getNewHeldItemFromCategory(entry, party ?? pokemon, {}, pokemon);
   }
-
-  if (isHeldItemPool(entry)) {
-    return getNewHeldItemFromPool(entry, pokemon, party);
-  }
-
-  if (isHeldItemCategoryEntry(entry)) {
-    return getNewHeldItemFromCategory(entry.id, party ?? pokemon, entry.customWeights, pokemon);
-  }
-
-  return entry satisfies HeldItemSpecs;
+  return entry;
 }
 
 function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): NonEmptyTuple<number> {
