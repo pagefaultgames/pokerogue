@@ -674,7 +674,7 @@ export class ShellTrapTag extends BattlerTag {
   }
 }
 
-//#region Trapping effects
+// #region Trapping effects
 
 /**
  * Abstract base class for {@link https://bulbapedia.bulbagarden.net/wiki/Escape_prevention | persistent trapping effects}.
@@ -1017,7 +1017,7 @@ export class InfestationTag extends DamagingTrapTag {
   }
 }
 
-//#endregion Trapping effects
+// #endregion Trapping effects
 
 /**
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
