@@ -41,7 +41,9 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
+    expect(player).toHaveBattlerTag({tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.SPLASH});
     expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK) * 1.5);
+    // should be restricted from using anything other than Splash
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
@@ -69,13 +71,12 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SPLASH); // prevent disable from being used again
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
     await game.toEndOfTurn();
+
     expect(player).toHaveUsedMove(MoveId.STRUGGLE);
   });
 
-  it("should lock into calling moves", async () => {
+  it("should lock into calling moves instead of the called move", async () => {
     game.move.forceMetronomeMove(MoveId.TACKLE);
     await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
@@ -84,7 +85,8 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.use(MoveId.METRONOME);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // Gorilla Tactics should lock into Metronome, not tackle
+    // Gorilla Tactics should lock into Metronome, not Tackle
+    expect(player).toHaveBattlerTag({tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.METRONOME});
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.METRONOME)).toBe(false);
     expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS, useMode: MoveUseMode.FOLLOW_UP });
@@ -104,8 +106,7 @@ describe("Abilities - Gorilla Tactics", () => {
     await game.move.forceEnemyMove(MoveId.PROTECT);
     await game.toEndOfTurn();
 
-    expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
-    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
+    expect(player).toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
     expect(enemy).toHaveFullHp();
   });
 

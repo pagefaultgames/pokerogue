@@ -78,12 +78,12 @@ describe("Abilities - Dancer", () => {
 
     game.move.select(MoveId.SWORDS_DANCE);
     await game.move.selectEnemyMove(MoveId.VICTORY_DANCE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(oricorio).toHaveAbilityApplied(AbilityId.DANCER);
     expect(shuckle).toHaveAbilityApplied(AbilityId.DANCER);
-    expect(game.phaseInterceptor.log).toContain("DancerPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("DancerPhase");
 
     // shpuldn't use PP if copied move is also in moveset
     expect(oricorio).toHaveUsedPP(MoveId.SWORDS_DANCE, 1);
@@ -112,7 +112,7 @@ describe("Abilities - Dancer", () => {
     game.move.use(MoveId.REVELATION_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.FIERY_DANCE, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await toNextMove(); // initial use
     checkCurrentMoveUser(oricorio, MoveId.FEATHER_DANCE, [BattlerIndex.PLAYER_2], MoveUseMode.NORMAL);
@@ -156,7 +156,7 @@ describe("Abilities - Dancer", () => {
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.AQUA_STEP, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
 
     await toNextMove(); // initial attack
     await toNextMove(); // dancer copy
@@ -204,7 +204,7 @@ describe("Abilities - Dancer", () => {
     game.move.use(MoveId.REVELATION_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
     await game.move.forceEnemyMove(MoveId.METAL_BURST);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toEndOfTurn();
 
     expect(enemyDmgSpy).toHaveBeenCalledTimes(2);
@@ -280,7 +280,7 @@ describe("Abilities - Dancer", () => {
     // attempt to copy swords dance and get para'd
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     expect(oricorio).toHaveUsedMove(MoveId.NONE);
@@ -293,7 +293,7 @@ describe("Abilities - Dancer", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.REVELATION_DANCE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MovePhase");
 
     expect(game.scene.arena.ignoreAbilities).toBe(true);
@@ -325,7 +325,7 @@ describe("Abilities - Dancer", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     const oricorio = game.field.getPlayerPokemon();
@@ -353,7 +353,7 @@ describe("Abilities - Dancer", () => {
 
     // Use petal dance ourselves and copy enemy one in same turn
     game.move.select(MoveId.PETAL_DANCE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     const prevQueueLength = oricorio.getMoveQueue().length;
@@ -374,7 +374,7 @@ describe("Abilities - Dancer", () => {
 
     // turn 1: Splash --> truanted SD (gets blocked)
     game.move.use(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     expect(oricorio).toHaveUsedMove({
@@ -394,7 +394,7 @@ describe("Abilities - Dancer", () => {
 
     // Turn 2: Dancer SD --> truanted Splash
     game.move.use(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(oricorio).toHaveUsedMove({
@@ -428,7 +428,7 @@ describe("Abilities - Dancer", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(move);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(shuckle).toHaveUsedMove({ move: MoveId.SPLASH, useMode: MoveUseMode.FOLLOW_UP });
