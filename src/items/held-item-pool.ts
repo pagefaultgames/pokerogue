@@ -324,16 +324,23 @@ export function getNewAttackTypeBoosterHeldItem(
 ): HeldItemId | null {
   const party = coerceArray(pokemon);
 
-  const attackMoveTypes = party
-    .values()
-    .flatMap(p =>
-      p
-        .getMoveset()
-        .filter(pm => pm.getMove().is("AttackMove"))
-        .map(pm => p.getMoveType(pm.getMove()))
-        .filter(type => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-    )
-    .toArray();
+  const attackMoveTypes = party.flatMap(p => {
+    const ret: PokemonType[] = [];
+    const moveset = p.getMoveset();
+
+    for (const pokemonMove of moveset) {
+      const move = pokemonMove.getMove();
+
+      if (move.is("AttackMove")) {
+        const moveType = p.getMoveType(move);
+
+        if (moveType !== PokemonType.UNKNOWN && moveType !== PokemonType.STELLAR) {
+          ret.push(moveType);
+        }
+      }
+    }
+    return ret;
+  });
 
   if (attackMoveTypes.length === 0) {
     return null;
