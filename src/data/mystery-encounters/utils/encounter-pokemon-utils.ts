@@ -1,20 +1,13 @@
 import { audioManager } from "#app/global-audio-manager";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
-import {
-  doPokeballBounceAnim,
-  getPokeballAtlasKey,
-  getPokeballCatchMultiplier,
-  getPokeballTintColor,
-} from "#data/pokeball";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { PartyUiMode } from "#enums/party-ui-mode";
@@ -35,8 +28,10 @@ import {
 import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { playNumberTween, playTween } from "#utils/anim-utils";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
+import { waitTime } from "#utils/time";
 import i18next from "i18next";
 
 /** Will give +1 level every 10 waves */
@@ -419,6 +414,8 @@ export async function applyModifierTypeToPlayerPokemon(
   globalScene.addModifier(modifier, false, false, false, true);
 }
 
+// #region Capture logic
+
 /**
  * Alternative to using AttemptCapturePhase
  * Assumes player sprite is visible on the screen (this is intended for non-combat uses)
@@ -428,25 +425,19 @@ export async function applyModifierTypeToPlayerPokemon(
  * @param scene
  * @param pokemon
  * @param pokeballType
- * @param ballTwitchRate - can pass custom ball catch rates (for special events, like safari)
+ * @param modifiedCatchRate - can pass custom ball catch rates (for special events, like safari)
  */
-export function trainerThrowPokeball(
+// TODO: Resolve the utterly massive code duplication between this and `AttemptCapturePhase`;
+// the only differences between the 2 callsites are a trainer ball throw anim and a custom modified catchrate formula.
+// This SHOULD be handled with a Phase subclass
+export async function trainerThrowPokeball(
   pokemon: EnemyPokemon,
   pokeballType: PokeballType,
-  ballTwitchRate?: number,
+  modifiedCatchRate: number,
 ): Promise<boolean> {
   const originalY: number = pokemon.y;
 
-  if (!ballTwitchRate) {
-    const _3m = 3 * pokemon.getMaxHp();
-    const _2h = 2 * pokemon.hp;
-    const catchRate = pokemon.species.catchRate;
-    const pokeballMultiplier = getPokeballCatchMultiplier(pokeballType);
-    const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
-    const shinyMultiplier = pokemon.isShiny() ? timedEventManager.getShinyCatchMultiplier() : 1;
-    const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier * shinyMultiplier);
-    ballTwitchRate = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
-  }
+  const [successfulShakes, caught] = computeTrainerCaptureOutcome(modifiedCatchRate);
 
   const fpOffset = pokemon.getFieldPositionOffset();
   const pokeballAtlasKey = getPokeballAtlasKey(pokeballType);
@@ -454,156 +445,204 @@ export function trainerThrowPokeball(
   pokeball.setOrigin(0.5, 0.625);
   globalScene.field.add(pokeball);
 
-  globalScene.time.delayedCall(300, () => {
-    globalScene.field.moveBelow(pokeball as Phaser.GameObjects.GameObject, pokemon);
+  globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
+
+  // TODO: Do some sort of `Promise.all` on these to ensure the phase doesn't end before all animations finish
+  waitTime(300).then(() => {
+    globalScene.field.moveBelow<Phaser.GameObjects.GameObject>(pokeball, pokemon);
   });
 
-  return new Promise(resolve => {
-    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
-    globalScene.time.delayedCall(512, () => {
-      audioManager.playSound("se/pb_throw");
+  await waitTime(512);
+  audioManager.playSound("se/pb_throw");
 
-      // Trainer throw frames
-      globalScene.trainer.setFrame("2");
-      globalScene.time.delayedCall(256, () => {
-        globalScene.trainer.setFrame("3");
-        globalScene.time.delayedCall(768, () => {
-          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
-        });
-      });
-
-      // Pokeball move and catch logic
-      globalScene.tweens.add({
-        targets: pokeball,
-        x: { value: 236 + fpOffset[0], ease: "Linear" },
-        y: { value: 16 + fpOffset[1], ease: "Cubic.easeOut" },
-        duration: 500,
-        onComplete: () => {
-          pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
-          globalScene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-          audioManager.playSound("se/pb_rel");
-          pokemon.tint(getPokeballTintColor(pokeballType));
-
-          globalScene.animations.addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
-
-          globalScene.tweens.add({
-            targets: pokemon,
-            duration: 500,
-            ease: "Sine.easeIn",
-            scale: 0.25,
-            y: 20,
-            onComplete: () => {
-              pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
-              pokemon.setVisible(false);
-              audioManager.playSound("se/pb_catch");
-              globalScene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}`));
-
-              const doShake = () => {
-                let shakeCount = 0;
-                const pbX = pokeball.x;
-                const shakeCounter = globalScene.tweens.addCounter({
-                  from: 0,
-                  to: 1,
-                  repeat: 4,
-                  yoyo: true,
-                  ease: "Cubic.easeOut",
-                  duration: 250,
-                  repeatDelay: 500,
-                  onUpdate: t => {
-                    if (shakeCount && shakeCount < 4) {
-                      const value = t.getValue() ?? 0;
-                      const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
-                      pokeball.setX(pbX + value * 4 * directionMultiplier);
-                      pokeball.setAngle(value * 27.5 * directionMultiplier);
-                    }
-                  },
-                  onRepeat: () => {
-                    if (shakeCount++ < 3) {
-                      if (randSeedInt(65536) < ballTwitchRate) {
-                        audioManager.playSound("se/pb_move");
-                      } else {
-                        shakeCounter.stop();
-                        failCatch(pokemon, originalY, pokeball, pokeballType).then(() => resolve(false));
-                      }
-                    } else {
-                      audioManager.playSound("se/pb_lock");
-                      globalScene.animations.addPokeballCaptureStars(pokeball);
-
-                      const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
-                      pbTint.setOrigin(pokeball.originX, pokeball.originY);
-                      pbTint.setTintFill(0);
-                      pbTint.setAlpha(0);
-                      globalScene.field.add(pbTint);
-                      globalScene.tweens.add({
-                        targets: pbTint,
-                        alpha: 0.375,
-                        duration: 200,
-                        easing: "Sine.easeOut",
-                        onComplete: () => {
-                          globalScene.tweens.add({
-                            targets: pbTint,
-                            alpha: 0,
-                            duration: 200,
-                            easing: "Sine.easeIn",
-                            onComplete: () => pbTint.destroy(),
-                          });
-                        },
-                      });
-                    }
-                  },
-                  onComplete: () => {
-                    catchPokemon(pokemon, pokeball, pokeballType).then(() => resolve(true));
-                  },
-                });
-              };
-
-              globalScene.time.delayedCall(250, () => doPokeballBounceAnim(pokeball, 16, 72, 350, doShake));
-            },
-          });
-        },
-      });
+  // Trainer throw frames
+  // TODO: Find a better way of queueing these.
+  globalScene.trainer.setFrame("2");
+  waitTime(256).then(() => {
+    globalScene.trainer.setFrame("3");
+    waitTime(768).then(() => {
+      globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     });
   });
+
+  // Throw animation
+  await playTween({
+    targets: pokeball,
+    x: { value: 236 + fpOffset[0], ease: "Linear" },
+    y: { value: 16 + fpOffset[1], ease: "Cubic.easeOut" },
+    duration: 500,
+  });
+
+  // Ball opens
+  pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
+  waitTime(17).then(() => pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
+  audioManager.playSound("se/pb_rel");
+  pokemon.tint(getPokeballTintColor(pokeballType));
+
+  globalScene.animations.addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
+
+  // Mon enters ball
+  await playTween({
+    targets: pokemon,
+    duration: 500,
+    ease: "Sine.easeIn",
+    scale: 0.25,
+    y: 20,
+  });
+
+  // Ball closes
+  pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
+  pokemon.setVisible(false);
+  audioManager.playSound("se/pb_catch");
+  waitTime(17).then(() => pokeball.setTexture("pb", `${pokeballAtlasKey}`));
+
+  // Ball bounces
+  await new Promise<void>(resolve =>
+    globalScene.time.delayedCall(250, () => doPokeballBounceAnim(pokeball, 16, 72, 350, resolve)),
+  );
+
+  // Play the wobble animations for each successful shake check.
+  await handleTrainerShakeChecks(pokeball, successfulShakes);
+
+  if (caught) {
+    audioManager.playSound("se/pb_lock");
+    globalScene.animations.addPokeballCaptureStars(pokeball);
+
+    const pbTint = globalScene.add
+      .sprite(pokeball.x, pokeball.y, "pb", "pb")
+      .setOrigin(pokeball.originX, pokeball.originY)
+      .setTintFill(0)
+      .setAlpha(0);
+    globalScene.field.add(pbTint);
+
+    await playTween({
+      targets: pbTint,
+      alpha: 0.375,
+      duration: 200,
+      easing: "Sine.easeOut",
+    });
+    await playTween({
+      targets: pbTint,
+      alpha: 0,
+      duration: 200,
+      easing: "Sine.easeIn",
+    });
+    pbTint.destroy();
+
+    await catchPokemon(pokemon, pokeball, pokeballType);
+    return true;
+  }
+  await failCatch(pokemon, originalY, pokeball, pokeballType);
+  return false;
+}
+
+/**
+ * Pre-compute the outcome of a trainer's capture sequence using a custom shake probability.
+ * @param modifiedCatchRate - Custom shake probability (0-65536 scale) for special events like safari
+ * @returns A tuple containing:
+ * 1. The number of successful shake check animations that should be displayed (0-3)
+ * 2. Whether the Pokemon should be caught at the end of the sequence
+ */
+function computeTrainerCaptureOutcome(modifiedCatchRate: number): [successfulShakes: number, caught: boolean] {
+  const maxShakeChecks = 3;
+  let successfulShakes: number;
+
+  for (successfulShakes = 0; successfulShakes < maxShakeChecks; successfulShakes++) {
+    if (randSeedInt(65536) >= modifiedCatchRate) {
+      break;
+    }
+  }
+
+  // must succeed the final shake check (which determines whether the ball breaks at the end).
+  // This does not produce a shake anim
+  const caught = successfulShakes === maxShakeChecks && randSeedInt(65536) < modifiedCatchRate;
+
+  return [successfulShakes, caught];
+}
+
+/**
+ * Animate the pokeball wobbling for each successful shake check during trainer throw.
+ *
+ * Each wobble plays the "se/pb_move" sound, then tilts the ball
+ * left or right via a 0→1→0 yoyo counter tween, followed by a
+ * brief pause. The method resolves once all wobbles have played,
+ * leaving catch/fail handling to the caller.
+ *
+ * @param pokeball - The pokeball sprite to animate
+ * @param shakeCount - The number of wobble animations to play
+ */
+async function handleTrainerShakeChecks(pokeball: Phaser.GameObjects.Sprite, shakeCount: number): Promise<void> {
+  if (shakeCount === 0) {
+    return;
+  }
+
+  const pbX = pokeball.x;
+  let currentShake = 0;
+
+  // Initial pause before the first wobble
+  await waitTime(1000);
+
+  await playNumberTween({
+    from: 0,
+    to: 1,
+    yoyo: true,
+    ease: "Cubic.easeOut",
+    duration: 250,
+    repeat: shakeCount - 1,
+    repeatDelay: 500,
+    onUpdate: t => {
+      const value = t.getValue() ?? 0;
+      const directionMultiplier = currentShake % 2 === 0 ? 1 : -1;
+      pokeball.setX(pbX + value * 4 * directionMultiplier);
+      pokeball.setAngle(value * 27.5 * directionMultiplier);
+    },
+    onRepeat: () => {
+      audioManager.playSound("se/pb_move");
+      currentShake++;
+    },
+  });
+
+  // Trailing pause after the final wobble
+  await waitTime(500);
 }
 
 /**
  * Animates pokeball opening and messages when an attempted catch fails
- * @param scene
  * @param pokemon
  * @param originalY
  * @param pokeball
  * @param pokeballType
  */
-function failCatch(
+async function failCatch(
   pokemon: EnemyPokemon,
   originalY: number,
   pokeball: Phaser.GameObjects.Sprite,
   pokeballType: PokeballType,
-) {
-  return new Promise<void>(resolve => {
-    audioManager.playSound("se/pb_rel");
-    pokemon.setY(originalY);
-    if (pokemon.status?.effect !== StatusEffect.SLEEP) {
-      pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
-    }
-    pokemon.tint(getPokeballTintColor(pokeballType));
-    pokemon.setVisible(true);
-    pokemon.untint(250, "Sine.easeOut");
+): Promise<void> {
+  audioManager.playSound("se/pb_rel");
+  pokemon.setY(originalY);
+  if (pokemon.status?.effect !== StatusEffect.SLEEP) {
+    pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+  }
+  pokemon.tint(getPokeballTintColor(pokeballType));
+  pokemon.setVisible(true);
+  pokemon.untint(250, "Sine.easeOut");
 
-    const pokeballAtlasKey = getPokeballAtlasKey(pokeballType);
-    pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
-    globalScene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
+  const pokeballAtlasKey = getPokeballAtlasKey(pokeballType);
+  pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
+  waitTime(17).then(() => pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
 
-    globalScene.tweens.add({
-      targets: pokemon,
-      duration: 250,
-      ease: "Sine.easeOut",
-      scale: 1,
-    });
+  await playTween({
+    targets: pokemon,
+    duration: 250,
+    ease: "Sine.easeOut",
+    scale: 1,
+  });
 
-    globalScene.currentBattle.lastUsedPokeball = pokeballType;
-    removePb(pokeball);
+  globalScene.currentBattle.lastUsedPokeball = pokeballType;
+  removePb(pokeball);
 
+  await new Promise<void>(resolve => {
     globalScene.ui.showText(
       i18next.t("battle:pokemonBrokeFree", {
         pokemonName: pokemon.getNameToRender(),
@@ -820,18 +859,17 @@ export async function catchPokemon(
  */
 function removePb(pokeball: Phaser.GameObjects.Sprite) {
   if (pokeball) {
-    globalScene.tweens.add({
+    playTween({
       targets: pokeball,
       duration: 250,
       delay: 250,
       ease: "Sine.easeIn",
       alpha: 0,
-      onComplete: () => {
-        pokeball.destroy();
-      },
-    });
+    }).then(() => pokeball.destroy());
   }
 }
+
+// #endregion Capture logic
 
 /**
  * Animates a wild pokemon "fleeing", including sfx and messaging

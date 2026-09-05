@@ -1,10 +1,8 @@
 import Phaser from "phaser";
 
-const Clock = Phaser.Time.Clock;
-
-export class MockClock extends Clock {
+export class MockClock extends Phaser.Time.Clock {
   public overrideDelay: number | null = 1;
-  constructor(scene) {
+  constructor(scene: Phaser.Scene) {
     super(scene);
     setInterval(() => {
       /*
@@ -18,7 +16,6 @@ export class MockClock extends Clock {
   }
 
   addEvent(config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig): Phaser.Time.TimerEvent {
-    const cfg = { ...config, delay: this.overrideDelay ?? config.delay ?? 0 };
-    return super.addEvent(cfg);
+    return super.addEvent({ ...config, delay: this.overrideDelay ?? config.delay ?? 0 });
   }
 }
