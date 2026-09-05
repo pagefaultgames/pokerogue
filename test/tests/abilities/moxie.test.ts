@@ -36,12 +36,12 @@ describe("Abilities - Moxie", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 0);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 1);
   });
 
   // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
@@ -52,7 +52,7 @@ describe("Abilities - Moxie", () => {
 
     const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 
-    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(firstPokemon).toHaveStatStage(Stat.ATK, 0);
 
     secondPokemon.hp = 1;
 
@@ -60,6 +60,6 @@ describe("Abilities - Moxie", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(firstPokemon).toHaveStatStage(Stat.ATK, 1);
   }, 20000);
 });

@@ -43,7 +43,7 @@ describe("Abilities - Disguise", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(mimikyu.hp).toEqual(maxHp - disguiseDamage);
+    expect(mimikyu).toHaveTakenDamage(disguiseDamage);
     expect(mimikyu.formIndex).toBe(bustedForm);
   });
 
@@ -55,7 +55,6 @@ describe("Abilities - Disguise", () => {
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
     game.move.use(MoveId.VACUUM_WAVE);
-
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
@@ -74,12 +73,12 @@ describe("Abilities - Disguise", () => {
 
     // First hit
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(mimikyu.hp).toEqual(maxHp - disguiseDamage);
+    expect(mimikyu).toHaveTakenDamage(disguiseDamage);
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
     // Second hit
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(mimikyu.hp).toBeLessThan(maxHp - disguiseDamage);
+    expect(mimikyu).not.toHaveTakenDamage(disguiseDamage);
     expect(mimikyu.formIndex).toBe(bustedForm);
   });
 
@@ -87,7 +86,7 @@ describe("Abilities - Disguise", () => {
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
-    expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
+    expect(mimikyu).toHaveFullHp();
 
     game.move.use(MoveId.TOXIC_THREAD);
 
@@ -95,8 +94,8 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
     expect(mimikyu).toHaveStatusEffect(StatusEffect.POISON);
-    expect(mimikyu.getStatStage(Stat.SPD)).toBe(-2);
-    expect(mimikyu.hp).toBeLessThan(mimikyu.getMaxHp());
+    expect(mimikyu).toHaveStatStage(Stat.SPD, -2);
+    expect(mimikyu).not.toHaveFullHp();
   });
 
   it("persists form change when switched out", async () => {
@@ -112,11 +111,11 @@ describe("Abilities - Disguise", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(mimikyu.formIndex).toBe(bustedForm);
-    expect(mimikyu.hp).toEqual(maxHp - disguiseDamage);
+    expect(mimikyu).toHaveTakenDamage(disguiseDamage);
 
     await game.toNextTurn();
-    game.doSwitchPokemon(1);
 
+    game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(mimikyu.formIndex).toBe(bustedForm);
@@ -199,7 +198,7 @@ describe("Abilities - Disguise", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(mimikyu.formIndex).toBe(bustedForm);
-    expect(mimikyu.hp).toBe(maxHp - disguiseDamage);
+    expect(mimikyu).toHaveTakenDamage(disguiseDamage);
   });
 
   it("doesn't trigger if user is behind a substitute", async () => {

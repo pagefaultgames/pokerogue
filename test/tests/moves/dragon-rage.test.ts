@@ -51,7 +51,7 @@ describe("Moves - Dragon Rage", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
+    expect(enemyPokemon).toHaveTakenDamage(dragonRageDamage);
   });
 
   it("ignores resistances", async () => {
@@ -61,7 +61,7 @@ describe("Moves - Dragon Rage", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
+    expect(enemyPokemon).toHaveTakenDamage(dragonRageDamage);
   });
 
   it("ignores SPATK stat stages", async () => {
@@ -71,7 +71,7 @@ describe("Moves - Dragon Rage", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
+    expect(enemyPokemon).toHaveTakenDamage(dragonRageDamage);
   });
 
   it("ignores stab", async () => {
@@ -81,7 +81,7 @@ describe("Moves - Dragon Rage", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
+    expect(enemyPokemon).toHaveTakenDamage(dragonRageDamage);
   });
 
   it("ignores criticals", async () => {
@@ -90,7 +90,7 @@ describe("Moves - Dragon Rage", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
+    expect(enemyPokemon).toHaveTakenDamage(dragonRageDamage);
   });
 
   it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
@@ -99,6 +99,6 @@ describe("Moves - Dragon Rage", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
+    expect(enemyPokemon).toHaveTakenDamage(dragonRageDamage);
   });
 });

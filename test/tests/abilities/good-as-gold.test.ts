@@ -42,11 +42,10 @@ describe("Abilities - Good As Gold", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
-
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(player.waveData.abilitiesApplied).toContain(AbilityId.GOOD_AS_GOLD);
-    expect(player.getStatStage(Stat.ATK)).toBe(0);
+    expect(player).toHaveAbilityApplied(AbilityId.GOOD_AS_GOLD);
+    expect(player).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should block memento and prevent the user from fainting", async () => {
@@ -55,8 +54,9 @@ describe("Abilities - Good As Gold", () => {
 
     game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().isFainted()).toBe(false);
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
+
+    expect(game.field.getPlayerPokemon()).not.toHaveFainted();
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
@@ -76,10 +76,11 @@ describe("Abilities - Good As Gold", () => {
     await game.move.selectEnemyMove(MoveId.HAZE);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
+
     expect(good_as_gold.getAbility().id).toBe(AbilityId.GOOD_AS_GOLD);
-    expect(good_as_gold.getStatStage(Stat.ATK)).toBe(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(good_as_gold).toHaveStatStage(Stat.ATK, 0);
+    expect(game).toHaveArenaTag(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
   });
 
   it("should not block field targeted effects in singles", async () => {
@@ -89,7 +90,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.select(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
   });
 
   it("should block the ally's helping hand", async () => {
@@ -100,7 +101,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(game.scene.getPlayerField()[1].getTag(BattlerTagType.HELPING_HAND)).toBeUndefined();
+    expect(game.scene.getPlayerField()[1]).not.toHaveBattlerTag(BattlerTagType.HELPING_HAND);
   });
 
   // TODO: re-enable when heal bell is fixed
@@ -116,12 +117,14 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.SPLASH, 0);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
+
     expect(milotic).toHaveStatusEffect(StatusEffect.BURN);
 
     game.doSwitchPokemon(2);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(milotic.status?.effect).toBeUndefined();
+
+    expect(milotic).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not block field targeted effects like rain dance", async () => {
@@ -131,6 +134,6 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+    expect(game).toHaveWeather(WeatherType.RAIN);
   });
 });

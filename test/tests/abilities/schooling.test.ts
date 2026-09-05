@@ -32,12 +32,12 @@ describe("Abilities - SCHOOLING", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.WISHIWASHI);
 
     const wishiwashi = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.WISHIWASHI)!;
-    expect(wishiwashi).not.toBe(undefined);
+    expect(wishiwashi).toBeDefined();
     expect(wishiwashi.formIndex).toBe(schoolForm);
 
     wishiwashi.hp = 0;
     wishiwashi.status = new Status(StatusEffect.FAINT);
-    expect(wishiwashi.isFainted()).toBe(true);
+    expect(wishiwashi).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();

@@ -41,16 +41,16 @@ describe("Moves - Hyper Beam", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
+    expect(enemyPokemon).not.toHaveFullHp();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.RECHARGING);
 
     const enemyPostAttackHp = enemyPokemon.hp;
 
     /** Game should progress without a new command from the player */
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
-    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
+    expect(enemyPokemon).toHaveHp(enemyPostAttackHp);
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.RECHARGING);
 
     game.move.select(MoveId.TACKLE);
 

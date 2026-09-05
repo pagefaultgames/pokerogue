@@ -55,7 +55,7 @@ describe("Moves - After You", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MovePhase");
 
-    expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerField()[1]).toHaveUsedMove({ move: MoveId.AFTER_YOU, result: MoveResult.FAIL });
   });
 
   // TODO: Enable once rampaging moves and move queue are fixed.
@@ -76,15 +76,14 @@ describe("Moves - After You", () => {
     game.move.select(MoveId.OUTRAGE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const outrageMove = rattata.getMoveset().find(m => m.moveId === MoveId.OUTRAGE);
-    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
 
     game.move.select(MoveId.AFTER_YOU, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(outrageMove?.ppUsed).toBe(1);
-    expect(rattata.getLastXMoves()[0]).toMatchObject({
+    expect(accelgor).toHaveUsedMove({ move: MoveId.AFTER_YOU, result: MoveResult.SUCCESS });
+    expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
+    expect(rattata).toHaveUsedMove({
       move: MoveId.OUTRAGE,
       result: MoveResult.SUCCESS,
       useMode: MoveUseMode.IGNORE_PP,

@@ -114,7 +114,7 @@ describe("Items - Grip Claw", () => {
     game.move.use(MoveId.TACKLE);
     await game.phaseInterceptor.to("FaintPhase");
 
-    expect(playerPokemon.isFainted()).toBe(true);
+    expect(playerPokemon).toHaveFainted();
     expect(getHeldItemCount(enemyPokemon)).toBe(enemyHeldItemCount);
   });
 

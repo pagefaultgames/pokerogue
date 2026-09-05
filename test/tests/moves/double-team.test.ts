@@ -35,13 +35,13 @@ describe("Moves - Double Team", () => {
     const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy, "getAccuracyMultiplier");
-    expect(ally.getStatStage(Stat.EVA)).toBe(0);
+    expect(ally).toHaveStatStage(Stat.EVA, 0);
 
     game.move.select(MoveId.DOUBLE_TEAM);
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
 
-    expect(ally.getStatStage(Stat.EVA)).toBe(1);
+    expect(ally).toHaveStatStage(Stat.EVA, 1);
     expect(enemy.getAccuracyMultiplier).toHaveReturnedWith(0.75);
   });
 });

@@ -68,7 +68,7 @@ describe("Abilities - Healer", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
 
-    expect(ally.status?.effect, "status effect was not healed").toBeFalsy();
+    expect(ally).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   // TODO: Healer is currently checked before the
@@ -83,7 +83,7 @@ describe("Abilities - Healer", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
 
-    expect(ally.status?.effect, "status effect was not healed").toBeFalsy();
-    expect(ally.hp).toBe(ally.getMaxHp());
+    expect(ally).toHaveStatusEffect(StatusEffect.NONE);
+    expect(ally).toHaveFullHp();
   });
 });

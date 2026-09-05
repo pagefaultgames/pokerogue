@@ -247,7 +247,7 @@ describe("Abilities - Protean/Libero", () => {
 
     expectTypeChange(karp);
     expect(karp.getHpRatio(true)).toBeCloseTo(0.25);
-    expect(karp.getTag(BattlerTagType.CURSED)).toBeDefined();
+    expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
   });
 
   it("should not trigger during Focus Punch's start-of-turn message or being interrupted", async () => {

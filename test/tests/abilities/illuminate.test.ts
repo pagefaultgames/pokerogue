@@ -32,13 +32,13 @@ describe("Abilities - Illuminate", () => {
 
     const player = game.field.getPlayerPokemon();
 
-    expect(player.getStatStage(Stat.ACC)).toBe(0);
+    expect(player).toHaveStatStage(Stat.ACC, 0);
 
     game.move.select(MoveId.SPLASH);
 
     await game.toNextTurn();
 
-    expect(player.getStatStage(Stat.ACC)).toBe(0);
+    expect(player).toHaveStatStage(Stat.ACC, 0);
   });
 
   it("should guarantee double battle with any one LURE", async () => {

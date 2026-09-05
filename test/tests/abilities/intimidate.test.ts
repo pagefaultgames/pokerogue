@@ -34,14 +34,14 @@ describe("Abilities - Intimidate", () => {
     const [mightyena, poochyena] = game.scene.getPlayerParty();
 
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
     expect(mightyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
     expect(poochyena.isActive()).toBe(true);
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
+    expect(enemy).toHaveStatStage(Stat.ATK, -2);
     expect(poochyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
   });
 
@@ -78,8 +78,8 @@ describe("Abilities - Intimidate", () => {
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    expect(enemy1.getStatStage(Stat.ATK)).toBe(-1);
-    expect(enemy2.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy1).toHaveStatStage(Stat.ATK, -1);
+    expect(enemy2).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should not trigger on switching moves used by wild Pokemon", async () => {
@@ -87,13 +87,13 @@ describe("Abilities - Intimidate", () => {
     await game.classicMode.startBattle(SpeciesId.VENUSAUR);
 
     const player = game.field.getPlayerPokemon();
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
+    expect(player).toHaveStatStage(Stat.ATK, -1);
 
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
     // doesn't lower attack due to not actually switching out
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
+    expect(player).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {
@@ -101,18 +101,18 @@ describe("Abilities - Intimidate", () => {
     await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
 
     const player = game.field.getPlayerPokemon();
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
+    expect(player).toHaveStatStage(Stat.ATK, -1);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.TELEPORT);
     await game.toNextTurn();
 
-    expect(player.getStatStage(Stat.ATK)).toBe(-2);
+    expect(player).toHaveStatStage(Stat.ATK, -2);
 
     game.move.use(MoveId.DRAGON_TAIL);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.getStatStage(Stat.ATK)).toBe(-3);
+    expect(player).toHaveStatStage(Stat.ATK, -3);
   });
 });
