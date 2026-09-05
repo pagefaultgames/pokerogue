@@ -57,7 +57,7 @@ import type {
 } from "#types/ability-types";
 import type { Move, MoveConditionFunc, StatusEffectAttr } from "#types/move-types";
 import type { StatChange } from "#types/stat-change";
-import type { Closed, Exact, Mutable } from "#types/type-helpers";
+import type { Closed, Exact } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
@@ -66,7 +66,7 @@ import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
-import type { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple, Writable } from "type-fest";
 
 /**
  * Base set of parameters passed to every ability attribute's {@linkcode AbAttr.apply | apply} method.
@@ -2793,7 +2793,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
     const dragonCheerTag = this.ally.getTag(BattlerTagType.DRAGON_CHEER) as CritBoostTag;
     if (dragonCheerTag) {
       pokemon.addTag(BattlerTagType.DRAGON_CHEER);
-      (pokemon.getTag(CritBoostTag) as Mutable<CritBoostTag>).critStages = dragonCheerTag.critStages;
+      (pokemon.getTag(CritBoostTag) as Writable<CritBoostTag>).critStages = dragonCheerTag.critStages;
     }
 
     const critBoostTag = this.ally.getTag(BattlerTagType.CRIT_BOOST);
