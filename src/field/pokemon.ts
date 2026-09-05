@@ -1635,7 +1635,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward | Bulbapedia: Stat calculation formula}
    */
   private calculateStat(stat: PermanentStat, baseStat: number, iv: number): number {
-    // Pokemon with Wonder Guard
+    // Pokemon with Wonder Guard as a base ability always have 1 HP
     if (stat === Stat.HP && this.hasAbility(AbilityId.WONDER_GUARD, false, true)) {
       return 1;
     }
