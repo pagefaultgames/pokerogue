@@ -239,7 +239,7 @@ describe("Double Battles", () => {
     await game.toNextWave();
 
     expect(game.scene.currentBattle.waveIndex).toBe(13);
-    expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+    expect(game.phaseInterceptor.phaseLog.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
     expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
   });
 });
