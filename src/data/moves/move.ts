@@ -2220,6 +2220,13 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
+    // don't do anything if a damaging recoil move didn't deal damage.
+    // Whether this goes before or after the ability check is unobservable in mainline for lack of a flyout,
+    // but putting it first avoids giving information to the enemy trainer AI that's ambiguous.
+    if (!this.useHp && user.turnData.totalDamageDealt === 0) {
+      return false;
+    }
+
     const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
       const abAttrParams: AbAttrParamsWithCancel = { pokemon: user, cancelled };
@@ -2239,16 +2246,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const damageValue = (this.useHp ? user.getMaxHp() : user.turnData.totalDamageDealt) * this.damageRatio;
-    const minValue = user.turnData.totalDamageDealt ? 1 : 0;
-    const recoilDamage = toDmgValue(damageValue, minValue);
-    if (!recoilDamage) {
-      return false;
-    }
-
-    if (cancelled.value) {
-      return false;
-    }
+    const recoilDamage = toDmgValue(this.useHp ? user.getMaxHp() : user.turnData.totalDamageDealt * this.damageRatio);
 
     user.damageAndUpdate(recoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
     globalScene.phaseManager.queueMessage(
