@@ -187,7 +187,7 @@ import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type { NonEmptyTuple, Writable } from "type-fest";
+import type { NonEmptyTuple, TupleOf, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
@@ -1407,6 +1407,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param stat - The {@linkcode BattleStat} whose stage is to be overwritten
    * @param value - The value of the stat stage to set, forcibly clamped within the range `[-6, +6]`.
    */
+  // TODO: Don't clamp the value, change the allowed type instead
   setStatStage(stat: BattleStat, value: number): void {
     this.summonData.statStages[stat - 1] = Phaser.Math.Clamp(value, -6, 6);
   }
@@ -1449,15 +1450,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates and retrieves the final value of a stat considering any held
-   * items, move effects, opponent abilities, and whether there was a critical
-   * hit.
+   * Calculate the final value of a given {@linkcode EffectiveStat}. Considers all effects that might
+   * modify the final calculation, including held items, move effects, critical hit-related effects, etc.
    *
    * @param stat - The desired stat to check
    * @param __namedParameters.opponent - Needed for proper typedoc rendering
    * @returns The final in-battle value for the given stat.
    */
-  // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
   getEffectiveStat(
     stat: EffectiveStat,
     {
@@ -1500,7 +1499,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         stat,
         statVal,
         simulated,
-        // TODO: maybe just don't call this if the move is none?
+        // TODO: This is solely used by hustle for move accuracy reduction;
+        // none of the actual classes use it at all
         move: move ?? allMoves[MoveId.NONE],
       });
     }
@@ -1577,50 +1577,30 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return Math.max(Math.floor(ret), 1);
   }
 
+  /**
+   * Re-compute this Pokemon's permanent stats (before in-battle multipliers).
+   */
   calculateStats(): void {
-    if (!this.stats) {
-      this.stats = [0, 0, 0, 0, 0, 0];
-    }
-
-    // Get and manipulate base stats
     const baseStats = this.calculateBaseStats();
-    // Using base stats, calculate and store stats one by one
-    for (const s of PERMANENT_STATS) {
-      const statHolder = new NumberHolder(Math.floor((2 * baseStats[s] + this.ivs[s]) * this.level * 0.01));
-      if (s === Stat.HP) {
-        statHolder.value = statHolder.value + this.level + 10;
-        globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
-        if (this.hasAbility(AbilityId.WONDER_GUARD, false, true)) {
-          statHolder.value = 1;
+
+    for (const stat of PERMANENT_STATS) {
+      const value = this.calculateStat(stat, baseStats[stat], this.ivs[stat]);
+
+      // clamp HP to new max or restore current HP if max HP increased
+      if (stat === Stat.HP && !this.isFainted()) {
+        this.hp = Math.max(this.hp, value);
+
+        const lastMaxHp = this.getMaxHp();
+        if (lastMaxHp > 0 && value > lastMaxHp) {
+          this.hp += value - lastMaxHp;
         }
-        if (this.hp > statHolder.value || this.hp === undefined) {
-          this.hp = statHolder.value;
-        } else if (this.hp) {
-          const lastMaxHp = this.getMaxHp();
-          if (lastMaxHp && statHolder.value > lastMaxHp) {
-            this.hp += statHolder.value - lastMaxHp;
-          }
-        }
-      } else {
-        statHolder.value += 5;
-        const natureStatMultiplier = new NumberHolder(getNatureStatMultiplier(this.getNature(), s));
-        globalScene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureStatMultiplier);
-        if (natureStatMultiplier.value !== 1) {
-          statHolder.value = Math.max(
-            Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](statHolder.value * natureStatMultiplier.value),
-            1,
-          );
-        }
-        globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
       }
 
-      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
-
-      this.setStat(s, statHolder.value);
+      this.setStat(stat, value);
     }
   }
 
-  calculateBaseStats(): number[] {
+  private calculateBaseStats(): TupleOf<typeof PERMANENT_STATS.length, number> {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     applyChallenges(ChallengeType.FLIP_STAT, this, baseStats);
     // Shuckle Juice
@@ -1642,7 +1622,41 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Vitamins
     globalScene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
 
-    return baseStats;
+    // TODO: Once the item rework is merged, convert function to use Array#map using the declaration merge and remove type assertion
+    return baseStats as TupleOf<typeof PERMANENT_STATS.length, number>;
+  }
+
+  /**
+   * Calculate the value of a single stat for a Pokemon.
+   * @param stat - The stat to calculate
+   * @param baseStat - The base stat value for the Pokemon's species
+   * @param iv - The Pokemon's IV for the given stat
+   * @returns The calculated stat value, which will be a positive integer less than {@linkcode Number.MAX_SAFE_INTEGER}.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward | Bulbapedia: Stat calculation formula}
+   */
+  private calculateStat(stat: PermanentStat, baseStat: number, iv: number): number {
+    // Pokemon with Wonder Guard
+    if (stat === Stat.HP && this.hasAbility(AbilityId.WONDER_GUARD, false, true)) {
+      return 1;
+    }
+
+    // ((2 * Base + IV) * Level / 100) + (5 for non-HP, Level + 10 for HP)
+    let base =
+      Math.floor(((2 * baseStat + iv) * this.level) / 100) // formatting
+      + (stat === Stat.HP ? this.level + 10 : 5);
+
+    const statHolder = new ValueHolder(base);
+    if (stat !== Stat.HP) {
+      // the effect of natures is always rounded up (away from 0)
+      const natureMulti = new ValueHolder(getNatureStatMultiplier(this.getNature(), stat));
+      globalScene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureMulti);
+      const delta = Phaser.Math.RoundAwayFromZero(base * (natureMulti.value - 1));
+      base += delta;
+    }
+
+    globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, stat, statHolder);
+
+    return Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
   }
 
   // TODO: Convert this into a getter
@@ -2371,8 +2385,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Accounts for all the various effects which can disable or modify abilities.
    * @param ability - The {@linkcode AbilityId | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
-   * @returns Whether this {@linkcode Pokemon} has the given ability
+   * @param ignoreOverride - (Default `false`) Whether to respect any ability overrides caused by effects like
+   * {@linkcode MoveId.TRANSFORM | Transform} and {@linkcode MoveId.SKILL_SWAP | Skill Swap}
+   * @returns Whether this {@linkcode Pokemon} has the given ability.
    */
   public hasAbility(ability: AbilityId, canApply = true, ignoreOverride = false): boolean {
     if (this.getAbility(ignoreOverride).id === ability && (!canApply || this.canApplyAbility())) {
@@ -7138,16 +7153,14 @@ export class EnemyPokemon extends Pokemon {
         continue;
       }
 
-      let stages = 1;
+      // final segment gives +2 if 3 or more total segments exist;
+      // 2nd to last similarly gives +2 if 5 or more total segments exist
+      const stages =
+        (this.bossSegmentIndex === 0 && this.bossSegments >= 3)
+        || (this.bossSegmentIndex === 1 && this.bossSegments >= 5)
+          ? 2
+          : 1;
 
-      // increase the boost if the boss has at least 3 segments and we passed last shield
-      if (this.bossSegments >= 3 && this.bossSegmentIndex === 0) {
-        stages++;
-      }
-      // increase the boost if the boss has at least 5 segments and we passed the second to last shield
-      if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
-        stages++;
-      }
       changes.push({ stat: boostedStat, stages });
     }
 
