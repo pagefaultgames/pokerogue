@@ -3176,7 +3176,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private readonly chance: number;
 
   constructor(chance: number) {
-    super(false);
+    super(false, { lastHitOnly: true });
     this.chance = chance;
   }
 
@@ -3245,7 +3245,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   private readonly berriesOnly: boolean;
 
   constructor(berriesOnly = false) {
-    super(false);
+    super(false, { lastHitOnly: true });
     this.berriesOnly = berriesOnly;
   }
 
@@ -3334,10 +3334,6 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
-  // biome-ignore lint/complexity/noUselessConstructor: this removes the `options` param from the superclass
-  constructor(selfTarget: boolean) {
-    super(selfTarget);
-  }
 
   /**
    * Causes the target to eat a berry.
@@ -3411,7 +3407,7 @@ export class EatBerryAttr extends MoveEffectAttr {
  */
 export class StealEatBerryAttr extends EatBerryAttr {
   constructor() {
-    super(false);
+    super(false, { lastHitOnly: true });
   }
 
   /**
@@ -4119,7 +4115,7 @@ export class PartingShotAttr extends StatStageChangeAttr {
  */
 export class SecretPowerAttr extends MoveEffectAttr {
   constructor() {
-    super(false);
+    super(false, { lastHitOnly: true });
   }
 
   /**
