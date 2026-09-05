@@ -63,10 +63,7 @@ export class ItemBar extends Phaser.GameObjects.Container {
       this.sendToBack(icon);
     }
 
-    this.itemCache = ([] as (TrainerItemId | HeldItemId)[])
-      .concat(sortedTrainerItems)
-      .concat(heldItemsA)
-      .concat(heldItemsB);
+    this.itemCache = [...sortedTrainerItems, ...heldItemsA, ...heldItemsB];
   }
 
   addIcon(icon: Phaser.GameObjects.Container, i: number, name: string, description: string) {
