@@ -33,7 +33,7 @@ export function getPartyItemsInCategory(category: HeldItemCategoryId): NonEmptyT
         .map(id => {
           // non-null assertion justified since we only consider berries that are owned by the pokemon
           const specs = pokemon.heldItemManager.getItemSpecs(id)!;
-          return { item: specs, pokemonId: pokemon.id } satisfies PokemonItemMap;
+          return { item: specs, pokemon } satisfies PokemonItemMap;
         }),
     )
     .toArray();

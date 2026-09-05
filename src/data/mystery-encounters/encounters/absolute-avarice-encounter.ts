@@ -168,7 +168,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Session has been safely saved at this point, so data won't be lost
     const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     berryItems.forEach(map => {
-      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id);
+      map.pokemon?.heldItemManager.remove(map.item.id);
     });
 
     globalScene.updateItemBar(true);
@@ -234,7 +234,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Returns 2/5 of the berries stolen to each Pokemon
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
-          const stolenBerries = berryMap.filter(map => map.pokemonId === pokemon.id);
+          const stolenBerries = berryMap.filter(map => map.pokemon === pokemon);
           const stolenBerryCount = stolenBerries.reduce((a, b) => a + b.item.stack, 0);
           const returnedBerryCount = Math.floor((stolenBerryCount * 2) / 5);
 
