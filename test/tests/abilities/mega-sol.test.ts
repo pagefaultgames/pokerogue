@@ -10,7 +10,6 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import type { VariableHealAttr } from "#moves/move";
 import { GameManager } from "#test/framework/game-manager";
-import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import { ValueHolder } from "#utils/value-holder";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -47,9 +46,9 @@ describe("Abilities - Mega Sol", () => {
     game.move.use(MoveId.SOLAR_BEAM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).not.toHaveFullHp();
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.SUCCESS });
   });
 
   it("should prevent Solar Beam power reduction in rain", async () => {
@@ -97,9 +96,6 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
-
     game.move.use(MoveId.GROWTH);
     await game.toEndOfTurn();
 
@@ -135,7 +131,7 @@ describe("Abilities - Mega Sol", () => {
     vi.spyOn(enemyPokemon, "getStat").mockReturnValue(100);
     const playerPokemon = game.field.getPlayerPokemon();
 
-    const params: GetEffectiveStatParams = {
+    const params = {
       opponent: playerPokemon,
       move: allMoves[MoveId.DISARMING_VOICE],
       forDefend: true,
@@ -148,10 +144,10 @@ describe("Abilities - Mega Sol", () => {
     };
 
     // Ensure sandstorm boost is applied (otherwise we are testing nothing)
-    expect(enemyPokemon.getEffectiveStat(Stat.SPDEF, params)).toBe(150);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPDEF, 150, params);
 
     params.ignoreOppAbility = false; // test with mega sol factored in
-    expect(enemyPokemon.getEffectiveStat(Stat.SPDEF, params)).toBe(100);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.SPDEF, 100, params);
   });
 
   it("should ignore snowscape's defense boost to ice types", async () => {
@@ -164,7 +160,7 @@ describe("Abilities - Mega Sol", () => {
     vi.spyOn(enemyPokemon, "getStat").mockReturnValue(100);
     const playerPokemon = game.field.getPlayerPokemon();
 
-    const params: GetEffectiveStatParams = {
+    const params = {
       opponent: playerPokemon,
       move: allMoves[MoveId.TACKLE],
       forDefend: true,
@@ -177,13 +173,13 @@ describe("Abilities - Mega Sol", () => {
     };
 
     // Ensure snowscape boost is applied (otherwise nothing is tested)
-    expect(enemyPokemon.getEffectiveStat(Stat.DEF, params)).toBe(150);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.DEF, 150, params);
 
     params.ignoreOppAbility = false; // test with mega sol factored in
-    expect(enemyPokemon.getEffectiveStat(Stat.DEF, params)).toBe(100);
+    expect(enemyPokemon).toHaveEffectiveStat(Stat.DEF, 100, params);
   });
 
-  // NB: the tests checking that these moves actually work
+  // NB: the tests checking that these moves actually work are inside recovery-moves.test.ts
   it("should cause weather-based healing moves to act as if it was sunny", async () => {
     game.override.weather(WeatherType.SANDSTORM);
     await game.classicMode.startBattle(SpeciesId.MEGANIUM);
