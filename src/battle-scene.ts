@@ -2596,10 +2596,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Update the item bar for the given side.
-   * @param player - Whether to use the player (`true`) or enemy side
-   * @param showHeldItems - Whether to include the held items of the first Pokemon in the party
+   * @param player - (Default `true`) Whether to use the player (`true`) or enemy side
+   * @param showHeldItems - (Default `true`) Whether to include the held items of the first Pokemon in the party
    */
-  updateItemBar(player = true, showHeldItems = true): void {
+  public updateItemBar(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];

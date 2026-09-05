@@ -8,7 +8,7 @@ import type { TrainerItemManager } from "#items/trainer-item-manager";
 const iconOverflowIndex = 24;
 
 export class ItemBar extends Phaser.GameObjects.Container {
-  private player: boolean;
+  private readonly player: boolean;
   private itemCache: (HeldItemId | TrainerItemId)[];
   public totalVisibleLength = 0;
 
@@ -26,7 +26,7 @@ export class ItemBar extends Phaser.GameObjects.Container {
    * @param pokemonA - (Optional) The first Pokemon whose items should be drawn to the bar
    * @param pokemonB - (Optional) The second Pokemon whose items should be drawn to the bar
    */
-  updateItems(trainerItems: TrainerItemManager, pokemonA?: Pokemon, pokemonB?: Pokemon) {
+  public updateItems(trainerItems: TrainerItemManager, pokemonA?: Pokemon, pokemonB?: Pokemon) {
     this.removeAll(true);
 
     const sortedTrainerItems = trainerItems.getItems().sort((a, b) => a - b);
