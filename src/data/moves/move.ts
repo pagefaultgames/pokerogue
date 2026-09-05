@@ -7176,9 +7176,10 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       globalScene.phaseManager.unshiftNew("RevivalBlessingPhase", user);
       return true;
     }
+
     if (
       user.isEnemy()
-      && user.hasTrainer()
+      && user.hasTrainer() // TODO: redundant due to `getCondition`
       && globalScene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1
     ) {
       // If used by an enemy trainer with at least one fainted non-boss Pokemon, this
@@ -7193,30 +7194,31 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         0,
         true,
       );
-      const allyPokemon = user.getAlly();
+
+      // Handle cases where revived pokemon needs to get switched in on same turn
+      const allyPokemon = user.getAlly() as EnemyPokemon | undefined;
       if (
         globalScene.currentBattle.double
         && globalScene.getEnemyParty().length > 1
-        && allyPokemon != null // Handle cases where revived pokemon needs to get switched in on same turn
+        && allyPokemon != null
         && (allyPokemon.isFainted() || allyPokemon === pokemon)
       ) {
         // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-        globalScene.phaseManager.tryRemovePhase("SwitchSummonPhase", phase => phase.getFieldIndex() === slotIndex);
+        // TODO: This is a byproduct of `FaintPhase` scheduling replacement switch phases immediately
+        // and should be removed afterwards
+        globalScene.phaseManager.tryRemovePhase("SwitchPhase", phase => phase.fieldIndex === slotIndex);
         // If the pokemon being revived was alive earlier in the turn, cancel its move
-        // TODO: check if revived pokemon shouldn't be able to move in the same turn they're brought back
-        // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
+        // (revived pokemon can't move in the turn they're brought back)
+        // TODO: move this to `FaintPhase` after checking for Rev Seed; to fix issues with repeated force switching
+        // TODO: This is not how revival blessing cancels a move (it just removes it altogether w/o failure message)
         globalScene.phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
         if (user.fieldPosition === FieldPosition.CENTER) {
           user.setFieldPosition(FieldPosition.LEFT);
         }
-        globalScene.phaseManager.unshiftNew(
-          "SwitchSummonPhase",
-          SwitchType.SWITCH,
-          allyPokemon.getFieldIndex(),
-          slotIndex,
-          false,
-          false,
-        );
+        globalScene.phaseManager.queueBattlerEntrance(allyPokemon.getBattlerIndex(), {
+          when: "eager",
+          playTrainerAnim: false,
+        });
       }
       return true;
     }
@@ -7294,27 +7296,15 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            true,
-          );
-        } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.queueDeferred(
-            "SwitchPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            true,
-            true,
-          );
-          return true;
-        }
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex:
+            this.switchType === SwitchType.FORCE_SWITCH
+              ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
+              : undefined,
+        });
+        return true;
       }
       return false;
     }
@@ -7381,28 +7371,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            false,
-          );
-        } else {
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            globalScene.currentBattle.trainer
-              ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
-              : 0,
-            false,
-            false,
-          );
-        }
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex:
+            this.switchType === SwitchType.FORCE_SWITCH
+              ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
+              : undefined,
+        });
       }
     }
 

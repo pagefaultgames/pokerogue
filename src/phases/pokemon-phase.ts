@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
+import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { FieldPhase } from "#phases/field-phase";
 
@@ -40,5 +41,23 @@ export abstract class PokemonPhase extends FieldPhase {
       return globalScene.getPokemonById(this.battlerIndex)!;
     }
     return globalScene.getField()[this.battlerIndex]!;
+  }
+
+  protected getAlliedParty(): Pokemon[] {
+    return this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
+  }
+
+  /**
+   * @returns the {@linkcode TrainerSlot} for this phase's {@linkcode getPokemon | Pokemon},
+   * or {@linkcode TrainerSlot.NONE} if the Pokemon does not have a Trainer
+   */
+  protected getTrainerSlot(): TrainerSlot {
+    const pokemon = this.getPokemon();
+
+    return pokemon.isEnemy() ? pokemon.trainerSlot : TrainerSlot.NONE;
+  }
+
+  protected getOpposingField(): Pokemon[] {
+    return this.player ? globalScene.getEnemyField() : globalScene.getPlayerField();
   }
 }

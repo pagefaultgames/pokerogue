@@ -9,7 +9,6 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
-import { IvScannerModifier } from "#modifiers/modifier";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
@@ -17,6 +16,7 @@ import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encou
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
 import { randSeedItem } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { queueBattlerEntrancePhases } from "#utils/switch-utils";
 import i18next from "i18next";
 
 /**
@@ -250,7 +250,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = globalScene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.SWITCH, i, true, false);
+        globalScene.phaseManager.unshiftNew("SwitchPhase", i, SwitchType.SWITCH);
       }
     });
 
@@ -325,17 +325,14 @@ export class MysteryEncounterBattlePhase extends Phase {
   /**
    * Queue {@linkcode SummonPhase}s for the new battle and handle trainer animations/dialogue for Trainer battles
    */
+  // TODO: The code to handle wild Pokemon entrances (being ripped straight out of `EncounterPhase`)
+  // should go in its own phase to massively simplyify the logic of queueing `PostSummonPhase`s and similar
   private doMysteryEncounterBattle() {
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
     if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
       if (encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
         audioManager.playBgm();
-      }
-      const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-      globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
-      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
       }
 
       if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
@@ -352,11 +349,6 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
-          const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
-          if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
-          }
           this.endBattleSetup();
         };
         if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
@@ -402,52 +394,26 @@ export class MysteryEncounterBattlePhase extends Phase {
    * Initiate {@linkcode SummonPhase}s, {@linkcode ScanIvsPhase}, {@linkcode PostSummonPhase}s, etc.
    */
   private endBattleSetup() {
-    const enemyField = globalScene.getEnemyField();
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
 
-    // PostSummon and ShinySparkle phases are handled by SummonPhase
-
-    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE) {
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
-        enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
-      }
-    }
-
+    // PostSummon and ShinySparkle phases are handled by helper function.
+    // We still need to clear COMMANDED tags manually before those phases are queued.
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
 
-    if (!availablePartyMembers[0].isOnField()) {
-      globalScene.phaseManager.pushNew("SummonPhase", 0);
-    }
-
-    if (globalScene.currentBattle.double) {
-      if (availablePartyMembers.length > 1) {
-        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
-        if (!availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("SummonPhase", 1);
-        }
-      }
-    } else {
-      if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-        for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
-          pokemon.lapseTag(BattlerTagType.COMMANDED);
-        }
-        globalScene.phaseManager.pushNew("ReturnPhase", 1);
-      }
-      globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
-    }
-
-    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      if (availablePartyMembers.length > minPartySize) {
-        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-        if (globalScene.currentBattle.double) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-        }
+    if (!globalScene.currentBattle.double && availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
+      // TODO: Can we remove this fallback? There shouldn't be any pokemon on field when this fires
+      for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
+        pokemon.lapseTag(BattlerTagType.COMMANDED);
       }
     }
 
-    globalScene.phaseManager.pushNew("InitEncounterPhase");
+    // NB: we need to queue the entrance phases here because the ME encounter phase doesn't queue any animations itself somehow?
+    queueBattlerEntrancePhases({
+      skipEnemySummon: false,
+      loaded: false,
+      checkSwitch: encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch,
+    });
+
     this.end();
   }
 
