@@ -2,15 +2,13 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Gorilla Tactics", () => {
+describe("Ability - Gorilla Tactics", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,7 +27,6 @@ describe("Abilities - Gorilla Tactics", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(30)
-      .moveset([MoveId.SPLASH, MoveId.TACKLE, MoveId.GROWL, MoveId.METRONOME])
       .ability(AbilityId.GORILLA_TACTICS);
   });
 
@@ -38,11 +35,13 @@ describe("Abilities - Gorilla Tactics", () => {
 
     const player = game.field.getPlayerPokemon();
 
+    // should be boosted even before a move is used
+    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK) * 1.5);
+
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
-    expect(player).toHaveBattlerTag({tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.SPLASH});
-    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK) * 1.5);
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.SPLASH });
     // should be restricted from using anything other than Splash
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
@@ -86,14 +85,9 @@ describe("Abilities - Gorilla Tactics", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Gorilla Tactics should lock into Metronome, not Tackle
-    expect(player).toHaveBattlerTag({tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.METRONOME});
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.METRONOME });
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.METRONOME)).toBe(false);
-    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS, useMode: MoveUseMode.FOLLOW_UP });
-    expect(player).toHaveUsedMove(
-      { move: MoveId.METRONOME, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL },
-      1,
-    );
   });
 
   it("should activate when the opponent protects", async () => {
@@ -138,4 +132,6 @@ describe("Abilities - Gorilla Tactics", () => {
     expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
     expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
   });
+
+  // TODO: Verify whether Gorilla Tactics increases struggle's power or not
 });

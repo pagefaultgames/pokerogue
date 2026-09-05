@@ -87,19 +87,19 @@ import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type {
-    AbilityBattlerTagType,
-    BattlerTagData,
-    ContactSetStatusProtectedTagType,
-    ContactStatStageChangeProtectedTagType,
-    CritStageBoostTagType,
-    EndureTagType,
-    HighestStatBoostTagType,
-    MoveRestrictionBattlerTagType,
-    ProtectionBattlerTagType,
-    RemovedTypeTagType,
-    SemiInvulnerableTagType,
-    TrappingBattlerTagType,
-    TypeBoostTagType,
+  AbilityBattlerTagType,
+  BattlerTagData,
+  ContactSetStatusProtectedTagType,
+  ContactStatStageChangeProtectedTagType,
+  CritStageBoostTagType,
+  EndureTagType,
+  HighestStatBoostTagType,
+  MoveRestrictionBattlerTagType,
+  ProtectionBattlerTagType,
+  RemovedTypeTagType,
+  SemiInvulnerableTagType,
+  TrappingBattlerTagType,
+  TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Constructor } from "#types/common";
 import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
@@ -479,12 +479,9 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Tag used by Gorilla Tactics to restrict the user to using only one move.
- *
+ * Tag used by {@link https://bulbapedia.bulbagarden.net/wiki/Gorilla_Tactics_(Ability) | Gorilla Tactics} to restrict the user to using only one move.
  * @sealed
  */
-// TODO: Make the stat boost part of the tag's effect itself rather than being handled by a manual check
-// in `GetEffectiveStat`.
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.GORILLA_TACTICS;
 
