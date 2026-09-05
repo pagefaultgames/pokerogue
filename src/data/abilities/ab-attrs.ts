@@ -64,7 +64,7 @@ import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase } from "#utils/strings";
-import type { ValueHolder } from "#utils/value-holder";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { NonEmptyTuple, Writable } from "type-fest";
 
@@ -1033,11 +1033,13 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 
   override canApply({ simulated, move, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): boolean {
-    return (
-      !simulated
-      && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
-      && !attacker.hasAbilityWithAttr("BlockNonDirectDamageAbAttr")
-    );
+    if (simulated || !move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })) {
+      return false;
+    }
+
+    const cancelled = new ValueHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled, simulated });
+    return !cancelled.value;
   }
 
   override apply({ opponent: attacker }: PostMoveInteractionAbAttrParams): void {
@@ -4018,7 +4020,9 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
   }
 
   override canApply({ pokemon }: PostWeatherLapseAbAttrParams): boolean {
-    return !pokemon.hasAbilityWithAttr("BlockNonDirectDamageAbAttr");
+    const cancelled = new ValueHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, simulated: false, cancelled });
+    return !cancelled.value;
   }
 
   override apply({ simulated, pokemon, passive }: PostWeatherLapseAbAttrParams): void {
@@ -4421,14 +4425,15 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return pokemon
-      .getOpponents()
-      .some(
-        opp =>
-          (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(AbilityId.COMATOSE))
-          && !opp.hasAbilityWithAttr("BlockNonDirectDamageAbAttr")
-          && !opp.switchOutStatus,
-      );
+    return pokemon.getOpponents().some(opp => {
+      const sleeping = opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(AbilityId.COMATOSE);
+      if (!sleeping || opp.switchOutStatus) {
+        return false;
+      }
+      const cancelled = new ValueHolder(false);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: opp, cancelled });
+      return !cancelled.value;
+    });
   }
 
   /** Deal damage to all sleeping, on-field opponents equal to 1/8 of their max hp (min 1). */
@@ -4444,13 +4449,14 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 
       const cancelled = new BooleanHolder(false);
       applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, simulated, cancelled });
-
-      if (!cancelled.value) {
-        opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
-        globalScene.phaseManager.queueMessage(
-          i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }),
-        );
+      if (cancelled.value) {
+        return;
       }
+
+      opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
+      globalScene.phaseManager.queueMessage(
+        i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }),
+      );
     }
   }
 }
