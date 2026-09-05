@@ -77,7 +77,7 @@ import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-spar
 import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
-import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
 import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
@@ -2507,7 +2507,7 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
+  public generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
     if (this.currentBattle.isClassicFinalBoss) {
       return;
     }
@@ -2528,7 +2528,7 @@ export class BattleScene extends SceneBase {
     }
 
     for (const [i, enemyPokemon] of party.entries()) {
-      if (heldItemConfigs && heldItemConfigs[i]) {
+      if (heldItemConfigs?.[i]) {
         assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
         continue;
       }
@@ -2554,13 +2554,16 @@ export class BattleScene extends SceneBase {
       if (isBoss) {
         count = Math.max(count, Math.floor(chances / 2));
       }
-      assignEnemyHeldItemsForWave(
-        difficultyWaveIndex,
+      generateEnemyPokemonHeldItems(
         count,
         enemyPokemon,
         this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
         upgradeChance,
       );
+    }
+    // gives Eternatus the MBH item on Endless X000 waves
+    if (!(difficultyWaveIndex % 1000)) {
+      party[0].heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
     }
     this.updateItemBar(false);
   }
@@ -2596,10 +2599,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Update the item bar for the given side.
-   * @param player - Whether to use the player (`true`) or enemy side
-   * @param showHeldItems - Whether to include the held items of the first Pokemon in the party
+   * @param player - (Default `true`) Whether to use the player (`true`) or enemy side
+   * @param showHeldItems - (Default `true`) Whether to include the held items of the first Pokemon in the party
    */
-  updateItemBar(player = true, showHeldItems = true): void {
+  public updateItemBar(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];

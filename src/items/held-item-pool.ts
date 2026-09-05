@@ -168,20 +168,14 @@ function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
 }
 
 /**
- * Assign randomly generated held items to an enemy Pokemon.
- * @param waveIndex - Index of the current wave
+ * Randomly generate held items from a pool and assign them to an enemy Pokemon.
  * @param count - Max number of held items the enemy should end up holding (including existing items)
  * @param enemy - The {@linkcode EnemyPokemon} to receive the items
- * @param poolType - Which tiered pool to draw from ({@linkcode HeldItemPoolType.WILD | WILD} or {@linkcode HeldItemPoolType.TRAINER | TRAINER})
- * @param upgradeChanceDivisor - If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
- * to be bumped up one rarity tier. `0` (default) disables tier upgrades.
- *
- * @privateRemarks
- * The `waveIndex` parameter currently only exists to assign black hole on X000 waves,
- * but can be used for any other wave-specific items if needed.
+ * @param poolType - Which {@linkcode HeldItemPoolType | tiered pool} to draw from (Wild or Trainer)
+ * @param upgradeChanceDivisor - (Default `0`) If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
+ * to be bumped up one rarity tier. `0` disables tier upgrades.
  */
-export function assignEnemyHeldItemsForWave(
-  waveIndex: number,
+export function generateEnemyPokemonHeldItems(
   count: number,
   enemy: EnemyPokemon,
   poolType: HeldItemPoolType.WILD | HeldItemPoolType.TRAINER,
@@ -199,10 +193,6 @@ export function assignEnemyHeldItemsForWave(
     if (item) {
       enemy.heldItemManager.add(item);
     }
-  }
-
-  if (!(waveIndex % 1000)) {
-    enemy.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
   }
 }
 
@@ -334,16 +324,23 @@ export function getNewAttackTypeBoosterHeldItem(
 ): HeldItemId | null {
   const party = coerceArray(pokemon);
 
-  const attackMoveTypes = party
-    .values()
-    .flatMap(p =>
-      p
-        .getMoveset()
-        .filter(pm => pm.getMove().is("AttackMove"))
-        .map(pm => p.getMoveType(pm.getMove()))
-        .filter(type => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-    )
-    .toArray();
+  const attackMoveTypes = party.flatMap(p => {
+    const ret: PokemonType[] = [];
+    const moveset = p.getMoveset();
+
+    for (const pokemonMove of moveset) {
+      const move = pokemonMove.getMove();
+
+      if (move.is("AttackMove")) {
+        const moveType = p.getMoveType(move);
+
+        if (moveType !== PokemonType.UNKNOWN && moveType !== PokemonType.STELLAR) {
+          ret.push(moveType);
+        }
+      }
+    }
+    return ret;
+  });
 
   if (attackMoveTypes.length === 0) {
     return null;
