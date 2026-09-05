@@ -94,6 +94,18 @@
     "@actions/github": "^9.1.1",
     "octokit": "^5.0.5"
   },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.34.5",
+      "onFail": "error"
+    },
+    "runtime": {
+      "name": "node",
+      "version": ">=24.9.0",
+      "onFail": "warn"
+    }
+  },
   "engines": {
     "node": ">=24.9.0"
   },
