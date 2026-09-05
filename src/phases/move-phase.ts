@@ -23,7 +23,7 @@ import { MoveResult } from "#enums/move-result";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveUsedEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -655,13 +655,14 @@ export class MovePhase extends PokemonPhase {
     if (isIgnorePP(this.useMode)) {
       return;
     }
+
     const { move, pokemon: user } = this;
     const ppHolder = new NumberHolder(1);
     this.getActiveTargetPokemon().forEach(target => {
       applyAbAttrs("IncreasePpUsedAbAttr", { pokemon: target, opponent: user, pp: ppHolder });
     });
     move.usePp(ppHolder.value);
-    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(user.id, move));
   }
 
   /**
