@@ -11498,7 +11498,6 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       [EVOLVE_MOVE, MoveId.FREEZE_DRY],
       [1, MoveId.LEER],
       [1, MoveId.POWDER_SNOW],
-      [1, MoveId.ICE_BALL],
       [1, MoveId.ASTONISH],
       [5, MoveId.DOUBLE_TEAM],
       [10, MoveId.ICE_SHARD],
