@@ -2528,7 +2528,7 @@ export class BattleScene extends SceneBase {
     }
 
     for (const [i, enemyPokemon] of party.entries()) {
-      if (heldItemConfigs && heldItemConfigs[i]) {
+      if (heldItemConfigs?.[i]) {
         assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
         continue;
       }
@@ -2555,12 +2555,15 @@ export class BattleScene extends SceneBase {
         count = Math.max(count, Math.floor(chances / 2));
       }
       generateEnemyPokemonHeldItems(
-        difficultyWaveIndex,
         count,
         enemyPokemon,
         this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
         upgradeChance,
       );
+    }
+    // gives Eternatus the MBH item on Endless X000 waves
+    if (!(difficultyWaveIndex % 1000)) {
+      party[0].heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
     }
     this.updateItemBar(false);
   }
