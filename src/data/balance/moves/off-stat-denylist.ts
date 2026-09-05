@@ -120,6 +120,7 @@ const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST: Readonly<Partial<Record<SpeciesId, 
   //#endregion physical deny list
 
   //#region special deny list
+  [SpeciesId.AERODACTYL]: DENY_SPECIAL_MOVES,
   [SpeciesId.AGGRON]: DENY_SPECIAL_MOVES,
   [SpeciesId.ALOLA_DUGTRIO]: DENY_SPECIAL_MOVES,
   [SpeciesId.ALOLA_GOLEM]: DENY_SPECIAL_MOVES,
@@ -243,7 +244,6 @@ const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST: Readonly<Partial<Record<SpeciesId, 
   [SpeciesId.GALAR_ZAPDOS]: DENY_SPECIAL_MOVES,
 
   [SpeciesId.GYARADOS]: { 1: DENY_SPECIAL_MOVES },
-  [SpeciesId.AERODACTYL]: { 1: DENY_SPECIAL_MOVES },
   [SpeciesId.SWAMPERT]: { 1: DENY_SPECIAL_MOVES },
   [SpeciesId.SHARPEDO]: { 1: DENY_SPECIAL_MOVES },
   [SpeciesId.ABSOL]: { 2: DENY_SPECIAL_MOVES }, // Mega Z

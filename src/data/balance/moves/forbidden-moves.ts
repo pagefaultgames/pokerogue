@@ -55,6 +55,7 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.SLEEP_TALK,
   MoveId.SNORE,
   MoveId.STEEL_ROLLER,
+  MoveId.STRENGTH, // Most Pokemon that get access to this move also get access to Body Slam.
   MoveId.TAKE_DOWN,
   MoveId.UPPER_HAND,
   MoveId.VENOM_DRENCH,
@@ -151,6 +152,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SPIT_UP,
   MoveId.SPIKE_CANNON, // No one who has it really cares for it outside of early levels.
   MoveId.SPLASH,
+  MoveId.STEAMROLLER,
   MoveId.STOMP,
   MoveId.STRUGGLE_BUG,
   MoveId.SUBMISSION,
