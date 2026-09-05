@@ -1,3 +1,4 @@
+import type { Stringable } from "#types/strings";
 import type { IsAny, IsEqual, IsNever, IsUnknown, Primitive, UnionToTuple } from "type-fest";
 
 /**
@@ -8,9 +9,6 @@ export type ErrorType<Msg extends string> = Error & Msg;
 
 export type IncompatibleTypeMessage<Expected, Received> =
   `Expected to receive ${FormatType<Expected>}, but got ${FormatType<Received>} instead!`;
-
-// TODO: Use version from "#types/strings" once said file is added in random species PR
-type Stringable = string | number | bigint | boolean | null | undefined;
 
 /**
  * Internal type helper to convert 2 arbitrary types (or unions thereof) into human-readable strings
@@ -29,8 +27,8 @@ export type FormatType<T> =
         : // List multi-member unions as a list of members separated by quotes and pipes,
           // handling boolean separately to avoid splitting it up as mentioned above
           Extract<T, boolean> extends never
-          ? `'${StringifyTuple<UnionToTuple<T>, "' | '">}'`
-          : `'${StringifyTuple<[...UnionToTuple<Exclude<T, boolean>>, boolean], "' | '">}'`;
+          ? `'${StringifyTuple<UnionToTuple<T>, " | ">}'`
+          : `'${StringifyTuple<[...UnionToTuple<Exclude<T, boolean>>, boolean], " | ">}'`;
 
 /**
  * Tail-recursive helper to stringify a tuple with an arbitrary delimiter.
@@ -76,8 +74,6 @@ type PrintTypeInternal<T> =
                     ? "number"
                     : bigint extends T
                       ? "bigint"
-                      : boolean extends T
-                        ? "boolean"
-                        : T extends Stringable
-                          ? `${T}`
-                          : never;
+                      : T extends Stringable
+                        ? `${T}`
+                        : never;
