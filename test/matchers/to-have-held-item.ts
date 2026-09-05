@@ -51,7 +51,7 @@ export function toHaveHeldItem(
     };
   }
 
-  const items = received.heldItemManager.generateSaveData();
+  const items = received.heldItemManager.getAllItemSpecs();
   const itemsReadable = items.map(specs => ({
     ...specs,
     id: getEnumStr(HeldItemId, specs.id),

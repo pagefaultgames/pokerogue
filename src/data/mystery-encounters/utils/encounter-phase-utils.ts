@@ -38,7 +38,7 @@ import type { Variant } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#types/held-item-data-types";
 import type { RandomEncounterParams } from "#types/pokemon-common";
 import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
@@ -95,7 +95,7 @@ export interface EnemyPokemonConfig {
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  heldItemConfig?: HeldItemConfiguration;
+  heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[];
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
   tera?: PokemonType;
@@ -194,7 +194,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
   battle.enemyLevels.forEach((level, e) => {
     let enemySpecies: PokemonSpecies | undefined;
-    let heldItemConfig: HeldItemConfiguration = [];
+    let heldItemConfig: HeldItemConfiguration | HeldItemSpecs[] = [];
     let dataSource: PokemonData | undefined;
     let isBoss = false;
     if (!loaded) {

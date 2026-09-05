@@ -29,6 +29,12 @@ export interface HeldItemData {
 
 export type HeldItemDataMap = Map<HeldItemId, HeldItemData>;
 
+/**
+ * Specification of an existing held item.
+ * Used for save data persistence and transferring existing items during evolution, etc.
+ *
+ * If the intent is to generate a new item, use {@linkcode HeldItemConfigurationEntry} instead.
+ */
 export interface HeldItemSpecs extends HeldItemData {
   id: HeldItemId;
 }
@@ -46,10 +52,14 @@ interface HeldItemPoolEntry {
 
 export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
 
-// TODO: Since this can contain a `HeldItemSpecs`, this has the potential to have 2 different "count" statistics
-// (which is useless and redundant).
-// Why this should be able to hold specs is dubious at best.
-interface HeldItemConfigurationEntry {
+/**
+ * Declarative instruction for generating/granting held items to a Pokemon.
+ * Evaluated by `assignItemsFromConfiguration` to generate items of the provided ID/category/pool.
+ *
+ * If the intent is to transfer/save existing items rather than generating new ones,
+ * use {@linkcode HeldItemSpecs} instead.
+ */
+export interface HeldItemConfigurationEntry {
   entry: HeldItemId | GeneratableHeldItemCategoryId | HeldItemPool;
   /**
    * The number of items to obtain - must be a positive integer!
@@ -58,6 +68,7 @@ interface HeldItemConfigurationEntry {
   count?: number;
 }
 
+/** An ordered list of {@linkcode HeldItemConfigurationEntry} generation instructions. */
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];
 
 // TODO: If this is an internal type, we can (and should) just shove a reference to the pokemon inside instead of the ID

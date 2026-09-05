@@ -8,16 +8,9 @@ import type { BerryItemId } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
-import type {
-  HeldItemConfiguration,
-  HeldItemPool,
-  HeldItemSaveData,
-  HeldItemSpecs,
-  HeldItemWeights,
-} from "#types/held-item-data-types";
+import type { HeldItemConfiguration, HeldItemPool, HeldItemWeights } from "#types/held-item-data-types";
 import type { Mutable } from "#types/type-helpers";
 import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
-import { isHeldItemSpecs } from "#utils/item-utils";
 import type { NonEmptyTuple } from "type-fest";
 
 /**
@@ -206,11 +199,7 @@ export function assignEnemyHeldItemsForWave(
   }
 }
 
-function getNewHeldItemFromTieredPool(
-  pool: HeldItemTieredPool,
-  pokemon: Pokemon,
-  upgradeCount: number,
-): HeldItemId | HeldItemSpecs | null {
+function getNewHeldItemFromTieredPool(pool: HeldItemTieredPool, pokemon: Pokemon, upgradeCount: number): HeldItemId {
   const tierPool = determineItemPool(pool, upgradeCount);
   return getNewHeldItemFromPool(tierPool, pokemon);
 }
@@ -248,11 +237,6 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
       } else {
         pokemon.heldItemManager.add(entry, actualCount);
       }
-      continue;
-    }
-
-    if (isHeldItemSpecs(entry)) {
-      pokemon.heldItemManager.add(entry);
       continue;
     }
 
@@ -385,10 +369,4 @@ function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): NonEmptyTuple<num
 
     return weight;
   });
-}
-
-// TODO: Handle form change items
-// TODO: This is duplicated from `HeldItemManager.generateSaveData` - should be a single source of truth
-export function saveDataToConfig(saveData: HeldItemSaveData): HeldItemConfiguration {
-  return saveData.map(specs => ({ entry: specs, count: 1 }));
 }

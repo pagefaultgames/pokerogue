@@ -124,7 +124,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Adds stolen berries to the Greedent item configuration
     const bossHeldItemConfig: HeldItemConfiguration = [];
     berryItems.forEach(map => {
-      bossHeldItemConfig.push({ entry: map.item, count: 1 });
+      bossHeldItemConfig.push({ entry: map.item.id, count: map.item.stack });
     });
 
     // +1 SpDef below wave 50, SpDef and Speed otherwise

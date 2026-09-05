@@ -12,7 +12,6 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { saveDataToConfig } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import type { HeldItemSaveData } from "#types/held-item-data-types";
@@ -103,9 +102,9 @@ export class PokemonData {
     this.hp = source.hp;
     this.stats = source.stats;
     this.ivs = source.ivs;
-    console.log("SAVE ITEMS:", sourcePokemon?.heldItemManager.generateSaveData());
+    console.log("SAVE ITEMS:", sourcePokemon?.heldItemManager.getAllItemSpecs());
     console.log(sourcePokemon, sourcePokemon?.heldItemManager);
-    this.heldItems = sourcePokemon?.heldItemManager.generateSaveData() ?? source.heldItems;
+    this.heldItems = sourcePokemon?.heldItemManager.getAllItemSpecs() ?? source.heldItems;
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
@@ -154,8 +153,6 @@ export class PokemonData {
 
   toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {
     const species = speciesDataRegistry.getSpecies(this.species);
-    console.log("LOADED ITEMS:", this.heldItems);
-    console.log(saveDataToConfig(this.heldItems));
     const ret: Pokemon = this.player
       ? globalScene.addPlayerPokemon(
           species,
@@ -167,7 +164,7 @@ export class PokemonData {
           this.variant,
           this.ivs,
           this.nature,
-          saveDataToConfig(this.heldItems),
+          this.heldItems,
           this,
           playerPokemon => {
             if (this.nickname) {
@@ -185,7 +182,7 @@ export class PokemonData {
             : TrainerSlot.NONE,
           this.boss,
           false,
-          saveDataToConfig(this.heldItems),
+          this.heldItems,
           this,
         );
 
