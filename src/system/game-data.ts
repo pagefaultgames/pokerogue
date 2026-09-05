@@ -950,7 +950,10 @@ export class GameData {
     });
 
     // #region Arena stuff
-    const { weather, terrain, playerTerasUsed, tags, positionalTags } = fromSession.arena;
+    const { weather, terrain, playerTerasUsed, tags, positionalTags, playerFaintedLastTurn } = fromSession.arena;
+
+    globalScene.arena.playerTerasUsed = playerTerasUsed;
+    globalScene.arena.playerFaintedLastTurn = playerFaintedLastTurn;
 
     if (weather) {
       globalScene.arena.weather = weather;

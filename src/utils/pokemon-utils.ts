@@ -170,7 +170,7 @@ export function willTerastallize(pokemon: Pokemon): boolean {
 /**
  * Determine whether the Pokémon's species is tera capable, and that the player has acquired the tera orb.
  * @param pokemon - The Pokémon to check
- * @returns Whether
+ * @returns Whether the species can Terastallize.
  */
 export function canSpeciesTera(pokemon: Pokemon): boolean {
   const hasTeraMod = globalScene.findModifier(modifier => modifier.is("TerastallizeAccessModifier")) != null;
