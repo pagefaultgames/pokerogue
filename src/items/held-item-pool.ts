@@ -168,19 +168,19 @@ function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
 }
 
 /**
- * Assign randomly generated held items to an enemy Pokemon.
+ * Randomly generate held items from a pool and assign them to an enemy Pokemon.
  * @param waveIndex - Index of the current wave
  * @param count - Max number of held items the enemy should end up holding (including existing items)
  * @param enemy - The {@linkcode EnemyPokemon} to receive the items
- * @param poolType - Which tiered pool to draw from ({@linkcode HeldItemPoolType.WILD | WILD} or {@linkcode HeldItemPoolType.TRAINER | TRAINER})
- * @param upgradeChanceDivisor - If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
- * to be bumped up one rarity tier. `0` (default) disables tier upgrades.
+ * @param poolType - Which {@linkcode HeldItemPoolType | tiered pool} to draw from (Wild or Trainer)
+ * @param upgradeChanceDivisor - (Default `0`) If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
+ * to be bumped up one rarity tier. `0` disables tier upgrades.
  *
  * @privateRemarks
  * The `waveIndex` parameter currently only exists to assign black hole on X000 waves,
  * but can be used for any other wave-specific items if needed.
  */
-export function assignEnemyHeldItemsForWave(
+export function generateEnemyPokemonHeldItems(
   waveIndex: number,
   count: number,
   enemy: EnemyPokemon,

@@ -77,7 +77,7 @@ import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-spar
 import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
-import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
 import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
@@ -2507,7 +2507,7 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
+  public generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
     if (this.currentBattle.isClassicFinalBoss) {
       return;
     }
@@ -2554,7 +2554,7 @@ export class BattleScene extends SceneBase {
       if (isBoss) {
         count = Math.max(count, Math.floor(chances / 2));
       }
-      assignEnemyHeldItemsForWave(
+      generateEnemyPokemonHeldItems(
         difficultyWaveIndex,
         count,
         enemyPokemon,
