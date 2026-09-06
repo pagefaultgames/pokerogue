@@ -3885,7 +3885,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
  * @see {@linkcode StatStageChangeAttr}
  */
 interface StatStageChangeAttrOptions extends MoveEffectAttrOptions, Pick<StatStageChangePhaseOptions, "message"> {
-  /** If defined, needs to be met in order for the stat change to apply */
+  /** The condition that needs to be met in order for the stat change to apply */
   condition: MoveConditionFunc;
 }
 
