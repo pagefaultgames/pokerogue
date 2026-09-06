@@ -47,21 +47,6 @@ describe("Moves - BELLY DRUM", () => {
     expect(player).toHaveStatStage(Stat.ATK, 6);
   });
 
-  // TODO: Do we need this test? it seems redundant (the same could be said of any stat raising move)
-  it("should still take effect if an uninvolved stat stage is at max", async () => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    const player = game.field.getPlayerPokemon();
-    player.setStatStage(Stat.SPATK, 6);
-
-    game.move.use(MoveId.BELLY_DRUM);
-    await game.toEndOfTurn();
-
-    expect(player).toHaveUsedMove({ move: MoveId.BELLY_DRUM, result: MoveResult.SUCCESS });
-    expect(player).toHaveStatStage(Stat.ATK, 6);
-    expect(player).toHaveStatStage(Stat.SPATK, 6);
-  });
-
   it("should fail if the pokemon's ATK stat stage is at its maximum", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
