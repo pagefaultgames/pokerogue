@@ -2,6 +2,7 @@ import { getGameMode } from "#app/game-mode";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -9,6 +10,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -158,5 +160,69 @@ describe("Double Battles", () => {
     await game.toEndOfTurn(false);
 
     expect(game.scene.phaseManager["phaseQueue"].findAll("BattleEndPhase")).toHaveLength(1);
+  });
+
+  describe("Info box render order", () => {
+    /** Position of the pokemon's info box in the field UI display list; higher renders on top */
+    const getInfoBoxIndex = (pokemon: Pokemon) => game.scene.fieldUI.getAll().indexOf(pokemon.getBattleInfo());
+
+    /**
+     * Clear the current wave and start the next one.
+     * From the 2nd wave on, the enemy info boxes are shown after the player's remain on screen,
+     * which is the display list state that exposed the ordering bug.
+     */
+    async function toNextDoubleWave(): Promise<void> {
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+      await game.doKillOpponents();
+      await game.toNextWave();
+      expect(game.scene.getPlayerField()).toHaveLength(2);
+      expect(game.scene.getEnemyField()).toHaveLength(2);
+    }
+
+    beforeEach(() => {
+      game.override.battleStyle("double");
+    });
+
+    it("should render the 2nd field slot's info box above the 1st's", async () => {
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARIZARD);
+
+      const [bulbasaur, charizard] = game.scene.getPlayerField();
+      expect(getInfoBoxIndex(charizard)).toBeGreaterThan(getInfoBoxIndex(bulbasaur));
+
+      const [enemy1, enemy2] = game.scene.getEnemyField();
+      expect(getInfoBoxIndex(enemy2)).toBeGreaterThan(getInfoBoxIndex(enemy1));
+    });
+
+    it("should render a pokemon switched into the 2nd field slot above the 1st slot's info box", async () => {
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARIZARD, SpeciesId.SQUIRTLE);
+
+      const [bulbasaur, , squirtle] = game.scene.getPlayerParty();
+      await toNextDoubleWave();
+
+      // Bulbasaur / Squirtle // Charizard
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+      game.doSwitchPokemon(2);
+      await game.toNextTurn();
+
+      expect(game.scene.getPlayerField()).toEqual([bulbasaur, squirtle]);
+      expect(getInfoBoxIndex(squirtle)).toBeGreaterThan(getInfoBoxIndex(bulbasaur));
+    });
+
+    it("should render a pokemon replacing a fainted 2nd field slot above the 1st slot's info box", async () => {
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARIZARD, SpeciesId.SQUIRTLE);
+
+      const [bulbasaur, charizard, squirtle] = game.scene.getPlayerParty();
+      await toNextDoubleWave();
+
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+      await game.killPokemon(charizard);
+      game.doSelectPartyPokemon(2);
+      await game.toNextTurn();
+
+      expect(game.scene.getPlayerField()).toEqual([bulbasaur, squirtle]);
+      expect(getInfoBoxIndex(squirtle)).toBeGreaterThan(getInfoBoxIndex(bulbasaur));
+    });
   });
 });

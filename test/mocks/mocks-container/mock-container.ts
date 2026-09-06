@@ -183,23 +183,45 @@ export class MockContainer implements MockGameObject {
     return this;
   }
 
-  sendToBack(): this {
-    // Sends this Game Object to the back of its parent's display list.\
+  sendToBack(child: MockGameObject): this {
+    // Sends the given child to the back of this Container's display list.
+    const index = this.list.indexOf(child);
+    if (index > 0) {
+      this.list.splice(index, 1);
+      this.list.unshift(child);
+    }
     return this;
   }
 
-  moveTo(_obj): this {
-    // Moves this Game Object to the given index in the list.\
+  moveTo(child: MockGameObject, index: number): this {
+    // Moves the given child to the given index in this Container's display list.
+    const currentIndex = this.list.indexOf(child);
+    if (currentIndex !== -1 && index >= 0 && index < this.list.length) {
+      this.list.splice(currentIndex, 1);
+      this.list.splice(index, 0, child);
+    }
     return this;
   }
 
-  moveAbove(_obj): this {
-    // Moves this Game Object to be above the given Game Object in the display list.
+  moveAbove(child: MockGameObject, other: MockGameObject): this {
+    // Moves the child to directly above the other child; no-op if already above it (matches Phaser)
+    const currentIndex = this.list.indexOf(child);
+    const baseIndex = this.list.indexOf(other);
+    if (child !== other && currentIndex !== -1 && baseIndex !== -1 && currentIndex < baseIndex) {
+      this.list.splice(currentIndex, 1);
+      this.list.splice(baseIndex, 0, child);
+    }
     return this;
   }
 
-  moveBelow(_obj): this {
-    // Moves this Game Object to be below the given Game Object in the display list.
+  moveBelow(child: MockGameObject, other: MockGameObject): this {
+    // Moves the child to directly below the other child; no-op if already below it (matches Phaser)
+    const currentIndex = this.list.indexOf(child);
+    const baseIndex = this.list.indexOf(other);
+    if (child !== other && currentIndex !== -1 && baseIndex !== -1 && currentIndex > baseIndex) {
+      this.list.splice(currentIndex, 1);
+      this.list.splice(baseIndex, 0, child);
+    }
     return this;
   }
 
@@ -208,8 +230,13 @@ export class MockContainer implements MockGameObject {
     return this;
   }
 
-  bringToTop(_obj): this {
-    // Brings this Game Object to the top of its parents display list.
+  bringToTop(child: MockGameObject): this {
+    // Brings the given child to the top of this Container's display list.
+    const index = this.list.indexOf(child);
+    if (index !== -1 && index < this.list.length - 1) {
+      this.list.splice(index, 1);
+      this.list.push(child);
+    }
     return this;
   }
 

@@ -156,7 +156,7 @@ import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
-import { BattleInfo } from "#ui/battle-info";
+import type { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -3256,15 +3256,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Show this Pokémon's info panel */
   showInfo(): void {
     if (!this.battleInfo.visible) {
-      const otherBattleInfo = globalScene.fieldUI
-        .getAll()
-        .slice(0, 4)
-        .find(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer());
-      if (!otherBattleInfo || !this.getFieldIndex()) {
+      // In double battles, the 2nd field slot's info box must render above the 1st's so they stack correctly
+      const allyBattleInfo = this.getAlly()?.getBattleInfo();
+      if (!allyBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else
       } else {
-        globalScene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
+        globalScene.fieldUI.moveAbove(this.battleInfo, allyBattleInfo);
       }
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
       this.battleInfo.setVisible(true);
