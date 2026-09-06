@@ -11,10 +11,6 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
   private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
   private readonly ERR_PASSWORD_MISMATCH: string = "password doesn't match";
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
-
   setup(): void {
     super.setup();
   }

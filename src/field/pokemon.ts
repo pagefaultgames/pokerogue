@@ -155,7 +155,7 @@ import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor, Mutable } from "#types/type-helpers";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -187,7 +187,7 @@ import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
@@ -319,7 +319,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Stat stages queued by berry eating to be run in a single phase */
   // TODO: Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
-  public queuedBerryStatChanges: Mutable<StatChange>[] = [];
+  public queuedBerryStatChanges: Writable<StatChange>[] = [];
 
   // TODO: Rework this eventually
   constructor(
@@ -2044,7 +2044,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     bypassSummonData?: boolean;
     useIllusion?: boolean;
     ignoreThirdType?: boolean;
-  } = {}): Mutable<NonEmptyTuple<PokemonType>> {
+  } = {}): Writable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
@@ -2068,7 +2068,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       types.add(this.summonData.addedType);
     }
 
-    return Array.from(types) as Mutable<NonEmptyTuple<PokemonType>>;
+    return Array.from(types) as Writable<NonEmptyTuple<PokemonType>>;
   }
 
   /**

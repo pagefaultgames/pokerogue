@@ -30,13 +30,13 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
-import type { Mutable } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type { Writable } from "type-fest";
 
 export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
@@ -785,7 +785,7 @@ export class MovePhase extends PokemonPhase {
     /* Clear out any two turn moves once they've been used.
     TODO: Refactor move queues and remove this assignment;
     Move queues should be handled by the calling `CommandPhase` or a manager for it */
-    (this as Mutable<this>).useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
+    (this as Writable<MovePhase>).useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
 
     if (!charging && user.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
       user.lapseTag(BattlerTagType.CHARGING);

@@ -47,14 +47,14 @@ import { isFieldTargeted } from "#moves/move-utils";
 import type { ArenaPokemonPools, TrainerPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
-import type { AbstractConstructor, Mutable } from "#types/type-helpers";
+import type { AbstractConstructor } from "#types/type-helpers";
 import type { TypedEventTarget } from "#types/typed-event-target";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
-import type { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple, Writable } from "type-fest";
 
 export class Arena {
   public readonly biomeId: BiomeId;
@@ -298,7 +298,11 @@ export class Arena {
       globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType));
     } else {
       this.weather = new Weather(weather, weatherDuration.value, weatherDuration.value);
-      this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, weatherDuration.value));
+      // Use the durations stored on the `Weather` itself, as immutable weathers (Harsh Sun, etc.) ignore
+      // the passed-in duration and last indefinitely.
+      this.eventTarget.dispatchEvent(
+        new WeatherChangedEvent(weather, this.weather.turnsLeft, this.weather.maxDuration),
+      );
 
       globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, getWeatherAnim(weather));
       globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather));
@@ -540,7 +544,7 @@ export class Arena {
         acc[tier] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
         return acc;
       },
-      {} as Mutable<ArenaPokemonPools>,
+      {} as Writable<ArenaPokemonPools>,
     );
     this.lastTimeOfDay = timeOfDay;
   }

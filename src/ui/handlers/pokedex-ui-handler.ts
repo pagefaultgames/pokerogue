@@ -266,10 +266,6 @@ export class PokedexUiHandler extends MessageUiHandler {
   private exitCallback?: (() => void) | undefined;
   private blockOpenPage = false;
 
-  constructor() {
-    super(UiMode.POKEDEX);
-  }
-
   setup() {
     const ui = this.getUi();
     const currentLanguage = i18next.resolvedLanguage ?? "en";

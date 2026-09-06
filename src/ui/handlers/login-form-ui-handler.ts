@@ -12,10 +12,6 @@ const ERR_ACCOUNT_EXIST: string = "account doesn't exist";
 const ERR_PASSWORD_MATCH: string = "password doesn't match";
 
 export class LoginFormUiHandler extends OAuthProvidersUiHandler {
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
-
   public override getModalTitle(): string {
     if (import.meta.env.VITE_SERVER_URL === "https://apibeta.pokerogue.net") {
       return i18next.t("menu:loginBeta");
