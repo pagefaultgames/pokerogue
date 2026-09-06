@@ -45,9 +45,9 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
       case "failed to add account record":
         return i18next.t("menu:usernameAlreadyUsed");
       case "failed to generate uuid":
-        return i18next.t("menu:serverErrorGenerateUuid");
+        return `${i18next.t("menu:serverErrorGenerateUuid")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
       case "failed to generate salt":
-        return i18next.t("menu:serverErrorGenerateSalt");
+        return `${i18next.t("menu:serverErrorGenerateSalt")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
     }
 
     return super.getReadableErrorMessage(error);

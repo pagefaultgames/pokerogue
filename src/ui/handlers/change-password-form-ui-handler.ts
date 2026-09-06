@@ -47,11 +47,11 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
       case ERR_PASSWORD_MISMATCH:
         return i18next.t("menu:passwordNotMatchingConfirmPassword");
       case ERR_GENERATE_SALT:
-        return i18next.t("menu:serverErrorGenerateSalt");
+        return `${i18next.t("menu:serverErrorGenerateSalt")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
       case ERR_REMOVE_SESSIONS:
-        return i18next.t("menu:serverErrorRemoveSessions");
+        return `${i18next.t("menu:serverErrorRemoveSessions")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
       case ERR_ADD_RECORD:
-        return i18next.t("menu:serverErrorUpdateAccount");
+        return `${i18next.t("menu:serverErrorUpdateAccount")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
     }
 
     return super.getReadableErrorMessage(error);
