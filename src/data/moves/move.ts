@@ -4322,7 +4322,7 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
-    user.updateInfo(); // TODO: Floating promise
+    user.updateInfo();
     return super.apply(user, target, move, args);
   }
 
