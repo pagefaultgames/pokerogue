@@ -97,7 +97,7 @@ describe("Moves - BELLY DRUM", () => {
     await game.phaseInterceptor.to("StatStageChangePhase", false);
 
     const phase = game.scene.phaseManager.getCurrentPhase() as StatStageChangePhase;
-    expect(phase).toBeInstanceOf(StatStageChangePhase);
+    expect(game).toBeAtPhase("StatStageChangePhase");
     const defaultMessageSpy = vi.spyOn(
       phase as unknown as { buildStatStageChangeMessage: StatStageChangePhase["buildStatStageChangeMessage"] },
       "buildStatStageChangeMessage",
