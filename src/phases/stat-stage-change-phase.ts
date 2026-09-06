@@ -238,8 +238,7 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * Queue one battle message per distinct stage change magnitude.
-   *
+   * Queue all messages for the stat changes being applied.
    * @param pokemon - The `Pokemon` receiving the stat changes
    * @param applied - The applied changes
    */
@@ -252,6 +251,45 @@ export class StatStageChangePhase extends PokemonPhase {
     for (const [_, group] of Map.groupBy(applied, c => c.stages)) {
       globalScene.phaseManager.queueMessage(this.buildStatStageChangeMessage(group));
     }
+  }
+
+  /**
+   * Build a stat change message for a group of changes that share the same magnitude.
+   *
+   * @param changes - The changes described by this message (all sharing one {@linkcode StatChange.stages | stages} value)
+   * @returns The localised message string
+   */
+  private buildStatStageChangeMessage(changes: readonly StatChange[]): string {
+    const relStages = changes[0].stages;
+    return i18next.t(getStatStageChangeDescriptionKey(Math.abs(relStages), this.isIncrease), {
+      pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
+      stats: this.formatStatsFragment(changes),
+      count: changes.length,
+    });
+  }
+
+  /**
+   * Format a list of changes into a localised stat-name fragment (e.g. `"Attack, Defense, and Speed"`).
+   *
+   * @param changes - The changes whose stat names should be listed
+   * @returns The localised fragment, or the generic `"stats"` string for 5+
+   */
+  private formatStatsFragment(changes: readonly StatChange[]): string {
+    if (changes.length >= 5) {
+      return i18next.t("battle:stats");
+    }
+
+    if (changes.length === 1) {
+      return i18next.t(getStatKey(changes[0].stat));
+    }
+
+    const allButLast = changes
+      .slice(0, -1)
+      .map(c => i18next.t(getStatKey(c.stat)))
+      .join(", ");
+    const oxfordComma = changes.length > 2 ? "," : "";
+    const last = i18next.t(getStatKey(changes.at(-1)!.stat));
+    return `${allButLast}${oxfordComma} ${i18next.t("battle:statsAnd")} ${last}`;
   }
 
   /**
@@ -373,45 +411,5 @@ export class StatStageChangePhase extends PokemonPhase {
     });
 
     pokemon.disableMask();
-  }
-
-  // TODO: Shouldn't this logically be before updateStatStages? Can I move it?
-  /**
-   * Build a stat change message for a group of changes that share the same magnitude.
-   *
-   * @param changes - The changes described by this message (all sharing one {@linkcode StatChange.stages | stages} value)
-   * @returns The localised message string
-   */
-  private buildStatStageChangeMessage(changes: readonly StatChange[]): string {
-    const relStages = changes[0].stages;
-    return i18next.t(getStatStageChangeDescriptionKey(Math.abs(relStages), this.isIncrease), {
-      pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
-      stats: this.formatStatsFragment(changes),
-      count: changes.length,
-    });
-  }
-
-  /**
-   * Format a list of changes into a localised stat-name fragment (e.g. `"Attack, Defense, and Speed"`).
-   *
-   * @param changes - The changes whose stat names should be listed
-   * @returns The localised fragment, or the generic `"stats"` string for 5+
-   */
-  private formatStatsFragment(changes: readonly StatChange[]): string {
-    if (changes.length >= 5) {
-      return i18next.t("battle:stats");
-    }
-
-    if (changes.length === 1) {
-      return i18next.t(getStatKey(changes[0].stat));
-    }
-
-    const allButLast = changes
-      .slice(0, -1)
-      .map(c => i18next.t(getStatKey(c.stat)))
-      .join(", ");
-    const oxfordComma = changes.length > 2 ? "," : "";
-    const last = i18next.t(getStatKey(changes.at(-1)!.stat));
-    return `${allButLast}${oxfordComma} ${i18next.t("battle:statsAnd")} ${last}`;
   }
 }
