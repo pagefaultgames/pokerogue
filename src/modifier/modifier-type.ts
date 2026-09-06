@@ -28,7 +28,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
-import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { EFFECTIVE_STATS, getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { VoucherType } from "#enums/voucher-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -124,7 +124,7 @@ import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, formatMoney, NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
-import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
@@ -689,13 +689,10 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   protected nature: Nature;
 
   constructor(nature: Nature) {
+    const boostedStat = EFFECTIVE_STATS.find(s => getNatureStatMultiplier(nature, s) > 1);
     super(
       "",
-      `mint_${
-        getEnumKeys(Stat)
-          .find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)
-          ?.toLowerCase() || "neutral"
-      }`,
+      `mint_${boostedStat ? Stat[boostedStat].toLowerCase() : "neutral"}`,
       (_type, args) => new PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature),
       (pokemon: PlayerPokemon) => {
         if (pokemon.getNature() === this.nature) {

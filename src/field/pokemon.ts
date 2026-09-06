@@ -217,8 +217,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public level: number;
   public exp: number;
   public gender: Gender;
-  public hp: number;
-  public stats: number[];
+  public hp = 0;
+  // TODO: make tuple
+  public stats: number[] = [0, 0, 0, 0, 0, 0];
+  // todo: make a tuple from 0-31
   public ivs: number[];
   public nature: Nature;
   public moveset: PokemonMove[];
@@ -1588,7 +1590,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // clamp HP to new max or restore current HP if max HP increased
       if (stat === Stat.HP && !this.isFainted()) {
-        this.hp = Math.max(this.hp, value);
+        this.hp = Math.min(this.hp, value);
 
         const lastMaxHp = this.getMaxHp();
         if (lastMaxHp > 0 && value > lastMaxHp) {
