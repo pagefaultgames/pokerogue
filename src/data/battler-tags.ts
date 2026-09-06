@@ -1512,6 +1512,57 @@ export class PowderTag extends BattlerTag {
 }
 
 /**
+ * Base class for tags that lock the holder into repeatedly using a single move.
+ *
+ * On each {@linkcode BattlerTagLapseType.AFTER_MOVE | AFTER_MOVE} lapse the tag ticks down and,
+ * while still active, queues the holder's next use of the locked move with freshly-selected targets.
+ * If the move fails, misses, or is otherwise interrupted, the tag is removed and no further use is queued.
+ */
+export abstract class MoveLockTag extends SerializableBattlerTag {
+  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId) {
+    super(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
+  }
+
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const { sourceMove } = this;
+    const lastMove = pokemon.getLastXMoves().at(0);
+
+    // If the holder didn't just use this tag's move (e.g. it used another move via Dancer),
+    // don't advance the tag on this lapse.
+    if (sourceMove == null || !lastMove || ![sourceMove, MoveId.NONE].includes(lastMove.move)) {
+      return true;
+    }
+
+    const ret =
+      super.lapse(pokemon, lapseType) && lastMove.targets.length > 0 && lastMove.result === MoveResult.SUCCESS;
+
+    // While the lock persists, queue next turn's use of the move with fresh target selection.
+    if (ret) {
+      const nextTargets = this.getNextTargets(pokemon, allMoves[sourceMove], lastMove.targets);
+      pokemon.pushMoveQueue({ move: sourceMove, targets: nextTargets, useMode: MoveUseMode.IGNORE_PP });
+    }
+
+    return ret;
+  }
+
+  /**
+   * Determine the target(s) for the move queued by this tag on the following turn.
+   * @param pokemon - The {@linkcode Pokemon} holding this tag
+   * @param move - The {@linkcode Move} queued by this tag
+   * @param lastTargets - The target(s) hit by the holder's most recent use of the move
+   * @returns The {@linkcode BattlerIndex}es targeted by the next use of the move.
+   */
+  protected getNextTargets(pokemon: Pokemon, move: Move, lastTargets: BattlerIndex[]): BattlerIndex[] {
+    // Re-roll a random target each turn so frenzy moves don't lock onto a single
+    // enemy for their whole duration in battles with multiple opponents.
+    if (move.moveTarget === MoveTarget.RANDOM_NEAR_ENEMY) {
+      return getMoveTargets(pokemon, move.id).targets;
+    }
+    return lastTargets;
+  }
+}
+
+/**
  * Locks the holder into a "{@link https://bulbapedia.bulbagarden.net/wiki/Rampaging | frenzy}",
  * forcing repeated use of the source move for 2-3 turns.
  *
