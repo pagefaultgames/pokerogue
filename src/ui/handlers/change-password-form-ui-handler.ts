@@ -6,12 +6,14 @@ import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import i18next from "i18next";
 
-const ERR_PASSWORD: string = "invalid password";
-const ERR_ACCOUNT_EXIST: string = "account doesn't exist";
-const ERR_PASSWORD_MISMATCH: string = "password doesn't match";
-const ERR_GENERATE_SALT: string = "failed to generate salt";
-const ERR_REMOVE_SESSIONS: string = "failed to remove sessions";
-const ERR_ADD_RECORD: string = "failed to add account record";
+// TODO: Consider replacing server error strings with numeric error codes for better maintainability
+// TODO: Centralize server error constants
+const ERR_PASSWORD = "invalid password";
+const ERR_ACCOUNT_EXIST = "account doesn't exist";
+const ERR_PASSWORD_MISMATCH = "password doesn't match";
+const ERR_GENERATE_SALT = "failed to generate salt";
+const ERR_REMOVE_SESSIONS = "failed to remove sessions";
+const ERR_ADD_RECORD = "failed to add account record";
 
 export class ChangePasswordFormUiHandler extends FormModalUiHandler {
   setup(): void {

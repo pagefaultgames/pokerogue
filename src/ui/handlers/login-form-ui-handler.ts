@@ -6,12 +6,14 @@ import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { OAuthProvidersUiHandler } from "#ui/oauth-providers-ui-handler";
 import i18next from "i18next";
 
-const ERR_USERNAME: string = "invalid username";
-const ERR_PASSWORD: string = "invalid password";
-const ERR_ACCOUNT_EXIST: string = "account doesn't exist";
-const ERR_PASSWORD_MATCH: string = "password doesn't match";
-const ERR_GENERATE_TOKEN: string = "failed to generate token";
-const ERR_ADD_SESSION: string = "failed to add account session";
+// TODO: Consider replacing server error strings with numeric error codes for better maintainability
+// TODO: Centralize server error constants
+const ERR_USERNAME = "invalid username";
+const ERR_PASSWORD = "invalid password";
+const ERR_ACCOUNT_EXIST = "account doesn't exist";
+const ERR_PASSWORD_MATCH = "password doesn't match";
+const ERR_GENERATE_TOKEN = "failed to generate token";
+const ERR_ADD_SESSION = "failed to add account session";
 
 export class LoginFormUiHandler extends OAuthProvidersUiHandler {
   public override getModalTitle(): string {
