@@ -2246,7 +2246,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const recoilDamage = toDmgValue(this.useHp ? user.getMaxHp() : user.turnData.totalDamageDealt * this.damageRatio);
+    const recoilDamage = toDmgValue((this.useHp ? user.getMaxHp() : user.turnData.totalDamageDealt) * this.damageRatio);
 
     user.damageAndUpdate(recoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
     globalScene.phaseManager.queueMessage(
