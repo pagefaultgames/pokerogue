@@ -227,7 +227,8 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param applied - The clamped per-stat deltas to apply
    */
   private applyStatChangesAndEnd(pokemon: Pokemon, applied: readonly StatChange[]): void {
-    this.queueStatChangeMessages(applied);
+    this.queueStatChangeMessages(pokemon, applied);
+
     this.updateStatStages(pokemon, applied);
     this.triggerReactionAbilities(pokemon);
     this.checkWhiteHerb(pokemon);
@@ -239,9 +240,15 @@ export class StatStageChangePhase extends PokemonPhase {
   /**
    * Queue one battle message per distinct stage change magnitude.
    *
+   * @param pokemon - The `Pokemon` receiving the stat changes
    * @param applied - The applied changes
    */
-  private queueStatChangeMessages(applied: readonly StatChange[]): void {
+  private queueStatChangeMessages(pokemon: Pokemon, applied: readonly StatChange[]): void {
+    if (this.options.message != null) {
+      globalScene.phaseManager.queueMessage(this.options.message(pokemon));
+      return;
+    }
+
     for (const [_, group] of Map.groupBy(applied, c => c.stages)) {
       globalScene.phaseManager.queueMessage(this.buildStatStageChangeMessage(group));
     }
@@ -250,7 +257,7 @@ export class StatStageChangePhase extends PokemonPhase {
   /**
    * Write each clamped change to the target's stat stages and flag turn data accordingly.
    *
-   * @param pokemon - The Pokemon receiving the stat changes
+   * @param pokemon - The `Pokemon` receiving the stat changes
    * @param applied - The applied changes
    */
   private updateStatStages(pokemon: Pokemon, applied: readonly StatChange[]): void {
@@ -368,6 +375,7 @@ export class StatStageChangePhase extends PokemonPhase {
     pokemon.disableMask();
   }
 
+  // TODO: Shouldn't this logically be before updateStatStages? Can I move it?
   /**
    * Build a stat change message for a group of changes that share the same magnitude.
    *
