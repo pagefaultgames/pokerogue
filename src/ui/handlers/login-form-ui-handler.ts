@@ -8,12 +8,12 @@ import i18next from "i18next";
 
 // TODO: Consider replacing server error strings with numeric error codes for better maintainability
 // TODO: Centralize server error constants
-const ERR_USERNAME = "invalid username";
-const ERR_PASSWORD = "invalid password";
-const ERR_ACCOUNT_EXIST = "account doesn't exist";
-const ERR_PASSWORD_MATCH = "password doesn't match";
-const ERR_GENERATE_TOKEN = "failed to generate token";
-const ERR_ADD_SESSION = "failed to add account session";
+const ERR_INVALID_USERNAME = "invalid username";
+const ERR_INVALID_PASSWORD = "invalid password";
+const ERR_NO_ACCOUNT = "account doesn't exist";
+const ERR_PASSWORD_MISMATCH = "password doesn't match";
+const ERR_FAILED_TO_GENERATE_TOKEN = "failed to generate token";
+const ERR_FAILED_TO_ADD_SESSION = "failed to add account session";
 
 export class LoginFormUiHandler extends OAuthProvidersUiHandler {
   public override getModalTitle(): string {
@@ -46,17 +46,17 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
     }
 
     switch (error) {
-      case ERR_USERNAME:
+      case ERR_INVALID_USERNAME:
         return i18next.t("menu:invalidLoginUsername");
-      case ERR_PASSWORD:
+      case ERR_INVALID_PASSWORD:
         return i18next.t("menu:invalidLoginPassword");
-      case ERR_ACCOUNT_EXIST:
+      case ERR_NO_ACCOUNT:
         return i18next.t("menu:accountNonExistent");
-      case ERR_PASSWORD_MATCH:
+      case ERR_PASSWORD_MISMATCH:
         return i18next.t("menu:unmatchingPassword");
-      case ERR_GENERATE_TOKEN:
+      case ERR_FAILED_TO_GENERATE_TOKEN:
         return `${i18next.t("menu:serverErrorGenerateToken")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
-      case ERR_ADD_SESSION:
+      case ERR_FAILED_TO_ADD_SESSION:
         return `${i18next.t("menu:serverErrorAddSession")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
     }
 

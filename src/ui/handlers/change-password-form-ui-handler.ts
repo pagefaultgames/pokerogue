@@ -8,12 +8,12 @@ import i18next from "i18next";
 
 // TODO: Consider replacing server error strings with numeric error codes for better maintainability
 // TODO: Centralize server error constants
-const ERR_PASSWORD = "invalid password";
-const ERR_ACCOUNT_EXIST = "account doesn't exist";
+const ERR_INVALID_PASSWORD = "invalid password";
+const ERR_NO_ACCOUNT = "account doesn't exist";
 const ERR_PASSWORD_MISMATCH = "password doesn't match";
-const ERR_GENERATE_SALT = "failed to generate salt";
+const ERR_FAILED_TO_GENERATE_PASSWORD = "failed to generate salt";
 const ERR_REMOVE_SESSIONS = "failed to remove sessions";
-const ERR_ADD_RECORD = "failed to add account record";
+const ERR_ACCOUNT_UPDATE_FAILURE = "failed to add account record";
 
 export class ChangePasswordFormUiHandler extends FormModalUiHandler {
   setup(): void {
@@ -42,17 +42,17 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-      case ERR_PASSWORD:
+      case ERR_INVALID_PASSWORD:
         return i18next.t("menu:invalidRegisterPassword");
-      case ERR_ACCOUNT_EXIST:
+      case ERR_NO_ACCOUNT:
         return i18next.t("menu:accountNonExistent");
       case ERR_PASSWORD_MISMATCH:
         return i18next.t("menu:passwordNotMatchingConfirmPassword");
-      case ERR_GENERATE_SALT:
+      case ERR_FAILED_TO_GENERATE_PASSWORD:
         return `${i18next.t("menu:serverErrorGenerateSalt")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
       case ERR_REMOVE_SESSIONS:
         return `${i18next.t("menu:serverErrorRemoveSessions")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
-      case ERR_ADD_RECORD:
+      case ERR_ACCOUNT_UPDATE_FAILURE:
         return `${i18next.t("menu:serverErrorUpdateAccount")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
     }
 
