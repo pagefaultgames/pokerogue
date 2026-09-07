@@ -256,76 +256,56 @@ export class TrainerConfig {
 
   /**
    * Returns the derived trainer type for a given trainer type.
-   * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
+   * @param trainerType - (Default `this.trainerType`) The trainer type to derive from.
    * @returns - The derived trainer type.
    */
-  getDerivedType(trainerTypeToDeriveFrom: TrainerType | null = null): TrainerType {
-    let trainerType = trainerTypeToDeriveFrom ? trainerTypeToDeriveFrom : this.trainerType;
+  getDerivedType(trainerType: Exclude<TrainerType, TrainerType.UNKNOWN> = this.trainerType as any): TrainerType {
     switch (trainerType) {
       case TrainerType.RIVAL_2:
       case TrainerType.RIVAL_3:
       case TrainerType.RIVAL_4:
       case TrainerType.RIVAL_5:
       case TrainerType.RIVAL_6:
-        trainerType = TrainerType.RIVAL;
-        break;
+        return TrainerType.RIVAL;
       case TrainerType.LANCE_CHAMPION:
-        trainerType = TrainerType.LANCE;
-        break;
+        return TrainerType.LANCE;
       case TrainerType.LARRY_ELITE:
-        trainerType = TrainerType.LARRY;
-        break;
+        return TrainerType.LARRY;
       case TrainerType.ROCKET_BOSS_GIOVANNI_2:
-        trainerType = TrainerType.ROCKET_BOSS_GIOVANNI_1;
-        break;
+        return TrainerType.ROCKET_BOSS_GIOVANNI_1;
       case TrainerType.MAXIE_2:
-        trainerType = TrainerType.MAXIE;
-        break;
+        return TrainerType.MAXIE;
       case TrainerType.ARCHIE_2:
-        trainerType = TrainerType.ARCHIE;
-        break;
+        return TrainerType.ARCHIE;
       case TrainerType.CYRUS_2:
-        trainerType = TrainerType.CYRUS;
-        break;
+        return TrainerType.CYRUS;
       case TrainerType.GHETSIS_2:
-        trainerType = TrainerType.GHETSIS;
-        break;
+        return TrainerType.GHETSIS;
       case TrainerType.LYSANDRE_2:
-        trainerType = TrainerType.LYSANDRE;
-        break;
+        return TrainerType.LYSANDRE;
       case TrainerType.LUSAMINE_2:
-        trainerType = TrainerType.LUSAMINE;
-        break;
+        return TrainerType.LUSAMINE;
       case TrainerType.GUZMA_2:
-        trainerType = TrainerType.GUZMA;
-        break;
+        return TrainerType.GUZMA;
       case TrainerType.ROSE_2:
-        trainerType = TrainerType.ROSE;
-        break;
+        return TrainerType.ROSE;
       case TrainerType.PENNY_2:
-        trainerType = TrainerType.PENNY;
-        break;
+        return TrainerType.PENNY;
       case TrainerType.MARNIE_ELITE:
-        trainerType = TrainerType.MARNIE;
-        break;
+        return TrainerType.MARNIE;
       case TrainerType.BEDE_ELITE:
-        trainerType = TrainerType.BEDE;
-        break;
+        return TrainerType.BEDE;
       case TrainerType.NESSA_ELITE:
-        trainerType = TrainerType.NESSA;
-        break;
+        return TrainerType.NESSA;
       case TrainerType.BEA_ELITE:
-        trainerType = TrainerType.BEA;
-        break;
+        return TrainerType.BEA;
       case TrainerType.ALLISTER_ELITE:
-        trainerType = TrainerType.ALLISTER;
-        break;
+        return TrainerType.ALLISTER;
       case TrainerType.RAIHAN_ELITE:
-        trainerType = TrainerType.RAIHAN;
-        break;
+        return TrainerType.RAIHAN;
+      default:
+        return trainerType;
     }
-
-    return trainerType;
   }
 
   /**
