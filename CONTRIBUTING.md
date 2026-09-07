@@ -268,10 +268,9 @@ Try to keep the title under 72 characters, as GitHub cuts off commit titles long
 
 #### Examples
 
-`refactor(data)!: improve serialization of Pokemon save data`
-
-`balance: update TM compatibility lists`
-`fix(move): Retaliate now saves power boost between waves`
+`refactor(data)!: improve serialization of Pokemon save data` \
+`balance: update TM compatibility lists` \
+`fix(move): Retaliate now saves power boost between waves` \
 `test: preserve text output of original shards`
 
 #### List of valid prefixes
@@ -279,11 +278,11 @@ Try to keep the title under 72 characters, as GitHub cuts off commit titles long
 - "balance" - Changes related to game balance
 - "chore" - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes
 - "dev" - Improving the developer experience (such as by modifying lint rules or creating cli scripts)
-- "docs" - Primarily adding/updating documentation
+- "docs" - Primarily adding/updating documentation related to the game's code
 - "feat" - Adding a new feature (e.g. adding a new implementation of a move) or redesigning an existing feature
 - "fix" - Fixing a bug
-- "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
-- "i18n" - Adding/modifying translation keys, etc
+- "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory, or updating the readme/contributing/credits documents
+- "i18n" - Adding/modifying translation keys, implementing a new language, etc
 - "misc" - A change that doesn't fit any other prefix
 - "perf" - A refactor aimed at improving performance
 - "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
@@ -296,7 +295,7 @@ Try to keep the title under 72 characters, as GitHub cuts off commit titles long
 - "audio"
 - "battle" - Relating to the general battle engine
 - "biomes"
-- "challenge"
+- "challenge" - Anything related to challenges/run modifiers, e.g. randomizer or mono-type challenges
 - "encounter" - Mystery Encounters
 - "event" - e.g. adding a Christmas event to the game
 - "graphics" - Anything related to art/graphics (adding new sprites, fixing a sprite that isn't displaying properly, etc)
