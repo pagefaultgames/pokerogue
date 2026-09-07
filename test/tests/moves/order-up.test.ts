@@ -51,7 +51,7 @@ describe("Moves - Order Up", () => {
       const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
       expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-      expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+      expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
       game.move.select(MoveId.ORDER_UP, 1, BattlerIndex.ENEMY);
       expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
@@ -59,7 +59,7 @@ describe("Moves - Order Up", () => {
       await game.phaseInterceptor.to("BerryPhase", false);
 
       const affectedStats: EffectiveStat[] = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
-      affectedStats.forEach(st => expect(dondozo.getStatStage(st)).toBe(st === stat ? 3 : 2));
+      affectedStats.forEach(st => expect(dondozo).toHaveStatStage(st, st === stat ? 3 : 2));
     },
   );
 });

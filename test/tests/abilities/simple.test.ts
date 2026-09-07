@@ -31,6 +31,6 @@ describe("Abilities - Simple", () => {
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-2);
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, -2);
   });
 });

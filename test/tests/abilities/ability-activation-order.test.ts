@@ -34,7 +34,7 @@ describe("Ability Activation Order", () => {
     await game.classicMode.startBattle(SpeciesId.SLOWPOKE);
 
     // Enemy's ability should activate first, so sun ends up replaced with rain
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+    expect(game).toHaveWeather(WeatherType.RAIN);
   });
 
   it("should consider base stat boosting items in determining order", async () => {
@@ -45,9 +45,9 @@ describe("Ability Activation Order", () => {
       .enemyAbility(AbilityId.DROUGHT)
       .ability(AbilityId.DRIZZLE)
       .startingHeldItems([{ name: "BASE_STAT_BOOSTER", type: Stat.SPD, count: 100 }]);
-
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("should consider stat boosting items in determining order", async () => {
@@ -58,9 +58,9 @@ describe("Ability Activation Order", () => {
       .enemyAbility(AbilityId.DROUGHT)
       .ability(AbilityId.DRIZZLE)
       .startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
-
     await game.classicMode.startBattle(SpeciesId.DITTO);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("should activate priority abilities first", async () => {
@@ -70,9 +70,9 @@ describe("Ability Activation Order", () => {
       .enemySpecies(SpeciesId.ACCELGOR)
       .enemyAbility(AbilityId.DROUGHT)
       .ability(AbilityId.NEUTRALIZING_GAS);
-
     await game.classicMode.startBattle(SpeciesId.SLOWPOKE);
-    expect(game.scene.arena.weather).toBeUndefined();
+
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should update dynamically based on speed order", async () => {
@@ -85,7 +85,8 @@ describe("Ability Activation Order", () => {
       .ability(AbilityId.DRIZZLE);
 
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+
     // Slow start activates and makes enemy slower, so drought activates after drizzle
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 });

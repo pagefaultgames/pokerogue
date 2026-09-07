@@ -102,9 +102,9 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = game.field.getPlayerPokemon().moveset;
-      for (const move of moves) {
-        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
+      const playerPokemon = game.field.getPlayerPokemon();
+      for (const move of playerPokemon.moveset) {
+        expect(playerPokemon).toHaveUsedPP(move.moveId, move.getMovePp() - 2);
       }
     });
 
@@ -122,9 +122,9 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(4), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getPlayerParty()[1].moveset;
-      for (const move of moves) {
-        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
+      const playerPokemon = scene.getPlayerParty()[1];
+      for (const move of playerPokemon.moveset) {
+        expect(playerPokemon).toHaveUsedPP(move.moveId, move.getMovePp() - 2);
       }
     });
 
@@ -168,9 +168,9 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getPlayerParty()[2].moveset;
-      for (const move of moves) {
-        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
+      const playerPokemon = scene.getPlayerParty()[2];
+      for (const move of playerPokemon.moveset) {
+        expect(playerPokemon).toHaveUsedPP(move.moveId, move.getMovePp() - 2);
       }
     });
 
@@ -188,9 +188,9 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(4), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getPlayerParty()[3].moveset;
-      for (const move of moves) {
-        expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
+      const playerPokemon = scene.getPlayerParty()[3];
+      for (const move of playerPokemon.moveset) {
+        expect(playerPokemon).toHaveUsedPP(move.moveId, move.getMovePp() - 2);
       }
     });
 
@@ -257,9 +257,9 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(2.5), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = game.field.getPlayerPokemon().moveset;
-      for (const move of moves) {
-        expect(move.getMovePp() - move.ppUsed).toBe(2);
+      const playerPokemon = game.field.getPlayerPokemon();
+      for (const move of playerPokemon.moveset) {
+        expect(playerPokemon).toHaveUsedPP(move.moveId, move.getMovePp() - 2);
       }
     });
 

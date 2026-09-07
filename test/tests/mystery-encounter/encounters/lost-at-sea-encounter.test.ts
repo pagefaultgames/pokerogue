@@ -247,9 +247,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
         ),
       );
 
-      notAllowedPkm.forEach(pkm =>
-        expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()),
-      );
+      notAllowedPkm.forEach(pkm => expect(pkm).toHaveFullHp());
     });
 
     it("should leave encounter without battle", async () => {

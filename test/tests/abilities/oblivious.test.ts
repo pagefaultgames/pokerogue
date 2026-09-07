@@ -37,12 +37,12 @@ describe("Abilities - Oblivious", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
     const enemy = game.field.getEnemyPokemon();
     enemy.addTag(BattlerTagType.TAUNT);
-    expect(enemy.getTag(BattlerTagType.TAUNT)).toBeDefined();
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TAUNT);
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.getTag(BattlerTagType.TAUNT)).toBeUndefined();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.TAUNT);
   });
 
   it("should remove infatuation when gained", async () => {
@@ -56,11 +56,11 @@ describe("Abilities - Oblivious", () => {
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "isOppositeGender").mockReturnValue(true);
     enemy.addTag(BattlerTagType.INFATUATED, 5, MoveId.JUDGMENT, game.field.getPlayerPokemon().id); // sourceID needs to be defined
-    expect(enemy.getTag(BattlerTagType.INFATUATED)).toBeTruthy();
+    expect(enemy).toHaveBattlerTag(BattlerTagType.INFATUATED);
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.getTag(BattlerTagType.INFATUATED)).toBeFalsy();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.INFATUATED);
   });
 });

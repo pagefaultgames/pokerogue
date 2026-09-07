@@ -48,8 +48,8 @@ describe("Moves - Power Shift", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Effective stats are calculated correctly
-    expect(playerPokemon.getEffectiveStat(Stat.ATK)).toBe(30);
-    expect(playerPokemon.getEffectiveStat(Stat.DEF)).toBe(15);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.ATK, 30);
+    expect(playerPokemon).toHaveEffectiveStat(Stat.DEF, 15);
     // Raw stats are swapped
     expect(playerPokemon.getStat(Stat.ATK, false)).toBe(20);
     expect(playerPokemon.getStat(Stat.DEF, false)).toBe(10);

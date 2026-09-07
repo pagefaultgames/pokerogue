@@ -47,8 +47,8 @@ describe("Moves - Jaw Lock", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 
   it("should not trap either pokemon if the target faints", async () => {
@@ -88,8 +88,8 @@ describe("Moves - Jaw Lock", () => {
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -113,8 +113,8 @@ describe("Moves - Jaw Lock", () => {
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon[0]).toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.toNextTurn();
 

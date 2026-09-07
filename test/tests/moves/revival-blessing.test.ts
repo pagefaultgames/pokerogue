@@ -3,6 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
@@ -48,8 +49,8 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const revivedPokemon = game.scene.getPlayerParty()[1];
-    expect(revivedPokemon.status?.effect).toBeFalsy();
-    expect(revivedPokemon.hp).toBe(Math.floor(revivedPokemon.getMaxHp() / 2));
+    expect(revivedPokemon).toHaveStatusEffect(StatusEffect.NONE);
+    expect(revivedPokemon).toHaveHp(revivedPokemon.getMaxHp() / 2);
   });
 
   it("should revive a random fainted enemy when used by an enemy Trainer", async () => {
@@ -67,8 +68,8 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const revivedPokemon = game.scene.getEnemyParty()[1];
-    expect(revivedPokemon.status?.effect).toBeFalsy();
-    expect(revivedPokemon.hp).toBe(Math.floor(revivedPokemon.getMaxHp() / 2));
+    expect(revivedPokemon).toHaveStatusEffect(StatusEffect.NONE);
+    expect(revivedPokemon).toHaveHp(revivedPokemon.getMaxHp() / 2);
   });
 
   it("should fail when there are no fainted Pokemon to target", async () => {
@@ -79,7 +80,7 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const player = game.field.getPlayerPokemon();
-    expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(player).toHaveUsedMove({ move: MoveId.REVIVAL_BLESSING, result: MoveResult.FAIL });
   });
 
   it("should revive a player pokemon and immediately send it back out if used in the same turn it fainted in doubles", async () => {
@@ -101,13 +102,13 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(feebas.isFainted()).toBe(true);
+    expect(feebas).toHaveFainted();
 
     game.doSelectPartyPokemon(0, "RevivalBlessingPhase");
     await game.toNextTurn();
 
-    expect(feebas.isFainted()).toBe(false);
-    expect(feebas.hp).toBe(toDmgValue(0.5 * feebas.getMaxHp()));
+    expect(feebas).not.toHaveFainted();
+    expect(feebas).toHaveHp(toDmgValue(0.5 * feebas.getMaxHp()));
     expect(game.field.getPlayerPokemon()).toBe(feebas);
   });
 

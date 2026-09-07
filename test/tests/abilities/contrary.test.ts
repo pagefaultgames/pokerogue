@@ -31,7 +31,7 @@ describe("Abilities - Contrary", () => {
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
   });
 
   describe("With Clear Body", () => {
@@ -41,12 +41,12 @@ describe("Abilities - Contrary", () => {
 
       const enemyPokemon = game.field.getEnemyPokemon();
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+      expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
 
       game.move.select(MoveId.TAIL_WHIP);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(1);
+      expect(enemyPokemon).toHaveStatStage(Stat.DEF, 1);
     });
 
     it("should block negative effects", async () => {
@@ -55,12 +55,12 @@ describe("Abilities - Contrary", () => {
 
       const enemyPokemon = game.field.getEnemyPokemon();
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+      expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
 
       game.move.use(MoveId.DECORATE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+      expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
     });
   });
 });

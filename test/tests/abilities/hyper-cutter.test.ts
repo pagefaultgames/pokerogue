@@ -6,6 +6,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+// TODO: Get rid of this test file and merge it
 describe("Abilities - Hyper Cutter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -44,7 +45,7 @@ describe("Abilities - Hyper Cutter", () => {
     game.move.use(MoveId.STRING_SHOT);
     await game.toNextTurn();
 
-    expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
     [Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD].forEach((stat: number) =>
       expect(enemy.getStatStage(stat)).toBeLessThan(0),
     );

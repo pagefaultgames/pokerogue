@@ -67,7 +67,7 @@ describe("Moves - Burning Jealousy", () => {
     game.move.select(MoveId.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.status?.effect).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   // TODO: Make this test if WP is implemented

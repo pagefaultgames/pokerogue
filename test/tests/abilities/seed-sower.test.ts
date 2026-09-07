@@ -34,7 +34,7 @@ describe("Abilities - Seed Sower", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
+    expect(game).toHaveTerrain(TerrainType.GRASSY);
   });
 
   it("should trigger even when fainting", async () => {
@@ -45,7 +45,7 @@ describe("Abilities - Seed Sower", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
+    expect(game).toHaveTerrain(TerrainType.GRASSY);
   });
 
   it("should not trigger when targetted with status moves", async () => {
@@ -55,6 +55,6 @@ describe("Abilities - Seed Sower", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.terrain?.terrainType).not.toBe(TerrainType.GRASSY);
+    expect(game).toHaveTerrain(TerrainType.NONE);
   });
 });

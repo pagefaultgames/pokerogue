@@ -38,12 +38,12 @@ describe("Moves - Nightmare", () => {
     game.move.select(MoveId.NIGHTMARE);
     await game.toNextTurn();
 
-    expect(enemyPokemon.hp).toBe(enemyMaxHP - Math.floor(enemyMaxHP / 4));
+    expect(enemyPokemon).toHaveTakenDamage(Math.floor(enemyMaxHP / 4));
 
     // take a second turn to make sure damage occurs again
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.hp).toBe(enemyMaxHP - Math.floor(enemyMaxHP / 4) - Math.floor(enemyMaxHP / 4));
+    expect(enemyPokemon).toHaveTakenDamage(Math.floor(enemyMaxHP / 4) + Math.floor(enemyMaxHP / 4));
   });
 });

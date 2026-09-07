@@ -48,7 +48,7 @@ describe("Moves - Steamroller", () => {
       .mock.results.map(r => r.value);
 
     expect(dmgCalcTurn2.damage).toBeGreaterThanOrEqual(dmgCalcTurn1.damage * 2);
-    expect(ditto.getTag(BattlerTagType.MINIMIZED)).toBeDefined();
+    expect(ditto).toHaveBattlerTag(BattlerTagType.MINIMIZED);
     expect(steamroller.calculateBattleAccuracy).toHaveReturnedWith(-1);
   });
 });

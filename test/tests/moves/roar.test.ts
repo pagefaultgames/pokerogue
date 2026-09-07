@@ -71,6 +71,6 @@ describe("Move - Roar", () => {
 
     expect(enemyIdAfter).not.toBe(enemyIdBefore);
     expect(game.scene.ui.mode).not.toBe(UiMode.MODIFIER_SELECT);
-    expect(game.field.getEnemyPokemon().isFainted()).toBe(false);
+    expect(game.field.getEnemyPokemon()).not.toHaveFainted();
   });
 });

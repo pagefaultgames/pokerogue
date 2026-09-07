@@ -44,8 +44,8 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
   });
 
   test("will still take effect if an uninvolved stat stage is at max", async () => {
@@ -61,9 +61,9 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
+    expect(leadPokemon).toHaveTakenDamage(hpLost);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
+    expect(leadPokemon).toHaveStatStage(Stat.SPATK, 6);
   });
 
   test("fails if the pokemon's ATK stat stage is at its maximum", async () => {
@@ -76,8 +76,8 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
+    expect(leadPokemon).toHaveFullHp();
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 6);
   });
 
   test("fails if the user's health is less than 1/2", async () => {
@@ -90,7 +90,7 @@ describe("Moves - BELLY DRUM", () => {
     game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveHp(hpLost - PREDAMAGE);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 });

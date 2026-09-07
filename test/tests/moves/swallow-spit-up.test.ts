@@ -94,9 +94,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
       // Swallow counted as a "success" as its other effect (removing Stockpile) _did_ work
       expect(swalot).toHaveUsedMove({ move: MoveId.SWALLOW, result: MoveResult.SUCCESS });
-      expect(game.textInterceptor.logs).toContain(
-        i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(swalot) }),
-      );
+      expect(game).toHaveShownMessage(i18next.t("battle:hpIsFull", { pokemonName: getPokemonNameWithAffix(swalot) }));
       expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
     });
   });

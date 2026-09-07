@@ -71,7 +71,7 @@ describe("Arena Tags", () => {
       const tag = game.scene.arena.getTagOnSide(tagType, side)!;
 
       if (tag["onAddMessageKey"]) {
-        expect(game.textInterceptor.logs).toContain(
+        expect(game).toHaveShownMessage(
           i18next.t(tag["onAddMessageKey"], {
             pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
             moveName: tag["getMoveName"](),
@@ -86,7 +86,7 @@ describe("Arena Tags", () => {
       game.scene.arena.removeTagOnSide(tagType, side, false);
       if (tag["onRemoveMessageKey"]) {
         // TODO: Convert to `game.toHaveShownMessage`
-        expect(game.textInterceptor.logs).toContain(
+        expect(game).toHaveShownMessage(
           i18next.t(tag["onRemoveMessageKey"], {
             pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
             moveName: tag["getMoveName"](),

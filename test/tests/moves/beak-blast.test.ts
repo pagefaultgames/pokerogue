@@ -39,7 +39,7 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
@@ -56,7 +56,7 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
@@ -73,7 +73,7 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.BURN);
@@ -90,11 +90,11 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
+    expect(enemyPokemon).toHaveFullHp();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
   });
 
   it("should still burn the enemy if the user is knocked out", async () => {
