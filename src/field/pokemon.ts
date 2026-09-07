@@ -1532,9 +1532,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.getTag(BattlerTagType.SLOW_START)) {
           ret /= 2;
         }
-        if (this.getTag(BattlerTagType.GORILLA_TACTICS)) {
-          ret *= 1.5;
-        }
         break;
       case Stat.DEF:
         if (this.isOfType(PokemonType.ICE) && effectiveWeather === WeatherType.SNOW) {
@@ -2340,10 +2337,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (globalScene.movesetGenInProgress) {
       return true;
     }
+
     if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
       return false;
     }
-    const arena = globalScene?.arena;
+    const { arena } = globalScene;
     if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
     }

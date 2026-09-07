@@ -42,6 +42,8 @@ describe("Ability - Gorilla Tactics", () => {
     await game.toEndOfTurn();
 
     expect(player).toHaveBattlerTag({ tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.SPLASH });
+    // should remain boosted at 50% (checks for double application)
+    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK) * 1.5);
     // should be restricted from using anything other than Splash
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
@@ -82,7 +84,7 @@ describe("Ability - Gorilla Tactics", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.use(MoveId.METRONOME);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
 
     // Gorilla Tactics should lock into Metronome, not Tackle
     expect(player).toHaveBattlerTag({ tagType: BattlerTagType.GORILLA_TACTICS, moveId: MoveId.METRONOME });
@@ -114,6 +116,7 @@ describe("Ability - Gorilla Tactics", () => {
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
+    expect(player).toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
   });
@@ -125,12 +128,12 @@ describe("Ability - Gorilla Tactics", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.GASTRO_ACID);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
-    expect(player.hasRestrictingTag(MoveId.TACKLE), "still locked into move").toBe(false);
-    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
     expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
+    expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
+    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
   });
 
   // TODO: Verify whether Gorilla Tactics increases struggle's power or not
