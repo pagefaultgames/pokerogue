@@ -1,3 +1,4 @@
+import type { SUPERCEDED_MOVES } from "#balance/superceded-moves";
 import type { Challenge } from "#data/challenge";
 
 /**
@@ -133,4 +134,14 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyEnemyTMCompatibility}
    */
   ENEMY_TM_COMPATIBILITY,
+  /**
+   * Challenges which modify the egg move pool used in AI moveset generation
+   * @see {@linkcode Challenge.applyAIMoveGenerationEggPool}
+   */
+  AI_MOVE_GENERATION_EGG_POOL,
+  /**
+   * Challenges which modify the {@link SUPERCEDED_MOVES | superceded move map} used in AI moveset generation
+   * @see {@linkcode Challenge.applyAIMoveGenerationSupercededMap}
+   */
+  AI_MOVE_GENERATION_SUPERCEDED_MAP,
 }
