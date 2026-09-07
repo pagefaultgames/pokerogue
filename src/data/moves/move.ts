@@ -3948,6 +3948,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     return false;
   }
 
+  // TODO: This is a shit use of inheritance
   getLevels(_user: Pokemon): number {
     return this.stages;
   }
@@ -6736,15 +6737,17 @@ export class JawLockAttr extends AddBattlerTagAttr {
   }
 }
 
+// TODO: Use composition once `StatStageChangeAttr` is refactored to accept a grouped stats object
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes().includes(PokemonType.GHOST)) {
+    if (user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
       }
-      const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
+      const curseRecoilDamage = toDmgValue(user.getMaxHp() / 2);
       user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),

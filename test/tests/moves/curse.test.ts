@@ -42,22 +42,22 @@ describe("Move - Curse", () => {
   it("should give +1 ATK/DEF, -1 SPD when used by non-Ghost types", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.CURSE);
     await game.toEndOfTurn();
 
-    expect(feebas).toHaveStatStage(Stat.ATK, 1);
-    expect(feebas).toHaveStatStage(Stat.DEF, 1);
-    expect(feebas).toHaveStatStage(Stat.SPD, -1);
-    expect(feebas).toHaveFullHp();
-    expect(karp).toHaveFullHp();
-    expect(karp).not.toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(player).toHaveStatStage(Stat.ATK, 1);
+    expect(player).toHaveStatStage(Stat.DEF, 1);
+    expect(player).toHaveStatStage(Stat.SPD, -1);
+    expect(player).toHaveFullHp();
+    expect(enemy).toHaveFullHp();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.CURSED);
     expect(game).not.toHaveShownMessage(
       i18next.t("battlerTags:cursedOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
-        pokemonName: getPokemonNameWithAffix(karp),
+        pokemonNameWithAffix: getPokemonNameWithAffix(player),
+        pokemonName: getPokemonNameWithAffix(enemy),
       }),
     );
   });
@@ -65,51 +65,53 @@ describe("Move - Curse", () => {
   it("should sacrifice 50% maximum HP if Ghost-type to add a CurseTag to the target", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
-
-    feebas.summonData.types = [PokemonType.GHOST];
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    player.summonData.types = [PokemonType.GHOST];
 
     game.move.use(MoveId.CURSE);
     await game.toEndOfTurn(false);
 
-    expect(feebas.getHpRatio(true)).toBeCloseTo(0.5);
-    expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(player.getHpRatio(true)).toBeCloseTo(0.5);
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:cursedOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
-        pokemonName: getPokemonNameWithAffix(karp),
+        pokemonNameWithAffix: getPokemonNameWithAffix(player),
+        pokemonName: getPokemonNameWithAffix(enemy),
       }),
     );
-    // NB: Tests for the curse tag actually _doing damage_ are inside
-    // `test/battler-tags/damage-over-time.ts`
   });
+
+  // NB: Tests for the curse tag actually _doing damage_ are inside
+  // `test/battler-tags/damage-over-time.ts`
 
   it("should curse the target if Tera Ghost", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
-    game.field.forceTera(feebas, PokemonType.GHOST);
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    game.field.forceTera(player, PokemonType.GHOST);
 
     game.move.use(MoveId.CURSE);
     await game.toEndOfTurn(false);
 
-    expect(feebas.getHpRatio(true)).toBeCloseTo(0.5);
-    expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CURSED);
   });
 
   it("should respect Tera Stellar and Curse the opponent", async () => {
     await game.classicMode.startBattle(SpeciesId.SHUPPET);
 
-    const shuppet = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
-    game.field.forceTera(shuppet, PokemonType.STELLAR);
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    game.field.forceTera(player, PokemonType.STELLAR);
 
     game.move.use(MoveId.CURSE);
     await game.toEndOfTurn(false);
 
-    expect(shuppet.getHpRatio(true)).toBeCloseTo(0.5);
-    expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(player.getHpRatio(true)).toBeCloseTo(0.5);
   });
 });
