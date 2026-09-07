@@ -70,7 +70,7 @@ describe("Moves - Shell Side Arm", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.SHELL_SIDE_ARM);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);

@@ -19,13 +19,11 @@ const VERSION = "3.1.0";
 /** Patterns that should be excluded, meant to be excluded at any level */
 const EXCLUDE_PATTERNS = ["REUSE.toml", ".git", "LICENSE", "README.md", "package.json", "pnpm-lock.yaml"];
 
+/**
+ * @returns Whether the given file should be skipped based on `EXCLUDE_PATTERNS`.
+ */
 function skipExcludes(file: string): boolean {
-  for (const exclude of EXCLUDE_PATTERNS) {
-    if (file.includes(exclude)) {
-      return true;
-    }
-  }
-  return false;
+  return EXCLUDE_PATTERNS.some(pattern => file.includes(pattern));
 }
 
 /** Vite plugin to minify JSON files. Non-JSON files are copied as-is. */
@@ -34,12 +32,67 @@ export function minifyPublicJsonFiles(): VitePlugin {
   let count = 0;
   const errors: Error[] = [];
   const { cyan, gray, red, yellow, green } = chalk;
+  const clearTerminalLine = (): void => {
+    if (!process.env.CI) {
+      moveCursor(process.stdout, 0, -1);
+      clearLine(process.stdout, 0);
+    }
+  };
+
+  const minifyFile = (fullPath: string, outputFilePath: string): void => {
+    try {
+      const content = readFileSync(fullPath, "utf-8");
+      const minifiedContent = JSON.stringify(JSON.parse(content));
+      writeFileSync(outputFilePath, minifiedContent, "utf-8");
+      count++;
+    } catch (err) {
+      copyFileSync(fullPath, outputFilePath);
+      const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
+      error.stack = err.stack;
+      errors.push(error);
+    }
+  };
+
+  const minifyJsonFiles = (dir: string, outDir: string): void => {
+    const files = readdirSync(dir);
+
+    for (const file of files) {
+      const fullPath = join(dir, file);
+      const outputFilePath = join(outDir, file);
+      const stat = statSync(fullPath);
+
+      if (skipExcludes(file)) {
+        clearTerminalLine();
+        logger.info(yellow(`Skipping "${fullPath}".`));
+        continue;
+      }
+
+      if (stat.isDirectory()) {
+        clearTerminalLine();
+        logger.info(green(`Processing directory "${fullPath}".`));
+
+        // Recurse into subdirectories
+        const nestedOutputDir = join(outDir, file);
+        mkdirSync(nestedOutputDir, { recursive: true });
+        minifyJsonFiles(fullPath, nestedOutputDir);
+        continue;
+      }
+
+      if (file.endsWith(".json")) {
+        minifyFile(fullPath, outputFilePath);
+        continue;
+      }
+
+      // Copy other files as-is
+      copyFileSync(fullPath, outputFilePath);
+    }
+  };
 
   return {
     name: NAME,
     version: VERSION,
     apply: "build",
-    enforce: "post", // run after other plugins/stuff
+    enforce: "post",
     configResolved(resolvedConfig): void {
       logger = resolvedConfig.logger;
     },
@@ -47,62 +100,6 @@ export function minifyPublicJsonFiles(): VitePlugin {
       logger.info(cyan(`\t→ Plugin: ${NAME} v${VERSION}`));
     },
     async generateBundle(options): Promise<void> {
-      const clearTerminalLine = (): void => {
-        if (!process.env.CI) {
-          moveCursor(process.stdout, 0, -1);
-          clearLine(process.stdout, 0);
-        }
-      };
-
-      const minifyFile = (fullPath: string, outputFilePath: string): void => {
-        try {
-          const content = readFileSync(fullPath, "utf-8");
-          const minifiedContent = JSON.stringify(JSON.parse(content));
-          writeFileSync(outputFilePath, minifiedContent, "utf-8");
-          count++;
-        } catch (err) {
-          copyFileSync(fullPath, outputFilePath);
-          const error = new Error(`Failed to minify JSON file: ${fullPath}\n\t→ ${err.message}`);
-          error.stack = err.stack;
-          errors.push(error);
-        }
-      };
-
-      const minifyJsonFiles = (dir: string, outDir: string): void => {
-        const files = readdirSync(dir);
-
-        for (const file of files) {
-          const fullPath = join(dir, file);
-          const outputFilePath = join(outDir, file);
-          const stat = statSync(fullPath);
-
-          if (skipExcludes(file)) {
-            clearTerminalLine();
-            logger.info(yellow(`Skipping "${fullPath}".`));
-            continue;
-          }
-
-          if (stat.isDirectory()) {
-            clearTerminalLine();
-            logger.info(green(`Processing directory "${fullPath}".`));
-
-            // Recurse into subdirectories
-            const nestedOutputDir = join(outDir, file);
-            mkdirSync(nestedOutputDir, { recursive: true });
-            minifyJsonFiles(fullPath, nestedOutputDir);
-            continue;
-          }
-
-          if (file.endsWith(".json")) {
-            minifyFile(fullPath, outputFilePath);
-            continue;
-          }
-
-          // Copy other files as-is
-          copyFileSync(fullPath, outputFilePath);
-        }
-      };
-
       logger.info(cyan("\nBeginning JSON minification."));
       if (!process.env.CI) {
         logger.info("");
@@ -126,9 +123,9 @@ export function minifyPublicJsonFiles(): VitePlugin {
         logger.info(`${green(`✓ Minified ${count} JSON files successfully`)}${failedMsg}${logSuffix}`);
       }
 
-      if (errors.length > 0) {
-        errors.map(error => logger.error(`${red(error.message)}${logSuffix}`, { error }));
-      }
+      errors.forEach(error => {
+        logger.error(`${red(error.message)}${logSuffix}`, { error });
+      });
     },
   };
 }

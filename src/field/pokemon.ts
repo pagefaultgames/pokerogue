@@ -155,7 +155,7 @@ import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor, Mutable } from "#types/type-helpers";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -187,7 +187,7 @@ import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
@@ -319,7 +319,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Stat stages queued by berry eating to be run in a single phase */
   // TODO: Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
-  public queuedBerryStatChanges: Mutable<StatChange>[] = [];
+  public queuedBerryStatChanges: Writable<StatChange>[] = [];
 
   // TODO: Rework this eventually
   constructor(
@@ -1693,6 +1693,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param precise - Whether to return the exact HP ratio (e.g. `0.54321`), or one rounded to the nearest %; default `false`
    * @returns The current HP ratio
    */
+  // TODO: Make `precise` default to `true`
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
@@ -2043,7 +2044,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     bypassSummonData?: boolean;
     useIllusion?: boolean;
     ignoreThirdType?: boolean;
-  } = {}): Mutable<NonEmptyTuple<PokemonType>> {
+  } = {}): Writable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
@@ -2067,7 +2068,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       types.add(this.summonData.addedType);
     }
 
-    return Array.from(types) as Mutable<NonEmptyTuple<PokemonType>>;
+    return Array.from(types) as Writable<NonEmptyTuple<PokemonType>>;
   }
 
   /**
@@ -3316,10 +3317,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether the specified Pokémon is an opponent
    * @param target - The {@linkcode Pokemon} to compare against
-   * @returns `true` if the two pokemon are opponents, `false` otherwise
+   * @returns Whether the 2 Pokemon belong to different parties
    */
   public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();
+  }
+
+  /**
+   * Check whether the specified Pokémon is an ally
+   * @param target - The {@linkcode Pokemon} to compare against
+   * @returns Whether the 2 Pokemon are on the same party
+   */
+  public isAlly(target: Pokemon): boolean {
+    return this.isPlayer() === target.isPlayer();
   }
 
   getOpponent(targetIndex: number): Pokemon | null {
@@ -4089,24 +4099,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * @param formKey - (Default `this.getFormKey()`) The form key to check
    * @returns Whether this Pokémon is in a Dynamax or Gigantamax form
    */
-  public isMax(): boolean {
+  public isMax(formKey: string = this.getFormKey()): boolean {
     const maxForms = [
       SpeciesFormKey.GIGANTAMAX,
       SpeciesFormKey.GIGANTAMAX_RAPID,
       SpeciesFormKey.GIGANTAMAX_SINGLE,
       SpeciesFormKey.ETERNAMAX,
     ] as string[];
-    return (
-      maxForms.includes(this.getFormKey()) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!))
-    );
+    return maxForms.includes(formKey) || (!!this.getFusionFormKey() && maxForms.includes(this.getFusionFormKey()!));
   }
 
   /**
+   * @param formKey - (Default `this.getFormKey()`) The form key to check
    * @returns Whether this Pokémon is in a Mega or Primal form
    */
-  public isMega(): boolean {
+  public isMega(formKey: string = this.getFormKey()): boolean {
     const megaForms = [
       SpeciesFormKey.MEGA,
       SpeciesFormKey.MEGA_X,
@@ -4118,10 +4128,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       SpeciesFormKey.MEGA_STRETCHY,
       SpeciesFormKey.PRIMAL,
     ] as string[];
-    return (
-      megaForms.includes(this.getFormKey())
-      || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!))
-    );
+    return megaForms.includes(formKey) || (!!this.getFusionFormKey() && megaForms.includes(this.getFusionFormKey()!));
   }
 
   /**
@@ -4208,8 +4215,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
-  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
-  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   /**
    * Find the first `BattlerTag` matching the specified predicate
    * @remarks
@@ -4571,6 +4576,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.abilityIndex = abilityCount - 1;
     }
 
+    this.resetTeraOnMajorFormChange();
+
     globalScene.gameData.setPokemonSeen(this, false);
     this.setScale(this.getSpriteScale());
 
@@ -4875,6 +4882,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Review and verify the message order precedence in mainline if multiple status-blocking effects are present at once
   // TODO: Make argument order consistent with `trySetStatus`
+  // TODO: Remove `overrideStatus` parameter used solely for rest
   public canSetStatus(
     effect: StatusEffect,
     quiet = false,
@@ -5310,6 +5318,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (wasTerastallized) {
       this.updateSpritePipelineData();
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
+    }
+  }
+
+  /**
+   * End this Pokémon's Terastallization if it is (or is about to be) in a Mega, Primal,
+   * Gigantamax, or Eternamax form, as these forms are incompatible with Terastallization.
+   *
+   * @param formKey - The form key to check; default this Pokémon's current form key.
+   * Pass the *incoming* form's key to end Terastallization before the form change is applied.
+   *
+   * @remarks
+   * When called without a form key, this must run *after* {@linkcode formIndex} has been updated
+   * so that {@linkcode isMega} and {@linkcode isMax} reflect the new form.
+   */
+  public resetTeraOnMajorFormChange(formKey?: string): void {
+    if (this.isTerastallized && (this.isMega(formKey) || this.isMax(formKey))) {
+      this.resetTera();
     }
   }
 
@@ -5910,7 +5935,7 @@ export class PlayerPokemon extends Pokemon {
     super(106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 
     if (activeOverrides.STATUS_OVERRIDE) {
-      this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4);
+      this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4, 4);
     }
 
     if (activeOverrides.SHINY_OVERRIDE) {
@@ -6321,6 +6346,8 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       }
 
+      this.resetTeraOnMajorFormChange();
+
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
@@ -6502,7 +6529,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (activeOverrides.ENEMY_STATUS_OVERRIDE) {
-      this.status = new Status(activeOverrides.ENEMY_STATUS_OVERRIDE, 0, 4);
+      this.status = new Status(activeOverrides.ENEMY_STATUS_OVERRIDE, 0, 4, 4);
     }
 
     if (activeOverrides.ENEMY_GENDER_OVERRIDE !== null) {

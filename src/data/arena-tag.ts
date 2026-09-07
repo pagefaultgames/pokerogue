@@ -76,11 +76,11 @@ import type {
   SerializableArenaTagType,
 } from "#types/arena-tags";
 import type { StatChange } from "#types/stat-change";
-import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type { Writable } from "type-fest";
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
@@ -815,7 +815,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
       return;
     }
 
-    (this as Mutable<this>).layers++;
+    (this as Writable<EntryHazardTag>).layers++;
     this.onAdd();
     globalScene.arena.eventTarget.dispatchEvent(
       new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
@@ -858,7 +858,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
 
   public loadTag<T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "layers">): void {
     super.loadTag(source);
-    (this as Mutable<this>).layers = source.layers;
+    (this as Writable<EntryHazardTag>).layers = source.layers;
   }
 }
 
@@ -1533,7 +1533,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
 
   public override loadTag(source: BaseArenaTag & Pick<SuppressAbilitiesTag, "tagType" | "sourceCount">): void {
     super.loadTag(source);
-    (this as Mutable<this>).sourceCount = source.sourceCount;
+    (this as Writable<SuppressAbilitiesTag>).sourceCount = source.sourceCount;
   }
 
   public override onAdd(): void {
@@ -1557,12 +1557,12 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     if (source == null) {
       return;
     }
-    (this as Mutable<this>).sourceCount++;
+    (this as Writable<SuppressAbilitiesTag>).sourceCount++;
     this.playActivationMessage(source);
   }
 
   public onSourceLeave(arena: Arena): void {
-    (this as Mutable<this>).sourceCount--;
+    (this as Writable<SuppressAbilitiesTag>).sourceCount--;
     if (this.sourceCount <= 0) {
       arena.removeTag(ArenaTagType.NEUTRALIZING_GAS);
     } else if (this.sourceCount === 1) {
@@ -1691,7 +1691,6 @@ export class PendingHealTag extends SerializableArenaTag {
     }
 
     const healEffect = targetEffects.find(effect => this.canApply(effect, pokemon));
-
     if (healEffect == null) {
       return false;
     }
@@ -1709,19 +1708,13 @@ export class PendingHealTag extends SerializableArenaTag {
       return this.apply(simulated, pokemon);
     }
 
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      targetIndex,
-      pokemon.getMaxHp(),
-      healMessage,
-      true,
-      false,
-      false,
-      true,
-      false,
-      restorePP,
-    );
-
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", targetIndex, pokemon.getMaxHp(), {
+      message: healMessage,
+      showFullHpMessage: false,
+      skipAnim: true,
+      healStatus: true,
+      fullRestorePP: restorePP,
+    });
     targetEffects.splice(targetEffects.indexOf(healEffect), 1);
 
     return true;
@@ -1744,7 +1737,7 @@ export class PendingHealTag extends SerializableArenaTag {
 
   override loadTag(source: BaseArenaTag & Pick<PendingHealTag, "tagType" | "pendingHeals">): void {
     super.loadTag(source);
-    (this as Mutable<this>).pendingHeals = source.pendingHeals;
+    (this as Writable<PendingHealTag>).pendingHeals = source.pendingHeals;
   }
 }
 

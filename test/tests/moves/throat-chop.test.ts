@@ -34,7 +34,7 @@ describe("Moves - Throat Chop", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.GROWL);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     // First turn, move is interrupted
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -45,7 +45,7 @@ describe("Moves - Throat Chop", () => {
 
     expect(player.trySelectMove(MoveId.GROWL)[0]).toBe(false);
     game.move.select(MoveId.GROWL);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.isFullHp()).toBe(false);

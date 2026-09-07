@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
@@ -20,52 +21,53 @@ describe("Moves - Taunt", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
+      .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([MoveId.TAUNT, MoveId.SPLASH])
-      .enemySpecies(SpeciesId.SHUCKLE)
-      .moveset([MoveId.GROWL]);
+      .enemySpecies(SpeciesId.SHUCKLE);
   });
 
-  it("Pokemon should not be able to use Status Moves", async () => {
+  it("should prevent the target from selecting status moves for 4 turns", async () => {
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
-    const playerPokemon = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
 
-    // First turn, Player Pokemon succeeds using Growl without Taunt
-    game.move.select(MoveId.GROWL);
-    await game.move.selectEnemyMove(MoveId.TAUNT);
+    game.move.use(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.TAUNT);
     await game.toNextTurn();
-    const move1 = playerPokemon.getLastXMoves(1)[0]!;
-    expect(move1.move).toBe(MoveId.GROWL);
-    expect(move1.result).toBe(MoveResult.SUCCESS);
-    expect(playerPokemon.getTag(BattlerTagType.TAUNT)).toBeDefined();
 
-    // Second turn, Taunt forces Struggle to occur
-    game.move.select(MoveId.GROWL);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.toNextTurn();
-    const move2 = playerPokemon.getLastXMoves(1)[0]!;
-    expect(move2.move).toBe(MoveId.STRUGGLE);
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 4 });
+
+    expect(player.isMoveSelectable(MoveId.GROWL)[0]).toBe(false);
+    // TODO: Does Taunt actually make the moves unusable?
+
+    // since growl is the only thing in our moveset, we should be forced to use struggle
+    game.move.use(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 3 });
+    expect(player).toHaveUsedMove(MoveId.STRUGGLE);
   });
 
-  it("should only lapse once on the turn it cancels its bearer's move", async () => {
-    // The enemy outspeeds here, so Taunt lands before the player's already-queued
-    // Growl, which then fails via checkTagCancel(TAUNT) on that same turn.
-    game.override.enemySpecies(SpeciesId.REGIELEKI);
-    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
+  it("should only tick down once on the turn it cancels the target's move", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+    const player = game.field.getPlayerPokemon();
 
-    const playerPokemon = game.field.getPlayerPokemon();
-
-    game.move.select(MoveId.GROWL);
-    await game.move.selectEnemyMove(MoveId.TAUNT);
+    game.move.use(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.TAUNT);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
-    expect(playerPokemon.getLastXMoves(1)[0]!.result).toBe(MoveResult.FAIL);
-    expect(playerPokemon.getTag(BattlerTagType.TAUNT)?.turnCount).toBe(3);
+
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 3 });
 
     // Subsequent turns tick down once each, as they always did
-    game.move.select(MoveId.GROWL);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.toNextTurn();
-    expect(playerPokemon.getTag(BattlerTagType.TAUNT)?.turnCount).toBe(2);
+    game.move.use(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.TAUNT, turnCount: 2 });
   });
+
+  // TODO: Clarify behavior with Instruct
 });

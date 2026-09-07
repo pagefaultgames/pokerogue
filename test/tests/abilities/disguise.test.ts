@@ -207,7 +207,7 @@ describe("Abilities - Disguise", () => {
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     game.move.use(MoveId.POWER_TRIP);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(game.field.getEnemyPokemon().formIndex).toBe(disguisedForm);

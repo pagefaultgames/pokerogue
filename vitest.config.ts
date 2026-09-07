@@ -9,25 +9,19 @@
 import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
-import { TEST_TIMEOUT } from "./test/constants";
-import { CustomDefaultReporter } from "./test/reporters/custom-default-reporter";
-import { sharedConfig } from "./vite.config";
+import { TEST_TIMEOUT } from "./test/constants.ts";
+import { CustomDefaultReporter } from "./test/reporters/custom-default-reporter.ts";
+import { sharedConfig } from "./vite.config.ts";
 
 // biome-ignore lint/style/noDefaultExport: required for vitest
 export default defineConfig(async config => {
   const viteConfig = await sharedConfig(config);
-  const opts: UserConfig = {
+  const opts = {
     ...viteConfig,
     test: {
       passWithNoTests: false,
-      reporters: process.env.MERGE_REPORTS
-        ? ["github-actions", new CustomDefaultReporter()]
-        : process.env.GITHUB_ACTIONS
-          ? ["blob", new CustomDefaultReporter()]
-          : [new CustomDefaultReporter()],
-      env: {
-        TZ: "UTC",
-      },
+      reporters: [] as (string | CustomDefaultReporter)[],
+      env: { TZ: "UTC" },
       isolate: false,
       testTimeout: TEST_TIMEOUT,
       slowTestThreshold: TEST_TIMEOUT / 2,
@@ -37,16 +31,10 @@ export default defineConfig(async config => {
       //   requireAssertions: true,
       // },
       setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
-      sequence: {
-        sequencer: MySequencer,
-      },
+      sequence: { sequencer: MySequencer },
       includeTaskLocation: true,
       environment: "jsdom",
-      environmentOptions: {
-        jsdom: {
-          resources: "usable",
-        },
-      },
+      environmentOptions: { jsdom: { resources: "usable" } },
       typecheck: {
         tsconfig: "tsconfig.json",
         include: ["./test/tests/types/**/*.{test,spec}-d.ts"],
@@ -56,18 +44,25 @@ export default defineConfig(async config => {
       coverage: {
         provider: "v8",
         reportsDirectory: "coverage",
-        reporter: process.env.MERGE_REPORTS
-          ? ["text-summary", "json-summary"]
-          : process.env.GITHUB_ACTIONS
-            ? []
-            : ["text-summary", "html"],
+        reporter: [] as string[],
         exclude: ["{src,test}/**/*.d.ts"],
         include: ["src/**/*.ts", "test/utils/**/*.ts"],
       },
       name: "main",
       include: ["./test/**/*.{test,spec}.ts"],
     },
-  };
+  } satisfies UserConfig;
+
+  if (process.env.MERGE_REPORTS) {
+    opts.test.reporters.push("github-actions");
+    opts.test.coverage.reporter = ["text-summary", "json-summary"];
+  } else if (process.env.GITHUB_ACTIONS) {
+    opts.test.reporters.push("blob");
+  } else {
+    opts.test.coverage.reporter = ["text-summary", "html"];
+  }
+  opts.test.reporters.push(new CustomDefaultReporter());
+
   return opts;
 });
 

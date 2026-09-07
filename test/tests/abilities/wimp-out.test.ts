@@ -41,7 +41,7 @@ describe("Abilities - Wimp Out", () => {
   function confirmSwitch(): void {
     const [pokemon1, pokemon2] = game.scene.getPlayerParty();
 
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");
 
     expect(pokemon1.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
@@ -53,7 +53,7 @@ describe("Abilities - Wimp Out", () => {
   function confirmNoSwitch(): void {
     const [pokemon1, pokemon2] = game.scene.getPlayerParty();
 
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchSummonPhase");
 
     expect(pokemon2.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
@@ -112,7 +112,7 @@ describe("Abilities - Wimp Out", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(game.scene.getPlayerParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     confirmSwitch();
@@ -212,7 +212,7 @@ describe("Abilities - Wimp Out", () => {
 
     expect(game.scene.getPlayerParty()[1]).toBe(wimpod);
     expect(wimpod.hp).toBeGreaterThan(toDmgValue(wimpod.getMaxHp() / 2));
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.TYRUNT);
   });
 
@@ -330,7 +330,7 @@ describe("Abilities - Wimp Out", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.field.getPlayerPokemon().getHpRatio()).toEqual(0.51);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.WIMPOD);
   });
 
@@ -374,10 +374,11 @@ describe("Abilities - Wimp Out", () => {
     game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, MoveId.STEALTH_ROCK, 0, ArenaTagSide.ENEMY);
     game.scene.arena.addTag(ArenaTagType.SPIKES, 1, MoveId.SPIKES, 0, ArenaTagSide.ENEMY);
     game.override.enemySpecies(SpeciesId.CENTISKORCH).enemyAbility(AbilityId.WIMP_OUT).startingWave(4);
-    await game.classicMode.startBattle(SpeciesId.TYRUNT);
+    await game.classicMode.runToSummon(SpeciesId.TYRUNT);
+    await game.phaseInterceptor.to("BattleEndPhase");
 
-    expect(game.phaseInterceptor.log).not.toContain("MovePhase");
-    expect(game.phaseInterceptor.log).toContain("BattleEndPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("MovePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("BattleEndPhase");
   });
 
   it("Wimp Out will activate due to Nightmare", async () => {
@@ -507,7 +508,7 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.MATCHA_GOTCHA, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(wimpod0.hp).toBeGreaterThan(0);
