@@ -1332,6 +1332,17 @@ export class MovesetRandomizerChallenge extends Challenge {
     return MovesetRandomizerChallenge._validMoveIds;
   }
 
+  public override applyStarterSelectModify(
+    _speciesId: SpeciesId,
+    _dexEntry: DexEntry,
+    starterDataEntry: StarterDataEntry,
+  ): boolean {
+    // Prevent Pokemon from being able to relearn egg moves via the Memory Mushroom item
+    starterDataEntry.eggMoves = 0;
+
+    return true;
+  }
+
   public override applyStarterModify(pokemon: Pokemon): boolean {
     const getFallbackStabMove = (pokemonType: PokemonType): MoveId => {
       switch (pokemonType) {
