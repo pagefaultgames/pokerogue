@@ -454,7 +454,7 @@ export abstract class Challenge {
   }
 
   /**
-   * Modifies a Pokemon's moveset after it has been generated
+   * Modifies a Pokemon's moveset after it has been generated.
    * @param pokemon - The pokemon whose moveset is being modified
    * @returns Whether this modification was applied
    */
@@ -463,7 +463,7 @@ export abstract class Challenge {
   }
 
   /**
-   * Modifies a species' level up moveset
+   * Modifies a species' level up moveset.
    * @param species - The species whose level up moveset is being modified
    * @param levelMoves - The level up moveset being modified
    * @returns Whether this modification was applied
@@ -473,7 +473,7 @@ export abstract class Challenge {
   }
 
   /**
-   * Modifies the TM compatbility list of a player Pokemon
+   * Modifies the TM compatbility list of a player Pokemon.
    * @param pokemon - The player Pokemon whose TM compatibility list is being modified
    * @param tms - A `Set` containing the list of compatible TMs
    * @returns Whether this modification was applied
@@ -483,12 +483,31 @@ export abstract class Challenge {
   }
 
   /**
-   * Modifies the TM compatibility list of an enemy Pokemon
+   * Modifies the TM compatibility list of an enemy Pokemon.
    * @param pokemon - The enemy Pokemon whose TM compatibility list is being modified
    * @param tmList - The Pokemon's TM compatibility list
    * @returns Whether this modification was applied
    */
   public applyEnemyTMCompatibility(pokemon: Pokemon, tmList: Map<MoveId, number>): boolean {
+    return false;
+  }
+
+  /**
+   * Modifies the egg move pool available to be used in AI moveset generation.
+   * @param speciesId - The {@linkcode SpeciesId | ID of the species} whose egg move pool should be modified
+   * @param movePool - The map of {@linkcode MoveId}s to weights
+   * @returns Whether this modification was applied
+   */
+  public applyAIMoveGenerationEggPool(speciesId: SpeciesId, movePool: Map<MoveId, number>): boolean {
+    return false;
+  }
+
+  /**
+   * Modifies the superceded moves map used by AI moveset generation.
+   * @param supercededMoves - The map of {@linkcode MoveId}s to replacement move IDs
+   * @returns Whether this modification was applied
+   */
+  public applyAIMoveGenerationSupercededMap(supercededMoves: Partial<Record<MoveId, MoveId[]>>): boolean {
     return false;
   }
 
@@ -1447,6 +1466,19 @@ export class MovesetRandomizerChallenge extends Challenge {
   public override applyEnemyTMCompatibility(_pokemon: Pokemon, tmList: Map<MoveId, number>): boolean {
     tmList.clear();
 
+    return true;
+  }
+
+  public override applyAIMoveGenerationEggPool(_speciesId: SpeciesId, movePool: Map<MoveId, number>): boolean {
+    movePool.clear();
+
+    return false;
+  }
+
+  public override applyAIMoveGenerationSupercededMap(supercededMoves: Partial<Record<MoveId, MoveId[]>>): boolean {
+    for (const key of Object.keys(supercededMoves)) {
+      supercededMoves[key] = [];
+    }
     return true;
   }
 
