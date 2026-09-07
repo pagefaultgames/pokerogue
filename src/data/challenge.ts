@@ -12,6 +12,7 @@ import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
@@ -1332,7 +1333,7 @@ export class MovesetRandomizerChallenge extends Challenge {
   }
 
   public override applyStarterModify(pokemon: Pokemon): boolean {
-    const getStabMove = (pokemonType: PokemonType): MoveId => {
+    const getFallbackStabMove = (pokemonType: PokemonType): MoveId => {
       switch (pokemonType) {
         case PokemonType.NORMAL:
           return MoveId.POUND;
@@ -1375,10 +1376,18 @@ export class MovesetRandomizerChallenge extends Challenge {
       }
     };
 
-    pokemon.moveset = [
-      new PokemonMove(getStabMove(pokemon.species.type1)),
-      new PokemonMove(pokemon.species.type2 == null ? MoveId.TACKLE : getStabMove(pokemon.species.type2)),
-    ];
+    const levelMoves = pokemon
+      .getLevelMoves({ startingLevel: 1, learnSituation: LearnMoveSituation.LEVEL_UP })
+      .slice(0, 3)
+      .map(lm => lm[1]);
+    pokemon.moveset = [];
+    for (const moveId of levelMoves) {
+      pokemon.moveset.push(new PokemonMove(moveId));
+    }
+
+    if (!pokemon.moveset.some(pm => pm.getMove().is("AttackMove"))) {
+      pokemon.moveset[0] = new PokemonMove(getFallbackStabMove(pokemon.species.type1));
+    }
 
     return true;
   }
@@ -1387,22 +1396,21 @@ export class MovesetRandomizerChallenge extends Challenge {
     // Randomization is hidden during starter select and pokedex
     // so the player can't "game the system"
     if (
-      globalScene.phaseManager.getCurrentPhase().phaseName === "SelectStarterPhase"
-      || [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN, UiMode.STARTER_SELECT].includes(globalScene.ui.mode)
     ) {
       return false;
     }
 
-    const seedOffset = 100 * species.speciesId;
+    const seedOffset = 100 * species.getRootSpeciesId(true);
 
-    const levels = levelMoves.map(lm => lm[0]);
+    const originalLevelMoves = [...levelMoves];
     levelMoves.splice(0);
 
-    globalScene.executeWithSeedOffset(() => {
-      for (const level of levels) {
+    for (const [level, moveId] of originalLevelMoves) {
+      globalScene.executeWithSeedOffset(() => {
         levelMoves.push([level, randSeedItem(this.validMoveIds)]);
-      }
-    }, seedOffset);
+      }, seedOffset * moveId);
+    }
 
     return true;
   }
