@@ -50,9 +50,10 @@ describe("ValueHolder", () => {
       GetConstructErrorMsg<string, boolean>
     >().toEqualTypeOf<"Expected to receive a boolean, but got a string instead!">();
 
+    // should not distribute over union in the error message, though the order of the members may vary arbitrarily
     expectTypeOf<
       GetConstructErrorMsg<string | boolean, number>
-    >().toExtend<`Expected to receive a number, but got ${"'boolean' | 'string'" | "'string' | 'boolean'"} instead!`>();
+    >().toExtend<`Expected to receive a number, but got ${"'boolean | string'" | "'string | boolean'"} instead!`>();
 
     // union members may appear in any order, but it should be consistent across compiles
     expectTypeOf<
