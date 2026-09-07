@@ -217,7 +217,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public level: number;
   public exp: number;
   public gender: Gender;
-  public hp = 0;
+  public hp: number;
   // TODO: make tuple
   public stats: number[] = [0, 0, 0, 0, 0, 0];
   // todo: make a tuple from 0-31
@@ -402,6 +402,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.isTerastallized = dataSource.isTerastallized;
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
     } else {
+      // TODO: this.hp is undefined right now
       this.id = randSeedInt(4294967296);
       this.ivs = ivs || getIvsFromId(this.id);
 
@@ -1588,16 +1589,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     for (const stat of PERMANENT_STATS) {
       const value = this.calculateStat(stat, baseStats[stat], this.ivs[stat]);
 
-      // clamp HP to new max or restore current HP if max HP increased
-      if (stat === Stat.HP && !this.isFainted()) {
-        this.hp = Math.min(this.hp, value);
-
-        const lastMaxHp = this.getMaxHp();
-        if (lastMaxHp > 0 && value > lastMaxHp) {
-          this.hp += value - lastMaxHp;
-        }
+      if (stat !== Stat.HP) {
+        this.setStat(stat, value);
+        continue;
       }
 
+      // clamp HP to new max or restore current HP if max HP increased
+
+      // optional chain defaults HP to max HP if not set yet
+      // TODO: this is extremely stupid
+      this.hp = Math.min(this.hp ?? value, value);
+
+      const lastMaxHp = this.getMaxHp();
+      if (lastMaxHp > 0 && value > lastMaxHp) {
+        this.hp += value - lastMaxHp;
+      }
       this.setStat(stat, value);
     }
   }
@@ -1633,7 +1639,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param stat - The stat to calculate
    * @param baseStat - The base stat value for the Pokemon's species
    * @param iv - The Pokemon's IV for the given stat
-   * @returns The calculated stat value, which will be a positive integer less than {@linkcode Number.MAX_SAFE_INTEGER}.
+   * @returns The calculated stat value, which will be a positive integer no greater than {@linkcode Number.MAX_SAFE_INTEGER}.
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward | Bulbapedia: Stat calculation formula}
    */
   private calculateStat(stat: PermanentStat, baseStat: number, iv: number): number {

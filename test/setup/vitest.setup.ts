@@ -134,12 +134,3 @@ afterEach(context => {
 });
 
 // #endregion Hooks
-
-// throw on unhandled exception and rejection
-// TODO: Why don't these get caught by Vitest? They used to...
-process.on("uncaughtException", err => {
-  throw err;
-});
-process.on("unhandledRejection", reason => {
-  throw reason;
-});
