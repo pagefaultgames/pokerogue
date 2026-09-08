@@ -1,6 +1,7 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
@@ -341,6 +342,19 @@ export function applyChallenges(
   supercededMoves: Partial<Record<MoveId, MoveId[]>>,
 ): boolean;
 
+/**
+ * Apply all challenges that modify the evolutions of a Pokemon.
+ * @param challengeType - {@linkcode ChallengeType.MODIFY_EVOLUTIONS}
+ * @param pokemon - The {@linkcode Pokemon} to get evolutions for
+ * @param evos - The array of {@linkcode SpeciesFormEvolution}s for that Pokemon
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.MODIFY_EVOLUTIONS,
+  pokemon: Pokemon,
+  evos: SpeciesFormEvolution[],
+): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -432,6 +446,9 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           break;
         case ChallengeType.AI_MOVE_GENERATION_SUPERCEDED_MAP:
           ret ||= c.applyAIMoveGenerationSupercededMap(args[0]);
+          break;
+        case ChallengeType.MODIFY_EVOLUTIONS:
+          ret ||= c.applyModifyEvolutions(args[0], args[1]);
           break;
         default:
           challengeType satisfies never;

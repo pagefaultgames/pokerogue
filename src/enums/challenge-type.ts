@@ -144,4 +144,9 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyAIMoveGenerationSupercededMap}
    */
   AI_MOVE_GENERATION_SUPERCEDED_MAP,
+  /**
+   * Challenges which modify the evolutions of a Pokemon
+   * @see {@linkcode Challenge.applyModifyEvolutions}
+   */
+  MODIFY_EVOLUTIONS,
 }

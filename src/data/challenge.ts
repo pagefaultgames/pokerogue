@@ -3,6 +3,7 @@ import { getRandomTrainerFunc } from "#app/battle";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { allMoves } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -508,6 +509,16 @@ export abstract class Challenge {
    * @returns Whether this modification was applied
    */
   public applyAIMoveGenerationSupercededMap(supercededMoves: Partial<Record<MoveId, MoveId[]>>): boolean {
+    return false;
+  }
+
+  /**
+   * Modifies the evolutions of a Pokemon.
+   * @param pokemon - The {@linkcode Pokemon} to get evolutions for
+   * @param evos - The array of {@linkcode SpeciesFormEvolution}s for that Pokemon
+   * @returns Whether this modification was applied
+   */
+  public applyModifyEvolutions(pokemon: Pokemon, evos: SpeciesFormEvolution[]): boolean {
     return false;
   }
 
@@ -1486,6 +1497,30 @@ export class MovesetRandomizerChallenge extends Challenge {
     isValid.value = reward?.type.group !== "tm";
 
     return true;
+  }
+
+  public override applyModifyEvolutions(_pokemon: Pokemon, evos: SpeciesFormEvolution[]): boolean {
+    if (!evos.some(e => e.condition?.data.some(c => c.key === EvoCondKey.MOVE))) {
+      return false;
+    }
+
+    let modified = false;
+
+    for (const evo of evos) {
+      if (!evo.condition?.data.some(c => c.key === EvoCondKey.MOVE)) {
+        continue;
+      }
+      if (evo.level === 1) {
+        evo.level = evo.evoLevelThreshold?.[0] ?? 50;
+      }
+      evo.condition.data = evo.condition.data.filter(c => c.key !== EvoCondKey.MOVE);
+      if (evo.condition.data.length === 0) {
+        evo.condition = null;
+      }
+      modified = true;
+    }
+
+    return modified;
   }
 
   public static override loadChallenge(source: Challenge | any): Challenge {
