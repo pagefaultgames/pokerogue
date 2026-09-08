@@ -1427,7 +1427,12 @@ export class MovesetRandomizerChallenge extends Challenge {
     }
 
     if (!pokemon.moveset.some(pm => pm.getMove().is("AttackMove"))) {
-      pokemon.moveset[0] = new PokemonMove(getFallbackStabMove(pokemon.species.type1));
+      const fallbackMove = new PokemonMove(getFallbackStabMove(pokemon.species.type1));
+      if (pokemon.moveset.length < 4) {
+        pokemon.moveset.push(fallbackMove);
+      } else {
+        pokemon.moveset[0] = fallbackMove;
+      }
     }
 
     return true;
@@ -1442,15 +1447,19 @@ export class MovesetRandomizerChallenge extends Challenge {
       return false;
     }
 
-    const seedOffset = 100 * species.getRootSpeciesId(true);
+    const seedOffset = 2000 * species.getRootSpeciesId(true);
 
     const originalLevelMoves = [...levelMoves];
     levelMoves.splice(0);
 
     for (const [level, moveId] of originalLevelMoves) {
-      globalScene.executeWithSeedOffset(() => {
-        levelMoves.push([level, randSeedItem(this.validMoveIds)]);
-      }, seedOffset * moveId);
+      // Smeargle's level up moveset consists of multiple copies of Sketch,
+      // which would otherwise all get randomized to the same move without the extra offset
+      const smeargleOffset = species.speciesId === SpeciesId.SMEARGLE ? level : 0;
+      globalScene.executeWithSeedOffset(
+        () => levelMoves.push([level, randSeedItem(this.validMoveIds)]),
+        seedOffset + moveId + smeargleOffset,
+      );
     }
 
     return true;
