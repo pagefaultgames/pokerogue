@@ -33,6 +33,7 @@ PokéRogue is built with [TypeScript](https://www.typescriptlang.org/docs/handbo
 
 If you have the motivation and experience with TypeScript/JavaScript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
 
+
 ## 💻 Environment Setup
 
 ### Codespaces/Devcontainer Environment
@@ -98,6 +99,7 @@ Also under issues, you can take a look at the [List of Partial / Unimplemented M
 
 You are free to comment on any issue so that you may be assigned to it and we can avoid multiple people working on the same thing.
 
+
 ## 📚 Documentation
 
 You can find the auto-generated API documentation [here](https://pagefaultgames.github.io/pokerogue/beta/index.html). It can be incomplete at times (as many methods lack documentation comments), but it's a great way to get a look at the overall structure of the codebase and find particular methods or classes you may be looking for.
@@ -112,6 +114,7 @@ Notable topics include:
 - [Running with Podman](./docs/podman.md)
 
 Again, please feel free to ask any questions you may have!
+
 
 ## 🧪 Testing Your Changes
 
@@ -145,6 +148,7 @@ PokéRogue uses [Vitest](https://vitest.dev/) for automated testing.
 Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
 
 #### Writing tests
+
 Most non-trivial changes (_especially bug fixes_) should be accompanied by one or more new automated test cases.
 
 To create a new test file, run `pnpm test:create` and follow the on-screen prompts.
@@ -166,6 +170,7 @@ Ensure that new test cases:
 > While Vitest does support both Jest and Chai syntax for assertions, our project exclusively uses Jest-style assertions (`...toBe()`, `...toEqual()`, etc.) for internal consistency. (The Chai variants have been blacklisted via TypeScript declaration merging, ensuring they aren't accidentally used by mistake.)
 
 #### Running tests
+
 To make sure your changes didn't break any existing test cases, run `pnpm test:silent <files>` in your terminal to run test files associated with your changes. \
 You can provide additional arguments to the command to alter its behavior;
 a full list of supported arguments can be found on [Vitest's website](https://vitest.dev/guide/cli.html).
@@ -174,7 +179,9 @@ a full list of supported arguments can be found on [Vitest's website](https://vi
 > Passing all test cases does **not** guarantee that everything is working properly.
 > The project does not have complete regression testing, so manual verification is still advised for most changes.
 
+
 ## 💾 Development Save File
+
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides.
 > For this reason, the repository contains a [save file](test/utils/saves/everything.prsv) with _everything_ unlocked (including things not legitimately obtainable, like unreleased variant shinies).
 
@@ -182,12 +189,67 @@ a full list of supported arguments can be found on [Vitest's website](https://vi
 2. Select [everything.prsv](test/utils/saves/everything.prsv) (`test/utils/saves/everything.prsv`) and hit "Confirm".
 3. The page will reload with everything unlocked! You can now test your changes with this save file.
 
+
 ## ✅ Submitting a Pull Request
 
 Most information related to submitting a pull request is contained within comments inside the [default pull request template](./.github/pull_request_template.md). \
 This section serves to elaborate on particular parts of the PR creation workflow that cannot fit fully inside the margins.
 
+<!--
+SPDX-SnippetBegin
+
+SPDX-SnippetCopyrightText: 2023 Biome Developers and Contributors
+SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: MIT
+-->
+
+### AI Assistance Notice
+
+> [!IMPORTANT]
+>
+> If you are using **any kind of AI assistance** to contribute to PokéRogue,
+> it must be disclosed in the pull request.
+
+If you relied on AI assistance to make a pull request you *must* disclose it in the pull request, together with the extent of the usage. \
+For example, if you used AI to generate docs or tests, you must say it.
+
+Example disclosures:
+
+- > This PR was written primarily by Claude Code.
+- > I consulted ChatGPT to understand the codebase but the solution
+  > was fully authored manually by myself.
+
+Providing this information helps reviewers understand the context of the pull request
+and apply the right level of scrutiny, ensuring a smoother and more efficient review process.
+
+AI assistance isn't always perfect, even when used with the utmost care.
+
+Please be respectful to maintainers and disclose AI assistance.
+
+Please do not use AI to write pull request descriptions or contributor communication for this project. \
+Maintainers have limited review bandwidth, and unnecessarily long or low-signal explanations can slow down the review process.
+
+If we believe AI-generated communication was used, we may close the pull request at our discretion. \
+Repeated attempts to contest that decision in comments or re-open the PR may affect whether we accept future contributions from the same contributor.
+
+If you do not speak English, write in your native language and then translate that to English instead of instructing an AI to generate an English comment or post.
+
+<!--
+SPDX-SnippetEnd
+-->
+
+<sup><sub>(The above notice was copied and adapted from [Biome's `CONTRIBUTING.md`](https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md) document)</sub></sup>
+
+> [!CAUTION]
+>
+> While we do accept well made AI-assisted code PRs, we **do not and will not ever** accept AI art or music contributions. \
+> Please do not try to submit GenAI art or music.
+>
+> We are also not interested in machine translations of the game. \
+> If you want to contribute to translating PokéRogue into another language, you should be fluent in both English and the target language.
+
 ### PR Title Format
+
 This repository follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for PR titles, enforced by an automated GitHub Actions workflow.
 
 Each PR must contain a valid prefix (and optionally a valid scope), followed by a colon and then the PR's subject line. \
@@ -205,10 +267,10 @@ fix(move): Future Sight no longer crashes
 Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.
 
 #### Examples
-`refactor(data)!: improve serialization of Pokemon save data`
 
-`balance: update TM compatibility lists`
-`fix(move): Retaliate now saves power boost between waves`
+`refactor(data)!: improve serialization of Pokemon save data` \
+`balance: update TM compatibility lists` \
+`fix(move): Retaliate now saves power boost between waves` \
 `test: preserve text output of original shards`
 
 #### List of valid prefixes
@@ -216,11 +278,11 @@ Try to keep the title under 72 characters, as GitHub cuts off commit titles long
 - "balance" - Changes related to game balance
 - "chore" - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes
 - "dev" - Improving the developer experience (such as by modifying lint rules or creating cli scripts)
-- "docs" - Primarily adding/updating documentation
+- "docs" - Primarily adding/updating documentation related to the game's code
 - "feat" - Adding a new feature (e.g. adding a new implementation of a move) or redesigning an existing feature
 - "fix" - Fixing a bug
-- "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
-- "i18n" - Adding/modifying translation keys, etc
+- "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory, or updating the readme/contributing/credits documents
+- "i18n" - Adding/modifying translation keys, implementing a new language, etc
 - "misc" - A change that doesn't fit any other prefix
 - "perf" - A refactor aimed at improving performance
 - "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
@@ -233,7 +295,7 @@ Try to keep the title under 72 characters, as GitHub cuts off commit titles long
 - "audio"
 - "battle" - Relating to the general battle engine
 - "biomes"
-- "challenge"
+- "challenge" - Anything related to challenges/run modifiers, e.g. randomizer or mono-type challenges
 - "encounter" - Mystery Encounters
 - "event" - e.g. adding a Christmas event to the game
 - "graphics" - Anything related to art/graphics (adding new sprites, fixing a sprite that isn't displaying properly, etc)
