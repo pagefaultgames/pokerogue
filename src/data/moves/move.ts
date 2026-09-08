@@ -121,6 +121,7 @@ import type {
   MoveMessageFunc,
 } from "#types/move-types";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
+import type { StatStageChangePhaseOptions } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
@@ -3883,18 +3884,13 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
  * Set of optional parameters that may be applied to stat stage changing effects
  * @see {@linkcode StatStageChangeAttr}
  */
-interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
-  /** If defined, needs to be met in order for the stat change to apply */
-  condition?: MoveConditionFunc;
+interface StatStageChangeAttrOptions extends MoveEffectAttrOptions, Pick<StatStageChangePhaseOptions, "message"> {
+  /** The condition that needs to be met in order for the stat change to apply */
+  condition: MoveConditionFunc;
 }
 
 /**
  * Attribute used for moves that change stat stages
- *
- * @param stats {@linkcode BattleStat} Array of stat(s) to change
- * @param stages How many stages to change the stat(s) by, [-6, 6]
- * @param selfTarget `true` if the move is self-targetting
- * @param options {@linkcode StatStageChangeAttrOptions} Container for any optional parameters for this attribute.
  */
 export class StatStageChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
@@ -3903,21 +3899,21 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    * Container for optional parameters to this attribute.
    * @see {@linkcode StatStageChangeAttrOptions} for available optional params
    */
-  protected override options?: StatStageChangeAttrOptions | undefined;
+  protected override options: StatStageChangeAttrOptions;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, options?: StatStageChangeAttrOptions) {
+  constructor(
+    stats: BattleStat[],
+    stages: number,
+    selfTarget?: boolean,
+    options: Partial<StatStageChangeAttrOptions> = {},
+  ) {
     super(selfTarget, options);
     this.stats = stats;
     this.stages = stages;
-    this.options = options;
-  }
-
-  /**
-   * The condition required for the stat stage change to apply.
-   * Defaults to `null` (i.e. no condition required).
-   */
-  private get condition() {
-    return this.options?.condition ?? null;
+    this.options = {
+      ...options,
+      condition: options?.condition ?? (() => true),
+    };
   }
 
   /**
@@ -3929,7 +3925,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    * @returns whether stat stages were changed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
-    if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move))) {
+    if (!super.apply(user, target, move, args) || !this.options.condition(user, target, move)) {
       return false;
     }
 
@@ -3940,6 +3936,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
         battlerIndex: (this.selfTarget ? user : target).getBattlerIndex(),
         changes: groupStatChange(this.stats, stages),
         sourcePokemon: user,
+        message: this.options.message,
       });
 
       return true;
@@ -4315,28 +4312,18 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
 }
 
 export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
-  private readonly cutRatio: number;
-  private readonly messageCallback: ((user: Pokemon) => void) | undefined;
+  private readonly cutRatio: number; // TODO: NOT A RATIO, THIS IS A DIVISOR
 
-  constructor(
-    stat: BattleStat[],
-    levels: number,
-    cutRatio: number,
-    messageCallback?: ((user: Pokemon) => void) | undefined,
-  ) {
-    super(stat, levels, true);
+  constructor(stat: BattleStat[], levels: number, cutRatio: number, options: Partial<StatStageChangeAttrOptions> = {}) {
+    super(stat, levels, true, options);
 
     this.cutRatio = cutRatio;
-    this.messageCallback = messageCallback;
   }
+
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
     user.updateInfo();
-    const ret = super.apply(user, target, move, args);
-    if (this.messageCallback) {
-      this.messageCallback(user);
-    }
-    return ret;
+    return super.apply(user, target, move, args);
   }
 
   getCondition(): MoveConditionFunc {
@@ -9983,13 +9970,12 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .reflectable(),
     new SelfStatusMove(MoveId.BELLY_DRUM, PokemonType.NORMAL, -1, 10, -1, 0, 2) //
-      .attr(CutHpStatStageBoostAttr, [Stat.ATK], 12, 2, user => {
-        globalScene.phaseManager.queueMessage(
+      .attr(CutHpStatStageBoostAttr, [Stat.ATK], 12, 2, {
+        message: user =>
           i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {
             pokemonName: getPokemonNameWithAffix(user),
             statName: i18next.t(getStatKey(Stat.ATK)),
           }),
-        );
       }),
     new AttackMove(MoveId.SLUDGE_BOMB, PokemonType.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
