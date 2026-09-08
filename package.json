@@ -74,6 +74,7 @@
     "dependency-cruiser": "^18.2.0",
     "jsdom": "^30.0.1",
     "lefthook": "^2.1.12",
+    "magic-string": "^1.2.3",
     "msw": "^2.15.0",
     "phaser3spectorjs": "^0.0.8",
     "type-fest": "^5.9.0",
