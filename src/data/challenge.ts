@@ -1441,9 +1441,11 @@ export class MovesetRandomizerChallenge extends Challenge {
   public override applyLevelUpMoveset(species: PokemonSpeciesForm, levelMoves: LevelMoves): boolean {
     // Randomization is hidden during starter select and pokedex
     // so the player can't "game the system"
-    if (
-      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN, UiMode.STARTER_SELECT].includes(globalScene.ui.mode)
-    ) {
+    if (globalScene.ui.mode === UiMode.STARTER_SELECT) {
+      levelMoves.splice(0);
+      return false;
+    }
+    if ([UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)) {
       return false;
     }
 
