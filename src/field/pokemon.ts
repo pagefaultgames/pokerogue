@@ -6006,6 +6006,9 @@ export class PlayerPokemon extends Pokemon {
     if (this.fusionSpecies) {
       this.fusionSpecies.getTms(this.getFusionFormKey() ?? undefined).forEach(tm => tms.add(tm));
     }
+
+    applyChallenges(ChallengeType.PLAYER_TM_COMPATIBILITY, this, tms);
+
     if (excludeKnown) {
       this.moveset.forEach(move => tms.delete(move.moveId));
     }
@@ -6015,8 +6018,6 @@ export class PlayerPokemon extends Pokemon {
     if (excludeUsedTMs) {
       this.usedTMs.forEach(moveId => tms.delete(moveId));
     }
-
-    applyChallenges(ChallengeType.PLAYER_TM_COMPATIBILITY, this, tms);
 
     return Array.from(tms);
   }
