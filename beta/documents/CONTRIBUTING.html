@@ -166,6 +166,53 @@ For this reason, the repository contains a <a href="../media/everything.prsv">sa
 <h2 id="✅-submitting-a-pull-request" class="tsd-anchor-link">✅ Submitting a Pull Request<a href="#✅-submitting-a-pull-request" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>Most information related to submitting a pull request is contained within comments inside the <a href="../media/pull_request_template.md">default pull request template</a>. <br>
 This section serves to elaborate on particular parts of the PR creation workflow that cannot fit fully inside the margins.</p>
+<!--
+SPDX-SnippetBegin
+
+SPDX-SnippetCopyrightText: 2023 Biome Developers and Contributors
+SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: MIT
+-->
+<h3 id="ai-assistance-notice" class="tsd-anchor-link">AI Assistance Notice<a href="#ai-assistance-notice" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p></p>
+<p>If you are using <strong>any kind of AI assistance</strong> to contribute to PokéRogue,
+it must be disclosed in the pull request.</p>
+</div>
+<p>If you relied on AI assistance to make a pull request you <em>must</em> disclose it in the pull request, together with the extent of the usage. <br>
+For example, if you used AI to generate docs or tests, you must say it.</p>
+<p>Example disclosures:</p>
+<ul>
+<li>
+<blockquote>
+<p>This PR was written primarily by Claude Code.</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+<p>I consulted ChatGPT to understand the codebase but the solution
+was fully authored manually by myself.</p>
+</blockquote>
+</li>
+</ul>
+<p>Providing this information helps reviewers understand the context of the pull request
+and apply the right level of scrutiny, ensuring a smoother and more efficient review process.</p>
+<p>AI assistance isn't always perfect, even when used with the utmost care.</p>
+<p>Please be respectful to maintainers and disclose AI assistance.</p>
+<p>Please do not use AI to write pull request descriptions or contributor communication for this project. <br>
+Maintainers have limited review bandwidth, and unnecessarily long or low-signal explanations can slow down the review process.</p>
+<p>If we believe AI-generated communication was used, we may close the pull request at our discretion. <br>
+Repeated attempts to contest that decision in comments or re-open the PR may affect whether we accept future contributions from the same contributor.</p>
+<p>If you do not speak English, write in your native language and then translate that to English instead of instructing an AI to generate an English comment or post.</p>
+<!--
+SPDX-SnippetEnd
+-->
+<p><sup><sub>(The above notice was copied and adapted from <a href="https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md">Biome's <code>CONTRIBUTING.md</code></a> document)</sub></sup></p>
+<div class="tsd-alert tsd-alert-caution"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertCaution"></use></svg><span>Caution</span></div><p></p>
+<p>While we do accept well made AI-assisted code PRs, we <strong>do not and will not ever</strong> accept AI art or music contributions. <br>
+Please do not try to submit GenAI art or music.</p>
+<p>We are also not interested in machine translations of the game. <br>
+If you want to contribute to translating PokéRogue into another language, you should be fluent in both English and the target language.</p>
+</div>
 <h3 id="pr-title-format" class="tsd-anchor-link">PR Title Format<a href="#pr-title-format" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>This repository follows the <a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a> standard for PR titles, enforced by an automated GitHub Actions workflow.</p>
 <p>Each PR must contain a valid prefix (and optionally a valid scope), followed by a colon and then the PR's subject line. \</p>
@@ -177,20 +224,20 @@ If a save migrator, version increase or other breaking change is part of the PR,
 </div>
 <p>Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.</p>
 <h4 id="examples" class="tsd-anchor-link">Examples<a href="#examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
-<p><code>refactor(data)!: improve serialization of Pokemon save data</code></p>
-<p><code>balance: update TM compatibility lists</code>
-<code>fix(move): Retaliate now saves power boost between waves</code>
+<p><code>refactor(data)!: improve serialization of Pokemon save data</code> <br>
+<code>balance: update TM compatibility lists</code> <br>
+<code>fix(move): Retaliate now saves power boost between waves</code> <br>
 <code>test: preserve text output of original shards</code></p>
 <h4 id="list-of-valid-prefixes" class="tsd-anchor-link">List of valid prefixes<a href="#list-of-valid-prefixes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
 <ul>
 <li>&quot;balance&quot; - Changes related to game balance</li>
 <li>&quot;chore&quot; - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes</li>
 <li>&quot;dev&quot; - Improving the developer experience (such as by modifying lint rules or creating cli scripts)</li>
-<li>&quot;docs&quot; - Primarily adding/updating documentation</li>
+<li>&quot;docs&quot; - Primarily adding/updating documentation related to the game's code</li>
 <li>&quot;feat&quot; - Adding a new feature (e.g. adding a new implementation of a move) or redesigning an existing feature</li>
 <li>&quot;fix&quot; - Fixing a bug</li>
-<li>&quot;github&quot; - Updating the CI pipeline or otherwise modifying something in the <code>./github/**</code> directory</li>
-<li>&quot;i18n&quot; - Adding/modifying translation keys, etc</li>
+<li>&quot;github&quot; - Updating the CI pipeline or otherwise modifying something in the <code>./github/**</code> directory, or updating the readme/contributing/credits documents</li>
+<li>&quot;i18n&quot; - Adding/modifying translation keys, implementing a new language, etc</li>
 <li>&quot;misc&quot; - A change that doesn't fit any other prefix</li>
 <li>&quot;perf&quot; - A refactor aimed at improving performance</li>
 <li>&quot;refactor&quot; - A change that doesn't impact functionality or fix any bugs (except incidentally)</li>
@@ -203,7 +250,7 @@ If a save migrator, version increase or other breaking change is part of the PR,
 <li>&quot;audio&quot;</li>
 <li>&quot;battle&quot; - Relating to the general battle engine</li>
 <li>&quot;biomes&quot;</li>
-<li>&quot;challenge&quot;</li>
+<li>&quot;challenge&quot; - Anything related to challenges/run modifiers, e.g. randomizer or mono-type challenges</li>
 <li>&quot;encounter&quot; - Mystery Encounters</li>
 <li>&quot;event&quot; - e.g. adding a Christmas event to the game</li>
 <li>&quot;graphics&quot; - Anything related to art/graphics (adding new sprites, fixing a sprite that isn't displaying properly, etc)</li>
@@ -266,6 +313,7 @@ for fixing bugs that only existed on the <code>beta</code> branch that never mad
 <li><a href="#✅-submitting-a-pull-request"><span>✅ <wbr/>Submitting a <wbr/>Pull <wbr/>Request</span></a></li>
 <li>
 <ul>
+<li><a href="#ai-assistance-notice"><span>AI <wbr/>Assistance <wbr/>Notice</span></a></li>
 <li><a href="#pr-title-format"><span>PR <wbr/>Title <wbr/>Format</span></a></li>
 <li>
 <ul>
