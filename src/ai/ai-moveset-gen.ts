@@ -170,7 +170,9 @@ function getTmPoolForSpecies(
   allowedTiers = getAllowedTmTiers(level),
 ): void {
   const [allowCommon, allowGreat, allowUltra] = allowedTiers;
-  const tms = speciesDataRegistry.getSpecies(speciesId).getTms(formKey);
+  const species = speciesDataRegistry.getSpecies(speciesId);
+  const tms = species.getTms(formKey);
+  applyChallenges(ChallengeType.ENEMY_TM_COMPATIBILITY, species, tms);
 
   for (const tm of tms) {
     if (FORBIDDEN_TM_MOVES.has(tm) || levelPool.has(tm) || eggPool.has(tm) || tmPool.has(tm)) {
@@ -222,8 +224,6 @@ function getAndWeightTmMoves(
   if (fusionSpecies != null && fusionFormKey != null && fusionFormKey !== "") {
     getTmPoolForSpecies(fusionSpecies, level, fusionFormKey, currentPool, eggPool, tmPool, allowedTiers);
   }
-
-  applyChallenges(ChallengeType.ENEMY_TM_COMPATIBILITY, pokemon, tmPool);
 }
 
 /**

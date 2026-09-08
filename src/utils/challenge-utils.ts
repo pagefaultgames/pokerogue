@@ -306,16 +306,16 @@ export function applyChallenges(
 ): boolean;
 
 /**
- * Apply all challenges that modify an enemy Pokemon's TM compatibility list
+ * Apply all challenges that modify the TM compatibility list of an enemy species
  * @param challengeType - {@linkcode ChallengeType.ENEMY_TM_COMPATIBILITY}
- * @param pokemon - The enemy Pokemon whose TM compatibility is being modified
- * @param tmList - The Pokemon's TM compatibility list
+ * @param species - The species whose TM compatibility is being modified
+ * @param tmList - The array of compatible TMs
  * @returns Whether any challenge was sucessfully applied
  */
 export function applyChallenges(
   challengeType: ChallengeType.ENEMY_TM_COMPATIBILITY,
-  pokemon: Pokemon,
-  tmList: Map<MoveId, number>,
+  species: PokemonSpecies,
+  tmList: MoveId[],
 ): boolean;
 
 /**

@@ -4,6 +4,7 @@ import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allMoves } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -33,12 +34,11 @@ import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
+import { type BooleanHolder, isBetween, type NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
-import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -484,12 +484,12 @@ export abstract class Challenge {
   }
 
   /**
-   * Modifies the TM compatibility list of an enemy Pokemon.
-   * @param pokemon - The enemy Pokemon whose TM compatibility list is being modified
-   * @param tmList - The Pokemon's TM compatibility list
+   * Modifies the TM compatibility list of an enemy species.
+   * @param species - The species whose TM compatibility is being modified
+   * @param tmList - The array of compatible TMs
    * @returns Whether this modification was applied
    */
-  public applyEnemyTMCompatibility(pokemon: Pokemon, tmList: Map<MoveId, number>): boolean {
+  public applyEnemyTMCompatibility(species: PokemonSpecies, tmList: MoveId[]): boolean {
     return false;
   }
 
@@ -1479,14 +1479,32 @@ export class MovesetRandomizerChallenge extends Challenge {
     return true;
   }
 
-  public override applyPlayerTMCompatibility(_pokemon: PlayerPokemon, tms: Set<MoveId>): boolean {
+  public override applyPlayerTMCompatibility(pokemon: PlayerPokemon, tms: Set<MoveId>): boolean {
     tms.clear();
+
+    const seedOffset = 500 * pokemon.species.speciesId;
+    globalScene.executeWithSeedOffset(() => {
+      for (const tm of Object.keys(tmPoolTiers)) {
+        if (randSeedInt(2)) {
+          tms.add(Number(tm));
+        }
+      }
+    }, seedOffset);
 
     return true;
   }
 
-  public override applyEnemyTMCompatibility(_pokemon: Pokemon, tmList: Map<MoveId, number>): boolean {
-    tmList.clear();
+  public override applyEnemyTMCompatibility(species: PokemonSpecies, tmList: MoveId[]): boolean {
+    tmList.splice(0);
+
+    const seedOffset = 500 * species.speciesId;
+    globalScene.executeWithSeedOffset(() => {
+      for (const tm of Object.keys(tmPoolTiers)) {
+        if (randSeedInt(2)) {
+          tmList.push(Number(tm));
+        }
+      }
+    }, seedOffset);
 
     return true;
   }
@@ -1501,12 +1519,6 @@ export class MovesetRandomizerChallenge extends Challenge {
     for (const key of Object.keys(supercededMoves)) {
       supercededMoves[key] = [];
     }
-    return true;
-  }
-
-  public override applyWaveReward(reward: ModifierTypeOption | null, isValid: ValueHolder<boolean>): boolean {
-    isValid.value = reward?.type.group !== "tm";
-
     return true;
   }
 
