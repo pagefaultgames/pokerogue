@@ -2190,7 +2190,7 @@ export class BattleScene extends SceneBase {
     for (const label of labels) {
       label.setAlpha(0);
     }
-    const luckValue = getPartyLuckValue(this.getPlayerParty());
+    const luckValue = getPartyLuckValue();
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
@@ -2291,7 +2291,7 @@ export class BattleScene extends SceneBase {
     filterAllEvolutions = false,
   ): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue());
     }
 
     // TODO: simplify this?
@@ -2865,7 +2865,7 @@ export class BattleScene extends SceneBase {
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
-      luck: this.currentBattle ? getPartyLuckValue(this.party) : -1,
+      luck: this.currentBattle ? getPartyLuckValue() : -1,
       party:
         this.party?.map(
           p =>

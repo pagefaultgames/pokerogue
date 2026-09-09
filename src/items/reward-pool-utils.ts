@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
-import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { RewardPool, RewardPoolWeights, RewardSpecs } from "#types/rewards";
 import { pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
@@ -111,13 +110,13 @@ function randomBaseTier(): RarityTier {
  * @param party - Party of the trainer using the item
  * return {@linkcode RarityTier}
  */
-function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier, party: Pokemon[]): RarityTier {
+function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier): RarityTier {
   if (baseTier === RarityTier.MASTER) {
     return 0;
   }
 
   let upgradeCount = 0;
-  const partyLuckValue = getPartyLuckValue(party);
+  const partyLuckValue = getPartyLuckValue();
   const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
   while (Object.hasOwn(pool, baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
     if (randSeedInt(upgradeOdds) < 4) {
@@ -138,7 +137,6 @@ function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier, party: Po
  */
 export function generatePlayerRewardOptions(
   count: number,
-  party: PlayerPokemon[],
   rarityTiers?: RarityTier[],
   customRewardSettings?: CustomRewardSettings,
 ): RewardOption[] {
@@ -166,20 +164,20 @@ export function generatePlayerRewardOptions(
     if (customRewardSettings.guaranteedRarityTiers && customRewardSettings.guaranteedRarityTiers.length > 0) {
       const allowLuckUpgrades = customRewardSettings.allowLuckUpgrades ?? true;
       for (const tier of customRewardSettings.guaranteedRarityTiers) {
-        options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, tier, allowLuckUpgrades));
+        options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, tier, allowLuckUpgrades));
       }
     }
 
     // Fill remaining
     if (options.length < count && customRewardSettings.fillRemaining) {
       while (options.length < count) {
-        options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, undefined));
+        options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, undefined));
       }
     }
   } else {
     for (let i = 0; i < count; i++) {
       const tier = rarityTiers && rarityTiers.length > i ? rarityTiers[i] : undefined;
-      options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, tier));
+      options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, tier));
     }
   }
 
@@ -204,12 +202,11 @@ function getRewardOptionWithRetry(
   weights: RewardPoolWeights,
   existingOptions: RewardOption[],
   retryCount: number,
-  party: PlayerPokemon[],
   tier?: RarityTier,
   allowLuckUpgrades?: boolean,
 ): RewardOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
-  let candidate = getNewRewardOption(pool, weights, party, tier, undefined, 0, allowLuckUpgrades);
+  let candidate = getNewRewardOption(pool, weights, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
   while (
     existingOptions.length > 0
@@ -225,7 +222,6 @@ function getRewardOptionWithRetry(
     candidate = getNewRewardOption(
       pool,
       weights,
-      party,
       candidate?.type.tier ?? tier,
       candidate?.upgradeCount,
       0,
@@ -248,7 +244,6 @@ function getRewardOptionWithRetry(
 function getNewRewardOption(
   pool: RewardPool,
   weights: RewardPoolWeights,
-  party: PlayerPokemon[],
   baseTier?: RarityTier,
   upgradeCount?: number,
   retryCount = 0,
@@ -259,7 +254,7 @@ function getNewRewardOption(
     baseTier = randomBaseTier();
   }
   if (upgradeCount == null) {
-    upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(pool, baseTier, party) : 0;
+    upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(pool, baseTier) : 0;
     tier = baseTier + upgradeCount;
   } else {
     tier = baseTier;
@@ -275,7 +270,7 @@ function getNewRewardOption(
   const rewardOption = generateRewardOptionFromId(pool[tier][index].id, 0, tier, upgradeCount);
   if (rewardOption === null) {
     console.log(RarityTier[tier], upgradeCount);
-    return getNewRewardOption(pool, weights, party, tier, upgradeCount, ++retryCount);
+    return getNewRewardOption(pool, weights, tier, upgradeCount, ++retryCount);
   }
 
   console.log(rewardOption);

@@ -25,66 +25,22 @@ function initCommonRewardPool() {
     { id: RewardId.RARE_CANDY, weight: 2 },
     {
       id: RewardId.POTION,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(p => p.getInverseHp() >= 10 && p.getHpRatio() <= 0.875 && !p.isFainted()).length,
-          3,
-        );
-        return thresholdPartyMemberCount * 3;
-      },
+      weight: potionWeightFunc(10, 0.875, 3),
       maxWeight: 9,
     },
     {
       id: RewardId.SUPER_POTION,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(p => p.getInverseHp() >= 25 && p.getHpRatio() <= 0.75 && !p.isFainted()).length,
-          3,
-        );
-        return thresholdPartyMemberCount;
-      },
+      weight: potionWeightFunc(25, 0.75, 1),
       maxWeight: 3,
     },
     {
       id: RewardId.ETHER,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(
-            p =>
-              p.hp
-              && !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY)
-              && p
-                .getMoveset()
-                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length > 0,
-          ).length,
-          3,
-        );
-        return thresholdPartyMemberCount * 3;
-      },
+      weight: etherWeightFunc(3),
       maxWeight: 9,
     },
     {
       id: RewardId.MAX_ETHER,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(
-            p =>
-              p.hp
-              && !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY)
-              && p
-                .getMoveset()
-                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length > 0,
-          ).length,
-          3,
-        );
-        return thresholdPartyMemberCount;
-      },
+      weight: etherWeightFunc(1),
       maxWeight: 3,
     },
     { id: RewardId.LURE, weight: lureWeightFunc(TrainerItemId.LURE, 2) },
@@ -103,32 +59,17 @@ function initGreatRewardPool(): void {
     { id: RewardId.PP_UP, weight: 2 },
     {
       id: RewardId.FULL_HEAL,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const statusEffectPartyMemberCount = Math.min(
-          party.filter(p => p.hp > 0 && p.status != null && !p.hasStatusFromOrb()).length,
-          3,
-        );
-        return statusEffectPartyMemberCount * 6;
-      },
+      weight: () => getStatusedPartyMemberCount(3) * 6,
       maxWeight: 18,
     },
     {
       id: RewardId.REVIVE,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
-        return faintedPartyMemberCount * 9;
-      },
+      weight: reviveWeightFunc(9),
       maxWeight: 27,
     },
     {
       id: RewardId.MAX_REVIVE,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
-        return faintedPartyMemberCount * 3;
-      },
+      weight: reviveWeightFunc(3),
       maxWeight: 9,
     },
     {
@@ -141,36 +82,19 @@ function initGreatRewardPool(): void {
     },
     {
       id: RewardId.HYPER_POTION,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.625 && !p.isFainted()).length,
-          3,
-        );
-        return thresholdPartyMemberCount * 3;
-      },
+      weight: potionWeightFunc(100, 0.625, 3),
       maxWeight: 9,
     },
     {
       id: RewardId.MAX_POTION,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length,
-          3,
-        );
-        return thresholdPartyMemberCount;
-      },
+      weight: potionWeightFunc(100, 0.5, 1),
       maxWeight: 3,
     },
     {
       id: RewardId.FULL_RESTORE,
       weight: () => {
         const party = globalScene.getPlayerParty();
-        const statusEffectPartyMemberCount = Math.min(
-          party.filter(p => p.hp && !!p.status && !p.hasStatusFromOrb()).length,
-          3,
-        );
+        const statusEffectPartyMemberCount = getStatusedPartyMemberCount(3);
         const thresholdPartyMemberCount = Math.floor(
           (Math.min(party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length, 3)
             + statusEffectPartyMemberCount)
@@ -182,42 +106,12 @@ function initGreatRewardPool(): void {
     },
     {
       id: RewardId.ELIXIR,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(
-            p =>
-              p.hp
-              && !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY)
-              && p
-                .getMoveset()
-                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length > 0,
-          ).length,
-          3,
-        );
-        return thresholdPartyMemberCount * 3;
-      },
+      weight: etherWeightFunc(3),
       maxWeight: 9,
     },
     {
       id: RewardId.MAX_ELIXIR,
-      weight: () => {
-        const party = globalScene.getPlayerParty();
-        const thresholdPartyMemberCount = Math.min(
-          party.filter(
-            p =>
-              p.hp
-              && !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY)
-              && p
-                .getMoveset()
-                .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length > 0,
-          ).length,
-          3,
-        );
-        return thresholdPartyMemberCount;
-      },
+      weight: etherWeightFunc(1),
       maxWeight: 3,
     },
     { id: RewardId.DIRE_HIT, weight: 4 },
@@ -253,14 +147,14 @@ function initGreatRewardPool(): void {
       weight: () =>
         globalScene
           .getPlayerParty()
-          .filter(
+          .some(
             p =>
               !(
                 p.hasSpecies(SpeciesId.TERAPAGOS)
                 || p.hasSpecies(SpeciesId.OGERPON)
                 || p.hasSpecies(SpeciesId.SHEDINJA)
               ),
-          ).length > 0
+          )
           ? 1
           : 0,
     },
@@ -638,6 +532,47 @@ function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedRewardWe
       ? weight
       : 0;
   };
+}
+
+function potionWeightFunc(hpThreshold: number, hpRatioThreshold: number, baseWeight = 1): WeightedRewardWeightFunc {
+  return () => {
+    const party = globalScene.getPlayerParty();
+    const thresholdPartyMemberCount = Math.min(
+      party.filter(p => p.getInverseHp() >= hpThreshold && p.getHpRatio() <= hpRatioThreshold && !p.isFainted()).length,
+      3,
+    );
+    return thresholdPartyMemberCount * baseWeight;
+  };
+}
+
+function etherWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
+  return () => {
+    const party = globalScene.getPlayerParty();
+    const thresholdPartyMemberCount = Math.min(
+      party.filter(
+        p =>
+          p.hp
+          && !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY)
+          && p
+            .getMoveset()
+            .some(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2)),
+      ).length,
+      3,
+    );
+    return thresholdPartyMemberCount * baseWeight;
+  };
+}
+
+function reviveWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
+  return () => {
+    const party = globalScene.getPlayerParty();
+    const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
+    return faintedPartyMemberCount * baseWeight;
+  };
+}
+
+function getStatusedPartyMemberCount(max = 1): number {
+  return Math.min(globalScene.getPlayerParty().filter(p => p.hp && !!p.status && !p.hasStatusFromOrb()).length, max);
 }
 
 /**
