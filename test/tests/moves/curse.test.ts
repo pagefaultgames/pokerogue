@@ -100,7 +100,7 @@ describe("Move - Curse", () => {
     expect(player).not.toHaveBattlerTag(BattlerTagType.CURSED);
   });
 
-  it("should respect Tera Stellar and Curse the opponent", async () => {
+  it("should ignore Tera Stellar and Curse the opponent", async () => {
     await game.classicMode.startBattle(SpeciesId.SHUPPET);
 
     const player = game.field.getPlayerPokemon();
@@ -114,4 +114,7 @@ describe("Move - Curse", () => {
     expect(player).not.toHaveBattlerTag(BattlerTagType.CURSED);
     expect(player.getHpRatio(true)).toBeCloseTo(0.5);
   });
+
+  // TODO: add test when this interaction is fixed
+  it.todo("should curse the enemy Pokemon if the player uses it on the same turn as Terastallizing into a Ghost type");
 });
