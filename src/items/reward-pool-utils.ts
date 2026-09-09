@@ -55,10 +55,11 @@ export interface CustomRewardSettings {
 }
 
 /**
- * Generates weights for a {@linkcode RewardPool}. An array of weights is generated for each rarity tier. Weights can be 0.
+ * Generates weights for a {@linkcode RewardPool}.
+ * An array of weights is generated for each rarity tier.
+ * Weights can be 0.
  * @param pool - The pool for which weights must be generated
- * @param party - Party is required for generating the weights
- * @param rerollCount - (Optional) Needed for weights of vouchers.
+ * @param rerollCount - (Default `0`) Needed for weights of vouchers.
  */
 export function generateRewardPoolWeights(pool: RewardPool, rerollCount = 0) {
   for (const tier of Object.keys(pool)) {

@@ -3335,11 +3335,11 @@ export class BattleScene extends SceneBase {
 
   /**
    * Determines whether an item is unlocked based on game mode
-   * @param unlockable Unlockables the unlock to check
-   * @param ignoreDaily Whether Daily Mode runs should treat it as unlocked
-   * @returns whether it's considered unlocked according to current game mode and challenges
+   * @param unlockable - The {@linkcode Unlockables | unlock} to check
+   * @param ignoreDaily - (Default `true`) Whether Daily Mode runs should treat it as unlocked
+   * @returns Whether it's considered unlocked according to current game mode and challenges
    */
-  getUnlockStatus(unlockable: Unlockables, ignoreDaily = true): boolean {
+  public getUnlockStatus(unlockable: Unlockables, ignoreDaily = true): boolean {
     return (
       (this.gameMode.isDaily && ignoreDaily)
       || (!this.gameMode.isFreshStartChallenge() && this.gameData.isUnlocked(unlockable))
