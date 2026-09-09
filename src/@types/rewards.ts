@@ -5,7 +5,6 @@ import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { AllRewardsType } from "#items/all-rewards";
 import type { RewardGenerator } from "#items/reward";
 
-// TODO: Remove party from arguments - can be accessed from `globalScene`
 export type WeightedRewardWeightFunc = (rerollCount?: number) => number;
 
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
