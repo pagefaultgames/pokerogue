@@ -141,11 +141,11 @@ function getTransitionPhases(
 
   const transitionPhases: (RecallPhase | ToggleDoublePositionPhase)[] = [];
 
-  transitionPhases.push(phaseManager.create("ToggleDoublePositionPhase", double));
   // If the second player mon is already on the field, recall it before toggling double battle position
   if (!double && availablePlayerPartyMembers[1]?.isOnField()) {
     transitionPhases.push(phaseManager.create("RecallPhase", BattlerIndex.PLAYER_2));
   }
+  transitionPhases.push(phaseManager.create("ToggleDoublePositionPhase", double));
 
   return transitionPhases;
 }
