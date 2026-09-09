@@ -706,7 +706,7 @@ export abstract class TrappedTag extends SerializableBattlerTag {
    */
   protected abstract get onAddMessageKey(): string;
 
-  canAdd(pokemon: Pokemon): boolean {
+  public override canAdd(pokemon: Pokemon): boolean {
     // Trapping effects fail if the target has ANY prior trapping effect at all
     if (pokemon.getTag(TrappedTag)) {
       return false;
@@ -726,7 +726,7 @@ export abstract class TrappedTag extends SerializableBattlerTag {
     return true;
   }
 
-  onAdd(pokemon: Pokemon): void {
+  public override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
     if (!this.onAddMessageKey) {
@@ -769,16 +769,16 @@ export abstract class TrappedTag extends SerializableBattlerTag {
  */
 export class GenericTrappedTag extends TrappedTag {
   public override readonly tagType = BattlerTagType.TRAPPED;
+
   protected override get onAddMessageKey() {
     return "battlerTags:trappedOnAdd";
   }
+
   constructor(turnCount: number, sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.TRAPPED, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 
-  // Insofar as ghost types cannot be trapped by trapping effects, simple trapping effects do not do anythign on them
-  // TODO: Do we need to fail the move?
-  override canAdd(pokemon: Pokemon): boolean {
+  public override canAdd(pokemon: Pokemon): boolean {
     return !pokemon.isOfType(PokemonType.GHOST);
   }
 }
@@ -790,22 +790,25 @@ export class GenericTrappedTag extends TrappedTag {
  */
 class NoRetreatTag extends TrappedTag {
   public override readonly tagType = BattlerTagType.NO_RETREAT;
+
   protected override get onAddMessageKey() {
     return "battlerTags:noRetreatOnAdd";
   }
+
   constructor(sourceId: number) {
     super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 1, MoveId.NO_RETREAT, sourceId);
   }
 }
 
 /**
- * BattlerTag to implement the effects of {@linkcode MoveId.INGRAIN}.
+ * BattlerTag to implement the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Ingrain_(move) | Ingrain}.
  *
  * Ingrain heals the user for 1/16th of their maximum HP each turn while grounding them and trapping them on-field.
- * {@see {@linkcode GroundedTag}} - Tag used by Ingrain and other effects to forcibly ground target
+ * @see {@linkcode GroundedTag} - Tag used by Ingrain and other effects to forcibly ground target
  */
 export class IngrainTag extends TrappedTag {
   public override readonly tagType = BattlerTagType.INGRAIN;
+
   protected override get onAddMessageKey() {
     return "battlerTags:ingrainOnAdd";
   }
@@ -824,25 +827,27 @@ export class IngrainTag extends TrappedTag {
     return true;
   }
 
-  getDescriptor(): string {
+  public override getDescriptor(): string {
     return i18next.t("battlerTags:ingrainDesc");
   }
 }
 
 /**
- * Octolock traps the target pokemon and reduces its DEF and SPDEF by one stage at the
- * end of each turn.
+ * Octolock traps the target Pokemon
+ * and reduces its DEF and SPDEF by one stage at the end of each turn.
  */
 export class OctolockTag extends TrappedTag {
   public override readonly tagType = BattlerTagType.OCTOLOCK;
+
   protected override get onAddMessageKey() {
     return "battlerTags:octolockOnAdd";
   }
+
   constructor(sourceId: number) {
     super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, MoveId.OCTOLOCK, sourceId);
   }
 
-  lapse(pokemon: Pokemon): boolean {
+  public override lapse(pokemon: Pokemon): boolean {
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: pokemon.getBattlerIndex(),
       sourcePokemon: this.getSourcePokemon(),
@@ -859,21 +864,24 @@ export class OctolockTag extends TrappedTag {
  */
 export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
   public declare readonly tagType: DamagingTrapBattlerTagType;
+
   /** @sealed */
   protected override get triggerMessageKey() {
     return "battlerTags:damagingTrapLapse";
   }
+
   // NB: This being an overriddable getter with a `pokemon` parameter
   // makes it really easy to parametrize it (such as for adding something like Binding Band)
   /** @sealed */
   protected override getDamageHpRatio() {
     return 0.125;
   }
+
   constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId, sourceId: number) {
     super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const shouldPersist = super.lapse(pokemon, lapseType);
     if (!shouldPersist) {
       return false;
@@ -886,12 +894,14 @@ export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
 
 export class BindTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.BIND;
+
   protected override get animation() {
     return CommonAnim.BIND as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:bindOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.BIND, turnCount, MoveId.BIND, sourceId);
   }
@@ -899,12 +909,14 @@ export class BindTag extends DamagingTrapTag {
 
 export class WrapTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.WRAP;
+
   protected override get animation() {
     return CommonAnim.WRAP as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:wrapOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WRAP, turnCount, MoveId.WRAP, sourceId);
   }
@@ -912,12 +924,14 @@ export class WrapTag extends DamagingTrapTag {
 
 export class FireSpinTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.FIRE_SPIN;
+
   protected override get animation() {
     return CommonAnim.FIRE_SPIN as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:fireSpinOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
   }
@@ -925,12 +939,14 @@ export class FireSpinTag extends DamagingTrapTag {
 
 export class WhirlpoolTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.WHIRLPOOL;
+
   protected override get animation() {
     return CommonAnim.WHIRLPOOL as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:whirlpoolOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
   }
@@ -938,12 +954,14 @@ export class WhirlpoolTag extends DamagingTrapTag {
 
 export class ClampTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.CLAMP;
+
   protected override get animation() {
     return CommonAnim.CLAMP as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:clampOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.CLAMP, turnCount, MoveId.CLAMP, sourceId);
   }
@@ -951,6 +969,7 @@ export class ClampTag extends DamagingTrapTag {
 
 export class SandTombTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.SAND_TOMB;
+
   protected override get animation() {
     return CommonAnim.SAND_TOMB as const;
   }
@@ -965,12 +984,14 @@ export class SandTombTag extends DamagingTrapTag {
 
 export class MagmaStormTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.MAGMA_STORM;
+
   protected override get animation() {
     return CommonAnim.MAGMA_STORM as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:magmaStormOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.MAGMA_STORM, turnCount, MoveId.MAGMA_STORM, sourceId);
   }
@@ -978,12 +999,14 @@ export class MagmaStormTag extends DamagingTrapTag {
 
 export class SnapTrapTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.SNAP_TRAP;
+
   protected override get animation() {
     return CommonAnim.SNAP_TRAP as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:snapTrapOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SNAP_TRAP, turnCount, MoveId.SNAP_TRAP, sourceId);
   }
@@ -991,12 +1014,14 @@ export class SnapTrapTag extends DamagingTrapTag {
 
 export class ThunderCageTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.THUNDER_CAGE;
+
   protected override get animation() {
     return CommonAnim.THUNDER_CAGE as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:thunderCageOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.THUNDER_CAGE, turnCount, MoveId.THUNDER_CAGE, sourceId);
   }
@@ -1004,12 +1029,14 @@ export class ThunderCageTag extends DamagingTrapTag {
 
 export class InfestationTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.INFESTATION;
+
   protected override get animation() {
     return CommonAnim.INFESTATION as const;
   }
   protected override get onAddMessageKey() {
     return "battlerTags:infestationOnAdd";
   }
+
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.INFESTATION, turnCount, MoveId.INFESTATION, sourceId);
   }
@@ -2523,6 +2550,7 @@ export class CritBoostTag extends SerializableBattlerTag {
 function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
   abstract class DoTTag extends Base {
     public declare abstract readonly tagType: DamagingBattlerTagType;
+
     /** @returns The {@linkcode CommonAnim} to play upon this Tag dealing damage. */
     protected abstract get animation(): CommonAnim;
 
@@ -2595,7 +2623,8 @@ export type DamagingBattlerTag<Tag extends SerializableBattlerTag = Serializable
  * Triggers repeatedly until removed by an effect or move.
  */
 abstract class DamageOverTimeTag extends DamagingBattlerTag(SerializableBattlerTag) {
-  abstract override readonly tagType: DamageOverTimeTagType;
+  public abstract override readonly tagType: DamageOverTimeTagType;
+
   constructor(tagType: DamageOverTimeTagType, isBatonPassable = false) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, undefined, undefined, isBatonPassable);
   }
@@ -2611,19 +2640,17 @@ abstract class DamageOverTimeTag extends DamagingBattlerTag(SerializableBattlerT
    */
   protected abstract get onAddMessageKey(): string;
 
-  override onAdd(pokemon: Pokemon): void {
+  public override onAdd(pokemon: Pokemon): void {
     if (!this.onAddMessageKey) {
       return;
     }
 
     globalScene.phaseManager.queueMessage(
-      i18next.t(this.onAddMessageKey, {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
+      i18next.t(this.onAddMessageKey, { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
     );
   }
 
-  override lapse(pokemon: Pokemon): boolean {
+  public override lapse(pokemon: Pokemon): boolean {
     this.damage(pokemon);
     return true;
   }
@@ -2633,6 +2660,7 @@ export type { DamageOverTimeTag };
 
 export class SaltCuredTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.SALT_CURED;
+
   constructor() {
     super(BattlerTagType.SALT_CURED);
   }
@@ -2641,11 +2669,11 @@ export class SaltCuredTag extends DamageOverTimeTag {
     return CommonAnim.SALT_CURE as const;
   }
 
-  override get onAddMessageKey() {
+  protected override get onAddMessageKey() {
     return "battlerTags:saltCuredOnAdd";
   }
 
-  override get triggerMessageKey() {
+  protected override get triggerMessageKey() {
     return "battlerTags:saltCuredLapse";
   }
 
@@ -2659,6 +2687,7 @@ export class SaltCuredTag extends DamageOverTimeTag {
 
 export class CursedTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.CURSED;
+
   constructor() {
     super(BattlerTagType.CURSED, true);
   }
@@ -2685,6 +2714,7 @@ export class CursedTag extends DamageOverTimeTag {
 
 export class NightmareTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.NIGHTMARE;
+
   constructor() {
     super(BattlerTagType.NIGHTMARE);
   }
@@ -2706,7 +2736,7 @@ export class NightmareTag extends DamageOverTimeTag {
     return 0.25 as const;
   }
 
-  override onOverlap(pokemon: Pokemon): void {
+  public override onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
     globalScene.phaseManager.queueMessage(
@@ -2716,7 +2746,7 @@ export class NightmareTag extends DamageOverTimeTag {
     );
   }
 
-  override getDescriptor(): string {
+  public override getDescriptor(): string {
     return i18next.t("battlerTags:nightmareDesc");
   }
 }
