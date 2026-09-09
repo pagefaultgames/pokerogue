@@ -364,12 +364,11 @@ export function truncateString(str: string, maxLength = 10) {
  * The actual damage applied to a Pokémon's HP must be an integer.
  * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
  *
- * @param value - The float value to convert.
- * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @param value - The value to round
  * @returns The converted value as an integer.
  */
-export function toDmgValue(value: number, minValue = 1) {
-  return Math.max(Math.floor(value), minValue);
+export function toDmgValue(value: number): number {
+  return Math.max(Math.floor(value), 1);
 }
 
 /**
