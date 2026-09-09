@@ -60,7 +60,6 @@ import type {
   SeenDialogues,
   SessionSaveData,
   StarterData,
-  StarterDataEntry,
   SystemSaveData,
   TutorialFlags,
   Unlocks,
@@ -70,7 +69,7 @@ import type {
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
-import { decrypt, deepCopy, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
+import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
