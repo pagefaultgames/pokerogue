@@ -1,3 +1,7 @@
+import type { PostDancingMoveAbAttr } from "#abilities/ab-attrs";
+import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { StatusEffect } from "#enums/status-effect";
+import type { DelayedAttackAttr } from "#moves/move";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
@@ -7,21 +11,22 @@ import type { ObjectValues } from "#types/type-helpers";
  * while oddities breaking a previous trend will be listed in _italics_.
  *
  * Callers should refrain from performing non-equality checks on `MoveUseMode`s directly,
- * instead using the available helper functions
- * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
+ * instead using the various available helper functions:
+ * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP}, {@linkcode isDancerCopiable} and {@linkcode isReflected}).
  */
 export const MoveUseMode = {
   /**
-   * This move was used normally (i.e. clicking on the button) or called via Instruct.
+   * This move was used normally (i.e. from normal command selection) or called via Instruct.
    * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
    */
   NORMAL: 1,
 
   /**
-   * This move was called by an effect that ignores PP, such as a consecutively executed move (e.g. Outrage).
+   * This move was called by an effect that ignores PP, such as a consecutively executed move (e.g. Outrage)
+   * or the 2nd turn of a charging move.
    *
-   * PP-ignoring moves (as their name implies) **do not consume PP** when used
-   * and **will not fail** if none is left prior to execution.
+   * PP-ignoring moves (as their name implies) **do not consume PP** when used (including via Pressure)
+   * and **will not fail** if none is left prior to execution. \
    * All other effects remain identical to {@linkcode MoveUseMode.NORMAL}.
    *
    * PP can still be reduced by other effects (such as Spite or Eerie Spell).
@@ -41,22 +46,22 @@ export const MoveUseMode = {
   INDIRECT: 3,
 
   /**
-    * This move was called as part of another move's effect (such as for most {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling moves}).
-
-    * Follow-up moves **bypass cancellation** from all **non-volatile status conditions** and **{@linkcode BattlerTagLapseType.MOVE}-type effects**
-    * (having been checked already on the calling move).
-
-    * They are _not ignored_ by other move-calling moves and abilities (unlike {@linkcode MoveUseMode.FOLLOW_UP} and {@linkcode MoveUseMode.REFLECTED}),
-    * but still inherit the former's disregard for moveset-related effects.
-    */
+   * This move was called as part of another move's effect (such as for most {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling moves}).
+   *
+   * Follow-up moves **bypass cancellation** from all **non-volatile status conditions** and **{@linkcode BattlerTagLapseType.MOVE}-type effects**
+   * (having been checked already on the calling move).
+   *
+   * They are _not ignored_ by other move-calling moves and abilities (unlike {@linkcode MoveUseMode.FOLLOW_UP} and {@linkcode MoveUseMode.REFLECTED}),
+   * but still inherit the former's disregard for moveset-related effects.
+   */
   FOLLOW_UP: 4,
 
   /**
    * This move was reflected by Magic Coat or Magic Bounce.
-
+   *
    * Reflected moves ignore all the same cancellation checks as {@linkcode MoveUseMode.INDIRECT}
    * and retain the same copy prevention as {@linkcode MoveUseMode.FOLLOW_UP}, but additionally
-   * **cannot be reflected by other reflecting effects**.
+   * **cannot be copied by other reflecting effects or Dancer**.
    */
   REFLECTED: 5,
 
@@ -66,9 +71,9 @@ export const MoveUseMode = {
    *
    * In addition to inheriting the cancellation ignores and copy prevention from {@linkcode MoveUseMode.REFLECTED},
    * transparent moves are ignored by **all forms of move usage checks** due to **not pushing to move history**.
-   * @todo Consider other means of implementing FS/DD than this - we currently only use it
-   * to prevent pushing to move history and avoid re-delaying the attack portion
    */
+  // TODO: Consider other means of implementing FS/DD than this - we currently only use it
+  // to prevent pushing to move history and avoid re-delaying the attack portion
   DELAYED_ATTACK: 6,
 } as const;
 
@@ -164,4 +169,31 @@ export function isReflected(useMode: MoveUseMode): boolean {
   return useMode === MoveUseMode.REFLECTED;
 }
 
+/**
+ * Check if a given `MoveUseMode` is capable of being copied by {@linkcode PostDancingMoveAbAttr | Dancer}.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` is copiable by Dancer.
+ * @remarks
+ * This function is equivalent to the following truth table:
+ *
+ * | Use Type                                | Returns |
+ * |-----------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}          | `true`  |
+ * | {@linkcode MoveUseMode.IGNORE_PP}       | `true`  |
+ * | {@linkcode MoveUseMode.INDIRECT}        | `false` |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}       | `true`  |
+ * | {@linkcode MoveUseMode.REFLECTED}       | `false` |
+ * | {@linkcode MoveUseMode.DELAYED_ATTACK}  | `false` |
+ */
+export function isDancerCopiable(useMode: MoveUseMode): boolean {
+  return (
+    useMode !== MoveUseMode.INDIRECT && useMode !== MoveUseMode.REFLECTED && useMode !== MoveUseMode.DELAYED_ATTACK
+  );
+}
+
 // #endregion Helper Functions
+
+/**
+ * Doc comment removal prevention block to prevent TS from flagging things as unused
+ * {@linkcode DelayedAttackAttr}
+ */

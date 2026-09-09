@@ -1,3 +1,4 @@
+import { settings } from "#app/global-settings-manager";
 import { Status } from "#data/status-effect";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
@@ -44,7 +45,7 @@ export async function runMysteryEncounterToEnd(
   if (!isBattle) {
     return await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   }
-  if (game.scene.battleStyle === BattleStyle.SWITCH) {
+  if (settings.general.battleStyle === BattleStyle.SWITCH) {
     console.warn("BattleStyle.SWITCH was used during ME battle, swapping to set mode...");
     game.settings.battleStyle(BattleStyle.SET);
   }

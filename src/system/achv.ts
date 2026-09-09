@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { Challenge } from "#data/challenge";
 import {
@@ -29,7 +30,7 @@ export enum AchvTier {
 }
 
 function getGenderStr(): string {
-  const genderIndex = globalScene?.gameData?.gender ?? PlayerGender.MALE;
+  const genderIndex = settings.general.playerGender;
   const genderStr = PlayerGender[genderIndex].toLowerCase();
   return genderStr;
 }

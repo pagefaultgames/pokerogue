@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
@@ -7,6 +8,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
+import { AdminUiHandler } from "#ui/admin-ui-handler";
 import { AlertModalUiHandler } from "#ui/alert-modal-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
@@ -28,6 +30,7 @@ import { FightUiHandler } from "#ui/fight-ui-handler";
 import { GameStatsUiHandler } from "#ui/game-stats-ui-handler";
 import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import { GeneralSettingsUiHandler } from "#ui/general-settings-ui-handler";
 import { KeyboardBindingUiHandler } from "#ui/keyboard-binding-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
@@ -44,11 +47,11 @@ import { PokedexScanUiHandler } from "#ui/pokedex-scan-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RegistrationFormUiHandler } from "#ui/registration-form-ui-handler";
 import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
+import { RenameRunFormUiHandler } from "#ui/rename-run-ui-handler";
 import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import { SavingIconContainer } from "#ui/saving-icon-handler";
-import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import { SummaryUiHandler } from "#ui/summary-ui-handler";
 import { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
@@ -60,8 +63,6 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
-import { AdminUiHandler } from "./handlers/admin-ui-handler";
-import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -86,7 +87,7 @@ const noTransitionModes = [
   UiMode.MENU_OPTION_SELECT,
   UiMode.GAMEPAD_BINDING,
   UiMode.KEYBOARD_BINDING,
-  UiMode.SETTINGS,
+  UiMode.SETTINGS_GENERAL,
   UiMode.SETTINGS_AUDIO,
   UiMode.SETTINGS_DISPLAY,
   UiMode.SETTINGS_GAMEPAD,
@@ -111,14 +112,10 @@ const noTransitionModes = [
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
-  private mode: UiMode;
-  private modeChain: UiMode[];
-  public handlers: UiHandler[];
-  private overlay: Phaser.GameObjects.Rectangle;
-  public achvBar: AchvBar;
-  public bgmBar: BgmBar;
-  public savingIcon: SavingIconContainer;
+  private _mode: UiMode = UiMode.MESSAGE;
+  private _modeChain: UiMode[] = [];
 
+  private overlay: Phaser.GameObjects.Rectangle;
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
   private tooltipTitle: Phaser.GameObjects.Text;
@@ -126,11 +123,15 @@ export class UI extends Phaser.GameObjects.Container {
 
   private overlayActive: boolean;
 
+  public handlers: UiHandler[];
+
+  public achvBar: AchvBar;
+  public bgmBar: BgmBar;
+  public savingIcon: SavingIconContainer;
+
   constructor() {
     super(globalScene, 0, globalScene.scaledCanvas.height);
 
-    this.mode = UiMode.MESSAGE;
-    this.modeChain = [];
     this.handlers = [
       new BattleMessageUiHandler(),
       new TitleUiHandler(),
@@ -151,19 +152,20 @@ export class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(),
       new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
       // settings
-      new SettingsUiHandler(),
+      new GeneralSettingsUiHandler(),
       new SettingsDisplayUiHandler(),
       new SettingsAudioUiHandler(),
       new SettingsGamepadUiHandler(),
       new GamepadBindingUiHandler(),
       new SettingsKeyboardUiHandler(),
       new KeyboardBindingUiHandler(),
+      // end settings
       new AchvsUiHandler(),
       new GameStatsUiHandler(),
       new EggListUiHandler(),
       new EggGachaUiHandler(),
       new PokedexUiHandler(),
-      new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
+      new PokedexScanUiHandler(),
       new PokedexPageUiHandler(),
       new LoginOrRegisterUiHandler(),
       new LoginFormUiHandler(),
@@ -175,7 +177,7 @@ export class UI extends Phaser.GameObjects.Container {
       new RenameRunFormUiHandler(),
       new RunHistoryUiHandler(),
       new RunInfoUiHandler(),
-      new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
+      new TestDialogueUiHandler(),
       new AutoCompleteUiHandler(),
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
@@ -184,8 +186,16 @@ export class UI extends Phaser.GameObjects.Container {
     ];
   }
 
-  setup(): void {
-    this.setName(`ui-${UiMode[this.mode]}`);
+  public get mode(): UiMode {
+    return this._mode;
+  }
+
+  public get modeChain(): UiMode[] {
+    return this._modeChain;
+  }
+
+  public setup(): void {
+    this.setName(`ui-${UiMode[this._mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
     }
@@ -231,20 +241,20 @@ export class UI extends Phaser.GameObjects.Container {
     globalScene.uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler<H extends UiHandler = UiHandler>(): H {
-    return this.handlers[this.mode] as H;
+  public getHandler<H extends UiHandler = UiHandler>(): H {
+    return this.handlers[this._mode] as H;
   }
 
-  getMessageHandler(): BattleMessageUiHandler {
+  public getMessageHandler(): BattleMessageUiHandler {
     return this.handlers[UiMode.MESSAGE] as BattleMessageUiHandler;
   }
 
-  processInfoButton(pressed: boolean) {
+  public processInfoButton(pressed: boolean) {
     if (this.overlayActive) {
       return false;
     }
 
-    if ([UiMode.CONFIRM, UiMode.COMMAND, UiMode.FIGHT, UiMode.MESSAGE, UiMode.TARGET_SELECT].includes(this.mode)) {
+    if ([UiMode.CONFIRM, UiMode.COMMAND, UiMode.FIGHT, UiMode.MESSAGE, UiMode.TARGET_SELECT].includes(this._mode)) {
       globalScene?.processInfoButton(pressed);
       return true;
     }
@@ -257,7 +267,7 @@ export class UI extends Phaser.GameObjects.Container {
    * @param button The {@linkcode Button} being inputted
    * @returns true if the input attempt succeeds
    */
-  processInput(button: Button): boolean {
+  public processInput(button: Button): boolean {
     if (this.overlayActive) {
       return false;
     }
@@ -271,13 +281,13 @@ export class UI extends Phaser.GameObjects.Container {
     return handler.processInput(button);
   }
 
-  showTextPromise(text: string, callbackDelay = 0, prompt = true, promptDelay?: number | null): Promise<void> {
+  public showTextPromise(text: string, callbackDelay = 0, prompt = true, promptDelay?: number | null): Promise<void> {
     return new Promise<void>(resolve => {
       this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
     });
   }
 
-  showText(
+  public showText(
     text: string,
     delay?: number | null,
     callback?: (() => void) | null,
@@ -314,7 +324,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  showDialogue(
+  public showDialogue(
     keyOrText: string,
     name: string | undefined,
     delay: number | null = 0,
@@ -325,7 +335,7 @@ export class UI extends Phaser.GameObjects.Container {
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     if (i18next.exists(keyOrText)) {
@@ -378,10 +388,10 @@ export class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  shouldSkipDialogue(i18nKey: string): boolean {
+  public shouldSkipDialogue(i18nKey: string): boolean {
     if (
       i18next.exists(i18nKey)
-      && globalScene.skipSeenDialogues
+      && settings.general.skipSeenDialogues
       && globalScene.gameData.getSeenDialogues()[i18nKey] === true
     ) {
       return true;
@@ -389,7 +399,7 @@ export class UI extends Phaser.GameObjects.Container {
     return false;
   }
 
-  getTooltip(): { visible: boolean; title: string; content: string } {
+  public getTooltip(): { visible: boolean; title: string; content: string } {
     return {
       visible: this.tooltipContainer.visible,
       title: this.tooltipTitle.text,
@@ -397,7 +407,7 @@ export class UI extends Phaser.GameObjects.Container {
     };
   }
 
-  showTooltip(title: string, content: string, overlap?: boolean): void {
+  public showTooltip(title: string, content: string, overlap?: boolean): void {
     this.tooltipContainer.setVisible(true);
     this.editTooltip(title, content);
     if (overlap) {
@@ -407,7 +417,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  editTooltip(title: string, content: string): void {
+  public editTooltip(title: string, content: string): void {
     this.tooltipTitle.setText(title || "");
     const wrappedContent = this.tooltipContent.runWordWrap(content);
     this.tooltipContent.setText(wrappedContent);
@@ -420,12 +430,12 @@ export class UI extends Phaser.GameObjects.Container {
     this.tooltipTitle.x = this.tooltipBg.width / 2;
   }
 
-  hideTooltip(): void {
+  public hideTooltip(): void {
     this.tooltipContainer.setVisible(false);
     this.tooltipTitle.clearTint();
   }
 
-  update(): void {
+  public override update(): void {
     if (this.tooltipContainer.visible) {
       const isTouch = globalScene.inputMethod === "touch";
       const pointerX = globalScene.game.input.activePointer.x;
@@ -458,7 +468,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  clearText(): void {
+  public clearText(): void {
     const handler = this.getHandler();
     if (handler instanceof MessageUiHandler) {
       (handler as MessageUiHandler).clearText();
@@ -467,7 +477,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
   }
 
-  setCursor(cursor: number): boolean {
+  public setCursor(cursor: number): boolean {
     const changed = this.getHandler().setCursor(cursor);
     if (changed) {
       this.playSelect();
@@ -476,15 +486,15 @@ export class UI extends Phaser.GameObjects.Container {
     return changed;
   }
 
-  playSelect(): void {
+  public playSelect(): void {
     audioManager.playSound("ui/select");
   }
 
-  playError(): void {
+  public playError(): void {
     audioManager.playSound("ui/error");
   }
 
-  fadeOut(duration: number): Promise<void> {
+  public fadeOut(duration: number): Promise<void> {
     return new Promise(resolve => {
       if (this.overlayActive) {
         return resolve();
@@ -502,7 +512,7 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  fadeIn(duration: number): Promise<void> {
+  public fadeIn(duration: number): Promise<void> {
     return new Promise(resolve => {
       if (!this.overlayActive) {
         return resolve();
@@ -530,20 +540,20 @@ export class UI extends Phaser.GameObjects.Container {
     args: any[],
   ): Promise<void> {
     return new Promise(resolve => {
-      if (this.mode === mode && !forceTransition) {
+      if (this._mode === mode && !forceTransition) {
         resolve();
         return;
       }
       const doSetMode = () => {
-        if (this.mode !== mode) {
+        if (this._mode !== mode) {
           if (clear) {
             this.getHandler().clear();
           }
-          if (chainMode && this.mode && !clear) {
-            this.modeChain.push(this.mode);
+          if (chainMode && this._mode && !clear) {
+            this._modeChain.push(this._mode);
             globalScene.updateGameInfo();
           }
-          this.mode = mode;
+          this._mode = mode;
           const touchControls = document?.getElementById("touchControls");
           if (touchControls) {
             touchControls.dataset.uiMode = UiMode[mode];
@@ -554,10 +564,10 @@ export class UI extends Phaser.GameObjects.Container {
       };
       if (
         (!chainMode
-          && (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
-          && noTransitionModes.indexOf(this.mode) === -1
-          && noTransitionModes.indexOf(mode) === -1)
-        || (chainMode && noTransitionModes.indexOf(mode) === -1)
+          && (transitionModes.includes(this._mode) || transitionModes.includes(mode))
+          && !noTransitionModes.includes(this._mode)
+          && !noTransitionModes.includes(mode))
+        || (chainMode && !noTransitionModes.includes(mode))
       ) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
@@ -571,46 +581,42 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  getMode(): UiMode {
-    return this.mode;
-  }
-
-  setMode(mode: UiMode, ...args: any[]): Promise<void> {
+  public setMode(mode: UiMode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, true, false, false, args);
   }
 
-  setModeForceTransition(mode: UiMode, ...args: any[]): Promise<void> {
+  public setModeForceTransition(mode: UiMode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, true, true, false, args);
   }
 
-  setModeWithoutClear(mode: UiMode, ...args: any[]): Promise<void> {
+  public setModeWithoutClear(mode: UiMode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, false, false, false, args);
   }
 
-  setOverlayMode(mode: UiMode, ...args: any[]): Promise<void> {
+  public setOverlayMode(mode: UiMode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, false, false, true, args);
   }
 
-  resetModeChain(): void {
-    this.modeChain = [];
+  public resetModeChain(): void {
+    this._modeChain = [];
     globalScene.updateGameInfo();
   }
 
-  revertMode(): Promise<boolean> {
+  public revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (this?.modeChain?.length === 0) {
+      if (this?._modeChain?.length === 0) {
         return resolve(false);
       }
 
-      const lastMode = this.mode;
+      const lastMode = this._mode;
 
       const doRevertMode = () => {
         this.getHandler().clear();
-        this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
+        this._mode = this._modeChain.pop()!; // TODO: is this bang correct?
         globalScene.updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
-          touchControls.dataset.uiMode = UiMode[this.mode];
+          touchControls.dataset.uiMode = UiMode[this._mode];
         }
         resolve(true);
       };
@@ -628,17 +634,13 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  revertModes(): Promise<void> {
+  public revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (this?.modeChain?.length === 0) {
+      if (this?._modeChain?.length === 0) {
         return resolve();
       }
       this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));
     });
-  }
-
-  public getModeChain(): UiMode[] {
-    return this.modeChain;
   }
 
   /**

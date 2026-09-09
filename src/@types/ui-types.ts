@@ -30,7 +30,7 @@ export interface OptionSelectItem {
   keepOpen?: boolean;
   overrideSound?: boolean;
   style?: TextStyle;
-  item?: string;
+  item?: string | undefined;
   itemArgs?: any[];
 }
 

@@ -5,7 +5,7 @@ import { getKeyWithKeycode, getKeyWithSettingName } from "#inputs/config-handler
 import { SettingKeyboard } from "#system/settings-keyboard";
 import { InGameManip } from "#test/setting-menu/in-game-manip";
 import { MenuManip } from "#test/setting-menu/menu-manip";
-import type { InterfaceConfig, SelectedDevice } from "#types/configs/inputs";
+import type { InterfaceConfig, SelectedDevice } from "#types/inputs";
 import { deepCopy } from "#utils/data";
 import { beforeEach, describe, expect, it } from "vitest";
 

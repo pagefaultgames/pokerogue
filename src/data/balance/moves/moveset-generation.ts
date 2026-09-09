@@ -32,12 +32,18 @@
  * @module
  */
 
-import type { LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
-import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import type { LEVEL_BASED_DENYLIST } from "#balance/forbidden-moves";
+import type { FORCED_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 
 // #region Constants
+
+/**
+ * The minimum level for a Pokémon to generate with a move it can only learn
+ * from a memory mushroom
+ */
+export const RELEARN_LEVEL_REQUIREMENT = 40;
 
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn

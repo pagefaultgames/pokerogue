@@ -1,5 +1,6 @@
 // biome-ignore-all lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
 
+import { GameDataType } from "#enums/game-data-type";
 import { version } from "#package.json";
 import { SessionMigrationError } from "#system/migration-errors";
 import type { AppliedMigrators, SessionSaveData, SystemSaveData } from "#types/save-data";
@@ -9,7 +10,8 @@ import type {
   SettingsSaveMigrator,
   SystemSaveMigrator,
 } from "#types/save-migrators";
-import { validateIsArrayOfObjects } from "#utils/migrator-utils";
+import { getDataTypeKey } from "#utils/data";
+import { compareVersions, validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /*
 // template for save migrator creation
@@ -63,6 +65,7 @@ const LATEST_VERSION = version;
 
 // Add migrator imports below
 
+import * as v1_0_3 from "#system/v1_0_3";
 import * as v1_0_4 from "#system/v1_0_4";
 import * as v1_7_0 from "#system/v1_7_0";
 import * as v1_8_3 from "#system/v1_8_3";
@@ -72,17 +75,22 @@ import * as v1_11_19 from "#system/v1_11_19";
 import * as v1_12_0_0 from "#system/v1_12_0_0";
 import * as v1_12_0_1 from "#system/v1_12_0_1";
 import * as v1_12_0_3 from "#system/v1_12_0_3";
+import * as v1_12_0_10 from "#system/v1_12_0_10";
+import * as v1_12_1_0 from "#system/v1_12_1_0";
 
 // To add a new set of migrators, add them to the appropriate array of migrators
 
 /** All system save migrators */
 const systemMigrators: SystemSaveMigrator[] = [
+  ...v1_0_3.systemMigrators,
   ...v1_0_4.systemMigrators,
   ...v1_7_0.systemMigrators,
   ...v1_8_3.systemMigrators,
   ...v1_12_0_0.systemMigrators,
   ...v1_12_0_1.systemMigrators,
   ...v1_12_0_3.systemMigrators,
+  ...v1_12_0_10.systemMigrators,
+  ...v1_12_1_0.systemMigrators,
 ];
 
 /** All session save migrators */
@@ -95,7 +103,11 @@ const sessionMigrators: SessionSaveMigrator[] = [
 ];
 
 /** All settings migrators */
-const settingsMigrators: SettingsSaveMigrator[] = [...v1_0_4.settingsMigrators, ...v1_11_19.settingsMigrators];
+const settingsMigrators: SettingsSaveMigrator[] = [
+  ...v1_0_4.settingsMigrators,
+  ...v1_11_19.settingsMigrators,
+  ...v1_12_1_0.settingsMigrators,
+];
 
 // Ensure the migrators are in the correct order so that they are consistently applied from oldest to newest
 sortMigrators(systemMigrators);
@@ -173,11 +185,18 @@ export function applySessionVersionMigration(data: Record<string, unknown>): voi
  * @param data - The settings data object to migrate
  */
 export function applySettingsVersionMigration(data: object): void {
-  const prevVersion: string = Object.hasOwn(data, "gameVersion") ? data["gameVersion"] : "1.0.0";
+  if (!data || typeof data !== "object") {
+    console.warn("No valid settings data to migrate. Skipping settings migrators.");
+    return;
+  }
+
+  const prevVersion: string = data["gameVersion"] ?? data["meta"]["gameVersion"] ?? "1.0.0";
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
   if (isCurrentVersionHigher) {
     applyMigrators(settingsMigrators, data, prevVersion);
+    data["meta"]["gameVersion"] = LATEST_VERSION;
+    localStorage.setItem(getDataTypeKey(GameDataType.SETTINGS), JSON.stringify(data));
     console.log(`Settings successfully migrated to v${LATEST_VERSION}!`);
   }
 }
@@ -210,58 +229,6 @@ function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, save
       }
     }
   }
-}
-
-/**
- * Converts a version string into an array of numbers for use in the comparison function.
- * @param versionString - The version to convert
- * @returns An array of numbers corresponding to the input version
- * @throws An error if the version string is not valid (of the form "#.#.#[.#]")
- * @example
- * ```ts
- * extractVersion("1.2.3"); // output: [1, 2, 3, 0]
- * extractVersion("1.2.3.4"); // output: [1, 2, 3, 4]
- * extractVersion("1..2.3"); // throws error
- * extractVersion("1.2.3.4.5"); // throws error
- * ```
- */
-function extractVersion(versionString: string): number[] {
-  // https://regex101.com/r/7r1299/1
-  const regex = /^\d+\.\d+\.\d+(?:\.\d+)?$/;
-  if (!regex.test(versionString)) {
-    throw new Error(`Invalid version string (${versionString}) in version migrator!`);
-  }
-
-  const versionArray = versionString.split(".").map(v => Number.parseInt(v));
-  if (versionArray.length === 3) {
-    versionArray.push(0);
-  }
-  return versionArray;
-}
-
-/**
- * Compares two versions and returns whether one is newer than the other.
- * @param versionA - The first version to compare
- * @param versionB - The second version to compare
- * @returns The result of the comparison:
- * - `1`: `versionA` is newer
- * - `-1`: `versionB` is newer
- * - `0`: The versions are equal
- */
-function compareVersions(versionA: string, versionB: string): -1 | 0 | 1 {
-  const a = extractVersion(versionA);
-  const b = extractVersion(versionB);
-
-  for (let i = 0; i < 4; i++) {
-    if (a[i] > b[i]) {
-      return 1;
-    }
-    if (a[i] < b[i]) {
-      return -1;
-    }
-  }
-
-  return 0;
 }
 
 // #endregion Utility Functions

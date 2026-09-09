@@ -190,11 +190,21 @@ export class EvolutionPhase extends Phase {
     if (!this.validate()) {
       return this.end();
     }
+    this.onBeforeSpriteSetup();
     this.setupEvolutionAssets();
     this.setupPokemonSprites();
     this.preEvolvedPokemonName = getPokemonNameWithAffix(this.pokemon);
     this.doEvolution();
   }
+
+  /**
+   * Hook allowing subclasses to mutate the Pokemon before the scene's sprites are configured.
+   *
+   * @remarks
+   * Runs after the transition into the evolution scene, so any resulting change to the Pokemon's
+   * appearance is hidden from the player rather than popping in on the field.
+   */
+  protected onBeforeSpriteSetup(): void {}
 
   /**
    * Update the sprites depicting the evolved Pokemon
@@ -403,7 +413,7 @@ export class EvolutionPhase extends Phase {
         ? LearnMoveSituation.EVOLUTION_FUSED_BASE
         : LearnMoveSituation.EVOLUTION;
     const levelMoves = this.pokemon
-      .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
+      .getLevelMoves({ startingLevel: this.lastLevel + 1, includeEvolutionMoves: true, learnSituation })
       .filter(lm => lm[0] === EVOLVE_MOVE);
     for (const lm of levelMoves) {
       globalScene.phaseManager.unshiftNew("LearnMovePhase", globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]);

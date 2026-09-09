@@ -1,15 +1,9 @@
 import { TrainerType } from "#enums/trainer-type";
+import { VoucherType } from "#enums/voucher-type";
 import { AchvTier, achvs } from "#system/achv";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { ConditionFn } from "#types/common";
 import i18next from "i18next";
-
-export enum VoucherType {
-  REGULAR,
-  PLUS,
-  PREMIUM,
-  GOLDEN,
-}
 
 export class Voucher {
   public id: string;

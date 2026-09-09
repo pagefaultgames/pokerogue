@@ -593,4 +593,4 @@ export const speciesEggMoves = {
   [SpeciesId.PALDEA_TAUROS]: [ MoveId.U_TURN, MoveId.SUCKER_PUNCH, MoveId.HORN_LEECH, MoveId.THUNDEROUS_KICK ],
   [SpeciesId.PALDEA_WOOPER]: [ MoveId.STONE_AXE, MoveId.RECOVER, MoveId.BANEFUL_BUNKER, MoveId.BARB_BARRAGE ],
   [SpeciesId.BLOODMOON_URSALUNA]: [ MoveId.NASTY_PLOT, MoveId.ROCK_POLISH, MoveId.SANDSEAR_STORM, MoveId.BOOMBURST ]
-} satisfies Partial<Record<SpeciesId, [MoveId, MoveId, MoveId, MoveId]>>;
+} as const satisfies Partial<Record<SpeciesId, [MoveId, MoveId, MoveId, MoveId]>>;

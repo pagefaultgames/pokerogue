@@ -7,11 +7,11 @@
  * @module
  */
 
-import { PHASE_START_COLOR } from "#app/constants/colors";
 import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
+import { PHASE_START_COLOR } from "#constants/colors";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
@@ -25,6 +25,7 @@ import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { DancerPhase } from "#phases/dancer-phase";
 import { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import { EggHatchPhase } from "#phases/egg-hatch-phase";
 import { EggLapsePhase } from "#phases/egg-lapse-phase";
@@ -133,6 +134,7 @@ const PHASES = Object.freeze({
   CheckSwitchPhase,
   CommandPhase,
   CommonAnimPhase,
+  DancerPhase,
   DamageAnimPhase,
   DynamicPhaseMarker,
   EggHatchPhase,
@@ -298,7 +300,8 @@ export class PhaseManager {
   public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
       const toAdd = this.checkDynamic(phase);
-      if (phase.is("MovePhase")) {
+      // TODO: Remove the dancer phase check once a move in flight allows `MoveEndPhase` to handle dancer interactions itself
+      if (phase.is("MovePhase") || phase.is("DancerPhase")) {
         this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
       } else {
         this.phaseQueue.addPhase(toAdd);

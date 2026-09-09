@@ -6,10 +6,10 @@ import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 
 export class TrainerPartyTemplate {
-  public size: number;
-  public strength: PartyMemberStrength;
-  public sameSpecies: boolean;
-  public balanced: boolean;
+  public readonly size: number;
+  public readonly strength: PartyMemberStrength;
+  public readonly sameSpecies: boolean;
+  public readonly balanced: boolean;
   /**
    * Controls which evolution level threshold to use for the trainer.
    * Bosses should use `EvoLevelThresholdKind.STRONG`, regular trainers
@@ -40,6 +40,10 @@ export class TrainerPartyTemplate {
     return this.strength;
   }
 
+  getEvoThresholdKind(_index: number): Exclude<EvoLevelThresholdKind, typeof EvoLevelThresholdKind.WILD> {
+    return this.evoLevelThresholdKind;
+  }
+
   isSameSpecies(_index: number): boolean {
     return this.sameSpecies;
   }
@@ -50,7 +54,7 @@ export class TrainerPartyTemplate {
 }
 
 export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
-  public templates: TrainerPartyTemplate[];
+  public readonly templates: readonly TrainerPartyTemplate[];
 
   constructor(...templates: TrainerPartyTemplate[]) {
     super(
@@ -73,6 +77,18 @@ export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
     }
 
     return super.getStrength(index);
+  }
+
+  getEvoThresholdKind(index: number): Exclude<EvoLevelThresholdKind, typeof EvoLevelThresholdKind.WILD> {
+    let t = 0;
+    for (const template of this.templates) {
+      if (t + template.size > index) {
+        return template.getEvoThresholdKind(index - t);
+      }
+      t += template.size;
+    }
+
+    return super.getEvoThresholdKind(index);
   }
 
   isSameSpecies(index: number): boolean {

@@ -1,3 +1,4 @@
+import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import type { Challenge } from "#data/challenge";
 import { copyChallenge } from "#data/challenge";
@@ -68,7 +69,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
   async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.runToSummon(...speciesIds);
 
-    if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
+    if (settings.general.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,

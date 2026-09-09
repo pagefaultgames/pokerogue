@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -537,7 +538,7 @@ export function getTextWithColors(content: string, primaryStyle: TextStyle, forW
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a giant switch which is the best option.
 export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
-  const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
+  const isLegacyTheme = settings.isLegacyTheme;
   switch (textStyle) {
     case TextStyle.MESSAGE:
       return shadow ? "#6b5a73" : "#f8f8f8";

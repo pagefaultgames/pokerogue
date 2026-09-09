@@ -59,7 +59,7 @@ describe("Field - Pokemon ID Checks", () => {
     game.move.use(MoveId.DESTINY_BOND);
     game.doSelectPartyPokemon(1);
     await game.move.forceEnemyMove(MoveId.FLAME_WHEEL);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     const dBondTag = player.getTag(BattlerTagType.DESTINY_BOND)!;

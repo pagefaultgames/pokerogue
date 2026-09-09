@@ -36,13 +36,13 @@ describe("Move - Rest", () => {
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
-    expect(snorlax.status?.effect).toBe(StatusEffect.POISON);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.POISON);
 
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
     expect(snorlax.hp).toBe(snorlax.getMaxHp());
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("should always last 3 turns", async () => {
@@ -56,7 +56,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toNextTurn();
 
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.status?.sleepTurnsRemaining).toBe(3);
 
     game.move.use(MoveId.SWORDS_DANCE);
@@ -117,7 +117,7 @@ describe("Move - Rest", () => {
     await game.toEndOfTurn();
 
     expect(snorlax.isFullHp()).toBe(false);
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.FAIL, MoveResult.SUCCESS]);
   });
 
@@ -128,13 +128,13 @@ describe("Move - Rest", () => {
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
 
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     snorlax.status!.sleepTurnsRemaining = 1;
 
     game.move.use(MoveId.REST);
     await game.toNextTurn();
 
-    expect(snorlax.status!.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.isFullHp()).toBe(true);
     expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(snorlax.status!.sleepTurnsRemaining).toBeGreaterThan(1);

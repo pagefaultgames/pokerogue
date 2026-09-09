@@ -68,12 +68,12 @@ export class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
 
     this.excludedMenus = () => [
       {
-        condition: [UiMode.COMMAND, UiMode.TITLE].includes(mode ?? UiMode.TITLE),
+        condition: true, // overridden later in `.render()`
         options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
@@ -202,7 +202,7 @@ export class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.add(this.menuMessageBoxContainer);
 
-    const manageDataOptions: any[] = []; // TODO: proper type
+    const manageDataOptions: OptionSelectItem[] = [];
 
     const confirmSlot = (message: string, slotFilter: (i: number) => boolean, callback: (i: number) => void) => {
       ui.revertMode();
@@ -305,16 +305,39 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       });
     }
-    manageDataOptions.push(
-      {
-        label: i18next.t("menuUiHandler:exportData"),
-        handler: () => {
-          globalScene.gameData.tryExportData(GameDataType.SYSTEM);
+    manageDataOptions.push({
+      label: i18next.t("menuUiHandler:exportData"),
+      handler: () => {
+        globalScene.gameData.tryExportData(GameDataType.SYSTEM);
+        return true;
+      },
+      keepOpen: true,
+    });
+    if (!bypassLogin) {
+      manageDataOptions.push({
+        label: i18next.t("menuUiHandler:clearLocalData"),
+        handler() {
+          ui.revertMode();
+          ui.showText(i18next.t("menuUiHandler:clearLocalDataWarning"), null, () => {
+            ui.setOverlayMode(
+              UiMode.CONFIRM,
+              () => {
+                globalScene.gameData.clearLocalData();
+                window.location.reload();
+              },
+              () => {
+                globalScene.ui.revertMode();
+                globalScene.ui.showText("", 0);
+              },
+              false,
+              -98,
+            );
+          });
           return true;
         },
         keepOpen: true,
-      },
-      {
+      });
+      manageDataOptions.push({
         // Note: i18n key is under `menu`, not `menuUiHandler` to avoid duplication
         label: i18next.t("menu:changePassword"),
         handler: () => {
@@ -324,8 +347,8 @@ export class MenuUiHandler extends MessageUiHandler {
           return true;
         },
         keepOpen: true,
-      },
-    );
+      });
+    }
     if (isBeta || isDev) {
       manageDataOptions.push({
         label: "Test Dialogue",
@@ -552,7 +575,7 @@ export class MenuUiHandler extends MessageUiHandler {
       this.showText("", 0);
       switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
-          ui.setOverlayMode(UiMode.SETTINGS);
+          ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
           success = true;
           break;
         case MenuOptions.ACHIEVEMENTS:

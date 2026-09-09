@@ -1,5 +1,5 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { initializeGame } from "#app/init/init";
+import { initializeGame } from "#init/init";
 import { manageListeners } from "#test/framework/listeners-manager";
 import { MockConsole } from "#test/mocks/mock-console/mock-console";
 import { mockContext } from "#test/mocks/mock-context-canvas";

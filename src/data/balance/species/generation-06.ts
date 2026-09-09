@@ -151,6 +151,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.GRASS_PLEDGE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.GRASSY_TERRAIN,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
@@ -4172,6 +4173,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.LASH_OUT,
@@ -5108,7 +5110,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [50, MoveId.SWORDS_DANCE],
       [56, MoveId.SACRED_SWORD],
     ],
-    tms: [],
+    tms: [MoveId.DUAL_CHOP],
   };
   generationSixSpeciesData[SpeciesId.AEGISLASH] = {
     species: new PokemonSpecies({
@@ -5941,6 +5943,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.SCALD,
       MoveId.BULLDOZE,
+      MoveId.DUAL_CHOP,
       MoveId.RAZOR_SHELL,
       MoveId.CONFIDE,
       MoveId.INFESTATION,
@@ -7267,6 +7270,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.ACROBATICS,
       MoveId.RETALIATE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.THROAT_CHOP,
@@ -9853,6 +9857,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.ALLY_SWITCH,
       MoveId.QUASH,
+      MoveId.DUAL_CHOP,
       MoveId.PHANTOM_FORCE,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,

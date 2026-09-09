@@ -101,7 +101,7 @@ describe("Final Boss", () => {
 
     game.move.use(MoveId.WILL_O_WISP);
     await game.toNextTurn();
-    expect(eternatus.status?.effect).toBe(StatusEffect.BURN);
+    expect(eternatus).toHaveStatusEffect(StatusEffect.BURN);
 
     const tickDamage = phase1Hp - eternatus.hp;
     const lastShieldHp = Math.ceil(phase1Hp / eternatus.bossSegments);

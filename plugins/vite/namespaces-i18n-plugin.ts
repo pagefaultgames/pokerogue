@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { normalizePath, type Plugin as VitePlugin } from "vite";
-import { namespaceMap } from "../../src/i18n-namespace-map";
-import { toCamelCase } from "../../src/utils/strings";
-import { isFileInsideDir, objectSwap } from "./vite-plugin-utils";
+import { namespaceMap } from "../../src/i18n-namespace-map.ts";
+import { toCamelCase } from "../../src/utils/strings.ts";
+import { isFileInsideDir, objectSwap } from "./vite-plugin-utils.ts";
 
 const namespaceMapSwap = objectSwap(namespaceMap);
 

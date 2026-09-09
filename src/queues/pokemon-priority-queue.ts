@@ -1,6 +1,6 @@
-import type { Pokemon } from "#app/field/pokemon";
-import { PriorityQueue } from "#app/queues/priority-queue";
-import { sortInSpeedOrder } from "#app/utils/speed-order";
+import type { Pokemon } from "#field/pokemon";
+import { PriorityQueue } from "#queues/priority-queue";
+import { sortInSpeedOrder } from "#utils/speed-order";
 
 /** A priority queue of {@linkcode Pokemon}s */
 export class PokemonPriorityQueue extends PriorityQueue<Pokemon> {
