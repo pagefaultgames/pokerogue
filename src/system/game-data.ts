@@ -60,6 +60,7 @@ import type {
   SeenDialogues,
   SessionSaveData,
   StarterData,
+  StarterDataEntry,
   SystemSaveData,
   TutorialFlags,
   Unlocks,
@@ -70,7 +71,7 @@ import type { StarterSpeciesId } from "#types/starter-species-id";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
-import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
+import { decrypt, deepCopy, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
@@ -1997,6 +1998,8 @@ export class GameData {
 
   getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
     const dexEntry = this.dexData[speciesId];
+    const starterDataEntry: StarterDataEntry = deepCopy(globalScene.gameData.starterData[speciesId]);
+    applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, speciesId, dexEntry, starterDataEntry);
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
