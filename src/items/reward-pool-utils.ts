@@ -61,7 +61,7 @@ export interface CustomRewardSettings {
  * @param party - Party is required for generating the weights
  * @param rerollCount - (Optional) Needed for weights of vouchers.
  */
-export function generateRewardPoolWeights(pool: RewardPool, party: Pokemon[], rerollCount = 0) {
+export function generateRewardPoolWeights(pool: RewardPool, rerollCount = 0) {
   for (const tier of Object.keys(pool)) {
     const poolWeights = pool[tier].map(w => {
       if (isTrainerItemId(w.id) && globalScene.trainerItems.isMaxStack(w.id)) {
@@ -70,7 +70,7 @@ export function generateRewardPoolWeights(pool: RewardPool, party: Pokemon[], re
       if (typeof w.weight === "number") {
         return w.weight;
       }
-      return w.weight(party, rerollCount);
+      return w.weight(rerollCount);
     });
     rewardPoolWeights[tier] = poolWeights;
   }

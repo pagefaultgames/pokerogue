@@ -66,6 +66,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { UiWindowStyle } from "#enums/ui-window-style";
+import type { Unlockables } from "#enums/unlockables";
 import { VolumeSetting } from "#enums/volume-setting";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
@@ -3330,5 +3331,18 @@ export class BattleScene extends SceneBase {
     encounter = new MysteryEncounter(encounter);
     encounter.populateDialogueTokensFromRequirements();
     return encounter;
+  }
+
+  /**
+   * Determines whether an item is unlocked based on game mode
+   * @param unlockable Unlockables the unlock to check
+   * @param ignoreDaily Whether Daily Mode runs should treat it as unlocked
+   * @returns whether it's considered unlocked according to current game mode and challenges
+   */
+  getUnlockStatus(unlockable: Unlockables, ignoreDaily = true): boolean {
+    return (
+      (this.gameMode.isDaily && ignoreDaily)
+      || (!this.gameMode.isFreshStartChallenge() && this.gameData.isUnlocked(unlockable))
+    );
   }
 }
