@@ -6,10 +6,7 @@ import type { PokemonPhase } from "#phases/pokemon-phase";
 import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 
 /**
- * Interface representing a single stat stage change.
- * @privateRemarks
- * Marked as `readonly` to prevent accidental mutation of data.
- */
+/** Interface representing a single stat stage change. */
 export interface StatChange {
   /** The stat to change. */
   readonly stat: BattleStat;
