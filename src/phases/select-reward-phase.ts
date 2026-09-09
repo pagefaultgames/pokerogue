@@ -70,9 +70,8 @@ export class SelectRewardPhase extends BattlePhase {
       globalScene.reroll = false;
     }
 
-    const party = globalScene.getPlayerParty();
     if (!this.isCopy) {
-      generateRewardPoolWeights(getRewardPoolForType(this.getPoolType()), party, this.rerollCount);
+      generateRewardPoolWeights(getRewardPoolForType(this.getPoolType()), this.rerollCount);
     }
     const rewardCount = this.getRewardCount();
 
@@ -453,7 +452,6 @@ export class SelectRewardPhase extends BattlePhase {
   getRewardOptions(rewardCount: number): RewardOption[] {
     return generatePlayerRewardOptions(
       rewardCount,
-      globalScene.getPlayerParty(),
       globalScene.lockRarityTiers ? this.rarityTiers : undefined,
       this.customRewardSettings,
     );

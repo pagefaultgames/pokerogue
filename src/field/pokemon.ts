@@ -1196,6 +1196,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.heldItemManager.getItems();
   }
 
+  public hasStatusFromOrb(): boolean {
+    return (
+      (this.heldItemManager.hasItem(HeldItemId.FLAME_ORB) && this.status?.effect === StatusEffect.BURN)
+      || (this.heldItemManager.hasItem(HeldItemId.TOXIC_ORB) && this.status?.effect === StatusEffect.TOXIC)
+    );
+  }
+
   updateScale(): void {
     this.setScale(this.getSpriteScale());
   }
