@@ -9,6 +9,7 @@ import {
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
 } from "#balance/starters";
+import { AbilityAttr } from "#enums/ability-attr";
 import { CandyUpgradeDisplayMode } from "#enums/candy-upgrade-display-mode";
 import { CandyUpgradeNotificationMode } from "#enums/candy-upgrade-notification-mode";
 import { ChallengeType } from "#enums/challenge-type";
@@ -16,6 +17,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
+import type { Nature } from "#enums/nature";
 import { Passive } from "#enums/passive";
 import { RibbonData } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
@@ -387,6 +389,23 @@ export function getStarterDexAttrPropsFromPreferences(
   };
 }
 
+function getStarterDefaultAbilityIndex(starterId: StarterSpeciesId): number {
+  const { starterDataEntry: starterData } = getStarterData(starterId);
+  const abilityAttr = starterData.abilityAttr;
+  const species = speciesDataRegistry.getSpecies(starterId);
+  return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
+}
+
+function getSpeciesDefaultNature(starterId: StarterSpeciesId): Nature {
+  const { dexEntry } = getStarterData(starterId);
+  for (let n = 0; n < 25; n++) {
+    if (dexEntry.natureAttr & (1 << (n + 1))) {
+      return n as Nature;
+    }
+  }
+  return 0 as Nature;
+}
+
 /**
  * Convert starter preferences to {@linkcode SpeciesDetails} format.
  *
@@ -401,8 +420,8 @@ export function getStarterDetailsFromPreferences(
 ) {
   const { female, formIndex, shiny, variant } = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = speciesDataRegistry.getSpecies(starterId);
-  const abilityIndex = starterPreferences.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-  const natureIndex = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
+  const abilityIndex = starterPreferences.abilityIndex ?? getStarterDefaultAbilityIndex(starterId);
+  const natureIndex = starterPreferences.nature ?? getSpeciesDefaultNature(starterId);
   const teraType = starterPreferences.tera ?? species.type1;
 
   return { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } satisfies DefinedSpeciesDetails;
