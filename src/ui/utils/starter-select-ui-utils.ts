@@ -396,7 +396,7 @@ function getStarterDefaultAbilityIndex(starterId: StarterSpeciesId): number {
   return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
 }
 
-function getSpeciesDefaultNature(starterId: StarterSpeciesId): Nature {
+function getStarterDefaultNature(starterId: StarterSpeciesId): Nature {
   const { dexEntry } = getStarterData(starterId);
   for (let n = 0; n < 25; n++) {
     if (dexEntry.natureAttr & (1 << (n + 1))) {
@@ -421,7 +421,7 @@ export function getStarterDetailsFromPreferences(
   const { female, formIndex, shiny, variant } = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = speciesDataRegistry.getSpecies(starterId);
   const abilityIndex = starterPreferences.abilityIndex ?? getStarterDefaultAbilityIndex(starterId);
-  const natureIndex = starterPreferences.nature ?? getSpeciesDefaultNature(starterId);
+  const natureIndex = starterPreferences.nature ?? getStarterDefaultNature(starterId);
   const teraType = starterPreferences.tera ?? species.type1;
 
   return { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } satisfies DefinedSpeciesDetails;
