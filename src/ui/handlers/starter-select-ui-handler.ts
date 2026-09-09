@@ -1263,7 +1263,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           break;
         }
 
-        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(this.lastStarterId, starterPreferences.formIndex ?? 0);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(
+          this.lastStarterId,
+          starterPreferences.formIndex ?? 0,
+        );
         const { teraType } = getStarterDetailsFromPreferences(
           this.lastStarterId,
           this.starterPreferences[this.lastStarterId],
