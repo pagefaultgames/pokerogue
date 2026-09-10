@@ -66,6 +66,7 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { VersionString } from "#types/save-migrators";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -108,6 +109,12 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
+  /**
+   * A record tracking which migrators have been applied to the save data,
+   * timestamped by the date in Unix milliseconds.
+   * @remarks
+   * Used for backend server validation.
+   */
   public appliedMigrators: AppliedMigrators = {};
 
   /**
@@ -161,7 +168,7 @@ export class GameData {
       voucherUnlocks: this.voucherUnlocks,
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
-      gameVersion: globalScene.game.config.gameVersion,
+      gameVersion: globalScene.game.config.gameVersion as VersionString,
       timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
@@ -435,7 +442,7 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
-      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version) === 1) {
+      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version as VersionString) === 1) {
         await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
 
         globalScene.time.delayedCall(fixedInt(1000), () => {
@@ -773,7 +780,7 @@ export class GameData {
         globalScene.currentBattle.battleType === BattleType.TRAINER
           ? new TrainerData(globalScene.currentBattle.trainer)
           : null,
-      gameVersion: globalScene.game.config.gameVersion,
+      gameVersion: globalScene.game.config.gameVersion as VersionString,
       timestamp: Date.now(),
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,

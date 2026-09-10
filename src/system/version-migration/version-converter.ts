@@ -1,17 +1,38 @@
-// biome-ignore-all lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
-
 import { GameDataType } from "#enums/game-data-type";
 import { version } from "#package.json";
 import { SessionMigrationError } from "#system/migration-errors";
 import type { AppliedMigrators, SessionSaveData, SystemSaveData } from "#types/save-data";
 import type {
+  SaveMigrator,
   SessionSaveMigrator,
   SessionSaveMigratorIn,
   SettingsSaveMigrator,
   SystemSaveMigrator,
+  VersionString,
 } from "#types/save-migrators";
 import { getDataTypeKey } from "#utils/data";
-import { compareVersions, validateIsArrayOfObjects } from "#utils/migrator-utils";
+import { compareVersions, isValidVersionString, validateIsArrayOfObjects } from "#utils/migrator-utils";
+
+// #region Migrator Imports
+
+// biome-ignore-start lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
+
+import * as v1_0_3 from "#system/v1_0_3";
+import * as v1_0_4 from "#system/v1_0_4";
+import * as v1_7_0 from "#system/v1_7_0";
+import * as v1_8_3 from "#system/v1_8_3";
+import * as v1_9_0 from "#system/v1_9_0";
+import * as v1_10_0 from "#system/v1_10_0";
+import * as v1_11_19 from "#system/v1_11_19";
+import * as v1_12_0_0 from "#system/v1_12_0_0";
+import * as v1_12_0_1 from "#system/v1_12_0_1";
+import * as v1_12_0_3 from "#system/v1_12_0_3";
+import * as v1_12_0_10 from "#system/v1_12_0_10";
+import * as v1_12_1_0 from "#system/v1_12_1_0";
+
+// biome-ignore-end lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
+
+// #endregion Migrator Imports
 
 /*
 // template for save migrator creation
@@ -32,7 +53,7 @@ const systemMigratorA: SystemSaveMigrator = {
   },
 };
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [systemMigratorA] as const;
+export const systemMigrators = [systemMigratorA] as const satisfies readonly SystemSaveMigrator[];
 
 const sessionMigratorA: SessionSaveMigrator = {
   name: "sessionMigratorA",
@@ -42,7 +63,7 @@ const sessionMigratorA: SessionSaveMigrator = {
   },
 };
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [sessionMigratorA] as const;
+export const sessionMigrators = [sessionMigratorA] as const satisfies readonly SessionSaveMigrator[];
 
 const settingsMigratorA: SettingsSaveMigrator = {
   name: "settingsMigratorA",
@@ -52,36 +73,19 @@ const settingsMigratorA: SettingsSaveMigrator = {
   },
 };
 
-export const settingsMigrators: readonly SettingsSaveMigrator[] = [settingsMigratorA] as const;
+export const settingsMigrators = [settingsMigratorA] as const satisfies readonly SettingsSaveMigrator[];
 */
 
-type SaveMigrator = SystemSaveMigrator | SessionSaveMigrator | SettingsSaveMigrator;
-type SaveData = SystemSaveData | SessionSaveMigratorIn | object;
+/**
+ * The current game version.
+ * @remarks
+ * This cannot be typed more strongly than `VersionString` because it is imported from `package.json`,
+ * and TypeScript does not infer exact value types from JSON imports.
+ */
+const LATEST_VERSION = version as VersionString;
 
-/** Current game version */
-const LATEST_VERSION = version;
-
-// #region Migrators
-
-// Add migrator imports below
-
-import * as v1_0_3 from "#system/v1_0_3";
-import * as v1_0_4 from "#system/v1_0_4";
-import * as v1_7_0 from "#system/v1_7_0";
-import * as v1_8_3 from "#system/v1_8_3";
-import * as v1_9_0 from "#system/v1_9_0";
-import * as v1_10_0 from "#system/v1_10_0";
-import * as v1_11_19 from "#system/v1_11_19";
-import * as v1_12_0_0 from "#system/v1_12_0_0";
-import * as v1_12_0_1 from "#system/v1_12_0_1";
-import * as v1_12_0_3 from "#system/v1_12_0_3";
-import * as v1_12_0_10 from "#system/v1_12_0_10";
-import * as v1_12_1_0 from "#system/v1_12_1_0";
-
-// To add a new set of migrators, add them to the appropriate array of migrators
-
-/** All system save migrators */
-const systemMigrators: SystemSaveMigrator[] = [
+/** All system save migrators. */
+const systemMigrators = [
   ...v1_0_3.systemMigrators,
   ...v1_0_4.systemMigrators,
   ...v1_7_0.systemMigrators,
@@ -91,46 +95,52 @@ const systemMigrators: SystemSaveMigrator[] = [
   ...v1_12_0_3.systemMigrators,
   ...v1_12_0_10.systemMigrators,
   ...v1_12_1_0.systemMigrators,
-];
+] as const satisfies readonly SystemSaveMigrator[];
 
-/** All session save migrators */
-const sessionMigrators: SessionSaveMigrator[] = [
+/** All session save migrators. */
+const sessionMigrators = [
   ...v1_0_4.sessionMigrators,
   ...v1_7_0.sessionMigrators,
   ...v1_9_0.sessionMigrators,
   ...v1_10_0.sessionMigrators,
   ...v1_12_0_0.sessionMigrators,
-];
+] as const satisfies readonly SessionSaveMigrator[];
 
-/** All settings migrators */
-const settingsMigrators: SettingsSaveMigrator[] = [
+/** All settings migrators. */
+const settingsMigrators = [
   ...v1_0_4.settingsMigrators,
   ...v1_11_19.settingsMigrators,
   ...v1_12_1_0.settingsMigrators,
-];
+] as const satisfies readonly SettingsSaveMigrator[];
 
-// Ensure the migrators are in the correct order so that they are consistently applied from oldest to newest
-sortMigrators(systemMigrators);
-sortMigrators(sessionMigrators);
-sortMigrators(settingsMigrators);
+// #region Migrator Sorting Typecheck Code
 
-// #endregion Migrators
+type MapToVersionNumbers<M extends readonly SaveMigrator[]> = M extends readonly [
+  infer First extends SaveMigrator,
+  ...infer Rest extends readonly SaveMigrator[],
+]
+  ? [First["version"], ...MapToVersionNumbers<Rest>]
+  : [];
+
+// Export the types for the migrator versions to be checked inside version-types.test-d.ts.
+
+export type SystemMigratorVersions = MapToVersionNumbers<typeof systemMigrators>;
+export type SessionMigratorVersions = MapToVersionNumbers<typeof sessionMigrators>;
+export type SettingsMigratorVersions = MapToVersionNumbers<typeof settingsMigrators>;
+
+// #endregion Migrator Sorting Typecheck Code
 
 // #region Migration Functions
 
 /**
- * Converts incoming {@linkcode SystemSaveData} that has a version below the
+ * Convert incoming {@linkcode SystemSaveData} that has a version below the
  * current version number listed in `package.json`.
- *
- * Note that no transforms act on the {@linkcode data} if its version matches
- * the current version or if there are no migrations made between its version up
- * to the current version.
  * @param data - The {@linkcode SystemSaveData} to migrate
  */
 export function applySystemVersionMigration(data: SystemSaveData): void {
   const prevVersion = data.gameVersion;
-  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
   if (isCurrentVersionHigher) {
     applyMigrators(systemMigrators, data, prevVersion);
     console.log(`System data successfully migrated to v${LATEST_VERSION}!`);
@@ -138,22 +148,23 @@ export function applySystemVersionMigration(data: SystemSaveData): void {
 }
 
 /**
- * Converts incoming {@linkcode SessionSavaData} that has a version below the
+ * Convert incoming {@linkcode SessionSaveData} that has a version below the
  * current version number listed in `package.json`.
- *
- * Note that no transforms act on the {@linkcode data} if its version matches
- * the current version or if there are no migrations made between its version up
- * to the current version.
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
-export function applySessionVersionMigration(data: Record<string, unknown>): void {
-  if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
-    console.warn("Session data is missing a valid gameVersion. Skipping migration.");
+export function applySessionVersionMigration(data: Record<string, unknown> | null): void {
+  if (
+    !data
+    || typeof data !== "object"
+    || typeof data.gameVersion !== "string"
+    || !isValidVersionString(data.gameVersion)
+  ) {
+    console.warn("Session data is invalid or missing a valid gameVersion. Skipping migration.");
     return;
   }
+
   const prevVersion = data.gameVersion;
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
-
   if (isCurrentVersionHigher) {
     // Always sanitize money as a safeguard
     data.money = Math.floor(data.money as number);
@@ -165,23 +176,19 @@ export function applySessionVersionMigration(data: Record<string, unknown>): voi
     // Enemy party can be null due to some mystery encounters. Coerce to empty array before continuing
     if (data.enemyParty == null) {
       console.debug("Converting null enemyParty to empty array for migration.");
-      data.enemyParty = [];
+      data.enemyParty = [] satisfies Record<string, unknown>[];
     } else if (!validateIsArrayOfObjects(data.enemyParty)) {
       throw new SessionMigrationError("Session data has an invalid enemyParty array. Cannot migrate.");
     }
 
-    applyMigrators(sessionMigrators, data, prevVersion);
+    applyMigrators(sessionMigrators, data as SessionSaveMigratorIn, prevVersion);
     console.log(`Session data successfully migrated to v${LATEST_VERSION}!`);
   }
 }
 
 /**
- * Converts incoming settings data that has a version below the
+ * Convert incoming settings data that has a version below the
  * current version number listed in `package.json`.
- *
- * Note that no transforms act on the {@linkcode data} if its version matches
- * the current version or if there are no migrations made between its version up
- * to the current version.
  * @param data - The settings data object to migrate
  */
 export function applySettingsVersionMigration(data: object): void {
@@ -190,9 +197,9 @@ export function applySettingsVersionMigration(data: object): void {
     return;
   }
 
-  const prevVersion: string = data["gameVersion"] ?? data["meta"]["gameVersion"] ?? "1.0.0";
-  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
+  const prevVersion: VersionString = data["gameVersion"] ?? data["meta"]["gameVersion"] ?? "1.0.0";
 
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
   if (isCurrentVersionHigher) {
     applyMigrators(settingsMigrators, data, prevVersion);
     data["meta"]["gameVersion"] = LATEST_VERSION;
@@ -204,29 +211,27 @@ export function applySettingsVersionMigration(data: object): void {
 // #endregion Migration Functions
 
 // #region Utility Functions
-
-/** Sorts migrators by their stated version */
-function sortMigrators(migrators: SaveMigrator[]): void {
-  migrators.sort((a, b) => compareVersions(a.version, b.version));
-}
-
 /**
- * Applies version migrators to the player's save data.
+ * Apply version migrators to the player's data.
  * @param migrators - The {@linkcode SaveMigrator}s to be applied
- * @param data - The {@linkcode SaveData} to migrate
+ * @param data - The data to migrate
  * @param saveVersion - The version of the save data
  */
-function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, saveVersion: string): void {
+function applyMigrators<D extends object>(
+  migrators: readonly SaveMigrator<D>[],
+  data: D,
+  saveVersion: VersionString,
+): void {
   for (const migrator of migrators) {
-    const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
+    if (compareVersions(saveVersion, migrator.version) !== -1) {
+      continue;
+    }
 
-    if (isMigratorVersionHigher) {
-      migrator.migrate(data as any);
+    migrator.migrate(data);
 
-      if ("appliedMigrators" in data) {
-        const migratorNameVersion = `${migrator.version}-${migrator.name}`;
-        (data.appliedMigrators as AppliedMigrators)[migratorNameVersion] = Date.now();
-      }
+    if ("appliedMigrators" in data) {
+      const migratorNameVersion: keyof AppliedMigrators = `${migrator.version}-${migrator.name}`;
+      (data.appliedMigrators as AppliedMigrators)[migratorNameVersion] = Date.now();
     }
   }
 }
