@@ -781,30 +781,28 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  async getSession(slotId: number): Promise<SessionSaveData | undefined> {
+  public async getSession(slotId: number): Promise<SessionSaveData | undefined> {
     // TODO: Do we need this fallback anymore?
     if (slotId < 0) {
       return;
     }
 
-    console.log("Getting Session Slot id: %d", slotId);
+    console.debug("Getting Session Slot id: %d", slotId);
 
-    // Check local storage for the cached session data
-    if (bypassLogin || localStorage.getItem(getSessionDataLocalStorageKey(slotId))) {
-      const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
-      if (!sessionData) {
-        console.error("No session data found!");
-        return;
-      }
+    const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
+    if (sessionData) {
       return this.parseSessionData(decrypt(sessionData, bypassLogin));
     }
+    if (bypassLogin) {
+      return;
+    }
 
-    // Ask the server API for the save data and store it in localstorage
     const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-
-    // TODO: This is a far cry from proper JSON validation
-    if (response == null || response.length === 0 || response.charAt(0) !== "{") {
-      console.error("Invalid save data JSON detected!", response);
+    if (response == null || response.trim() === "save does not exist") {
+      return;
+    }
+    if (!isValidJSON(response)) {
+      console.error("Invalid save data detected!", response);
       return;
     }
 
