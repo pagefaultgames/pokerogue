@@ -43,7 +43,6 @@ export class StatStageChangePhase extends PokemonPhase {
     super(options.battlerIndex);
 
     // Allow changes with 0 stages to be passed as no-ops
-    // TODO: Do we want to allow this? It's probably a mistake unless it's inside a `map` call or something...
     this.options = { ...options, changes: options.changes.filter(c => c.stages !== 0) };
     // TODO: Change this once `getPokemon`'s return type is fixed
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
@@ -199,9 +198,8 @@ export class StatStageChangePhase extends PokemonPhase {
    * split the negative changes into a follow-up {@linkcode StatStageChangePhase}.
    */
   private splitBySign(): void {
-    const { positive = [], negative = [] } = Object.groupBy(this.options.changes, c =>
-      c.stages > 0 ? "positive" : "negative",
-    );
+    const positive = this.options.changes.filter(c => c.stages >= 0);
+    const negative = this.options.changes.filter(c => c.stages < 0);
 
     if (positive.length === 0 || negative.length === 0) {
       return;
@@ -224,11 +222,7 @@ export class StatStageChangePhase extends PokemonPhase {
   private getAppliedChanges(pokemon: Pokemon): StatChange[] {
     return this.options.changes.map(({ stat, stages }) => {
       const current = pokemon.getStatStage(stat);
-      // type assertion is always safe (though TS cannot know it):
-      // - `delta` is always an integer since `current` and `stages` both are
-      // - If `stages > 0`, then `delta = min(stages, 6 - current) ∈ [0, 6]`
-      // - If `stages < 0`, then `delta = max(stages, -6 - current) ∈ [-6, 0]`
-      // - if `stages = 0`, then we would have filtered it out in the constructor
+      // this is always inside [-6, 6]
       const delta = Phaser.Math.Clamp(current + stages, -6, 6) - current;
       return { stat, stages: delta };
     });
