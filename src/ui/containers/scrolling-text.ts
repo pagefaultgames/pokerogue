@@ -6,13 +6,26 @@ import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
-/*
-This takes various coordinates:
-- The x and y coordinates relative to the parent container, this is typical behavior for Phaser.GameObjects.Container.
-- The width and height of the box; these are needed to create the background.
-The mask is not created right away (although this is possible in principle). Instead, we have a separate function,
-which takes as input the _global_ coordinates of scrolling text object. This is necessary to correctly position the mask in the scene.
- */
+interface ScrollingTextParameters {
+  // The x coordinate relative to the parent container
+  x: number;
+  // The y coordinate relative to the parent container
+  y: number;
+  // The width of the text box
+  width: number;
+  // The height of the text box
+  height: number;
+  // How many lines can be displayed on the screen at once
+  maxLineCount: number;
+  // The text shown initially; can be modified later
+  content: string;
+  // The style of the text
+  style: TextStyle;
+  // Whether to add a background box
+  hasBackground?: boolean;
+  // Extra style options
+  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle;
+}
 
 const BORDER = 8;
 
@@ -26,17 +39,16 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   private offsetY: number;
   maskHeight: number;
 
-  constructor(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    maxLineCount: number,
-    content: string,
-    style: TextStyle,
-    hasBackground = false,
-    extraStyleOptions: Phaser.Types.GameObjects.Text.TextStyle = {},
-  ) {
+  /*
+  This takes various coordinates:
+  The mask is not created right away (although this is possible in principle). Instead, we have a separate function,
+  which takes as input the _global_ coordinates of scrolling text object. This is necessary to correctly position the mask in the scene.
+  */
+  constructor(params: ScrollingTextParameters) {
+    const { x, y, width, height, maxLineCount, content, style } = params;
+    const hasBackground = !!params.hasBackground;
+    const extraStyleOptions: Phaser.Types.GameObjects.Text.TextStyle = params.extraStyleOptions ?? {};
+
     super(globalScene, x, y);
 
     this.offsetX = hasBackground ? BORDER : 0;

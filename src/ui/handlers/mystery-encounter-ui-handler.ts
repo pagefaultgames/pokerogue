@@ -503,16 +503,16 @@ export class MysteryEncounterUiHandler extends UiHandler {
     this.rarityBall.setTexture("pb", ballType);
 
     // prepare the description box
-    this.desc = new ScrollingText(
-      6,
-      22,
-      830 / 6,
-      62,
-      6, // maxLineCount
-      descriptionText ?? "", // initial content
-      TextStyle.TOOLTIP_CONTENT,
-      false,
-    );
+    this.desc = new ScrollingText({
+      x: 6,
+      y: 22,
+      width: 830 / 6,
+      height: 62,
+      maxLineCount: 6,
+      content: descriptionText ?? "",
+      style: TextStyle.TOOLTIP_CONTENT,
+      hasBackground: false,
+    });
     this.desc.createMask(globalScene, 6, 50);
     this.descriptionContainer.add(this.desc);
     this.desc.activate();
@@ -590,21 +590,21 @@ export class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (text) {
-      this.tooltipDesc = new ScrollingText(
-        6,
-        5,
-        96,
-        32,
-        3, // maxLineCount
-        text ?? "", // initial content
-        TextStyle.TOOLTIP_CONTENT,
-        false,
-        {
+      this.tooltipDesc = new ScrollingText({
+        x: 6,
+        y: 5,
+        width: 96,
+        height: 32,
+        maxLineCount: 3,
+        content: text ?? "",
+        style: TextStyle.TOOLTIP_CONTENT,
+        hasBackground: false,
+        extraStyleOptions: {
           fontSize: "72px",
           padding: { top: 8 },
           lineSpacing: 1.25,
         },
-      );
+      });
       this.tooltipDesc.createMask(globalScene, this.tooltipContainer.x, this.tooltipContainer.y + 188.5);
       this.tooltipContainer.add(this.tooltipDesc);
       this.tooltipDesc.activate();

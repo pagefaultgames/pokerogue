@@ -67,16 +67,16 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     const descBoxHeight = DESC_HEIGHT;
 
     // prepare the description box
-    this.desc = new ScrollingText(
-      descBoxX,
-      descBoxY,
-      descBoxWidth,
-      descBoxHeight,
-      3, // maxLineCount
-      "", // initial content
-      TextStyle.BATTLE_INFO,
-      !options?.hideBg,
-    );
+    this.desc = new ScrollingText({
+      x: descBoxX,
+      y: descBoxY,
+      width: descBoxWidth,
+      height: descBoxHeight,
+      maxLineCount: 3,
+      content: "",
+      style: TextStyle.BATTLE_INFO,
+      hasBackground: !options?.hideBg,
+    });
     this.desc.createMask(globalScene, this.x + this.desc.x, this.y + this.desc.y);
     this.add(this.desc);
 

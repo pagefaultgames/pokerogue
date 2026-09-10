@@ -45,16 +45,16 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     const descBoxHeight = DESC_HEIGHT;
 
     // prepare the description box
-    this.desc = new ScrollingText(
-      descBoxX,
-      descBoxY,
-      descBoxWidth,
-      descBoxHeight,
-      3, // maxLineCount
-      "", // initial content
-      TextStyle.BATTLE_INFO,
-      true,
-    );
+    this.desc = new ScrollingText({
+      x: descBoxX,
+      y: descBoxY,
+      width: descBoxWidth,
+      height: descBoxHeight,
+      maxLineCount: 3,
+      content: "",
+      style: TextStyle.BATTLE_INFO,
+      hasBackground: true,
+    });
     this.desc.createMask(globalScene, this.x + this.desc.x, this.y + this.desc.y);
     this.add(this.desc);
 

@@ -946,15 +946,15 @@ export class SummaryUiHandler extends UiHandler {
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.description = new ScrollingText(
-            7,
-            71,
-            206,
-            31,
-            2, // maxLineCount
-            abilityInfo.ability?.description!, // initial content
-            TextStyle.WINDOW_ALT,
-          );
+          abilityInfo.description = new ScrollingText({
+            x: 7,
+            y: 71,
+            width: 206,
+            height: 31,
+            maxLineCount: 2,
+            content: abilityInfo.ability?.description!,
+            style: TextStyle.WINDOW_ALT,
+          });
           abilityInfo.description.createMask(globalScene, 110, 90);
           profileContainer.add(abilityInfo.description);
 
@@ -1236,15 +1236,15 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescription = new ScrollingText(
-          1,
-          74,
-          205,
-          59,
-          4, // maxLineCount
-          "", // initial content
-          TextStyle.WINDOW_ALT,
-        );
+        this.moveDescription = new ScrollingText({
+          x: 1,
+          y: 74,
+          width: 205,
+          height: 59,
+          maxLineCount: 4,
+          content: "",
+          style: TextStyle.WINDOW_ALT,
+        });
         this.moveDescription.createMask(globalScene, 112, 121);
         this.movesContainer.add(this.moveDescription);
         break;
