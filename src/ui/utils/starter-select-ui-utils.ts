@@ -17,7 +17,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
-import type { Nature } from "#enums/nature";
+import { Nature } from "#enums/nature";
 import { Passive } from "#enums/passive";
 import { RibbonData } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
@@ -403,7 +403,7 @@ function getStarterDefaultNature(starterId: StarterSpeciesId): Nature {
       return n as Nature;
     }
   }
-  return 0 as Nature;
+  return Nature.HARDY;
 }
 
 /**
