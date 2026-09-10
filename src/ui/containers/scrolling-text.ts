@@ -77,9 +77,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
 
     const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
     this.maskHeight = (this.text.style.lineHeight / 6) * this.maxLineCount;
-    console.log("Mask: ");
-    console.log(this.text.style.lineHeight / 6);
-    console.log(this.maskHeight);
     const visibleHeight = this.maskHeight;
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
@@ -99,12 +96,11 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     }
 
     // determine if we need to add new scrolling effects
-    const displayHeight = this.text.displayHeight;
-    const scrollAmount = displayHeight - this.maskHeight;
     const lineHeight = this.text.style.lineHeight / 6;
-    console.log("Activate: ");
-    console.log(displayHeight);
-    console.log(scrollAmount);
+    // This is necessary because this.text.displayHeight does not correspond to
+    // number of lines * lineHeight, and this causes issues when a custom lineSpacing is used.
+    const displayHeight = lineHeight * Math.round(this.text.displayHeight / lineHeight);
+    const scrollAmount = displayHeight - this.maskHeight;
 
     if (scrollAmount > 0) {
       // generate scrolling effects

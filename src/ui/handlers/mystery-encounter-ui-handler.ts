@@ -590,7 +590,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
     if (text) {
       this.tooltipDesc = new ScrollingText({
         x: 6,
-        y: 5,
+        y: 5 + 8 / 6,
         width: 96,
         height: 32,
         maxLineCount: 3,
@@ -599,11 +599,10 @@ export class MysteryEncounterUiHandler extends UiHandler {
         hasBackground: false,
         extraStyleOptions: {
           fontSize: "72px",
-          padding: { top: 8 },
           lineSpacing: 1.25,
         },
       });
-      this.tooltipDesc.createMask(globalScene, this.tooltipContainer.x, this.tooltipContainer.y + 188.5);
+      this.tooltipDesc.createMask(globalScene, this.tooltipContainer.x + 6, this.tooltipContainer.y + 188.5);
       this.tooltipContainer.add(this.tooltipDesc);
       this.tooltipDesc.activate();
     }
