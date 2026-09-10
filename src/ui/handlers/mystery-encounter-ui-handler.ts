@@ -28,11 +28,9 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
-  private tooltipScrollTween?: Phaser.Tweens.Tween | undefined;
 
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
-  private descriptionScrollTween?: Phaser.Tweens.Tween | undefined;
   private rarityBall: Phaser.GameObjects.Sprite;
 
   private dexProgressWindow: Phaser.GameObjects.NineSlice;

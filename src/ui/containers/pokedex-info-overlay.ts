@@ -20,18 +20,8 @@ const DESC_HEIGHT = 48;
 
 export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
-
   private readonly desc: ScrollingText;
-  private descScroll: Phaser.Tweens.Tween | null = null;
-
-  private readonly descBg: Phaser.GameObjects.NineSlice;
-
   private readonly options: PokedexInfoOverlaySettings;
-
-  private readonly textMaskRect: Phaser.GameObjects.Graphics;
-
-  private readonly maskPointOriginX: number;
-  private readonly maskPointOriginY: number;
 
   constructor(options?: PokedexInfoOverlaySettings) {
     super(globalScene, options?.x, options?.y);

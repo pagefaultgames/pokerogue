@@ -7,23 +7,23 @@ import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 interface ScrollingTextParameters {
-  // The x coordinate relative to the parent container
+  /** The x coordinate relative to the parent container */
   x: number;
-  // The y coordinate relative to the parent container
+  /** The y coordinate relative to the parent container */
   y: number;
-  // The width of the text box
+  /** The width of the text box */
   width: number;
-  // The height of the text box
+  /** The height of the text box */
   height: number;
-  // How many lines can be displayed on the screen at once
+  /** How many lines can be displayed on the screen at once */
   maxLineCount: number;
-  // The text shown initially; can be modified later
+  /** The text shown initially; can be modified later */
   content: string;
-  // The style of the text
+  /** The style of the text */
   style: TextStyle;
-  // Whether to add a background box
+  /** Whether to add a background box */
   hasBackground?: boolean;
-  // Extra style options
+  /** Extra style options */
   extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle;
 }
 
