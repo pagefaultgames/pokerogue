@@ -955,7 +955,7 @@ export class SummaryUiHandler extends UiHandler {
             content: abilityInfo.ability?.description!,
             style: TextStyle.WINDOW_ALT,
           });
-          abilityInfo.description.createMask(globalScene, 110, 90);
+          abilityInfo.description.createMask(110, 90);
           profileContainer.add(abilityInfo.description);
 
           abilityInfo.description.activate();
@@ -1245,7 +1245,7 @@ export class SummaryUiHandler extends UiHandler {
           content: "",
           style: TextStyle.WINDOW_ALT,
         });
-        this.moveDescription.createMask(globalScene, 112, 121);
+        this.moveDescription.createMask(112, 121);
         this.movesContainer.add(this.moveDescription);
         break;
       }

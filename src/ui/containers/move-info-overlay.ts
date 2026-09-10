@@ -75,9 +75,9 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
       maxLineCount: 3,
       content: "",
       style: TextStyle.BATTLE_INFO,
-      hasBackground: !options?.hideBg,
+      showBackground: !options?.hideBg,
     });
-    this.desc.createMask(globalScene, this.x + this.desc.x, this.y + this.desc.y);
+    this.desc.createMask(this.x + this.desc.x, this.y + this.desc.y);
     this.add(this.desc);
 
     // prepare the effect box

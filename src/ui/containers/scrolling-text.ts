@@ -21,7 +21,7 @@ interface ScrollingTextParameters {
   /** The style of the text */
   style: TextStyle;
   /** Whether to add a background box */
-  hasBackground?: boolean;
+  showBackground?: boolean;
   /** Extra style options */
   extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle;
 }
@@ -38,22 +38,29 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   private offsetY: number;
   maskHeight: number;
 
-  /*
-  The mask is not created right away (although this is possible in principle). Instead, we have a separate function,
-  which takes as input the _global_ coordinates of scrolling text object. This is necessary to correctly position the mask in the scene.
-  */
+  /**
+   * This constructor sets up a background element, plus the text. By default, the background is invisible.
+   * If the `showBackground` option is set to `true`, an offset is automatically added
+   * between the background and the text; otherwise, there is no offset.
+   *
+   * In order for scrolling to work, it is also necessary to set up a mask, which define the region
+   * of the screen where the text is visible. This is done through a separate method, so that the mask
+   * can be adjusted if the `ScrollingText` container is repositioned at some point.
+   *
+   * @param params A set of {@linkcode ScrollingTextParameters}.
+   */
   constructor(params: ScrollingTextParameters) {
     const { x, y, width, height, maxLineCount, content, style } = params;
-    const hasBackground = !!params.hasBackground;
+    const showBackground = !!params.showBackground;
     const extraStyleOptions: Phaser.Types.GameObjects.Text.TextStyle = params.extraStyleOptions ?? {};
 
     super(globalScene, x, y);
 
-    this.offsetX = hasBackground ? BORDER : 0;
-    this.offsetY = hasBackground ? BORDER - 2 : 0;
+    this.offsetX = showBackground ? BORDER : 0;
+    this.offsetY = showBackground ? BORDER - 2 : 0;
 
     // Adding the background
-    this.descBg = addWindow(0, 0, width, height).setOrigin(0, 0).setVisible(hasBackground);
+    this.descBg = addWindow(0, 0, width, height).setOrigin(0, 0).setVisible(showBackground);
     this.add(this.descBg);
 
     // Adding the text element
@@ -70,7 +77,17 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     this.add(this.text);
   }
 
-  createMask(scene: Phaser.Scene, globalX: number, globalY: number) {
+  /**
+   * This method must be passed as input the global coordinates of the scrolling text object.
+   * It is done this way because of two reasons:
+   * 1) the mask must be positioned relative to the scene, not to a parent container;
+   * 2) there is no simple way to recover the global coordinates from inside the ScrollingText container.
+   * The latter would be much more desirable if possible.
+   *
+   * @param globalX
+   * @param globalY
+   */
+  createMask(globalX: number, globalY: number) {
     // Adding the mask for the scrolling effect
     const globalMaskX = globalX + this.offsetX;
     const globalMaskY = globalY + this.offsetY;
@@ -79,14 +96,17 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     this.maskHeight = (this.text.style.lineHeight / 6) * this.maxLineCount;
     const visibleHeight = this.maskHeight;
 
-    const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
+    const maskGraphics = globalScene.make.graphics({ x: 0, y: 0 });
     maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight).setScale(6);
 
-    scene.add.existing(maskGraphics);
+    globalScene.add.existing(maskGraphics);
     const mask = this.createGeometryMask(maskGraphics);
     this.text.setMask(mask);
   }
 
+  /**
+   * Start the scrolling animation.
+   */
   activate() {
     // stop previous scrolling effects and reset y position
     if (this.descScroll) {
@@ -103,7 +123,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     const scrollAmount = displayHeight - this.maskHeight;
 
     if (scrollAmount > 0) {
-      // generate scrolling effects
       this.descScroll = globalScene.tweens.add({
         targets: this.text,
         delay: fixedInt(2000),

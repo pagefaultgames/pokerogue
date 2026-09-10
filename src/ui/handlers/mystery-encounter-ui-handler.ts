@@ -509,9 +509,9 @@ export class MysteryEncounterUiHandler extends UiHandler {
       maxLineCount: 6,
       content: descriptionText ?? "",
       style: TextStyle.TOOLTIP_CONTENT,
-      hasBackground: false,
+      showBackground: false,
     });
-    this.desc.createMask(globalScene, 6, 50);
+    this.desc.createMask(6, 50);
     this.descriptionContainer.add(this.desc);
     this.desc.activate();
 
@@ -596,13 +596,13 @@ export class MysteryEncounterUiHandler extends UiHandler {
         maxLineCount: 3,
         content: text ?? "",
         style: TextStyle.TOOLTIP_CONTENT,
-        hasBackground: false,
+        showBackground: false,
         extraStyleOptions: {
           fontSize: "72px",
           lineSpacing: 1.25,
         },
       });
-      this.tooltipDesc.createMask(globalScene, this.tooltipContainer.x + 6, this.tooltipContainer.y + 188.5);
+      this.tooltipDesc.createMask(this.tooltipContainer.x + 6, this.tooltipContainer.y + 188.5);
       this.tooltipContainer.add(this.tooltipDesc);
       this.tooltipDesc.activate();
     }
