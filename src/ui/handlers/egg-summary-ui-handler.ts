@@ -6,7 +6,6 @@ import type { EggHatchData } from "#data/egg-hatch-data";
 import { Button } from "#enums/buttons";
 import { EggSkipPreference } from "#enums/egg-skip-preference";
 import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
-import { UiMode } from "#enums/ui-mode";
 import { HatchedPokemonContainer } from "#ui/hatched-pokemon-container";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
@@ -55,10 +54,6 @@ export class EggSummaryUiHandler extends MessageUiHandler {
    * - {@linkcode EggEventType.EGG_COUNT_CHANGED} {@linkcode EggCountChangedEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
-
-  constructor() {
-    super(UiMode.EGG_HATCH_SUMMARY);
-  }
 
   setup() {
     const ui = this.getUi();

@@ -124,7 +124,7 @@ describe("Terrain -", () => {
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
+      expect(game.phaseInterceptor.phaseLog).toContain("PokemonHealPhase");
       expect(blissey.getHpRatio()).toBeCloseTo(0.5625, 1);
       expect(shuckle.getHpRatio()).toBeCloseTo(0.5, 1);
 
@@ -134,7 +134,7 @@ describe("Terrain -", () => {
       await game.toNextTurn();
 
       // shuckle is airborne and blissey is semi-invulnerable, so nobody gets healed
-      expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
       expect(blissey.getHpRatio()).toBeCloseTo(0.5625, 1);
       expect(shuckle.getHpRatio()).toBeCloseTo(0.5, 1);
     });

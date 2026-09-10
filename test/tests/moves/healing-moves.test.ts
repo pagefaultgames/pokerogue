@@ -55,7 +55,7 @@ describe("Moves - Healing Moves", () => {
         game.move.use(move);
         await game.toEndOfTurn();
 
-        expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
+        expect(game.phaseInterceptor.phaseLog).toContain("PokemonHealPhase");
         expect(game).toHaveShownMessage(
           i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(blissey) }),
         );
@@ -77,7 +77,7 @@ describe("Moves - Healing Moves", () => {
             pokemonName: getPokemonNameWithAffix(blissey),
           }),
         );
-        expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+        expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
         expect(blissey).toHaveUsedMove({ move, result: MoveResult.FAIL });
       });
     });
@@ -177,7 +177,7 @@ describe("Moves - Healing Moves", () => {
         game.move.use(move);
         await game.toEndOfTurn();
 
-        expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
+        expect(game.phaseInterceptor.phaseLog).toContain("PokemonHealPhase");
         expect(game).toHaveShownMessage(
           i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(chansey) }),
         );
@@ -198,7 +198,7 @@ describe("Moves - Healing Moves", () => {
             pokemonName: getPokemonNameWithAffix(chansey),
           }),
         );
-        expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+        expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
         expect(blissey).toHaveUsedMove({ move, result: MoveResult.FAIL });
       });
 
@@ -234,7 +234,7 @@ describe("Moves - Healing Moves", () => {
         expect(karp1).not.toHaveFullHp();
         expect(omantye).toHaveHp(omantye.getMaxHp() / 2 + 1, { rounding: "half up" });
         // Only omantye received a healing phase
-        expect(game.phaseInterceptor.log.filter(p => p === "PokemonHealPhase")).toHaveLength(1);
+        expect(game.phaseInterceptor.phaseLog.filter(p => p === "PokemonHealPhase")).toHaveLength(1);
       });
 
       it("should display message & fail when healing a full HP ally", async () => {
@@ -255,7 +255,7 @@ describe("Moves - Healing Moves", () => {
             pokemonName: getPokemonNameWithAffix(omantye),
           }),
         );
-        expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+        expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
       });
 
       it("should not heal an ally multiple times if the user has a source of multi-hit", async () => {
@@ -271,7 +271,7 @@ describe("Moves - Healing Moves", () => {
 
         expect(bulbasaur.turnData.hitCount).toBe(1);
         expect(omantye).toHaveHp(omantye.getMaxHp() / 2 + 1, { rounding: "half up" });
-        expect(game.phaseInterceptor.log.filter(l => l === "PokemonHealPhase")).toHaveLength(1);
+        expect(game.phaseInterceptor.phaseLog.filter(l => l === "PokemonHealPhase")).toHaveLength(1);
       });
 
       it("should damage an enemy multiple times if the user has a source of multi-hit", async () => {

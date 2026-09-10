@@ -247,7 +247,7 @@ export class GameData {
     globalScene.time.delayedCall(fixedInt(1000), () => {
       // on the pokedex page, which changes the UiMode after calling this so the
       // user never sees the alert modal.
-      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+      if (globalScene.ui.mode === UiMode.ALERT_MODAL) {
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       } else {
         globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
@@ -439,7 +439,7 @@ export class GameData {
         await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
 
         globalScene.time.delayedCall(fixedInt(1000), () => {
-          if (globalScene.ui.getMode() !== UiMode.ALERT_MODAL) {
+          if (globalScene.ui.mode !== UiMode.ALERT_MODAL) {
             globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
           }
         });
@@ -782,30 +782,28 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  async getSession(slotId: number): Promise<SessionSaveData | undefined> {
+  public async getSession(slotId: number): Promise<SessionSaveData | undefined> {
     // TODO: Do we need this fallback anymore?
     if (slotId < 0) {
       return;
     }
 
-    console.log("Getting Session Slot id: %d", slotId);
+    console.debug("Getting Session Slot id: %d", slotId);
 
-    // Check local storage for the cached session data
-    if (bypassLogin || localStorage.getItem(getSessionDataLocalStorageKey(slotId))) {
-      const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
-      if (!sessionData) {
-        console.error("No session data found!");
-        return;
-      }
+    const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
+    if (sessionData) {
       return this.parseSessionData(decrypt(sessionData, bypassLogin));
     }
+    if (bypassLogin) {
+      return;
+    }
 
-    // Ask the server API for the save data and store it in localstorage
     const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-
-    // TODO: This is a far cry from proper JSON validation
-    if (response == null || response.length === 0 || response.charAt(0) !== "{") {
-      console.error("Invalid save data JSON detected!", response);
+    if (response == null || response.trim() === "save does not exist") {
+      return;
+    }
+    if (!isValidJSON(response)) {
+      console.error("Invalid save data detected!", response);
       return;
     }
 
@@ -1984,6 +1982,17 @@ export class GameData {
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
+  /**
+   * Checks whether a species has a specified ability index unlocked for its starter
+   * @param species - The species to check
+   * @param abilityIndex - The ability index to check
+   * @returns Whether that starter has that ability index unlocked
+   */
+  public checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
+    const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
+    return !!(abilityAttr & (1 << abilityIndex));
+  }
+
   getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
     const dexEntry = this.dexData[speciesId];
     for (let n = 0; n < 25; n++) {
@@ -2006,6 +2015,17 @@ export class GameData {
       }
     }
     return ret;
+  }
+
+  /**
+   * Checks if a species has a particular nature unlocked
+   * @param species - The species to check
+   * @param nature - The Nature to look for
+   * @returns Whether that species has the specified nature unlocked
+   */
+  public checkSpeciesNatureUnlocked(species: PokemonSpecies, nature: Nature): boolean {
+    const dexEntry = this.dexData[species.speciesId];
+    return !!(dexEntry.natureAttr & (1 << (nature + 1)));
   }
 
   /**

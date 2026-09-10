@@ -130,10 +130,6 @@ export class SummaryUiHandler extends UiHandler {
   private selectedMoveIndex: number;
   private selectCallback: ((cursor: number) => void) | null;
 
-  constructor() {
-    super(UiMode.SUMMARY);
-  }
-
   setup() {
     const ui = this.getUi();
 

@@ -100,7 +100,9 @@ export class QuietFormChangePhase extends BattlePhase {
 
     applyOnLoseAbAttrs({ pokemon });
     await pokemon.changeForm(formChange);
-    applyPostFormChangeAbAttrs({ pokemon });
+    if (pokemon.isActive(true)) {
+      applyPostFormChangeAbAttrs({ pokemon });
+    }
   }
 
   private async playFormChangeTween(): Promise<void> {
