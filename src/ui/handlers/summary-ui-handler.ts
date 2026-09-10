@@ -947,7 +947,6 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(abilityInfo.nameText);
 
           abilityInfo.description = new ScrollingText(
-            globalScene,
             7,
             71,
             206,
@@ -1238,7 +1237,6 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         this.moveDescription = new ScrollingText(
-          globalScene,
           1,
           74,
           205,

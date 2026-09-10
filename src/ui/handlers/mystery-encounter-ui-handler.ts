@@ -504,7 +504,6 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
     // prepare the description box
     this.desc = new ScrollingText(
-      globalScene,
       6,
       22,
       830 / 6,
@@ -592,7 +591,6 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
     if (text) {
       this.tooltipDesc = new ScrollingText(
-        globalScene,
         6,
         5,
         96,

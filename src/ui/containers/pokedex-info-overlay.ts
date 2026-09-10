@@ -46,7 +46,6 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
 
     // prepare the description box
     this.desc = new ScrollingText(
-      globalScene,
       descBoxX,
       descBoxY,
       descBoxWidth,

@@ -27,7 +27,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   maskHeight: number;
 
   constructor(
-    scene: Phaser.Scene,
     x: number,
     y: number,
     width: number,
@@ -38,7 +37,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     hasBackground = false,
     extraStyleOptions: Phaser.Types.GameObjects.Text.TextStyle = {},
   ) {
-    super(scene, x, y);
+    super(globalScene, x, y);
 
     this.offsetX = hasBackground ? BORDER : 0;
     this.offsetY = hasBackground ? BORDER - 2 : 0;

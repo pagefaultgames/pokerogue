@@ -68,7 +68,6 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
 
     // prepare the description box
     this.desc = new ScrollingText(
-      globalScene,
       descBoxX,
       descBoxY,
       descBoxWidth,
