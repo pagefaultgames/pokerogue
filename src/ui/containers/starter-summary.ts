@@ -27,7 +27,7 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { getLocalizedSpriteKey, padInt, truncateString } from "#utils/common";
-import { getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
+import { getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -590,7 +590,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
       const props = globalScene.gameData.getDexAttrProps(defaultDexAttr);
       props.formIndex = starterPreferences?.formIndex ?? props.formIndex;
-      const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
+      const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, props.formIndex);
       this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
       this.pokemonSprite.clearTint();
@@ -703,7 +703,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.pokemonNatureText.setText(getNatureName(natureIndex, true, true, false));
 
-    const speciesForm = getPokemonSpeciesForm(starterId, formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(starterId, formIndex);
     const formText = species.getFormNameToDisplay(formIndex);
     this.pokemonFormText.setText(formText);
 
