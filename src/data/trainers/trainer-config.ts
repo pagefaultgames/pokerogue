@@ -1130,31 +1130,61 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BAKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.CLERK)
     .setMoneyMultiplier(1.35)
-    .setSpeciesFilter(
-      s =>
-        [s.ability1, s.ability2, s.abilityHidden].some(
-          a =>
-            !!a
-            && [
-              AbilityId.WHITE_SMOKE,
-              AbilityId.GLUTTONY,
-              AbilityId.HONEY_GATHER,
-              AbilityId.HARVEST,
-              AbilityId.CHEEK_POUCH,
-              AbilityId.SWEET_VEIL,
-              AbilityId.RIPEN,
-              AbilityId.PURIFYING_SALT,
-              AbilityId.WELL_BAKED_BODY,
-              AbilityId.SUPERSWEET_SYRUP,
-              AbilityId.HOSPITALITY,
-            ].includes(a),
-        )
-        || s
-          .getLevelMoves()
-          .some(plm =>
-            [MoveId.SOFT_BOILED, MoveId.SPORE, MoveId.MILK_DRINK, MoveId.OVERHEAT, MoveId.TEATIME].includes(plm[1]),
-          ),
-    ), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
+    .setSpecialtyType(PokemonType.FIRE) // Ensures Rotom is in Heat form
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.IGGLYBUFF,
+        SpeciesId.SUNKERN,
+        SpeciesId.TEDDIURSA,
+        SpeciesId.COMBEE,
+        SpeciesId.PANSAGE,
+        SpeciesId.PANSEAR,
+        SpeciesId.PANPOUR,
+        SpeciesId.SWIRLIX,
+        SpeciesId.CUTIEFLY,
+        SpeciesId.SKWOVET,
+        SpeciesId.MILCERY,
+        SpeciesId.FIDOUGH,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.PARAS,
+        SpeciesId.EXEGGCUTE,
+        SpeciesId.SHROOMISH,
+        SpeciesId.GULPIN,
+        SpeciesId.HAPPINY,
+        SpeciesId.DARUMAKA,
+        SpeciesId.FOONGUS,
+        SpeciesId.LITLEO,
+        SpeciesId.SKIDDO,
+        SpeciesId.MORELULL,
+        SpeciesId.SIZZLIPEDE,
+        SpeciesId.SMOLIV,
+        SpeciesId.TOEDSCOOL,
+      ],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.SLOWPOKE,
+        SpeciesId.MILTANK,
+        SpeciesId.TORKOAL,
+        SpeciesId.SPOINK,
+        SpeciesId.MUNCHLAX,
+        SpeciesId.LITWICK,
+        SpeciesId.HEATMOR,
+        SpeciesId.BOUNSWEET,
+        SpeciesId.APPLIN,
+        SpeciesId.SINISTEA,
+        SpeciesId.NACLI,
+        SpeciesId.CAPSAKID,
+        SpeciesId.POLTCHAGEIST,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.CYNDAQUIL,
+        SpeciesId.SHUCKLE,
+        SpeciesId.ROTOM,
+        SpeciesId.TEPIG,
+        SpeciesId.LARVESTA,
+        SpeciesId.GALAR_SLOWPOKE,
+      ],
+    }), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
   [TrainerType.BEAUTY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
     .setEncounterBgm(TrainerType.PARASOL_LADY)
