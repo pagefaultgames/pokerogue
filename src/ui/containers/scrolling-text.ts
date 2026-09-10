@@ -3,7 +3,6 @@ import { fixedInt } from "#app/utils/common";
 import type { TextStyle } from "#enums/text-style";
 import { addBBCodeTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 interface ScrollingTextParameters {
@@ -40,7 +39,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   maskHeight: number;
 
   /*
-  This takes various coordinates:
   The mask is not created right away (although this is possible in principle). Instead, we have a separate function,
   which takes as input the _global_ coordinates of scrolling text object. This is necessary to correctly position the mask in the scene.
   */
@@ -68,8 +66,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
       ...extraStyleOptions,
     });
     this.maxLineCount = maxLineCount;
-    // TODO: change this based on which text is being used, etc
-    this.text.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
+
     this.add(this.text);
   }
 
@@ -80,6 +77,9 @@ export class ScrollingText extends Phaser.GameObjects.Container {
 
     const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
     this.maskHeight = (this.text.style.lineHeight / 6) * this.maxLineCount;
+    console.log("Mask: ");
+    console.log(this.text.style.lineHeight / 6);
+    console.log(this.maskHeight);
     const visibleHeight = this.maskHeight;
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
@@ -102,8 +102,11 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     const displayHeight = this.text.displayHeight;
     const scrollAmount = displayHeight - this.maskHeight;
     const lineHeight = this.text.style.lineHeight / 6;
+    console.log("Activate: ");
+    console.log(displayHeight);
+    console.log(scrollAmount);
 
-    if (scrollAmount) {
+    if (scrollAmount > 0) {
       // generate scrolling effects
       this.descScroll = globalScene.tweens.add({
         targets: this.text,
