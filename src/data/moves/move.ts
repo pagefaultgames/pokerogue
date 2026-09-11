@@ -3333,7 +3333,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
-  // biome-ignore lint/complexity/noUselessConstructor: this removes the `options` param from the superclass
+
   constructor(selfTarget: boolean) {
     super(selfTarget);
   }

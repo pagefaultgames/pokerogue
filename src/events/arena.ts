@@ -12,7 +12,7 @@ import type { WeatherType } from "#enums/weather-type";
 abstract class ArenaEvent extends Event {
   /** The {@linkcode ArenaEventType} being emitted. */
   declare public abstract readonly type: ArenaEventType;
-  // biome-ignore lint/complexity/noUselessConstructor: changes the type of the type field
+
   constructor(type: ArenaEventType) {
     super(type);
   }
