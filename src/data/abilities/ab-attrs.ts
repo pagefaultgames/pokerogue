@@ -39,7 +39,7 @@ import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
-import { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
@@ -3779,8 +3779,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
       }),
     );
 
-    // TODO: Update callsite in https://github.com/pagefaultgames/pokerogue/pull/6143
-    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(opponent.id, chosenMove.getMove(), chosenMove.ppUsed));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(opponent.id, chosenMove));
   }
 }
 
@@ -4274,8 +4273,6 @@ export class CudChewConsumeBerryAbAttr extends AbAttr {
     // This doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden) as no item is consumed.
     for (const berryType of pokemon.summonData.berriesEatenLast) {
       getBerryEffectFunc(berryType)(pokemon);
-      const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
     }
 
     // uncomment to make cheek pouch work with cud chew

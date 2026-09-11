@@ -78,7 +78,7 @@ import { SpeciesId } from "#enums/species-id";
 import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { MoveUsedEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
@@ -3680,8 +3680,7 @@ export class GrudgeTag extends SerializableBattlerTag {
 
     const remaining = movesetMove.getMovePp() - movesetMove.ppUsed;
     movesetMove.usePp(remaining);
-    // TODO: adjust in PR that reworks battler flyout
-    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(sourcePokemon.id, movesetMove.getMove(), remaining));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(sourcePokemon.id, movesetMove));
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:grudgeLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(sourcePokemon),
