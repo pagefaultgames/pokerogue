@@ -66,7 +66,6 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
-import type { StarterSpeciesId } from "#types/starter-species-id";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -782,30 +781,28 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  async getSession(slotId: number): Promise<SessionSaveData | undefined> {
+  public async getSession(slotId: number): Promise<SessionSaveData | undefined> {
     // TODO: Do we need this fallback anymore?
     if (slotId < 0) {
       return;
     }
 
-    console.log("Getting Session Slot id: %d", slotId);
+    console.debug("Getting Session Slot id: %d", slotId);
 
-    // Check local storage for the cached session data
-    if (bypassLogin || localStorage.getItem(getSessionDataLocalStorageKey(slotId))) {
-      const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
-      if (!sessionData) {
-        console.error("No session data found!");
-        return;
-      }
+    const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
+    if (sessionData) {
       return this.parseSessionData(decrypt(sessionData, bypassLogin));
     }
+    if (bypassLogin) {
+      return;
+    }
 
-    // Ask the server API for the save data and store it in localstorage
     const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-
-    // TODO: This is a far cry from proper JSON validation
-    if (response == null || response.length === 0 || response.charAt(0) !== "{") {
-      console.error("Invalid save data JSON detected!", response);
+    if (response == null || response.trim() === "save does not exist") {
+      return;
+    }
+    if (!isValidJSON(response)) {
+      console.error("Invalid save data detected!", response);
       return;
     }
 
@@ -1978,12 +1975,6 @@ export class GameData {
     };
   }
 
-  getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
-    abilityAttr ??= this.starterData[starterId].abilityAttr;
-    const species = speciesDataRegistry.getSpecies(starterId);
-    return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
-  }
-
   /**
    * Checks whether a species has a specified ability index unlocked for its starter
    * @param species - The species to check
@@ -1993,16 +1984,6 @@ export class GameData {
   public checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
     const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
     return !!(abilityAttr & (1 << abilityIndex));
-  }
-
-  getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
-    const dexEntry = this.dexData[speciesId];
-    for (let n = 0; n < 25; n++) {
-      if (dexEntry.natureAttr & (1 << (n + 1))) {
-        return n as Nature;
-      }
-    }
-    return 0 as Nature;
   }
 
   getDexAttrLuck(dexAttr: bigint): number {

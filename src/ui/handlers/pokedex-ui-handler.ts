@@ -41,7 +41,7 @@ import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange } from "#utils/common";
 import { loadStarterPreferences } from "#utils/data";
 import { enumValueToKey } from "#utils/enums";
-import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
+import { getDexNumber, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -2127,7 +2127,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       if (this.speciesStarterDexEntry?.caughtAttr || settings.general.dexForDevs) {
         this.startIconAnimation(this.cursor);
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, 0);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, 0);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.setSpeciesDetails(species, {});
@@ -2252,7 +2252,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (isFormCaught || isFormSeen || settings.general.dexForDevs) {
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.setTypeIcons(null, null);
