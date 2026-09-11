@@ -1869,8 +1869,6 @@ export function initAbilities() {
       .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1))
       .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, groupStatChange([Stat.DEF, Stat.SPDEF], -1))
       .condition(sheerForceHitDisableAbCondition)
-      // Should trigger after the last strike of multi-strike moves, not in the middle
-      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.PURIFYING_SALT, 9) //
       .attr(StatusEffectImmunityAbAttr)
