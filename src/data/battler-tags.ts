@@ -267,7 +267,7 @@ export class SerializableBattlerTag extends BattlerTag {
    * @remarks
    * Does not exist at runtime, so must not be used!
    */
-  private declare __SerializableBattlerTag: never;
+  declare private __SerializableBattlerTag: never;
 }
 
 /**
@@ -293,7 +293,7 @@ interface GenericSerializableBattlerTag<T extends BattlerTagType> extends Serial
  * @todo Require descendant subclasses to inherit a `PRE_MOVE` lapse type
  */
 export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
-  public declare readonly tagType: MoveRestrictionBattlerTagType;
+  declare public readonly tagType: MoveRestrictionBattlerTagType;
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType !== BattlerTagLapseType.PRE_MOVE) {
       return super.lapse(pokemon, lapseType);
@@ -581,7 +581,7 @@ export class RechargingTag extends SerializableBattlerTag {
  */
 export class BeakBlastChargingTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.BEAK_BLAST_CHARGING;
-  public declare readonly sourceMove: MoveId.BEAK_BLAST;
+  declare public readonly sourceMove: MoveId.BEAK_BLAST;
   constructor() {
     super(
       BattlerTagType.BEAK_BLAST_CHARGING,
@@ -673,7 +673,7 @@ export class ShellTrapTag extends BattlerTag {
 }
 
 export class TrappedTag extends SerializableBattlerTag {
-  public declare readonly tagType: TrappingBattlerTagType;
+  declare public readonly tagType: TrappingBattlerTagType;
   constructor(
     tagType: BattlerTagType,
     lapseType: BattlerTagLapseType,
@@ -1673,7 +1673,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 }
 
 export abstract class DamagingTrapTag extends TrappedTag {
-  public declare readonly tagType: TrappingBattlerTagType;
+  declare public readonly tagType: TrappingBattlerTagType;
   /** The animation to play during the damage sequence */
   #commonAnim: CommonAnim;
 
@@ -1884,7 +1884,7 @@ export class InfestationTag extends DamagingTrapTag {
 }
 
 export class ProtectedTag extends BattlerTag {
-  public declare readonly tagType: ProtectionBattlerTagType;
+  declare public readonly tagType: ProtectionBattlerTagType;
 
   /**
    * Whether this protection effect should block status moves.
@@ -2002,7 +2002,7 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Baneful_Bunker_(move)}
  */
 export class ContactSetStatusProtectedTag extends ContactProtectedTag {
-  public declare readonly tagType: ContactSetStatusProtectedTagType;
+  declare public readonly tagType: ContactSetStatusProtectedTagType;
   /** The status effect applied to attackers */
   readonly #statusEffect: StatusEffect;
   /** Whether this protection effect blocks status moves. */
@@ -2046,7 +2046,7 @@ export class ContactSetStatusProtectedTag extends ContactProtectedTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Silk_Trap_(move)}
  */
 export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
-  public declare readonly tagType: ContactStatStageChangeProtectedTagType;
+  declare public readonly tagType: ContactStatStageChangeProtectedTagType;
   readonly #stat: BattleStat;
   readonly #levels: number;
 
@@ -2080,7 +2080,7 @@ export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
  * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Endure_(move) | Endure} and endure tokens.
  */
 export class EnduringTag extends BattlerTag {
-  public declare readonly tagType: EndureTagType;
+  declare public readonly tagType: EndureTagType;
   constructor(tagType: EndureTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 0, sourceMove);
   }
@@ -2184,7 +2184,7 @@ export class CenterOfAttentionTag extends BattlerTag {
 }
 
 export class AbilityBattlerTag extends SerializableBattlerTag {
-  public declare readonly tagType: AbilityBattlerTagType;
+  declare public readonly tagType: AbilityBattlerTagType;
   #ability: AbilityId;
   /** The ability that the tag corresponds to */
   public get ability(): AbilityId {
@@ -2288,7 +2288,7 @@ export class SlowStartTag extends AbilityBattlerTag {
 }
 
 export class HighestStatBoostTag extends AbilityBattlerTag {
-  public declare readonly tagType: HighestStatBoostTagType;
+  declare public readonly tagType: HighestStatBoostTagType;
   public stat: EffectiveStat = Stat.ATK;
   public multiplier = 1.3;
 
@@ -2378,7 +2378,7 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag {
 }
 
 export class SemiInvulnerableTag extends SerializableBattlerTag {
-  public declare readonly tagType: SemiInvulnerableTagType;
+  declare public readonly tagType: SemiInvulnerableTagType;
   constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
@@ -2481,7 +2481,7 @@ export class TelekinesisTag extends SerializableBattlerTag {
 }
 
 export class TypeBoostTag extends SerializableBattlerTag {
-  public declare readonly tagType: TypeBoostTagType;
+  declare public readonly tagType: TypeBoostTagType;
   #boostedType: PokemonType;
   #boostValue: number;
   #oneUse: boolean;
@@ -2531,7 +2531,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
 }
 
 export class CritBoostTag extends SerializableBattlerTag {
-  public declare readonly tagType: CritStageBoostTagType;
+  declare public readonly tagType: CritStageBoostTagType;
   /** The number of stages boosted by this tag */
   public readonly critStages: number = 1;
 
@@ -2686,7 +2686,7 @@ export class CursedTag extends SerializableBattlerTag {
 // This is a hacky way to add the bare minimum amount of granularity
 // when a more comprehensive system would likely be preferred.
 export class RemovedTypeTag extends SerializableBattlerTag {
-  public declare readonly tagType: RemovedTypeTagType;
+  declare public readonly tagType: RemovedTypeTagType;
   constructor(tagType: RemovedTypeTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 1, sourceMove);
   }
@@ -2913,7 +2913,7 @@ export class StockpilingTag extends SerializableBattlerTag {
  * Battler tag for Gulp Missile used by Cramorant.
  */
 export class GulpMissileTag extends SerializableBattlerTag {
-  public declare readonly tagType: BattlerTagType.GULP_MISSILE_ARROKUDA | BattlerTagType.GULP_MISSILE_PIKACHU;
+  declare public readonly tagType: BattlerTagType.GULP_MISSILE_ARROKUDA | BattlerTagType.GULP_MISSILE_PIKACHU;
   constructor(tagType: BattlerTagType.GULP_MISSILE_ARROKUDA | BattlerTagType.GULP_MISSILE_PIKACHU, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.HIT, 0, sourceMove);
   }
@@ -2993,7 +2993,7 @@ export class GulpMissileTag extends SerializableBattlerTag {
  * @see {@linkcode ignoreImmunity}
  */
 export class ExposedTag extends SerializableBattlerTag {
-  public declare readonly tagType: BattlerTagType.IGNORE_DARK | BattlerTagType.IGNORE_GHOST;
+  declare public readonly tagType: BattlerTagType.IGNORE_DARK | BattlerTagType.IGNORE_GHOST;
   #defenderType: PokemonType;
   #allowedTypes: readonly PokemonType[];
 
