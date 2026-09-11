@@ -393,7 +393,14 @@ function getStarterDefaultAbilityIndex(starterId: StarterSpeciesId): number {
   const { starterDataEntry: starterData } = getStarterData(starterId);
   const abilityAttr = starterData.abilityAttr;
   const species = speciesDataRegistry.getSpecies(starterId);
-  return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
+
+  if (abilityAttr & AbilityAttr.ABILITY_1) {
+    return 0;
+  }
+  if (!species.ability2 || abilityAttr & AbilityAttr.ABILITY_2) {
+    return 1;
+  }
+  return 2;
 }
 
 function getStarterDefaultNature(starterId: StarterSpeciesId): Nature {
