@@ -350,8 +350,6 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param pokemon - The Pokemon to check
    */
   private checkWhiteHerb(pokemon: Pokemon): void {
-    // TODO: Consider whether the item application would make more sense during the end of the move sequence;
-    // this seems a bit prone to breaking unintentionally
     const hasMoreStatPhases = globalScene.phaseManager.hasPhaseOfType(
       "StatStageChangePhase",
       p => p.battlerIndex === this.battlerIndex,
