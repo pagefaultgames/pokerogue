@@ -69,6 +69,7 @@ type GetEnumStrOptions<Val extends string | number = string | number, X extends 
  * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
  * ```
  */
+// TODO: Make this not crash and correctly stringify a Vitest asymmetric matcher
 export function getEnumStr<E extends EnumOrObject, V extends E[keyof E], X extends boolean>(
   obj: E,
   val: V,
