@@ -162,4 +162,28 @@ describe("Enemy Commands - Move Selection", () => {
       }
     });
   });
+
+  it("should account for redirect abilities like Storm Drain in double battles", async () => {
+    game.override
+      .battleStyle("double")
+      .enemySpecies(SpeciesId.SWAMPERT)
+      .enemyMoveset([MoveId.SURF, MoveId.EARTHQUAKE])
+      .enemyLevel(100)
+      .startingLevel(100)
+      .ability(AbilityId.STORM_DRAIN)
+      .enemyAbility(AbilityId.BALL_FETCH);
+
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
+
+    const enemyPokemon = game.scene.getEnemyField()[0];
+    enemyPokemon.aiType = AiType.SMART;
+
+    const moveChoices: MoveChoiceSet = {};
+    const enemyMoveset = enemyPokemon.getMoveset();
+    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
+    getEnemyMoveChoices(enemyPokemon, moveChoices);
+
+    // Storm Drain redirects Water moves, so the AI should not prefer Surf
+    expect(moveChoices[MoveId.SURF]).toBeLessThan(moveChoices[MoveId.EARTHQUAKE]);
+  });
 });
