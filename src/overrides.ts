@@ -106,6 +106,15 @@ class DefaultOverrides {
   readonly STARTING_WAVE_OVERRIDE: number | null = null;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
   /**
+   * Hides the battle UI for cleaner screenshots (useful for seeing the biomes and pokemon clearly).
+   */
+  readonly STARTING_HIDE_UI_OVERRIDE: boolean = false;
+  /**
+   * Forces all available biome props to be visible when entering a biome.
+   * Sets the prop bitmask to show all 3 props instead of a random combination.
+   */
+  readonly ALL_BIOME_PROPS_OVERRIDE: boolean = false;
+  /**
    * Overrides the Time of Day for the given biome.
    * Set to `null` to disable.
    * @remarks

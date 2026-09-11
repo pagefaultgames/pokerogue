@@ -1255,6 +1255,11 @@ export class BattleScene extends SceneBase {
    * @returns The newly created `Battle` instance.
    */
   public newBattle(fromSession?: SessionSaveData): Battle {
+    if (activeOverrides.STARTING_HIDE_UI_OVERRIDE) {
+      this.uiContainer.setVisible(false);
+      this.fieldUI.setVisible(false);
+    }
+
     const props = this.getNewBattleProps(fromSession);
     const { waveIndex, mysteryEncounterType } = props;
     const resolved: NewBattleInitialProps = { waveIndex, mysteryEncounterType };
