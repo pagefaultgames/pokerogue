@@ -55,7 +55,7 @@ export class MovePhase extends PokemonPhase {
   protected cancelled = false;
 
   /** Flag set to `true` during {@linkcode checkFreeze} that indicates that the pokemon will thaw if it passes the failure conditions */
-  private declare thaw?: boolean;
+  declare private thaw?: boolean;
 
   /** The move history entry object that is pushed to the pokemon's move history
    *

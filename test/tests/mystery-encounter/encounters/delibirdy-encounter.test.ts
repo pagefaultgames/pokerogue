@@ -100,7 +100,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const price = (scene.currentBattle.mysteryEncounter?.options[0].requirements[0] as MoneyRequirement)
+      const price = (scene.currentBattle.mysteryEncounter!.options[0].requirements[0] as MoneyRequirement)
         .requiredMoney;
 
       expect(updateMoneySpy).toHaveBeenCalledWith(-price, true, false);

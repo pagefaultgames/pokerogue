@@ -5918,7 +5918,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 }
 
 export class PlayerPokemon extends Pokemon {
-  protected declare battleInfo: PlayerBattleInfo;
+  declare protected battleInfo: PlayerBattleInfo;
 
   constructor(
     species: PokemonSpecies,
@@ -6488,7 +6488,7 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
-  protected declare battleInfo: EnemyBattleInfo;
+  declare protected battleInfo: EnemyBattleInfo;
   public trainerSlot: TrainerSlot;
   public aiType: AiType;
   public bossSegments: number;
