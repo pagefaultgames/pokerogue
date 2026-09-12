@@ -43,11 +43,12 @@ describe("Abilities - Protean/Libero", () => {
    */
   function expectTypeChange(pokemon: PlayerPokemon) {
     expect(pokemon.waveData.abilitiesApplied).toContainEqual(expect.toBeOneOf([AbilityId.PROTEAN, AbilityId.LIBERO]));
-    const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
 
-    const pokemonTypes = pokemon.getTypes().map(pt => PokemonType[pt]);
-    const moveType = PokemonType[pokemon.getMoveType(lastMove)];
-    expect(pokemonTypes).toEqual([moveType]);
+    const lastMove = allMoves[pokemon.getLastXMoves()[0].move];
+
+    const moveType = pokemon.getMoveType(lastMove);
+    expect(pokemon).toHaveTypes(moveType, { mode: "ordered" });
+
     pokemon.waveData.abilitiesApplied.clear();
   }
 
@@ -63,11 +64,12 @@ describe("Abilities - Protean/Libero", () => {
     expect(pokemon.waveData.abilitiesApplied).not.toContainEqual(
       expect.toBeOneOf([AbilityId.PROTEAN, AbilityId.LIBERO]),
     );
-    const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
 
-    const pokemonTypes = pokemon.getTypes().map(pt => PokemonType[pt]);
-    const moveType = PokemonType[pokemon.getMoveType(lastMove, true)];
-    expect(pokemonTypes).not.toEqual([moveType]);
+    const lastMove = allMoves[pokemon.getLastXMoves()[0].move];
+
+    const moveType = pokemon.getMoveType(lastMove);
+    expect(pokemon).not.toHaveTypes(moveType, { mode: "ordered" });
+
     pokemon.waveData.abilitiesApplied.clear();
   }
 

@@ -12,14 +12,6 @@ describe("Moves - Last Resort", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  function expectLastResortFail() {
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0]).toEqual(
-      expect.objectContaining({
-        move: MoveId.LAST_RESORT,
-        result: MoveResult.FAIL,
-      }),
-    );
-  }
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -45,30 +37,26 @@ describe("Moves - Last Resort", () => {
     // Last resort by itself
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expectLastResortFail();
+    expect(blissey).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.FAIL });
 
     // Splash (1/3)
     blissey.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expectLastResortFail();
+    expect(blissey).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.FAIL });
 
     // Growl (2/3)
     blissey.pushMoveHistory({ move: MoveId.GROWL, targets: [BattlerIndex.ENEMY], useMode: MoveUseMode.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expectLastResortFail(); // Were last resort itself counted, it would error here
+    expect(blissey).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.FAIL });
 
     // Growth (3/3)
     blissey.pushMoveHistory({ move: MoveId.GROWTH, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0]).toEqual(
-      expect.objectContaining({
-        move: MoveId.LAST_RESORT,
-        result: MoveResult.SUCCESS,
-      }),
-    );
+
+    expect(blissey).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.SUCCESS });
   });
 
   it("should disregard virtually invoked moves", async () => {
@@ -88,7 +76,9 @@ describe("Moves - Last Resort", () => {
     await game.move.selectEnemyMove(MoveId.SWORDS_DANCE); // goes first to proc dancer ahead of time
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expectLastResortFail();
+
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.FAIL });
   });
 
   it("should fail if no other moves in moveset", async () => {
@@ -98,7 +88,8 @@ describe("Moves - Last Resort", () => {
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expectLastResortFail();
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.FAIL });
   });
 
   it("should work if invoked virtually when all other moves have been used", async () => {
@@ -108,18 +99,20 @@ describe("Moves - Last Resort", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.field.getPlayerPokemon().getLastXMoves(-1)).toEqual([
-      expect.objectContaining({
-        move: MoveId.LAST_RESORT,
-        result: MoveResult.SUCCESS,
-        useMode: MoveUseMode.FOLLOW_UP,
-      }),
-      expect.objectContaining({
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({
+      move: MoveId.LAST_RESORT,
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.FOLLOW_UP,
+    });
+    expect(player).toHaveUsedMove(
+      {
         move: MoveId.SLEEP_TALK,
-        result: MoveResult.SUCCESS,
         useMode: MoveUseMode.NORMAL,
-      }),
-    ]);
+        result: MoveResult.SUCCESS,
+      },
+      1,
+    );
   });
 
   it("should preserve usability status on reload", async () => {
@@ -157,6 +150,7 @@ describe("Moves - Last Resort", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expectLastResortFail();
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.LAST_RESORT, result: MoveResult.FAIL });
   });
 });
