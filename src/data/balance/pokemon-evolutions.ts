@@ -110,6 +110,7 @@ export type EvolutionConditionData =
 
 export class SpeciesEvolutionCondition {
   public data: EvolutionConditionData[];
+
   private desc: string[];
 
   constructor(...data: EvolutionConditionData[]) {
@@ -120,6 +121,7 @@ export class SpeciesEvolutionCondition {
     if (this.desc != null) {
       return this.desc;
     }
+
     this.desc = this.data
       .map(cond => {
         switch (cond.key) {
@@ -129,10 +131,10 @@ export class SpeciesEvolutionCondition {
             return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time.at(-1)!])}`); // For Day and Night evos, the key we want goes last
           case EvoCondKey.MOVE_TYPE:
             return i18next.t("pokemonEvolutions:moveType", { type: i18next.t(getPokemonTypeLocaleKey(cond.pkmnType)) });
-          case EvoCondKey.PARTY_TYPE:
-            return i18next.t("pokemonEvolutions:partyType", {
-              type: i18next.t(getPokemonTypeLocaleKey(cond.pkmnType)),
-            });
+          case EvoCondKey.PARTY_TYPE: {
+            const type = i18next.t(getPokemonTypeLocaleKey(cond.pkmnType));
+            return i18next.t("pokemonEvolutions:partyType", { type });
+          }
           case EvoCondKey.GENDER:
             return i18next.t("pokemonEvolutions:gender", { gender: getGenderSymbol(cond.gender) });
           case EvoCondKey.MOVE:
@@ -148,10 +150,10 @@ export class SpeciesEvolutionCondition {
             return i18next.t("pokemonEvolutions:shedinja");
           case EvoCondKey.EVO_TREASURE_TRACKER:
             return i18next.t("pokemonEvolutions:treasure");
-          case EvoCondKey.SPECIES_CAUGHT:
-            return i18next.t("pokemonEvolutions:caught", {
-              species: speciesDataRegistry.getSpecies(cond.speciesCaught).name,
-            });
+          case EvoCondKey.SPECIES_CAUGHT: {
+            const species = speciesDataRegistry.getSpecies(cond.speciesCaught).name;
+            return i18next.t("pokemonEvolutions:caught", { species });
+          }
           case EvoCondKey.HELD_ITEM:
             return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
           case EvoCondKey.RANDOM_FORM:
@@ -161,12 +163,12 @@ export class SpeciesEvolutionCondition {
             return null;
         }
       })
-      .filter(s => s != null); // Filter out stringless conditions
+      .filter(s => s != null);
+
     return this.desc;
   }
 
   public conditionsFulfilled(pokemon: Pokemon, forFusion = false): boolean {
-    console.log(this.data);
     return this.data.every(cond => {
       switch (cond.key) {
         case EvoCondKey.FRIENDSHIP:
@@ -235,7 +237,7 @@ interface SpeciesFormEvolutionConstructor {
   preFormKey: string | null;
   evoFormKey: string | null;
   level: number;
-  item?: EvolutionItem | undefined;
+  item?: EvolutionItem | null;
   condition?: EvolutionConditionData | EvolutionConditionData[] | undefined;
   evoDelay?: EvoLevelThreshold | undefined;
 }
@@ -246,8 +248,8 @@ export class SpeciesFormEvolution {
   public preFormKey: string | null;
   public evoFormKey: string | null;
   public level: number;
-  public item: EvolutionItem | null;
-  public condition: SpeciesEvolutionCondition | null;
+  public item: EvolutionItem | null; // TODO: this shouldn't be `| null`, the constructor coerces it to `EvolutionItem.NONE`
+  public condition: SpeciesEvolutionCondition | null; // TODO: default to `() => true`
   /**
    * A triple containing the level thresholds for evolutions based on the encounter sort
    * @see {@linkcode EvoLevelThreshold}
@@ -261,7 +263,7 @@ export class SpeciesFormEvolution {
     this.preFormKey = data.preFormKey;
     this.evoFormKey = data.evoFormKey;
     this.level = data.level;
-    this.item = data.item || EvolutionItem.NONE;
+    this.item = data.item ?? EvolutionItem.NONE;
     if (data.condition != null) {
       this.condition = new SpeciesEvolutionCondition(...coerceArray(data.condition));
     }
@@ -270,7 +272,7 @@ export class SpeciesFormEvolution {
     }
   }
 
-  get description(): string {
+  public get description(): string {
     if (this.desc.length > 0) {
       return this.desc;
     }
@@ -311,41 +313,45 @@ export class SpeciesFormEvolution {
     return this.desc;
   }
 
+  public get evoItem(): EvolutionItem {
+    return this.item ?? EvolutionItem.NONE;
+  }
+
   /**
    * Checks if a Pokemon fulfills the requirements of this evolution.
-   * @param pokemon {@linkcode Pokemon} who wants to evolve
-   * @param forFusion defaults to False. Whether this evolution is meant for the secondary fused mon. In that case, use their form key.
-   * @param item {@linkcode EvolutionItem} optional, check if the evolution uses a certain item
-   * @returns whether this evolution can apply to the Pokemon
+   * @param pokemon - The {@linkcode Pokemon} to evolve
+   * @param forFusion - (Default `false`) Whether this evolution is meant for the secondary fused mon.
+   * @param item - (Default `EvolutionItem.NONE`) The {@linkcode EvolutionItem} to check for, if applicable
+   * @returns Whether this evolution can apply to the Pokemon
    */
-  public validate(pokemon: Pokemon, forFusion = false, item?: EvolutionItem): boolean {
+  public validate(pokemon: Pokemon, forFusion = false, item: EvolutionItem = EvolutionItem.NONE): boolean {
+    const correctForm =
+      this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey;
+
     return (
-      pokemon.level >= this.level // Check form key, using the fusion's form key if we're checking the fusion
-      && (this.preFormKey == null
-        || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey)
+      pokemon.level >= this.level
+      && correctForm
       && (this.condition == null || this.condition.conditionsFulfilled(pokemon, forFusion))
-      && (item ?? EvolutionItem.NONE) === (this.item ?? EvolutionItem.NONE)
+      && item === this.evoItem
     );
   }
 
   /**
    * Checks if this evolution is item-based and any conditions for it are fulfilled
-   * @param pokemon {@linkcode Pokemon} who wants to evolve
-   * @param forFusion defaults to False. Whether this evolution is meant for the secondary fused mon. In that case, use their form key.
-   * @returns whether this evolution uses an item and can apply to the Pokemon
+   * @param pokemon - The {@linkcode Pokemon} to evolve
+   * @param forFusion - (Default `false`) Whether this evolution is meant for the secondary fused mon.
+   * @returns Whether this evolution uses an item and can apply to the Pokemon
    */
   public isValidItemEvolution(pokemon: Pokemon, forFusion = false): boolean {
+    const correctForm =
+      this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey;
+
     return (
       this.item != null
-      && pokemon.level >= this.level // Check form key, using the fusion's form key if we're checking the fusion
-      && (this.preFormKey == null
-        || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey)
+      && pokemon.level >= this.level
+      && correctForm
       && (this.condition == null || this.condition.conditionsFulfilled(pokemon))
     );
-  }
-
-  public get evoItem(): EvolutionItem {
-    return this.item ?? EvolutionItem.NONE;
   }
 }
 
@@ -356,17 +362,10 @@ interface SpeciesEvolutionConstructor {
   condition?: EvolutionConditionData | EvolutionConditionData[];
   evoDelay?: EvoLevelThreshold;
 }
+
 export class SpeciesEvolution extends SpeciesFormEvolution {
   constructor(data: SpeciesEvolutionConstructor) {
-    super({
-      speciesId: data.speciesId,
-      preFormKey: null,
-      evoFormKey: null,
-      level: data.level,
-      item: data.item,
-      condition: data.condition,
-      evoDelay: data.evoDelay,
-    });
+    super({ ...data, preFormKey: null, evoFormKey: null });
   }
 }
 
@@ -374,15 +373,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
   public primarySpeciesId: SpeciesId;
 
   constructor(primarySpeciesId: SpeciesId, evolution: SpeciesFormEvolution) {
-    super({
-      speciesId: evolution.speciesId,
-      preFormKey: evolution.preFormKey,
-      evoFormKey: evolution.evoFormKey,
-      level: evolution.level,
-      item: evolution.item ?? undefined,
-      condition: evolution.condition?.data,
-      evoDelay: evolution.evoLevelThreshold,
-    });
+    super({ ...evolution, condition: evolution.condition?.data });
 
     this.primarySpeciesId = primarySpeciesId;
   }
