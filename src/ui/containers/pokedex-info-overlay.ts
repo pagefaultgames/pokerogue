@@ -58,7 +58,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
       return false;
     }
 
-    this.desc.text.setText(text ?? "");
+    this.desc.updateText(text ?? "", true, true);
 
     // stop previous scrolling effects and reset y position
     this.desc.activate();

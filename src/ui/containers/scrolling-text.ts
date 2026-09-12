@@ -33,10 +33,15 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   public text: BBCodeText;
   private descScroll: Phaser.Tweens.Tween | null = null;
   private maxLineCount: number;
+  private anchorBottom: boolean;
 
   private offsetX: number;
   private offsetY: number;
-  maskHeight: number;
+
+  private maskHeight: number;
+  // These are stored so that the mask can be updated automatically after being created.
+  private maskGlobalX: number;
+  private maskGlobalY: number;
 
   /**
    * This constructor sets up a background element, plus the text. By default, the background is invisible.
@@ -47,10 +52,12 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * of the screen where the text is visible. This is done through a separate method, so that the mask
    * can be adjusted if the `ScrollingText` container is repositioned at some point.
    *
+   * The text can be updated using
+   *
    * @param params A set of {@linkcode ScrollingTextParameters}.
    */
   constructor(params: ScrollingTextParameters) {
-    const { x, y, width, height, maxLineCount, content, style } = params;
+    const { x, y, width, maxLineCount, content, style } = params;
     const showBackground = !!params.showBackground;
     const extraStyleOptions: Phaser.Types.GameObjects.Text.TextStyle = params.extraStyleOptions ?? {};
 
@@ -58,10 +65,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
 
     this.offsetX = showBackground ? BORDER : 0;
     this.offsetY = showBackground ? BORDER - 2 : 0;
-
-    // Adding the background
-    this.descBg = addWindow(0, 0, width, height).setOrigin(0, 0).setVisible(showBackground);
-    this.add(this.descBg);
 
     // Adding the text element
     const wrapWidth = (width - (this.offsetX - 2) * 2) * 6;
@@ -73,6 +76,11 @@ export class ScrollingText extends Phaser.GameObjects.Container {
       ...extraStyleOptions,
     });
     this.maxLineCount = maxLineCount;
+
+    const height = this.calculateMaxTextHeight() + this.offsetY * 2;
+    // Adding the background
+    this.descBg = addWindow(0, 0, width, height).setOrigin(0, 0).setVisible(showBackground);
+    this.add(this.descBg);
 
     this.add(this.text);
   }
@@ -88,12 +96,18 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * @param globalY
    */
   createMask(globalX: number, globalY: number) {
+    // Remove existing mask
+    this.text.clearMask(true);
+
+    this.maskGlobalX = globalX;
+    this.maskGlobalY = globalY;
+
     // Adding the mask for the scrolling effect
     const globalMaskX = globalX + this.offsetX;
     const globalMaskY = globalY + this.offsetY;
 
     const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
-    this.maskHeight = (this.text.style.lineHeight / 6) * this.maxLineCount;
+    this.maskHeight = this.calculateMaxTextHeight();
     const visibleHeight = this.maskHeight;
 
     const maskGraphics = globalScene.make.graphics({ x: 0, y: 0 });
@@ -102,6 +116,55 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     globalScene.add.existing(maskGraphics);
     const mask = this.createGeometryMask(maskGraphics);
     this.text.setMask(mask);
+  }
+
+  /**
+   * Method to update the text after the scrolling object and mask have been created.
+   * if `fitHeight` is `true`, the background box is automatically adjusted to fit the text
+   * (only if the text is shorter than the maximum number of lines).
+   * When resizing, by default the top of the box is fixed. To change this behavior, and keep
+   * the bottom fixed, set `anchorBottom` to `true` instead.
+   *
+   * @param content
+   * @param fitHeight
+   * @param anchorBottom
+   */
+  updateText(content: string, fitHeight?: boolean, anchorBottom?: boolean) {
+    this.text.setText(content);
+
+    if (!fitHeight) {
+      return;
+    }
+
+    // Update the height of the background
+    const height = this.calculateTextHeight();
+    if (height > this.calculateMaxTextHeight()) {
+      return;
+    }
+    const bgHeight = height + this.offsetY * 2;
+    const oldBgHeight = this.descBg.height;
+    this.descBg.height = bgHeight;
+
+    if (!anchorBottom) {
+      return;
+    }
+
+    // If anchoring at the bottom, reposition this container and the mask
+    const heightDifference = oldBgHeight - bgHeight;
+    this.y += heightDifference;
+    this.createMask(this.maskGlobalX, this.maskGlobalY + heightDifference);
+  }
+
+  calculateTextHeight(): number {
+    const lineHeight = this.text.style.lineHeight / 6;
+    // This is necessary because this.text.displayHeight does not correspond to
+    // number of lines * lineHeight, and this causes issues when a custom lineSpacing is used.
+    return lineHeight * Math.round(this.text.displayHeight / lineHeight);
+  }
+
+  calculateMaxTextHeight(): number {
+    const lineHeight = this.text.style.lineHeight / 6;
+    return lineHeight * this.maxLineCount;
   }
 
   /**
@@ -117,9 +180,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
 
     // determine if we need to add new scrolling effects
     const lineHeight = this.text.style.lineHeight / 6;
-    // This is necessary because this.text.displayHeight does not correspond to
-    // number of lines * lineHeight, and this causes issues when a custom lineSpacing is used.
-    const displayHeight = lineHeight * Math.round(this.text.displayHeight / lineHeight);
+    const displayHeight = this.calculateTextHeight();
     const scrollAmount = displayHeight - this.maskHeight;
 
     if (scrollAmount > 0) {
