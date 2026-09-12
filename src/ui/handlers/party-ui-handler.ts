@@ -1126,7 +1126,7 @@ export class PartyUiHandler extends MessageUiHandler {
       // The following logic serves to ensure its menu behaviour matches its in-game position,
       // being selected when scrolling up from the first inactive party member or down from the last active one.
       case Button.UP:
-        if (this.isItemManageMode() || this.partyUiMode === PartyUiMode.CHECK) {
+        if (this.isItemManageMode()) {
           if (this.cursor === 1) {
             success = this.setCursor(globalScene.currentBattle.double ? 0 : 7);
             break;
@@ -1147,7 +1147,7 @@ export class PartyUiHandler extends MessageUiHandler {
         success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
         break;
       case Button.DOWN:
-        if (this.isItemManageMode() || this.partyUiMode === PartyUiMode.CHECK) {
+        if (this.isItemManageMode()) {
           if (this.cursor === 0) {
             success = this.setCursor(globalScene.currentBattle.double && slotCount > 1 ? 1 : 7);
             break;
@@ -1167,9 +1167,7 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case Button.LEFT:
         if (this.cursor === 6) {
-          success = this.setCursor(
-            this.isItemManageMode() || this.partyUiMode === PartyUiMode.CHECK ? 7 : this.lastLeftPokemonCursor,
-          );
+          success = this.setCursor(this.isItemManageMode() ? 7 : this.lastLeftPokemonCursor);
         }
         if (this.cursor >= battlerCount && this.cursor < 6) {
           success = this.setCursor(this.lastLeftPokemonCursor);
