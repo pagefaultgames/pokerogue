@@ -11,7 +11,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import { addTextObject, updateCandyCountTextStyle } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { padInt } from "#utils/common";
-import { getDexNumber, getPokemonSpeciesForm, getStarterColors } from "#utils/pokemon-utils";
+import { getDexNumber, getStarterColors } from "#utils/pokemon-utils";
 import { PokemonInfoContainer } from "./pokemon-info-container";
 
 /**
@@ -136,7 +136,7 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const variant = pokemon.variant;
     this.currentPokemonSprite.setVisible(false);
     species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
-      getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry();
+      speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry();
       this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
       this.currentPokemonSprite.setPipelineData("shiny", shiny);
       this.currentPokemonSprite.setPipelineData("variant", variant);

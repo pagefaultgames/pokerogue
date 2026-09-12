@@ -6,10 +6,10 @@ import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 
 export class TrainerPartyTemplate {
-  public size: number;
-  public strength: PartyMemberStrength;
-  public sameSpecies: boolean;
-  public balanced: boolean;
+  public readonly size: number;
+  public readonly strength: PartyMemberStrength;
+  public readonly sameSpecies: boolean;
+  public readonly balanced: boolean;
   /**
    * Controls which evolution level threshold to use for the trainer.
    * Bosses should use `EvoLevelThresholdKind.STRONG`, regular trainers
@@ -54,7 +54,7 @@ export class TrainerPartyTemplate {
 }
 
 export class TrainerPartyCompoundTemplate extends TrainerPartyTemplate {
-  public templates: TrainerPartyTemplate[];
+  public readonly templates: readonly TrainerPartyTemplate[];
 
   constructor(...templates: TrainerPartyTemplate[]) {
     super(

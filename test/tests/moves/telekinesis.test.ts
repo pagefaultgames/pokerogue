@@ -181,38 +181,38 @@ describe("Move - Telekinesis", () => {
   it.each([
     { name: "Mega", formKey: SpeciesFormKey.MEGA, formIndex: 1 },
     { name: "G-Max", formKey: SpeciesFormKey.GIGANTAMAX, formIndex: 2 },
-  ])("should fail if used against a $name Gengar, and cannot be Baton Passed onto one", async ({
-    formKey,
-    formIndex,
-  }) => {
-    game.override.starterForms({ [SpeciesId.GENGAR]: formIndex });
-    await game.classicMode.startBattle(SpeciesId.GENGAR, SpeciesId.FEEBAS);
+  ])(
+    "should fail if used against a $name Gengar, and cannot be Baton Passed onto one",
+    async ({ formKey, formIndex }) => {
+      game.override.starterForms({ [SpeciesId.GENGAR]: formIndex });
+      await game.classicMode.startBattle(SpeciesId.GENGAR, SpeciesId.FEEBAS);
 
-    const [gengar, feebas] = game.scene.getPlayerParty();
-    expect(gengar.getFormKey()).toBe(formKey);
+      const [gengar, feebas] = game.scene.getPlayerParty();
+      expect(gengar.getFormKey()).toBe(formKey);
 
-    game.move.use(MoveId.TELEPORT);
-    game.doSelectPartyPokemon(1);
-    await game.move.forceEnemyMove(MoveId.TELEKINESIS);
-    await game.toNextTurn();
+      game.move.use(MoveId.TELEPORT);
+      game.doSelectPartyPokemon(1);
+      await game.move.forceEnemyMove(MoveId.TELEKINESIS);
+      await game.toNextTurn();
 
-    // Adding tags directly should have failed
-    const enemy = game.field.getEnemyPokemon();
-    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
-    expect(gengar.isOnField()).toBe(false);
+      // Adding tags directly should have failed
+      const enemy = game.field.getEnemyPokemon();
+      expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+      expect(gengar.isOnField()).toBe(false);
 
-    game.move.use(MoveId.BATON_PASS);
-    game.doSelectPartyPokemon(1);
-    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MoveEndPhase");
+      game.move.use(MoveId.BATON_PASS);
+      game.doSelectPartyPokemon(1);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+      expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
 
-    await game.toEndOfTurn();
+      await game.toEndOfTurn();
 
-    // Should have not received either effect from baton passing
-    expect(gengar.isOnField()).toBe(true);
-    expect(gengar).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
-    expect(gengar.isGrounded()).toBe(true);
-  });
+      // Should have not received either effect from baton passing
+      expect(gengar.isOnField()).toBe(true);
+      expect(gengar).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+      expect(gengar.isGrounded()).toBe(true);
+    },
+  );
 });

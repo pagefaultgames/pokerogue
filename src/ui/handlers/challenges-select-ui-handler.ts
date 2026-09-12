@@ -5,7 +5,6 @@ import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import { TabMenu } from "#ui/tab-menu";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -60,10 +59,6 @@ export class GameChallengesUiHandler extends UiHandler {
     ChallengeCategory.NUZLOCKE,
     ChallengeCategory.MISC,
   ];
-
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
 
   public override setup(): void {
     const ui = this.getUi();
