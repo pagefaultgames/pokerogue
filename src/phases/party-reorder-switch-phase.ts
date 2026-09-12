@@ -20,18 +20,14 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     const isDouble = globalScene.currentBattle.double;
     // The pokemon that should occupy the field, ordered by their target field slot.
     const desiredField = party.slice(0, isDouble ? 2 : 1);
-    console.log("Desired field: ", desiredField.length);
 
     if (desiredField.length === 0) {
       this.end();
       return;
     }
 
-    console.log(globalScene.currentBattle.battleType);
     if (globalScene.currentBattle.battleType !== BattleType.WILD) {
       const displacedPokemon = party.filter(pokemon => pokemon.isOnField());
-      console.log("Displaced Pokémon:", displacedPokemon?.length);
-      console.log(displacedPokemon);
       if (!displacedPokemon) {
         this.end();
         return;
