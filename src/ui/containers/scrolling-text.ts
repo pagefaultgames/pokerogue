@@ -155,6 +155,9 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     this.createMask(this.maskGlobalX, this.maskGlobalY + heightDifference);
   }
 
+  /**
+   * The total height of the text if displayed fully, regardless of the maximum line count.
+   */
   calculateTextHeight(): number {
     const lineHeight = this.text.style.lineHeight / 6;
     // This is necessary because this.text.displayHeight does not correspond to
@@ -162,6 +165,9 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     return lineHeight * Math.round(this.text.displayHeight / lineHeight);
   }
 
+  /**
+   * The maximum height of the text that can be displayed, based on the maximum line count.
+   */
   calculateMaxTextHeight(): number {
     const lineHeight = this.text.style.lineHeight / 6;
     return lineHeight * this.maxLineCount;
