@@ -66,7 +66,6 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
-import type { StarterSpeciesId } from "#types/starter-species-id";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -1976,12 +1975,6 @@ export class GameData {
     };
   }
 
-  getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
-    abilityAttr ??= this.starterData[starterId].abilityAttr;
-    const species = speciesDataRegistry.getSpecies(starterId);
-    return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
-  }
-
   /**
    * Checks whether a species has a specified ability index unlocked for its starter
    * @param species - The species to check
@@ -1991,16 +1984,6 @@ export class GameData {
   public checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
     const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
     return !!(abilityAttr & (1 << abilityIndex));
-  }
-
-  getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
-    const dexEntry = this.dexData[speciesId];
-    for (let n = 0; n < 25; n++) {
-      if (dexEntry.natureAttr & (1 << (n + 1))) {
-        return n as Nature;
-      }
-    }
-    return 0 as Nature;
   }
 
   getDexAttrLuck(dexAttr: bigint): number {
