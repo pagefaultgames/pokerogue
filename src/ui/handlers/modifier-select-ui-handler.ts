@@ -9,7 +9,6 @@ import { Button } from "#enums/buttons";
 import type { PokeballType } from "#enums/pokeball";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
@@ -37,7 +36,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
-  protected declare onActionInput: ModifierSelectCallback | null;
+  declare protected onActionInput: ModifierSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -49,17 +48,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private transferButtonWidth: number;
   private checkButtonWidth: number;
 
-  public options: ModifierOption[];
-  public shopOptionsRows: ModifierOption[][];
+  public options: ModifierOption[] = [];
+  public shopOptionsRows: ModifierOption[][] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
-
-  constructor() {
-    super(UiMode.CONFIRM);
-
-    this.options = [];
-    this.shopOptionsRows = [];
-  }
 
   setup() {
     const ui = this.getUi();

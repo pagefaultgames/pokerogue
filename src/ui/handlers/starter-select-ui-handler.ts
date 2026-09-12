@@ -80,7 +80,7 @@ import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpeciesForm, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
+import { getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -213,10 +213,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   protected blockInput = false;
   private allowTera: boolean;
   private oldCursor = -1;
-
-  constructor() {
-    super(UiMode.STARTER_SELECT);
-  }
 
   public override setup(): void {
     const ui = this.getUi();
@@ -1091,7 +1087,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         );
         const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
         const starterCost = globalScene.gameData.getSpeciesStarterValue(randomStarterId);
-        const speciesForm = getPokemonSpeciesForm(randomStarterId, props.formIndex);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(randomStarterId, props.formIndex);
         // Load assets and add to party
         speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
@@ -1267,7 +1263,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           break;
         }
 
-        const speciesForm = getPokemonSpeciesForm(this.lastStarterId, starterPreferences.formIndex ?? 0);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(
+          this.lastStarterId,
+          starterPreferences.formIndex ?? 0,
+        );
         const { teraType } = getStarterDetailsFromPreferences(
           this.lastStarterId,
           this.starterPreferences[this.lastStarterId],
@@ -2234,7 +2233,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.partyStarters.push(starter);
     this.partyStarterIds.push(starterId);
-    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
+    speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     this.updateInstructions();
   }
 
@@ -2896,7 +2895,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.canCycle.tera =
       !this.showIvsMode
       && this.allowTera
-      && getPokemonSpeciesForm(species.speciesId, formIndex).type2 != null
+      && speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex).type2 != null
       && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
   }
 
@@ -3210,7 +3209,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.canCycle.tera =
       !this.showIvsMode
       && this.allowTera
-      && getPokemonSpeciesForm(this.lastStarterId, formIndex ?? 0).type2 != null
+      && speciesDataRegistry.getPokemonSpeciesForm(this.lastStarterId, formIndex ?? 0).type2 != null
       && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
     this.updateInstructions();
   }

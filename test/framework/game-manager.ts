@@ -156,7 +156,7 @@ export class GameManager {
    */
   // TODO: This is unused
   async waitMode(mode: UiMode): Promise<void> {
-    await vi.waitUntil(() => this.scene.ui?.getMode() === mode);
+    await vi.waitUntil(() => this.scene.ui?.mode === mode);
   }
 
   /**
@@ -413,7 +413,7 @@ export class GameManager {
    * @returns Whether the current mode matches the target mode.
    */
   isCurrentMode(mode: UiMode): boolean {
-    return this.scene.ui.getMode() === mode;
+    return this.scene.ui.mode === mode;
   }
 
   /**

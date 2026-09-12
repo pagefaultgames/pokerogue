@@ -68,12 +68,12 @@ export class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
 
     this.excludedMenus = () => [
       {
-        condition: [UiMode.COMMAND, UiMode.TITLE].includes(mode ?? UiMode.TITLE),
+        condition: true, // overridden later in `.render()`
         options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },

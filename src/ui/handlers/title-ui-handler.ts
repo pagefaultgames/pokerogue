@@ -6,9 +6,9 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { isBeta, isDev } from "#constants/app-constants";
+import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
-import type { SpeciesId } from "#enums/species-id";
+import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
@@ -17,25 +17,32 @@ import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
 import { fixedInt, randInt, randItem } from "#utils/common";
-import i18next from "i18next";
+import { getEnumValues } from "#utils/enums";
+import i18next, { type TOptions } from "i18next";
+
+/** If the stats can not be retrieved, use this fallback value */
+const BATTLES_WON_FALLBACK = -1;
 
 export class TitleUiHandler extends OptionSelectUiHandler {
-  /** If the stats can not be retrieved, use this fallback value */
-  private static readonly BATTLES_WON_FALLBACK: number = -1;
-
   private titleContainer: Phaser.GameObjects.Container;
   private usernameLabel: Phaser.GameObjects.Text;
   private playerCountLabel: Phaser.GameObjects.Text;
-  private splashMessage: string;
-  private splashMessageText: Phaser.GameObjects.Text;
   private eventDisplay: TimedEventDisplay;
   private appVersionText: Phaser.GameObjects.Text;
+  private snow: Phaser.GameObjects.TileSprite;
+  private splashMessageText: Phaser.GameObjects.Text;
+
+  private splashMessage: string;
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
+  constructor() {
+    super(UiMode.TITLE);
+  }
+
   /**
-   * Returns the username of logged in user. If the username is hidden, the trainer name based on gender will be displayed.
-   * @returns The username of logged in user
+   * @returns The username of the logged in user,
+   * or the trainer name (based on currently selected gender) if the "Hide Username" setting is enabled
    */
   private getUsername(): string {
     const usernameReplacement = i18next.t(settings.isPlayerFemale ? "trainerNames:playerF" : "trainerNames:playerM");
@@ -47,52 +54,47 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     return i18next.t("menu:loggedInAs", { username: displayName });
   }
 
-  updateUsername() {
+  private updateUsername(): void {
     this.usernameLabel.setText(this.getUsername());
   }
 
-  constructor(mode: UiMode = UiMode.TITLE) {
-    super(mode);
-  }
-
-  setup() {
+  public override setup(): void {
     super.setup();
 
     const ui = this.getUi();
 
-    const scaledHeight = globalScene.scaledCanvas.height;
-    const scaledWidth = globalScene.scaledCanvas.width;
+    const { height, width } = globalScene.scaledCanvas;
 
     this.titleContainer = globalScene.add
-      .container(0, -scaledHeight) // formatting
+      .container(0, -height) // formatting
       .setName("title")
       .setAlpha(0);
     ui.add(this.titleContainer);
 
     const logo = globalScene.add
-      .image(scaledWidth / 2, 8, this.getLogo()) // formatting
+      .image(width / 2, 8, this.getLogo()) // formatting
       .setOrigin(0.5, 0);
 
     if (timedEventManager.isEventActive()) {
       this.eventDisplay = new TimedEventDisplay(0, 0, timedEventManager.activeEvent());
       this.eventDisplay.setup();
+
       this.titleContainer.add(this.eventDisplay);
     }
 
-    const labelPosX = scaledWidth - 2;
+    const labelPosX = width - 2;
     // Actual y positions will be determined after the title menu has been populated with options
     this.usernameLabel = addTextObject(labelPosX, 0, this.getUsername(), TextStyle.MESSAGE, { fontSize: "54px" }) // formatting
       .setOrigin(1, 0);
 
     this.playerCountLabel = addTextObject(labelPosX, 0, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, {
-      // formatting
       fontSize: "54px",
-    }).setOrigin(1, 0);
+    }) //
+      .setOrigin(1, 0);
 
-    const logoX = logo.x;
     const logoHeight = logo.y + logo.displayHeight;
 
-    this.splashMessageText = addTextObject(logoX + 64, logoHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" })
+    this.splashMessageText = addTextObject(logo.x + 64, logoHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" })
       .setOrigin()
       .setAngle(-20);
 
@@ -104,7 +106,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       yoyo: true,
     });
 
-    this.appVersionText = addTextObject(logoX - 60, logoHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" }) // formatting
+    this.appVersionText = addTextObject(logo.x - 60, logoHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" }) // formatting
       .setOrigin();
 
     this.titleContainer.add([
@@ -122,7 +124,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     });
   }
 
-  updateTitleStats(): void {
+  private updateTitleStats(): void {
     pokerogueApi
       .getGameTitleStats()
       .then(stats => {
@@ -136,38 +138,37 @@ export class TitleUiHandler extends OptionSelectUiHandler {
         }
       })
       .catch(err => {
-        if (!isDev) {
+        if (!bypassLogin) {
           console.error("Failed to fetch title stats:\n", err);
         }
       });
   }
 
-  /** Used solely to display a random Pokémon name in a splash message. */
-  randomPokemon(): void {
-    const rand = randInt(1025, 1);
-    const pokemon = speciesDataRegistry.getSpecies(rand as SpeciesId);
-    const splashMessage = this.splashMessage;
-    if (
-      this.splashMessage === "splashMessages:underratedPokemon"
-      || this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident"
-      || this.splashMessage === "splashMessages:aWildPokemonAppeared"
-      || this.splashMessage === "splashMessages:aprilFools.removedPokemon"
-    ) {
-      this.splashMessageText.setText(i18next.t(splashMessage, { pokemonName: pokemon.name }));
+  private getSplashMessageI18nParams(): TOptions & Record<string, unknown> {
+    switch (this.splashMessage) {
+      case "splashMessages:battlesWon":
+        return { count: BATTLES_WON_FALLBACK };
+      case "splashMessages:itsBeenTotalRuns":
+        return { cycleCountNoOrdinal: 5643853 + globalScene.gameData.gameStats.classicSessionsPlayed };
+      case "splashMessages:aprilFools.helloKyleAmber": {
+        const trainerName = settings.isPlayerFemale ? "trainerNames:playerF" : "trainerNames:playerM";
+        return { name: i18next.t(trainerName) };
+      }
+      case "splashMessages:underratedPokemon":
+      case "splashMessages:dontTalkAboutThePokemonIncident":
+      case "splashMessages:aWildPokemonAppeared":
+      case "splashMessages:aprilFools.removedPokemon": {
+        const randSpeciesId = randItem(getEnumValues(SpeciesId));
+        const species = speciesDataRegistry.getSpecies(randSpeciesId);
+        const pokemonName = randSpeciesId > 2000 ? species.getFormNameToDisplay(0, true) : species.name;
+        return { pokemonName };
+      }
     }
+
+    return {};
   }
 
-  /** Used for a specific April Fools splash message. */
-  genderSplash(): void {
-    const splashMessage = this.splashMessage;
-    if (this.splashMessage === "splashMessages:aprilFools.helloKyleAmber") {
-      const splashMessageText = this.splashMessageText;
-      const text = settings.isPlayerFemale ? "trainerNames:playerF" : "trainerNames:playerM";
-      splashMessageText.setText(i18next.t(splashMessage, { name: i18next.t(text) }));
-    }
-  }
-
-  show(args: any[]): boolean {
+  public override show(args: any[]): boolean {
     const ret = super.show(args);
 
     if (!ret) {
@@ -179,8 +180,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     this.updateUsername();
 
-    // Moving username and player count to top of the menu
-    // and sorting it, to display the shorter one on top
+    // Move username and player count to top of the menu and sort it,
+    // to display the shorter one on top
     const UPPER_LABEL = scaledHeight - 23 - windowHeight;
     const LOWER_LABEL = scaledHeight - 13 - windowHeight;
 
@@ -193,12 +194,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     }
 
     this.splashMessage = randItem(getSplashMessages());
-    this.splashMessageText.setText(
-      i18next.t(this.splashMessage, {
-        count: TitleUiHandler.BATTLES_WON_FALLBACK,
-        cycleCountNoOrdinal: 5643853 + globalScene.gameData.gameStats.classicSessionsPlayed, // for `splashMessages:itsBeenTotalRuns`
-      }),
-    );
+    this.splashMessageText.setText(i18next.t(this.splashMessage, this.getSplashMessageI18nParams()));
 
     const betaText = isBeta || isDev ? " (Beta)" : "";
     this.appVersionText.setText("v" + version + betaText);
@@ -212,11 +208,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     const now = new Date();
     if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
-      this.getSnow();
+      this.addSnow();
     }
-
-    this.randomPokemon();
-    this.genderSplash();
 
     this.updateTitleStats();
 
@@ -234,8 +227,10 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     return true;
   }
 
-  clear(): void {
+  public override clear(): void {
     super.clear();
+
+    this.snow?.destroy();
 
     const ui = this.getUi();
 
@@ -262,15 +257,15 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : "logo";
   }
 
-  private snow: Phaser.GameObjects.TileSprite;
-
   /** Adds a snow effect on the title screen during the winter season. */
-  private getSnow(): void {
-    const width = globalScene.scaledCanvas.width;
-    const height = globalScene.scaledCanvas.height;
+  private addSnow(): void {
+    const { height, width } = globalScene.scaledCanvas;
+
     this.snow?.destroy(); // Ensures no duplicate snow layers
-    this.snow = globalScene.add.tileSprite(width, height, width, height, "snow");
-    this.snow.setOrigin(1, 1);
+
+    this.snow = globalScene.add //
+      .tileSprite(width, height, width, height, "snow")
+      .setOrigin(1, 1);
 
     globalScene.tweens.add({
       targets: this.snow,
@@ -287,6 +282,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
         }
       },
     });
+
     this.titleContainer.addAt(this.snow, 0);
   }
 }

@@ -11,7 +11,7 @@ import i18next from "i18next";
 
 export class ScanIvsPhase extends PokemonPhase {
   public readonly phaseName = "ScanIvsPhase";
-  // biome-ignore lint/complexity/noUselessConstructor: This changes `battlerIndex` to be required
+
   constructor(battlerIndex: BattlerIndex) {
     super(battlerIndex);
   }

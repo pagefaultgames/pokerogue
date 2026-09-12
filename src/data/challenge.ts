@@ -31,7 +31,6 @@ import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -792,7 +791,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   override applyStarterChoice(species: PokemonSpecies, isValid: BooleanHolder, dexAttr: DexAttrProps): boolean {
-    const speciesForm = getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
     if (!types.includes(this.value - 1)) {
       isValid.value = false;

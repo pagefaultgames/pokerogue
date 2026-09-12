@@ -91,12 +91,21 @@ export function toHaveTypes(
     };
   }
 
-  // Exact matches do not care about subset equality
-  const matchers =
-    mode === "superset"
-      ? [...this.customTesters, this.utils.iterableEquality]
-      : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
-  const pass = this.equals(actualSorted, expectedSorted, matchers);
+  if (mode === "superset") {
+    const pass = expectedSorted.every(v => actualSorted.some(a => this.equals(a, v)));
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected ${pkmName}'s types NOT to include all of ${expectedStr}, but it did!`
+          : `Expected ${pkmName}'s types to include all of ${expectedStr}, but it didn't!`,
+      expected: expectedSorted,
+      actual: actualSorted,
+    };
+  }
+
+  const pass = this.equals(actualSorted, expectedSorted, [...this.customTesters, this.utils.iterableEquality]);
 
   return {
     pass,

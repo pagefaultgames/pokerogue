@@ -45,7 +45,7 @@ describe("Abilities - Volt Absorb", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
     expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("should activate regardless of accuracy checks", async () => {
