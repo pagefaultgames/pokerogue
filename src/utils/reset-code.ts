@@ -26,6 +26,10 @@ export function getResetCodes(): ResetCode[] {
   return Object.entries(resetCodes).map(([username, resetCode]) => ({ username, resetCode }));
 }
 
+/**
+ * Removes the reset code for a given username from local storage.
+ * @param username - The username for which to remove the reset code
+ */
 export function removeResetCode(username: string): void {
   const resetCodes: ResetCodes = JSON.parse(localStorage.getItem(resetCodesLsKey) ?? "{}");
   delete resetCodes[username];
