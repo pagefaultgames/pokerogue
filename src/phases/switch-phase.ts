@@ -30,10 +30,10 @@ export class SwitchPhase extends PokemonPhase {
    * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon switching **out**
    * @param switchType - A {@linkcode SwitchType} dictating the type of switch behavior
    * to perform
-   * @param switchInIndex - The party index of the Pokemon switching **in**, or `-1` to prompt a switch
-   * from the Player party selector or enemy AI; default `-1`
-   * @param summonPhaseOptions - If provided, will be used as parameters to queue a {@linkcode SummonPhase} and {@linkcode PostSummonPhase} immediately after this phase ends.
-   * Used exclusively for faint switches to send in the party member chosen by this Phase,
+   * @param switchInIndex - (Default `-1`) The party index of the Pokemon switching **in**,
+   * or `-1` to prompt a switch from the Player party selector or enemy AI
+   * @param summonPhaseOptions - If provided, will be used as parameters to queue a {@linkcode SummonPhase} and {@linkcode PostSummonPhase} immediately after this phase ends. \
+   * Used exclusively for faint switches to send in the party member chosen by this Phase, \
    * as well as mid-battle switches (to ensure relevant phases remain grouped alongside this Phase).
    */
   // TODO: Stop using the `summonPhaseOptions` parameter for faint switches in favor of queueing relevant switches at turn end
@@ -109,11 +109,10 @@ export class SwitchPhase extends PokemonPhase {
   }
 
   /**
-   * Updates *all* data that needs to be changed as a direct result of this
-   * phase's switch action.
+   * Updates *all* data that needs to be changed as a direct result of this phase's switch action.
    *
-   * Note that the affected Pokemon are visually off the field when this is
-   * called. Any pre-switch effects that require the Pokemon to be visible
+   * Note that the affected Pokemon are visually off the field when this is called. \
+   * Any pre-switch effects that require the Pokemon to be visible
    * should be applied when or before the Pokemon is {@linkcode RecallPhase | recalled}.
    */
   private updatePokemonData(): void {
@@ -122,8 +121,7 @@ export class SwitchPhase extends PokemonPhase {
     const switchedInPokemon = party[this.switchInIndex];
 
     // Apply pre-switch effects from abilities (e.g. Regenerator)
-    const params = { pokemon: activePokemon };
-    applyAbAttrs("PreSwitchOutAbAttr", params);
+    applyAbAttrs("PreSwitchOutAbAttr", { pokemon: activePokemon });
 
     // Remove all tags applied to the active Pokemon's opponents by the active Pokemon
     // (e.g. "binding" effects from Bind, Fire Spin, etc.)
@@ -198,14 +196,14 @@ export class SwitchPhase extends PokemonPhase {
   }
 
   public override end(): void {
+    const { phaseManager } = globalScene;
     const { battlerIndex, switchType, summonPhaseOptions } = this;
+
     if (summonPhaseOptions != null) {
-      globalScene.phaseManager.unshiftNew("SummonPhase", battlerIndex, {
-        switchType,
-        ...summonPhaseOptions,
-      });
-      globalScene.phaseManager.unshiftNew("PostSummonPhase", battlerIndex);
+      phaseManager.unshiftNew("SummonPhase", battlerIndex, { switchType, ...summonPhaseOptions });
+      phaseManager.unshiftNew("PostSummonPhase", battlerIndex);
     }
+
     super.end();
   }
 }
