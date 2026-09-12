@@ -29,13 +29,15 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
     console.log(globalScene.currentBattle.battleType);
     if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      const desiredPokemon = desiredField[0];
-      const displacedPokemon = party.find(pokemon => pokemon.isOnField() && pokemon.id !== desiredPokemon?.id);
-      if (!desiredPokemon || !displacedPokemon) {
+      const displacedPokemon = party.filter(pokemon => pokemon.isOnField());
+      console.log("Displaced Pokémon:", displacedPokemon?.length);
+      console.log(displacedPokemon);
+      if (!displacedPokemon) {
         this.end();
         return;
       }
-      await this.recallPokemon([displacedPokemon]);
+      await this.recallPokemon(displacedPokemon);
+      this.end();
       return;
     }
 
