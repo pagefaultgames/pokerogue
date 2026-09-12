@@ -36,6 +36,8 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   private offsetX: number;
   private offsetY: number;
 
+  private maskGraphics?: Phaser.GameObjects.Graphics;
+  private textMask?: Phaser.Display.Masks.GeometryMask;
   private maskHeight: number;
   // These are stored so that the mask can be updated automatically after being created.
   private maskGlobalX: number;
@@ -94,9 +96,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * @param globalY
    */
   createMask(globalX: number, globalY: number) {
-    // Remove existing mask
-    this.text.clearMask(true);
-
     this.maskGlobalX = globalX;
     this.maskGlobalY = globalY;
 
@@ -106,14 +105,19 @@ export class ScrollingText extends Phaser.GameObjects.Container {
 
     const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
     this.maskHeight = this.calculateMaxTextHeight();
-    const visibleHeight = this.maskHeight;
 
-    const maskGraphics = globalScene.make.graphics({ x: 0, y: 0 });
-    maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight).setScale(6);
+    if (!this.maskGraphics) {
+      this.maskGraphics = globalScene.make.graphics();
+      this.maskGraphics.setVisible(false);
+      globalScene.add.existing(this.maskGraphics);
 
-    globalScene.add.existing(maskGraphics);
-    const mask = this.createGeometryMask(maskGraphics);
-    this.text.setMask(mask);
+      this.textMask = this.createGeometryMask(this.maskGraphics);
+      this.text.setMask(this.textMask);
+    }
+
+    this.maskGraphics.clear();
+
+    this.maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, this.maskHeight).setScale(6);
   }
 
   /**
