@@ -31,7 +31,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   public text: BBCodeText;
   private descScroll: Phaser.Tweens.Tween | null = null;
   private maxLineCount: number;
-  private anchorBottom: boolean;
 
   private offsetX: number;
   private offsetY: number;
@@ -92,8 +91,8 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * 2) there is no simple way to recover the global coordinates from inside the ScrollingText container.
    * The latter would be much more desirable if possible.
    *
-   * @param globalX
-   * @param globalY
+   * @param globalX The x position of the mask in global coordinates
+   * @param globalY The y position of the mask in global coordinates
    */
   createMask(globalX: number, globalY: number) {
     this.maskGlobalX = globalX;
@@ -127,9 +126,9 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * When resizing, by default the top of the box is fixed. To change this behavior, and keep
    * the bottom fixed, set `anchorBottom` to `true` instead.
    *
-   * @param content
-   * @param fitHeight
-   * @param anchorBottom
+   * @param content The new text
+   * @param fitHeight Whether the background should be resized to fit the height of the text
+   * @param anchorBottom Whether the background should be anchored at the bottom when resizing
    */
   setText(content: string, fitHeight?: boolean, anchorBottom?: boolean) {
     this.text.setText(content);
