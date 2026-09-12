@@ -64,14 +64,12 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     const descBoxY = options?.top ? EFF_HEIGHT : 0;
     const width = options?.width || MoveInfoOverlay.getWidth();
     const descBoxWidth = width - (options?.onSide ? EFF_WIDTH : 0);
-    const descBoxHeight = DESC_HEIGHT;
 
     // prepare the description box
     this.desc = new ScrollingText({
       x: descBoxX,
       y: descBoxY,
       width: descBoxWidth,
-      height: descBoxHeight,
       maxLineCount: 3,
       content: "",
       style: TextStyle.BATTLE_INFO,

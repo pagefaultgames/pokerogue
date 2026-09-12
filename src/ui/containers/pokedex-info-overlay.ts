@@ -32,14 +32,12 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     const descBoxY = 0;
     const width = options?.width || PokedexInfoOverlay.getWidth();
     const descBoxWidth = width;
-    const descBoxHeight = DESC_HEIGHT;
 
     // prepare the description box
     this.desc = new ScrollingText({
       x: descBoxX,
       y: descBoxY,
       width: descBoxWidth,
-      height: descBoxHeight,
       maxLineCount: 3,
       content: "",
       style: TextStyle.BATTLE_INFO,

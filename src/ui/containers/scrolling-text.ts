@@ -12,8 +12,6 @@ interface ScrollingTextParameters {
   y: number;
   /** The width of the text box */
   width: number;
-  /** The height of the text box */
-  height: number;
   /** How many lines can be displayed on the screen at once */
   maxLineCount: number;
   /** The text shown initially; can be modified later */
@@ -77,8 +75,8 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     });
     this.maxLineCount = maxLineCount;
 
+    // Adding the background; height is calculated automatically
     const height = this.calculateMaxTextHeight() + this.offsetY * 2;
-    // Adding the background
     this.descBg = addWindow(0, 0, width, height).setOrigin(0, 0).setVisible(showBackground);
     this.add(this.descBg);
 
