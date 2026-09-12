@@ -35,7 +35,7 @@ export abstract class Phase {
    *
    * @param phaseName - The name of the phase to check
    * @returns Whether this Phase is of the provided type.
-   *
+   * @sealed
    * @remarks
    * This does not check for subclasses! It only checks if the phase is *exactly* the given type.
    * This method exists to avoid circular import issues, as using `instanceof` would require importing each phase.
