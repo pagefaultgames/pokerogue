@@ -34,8 +34,6 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
   private splashMessage: string;
 
-  private titleStatsTimer: NodeJS.Timeout | null;
-
   constructor() {
     super(UiMode.TITLE);
   }
@@ -213,9 +211,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     this.updateTitleStats();
 
-    this.titleStatsTimer = setInterval(() => {
-      this.updateTitleStats();
-    }, 60000);
+    globalScene.titleStatsTimer = setInterval(() => this.updateTitleStats(), 60000);
 
     globalScene.tweens.add({
       targets: [this.titleContainer, ui.getMessageHandler().bg],
@@ -236,8 +232,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     this.eventDisplay?.clear();
 
-    this.titleStatsTimer && clearInterval(this.titleStatsTimer);
-    this.titleStatsTimer = null;
+    globalScene.titleStatsTimer && clearInterval(globalScene.titleStatsTimer);
+    globalScene.titleStatsTimer = null;
 
     globalScene.tweens.add({
       targets: [this.titleContainer, ui.getMessageHandler().bg],
