@@ -89,23 +89,25 @@ describe("Abilities - Desolate Land", () => {
   });
 
   it("should lift when pokemon returns upon switching from double to single battle", async () => {
-    game.override.battleStyle("even-doubles").enemyMoveset([MoveId.SPLASH, MoveId.MEMENTO]).startingWave(12);
+    game.override.battleStyle("odd-doubles");
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGCARGO);
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    const [player1, player2] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.SPLASH, 0, 2);
-    game.move.select(MoveId.SPLASH, 1, 2);
-    await game.move.selectEnemyMove(MoveId.MEMENTO, 0);
-    await game.move.selectEnemyMove(MoveId.MEMENTO, 1);
+    game.move.use(MoveId.SPLASH, 0, 2);
+    game.move.use(MoveId.SPLASH, 1, 2);
+    await game.move.forceEnemyMove(MoveId.MEMENTO, 0);
+    await game.move.forceEnemyMove(MoveId.MEMENTO, 1);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     await game.toNextWave();
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+    expect(game.scene.currentBattle.double).toBe(false);
+    expect(player1.isOnField()).toBe(true);
+    expect(player2.isOnField()).toBe(false);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should lift when enemy is captured", async () => {

@@ -1,14 +1,17 @@
 import { getGameMode } from "#app/game-mode";
+import { Phase } from "#app/phase";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
-import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
+import { PostSummonActivateAbilityPhase } from "#phases/post-summon-activate-ability-phase";
 import { GameManager } from "#test/framework/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -105,6 +108,82 @@ describe("Double Battles", () => {
     expect(singleCount).toBe(DOUBLE_CHANCE - 1);
   });
 
+  it("should transition to and from double battles without crashing", async () => {
+    game.override.battleStyle("even-doubles");
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER);
+
+    // Run a single -> double transition and a double -> single transition
+    for (let waveNumber = 1; waveNumber < 3; waveNumber++) {
+      const isDouble = waveNumber % 2 === 0;
+      expect(game.scene.currentBattle.double).toBe(isDouble);
+      expect(game.scene.currentBattle.waveIndex).toBe(waveNumber);
+
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+      if (isDouble) {
+        game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+      }
+      await game.doKillOpponents();
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.double).toBe(!isDouble);
+    }
+  });
+
+  it("should trigger multiple switches in speed order without shuffling phases", async () => {
+    game.override.battleStyle("double").battleType(BattleType.TRAINER);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.POLITOED, SpeciesId.MILOTIC);
+
+    const [player1, player2, player3, player4] = game.scene.getPlayerParty();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    game.field.mockAbility(player2, AbilityId.SWIFT_SWIM);
+    game.field.mockAbility(player3, AbilityId.DRIZZLE);
+    // NB: These need to be mocks as stats get recomputed copiously often (more than they arguably should be)
+    vi.spyOn(player1, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 100 : player1.stats[stat]));
+    vi.spyOn(player2, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 40 : player2.stats[stat]));
+    vi.spyOn(player3, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 10 : player3.stats[stat]));
+    vi.spyOn(enemy1, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 55 : enemy1.stats[stat]));
+    vi.spyOn(enemy2, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 50 : enemy2.stats[stat]));
+
+    // Mock out `Phase.start` to track all switch/recall/summon/post summon phases queued,
+    // alongside a reference to their respective pokemon.
+    // We cannot do this _post hoc_ as the `SwitchPhase`s will have rearranged the player party by turn end
+    // (thus making any BattlerIndex-based references inaccurate)
+    const phases: ["RecallPhase" | "SwitchPhase" | "SummonPhase" | "PostSummonPhase", string][] = [];
+    vi.spyOn(Phase.prototype, "start").mockImplementation(function (this: Phase) {
+      if (
+        this.is("RecallPhase")
+        || this.is("SwitchPhase")
+        || this.is("SummonPhase")
+        || (this.is("PostSummonPhase") && !(this instanceof PostSummonActivateAbilityPhase))
+      ) {
+        phases.push([this.phaseName, this.getPokemon().name]);
+      }
+    });
+
+    // switch magikarp out for politoed, and feebas out for milotic
+    // drizzle should activate Feebas' Swift Swim and make it move 2nd
+    game.doSwitchPokemon(2);
+    game.doSwitchPokemon(3);
+    game.forceEnemyToSwitch();
+    await game.toEndOfTurn();
+
+    // Ensure proper ordering of effects - each pokemon should do recall -> switch -> summon -> post summon in that order
+    expect(phases).toEqual([
+      ["RecallPhase", player1.name],
+      ["SwitchPhase", player1.name],
+      ["SummonPhase", player3.name],
+      ["PostSummonPhase", player3.name],
+      ["RecallPhase", player2.name],
+      ["SwitchPhase", player2.name],
+      ["SummonPhase", player4.name],
+      ["PostSummonPhase", player4.name],
+      ["RecallPhase", enemy1.name],
+      ["SwitchPhase", enemy1.name],
+      ["SummonPhase", expect.anything()],
+      ["PostSummonPhase", expect.anything()],
+    ]);
+  });
+
   it("should offer no rewards when both opponents flee and zero are defeated", async () => {
     game.override.battleStyle("double").enemySpecies(SpeciesId.MAGIKARP).enemyMoveset([MoveId.SPLASH]);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
@@ -143,20 +222,24 @@ describe("Double Battles", () => {
     expect(handler.options.length).toBe(3);
   });
 
-  it("won't queue multiple `BattleEndPhase`s/etc if the last 2 enemy Pokemon are defeated simultaneously in a trainer battle", async () => {
-    game.override //
+  it("should advance exactly one wave if both opponents are defeated at the same time", async () => {
+    game.override
+      .randomTrainer({ trainerType: TrainerType.TWINS })
       .battleType(BattleType.TRAINER)
-      .randomTrainer({ trainerType: TrainerType.YOUNGSTER, trainerVariant: TrainerVariant.DOUBLE })
-      .startingLevel(200);
+      .startingLevel(1000)
+      .startingWave(12);
 
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    expect(game.field.getEnemyParty()).toHaveLength(2);
-    expect(game.scene.getEnemyField()).toHaveLength(2);
-
-    game.move.use(MoveId.SURF);
+    game.move.use(MoveId.DAZZLING_GLEAM);
     await game.toEndOfTurn(false);
 
     expect(game.scene.phaseManager["phaseQueue"].findAll("BattleEndPhase")).toHaveLength(1);
+
+    await game.toNextWave();
+
+    expect(game.scene.currentBattle.waveIndex).toBe(13);
+    expect(game.phaseInterceptor.phaseLog.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+    expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
   });
 });

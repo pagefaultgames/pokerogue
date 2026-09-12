@@ -9,3 +9,5 @@ export enum BattlerIndex {
   ENEMY,
   ENEMY_2,
 }
+
+export type FieldBattlerIndex = BattlerIndex.PLAYER | BattlerIndex.PLAYER_2 | BattlerIndex.ENEMY | BattlerIndex.ENEMY_2;
