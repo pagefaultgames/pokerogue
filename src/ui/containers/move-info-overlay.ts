@@ -145,7 +145,7 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     this.typ.setTexture(getLocalizedSpriteKey("types"), PokemonType[move.type].toLowerCase());
     this.cat.setFrame(MoveCategory[move.category].toLowerCase());
 
-    this.desc.updateText(move?.effect || "");
+    this.desc.setText(move?.effect || "");
 
     // stop previous scrolling effects and reset y position
     this.desc.activate();

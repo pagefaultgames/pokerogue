@@ -129,7 +129,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * @param fitHeight
    * @param anchorBottom
    */
-  updateText(content: string, fitHeight?: boolean, anchorBottom?: boolean) {
+  setText(content: string, fitHeight?: boolean, anchorBottom?: boolean) {
     this.text.setText(content);
 
     if (!fitHeight) {
