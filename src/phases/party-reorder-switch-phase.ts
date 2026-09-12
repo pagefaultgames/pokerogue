@@ -12,6 +12,7 @@ const REPOSITION_SLIDE_DURATION = 500;
 
 export class PartyReorderSwitchPhase extends BattlePhase {
   public readonly phaseName = "PartyReorderSwitchPhase";
+
   private readonly partyIndex: number;
 
   constructor(partyIndex: number) {
@@ -20,7 +21,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     this.partyIndex = partyIndex;
   }
 
-  start(): void {
+  public override async start(): Promise<void> {
     super.start();
 
     const party = globalScene.getPlayerParty();
@@ -76,11 +77,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     }
 
     if (slides.length > 0) {
-      Promise.all(slides).then(() => {
-        summonEntering();
-        this.end();
-      });
-      return;
+      await Promise.all(slides);
     }
 
     summonEntering();
