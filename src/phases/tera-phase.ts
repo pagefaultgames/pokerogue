@@ -44,7 +44,6 @@ export class TeraPhase extends BattlePhase {
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangeTeraTrigger);
 
     if (this.pokemon.isPlayer()) {
-      globalScene.arena.playerTerasUsed += 1;
       globalScene.validateAchv(achvs.TERASTALLIZE);
       if (this.pokemon.getTeraType() === PokemonType.STELLAR) {
         globalScene.validateAchv(achvs.STELLAR_TERASTALLIZE);
