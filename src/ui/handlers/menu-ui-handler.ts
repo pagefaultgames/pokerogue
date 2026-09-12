@@ -705,10 +705,13 @@ export class MenuUiHandler extends MessageUiHandler {
           const doLogout = () => {
             ui.setMode(UiMode.LOADING, {
               buttonActions: [],
-              fadeOut: () =>
-                pokerogueApi.account.logout().then(() => {
-                  updateUserInfo().then(() => globalScene.reset(true, true));
-                }),
+              fadeOut: async () => {
+                await pokerogueApi.account.logout();
+                await updateUserInfo();
+                globalScene.titleStatsTimer && clearInterval(globalScene.titleStatsTimer);
+                globalScene.titleStatsTimer = null;
+                globalScene.reset(true, true);
+              },
             });
           };
           if (globalScene.currentBattle) {
