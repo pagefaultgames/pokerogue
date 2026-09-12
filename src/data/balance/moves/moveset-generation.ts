@@ -178,11 +178,13 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.BELCH,
   MoveId.BIDE,
   MoveId.BIND,
+  MoveId.BURN_UP,
   MoveId.CLAMP,
   MoveId.CIRCLE_THROW,
   MoveId.COMEUPPANCE,
   MoveId.COUNTER,
   MoveId.DOOM_DESIRE,
+  MoveId.DOUBLE_SHOCK,
   MoveId.DRAGON_RAGE,
   MoveId.DRAGON_TAIL,
   MoveId.DREAM_EATER,
@@ -227,6 +229,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUPER_FANG,
   MoveId.SUCKER_PUNCH,
   MoveId.SYNCHRONOISE,
+  MoveId.THIEF,
   MoveId.UPPER_HAND,
   MoveId.U_TURN,
   MoveId.VOLT_SWITCH,
@@ -235,6 +238,17 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   // Moves that always change type.
   MoveId.NATURE_POWER,
   MoveId.HIDDEN_POWER,
+  // Priority / not main STAB
+  MoveId.AQUA_JET,
+  MoveId.SHADOW_SNEAK,
+  MoveId.VACUUM_WAVE,
+  MoveId.POWER_UP_PUNCH,
+  MoveId.MACH_PUNCH,
+  MoveId.ICE_SHARD,
+  MoveId.BULLET_PUNCH,
+  MoveId.ACCELEROCK,
+  MoveId.TRAILBLAZE,
+  MoveId.FLAME_CHARGE,
 ]);
 
 // #endregion Constants
