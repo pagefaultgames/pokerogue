@@ -348,6 +348,14 @@ export class MenuUiHandler extends MessageUiHandler {
         },
         keepOpen: true,
       });
+      manageDataOptions.push({
+        label: i18next.t("menuUiHandler:showResetCode"),
+        handler: () => {
+          ui.setOverlayMode(UiMode.RESET_CODE);
+          return true;
+        },
+        keepOpen: true,
+      });
     }
     if (isBeta || isDev) {
       manageDataOptions.push({

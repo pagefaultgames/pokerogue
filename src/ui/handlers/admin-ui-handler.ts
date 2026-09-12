@@ -19,6 +19,7 @@ export class AdminUiHandler extends FormModalUiHandler {
   private config: ModalConfig;
 
   private tempGameData: GameData | null = null;
+  private isResetCodeVisible = false;
 
   private readonly buttonGap = 10;
   /** @returns "[field] is required" */
@@ -76,6 +77,7 @@ export class AdminUiHandler extends FormModalUiHandler {
             label: "Google ID",
             isReadOnly: (this.adminResult?.googleId ?? "") !== "",
           },
+          { label: "Reset Code", isPassword: true, isReadOnly: true },
           { label: "Last played", isReadOnly: true },
           { label: "Registered", isReadOnly: true },
         ];
@@ -97,10 +99,12 @@ export class AdminUiHandler extends FormModalUiHandler {
   show(args: any[]): boolean {
     this.config = args[0] as ModalConfig; // config
     this.adminMode = args[1] as AdminMode; // admin mode
+    this.isResetCodeVisible = false;
     this.adminResult = args[2] ?? {
       username: "",
       discordId: "",
       googleId: "",
+      resetCode: "",
       lastLoggedIn: "",
       registered: "",
     }; // admin result, if any
@@ -184,12 +188,28 @@ export class AdminUiHandler extends FormModalUiHandler {
   }
 
   private populateAdminFields(adminResult: SearchAccountResponse) {
-    for (const [i, aR] of Object.keys(adminResult).entries()) {
-      if (aR === "systemData") {
-        continue;
+    const fields: {
+      key: "username" | "discordId" | "googleId" | "resetCode" | "lastLoggedIn" | "registered";
+      linkable?: boolean;
+    }[] = [
+      { key: "username" },
+      { key: "discordId", linkable: true },
+      { key: "googleId", linkable: true },
+      { key: "resetCode" },
+      { key: "lastLoggedIn" },
+      { key: "registered" },
+    ];
+
+    for (const [i, field] of fields.entries()) {
+      const aR = field.key;
+      const value = adminResult[aR] as string | undefined;
+      this.inputs[i].setText(value ?? "");
+      if (aR === "resetCode") {
+        this.addResetCodeVisibilityToggle(i);
+        // Hide if the user has a code or not by always showing teh full 8 asterisks
+        this.inputs[i].setText(this.isResetCodeVisible ? adminResult.resetCode : "********");
       }
-      this.inputs[i].setText(adminResult[aR]);
-      if (aR === "discordId" || aR === "googleId") {
+      if (field.linkable) {
         // this is here to add the icons for linking/unlinking of google/discord IDs
         const nineSlice = this.inputContainers[i].list.find(
           (iC): iC is Phaser.GameObjects.NineSlice => iC.type === "NineSlice",
@@ -235,6 +255,32 @@ export class AdminUiHandler extends FormModalUiHandler {
         this.modalContainer.add(img);
       }
     }
+  }
+
+  private addResetCodeVisibilityToggle(inputIndex: number) {
+    const inputContainer = this.inputContainers[inputIndex];
+    const nineSlice = inputContainer.list.find(
+      (item): item is Phaser.GameObjects.NineSlice => item.type === "NineSlice",
+    );
+    const icon = globalScene.add.image(
+      inputContainer.x + nineSlice!.width + this.buttonGap,
+      inputContainer.y + Math.floor(nineSlice!.height / 2),
+      "unown_closed",
+    );
+    icon
+      .setName("adminBtn_resetCodeVisibility")
+      .setOrigin()
+      .setInteractive()
+      .on("pointerdown", () => {
+        this.isResetCodeVisible = !this.isResetCodeVisible;
+        const input = this.inputs[inputIndex];
+        (input.node as HTMLInputElement).type = this.isResetCodeVisible ? "text" : "password";
+        input.setText(this.isResetCodeVisible ? this.adminResult.resetCode : "********");
+        icon.setTexture(this.isResetCodeVisible ? "unown_open" : "unown_closed");
+      });
+
+    this.addInteractionHoverEffect(icon);
+    this.modalContainer.add(icon);
   }
 
   /**
@@ -313,8 +359,9 @@ export class AdminUiHandler extends FormModalUiHandler {
       username: inputs[0]?.node ? inputs[0].text : "",
       discordId: inputs[1]?.node ? inputs[1]?.text : "",
       googleId: inputs[2]?.node ? inputs[2]?.text : "",
-      lastLoggedIn: inputs[3]?.node ? inputs[3]?.text : "",
-      registered: inputs[4]?.node ? inputs[4]?.text : "",
+      resetCode: inputs[3]?.node ? inputs[3]?.text : "",
+      lastLoggedIn: inputs[4]?.node ? inputs[4]?.text : "",
+      registered: inputs[5]?.node ? inputs[5]?.text : "",
     };
   }
 
@@ -326,6 +373,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         username: adminSearchResult.username,
         discordId: "",
         googleId: "",
+        resetCode: "",
         lastLoggedIn: "",
         registered: "",
       };
@@ -341,6 +389,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
         return { adminSearchResult, error: true, errorType };
       }
+      adminInfo.resetCode = adminInfo.resetCode || "N/A";
       if (adminInfo.systemData) {
         const rawSystem = JSON.stringify(adminInfo.systemData);
         try {
