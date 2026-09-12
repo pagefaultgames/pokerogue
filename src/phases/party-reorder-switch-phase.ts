@@ -13,14 +13,6 @@ const REPOSITION_SLIDE_DURATION = 500;
 export class PartyReorderSwitchPhase extends BattlePhase {
   public readonly phaseName = "PartyReorderSwitchPhase";
 
-  private readonly partyIndex: number;
-
-  constructor(partyIndex: number) {
-    super();
-
-    this.partyIndex = partyIndex;
-  }
-
   public override async start(): Promise<void> {
     super.start();
 
@@ -28,7 +20,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     const isDouble = globalScene.currentBattle.double;
     // The pokemon that should occupy the field, ordered by their target field slot.
     const desiredField = party.slice(0, isDouble ? 2 : 1);
-    console.log("Desired field: ", desiredField);
+    console.log("Desired field: ", desiredField.length);
 
     if (desiredField.length === 0) {
       this.end();
@@ -37,13 +29,13 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
     console.log(globalScene.currentBattle.battleType);
     if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      const desiredPokemon = desiredField[this.partyIndex];
+      const desiredPokemon = desiredField[0];
       const displacedPokemon = party.find(pokemon => pokemon.isOnField() && pokemon.id !== desiredPokemon?.id);
       if (!desiredPokemon || !displacedPokemon) {
         this.end();
         return;
       }
-      this.recallPokemon([displacedPokemon], () => this.end());
+      await this.recallPokemon([displacedPokemon]);
       return;
     }
 
@@ -71,11 +63,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     };
 
     if (leavingPokemon.length > 0) {
-      this.recallPokemon(leavingPokemon, () => {
-        summonEntering();
-        this.end();
-      });
-      return;
+      await this.recallPokemon(leavingPokemon);
     }
 
     if (slides.length > 0) {
@@ -123,8 +111,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
    * @param leavingPokemon - The pokemon to recall
    * @param onComplete - Callback invoked once every recall animation has finished
    */
-  private recallPokemon(leavingPokemon: Pokemon[], onComplete: () => void): void {
-    let remaining = leavingPokemon.length;
+  private async recallPokemon(leavingPokemon: Pokemon[]): Promise<void> {
     for (const pokemon of leavingPokemon) {
       globalScene.ui.showText(
         i18next.t("battle:playerComeBack", {
@@ -135,19 +122,21 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
       pokemon.hideInfo();
       pokemon.tint(getPokeballTintColor(pokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
-      globalScene.tweens.add({
-        targets: pokemon,
-        duration: 250,
-        ease: "Sine.easeIn",
-        scale: 0.1,
-        onComplete: () => {
-          globalScene.time.delayedCall(750, () => {
+
+      await new Promise<void>(resolve => {
+        globalScene.tweens.add({
+          targets: pokemon,
+          duration: 250,
+          ease: "Sine.easeIn",
+          scale: 0.1,
+          onComplete: () => {
             pokemon.leaveField(true, false);
-            if (--remaining === 0) {
-              onComplete();
-            }
-          });
-        },
+
+            globalScene.time.delayedCall(750, () => {
+              resolve();
+            });
+          },
+        });
       });
     }
   }
