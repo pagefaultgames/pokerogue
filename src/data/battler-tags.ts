@@ -1911,6 +1911,7 @@ export class ProtectedTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    // TODO: denest :(
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play();
       globalScene.phaseManager.queueMessage(
@@ -1931,25 +1932,18 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
-/** Class for `BattlerTag`s that apply some effect when hit by a contact move */
+/** Class for `BattlerTag`s that apply effects when hit by a contact move. */
 export abstract class ContactProtectedTag extends ProtectedTag {
   /**
-   * Function to call when a contact move hits the pokemon with this tag.
-   * @param _attacker - The pokemon using the contact move
-   * @param _user - The pokemon that is being attacked and has the tag
+   * Trigger effects when a contact move hits the Pokemon with this tag.
+   * @param attacker - The pokemon using the contact move
+   * @param user - The pokemon that is being attacked and has the tag
    */
-  abstract onContact(_attacker: Pokemon, _user: Pokemon): void;
+  // TODO: Reverse parameter order perhaps? We usually put user first...
+  // TODO: Make this protected
+  abstract onContact(attacker: Pokemon, user: Pokemon): void;
 
-  /**
-   * Lapse the tag and apply `onContact` if the move makes contact and
-   * `lapseType` is custom, respecting the move's flags and the pokemon's
-   * abilities, and whether the lapseType is custom.
-   *
-   * @param pokemon - The pokemon with the tag
-   * @param lapseType - The type of lapse to apply. If this is not {@linkcode BattlerTagLapseType.CUSTOM CUSTOM}, no effect will be applied.
-   * @returns Whether the tag continues to exist after the lapse.
-   */
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = super.lapse(pokemon, lapseType);
 
     const moveData = getMoveEffectPhaseData(pokemon);
@@ -1966,7 +1960,7 @@ export abstract class ContactProtectedTag extends ProtectedTag {
 }
 
 /**
- * `BattlerTag` class for moves that block damaging moves damage the enemy if the enemy's move makes contact
+ * `BattlerTag` class for protection effects that damage enemies who make contact with the user.
  * Used by {@linkcode MoveId.SPIKY_SHIELD}
  *
  * @sealed
@@ -1980,14 +1974,9 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
     this.#damageRatio = damageRatio;
   }
 
-  /**
-   * Damage the attacker by `this.damageRatio` of the target's max HP
-   * @param attacker - The pokemon using the contact move
-   * @param user - The pokemon that is being attacked and has the tag
-   */
-  override onContact(attacker: Pokemon, user: Pokemon): void {
+  public override onContact(attacker: Pokemon): void {
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: user, cancelled });
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
     if (!cancelled.value) {
       attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.#damageRatio)), {
         result: HitResult.INDIRECT,
