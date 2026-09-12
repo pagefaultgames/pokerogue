@@ -3760,7 +3760,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       1: AbilityId.UNAWARE,
     },
     levelMoves: [
-      [EVOLVE_MOVE, MoveId.DISARMING_VOICE],
+      [1, MoveId.DISARMING_VOICE],
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
       [1, MoveId.SPOTLIGHT],

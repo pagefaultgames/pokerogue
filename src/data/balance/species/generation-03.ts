@@ -12432,6 +12432,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       [RELEARN_MOVE, MoveId.THUNDER_FANG],
       [RELEARN_MOVE, MoveId.FIRE_FANG],
       [EVOLVE_MOVE, MoveId.FLY],
+      [1, MoveId.SLASH],
       [1, MoveId.LEER],
       [1, MoveId.EMBER],
       [1, MoveId.RAGE],
