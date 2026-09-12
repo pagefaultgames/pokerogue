@@ -3760,7 +3760,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       1: AbilityId.UNAWARE,
     },
     levelMoves: [
-      [EVOLVE_MOVE, MoveId.DISARMING_VOICE],
+      [1, MoveId.DISARMING_VOICE],
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
       [1, MoveId.SPOTLIGHT],
@@ -12677,9 +12677,10 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [36, MoveId.STRENGTH],
       [40, MoveId.SWORDS_DANCE],
       [43, MoveId.STORM_THROW],
-      [47, MoveId.THRASH],
-      [50, MoveId.SUPERPOWER],
-      [54, MoveId.GUILLOTINE],
+      [46, MoveId.SLASH],
+      [49, MoveId.THRASH],
+      [52, MoveId.SUPERPOWER],
+      [55, MoveId.GUILLOTINE],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
