@@ -11376,7 +11376,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [21, MoveId.DETECT],
       [25, MoveId.SWORDS_DANCE],
       [27, MoveId.DEFOG],
-      [31, MoveId.AGILITY],
+      [31, MoveId.FEATHER_DANCE],
       [37, MoveId.BRICK_BREAK],
       [43, MoveId.SLAM],
       [45, MoveId.FALSE_SWIPE],
