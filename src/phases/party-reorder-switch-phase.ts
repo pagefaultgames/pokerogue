@@ -28,12 +28,14 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     const isDouble = globalScene.currentBattle.double;
     // The pokemon that should occupy the field, ordered by their target field slot.
     const desiredField = party.slice(0, isDouble ? 2 : 1);
+    console.log("Desired field: ", desiredField);
 
     if (desiredField.length === 0) {
       this.end();
       return;
     }
 
+    console.log(globalScene.currentBattle.battleType);
     if (globalScene.currentBattle.battleType !== BattleType.WILD) {
       const desiredPokemon = desiredField[this.partyIndex];
       const displacedPokemon = party.find(pokemon => pokemon.isOnField() && pokemon.id !== desiredPokemon?.id);
@@ -122,27 +124,29 @@ export class PartyReorderSwitchPhase extends BattlePhase {
    * @param onComplete - Callback invoked once every recall animation has finished
    */
   private recallPokemon(leavingPokemon: Pokemon[], onComplete: () => void): void {
-    globalScene.ui.showText(
-      i18next.t("battle:playerComeBack", {
-        pokemonName: getPokemonNameWithAffix(leavingPokemon[0]),
-      }),
-    );
-    audioManager.playSound("se/pb_rel");
-
     let remaining = leavingPokemon.length;
     for (const pokemon of leavingPokemon) {
+      globalScene.ui.showText(
+        i18next.t("battle:playerComeBack", {
+          pokemonName: getPokemonNameWithAffix(pokemon),
+        }),
+      );
+      audioManager.playSound("se/pb_rel");
+
       pokemon.hideInfo();
       pokemon.tint(getPokeballTintColor(pokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
       globalScene.tweens.add({
         targets: pokemon,
         duration: 250,
         ease: "Sine.easeIn",
-        scale: 0.5,
+        scale: 0.1,
         onComplete: () => {
-          pokemon.leaveField(true, false);
-          if (--remaining === 0) {
-            onComplete();
-          }
+          globalScene.time.delayedCall(750, () => {
+            pokemon.leaveField(true, false);
+            if (--remaining === 0) {
+              onComplete();
+            }
+          });
         },
       });
     }
