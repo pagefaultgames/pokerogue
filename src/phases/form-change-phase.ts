@@ -1,4 +1,3 @@
-import type { Animation } from "#app/animations";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -12,6 +11,7 @@ import { EvolutionPhase } from "#phases/evolution-phase";
 import { achvs } from "#system/achv";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { fixedInt } from "#utils/common";
+import { waitTime } from "#utils/time";
 
 export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
@@ -26,6 +26,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   validate(): boolean {
+    // TODO: This is really dumb
     return !!this.formChange;
   }
 
@@ -115,9 +116,6 @@ export class FormChangePhase extends EvolutionPhase {
 
   /**
    * Commence the animations that occur once the form change evolution cycle is complete
-   *
-   * @privateRemarks
-   * This would prefer {@linkcode Animation.doCycle | doCycle} to be refactored and de-promisified so this can be moved into {@linkcode beginTweens}
    * @param preName - The name of the Pokemon before the evolution
    * @param transformedPokemon - The Pokemon being transformed into
    */
@@ -144,12 +142,11 @@ export class FormChangePhase extends EvolutionPhase {
    */
   private beginTweens(preName: string, transformedPokemon: Pokemon): void {
     globalScene.tweens.chain({
-      // Starts 250ms after sprites have been configured
       targets: null,
       tweens: [
         // Step 1: Fade in the background overlay
         {
-          delay: 250,
+          delay: 250, // Starts 250ms after sprites have been configured
           targets: this.evolutionBgOverlay,
           alpha: 1,
           duration: 1500,
@@ -185,12 +182,13 @@ export class FormChangePhase extends EvolutionPhase {
       onComplete: () => {
         audioManager.playSound("se/beam");
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
-        globalScene.time.delayedCall(1000, () => {
-          this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
+        // TODO: Investigate why creating the tween immediately causes it to not play properly,
+        // but waiting a single frame works fine
+        waitTime(1000).then(() =>
           globalScene.animations
-            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite)
-            .then(() => this.afterCycle(preName, transformedPokemon));
-        });
+            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoTintSprite)[0]
+            .then(() => this.afterCycle(preName, transformedPokemon)),
+        );
       },
     });
   }

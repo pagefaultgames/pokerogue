@@ -21,12 +21,10 @@ export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
   protected lastLevel: number;
 
-  protected evoChain: Phaser.Tweens.TweenChain | null = null;
-
   private preEvolvedPokemonName: string;
 
-  private evolution: SpeciesFormEvolution | null;
-  private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
+  private readonly evolution: SpeciesFormEvolution | null;
+  private readonly fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
   private evolutionBgm: BackgroundMusic | null;
   private evolutionHandler: EvolutionSceneUiHandler;
 
@@ -50,6 +48,7 @@ export class EvolutionPhase extends Phase {
    * @param lastLevel - The level at which the Pokemon is evolving
    * @param canCancel - Whether the evolution can be cancelled by the player
    */
+  // TODO: WHY can this be null?
   constructor(pokemon: PlayerPokemon, evolution: SpeciesFormEvolution | null, lastLevel: number, canCancel = true) {
     super();
 
@@ -66,6 +65,20 @@ export class EvolutionPhase extends Phase {
 
   setMode(): Promise<void> {
     return globalScene.ui.setModeForceTransition(UiMode.EVOLUTION_SCENE);
+  }
+
+  public override async start(): Promise<void> {
+    super.start();
+    await this.setMode();
+
+    if (!this.validate()) {
+      return this.end();
+    }
+    this.onBeforeSpriteSetup();
+    this.setupEvolutionAssets();
+    this.setupPokemonSprites();
+    this.preEvolvedPokemonName = getPokemonNameWithAffix(this.pokemon);
+    this.doEvolution();
   }
 
   /**
@@ -86,7 +99,7 @@ export class EvolutionPhase extends Phase {
       .video(0, 0, "evo_bg")
       .stop()
       .setOrigin(0)
-      .setScale(0.4359673025)
+      .setScale(0.4359673025) // this is apparently 320/734 ?????
       .setVisible(false);
 
     this.evolutionBgOverlay = globalScene.add
@@ -183,20 +196,6 @@ export class EvolutionPhase extends Phase {
     ]);
   }
 
-  async start() {
-    super.start();
-    await this.setMode();
-
-    if (!this.validate()) {
-      return this.end();
-    }
-    this.onBeforeSpriteSetup();
-    this.setupEvolutionAssets();
-    this.setupPokemonSprites();
-    this.preEvolvedPokemonName = getPokemonNameWithAffix(this.pokemon);
-    this.doEvolution();
-  }
-
   /**
    * Hook allowing subclasses to mutate the Pokemon before the scene's sprites are configured.
    *
@@ -263,13 +262,20 @@ export class EvolutionPhase extends Phase {
    */
   private prepareForCycle(evolvedPokemon: Pokemon): void {
     globalScene.time.delayedCall(1500, () => {
-      this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
-      this.evolutionHandler.canCancel = this.canCancel;
-      globalScene.animations.doCycle(1, 15, this.pokemonTintSprite, this.pokemonEvoTintSprite).then(() => {
-        if (this.evolutionHandler.cancelled) {
-          this.handleFailedEvolution(evolvedPokemon);
-        } else {
+      const [promise, cancelFunc] = globalScene.animations.doCycle(
+        1,
+        15,
+        this.pokemonTintSprite,
+        this.pokemonEvoTintSprite,
+      );
+      if (this.canCancel) {
+        this.evolutionHandler.cancelFunc = cancelFunc;
+      }
+      promise.then(completed => {
+        if (completed) {
           this.handleSuccessEvolution(evolvedPokemon);
+        } else {
+          this.handleFailedEvolution(evolvedPokemon);
         }
       });
     });
@@ -463,8 +469,6 @@ export class EvolutionPhase extends Phase {
     globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
 
     globalScene.time.delayedCall(900, () => {
-      this.evolutionHandler.canCancel = this.canCancel;
-
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => this.postEvolve(evolvedPokemon));
     });
   }
