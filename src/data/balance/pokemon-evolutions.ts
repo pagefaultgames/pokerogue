@@ -237,7 +237,7 @@ interface SpeciesFormEvolutionConstructor {
   preFormKey: string | null;
   evoFormKey: string | null;
   level: number;
-  item?: EvolutionItem | null;
+  item?: EvolutionItem;
   condition?: EvolutionConditionData | EvolutionConditionData[] | undefined;
   evoDelay?: EvoLevelThreshold | undefined;
 }
@@ -248,7 +248,7 @@ export class SpeciesFormEvolution {
   public preFormKey: string | null;
   public evoFormKey: string | null;
   public level: number;
-  public item: EvolutionItem | null; // TODO: this shouldn't be `| null`, the constructor coerces it to `EvolutionItem.NONE`
+  public item: EvolutionItem;
   public condition: SpeciesEvolutionCondition | null; // TODO: default to `() => true`
   /**
    * A triple containing the level thresholds for evolutions based on the encounter sort
@@ -313,10 +313,6 @@ export class SpeciesFormEvolution {
     return this.desc;
   }
 
-  public get evoItem(): EvolutionItem {
-    return this.item ?? EvolutionItem.NONE;
-  }
-
   /**
    * Checks if a Pokemon fulfills the requirements of this evolution.
    * @param pokemon - The {@linkcode Pokemon} to evolve
@@ -332,7 +328,7 @@ export class SpeciesFormEvolution {
       pokemon.level >= this.level
       && correctForm
       && (this.condition == null || this.condition.conditionsFulfilled(pokemon, forFusion))
-      && item === this.evoItem
+      && item === this.item
     );
   }
 
@@ -347,7 +343,7 @@ export class SpeciesFormEvolution {
       this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey;
 
     return (
-      this.item != null
+      !!this.item
       && pokemon.level >= this.level
       && correctForm
       && (this.condition == null || this.condition.conditionsFulfilled(pokemon))

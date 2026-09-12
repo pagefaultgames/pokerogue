@@ -2342,13 +2342,13 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
     let matchingEvolution = speciesDataRegistry.hasEvolutions(playerPokemon.species.speciesId)
       ? speciesDataRegistry
           .getEvolutions(playerPokemon.species.speciesId)
-          .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!))
+          .find(e => e.item === this.type.evolutionItem && e.validate(playerPokemon, false, e.item))
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
       matchingEvolution = speciesDataRegistry
         .getEvolutions(playerPokemon.fusionSpecies!.speciesId)
-        .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!));
+        .find(e => e.item === this.type.evolutionItem && e.validate(playerPokemon, true, e.item));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
       }
