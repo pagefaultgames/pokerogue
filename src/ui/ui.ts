@@ -283,7 +283,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   public showTextPromise(text: string, callbackDelay = 0, prompt = true, promptDelay?: number | null): Promise<void> {
     return new Promise<void>(resolve => {
-      this.showText(text ?? "", null, () => resolve(), callbackDelay, prompt, promptDelay);
+      this.showText(text ?? "", null, resolve, callbackDelay, prompt, promptDelay);
     });
   }
 
