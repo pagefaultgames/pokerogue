@@ -25,3 +25,9 @@ export function getResetCodes(): ResetCode[] {
   const resetCodes: ResetCodes = JSON.parse(localStorage.getItem(resetCodesLsKey) ?? "{}");
   return Object.entries(resetCodes).map(([username, resetCode]) => ({ username, resetCode }));
 }
+
+export function removeResetCode(username: string): void {
+  const resetCodes: ResetCodes = JSON.parse(localStorage.getItem(resetCodesLsKey) ?? "{}");
+  delete resetCodes[username];
+  localStorage.setItem(resetCodesLsKey, JSON.stringify(resetCodes));
+}
