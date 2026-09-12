@@ -36,7 +36,6 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   private readonly offsetY: number;
 
   private maskGraphics?: Phaser.GameObjects.Graphics;
-  private textMask?: Phaser.Display.Masks.GeometryMask;
   private maskHeight: number;
   // These are stored so that the mask can be updated automatically after being created.
   private maskGlobalX: number;
@@ -110,8 +109,8 @@ export class ScrollingText extends Phaser.GameObjects.Container {
       this.maskGraphics.setVisible(false);
       globalScene.add.existing(this.maskGraphics);
 
-      this.textMask = this.createGeometryMask(this.maskGraphics);
-      this.text.setMask(this.textMask);
+      const textMask = this.createGeometryMask(this.maskGraphics);
+      this.text.setMask(textMask);
     }
 
     this.maskGraphics.clear();
