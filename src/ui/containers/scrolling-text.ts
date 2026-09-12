@@ -27,13 +27,13 @@ interface ScrollingTextParameters {
 const BORDER = 8;
 
 export class ScrollingText extends Phaser.GameObjects.Container {
-  private descBg: Phaser.GameObjects.NineSlice;
+  private readonly descBg: Phaser.GameObjects.NineSlice;
   public text: BBCodeText;
   private descScroll: Phaser.Tweens.Tween | null = null;
-  private maxLineCount: number;
+  private readonly maxLineCount: number;
 
-  private offsetX: number;
-  private offsetY: number;
+  private readonly offsetX: number;
+  private readonly offsetY: number;
 
   private maskGraphics?: Phaser.GameObjects.Graphics;
   private textMask?: Phaser.Display.Masks.GeometryMask;
@@ -94,7 +94,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * @param globalX The x position of the mask in global coordinates
    * @param globalY The y position of the mask in global coordinates
    */
-  createMask(globalX: number, globalY: number) {
+  public createMask(globalX: number, globalY: number) {
     this.maskGlobalX = globalX;
     this.maskGlobalY = globalY;
 
@@ -130,7 +130,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
    * @param fitHeight Whether the background should be resized to fit the height of the text
    * @param anchorBottom Whether the background should be anchored at the bottom when resizing
    */
-  setText(content: string, fitHeight?: boolean, anchorBottom?: boolean) {
+  public setText(content: string, fitHeight?: boolean, anchorBottom?: boolean) {
     this.text.setText(content);
 
     if (!fitHeight) {
@@ -159,7 +159,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   /**
    * The total height of the text if displayed fully, regardless of the maximum line count.
    */
-  calculateTextHeight(): number {
+  private calculateTextHeight(): number {
     const lineHeight = this.text.style.lineHeight / 6;
     // This is necessary because this.text.displayHeight does not correspond to
     // number of lines * lineHeight, and this causes issues when a custom lineSpacing is used.
@@ -169,7 +169,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   /**
    * The maximum height of the text that can be displayed, based on the maximum line count.
    */
-  calculateMaxTextHeight(): number {
+  private calculateMaxTextHeight(): number {
     const lineHeight = this.text.style.lineHeight / 6;
     return lineHeight * this.maxLineCount;
   }
@@ -177,7 +177,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
   /**
    * Start the scrolling animation.
    */
-  activate() {
+  public activate() {
     // stop previous scrolling effects and reset y position
     if (this.descScroll) {
       this.descScroll.remove();
