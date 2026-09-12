@@ -53,12 +53,12 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
     const leavingPokemon = party.filter(pokemon => pokemon.isOnField() && !desiredField.includes(pokemon));
 
-    const enteringIndexes = desiredField.reduce<number[]>((acc, pokemon, index) => {
+    const enteringIndexes: number[] = [];
+    desiredField.forEach((pokemon, index) => {
       if (!pokemon.isOnField()) {
-        acc.push(index);
+        enteringIndexes.push(index);
       }
-      return acc;
-    }, []);
+    });
 
     const slides = this.repositionStayingPokemon(desiredField, isDouble);
 
