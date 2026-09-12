@@ -3,7 +3,6 @@ import { SubstituteTag } from "#data/battler-tags";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import type { MoveId } from "#enums/move-id";
-import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
@@ -26,7 +25,7 @@ export class TargetSelectUiHandler extends UiHandler {
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor() {
-    super(UiMode.TARGET_SELECT);
+    super();
 
     this.cursor = -1;
   }

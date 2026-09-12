@@ -189,7 +189,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
 
-  private localizedOptions = [
+  private readonly localizedOptions = [
     PartyOption.SEND_OUT,
     PartyOption.SUMMARY,
     PartyOption.POKEDEX,
@@ -206,10 +206,6 @@ export class PartyUiHandler extends MessageUiHandler {
     PartyOption.RENAME,
     PartyOption.SELECT,
   ];
-
-  constructor() {
-    super(UiMode.PARTY);
-  }
 
   setup() {
     const ui = this.getUi();

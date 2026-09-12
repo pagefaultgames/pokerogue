@@ -1,15 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName, getKeyWithKeycode } from "#inputs/config-handler";
 import { BaseBindingUiHandler } from "#ui/base-binding-ui-handler";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
 export class GamepadBindingUiHandler extends BaseBindingUiHandler {
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
 
     globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }
