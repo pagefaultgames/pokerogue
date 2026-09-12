@@ -24,15 +24,16 @@ export interface SummonPhaseOptions {
   readonly loaded?: boolean;
   /**
    * If `true` for an enemy Trainer's switch, this phase will play
-   * an animation on the Trainer before the "thrown Poke Ball" animation.
+   * an animation on the Trainer before the "thrown Poke Ball" animation. \
    * This does not affect summons on the Player's side since part of the
    * Player Trainer's animation is implemented in {@linkcode EncounterPhase}.
    * @defaultValue `true`
    */
   readonly playTrainerAnim?: boolean;
   /**
-   * The type of switching behavior that was triggered; default `SwitchType.SWITCH`.
+   * The type of switching behavior that was triggered.
    * Used solely to configure custom messages for Force switching moves.
+   * @defaultValue `SwitchType.SWITCH`
    */
   // TODO: Expand this into an entire 'message override' parameter (will be needed for U-Turn and co.)
   readonly switchType?: SwitchType;
@@ -40,7 +41,7 @@ export interface SummonPhaseOptions {
 
 /**
  * Phase to handle all visual elements of adding a Pokemon to the field.
- * @see {@linkcode SwitchPhase} Phase handling the logical aspects of switching 2 Pokemon
+ * @see {@linkcode SwitchPhase} which handles the logical aspects of switching 2 Pokemon
  */
 export class SummonPhase extends PokemonPhase {
   public override readonly phaseName = "SummonPhase";
@@ -79,8 +80,8 @@ export class SummonPhase extends PokemonPhase {
 
   /**
    * Handle edge cases where the Pokemon to be summoned by this phase is somehow not allowed in battle.
-   * This will attempt to swap the illegal Pokemon with the first inactive legal
-   * Pokemon in the same party.
+   *
+   * This will attempt to swap the illegal Pokemon with the first inactive legal Pokemon in the same party.
    * @returns Whether a legal party member can be swapped in.
    */
   // TODO: This ideally shouldn't exist
@@ -141,9 +142,10 @@ export class SummonPhase extends PokemonPhase {
   }
 
   /**
-   * Plays all animations targeting the Player Trainer during the summon
-   * sequence. This assumes the Player Trainer sprite is already visible and
-   * on the field, e.g. after the animation sequence in {@linkcode EncounterPhase}
+   * Plays all animations targeting the Player Trainer during the summon sequence.
+   *
+   * This assumes the Player Trainer sprite is already visible and on the field,
+   * e.g. after the animation sequence in {@linkcode EncounterPhase}
    */
   private async playPlayerTrainerThrowSequence(): Promise<void> {
     const { time, trainer, tweens } = globalScene;
@@ -169,8 +171,9 @@ export class SummonPhase extends PokemonPhase {
   }
 
   /**
-   * Plays all animations targeting the Enemy Trainer during the summon
-   * sequence. The Trainer first enters the field while showing its Poke Ball tray,
+   * Plays all animations targeting the Enemy Trainer during the summon sequence.
+   *
+   * The Trainer first enters the field while showing its Poke Ball tray, \
    * then hides itself as it announces the Pokemon entering the field.
    */
   private async playEnemyTrainerThrowSequence(): Promise<void> {
@@ -192,6 +195,7 @@ export class SummonPhase extends PokemonPhase {
 
   /**
    * Plays an animation to move the enemy Trainer onto the field.
+   * @remarks
    * Should only be called if the switched-in Pokemon is an enemy.
    */
   private async playEnemyTrainerEntranceAnim(): Promise<void> {
@@ -202,11 +206,12 @@ export class SummonPhase extends PokemonPhase {
 
   /**
    * Plays animations to summon this phase's Pokemon from its Poke Ball.
-   * More specifically, this animates the Poke Ball's movement to the Pokemon's field position,
+   *
+   * More specifically, this animates the Poke Ball's movement to the Pokemon's field position, \
    * the Pokemon exiting from the Poke Ball, and the Pokemon's entrance animation and cry.
    */
   private async playPokeBallSummonFX(): Promise<void> {
-    const { add, currentBattle, animations, field } = globalScene;
+    const { add, animations, currentBattle, field } = globalScene;
     const pokemon = this.getPokemon();
 
     const pokeball = globalScene.addFieldSprite(
@@ -215,7 +220,9 @@ export class SummonPhase extends PokemonPhase {
       "pb",
       getPokeballAtlasKey(pokemon.pokeball),
     );
-    pokeball.setVisible(false).setOrigin(0.5, 0.625);
+    pokeball //
+      .setVisible(false)
+      .setOrigin(0.5, 0.625);
     field.add(pokeball);
 
     if (this.fieldIndex === 1) {
@@ -270,8 +277,11 @@ export class SummonPhase extends PokemonPhase {
 
     pokemon.showInfo();
     pokemon.playAnim();
-    pokemon.setVisible(true).setScale(0.5);
-    pokemon.getSprite().setVisible(true);
+    pokemon //
+      .setVisible(true)
+      .setScale(0.5)
+      .getSprite()
+      .setVisible(true);
     pokemon.tint(getPokeballTintColor(pokemon.pokeball));
     pokemon.untint(250, "Sine.easeIn");
 
@@ -298,12 +308,12 @@ export class SummonPhase extends PokemonPhase {
   }
 
   /**
-   * Handles tweening and battle setup for a wild Pokemon that appears outside of the normal screen transition.
-   * Wild Pokemon will ease and fade in onto the field, then perform standard summon behavior.
+   * Handles tweening and battle setup for a wild Pokemon that appears outside of the normal screen transition. \
+   * Wild Pokemon will ease and fade in onto the field, then perform standard summon behavior. \
    * Currently only used by Mystery Encounters, as all other battle types pre-summon wild pokemon before screen transitions.
-   * @todo Are any of these animations recycled from other phases? If so, can they be
-   * implemented as utility methods?
    */
+  // TODO: Are any of these animations recycled from other phases?
+  // If so, can they be implemented as utility methods?
   private async playWildSummonFX(): Promise<void> {
     const { add, currentBattle, field } = globalScene;
     const pokemon = this.getPokemon();
@@ -334,8 +344,11 @@ export class SummonPhase extends PokemonPhase {
 
     pokemon.showInfo();
     pokemon.playAnim();
-    pokemon.setVisible(true).setScale(0.75);
-    pokemon.getSprite().setVisible(true);
+    pokemon //
+      .setVisible(true)
+      .setScale(0.75)
+      .getSprite()
+      .setVisible(true);
     pokemon.tint(getPokeballTintColor(pokemon.pokeball));
     pokemon.untint(250, "Sine.easeIn");
     pokemon.x += 16;
@@ -390,13 +403,9 @@ export class SummonPhase extends PokemonPhase {
 
     if (this.switchType === SwitchType.FORCE_SWITCH) {
       // "XYZ was dragged out!"
-      msg = i18next.t("battle:pokemonDraggedOut", {
-        pokemonName: getPokemonNameWithAffix(this.getPokemon()),
-      });
+      msg = i18next.t("battle:pokemonDraggedOut", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) });
     } else if (player) {
-      msg = i18next.t("battle:playerGo", {
-        pokemonName: this.getPokemon().getNameToRender(),
-      });
+      msg = i18next.t("battle:playerGo", { pokemonName: this.getPokemon().getNameToRender() });
     } else {
       msg = i18next.t("battle:trainerSendOut", {
         trainerName: trainer?.getName(this.getTrainerSlot()),
@@ -404,6 +413,6 @@ export class SummonPhase extends PokemonPhase {
       });
     }
 
-    await new Promise<void>(resolve => ui.showText(msg, undefined, resolve));
+    await ui.showTextPromise(msg);
   }
 }
