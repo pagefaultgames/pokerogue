@@ -13,12 +13,13 @@ import type {
   CustomDailyRunConfig,
   DailyEventChallenge,
   DailyEventMysteryEncounter,
+  DailyForcedBiome,
   DailyForcedWave,
   DailyTrainerManipulation,
 } from "#types/daily-run";
 import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
-import { confirm, input, number, search, select } from "@inquirer/prompts";
+import { checkbox, confirm, input, number, search, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json";
@@ -325,4 +326,55 @@ export async function promptMysteryEncounters(): Promise<DailyEventMysteryEncoun
     return;
   }
   return mysteryEncounters;
+}
+
+/**
+ * Prompt the user to enter a list of forced biomes.
+ * @returns A Promise that resolves with the list of forced biomes.
+ */
+export async function promptForcedBiomes(): Promise<DailyForcedBiome[] | undefined> {
+  const forcedBiomes: DailyForcedBiome[] = [];
+
+  const addForcedBiome = async () => {
+    const waveIndex = (await select({
+      message: "Please enter the wave to force.",
+      choices: ["exit", 10, 20, 30, 40].filter(wave => !forcedBiomes.some(biome => biome.waveIndex === wave)),
+    })) as "exit" | 10 | 20 | 30 | 40;
+
+    if (waveIndex === "exit") {
+      return;
+    }
+
+    const type = await select({
+      message: "Please select the type of forced biome to add.",
+      choices: ["Biomes", "All Map Options"],
+    });
+    switch (type) {
+      case "All Map Options": {
+        forcedBiomes.push({ waveIndex, allMapOptions: true });
+        break;
+      }
+      case "Biomes": {
+        const biomeIds: string[] = await checkbox({
+          message: "Please select the biomes to force.",
+          choices: Object.keys(BiomeId).map(toTitleCase),
+          validate: value => {
+            if (value.length === 0) {
+              return chalk.red.bold("You must select at least one biome!");
+            }
+            return true;
+          },
+        });
+        forcedBiomes.push({
+          waveIndex,
+          biomeId: biomeIds.map(biome => BiomeId[toUpperSnakeCase(biome) as keyof typeof BiomeId]),
+        });
+        break;
+      }
+    }
+    await addForcedBiome();
+  };
+
+  await addForcedBiome();
+  return forcedBiomes.length > 0 ? forcedBiomes : undefined;
 }
