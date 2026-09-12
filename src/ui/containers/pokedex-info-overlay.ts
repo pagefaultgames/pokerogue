@@ -51,7 +51,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
     this.desc = addTextObject(BORDER, BORDER - 2, "", TextStyle.BATTLE_INFO, {
-      wordWrap: { width: (this.width - (BORDER - 2) * 2) * GLOBAL_SCALE },
+      wordWrap: { width: (this.width - (BORDER - 1) * 2) * GLOBAL_SCALE },
     });
 
     // limit the text rendering, required for scrolling later on
