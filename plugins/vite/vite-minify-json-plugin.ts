@@ -14,10 +14,20 @@ import chalk from "chalk";
 import type { Logger, Plugin as VitePlugin } from "vite";
 
 const NAME = "minify-public-json-files";
-const VERSION = "3.1.0";
+const VERSION = "3.1.1";
 
 /** Patterns that should be excluded, meant to be excluded at any level */
-const EXCLUDE_PATTERNS = ["REUSE.toml", ".git", "LICENSE", "README.md", "package.json", "pnpm-lock.yaml"];
+const EXCLUDE_PATTERNS = [
+  "REUSE.toml",
+  ".git",
+  "LICENSE",
+  "README.md",
+  "package.json",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml",
+  "tsconfig.json",
+  "biome.jsonc",
+];
 
 /**
  * @returns Whether the given file should be skipped based on `EXCLUDE_PATTERNS`.

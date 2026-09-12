@@ -11,8 +11,8 @@
  */
 
 import { globalScene } from "#app/global-scene";
-import type { Mutable } from "#types/type-helpers";
 import { randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
+import type { Writable } from "type-fest";
 
 /**
  * Select a random element using an offset such that the chosen element is
@@ -40,7 +40,7 @@ import { randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
  */
 export function randSeedUniqueItem<T>(choices: readonly T[], seedOffset: number, scene = globalScene): T {
   if (choices.length <= seedOffset) {
-    return randSeedItem(choices as Mutable<typeof choices>);
+    return randSeedItem(choices as Writable<typeof choices>);
   }
 
   // TODO: Refactor `excuteWithSeedOffset` and pull it into this module

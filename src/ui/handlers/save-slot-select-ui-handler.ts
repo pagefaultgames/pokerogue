@@ -42,10 +42,6 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   private sessionSlotsContainerInitialY: number;
 
-  constructor() {
-    super(UiMode.SAVE_SLOT);
-  }
-
   setup() {
     const ui = this.getUi();
 

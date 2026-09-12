@@ -539,7 +539,7 @@ export function selectPokemonForOption(
   selectablePokemonFilter?: PokemonSelectFilter,
 ): Promise<boolean> {
   return new Promise(resolve => {
-    const modeToSetOnExit = globalScene.ui.getMode();
+    const modeToSetOnExit = globalScene.ui.mode;
 
     // Open party screen to choose pokemon
     globalScene.ui.setMode(
@@ -641,7 +641,7 @@ export function selectOptionThenPokemon(
   onHoverOverCancelOption?: () => void,
 ): Promise<PokemonAndOptionSelected | null> {
   return new Promise<PokemonAndOptionSelected | null>(resolve => {
-    const modeToSetOnExit = globalScene.ui.getMode();
+    const modeToSetOnExit = globalScene.ui.mode;
 
     const displayOptions = async (config: OptionSelectConfig) => {
       await globalScene.ui.setMode(UiMode.MESSAGE);
