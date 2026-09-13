@@ -18,7 +18,6 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
     const party = globalScene.getPlayerParty();
     const isDouble = globalScene.currentBattle.double;
-    // The pokemon that should occupy the field, ordered by their target field slot.
     const desiredField = party.slice(0, isDouble ? 2 : 1);
 
     if (desiredField.length === 0) {
@@ -26,31 +25,20 @@ export class PartyReorderSwitchPhase extends BattlePhase {
       return;
     }
 
-    if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      const displacedPokemon = party.filter(pokemon => pokemon.isOnField());
-      if (!displacedPokemon) {
-        this.end();
-        return;
-      }
-      await this.recallPokemon(displacedPokemon);
-      this.end();
-      return;
-    }
-
-    // No Pokemon on the field yet; EncounterPhase will queue the initial SummonPhase(s).
+    // No Pokemon on the field; EncounterPhase will queue the initial SummonPhase(s).
     if (!party.some(pokemon => pokemon.isOnField())) {
       this.end();
       return;
     }
 
-    const leavingPokemon = party.filter(pokemon => pokemon.isOnField() && !desiredField.includes(pokemon));
+    if (globalScene.currentBattle.battleType !== BattleType.WILD) {
+      const displacedPokemon = party.filter(pokemon => pokemon.isOnField());
+      await this.recallPokemon(displacedPokemon);
+      this.end();
+      return;
+    }
 
-    const enteringIndexes: number[] = [];
-    desiredField.forEach((pokemon, index) => {
-      if (!pokemon.isOnField()) {
-        enteringIndexes.push(index);
-      }
-    });
+    const leavingPokemon = party.filter(pokemon => pokemon.isOnField() && !desiredField.includes(pokemon));
 
     if (leavingPokemon.length > 0) {
       await this.recallPokemon(leavingPokemon);
@@ -58,9 +46,12 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
     await this.repositionStayingPokemon(desiredField, isDouble);
 
-    for (const index of enteringIndexes) {
-      globalScene.phaseManager.unshiftNew("SummonPhase", index);
-    }
+    desiredField.forEach((pokemon, index) => {
+      if (!pokemon.isOnField()) {
+        globalScene.phaseManager.unshiftNew("SummonPhase", index);
+      }
+    });
+
     this.end();
   }
 
