@@ -52,23 +52,15 @@ export class PartyReorderSwitchPhase extends BattlePhase {
       }
     });
 
-    const slides = this.repositionStayingPokemon(desiredField, isDouble);
-
-    const summonEntering = () => {
-      for (const index of enteringIndexes) {
-        globalScene.phaseManager.unshiftNew("SummonPhase", index);
-      }
-    };
-
     if (leavingPokemon.length > 0) {
       await this.recallPokemon(leavingPokemon);
     }
 
-    if (slides.length > 0) {
-      await Promise.all(slides);
-    }
+    await this.repositionStayingPokemon(desiredField, isDouble);
 
-    summonEntering();
+    for (const index of enteringIndexes) {
+      globalScene.phaseManager.unshiftNew("SummonPhase", index);
+    }
     this.end();
   }
 
@@ -79,7 +71,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
    * @param isDouble - Whether the current battle is a double battle
    * @returns The slide tween promises that were started
    */
-  private repositionStayingPokemon(desiredField: Pokemon[], isDouble: boolean): Promise<void>[] {
+  private async repositionStayingPokemon(desiredField: Pokemon[], isDouble: boolean): Promise<void> {
     const availablePartyMembers = globalScene.getPlayerParty().filter(pokemon => pokemon.isAllowedInBattle()).length;
     const slides: Promise<void>[] = [];
 
@@ -88,19 +80,23 @@ export class PartyReorderSwitchPhase extends BattlePhase {
         return;
       }
 
-      const targetPosition =
-        index === 1
-          ? FieldPosition.RIGHT
-          : !isDouble || availablePartyMembers === 1
-            ? FieldPosition.CENTER
-            : FieldPosition.LEFT;
+      let targetPosition: FieldPosition = FieldPosition.CENTER;
+      if (isDouble && availablePartyMembers > 1) {
+        targetPosition = index === 1 ? FieldPosition.RIGHT : FieldPosition.LEFT;
+      }
 
       if (pokemon.fieldPosition !== targetPosition) {
         slides.push(pokemon.setFieldPosition(targetPosition, REPOSITION_SLIDE_DURATION));
+        // Ensure that the Pokémon on the right is displayed on top
+        if (targetPosition === FieldPosition.RIGHT) {
+          globalScene.field.bringToTop(pokemon);
+        }
       }
     });
 
-    return slides;
+    if (slides.length > 0) {
+      await Promise.all(slides);
+    }
   }
 
   /**
