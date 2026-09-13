@@ -154,7 +154,7 @@ export function staticShellPlugin(): VitePlugin {
       const indexPath = path.join(outDir, "index.html");
 
       if (!fs.existsSync(manifestPath) || !fs.existsSync(indexPath)) {
-        warn(`Skipping: expected ${manifestPath} and ${indexPath} to exist.`);
+        throw new Error(`Error: expected ${manifestPath} and ${indexPath} to exist.`);
         return;
       }
 
@@ -162,7 +162,7 @@ export function staticShellPlugin(): VitePlugin {
       const entry = manifest["index.html"];
 
       if (!entry) {
-        warn(`Skipping: no "index.html" entry found in ${manifestPath}.`);
+        throw new Error(`Error: no "index.html" entry found in ${manifestPath}.`);
         return;
       }
 
@@ -170,7 +170,7 @@ export function staticShellPlugin(): VitePlugin {
       fs.writeFileSync(path.join(outDir, "asset-manifest.json"), JSON.stringify(assetManifest));
 
       let html = fs.readFileSync(indexPath, "utf-8");
-      const hadEntryScript = ENTRY_SCRIPT_PATTERN.test(html);
+      const hadEntryScript = (ENTRY_SCRIPT_PATTERN.test(html) && MODULEPRELOAD_LINK_PATTERN.test(html) && STYLESHEET_LINK_PATTERN.test(html));
 
       if (!hadEntryScript) {
         throw new Error(`"${indexPath}" did not contain the expected Vite entry <script> tag - static shell was not applied.`);
