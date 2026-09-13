@@ -95,7 +95,7 @@ describe("UI - Party switch mode", () => {
     await skipModifierSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
-    expect(onField).toContain(thirdPokemon);
+    expect(onField[0]).toBe(thirdPokemon);
   });
 
   it("should reorder the party before a double battle", async () => {
@@ -123,8 +123,64 @@ describe("UI - Party switch mode", () => {
     await skipModifierSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
-    expect(onField).toContain(thirdPokemon);
-    expect(onField).toContain(fourthPokemon);
+    expect(onField[0]).toBe(thirdPokemon);
+    expect(onField[1]).toBe(fourthPokemon);
+  });
+
+  it("should reorder the party when going from double to single battle", async () => {
+    await setupBattle("double");
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
+    const party = game.scene.getPlayerParty();
+    const firstPokemon = party[0];
+    const secondPokemon = party[1];
+    const thirdPokemon = party[2];
+
+    swapInParty(partyHandler, 0, 2);
+
+    expect(game.scene.getPlayerParty()[0]).toBe(thirdPokemon);
+    expect(game.scene.getPlayerParty()[2]).toBe(firstPokemon);
+
+    let onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
+    expect(onField).not.toContain(thirdPokemon);
+
+    game.override.battleStyle("single");
+
+    await skipModifierSelect();
+
+    onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
+    expect(onField[0]).toBe(thirdPokemon);
+    expect(onField).not.toContain(firstPokemon);
+    expect(onField).not.toContain(secondPokemon);
+  });
+
+  it("should reorder the party when going from single to double battle", async () => {
+    await setupBattle("single");
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
+    const party = game.scene.getPlayerParty();
+    const firstPokemon = party[0];
+    const secondPokemon = party[1];
+    const thirdPokemon = party[2];
+
+    swapInParty(partyHandler, 0, 1);
+    swapInParty(partyHandler, 0, 2);
+
+    expect(game.scene.getPlayerParty()[0]).toBe(thirdPokemon);
+    expect(game.scene.getPlayerParty()[2]).toBe(secondPokemon);
+
+    let onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
+    expect(onField).not.toContain(secondPokemon);
+    expect(onField).not.toContain(thirdPokemon);
+
+    game.override.battleStyle("double");
+
+    await skipModifierSelect();
+
+    onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
+    expect(onField[0]).toBe(thirdPokemon);
+    expect(onField[1]).toBe(firstPokemon);
+    expect(onField).not.toContain(secondPokemon);
   });
 
   it("should reorder the party before a double battle against trainers", async () => {
@@ -154,7 +210,7 @@ describe("UI - Party switch mode", () => {
     await skipModifierSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
-    expect(onField).toContain(thirdPokemon);
-    expect(onField).toContain(fourthPokemon);
+    expect(onField[0]).toBe(thirdPokemon);
+    expect(onField[1]).toBe(fourthPokemon);
   });
 });
