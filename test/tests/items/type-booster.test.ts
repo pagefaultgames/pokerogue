@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -12,7 +12,7 @@ import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const typeBoosterCases = Object.entries(attackTypeToHeldItem).map(([typeKey, itemId]) => ({
-  itemName: HeldItemId[itemId],
+  itemName: HeldItemNames[itemId],
   item: itemId,
   moveType: Number(typeKey) as PokemonType,
 }));

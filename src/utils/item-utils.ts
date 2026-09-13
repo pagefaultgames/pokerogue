@@ -1,6 +1,6 @@
 import { allHeldItems } from "#data/data-lists";
 import type { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemNames } from "#enums/held-item-id";
 import { TrainerItemNames } from "#enums/trainer-item-id";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { HeldItemCategoryEntry, HeldItemPool, HeldItemSpecs } from "#types/held-item-data-types";
@@ -24,7 +24,7 @@ export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
   }
   const specs = entry as HeldItemSpecs;
 
-  return typeof specs.id === "number" && typeof specs.stack === "number" && HeldItemId[specs.id] != null;
+  return typeof specs.id === "number" && typeof specs.stack === "number" && HeldItemNames[specs.id] != null;
 }
 
 // TODO: These predicate functions should use `unknown` instead of `any`,
