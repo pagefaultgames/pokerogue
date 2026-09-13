@@ -243,7 +243,8 @@
           }
         },
         "noMultiAssign": "error",
-        "noMultilineString": "error"
+        "noMultilineString": "error",
+        "noNestedTernary": "warn" // TODO: fix existing instances and make "error"
       },
       "suspicious": {
         "noExtraNonNullAssertion": "error",

@@ -16,33 +16,33 @@
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="gettextwithcolors"><span class="tsd-kind-call-signature">getTextWithColors</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">content</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">primaryStyle</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_enums_text-style.TextStyle.html" class="tsd-signature-type tsd-kind-type-alias">TextStyle</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">forWindow</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#gettextwithcolors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Should only be used with BBCodeText (see <a href="src_ui_text.addBBCodeTextObject.html" class="tsd-kind-function"><code>()</code></a>)
-This does NOT work with UI showText() or showDialogue() methods.
-Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
-@[<TextStyle>]{<text to color>}</p>
-<p>Example: passing a content string of &quot;@[SUMMARY_BLUE]{blue text} primaryStyle text @[SUMMARY_RED]{red text}&quot; will result in:</p>
-<ul>
-<li>&quot;blue text&quot; with TextStyle.SUMMARY_BLUE applied</li>
-<li>&quot; primaryStyle text &quot; with primaryStyle TextStyle applied</li>
-<li>&quot;red text&quot; with TextStyle.SUMMARY_RED applied</li>
-</ul>
+<div class="tsd-comment tsd-typography"><p>Should only be used with BBCodeText (see <a href="src_ui_text.addBBCodeTextObject.html" class="tsd-kind-function"><code>addBBCodeTextObject</code></a>).</p>
+<p>This does NOT work with UI <code>showText</code> or <code>showDialogue</code> methods.</p>
+<p>Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
+<code>@[&lt;TextStyle&gt;]{&lt;text to color&gt;}</code></p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">content</span>: <span class="tsd-signature-type">string</span></span>
-<div class="tsd-comment tsd-typography"><p>string with styling that need to be applied for BBCodeTextObject</p>
+<div class="tsd-comment tsd-typography"><p>The string with styling that needs to be applied for the <a href="../classes/src_ui_text.BBCodeText.html" class="tsd-kind-class"><code>BBCodeText</code></a> object</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">primaryStyle</span>: <a href="../types/src_enums_text-style.TextStyle.html" class="tsd-signature-type tsd-kind-type-alias">TextStyle</a></span>
-<div class="tsd-comment tsd-typography"><p>Primary style is required in order to escape BBCode styling properly.</p>
+<div class="tsd-comment tsd-typography"><p>The primary style to use</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">forWindow</span>: <span class="tsd-signature-type">boolean</span></span>
-<div class="tsd-comment tsd-typography"><p>set to <code>true</code> if the text is to be displayed in a window (BattleScene.addWindow)
-it will replace all instances of the default MONEY TextStyle by TextStyle.MONEY_WINDOW</p>
+<div class="tsd-comment tsd-typography"><p>Whether the text is going to be displayed in a window. <br>
+It will replace all instances of the default MONEY TextStyle by TextStyle.MONEY_WINDOW</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="markdown"><span class="hl-5">passing a content string of </span><span class="hl-18">`&quot;@[SUMMARY_BLUE]{blue text} primaryStyle text @[SUMMARY_RED]{red text}&quot;`</span><span class="hl-5"> will result in:</span><br/><span class="hl-19">-</span><span class="hl-5"> &quot;blue text&quot; with </span><span class="hl-18">`TextStyle.SUMMARY_BLUE`</span><span class="hl-5"> applied</span><br/><span class="hl-19">-</span><span class="hl-5"> &quot; primaryStyle text &quot; with </span><span class="hl-18">`primaryStyle`</span><span class="hl-5"> </span><span class="hl-18">`TextStyle`</span><span class="hl-5"> applied</span><br/><span class="hl-19">-</span><span class="hl-5"> &quot;red text&quot; with </span><span class="hl-18">`TextStyle.SUMMARY_RED`</span><span class="hl-5"> applied</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/text.ts#L516">src/ui/text.ts:516</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/text.ts#L523">src/ui/text.ts:523</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

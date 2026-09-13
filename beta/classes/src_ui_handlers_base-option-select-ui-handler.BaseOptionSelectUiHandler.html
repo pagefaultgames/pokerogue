@@ -10,22 +10,36 @@
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="../modules/src_ui_handlers_base-option-select-ui-handler.html">src/ui/handlers/base-option-select-ui-handler</a></li>
 <li><a href="" aria-current="page">BaseOptionSelectUiHandler</a></li></ul>
-<h1>Class BaseOptionSelectUiHandler<code class="tsd-tag">Abstract</code></h1></div>
+<h1>Class BaseOptionSelectUiHandler&lt;T&gt;<code class="tsd-tag">Abstract</code></h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>A basic abstract class to act as a holder and processor for UI elements.</p>
+<div class="tsd-comment tsd-typography"><p>Generic handler for a menu with several options to choose from with a cursor.</p>
+<p>Given the proper <a href="../interfaces/src__types_ui-types.OptionSelectModeConfig.html" class="tsd-kind-interface"><code>OptionSelectModeConfig</code></a> the handler will:</p>
+<ul>
+<li>Measure the size of all elements in the menu, including the size of any icon.</li>
+<li>Apply the required BBCode if an elements asks for a specific color.</li>
+<li>Create the window of the appropriate size to hold all elements.</li>
+<li>Handle scrolling through the menu items, resizing as needed.</li>
+<li>Handle selecting the menu items, or cancelling out of the menu.</li>
+</ul>
+<p>At initialization the size of the first <a href="../variables/src_ui_handlers_base-option-select-ui-handler.NUM_PRE_COMPUTED_OPTIONS.html" class="tsd-kind-variable"><code>NUM_PRE_COMPUTED_OPTIONS</code></a> is measured. <br>
+Then the window's size is updated as needed when a non initialized option needs to be displayed.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="78062">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="t"><span class="tsd-kind-type-parameter">T</span> <span class="tsd-signature-keyword">extends</span> <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a></span>
+<div class="tsd-comment tsd-typography"><p>The specifc type of <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-kind-interface"><code>OptionSelectItem</code></a> that this handler displays</p>
+</div></li></ul></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="78180">
 <h4>Hierarchy (<a href="../hierarchy.html#src/ui/handlers/base-option-select-ui-handler.BaseOptionSelectUiHandler">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
-<li class="tsd-hierarchy-item"><a href="src_ui_handlers_ui-handler.UiHandler.html" class="tsd-signature-type tsd-kind-class">UiHandler</a>
+<li class="tsd-hierarchy-item"><a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html" class="tsd-signature-type tsd-kind-class">MessageUiHandler</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">BaseOptionSelectUiHandler</span>
 <ul class="tsd-hierarchy">
-<li class="tsd-hierarchy-item"><a href="src_ui_handlers_autocomplete-ui-handler.AutoCompleteUiHandler.html" class="tsd-signature-type tsd-kind-class">AutoCompleteUiHandler</a></li>
-<li class="tsd-hierarchy-item"><a href="src_ui_handlers_confirm-ui-handler.ConfirmUiHandler.html" class="tsd-signature-type tsd-kind-class">ConfirmUiHandler</a></li>
-<li class="tsd-hierarchy-item"><a href="src_ui_settings_option-select-ui-handler.OptionSelectUiHandler.html" class="tsd-signature-type tsd-kind-class">OptionSelectUiHandler</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
+<li class="tsd-hierarchy-item"><a href="src_ui_handlers_option-select-ui-handler.OptionSelectUiHandler.html" class="tsd-signature-type tsd-kind-class">OptionSelectUiHandler</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L16">src/ui/handlers/base-option-select-ui-handler.ts:16</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L35">src/ui/handlers/base-option-select-ui-handler.ts:35</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -38,41 +52,70 @@
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-index-list"><a href="#active" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a>
+<a href="#awaitingactioninput" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>awaiting<wbr/>Action<wbr/>Input</span></a>
 <a href="#blockinput" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>block<wbr/>Input</span></a>
-<a href="#config" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>config</span></a>
+<a href="#config" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>config</span></a>
 <a href="#cursor" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor</span></a>
-<a href="#cursorobj" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor<wbr/>Obj</span></a>
-<a href="#defaulttextstyle" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Text<wbr/>Style</span></a>
-<a href="#fullcursor" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>full<wbr/>Cursor</span></a>
+<a href="#cursorobj" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor<wbr/>Obj</span></a>
+<a href="#fullyinitialized" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>fully<wbr/>Initialized</span></a>
+<a href="#maxiconwidth" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Icon<wbr/>Width</span></a>
+<a href="#maxoptions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Options</span></a>
+<a href="#message" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>message</span></a>
 <a href="#mode" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>mode</span></a>
+<a href="#onactioninput" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>on<wbr/>Action<wbr/>Input</span></a>
+<a href="#options" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>options</span></a>
 <a href="#optionselectbg" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Bg</span></a>
 <a href="#optionselectcontainer" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Container</span></a>
 <a href="#optionselecticons" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Icons</span></a>
 <a href="#optionselecttext" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Text</span></a>
-<a href="#optionselecttextcontainer" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Text<wbr/>Container</span></a>
+<a href="#pendingprompt" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>pending<wbr/>Prompt</span></a>
+<a href="#prompt" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>prompt</span></a>
+<a href="#repeatinput" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>repeat<wbr/>Input</span></a>
 <a href="#scale" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scale</span></a>
+<a href="#scrollbar" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scroll<wbr/>Bar</span></a>
 <a href="#scrollcursor" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scroll<wbr/>Cursor</span></a>
-<a href="#textcontent" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>text<wbr/>Content</span></a>
-<a href="#unskippedindices" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>unskipped<wbr/>Indices</span></a>
+<a href="#textcallbacktimer" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>text<wbr/>Callback<wbr/>Timer</span></a>
+<a href="#texttimer" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>text<wbr/>Timer</span></a>
+<a href="#tutorialactive" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Active</span></a>
+<a href="#tutorialoverlay" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Overlay</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#currentoption" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>current<wbr/>Option</span></a>
+<a href="#windowheight" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>window<wbr/>Height</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-index-list"><a href="#clear" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear</span></a>
+<a href="#clearcursor" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Cursor</span></a>
+<a href="#cleariconsprites" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Icon<wbr/>Sprites</span></a>
+<a href="#clearscrollbar" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Scroll<wbr/>Bar</span></a>
+<a href="#cleartext" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Text</span></a>
 <a href="#destroy" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a>
-<a href="#erasecursor" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>erase<wbr/>Cursor</span></a>
+<a href="#displaycurrentoptions" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>display<wbr/>Current<wbr/>Options</span></a>
 <a href="#getcursor" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Cursor</span></a>
-<a href="#getoptionswithscroll" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Options<wbr/>With<wbr/>Scroll</span></a>
+<a href="#getoptionsmaxwidth" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Options<wbr/>Max<wbr/>Width</span></a>
 <a href="#getui" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Ui</span></a>
-<a href="#getunskippedindices" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Unskipped<wbr/>Indices</span></a>
-<a href="#getwindowheight" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Window<wbr/>Height</span></a>
-<a href="#getwindowwidth" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Window<wbr/>Width</span></a>
+<a href="#handlecursorupdown" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Cursor<wbr/>Up<wbr/>Down</span></a>
+<a href="#initcursor" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Cursor</span></a>
+<a href="#initializeoption" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>initialize<wbr/>Option</span></a>
+<a href="#initoptions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Options</span></a>
+<a href="#initpromptsprite" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Prompt<wbr/>Sprite</span></a>
+<a href="#inittutorialoverlay" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Tutorial<wbr/>Overlay</span></a>
+<a href="#istextanimationinprogress" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Text<wbr/>Animation<wbr/>In<wbr/>Progress</span></a>
 <a href="#processinput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Input</span></a>
+<a href="#processtutorialinput" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Tutorial<wbr/>Input</span></a>
 <a href="#setcursor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Cursor</span></a>
 <a href="#setmousecursorstyle" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Mouse<wbr/>Cursor<wbr/>Style</span></a>
+<a href="#setscrollcursor" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Scroll<wbr/>Cursor</span></a>
 <a href="#setup" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup</span></a>
-<a href="#setupoptions" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup<wbr/>Options</span></a>
 <a href="#show" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show</span></a>
+<a href="#showdialogue" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Dialogue</span></a>
+<a href="#showprompt" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Prompt</span></a>
+<a href="#showtext" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Text</span></a>
 <a href="#unblockinput" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>unblock<wbr/>Input</span></a>
+<a href="#updatecursorplacement" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Cursor<wbr/>Placement</span></a>
+<a href="#updatesizeforoptions" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Size<wbr/>For<wbr/>Options</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -81,108 +124,194 @@
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorbaseoptionselectuihandler"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">BaseOptionSelectUiHandler</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">mode</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_enums_ui-mode.UiMode.html" class="tsd-signature-type tsd-kind-enum">UiMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">BaseOptionSelectUiHandler</a><a href="#constructorbaseoptionselectuihandler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorbaseoptionselectuihandler"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">BaseOptionSelectUiHandler</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#constructorbaseoptionselectuihandlert">T</a> <span class="tsd-signature-keyword">extends</span> <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">mode</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_enums_ui-mode.UiMode.html" class="tsd-signature-type tsd-kind-enum">UiMode</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">BaseOptionSelectUiHandler</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span><a href="#constructorbaseoptionselectuihandler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="constructorbaseoptionselectuihandlert"><span class="tsd-kind-type-parameter">T</span> <span class="tsd-signature-keyword">extends</span> <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a></span>
+<div class="tsd-comment tsd-typography"><p>The specifc type of <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-kind-interface"><code>OptionSelectItem</code></a> that this handler displays</p>
+</div></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">mode</span>: <a href="../enums/src_enums_ui-mode.UiMode.html" class="tsd-signature-type tsd-kind-enum">UiMode</a><span class="tsd-signature-symbol"> = UiMode.OPTION_SELECT</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">BaseOptionSelectUiHandler</a></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#constructor">constructor</a></p>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">BaseOptionSelectUiHandler</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L42">src/ui/handlers/base-option-select-ui-handler.ts:42</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L69">src/ui/handlers/base-option-select-ui-handler.ts:69</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="active"><span>active</span><a href="#active" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">active</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#active">active</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#active">active</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/ui-handler.ts#L9">src/ui/handlers/ui-handler.ts:9</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/ui-handler.ts#L9">src/ui/handlers/ui-handler.ts:9</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="awaitingactioninput"><code class="tsd-tag">Protected</code><span>awaiting<wbr/>Action<wbr/>Input</span><a href="#awaitingactioninput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">awaitingActionInput</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#awaitingactioninput">awaitingActionInput</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/awaitable-ui-handler.ts#L8">src/ui/handlers/awaitable-ui-handler.ts:8</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="blockinput"><code class="tsd-tag">Protected</code><span>block<wbr/>Input</span><a href="#blockinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">blockInput</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L28">src/ui/handlers/base-option-select-ui-handler.ts:28</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="config"><code class="tsd-tag">Protected</code><span>config</span><a href="#config" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">config</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.OptionSelectConfig.html" class="tsd-signature-type tsd-kind-interface">OptionSelectConfig</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L55">src/ui/handlers/base-option-select-ui-handler.ts:55</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="config"><code class="tsd-tag">Private</code><span>config</span><a href="#config" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">config</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.OptionSelectModeConfig.html" class="tsd-signature-type tsd-kind-interface">OptionSelectModeConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L26">src/ui/handlers/base-option-select-ui-handler.ts:26</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L36">src/ui/handlers/base-option-select-ui-handler.ts:36</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="cursor"><code class="tsd-tag">Protected</code><span>cursor</span><a href="#cursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">cursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#cursor">cursor</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#cursor">cursor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/ui-handler.ts#L8">src/ui/handlers/ui-handler.ts:8</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="cursorobj"><code class="tsd-tag">Private</code><span>cursor<wbr/>Obj</span><a href="#cursorobj" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/ui-handler.ts#L8">src/ui/handlers/ui-handler.ts:8</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="cursorobj"><code class="tsd-tag">Protected</code><span>cursor<wbr/>Obj</span><a href="#cursorobj" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">cursorObj</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Image</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L35">src/ui/handlers/base-option-select-ui-handler.ts:35</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L52">src/ui/handlers/base-option-select-ui-handler.ts:52</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="defaulttextstyle"><code class="tsd-tag">Protected</code><span>default<wbr/>Text<wbr/>Style</span><a href="#defaulttextstyle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">defaultTextStyle</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_enums_text-style.TextStyle.html" class="tsd-signature-type tsd-kind-type-alias">TextStyle</a><span class="tsd-signature-symbol"> = TextStyle.WINDOW</span></div><aside class="tsd-sources">
+<h3 class="tsd-anchor-link" id="fullyinitialized"><code class="tsd-tag">Protected</code><span>fully<wbr/>Initialized</span><a href="#fullyinitialized" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">fullyInitialized</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L39">src/ui/handlers/base-option-select-ui-handler.ts:39</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="fullcursor"><code class="tsd-tag">Protected</code><span>full<wbr/>Cursor</span><a href="#fullcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">fullCursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L43">src/ui/handlers/base-option-select-ui-handler.ts:43</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="maxiconwidth"><code class="tsd-tag">Private</code><span>max<wbr/>Icon<wbr/>Width</span><a href="#maxiconwidth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maxIconWidth</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L31">src/ui/handlers/base-option-select-ui-handler.ts:31</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L41">src/ui/handlers/base-option-select-ui-handler.ts:41</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="maxoptions"><code class="tsd-tag">Private</code><span>max<wbr/>Options</span><a href="#maxoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maxOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L38">src/ui/handlers/base-option-select-ui-handler.ts:38</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="message"><span>message</span><a href="#message" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">message</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Text</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#message">message</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L11">src/ui/handlers/message-ui-handler.ts:11</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="mode"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Readonly</code><span>mode</span><a href="#mode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">mode</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_enums_ui-mode.UiMode.html" class="tsd-signature-type tsd-kind-enum">UiMode</a></div>
-<div class="tsd-comment tsd-typography"><p>Used to set the name of <a href="#optionselectcontainer" class="tsd-kind-property"><code>optionSelectContainer</code></a></p>
+<div class="tsd-comment tsd-typography"><p>Used to set the name of <a href="src_ui_handlers_title-ui-handler.TitleUiHandler.html#optionselectcontainer" class="tsd-kind-property"><code>optionSelectContainer</code></a></p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L18">src/ui/handlers/base-option-select-ui-handler.ts:18</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L46">src/ui/handlers/base-option-select-ui-handler.ts:46</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="onactioninput"><code class="tsd-tag">Protected</code><span>on<wbr/>Action<wbr/>Input</span><a href="#onactioninput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">onActionInput</span><span class="tsd-signature-symbol">:</span> <a href="../types/src__types_type-helpers.AnyFn.html" class="tsd-signature-type tsd-kind-type-alias">AnyFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#onactioninput">onActionInput</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/awaitable-ui-handler.ts#L11">src/ui/handlers/awaitable-ui-handler.ts:11</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="options"><code class="tsd-tag">Private</code><span>options</span><a href="#options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">options</span><span class="tsd-signature-symbol">:</span> (<a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a>)<span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L37">src/ui/handlers/base-option-select-ui-handler.ts:37</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="optionselectbg"><code class="tsd-tag">Protected</code><span>option<wbr/>Select<wbr/>Bg</span><a href="#optionselectbg" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">optionSelectBg</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NineSlice</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L22">src/ui/handlers/base-option-select-ui-handler.ts:22</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L49">src/ui/handlers/base-option-select-ui-handler.ts:49</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="optionselectcontainer"><code class="tsd-tag">Protected</code><span>option<wbr/>Select<wbr/>Container</span><a href="#optionselectcontainer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">optionSelectContainer</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Container</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L20">src/ui/handlers/base-option-select-ui-handler.ts:20</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L48">src/ui/handlers/base-option-select-ui-handler.ts:48</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="optionselecticons"><code class="tsd-tag">Protected</code><span>option<wbr/>Select<wbr/>Icons</span><a href="#optionselecticons" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">optionSelectIcons</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Sprite</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">optionSelectIcons</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Sprite</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L24">src/ui/handlers/base-option-select-ui-handler.ts:24</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L51">src/ui/handlers/base-option-select-ui-handler.ts:51</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="optionselecttext"><code class="tsd-tag">Protected</code><span>option<wbr/>Select<wbr/>Text</span><a href="#optionselecttext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">optionSelectText</span><span class="tsd-signature-symbol">:</span> <a href="src_ui_text.BBCodeText.html" class="tsd-signature-type tsd-kind-class">BBCodeText</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L23">src/ui/handlers/base-option-select-ui-handler.ts:23</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="optionselecttextcontainer"><code class="tsd-tag">Protected</code><span>option<wbr/>Select<wbr/>Text<wbr/>Container</span><a href="#optionselecttextcontainer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">optionSelectTextContainer</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Container</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L50">src/ui/handlers/base-option-select-ui-handler.ts:50</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="pendingprompt"><span>pending<wbr/>Prompt</span><a href="#pendingprompt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">pendingPrompt</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#pendingprompt">pendingPrompt</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L21">src/ui/handlers/base-option-select-ui-handler.ts:21</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L9">src/ui/handlers/message-ui-handler.ts:9</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="prompt"><span>prompt</span><a href="#prompt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">prompt</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Sprite</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#prompt">prompt</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L12">src/ui/handlers/message-ui-handler.ts:12</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="repeatinput"><code class="tsd-tag">Private</code><span>repeat<wbr/>Input</span><a href="#repeatinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">repeatInput</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L40">src/ui/handlers/base-option-select-ui-handler.ts:40</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="scale"><code class="tsd-tag">Protected</code><span>scale</span><a href="#scale" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scale</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0.1666666667</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L33">src/ui/handlers/base-option-select-ui-handler.ts:33</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L59">src/ui/handlers/base-option-select-ui-handler.ts:59</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="scrollbar"><code class="tsd-tag">Protected</code><span>scroll<wbr/>Bar</span><a href="#scrollbar" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">scrollBar</span><span class="tsd-signature-symbol">:</span> <a href="src_ui_containers_scroll-bar.ScrollBar.html" class="tsd-signature-type tsd-kind-class">ScrollBar</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L53">src/ui/handlers/base-option-select-ui-handler.ts:53</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="scrollcursor"><code class="tsd-tag">Protected</code><span>scroll<wbr/>Cursor</span><a href="#scrollcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scrollCursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L30">src/ui/handlers/base-option-select-ui-handler.ts:30</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="textcontent"><code class="tsd-tag">Protected</code><span>text<wbr/>Content</span><a href="#textcontent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">textContent</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L57">src/ui/handlers/base-option-select-ui-handler.ts:57</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="textcallbacktimer"><code class="tsd-tag">Protected</code><span>text<wbr/>Callback<wbr/>Timer</span><a href="#textcallbacktimer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">textCallbackTimer</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#textcallbacktimer">textCallbackTimer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L40">src/ui/handlers/base-option-select-ui-handler.ts:40</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="unskippedindices"><code class="tsd-tag">Protected</code><span>unskipped<wbr/>Indices</span><a href="#unskippedindices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">unskippedIndices</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L8">src/ui/handlers/message-ui-handler.ts:8</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="texttimer"><code class="tsd-tag">Protected</code><span>text<wbr/>Timer</span><a href="#texttimer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">textTimer</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#texttimer">textTimer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L37">src/ui/handlers/base-option-select-ui-handler.ts:37</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L7">src/ui/handlers/message-ui-handler.ts:7</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="tutorialactive"><span>tutorial<wbr/>Active</span><a href="#tutorialactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">tutorialActive</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#tutorialactive">tutorialActive</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/awaitable-ui-handler.ts#L12">src/ui/handlers/awaitable-ui-handler.ts:12</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="tutorialoverlay"><span>tutorial<wbr/>Overlay</span><a href="#tutorialoverlay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">tutorialOverlay</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Rectangle</span></div><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#tutorialoverlay">tutorialOverlay</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/awaitable-ui-handler.ts#L13">src/ui/handlers/awaitable-ui-handler.ts:13</a></li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="currentoption"><code class="tsd-tag">Protected</code><span>current<wbr/>Option</span><a href="#currentoption" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li>
+<div class="tsd-signature" id="currentoptioncurrentoption"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">currentOption</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L65">src/ui/handlers/base-option-select-ui-handler.ts:65</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="windowheight"><code class="tsd-tag">Protected</code><span>window<wbr/>Height</span><a href="#windowheight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li>
+<div class="tsd-signature" id="windowheightwindowheight"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">windowHeight</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L61">src/ui/handlers/base-option-select-ui-handler.ts:61</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -193,9 +322,46 @@
 <div class="tsd-signature tsd-anchor-link" id="clear-1"><span class="tsd-kind-call-signature">clear</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#clear-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#clear">clear</a></p>
+<p>Overrides <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#clear">clear</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L405">src/ui/handlers/base-option-select-ui-handler.ts:405</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L544">src/ui/handlers/base-option-select-ui-handler.ts:544</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="clearcursor"><code class="tsd-tag">Protected</code><span>clear<wbr/>Cursor</span><a href="#clearcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="clearcursor-1"><span class="tsd-kind-call-signature">clearCursor</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#clearcursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L567">src/ui/handlers/base-option-select-ui-handler.ts:567</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="cleariconsprites"><code class="tsd-tag">Protected</code><span>clear<wbr/>Icon<wbr/>Sprites</span><a href="#cleariconsprites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="cleariconsprites-1"><span class="tsd-kind-call-signature">clearIconSprites</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#cleariconsprites-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L560">src/ui/handlers/base-option-select-ui-handler.ts:560</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="clearscrollbar"><code class="tsd-tag">Protected</code><span>clear<wbr/>Scroll<wbr/>Bar</span><a href="#clearscrollbar" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="clearscrollbar-1"><span class="tsd-kind-call-signature">clearScrollBar</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#clearscrollbar-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L572">src/ui/handlers/base-option-select-ui-handler.ts:572</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="cleartext"><span>clear<wbr/>Text</span><a href="#cleartext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="cleartext-1"><span class="tsd-kind-call-signature">clearText</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#cleartext-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#cleartext">clearText</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L261">src/ui/handlers/message-ui-handler.ts:261</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -206,18 +372,30 @@
 Called when BattleScene is reset</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#destroy">destroy</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#destroy">destroy</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/ui-handler.ts#L54">src/ui/handlers/ui-handler.ts:54</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="erasecursor"><code class="tsd-tag">Private</code><span>erase<wbr/>Cursor</span><a href="#erasecursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/ui-handler.ts#L54">src/ui/handlers/ui-handler.ts:54</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="displaycurrentoptions"><code class="tsd-tag">Protected</code><span>display<wbr/>Current<wbr/>Options</span><a href="#displaycurrentoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="erasecursor-1"><span class="tsd-kind-call-signature">eraseCursor</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#erasecursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="displaycurrentoptions-1"><span class="tsd-kind-call-signature">displayCurrentOptions</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">skipResizing</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#displaycurrentoptions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography"><p>Display the current options based on the cursor and scroll cursor.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">skipResizing</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span>
+<div class="tsd-comment tsd-typography"><p>(Default <code>false</code>) Whether to skip the automatic resizing step</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Can handle automatic resizing of the menu window as needed.</p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L414">src/ui/handlers/base-option-select-ui-handler.ts:414</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L332">src/ui/handlers/base-option-select-ui-handler.ts:332</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getcursor"><span>get<wbr/>Cursor</span><a href="#getcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -225,18 +403,29 @@ Called when BattleScene is reset</p>
 <div class="tsd-signature tsd-anchor-link" id="getcursor-1"><span class="tsd-kind-call-signature">getCursor</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getcursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#getcursor">getCursor</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#getcursor">getCursor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/ui-handler.ts#L25">src/ui/handlers/ui-handler.ts:25</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="getoptionswithscroll"><span>get<wbr/>Options<wbr/>With<wbr/>Scroll</span><a href="#getoptionswithscroll" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/ui-handler.ts#L25">src/ui/handlers/ui-handler.ts:25</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="getoptionsmaxwidth"><code class="tsd-tag">Private</code><span>get<wbr/>Options<wbr/>Max<wbr/>Width</span><a href="#getoptionsmaxwidth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="getoptionswithscroll-1"><span class="tsd-kind-call-signature">getOptionsWithScroll</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a><span class="tsd-signature-symbol">[]</span><a href="#getoptionswithscroll-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getoptionsmaxwidth-1"><span class="tsd-kind-call-signature">getOptionsMaxWidth</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">configOptions</span><span class="tsd-signature-symbol">:</span> (<a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a>)<span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getoptionsmaxwidth-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<h4 class="tsd-returns-title">Returns <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography"><p>Compute the width required to display all given options and readies them for display.</p>
+<p>Creates temporary sprite and Text objects and set to be able to infer the required space.</p>
+<p>Only considers the options that have not been initialized, and marks them as initialized once done.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">configOptions</span>: (<a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a>)<span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>Array of <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-kind-interface"><code>UIOptionSelectItem</code></a>s to consider</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>the maximum width that will be taken by those elements</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L290">src/ui/handlers/base-option-select-ui-handler.ts:290</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L242">src/ui/handlers/base-option-select-ui-handler.ts:242</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getui"><span>get<wbr/>Ui</span><a href="#getui" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -244,40 +433,120 @@ Called when BattleScene is reset</p>
 <div class="tsd-signature tsd-anchor-link" id="getui-1"><span class="tsd-kind-call-signature">getUi</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="src_ui_ui.UI.html" class="tsd-signature-type tsd-kind-class">UI</a><a href="#getui-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="src_ui_ui.UI.html" class="tsd-signature-type tsd-kind-class">UI</a></h4><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#getui">getUi</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#getui">getUi</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/ui-handler.ts#L21">src/ui/handlers/ui-handler.ts:21</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/ui-handler.ts#L21">src/ui/handlers/ui-handler.ts:21</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="getunskippedindices"><code class="tsd-tag">Private</code><span>get<wbr/>Unskipped<wbr/>Indices</span><a href="#getunskippedindices" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="handlecursorupdown"><code class="tsd-tag">Private</code><span>handle<wbr/>Cursor<wbr/>Up<wbr/>Down</span><a href="#handlecursorupdown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="getunskippedindices-1"><span class="tsd-kind-call-signature">getUnskippedIndices</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><a href="#getunskippedindices-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="handlecursorupdown-1"><span class="tsd-kind-call-signature">handleCursorUpDown</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">button</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_enums_buttons.Button.html" class="tsd-signature-type tsd-kind-enum">Button</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#handlecursorupdown-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">options</span>: <a href="../interfaces/src__types_ui-types.OptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">OptionSelectItem</a><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<li><span><span class="tsd-kind-parameter">button</span>: <a href="../enums/src_enums_buttons.Button.html" class="tsd-signature-type tsd-kind-enum">Button</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L333">src/ui/handlers/base-option-select-ui-handler.ts:333</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L431">src/ui/handlers/base-option-select-ui-handler.ts:431</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="getwindowheight"><code class="tsd-tag">Protected</code><span>get<wbr/>Window<wbr/>Height</span><a href="#getwindowheight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="initcursor"><code class="tsd-tag">Protected</code><span>init<wbr/>Cursor</span><a href="#initcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="getwindowheight-1"><span class="tsd-kind-call-signature">getWindowHeight</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getwindowheight-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="initcursor-1"><span class="tsd-kind-call-signature">initCursor</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#initcursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography"><p>Initializes the cursor when opening the menu. MUST only be called <em>after</em> <code>this.initOptions()</code>!</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L50">src/ui/handlers/base-option-select-ui-handler.ts:50</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L476">src/ui/handlers/base-option-select-ui-handler.ts:476</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="getwindowwidth"><code class="tsd-tag">Protected</code> <code class="tsd-tag">Abstract</code><span>get<wbr/>Window<wbr/>Width</span><a href="#getwindowwidth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="initializeoption"><code class="tsd-tag">Protected</code><span>initialize<wbr/>Option</span><a href="#initializeoption" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="getwindowwidth-1"><span class="tsd-kind-call-signature">getWindowWidth</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#getwindowwidth-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="initializeoption-1"><span class="tsd-kind-call-signature">initializeOption</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">option</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">singleSpaceWidth</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tempSprite</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Sprite</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#initializeoption-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography"><p>Readies the given <code>UIOptionSelectItem</code> for display.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">option</span>: <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
+<div class="tsd-comment tsd-typography"><p>The <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-kind-interface"><code>UIOptionSelectItem</code></a> to consider</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">singleSpaceWidth</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The width of a single space, used to offset the label if there is a icon to show</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tempSprite</span>: <span class="tsd-signature-type">Sprite</span></span>
+<div class="tsd-comment tsd-typography"><p>A <code>Sprite</code> object that can be used to measure the needed space of the item's icon, if any</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>For options with icon(s), adds the appropriate number of space before the label to give the sprite the space it needs</p>
+<p>For options with color, adds the appropriate BBCode to the label</p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L48">src/ui/handlers/base-option-select-ui-handler.ts:48</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L289">src/ui/handlers/base-option-select-ui-handler.ts:289</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="initoptions"><code class="tsd-tag">Private</code><span>init<wbr/>Options</span><a href="#initoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="initoptions-1"><span class="tsd-kind-call-signature">initOptions</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src__types_ui-types.OptionSelectModeConfig.html" class="tsd-signature-type tsd-kind-interface">OptionSelectModeConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#initoptions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/src__types_ui-types.OptionSelectModeConfig.html" class="tsd-signature-type tsd-kind-interface">OptionSelectModeConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L130">src/ui/handlers/base-option-select-ui-handler.ts:130</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="initpromptsprite"><span>init<wbr/>Prompt<wbr/>Sprite</span><a href="#initpromptsprite" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="initpromptsprite-1"><span class="tsd-kind-call-signature">initPromptSprite</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">container</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#initpromptsprite-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Add the sprite to be displayed at the end of messages with prompts</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">container</span>: <span class="tsd-signature-type">Container</span></span>
+<div class="tsd-comment tsd-typography"><p>the container to add the sprite to</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#initpromptsprite">initPromptSprite</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L18">src/ui/handlers/message-ui-handler.ts:18</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="inittutorialoverlay"><span>init<wbr/>Tutorial<wbr/>Overlay</span><a href="#inittutorialoverlay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="inittutorialoverlay-1"><span class="tsd-kind-call-signature">initTutorialOverlay</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">container</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Container</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#inittutorialoverlay-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Create a semi transparent overlay that will get shown during tutorials</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">container</span>: <span class="tsd-signature-type">Container</span></span>
+<div class="tsd-comment tsd-typography"><p>the container to add the overlay to</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#inittutorialoverlay">initTutorialOverlay</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/awaitable-ui-handler.ts#L32">src/ui/handlers/awaitable-ui-handler.ts:32</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="istextanimationinprogress"><span>is<wbr/>Text<wbr/>Animation<wbr/>In<wbr/>Progress</span><a href="#istextanimationinprogress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="istextanimationinprogress-1"><span class="tsd-kind-call-signature">isTextAnimationInProgress</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#istextanimationinprogress-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#istextanimationinprogress">isTextAnimationInProgress</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L253">src/ui/handlers/message-ui-handler.ts:253</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="processinput"><span>process<wbr/>Input</span><a href="#processinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -289,23 +558,37 @@ Called when BattleScene is reset</p>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">button</span>: <a href="../enums/src_enums_buttons.Button.html" class="tsd-signature-type tsd-kind-enum">Button</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#processinput">processInput</a></p>
+<p>Overrides <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#processinput">processInput</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L205">src/ui/handlers/base-option-select-ui-handler.ts:205</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="setcursor"><span>set<wbr/>Cursor</span><a href="#setcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
-<div class="tsd-signature tsd-anchor-link" id="setcursor-1"><span class="tsd-kind-call-signature">setCursor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">fullCursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#setcursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L377">src/ui/handlers/base-option-select-ui-handler.ts:377</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="processtutorialinput"><span>process<wbr/>Tutorial<wbr/>Input</span><a href="#processtutorialinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="processtutorialinput-1"><span class="tsd-kind-call-signature">processTutorialInput</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">button</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_enums_buttons.Button.html" class="tsd-signature-type tsd-kind-enum">Button</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#processtutorialinput-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">fullCursor</span>: <span class="tsd-signature-type">number</span></span></li></ul></div>
+<li><span><span class="tsd-kind-parameter">button</span>: <a href="../enums/src_enums_buttons.Button.html" class="tsd-signature-type tsd-kind-enum">Button</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#setcursor">setCursor</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#processtutorialinput">processTutorialInput</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L340">src/ui/handlers/base-option-select-ui-handler.ts:340</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/awaitable-ui-handler.ts#L15">src/ui/handlers/awaitable-ui-handler.ts:15</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setcursor"><span>set<wbr/>Cursor</span><a href="#setcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setcursor-1"><span class="tsd-kind-call-signature">setCursor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">cursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#setcursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">cursor</span>: <span class="tsd-signature-type">number</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#setcursor">setCursor</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L499">src/ui/handlers/base-option-select-ui-handler.ts:499</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="setmousecursorstyle"><code class="tsd-tag">Protected</code><span>set<wbr/>Mouse<wbr/>Cursor<wbr/>Style</span><a href="#setmousecursorstyle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -325,9 +608,22 @@ Called when BattleScene is reset</p>
 <div class="tsd-tag-see">
 <h4 class="tsd-anchor-link" id="see">See<a href="#see" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/cursor">https://developer.mozilla.org/en-US/docs/Web/CSS/cursor</a></p>
 </div></div><aside class="tsd-sources">
-<p>Inherited from <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#setmousecursorstyle">setMouseCursorStyle</a></p>
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#setmousecursorstyle">setMouseCursorStyle</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/ui-handler.ts#L43">src/ui/handlers/ui-handler.ts:43</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/ui-handler.ts#L43">src/ui/handlers/ui-handler.ts:43</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="setscrollcursor"><code class="tsd-tag">Protected</code><span>set<wbr/>Scroll<wbr/>Cursor</span><a href="#setscrollcursor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setscrollcursor-1"><span class="tsd-kind-call-signature">setScrollCursor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">scrollCursor</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#setscrollcursor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">scrollCursor</span>: <span class="tsd-signature-type">number</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L522">src/ui/handlers/base-option-select-ui-handler.ts:522</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setup"><span>setup</span><a href="#setup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -335,18 +631,9 @@ Called when BattleScene is reset</p>
 <div class="tsd-signature tsd-anchor-link" id="setup-1"><span class="tsd-kind-call-signature">setup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#setup">setup</a></p>
+<p>Overrides <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#setup">setup</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L54">src/ui/handlers/base-option-select-ui-handler.ts:54</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-protected">
-<h3 class="tsd-anchor-link" id="setupoptions"><code class="tsd-tag">Protected</code><span>setup<wbr/>Options</span><a href="#setupoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-protected">
-<li class="">
-<div class="tsd-signature tsd-anchor-link" id="setupoptions-1"><span class="tsd-kind-call-signature">setupOptions</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setupoptions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
-<div class="tsd-description">
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L77">src/ui/handlers/base-option-select-ui-handler.ts:77</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L75">src/ui/handlers/base-option-select-ui-handler.ts:75</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="show"><span>show</span><a href="#show" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -358,9 +645,63 @@ Called when BattleScene is reset</p>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_ui_handlers_ui-handler.UiHandler.html">UiHandler</a>.<a href="src_ui_handlers_ui-handler.UiHandler.html#show">show</a></p>
+<p>Overrides <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#show">show</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L173">src/ui/handlers/base-option-select-ui-handler.ts:173</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L99">src/ui/handlers/base-option-select-ui-handler.ts:99</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="showdialogue"><span>show<wbr/>Dialogue</span><a href="#showdialogue" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="showdialogue-1"><span class="tsd-kind-call-signature">showDialogue</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">text</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_name</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">delay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">?:</span> (<span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">callbackDelay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">prompt</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">promptDelay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#showdialogue-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">text</span>: <span class="tsd-signature-type">string</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">_name</span>: <span class="tsd-signature-type">string</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">delay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callback</span>: (<span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callbackDelay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">prompt</span>: <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">promptDelay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#showdialogue">showDialogue</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L42">src/ui/handlers/message-ui-handler.ts:42</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="showprompt"><span>show<wbr/>Prompt</span><a href="#showprompt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="showprompt-1"><span class="tsd-kind-call-signature">showPrompt</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">?:</span> (<span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">callbackDelay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#showprompt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callback</span>: (<span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callbackDelay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#showprompt">showPrompt</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L216">src/ui/handlers/message-ui-handler.ts:216</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="showtext"><span>show<wbr/>Text</span><a href="#showtext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="showtext-1"><span class="tsd-kind-call-signature">showText</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">text</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">delay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">?:</span> (<span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">callbackDelay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">prompt</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">promptDelay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#showtext-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">text</span>: <span class="tsd-signature-type">string</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">delay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callback</span>: (<span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callbackDelay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">prompt</span>: <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">promptDelay</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html">MessageUiHandler</a>.<a href="src_ui_handlers_message-ui-handler.MessageUiHandler.html#showtext">showText</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/message-ui-handler.ts#L31">src/ui/handlers/message-ui-handler.ts:31</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected">
 <h3 class="tsd-anchor-link" id="unblockinput"><code class="tsd-tag">Protected</code><span>unblock<wbr/>Input</span><a href="#unblockinput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -369,7 +710,43 @@ Called when BattleScene is reset</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/b836dd3f7d13456d1f85435dfe355d31a0a043aa/src/ui/handlers/base-option-select-ui-handler.ts#L280">src/ui/handlers/base-option-select-ui-handler.ts:280</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L465">src/ui/handlers/base-option-select-ui-handler.ts:465</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="updatecursorplacement"><code class="tsd-tag">Private</code><span>update<wbr/>Cursor<wbr/>Placement</span><a href="#updatecursorplacement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updatecursorplacement-1"><span class="tsd-kind-call-signature">updateCursorPlacement</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updatecursorplacement-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Place the cursor in front of the currently selected option.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Initializes the cursor sprite if it doesn't exist.</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L218">src/ui/handlers/base-option-select-ui-handler.ts:218</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="updatesizeforoptions"><code class="tsd-tag">Protected</code><span>update<wbr/>Size<wbr/>For<wbr/>Options</span><a href="#updatesizeforoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updatesizeforoptions-1"><span class="tsd-kind-call-signature">updateSizeForOptions</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> (<a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a>)<span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updatesizeforoptions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Automatically set the menu's size for the given options.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">options</span>: (<a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-signature-type tsd-kind-interface">UIOptionSelectItem</a> <span class="tsd-signature-symbol">&amp;</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a>)<span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>Array of <a href="../interfaces/src__types_ui-types.UIOptionSelectItem.html" class="tsd-kind-interface"><code>UIOptionSelectItem</code></a>s to consider</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-3">Remarks<a href="#remarks-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Preserves the current size if they are all smaller, otherwise expands as needed.</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7171aede5346c8d92a19790df50f18df0a49a47b/src/ui/handlers/base-option-select-ui-handler.ts#L176">src/ui/handlers/base-option-select-ui-handler.ts:176</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -389,9 +766,11 @@ Called when BattleScene is reset</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#active" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a><a href="#blockinput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>block<wbr/>Input</span></a><a href="#config" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>config</span></a><a href="#cursor" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor</span></a><a href="#cursorobj" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor<wbr/>Obj</span></a><a href="#defaulttextstyle" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Text<wbr/>Style</span></a><a href="#fullcursor" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>full<wbr/>Cursor</span></a><a href="#mode" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>mode</span></a><a href="#optionselectbg" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Bg</span></a><a href="#optionselectcontainer" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Container</span></a><a href="#optionselecticons" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Icons</span></a><a href="#optionselecttext" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Text</span></a><a href="#optionselecttextcontainer" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Text<wbr/>Container</span></a><a href="#scale" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scale</span></a><a href="#scrollcursor" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scroll<wbr/>Cursor</span></a><a href="#textcontent" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>text<wbr/>Content</span></a><a href="#unskippedindices" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>unskipped<wbr/>Indices</span></a></div></details>
+<div><a href="#active" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a><a href="#awaitingactioninput" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>awaiting<wbr/>Action<wbr/>Input</span></a><a href="#blockinput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>block<wbr/>Input</span></a><a href="#config" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>config</span></a><a href="#cursor" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor</span></a><a href="#cursorobj" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cursor<wbr/>Obj</span></a><a href="#fullyinitialized" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>fully<wbr/>Initialized</span></a><a href="#maxiconwidth" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Icon<wbr/>Width</span></a><a href="#maxoptions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Options</span></a><a href="#message" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>message</span></a><a href="#mode" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>mode</span></a><a href="#onactioninput" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>on<wbr/>Action<wbr/>Input</span></a><a href="#options" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>options</span></a><a href="#optionselectbg" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Bg</span></a><a href="#optionselectcontainer" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Container</span></a><a href="#optionselecticons" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Icons</span></a><a href="#optionselecttext" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>option<wbr/>Select<wbr/>Text</span></a><a href="#pendingprompt" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>pending<wbr/>Prompt</span></a><a href="#prompt" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>prompt</span></a><a href="#repeatinput" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>repeat<wbr/>Input</span></a><a href="#scale" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scale</span></a><a href="#scrollbar" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scroll<wbr/>Bar</span></a><a href="#scrollcursor" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scroll<wbr/>Cursor</span></a><a href="#textcallbacktimer" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>text<wbr/>Callback<wbr/>Timer</span></a><a href="#texttimer" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>text<wbr/>Timer</span></a><a href="#tutorialactive" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Active</span></a><a href="#tutorialoverlay" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tutorial<wbr/>Overlay</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
+<div><a href="#currentoption" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>current<wbr/>Option</span></a><a href="#windowheight" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>window<wbr/>Height</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#clear"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear</span></a><a href="#destroy" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#erasecursor" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>erase<wbr/>Cursor</span></a><a href="#getcursor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Cursor</span></a><a href="#getoptionswithscroll"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Options<wbr/>With<wbr/>Scroll</span></a><a href="#getui" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Ui</span></a><a href="#getunskippedindices" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Unskipped<wbr/>Indices</span></a><a href="#getwindowheight" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Window<wbr/>Height</span></a><a href="#getwindowwidth" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Window<wbr/>Width</span></a><a href="#processinput"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Input</span></a><a href="#setcursor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Cursor</span></a><a href="#setmousecursorstyle" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Mouse<wbr/>Cursor<wbr/>Style</span></a><a href="#setup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup</span></a><a href="#setupoptions" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup<wbr/>Options</span></a><a href="#show"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show</span></a><a href="#unblockinput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>unblock<wbr/>Input</span></a></div></details></div></details></div>
+<div><a href="#clear"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear</span></a><a href="#clearcursor" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Cursor</span></a><a href="#cleariconsprites" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Icon<wbr/>Sprites</span></a><a href="#clearscrollbar" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Scroll<wbr/>Bar</span></a><a href="#cleartext" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear<wbr/>Text</span></a><a href="#destroy" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#displaycurrentoptions" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>display<wbr/>Current<wbr/>Options</span></a><a href="#getcursor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Cursor</span></a><a href="#getoptionsmaxwidth" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Options<wbr/>Max<wbr/>Width</span></a><a href="#getui" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Ui</span></a><a href="#handlecursorupdown" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Cursor<wbr/>Up<wbr/>Down</span></a><a href="#initcursor" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Cursor</span></a><a href="#initializeoption" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>initialize<wbr/>Option</span></a><a href="#initoptions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Options</span></a><a href="#initpromptsprite" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Prompt<wbr/>Sprite</span></a><a href="#inittutorialoverlay" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init<wbr/>Tutorial<wbr/>Overlay</span></a><a href="#istextanimationinprogress" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Text<wbr/>Animation<wbr/>In<wbr/>Progress</span></a><a href="#processinput"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Input</span></a><a href="#processtutorialinput" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Tutorial<wbr/>Input</span></a><a href="#setcursor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Cursor</span></a><a href="#setmousecursorstyle" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Mouse<wbr/>Cursor<wbr/>Style</span></a><a href="#setscrollcursor" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Scroll<wbr/>Cursor</span></a><a href="#setup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup</span></a><a href="#show"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show</span></a><a href="#showdialogue" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Dialogue</span></a><a href="#showprompt" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Prompt</span></a><a href="#showtext" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Text</span></a><a href="#unblockinput" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>unblock<wbr/>Input</span></a><a href="#updatecursorplacement" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Cursor<wbr/>Placement</span></a><a href="#updatesizeforoptions" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Size<wbr/>For<wbr/>Options</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
 <nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
