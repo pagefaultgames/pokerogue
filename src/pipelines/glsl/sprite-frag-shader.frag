@@ -200,7 +200,7 @@ void main() {
 		teraCol.rgb = mix(teraCol.rgb, teraColor, 0.5);
 		color.rgb = blendOverlay(color.rgb, teraCol.rgb);
 
-		if (any(lessThan(teraCol.rgb, vec3(1.0)))) {
+		if (any(lessThan(teraColor.rgb, vec3(1.0)))) {
 			vec3 teraColHsv = rgb2hsv(teraColor);
 			color.rgb = mix(color.rgb, teraColor, (1.0 - teraColHsv.g) / 2.0);
 		}

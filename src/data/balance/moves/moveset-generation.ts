@@ -32,8 +32,8 @@
  * @module
  */
 
-import type { LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
-import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import type { LEVEL_BASED_DENYLIST } from "#balance/forbidden-moves";
+import type { FORCED_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 

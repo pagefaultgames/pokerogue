@@ -25,13 +25,12 @@ import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { GameData } from "#system/game-data";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -792,7 +791,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   override applyStarterChoice(species: PokemonSpecies, isValid: BooleanHolder, dexAttr: DexAttrProps): boolean {
-    const speciesForm = getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, dexAttr.formIndex);
     const types = [speciesForm.type1, speciesForm.type2];
     if (!types.includes(this.value - 1)) {
       isValid.value = false;
@@ -914,10 +913,6 @@ export class FreshStartChallenge extends Challenge {
       dexEntry.ivs[i] = Math.min(dexEntry.ivs[i], 15);
     }
 
-    // Removes shiny and variants
-    dexEntry.caughtAttr &= ~DexAttr.SHINY;
-    dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
-
     // Remove unlocked forms for specific species
     if (
       [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(speciesId)
@@ -944,9 +939,7 @@ export class FreshStartChallenge extends Challenge {
       validMoves = validMoves.filter(m => !existingMoveIds.includes(m));
       pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
     }
-    pokemon.luck = 0; // No luck
-    pokemon.shiny = false; // Not shiny
-    pokemon.variant = 0; // Not shiny
+    pokemon.luck = 0; // No luck, even if shiny
     if (
       pokemon.formIndex > 0
       && [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(

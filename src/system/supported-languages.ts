@@ -27,7 +27,7 @@ export const SUPPORTED_LANGUAGE_ENTRIES = {
     label: "Italiano", // Italian
     hasAllLocalizedImages: true,
   },
-  "pr-BR": {
+  "pt-BR": {
     label: "Português (BR)", // Brazilian Portuguese
     hasAllLocalizedImages: true,
   },

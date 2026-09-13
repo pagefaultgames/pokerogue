@@ -38,7 +38,9 @@ module.exports = {
         "Files in `@types/` should not export anything but types and interfaces. "
         + "The folder is intended to house imports that are removed at runtime, "
         + "and thus should not contain anything with a bearing on runtime code.",
-      from: {},
+      from: {
+        pathNot: ["^test/tests/data/species-data-registry[.]test[.]ts$"],
+      },
       to: {
         path: ["(^|/)src/@types", "(^|/)test/@types"],
         dependencyTypesNot: ["type-only"],

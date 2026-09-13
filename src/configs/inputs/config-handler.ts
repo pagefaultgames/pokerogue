@@ -12,7 +12,7 @@ import type {
   MappingSettingName,
   PadConfig,
   SelectedDevice,
-} from "#types/configs/inputs";
+} from "#types/inputs";
 
 /**
  * Retrieve the key associated with the specified keycode from the mapping.

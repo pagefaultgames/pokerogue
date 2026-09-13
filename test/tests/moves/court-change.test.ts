@@ -76,7 +76,7 @@ describe("Move - Court Change", () => {
     // Ninjask should now be poisoned due to lack of Safeguard
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY)).toBeDefined();
-    expect(ninjask.status?.effect).toBe(StatusEffect.POISON);
+    expect(ninjask).toHaveStatusEffect(StatusEffect.POISON);
   });
 
   it("should swap spikes layers to the enemy side", async () => {

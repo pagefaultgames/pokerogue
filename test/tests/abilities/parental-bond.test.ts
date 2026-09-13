@@ -323,7 +323,7 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 

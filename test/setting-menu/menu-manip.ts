@@ -11,7 +11,7 @@ import {
   getSettingNameWithKeycode,
 } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { KeyboardConfig } from "#types/configs/inputs";
+import type { KeyboardConfig } from "#types/inputs";
 import { expect } from "vitest";
 
 // TODO: Review what the literal fuck this class does

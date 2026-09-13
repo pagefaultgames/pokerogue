@@ -129,10 +129,6 @@ export class SummaryUiHandler extends UiHandler {
   private selectedMoveIndex: number;
   private selectCallback: ((cursor: number) => void) | null;
 
-  constructor() {
-    super(UiMode.SUMMARY);
-  }
-
   setup() {
     const ui = this.getUi();
 
@@ -850,7 +846,7 @@ export class SummaryUiHandler extends UiHandler {
           `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
             settings.display.hideUsername
               ? usernameReplacement
-              : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
+              : loggedInUser?.username || i18next.t("pokemonSummary:unknownTrainer"),
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,

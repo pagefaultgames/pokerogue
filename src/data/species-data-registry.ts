@@ -13,13 +13,15 @@ import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import type { StarterCost } from "#balance/starters";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChange } from "#data/pokemon-forms";
-import type { PokemonSpecies } from "#data/pokemon-species";
+import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import type { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
 import type { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import type { SpeciesId } from "#enums/species-id";
-import type { LevelMoves, PokemonSpeciesData, SpeciesDataMap } from "#types/pokemon-species";
+import type { LevelMoves } from "#types/level-moves";
+import type { PokemonSpeciesData, SpeciesDataMap } from "#types/pokemon-species";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 
 /**
  * The SpeciesDataRegistry is a singleton class responsible for managing and querying species-related information.
@@ -143,6 +145,19 @@ export class SpeciesDataRegistry {
   }
 
   /**
+   * Get either a pokemon species or a specific form of that species.
+   * @param speciesId - The {@linkcode SpeciesId} of the species
+   * @param form - The `formIndex` or `formKey` of the form to get.
+   * @returns The {@linkcode PokemonSpeciesForm} or {@linkcode PokemonSpecies} if the form doesn't exist
+   */
+  public getPokemonSpeciesForm(speciesId: SpeciesId, form: string | number): PokemonSpeciesForm {
+    const species: PokemonSpecies = this.getSpecies(speciesId);
+    const formIndex = this.getFormIndex(speciesId, form);
+
+    return species.forms[formIndex] ?? species;
+  }
+
+  /**
    * Get all available TMs for a given species and form.
    * @param speciesId - The {@linkcode SpeciesId} of the species to get TMs for
    * @param form - (Optional) The `formIndex` or `formKey` of the form to get TMs for.
@@ -245,15 +260,15 @@ export class SpeciesDataRegistry {
    * @param getSpecies - (Default `false`) Whether to return the {@linkcode PokemonSpecies} instead of a {@linkcode SpeciesId}.
    * @returns The starter {@linkcode SpeciesId} or {@linkcode PokemonSpecies}
    */
-  public getStarter(speciesId: SpeciesId, getSpecies?: false): SpeciesId;
+  public getStarter(speciesId: SpeciesId, getSpecies?: false): StarterSpeciesId;
   public getStarter(speciesId: SpeciesId, getSpecies: true): PokemonSpecies;
-  public getStarter(speciesId: SpeciesId, getSpecies = false): SpeciesId | PokemonSpecies {
+  public getStarter(speciesId: SpeciesId, getSpecies = false): StarterSpeciesId | PokemonSpecies {
     const speciesData = this.getSpeciesData(speciesId);
     // only need to check if the species is a starter because of pikachu :/
     if (getSpecies) {
       return this.isStarter(speciesId) ? speciesData.species : this.getSpecies(speciesData.starter);
     }
-    return this.isStarter(speciesId) ? speciesId : speciesData.starter;
+    return this.isStarter(speciesId) ? (speciesId as StarterSpeciesId) : speciesData.starter;
   }
 
   /**
@@ -273,16 +288,16 @@ export class SpeciesDataRegistry {
    * @param getSpecies - (Default `false`) Whether to return {@linkcode PokemonSpecies} instead of {@linkcode SpeciesId}.
    * @returns An array of all starter {@linkcode SpeciesId}s or {@linkcode PokemonSpecies}s
    */
-  public getAllStarters(getSpecies?: false): SpeciesId[];
+  public getAllStarters(getSpecies?: false): StarterSpeciesId[];
   public getAllStarters(getSpecies: true): PokemonSpecies[];
-  public getAllStarters(getSpecies = false): SpeciesId[] | PokemonSpecies[] {
-    const ret: (SpeciesId | PokemonSpecies)[] = [];
+  public getAllStarters(getSpecies = false): StarterSpeciesId[] | PokemonSpecies[] {
+    const ret: (StarterSpeciesId | PokemonSpecies)[] = [];
     for (const speciesData of Object.values(this._data)) {
       if (this.isStarter(speciesData.species.speciesId)) {
-        ret.push(getSpecies ? speciesData.species : speciesData.species.speciesId);
+        ret.push(getSpecies ? speciesData.species : (speciesData.species.speciesId as StarterSpeciesId));
       }
     }
-    return ret as SpeciesId[] | PokemonSpecies[];
+    return ret as StarterSpeciesId[] | PokemonSpecies[];
   }
 
   /**
@@ -290,11 +305,11 @@ export class SpeciesDataRegistry {
    * @param starterCost - The starter cost
    * @returns An array of all starter species that have the given starter cost
    */
-  public getStartersForCost(starterCost: number): SpeciesId[] {
-    const ret: SpeciesId[] = [];
+  public getStartersForCost(starterCost: number): StarterSpeciesId[] {
+    const ret: StarterSpeciesId[] = [];
     for (const speciesData of Object.values(this._data)) {
       if (speciesData.starterCost === starterCost) {
-        ret.push(speciesData.species.speciesId);
+        ret.push(speciesData.species.speciesId as StarterSpeciesId);
       }
     }
     return ret;

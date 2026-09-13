@@ -42,7 +42,7 @@ describe("Moves - Revival Blessing", () => {
     expect(player.species.speciesId).toBe(SpeciesId.MAGIKARP);
     game.move.select(MoveId.REVIVAL_BLESSING);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1, "RevivalBlessingPhase");
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -62,7 +62,7 @@ describe("Moves - Revival Blessing", () => {
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -75,7 +75,7 @@ describe("Moves - Revival Blessing", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const player = game.field.getPlayerPokemon();
@@ -96,7 +96,7 @@ describe("Moves - Revival Blessing", () => {
     game.move.select(MoveId.REVIVAL_BLESSING, 1);
     await game.move.selectEnemyMove(MoveId.FISSURE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");

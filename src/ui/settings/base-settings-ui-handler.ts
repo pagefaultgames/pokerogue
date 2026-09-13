@@ -3,21 +3,19 @@ import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { MappingSettingName } from "#types/configs/inputs";
+import type { MappingSettingName } from "#types/inputs";
 import type { SettingsCategory, SettingsUiItem } from "#types/settings";
-import type { InputsIcons } from "#types/ui-types";
-import { TabMenu } from "#ui/containers/tab-menu";
+import type { ConfirmModeConfig, InputsIcons } from "#types/ui-types";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
+import { TabMenu } from "#ui/tab-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { hasTouchscreen } from "#utils/app-utils";
 import { capitalizeFirstLetter } from "#utils/strings";
 import i18next from "i18next";
 
-/**
- * Abstract class for handling UI elements related to settings.
- */
+/** Abstract class for handling UI elements related to settings. */
 export class BaseSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
@@ -52,7 +50,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
   protected category: SettingsCategory;
 
   constructor(category: SettingsCategory, uiItems: SettingsUiItem[]) {
-    super(null);
+    super();
 
     this.category = category;
 
@@ -85,7 +83,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
     });
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === ui.mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
@@ -246,7 +244,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
    */
   public override show(args: any[]): boolean {
     super.show(args);
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
@@ -451,8 +449,15 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
 
         const confirmationMessage =
           uiItem.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
+
+        const confirmSettingOptions: ConfirmModeConfig = {
+          yesHandler: confirmUpdateSetting,
+          noHandler: cancelUpdateSetting,
+          inputDelay: 750,
+          canBypassInputDelay: true,
+        };
         globalScene.ui.showText(confirmationMessage, null, () => {
-          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmSettingOptions);
         });
       } else {
         this.handleSaveSetting(uiItem, value);
@@ -561,26 +566,23 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
   }
 
   protected showConfirm(text: string, onConfirm: () => void, onCancel?: () => void) {
+    const config: ConfirmModeConfig = {
+      yesHandler: () => {
+        // revert confirm mode.
+        globalScene.ui.revertMode();
+        // revert settings mode.
+        globalScene.ui.revertMode();
+        this.showText("", 0);
+        onConfirm();
+      },
+      noHandler: () => {
+        globalScene.ui.revertMode();
+        this.showText("", 0);
+        onCancel?.();
+      },
+    };
     this.showText(text, undefined, () => {
-      globalScene.ui.setOverlayMode(
-        UiMode.CONFIRM,
-        () => {
-          // revert confirm mode.
-          globalScene.ui.revertMode();
-          // revert settings mode.
-          globalScene.ui.revertMode();
-          this.showText("", 0);
-          onConfirm();
-        },
-        () => {
-          globalScene.ui.revertMode();
-          this.showText("", 0);
-          onCancel?.();
-        },
-        false,
-        0,
-        0,
-      );
+      globalScene.ui.setOverlayMode(UiMode.CONFIRM, config);
     });
   }
 

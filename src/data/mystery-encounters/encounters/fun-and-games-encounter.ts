@@ -167,101 +167,93 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   )
   .build();
 
-async function summonPlayerPokemon() {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
-  return new Promise<void>(async resolve => {
-    const encounter = globalScene.currentBattle.mysteryEncounter!;
+async function summonPlayerPokemon(): Promise<void> {
+  const { promise, resolve } = Promise.withResolvers<void>();
 
-    const playerPokemon = encounter.misc.playerPokemon;
-    // Swaps the chosen Pokemon and the first player's lead Pokemon in the party
-    const party = globalScene.getPlayerParty();
-    const chosenIndex = party.indexOf(playerPokemon);
-    if (chosenIndex !== 0) {
-      const leadPokemon = party[0];
-      party[0] = playerPokemon;
-      party[chosenIndex] = leadPokemon;
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
+
+  const playerPokemon = encounter.misc.playerPokemon;
+  // Swaps the chosen Pokemon and the first player's lead Pokemon in the party
+  const party = globalScene.getPlayerParty();
+  const chosenIndex = party.indexOf(playerPokemon);
+  if (chosenIndex !== 0) {
+    const leadPokemon = party[0];
+    party[0] = playerPokemon;
+    party[chosenIndex] = leadPokemon;
+  }
+
+  // Do trainer summon animation
+  let playerAnimationPromise: Promise<void> | undefined;
+  globalScene.ui.showText(i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(playerPokemon) }));
+  globalScene.pbTray.hide();
+  globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
+  globalScene.time.delayedCall(562, () => {
+    globalScene.trainer.setFrame("2");
+    globalScene.time.delayedCall(64, () => {
+      globalScene.trainer.setFrame("3");
+    });
+  });
+  globalScene.tweens.add({
+    targets: globalScene.trainer,
+    x: -36,
+    duration: 1000,
+    onComplete: () => globalScene.trainer.setVisible(false),
+  });
+  globalScene.time.delayedCall(750, () => {
+    playerAnimationPromise = summonPlayerPokemonAnimation(playerPokemon);
+  });
+
+  // Also loads Wobbuffet data (cannot be shiny)
+  const enemySpecies = speciesDataRegistry.getSpecies(SpeciesId.WOBBUFFET);
+  globalScene.currentBattle.enemyParty = [];
+  const wobbuffet = globalScene.addEnemyPokemon(
+    enemySpecies,
+    encounter.misc.playerPokemon.level,
+    TrainerSlot.NONE,
+    false,
+    true,
+  );
+  wobbuffet.ivs.fill(0);
+  wobbuffet.setNature(Nature.MILD);
+  wobbuffet.setAlpha(0);
+  wobbuffet.setVisible(false);
+  wobbuffet.calculateStats();
+  globalScene.currentBattle.enemyParty[0] = wobbuffet;
+  globalScene.gameData.setPokemonSeen(wobbuffet, true);
+  await wobbuffet.loadAssets();
+  const id = setInterval(checkPlayerAnimationPromise, 500);
+  async function checkPlayerAnimationPromise(): Promise<void> {
+    if (playerAnimationPromise !== undefined) {
+      clearInterval(id);
+      await playerAnimationPromise;
+      resolve();
     }
+  }
 
-    // Do trainer summon animation
-    let playerAnimationPromise: Promise<void> | undefined;
-    globalScene.ui.showText(
-      i18next.t("battle:playerGo", {
-        pokemonName: getPokemonNameWithAffix(playerPokemon),
-      }),
-    );
-    globalScene.pbTray.hide();
-    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
-    globalScene.time.delayedCall(562, () => {
-      globalScene.trainer.setFrame("2");
-      globalScene.time.delayedCall(64, () => {
-        globalScene.trainer.setFrame("3");
-      });
-    });
-    globalScene.tweens.add({
-      targets: globalScene.trainer,
-      x: -36,
-      duration: 1000,
-      onComplete: () => globalScene.trainer.setVisible(false),
-    });
-    globalScene.time.delayedCall(750, () => {
-      playerAnimationPromise = summonPlayerPokemonAnimation(playerPokemon);
-    });
+  return promise;
+}
 
-    // Also loads Wobbuffet data (cannot be shiny)
-    const enemySpecies = speciesDataRegistry.getSpecies(SpeciesId.WOBBUFFET);
+async function handleLoseMinigame(): Promise<void> {
+  // Check Wobbuffet is still alive
+  const wobbuffet = globalScene.getEnemyPokemon();
+  if (!wobbuffet || wobbuffet.isFainted(true) || wobbuffet.hp === 0) {
+    // Player loses
+    // End the battle
+    if (wobbuffet) {
+      wobbuffet.hideInfo();
+      wobbuffet.leaveField();
+    }
+    transitionMysteryEncounterIntroVisuals(true, true);
     globalScene.currentBattle.enemyParty = [];
-    const wobbuffet = globalScene.addEnemyPokemon(
-      enemySpecies,
-      encounter.misc.playerPokemon.level,
-      TrainerSlot.NONE,
-      false,
-      true,
-    );
-    wobbuffet.ivs.fill(0);
-    wobbuffet.setNature(Nature.MILD);
-    wobbuffet.setAlpha(0);
-    wobbuffet.setVisible(false);
-    wobbuffet.calculateStats();
-    globalScene.currentBattle.enemyParty[0] = wobbuffet;
-    globalScene.gameData.setPokemonSeen(wobbuffet, true);
-    await wobbuffet.loadAssets();
-    const id = setInterval(checkPlayerAnimationPromise, 500);
-    async function checkPlayerAnimationPromise() {
-      if (playerAnimationPromise) {
-        clearInterval(id);
-        await playerAnimationPromise;
-        resolve();
-      }
-    }
-  });
+    globalScene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
+    leaveEncounterWithoutBattle(true);
+    await showEncounterText(`${namespace}:ko`);
+    const reviveCost = globalScene.getWaveMoneyAmount(1.5);
+    updatePlayerMoney(-reviveCost, true, false);
+  }
 }
 
-function handleLoseMinigame() {
-  // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
-  return new Promise<void>(async resolve => {
-    // Check Wobbuffet is still alive
-    const wobbuffet = globalScene.getEnemyPokemon();
-    if (!wobbuffet || wobbuffet.isFainted(true) || wobbuffet.hp === 0) {
-      // Player loses
-      // End the battle
-      if (wobbuffet) {
-        wobbuffet.hideInfo();
-        wobbuffet.leaveField();
-      }
-      transitionMysteryEncounterIntroVisuals(true, true);
-      globalScene.currentBattle.enemyParty = [];
-      globalScene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
-      leaveEncounterWithoutBattle(true);
-      await showEncounterText(`${namespace}:ko`);
-      const reviveCost = globalScene.getWaveMoneyAmount(1.5);
-      updatePlayerMoney(-reviveCost, true, false);
-    }
-
-    resolve();
-  });
-}
-
-function handleNextTurn() {
+function handleNextTurn(): boolean {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
 
   const wobbuffet = globalScene.getEnemyPokemon();

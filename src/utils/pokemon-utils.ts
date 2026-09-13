@@ -3,11 +3,11 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { POKERUS_STARTER_COUNT } from "#balance/starters";
 import { starterColors } from "#data/data-lists";
-import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
@@ -23,17 +23,16 @@ export function getDexNumber(speciesId: SpeciesId): number {
  * Method to get the daily list of starters with Pokerus.
  * @returns A list of starters with Pokerus
  */
-export function getPokerusStarters(): PokemonSpecies[] {
-  const pokerusStarters: PokemonSpecies[] = [];
+export function getPokerusStarters(): StarterSpeciesId[] {
+  const pokerusStarters: StarterSpeciesId[] = [];
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
   globalScene.executeWithSeedOffset(
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
         const randomSpeciesId = randSeedItem(speciesDataRegistry.getAllStarters());
-        const species = speciesDataRegistry.getSpecies(randomSpeciesId);
-        if (!pokerusStarters.includes(species)) {
-          pokerusStarters.push(species);
+        if (!pokerusStarters.includes(randomSpeciesId)) {
+          pokerusStarters.push(randomSpeciesId);
         }
       }
     },
@@ -115,15 +114,6 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   }
 
   return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
-}
-
-export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies = speciesDataRegistry.getSpecies(species);
-
-  if (formIndex < retSpecies.forms.length) {
-    return retSpecies.forms[formIndex];
-  }
-  return retSpecies;
 }
 
 /**

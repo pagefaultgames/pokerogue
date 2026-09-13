@@ -37,7 +37,7 @@ describe("Test Utils - PromptHandler", () => {
             setModeCallback();
             return Promise.resolve();
           },
-          getMode: () => UiMode.TEST_DIALOGUE,
+          mode: UiMode.TEST_DIALOGUE,
         } as unknown as UI,
         phaseManager: {
           getCurrentPhase: () =>

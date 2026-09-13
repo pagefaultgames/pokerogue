@@ -40,7 +40,7 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     const feebas = game.field.getPlayerPokemon();
@@ -67,7 +67,7 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 3 });
@@ -102,7 +102,7 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     // Encore overrode the selected Splash with a tackle, ticking down an additional time
@@ -140,7 +140,7 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn(false);
 
     expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
@@ -166,7 +166,7 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(player).toHaveUsedMove({ move: MoveId.ENCORE, result: MoveResult.FAIL });
@@ -177,7 +177,7 @@ describe("Move - Encore", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.ENCORE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     const feebas = game.field.getPlayerPokemon();
@@ -191,7 +191,7 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     const karp = game.field.getEnemyPokemon();

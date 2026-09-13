@@ -143,7 +143,6 @@ describe("Moves - Dragon Tail", () => {
 
     // Make sure the enemy switched to a healthy Pokemon
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy).toBeDefined();
     expect(enemy.isFullHp()).toBe(true);
 
     // Make sure the enemy has a fainted Pokemon in their party and not on the field
@@ -165,7 +164,6 @@ describe("Moves - Dragon Tail", () => {
 
     // Make sure the enemy field is not empty and has a revived Pokemon
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy).toBeDefined();
     expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
     expect(game.scene.getEnemyField()).toHaveLength(1);
   });
@@ -183,7 +181,6 @@ describe("Moves - Dragon Tail", () => {
 
     // Make sure the player's field is not empty and has a revived Pokemon
     const dratini = game.field.getPlayerPokemon();
-    expect(dratini).toBeDefined();
     expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
     expect(game.scene.getPlayerField().length).toBe(1);
   });
