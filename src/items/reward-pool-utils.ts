@@ -313,7 +313,7 @@ export function getRewardWeightsForType(poolType: RewardPoolType): RewardPoolWei
 
 /**
  * Finds how many party members have a non-volatile status condition in need of healing
- * @param max The maximum amount of statused party members to consider
+ * @param max - The maximum amount of statused party members to consider
  * @returns The number of statused party members
  */
 export function getStatusedPartyMemberCount(max = 1): number {
@@ -322,8 +322,8 @@ export function getStatusedPartyMemberCount(max = 1): number {
 
 /**
  * Used to check if the player has max of a given ball type in Classic
- * @param ballType The {@linkcode PokeballType} being checked
- * @returns boolean: true if the player has the maximum of a given ball type
+ * @param ballType - The {@linkcode PokeballType} being checked
+ * @returns Whether the player has the maximum of a given ball type
  */
 export function hasMaximumBalls(ballType: PokeballType): boolean {
   return globalScene.gameMode.isClassic && globalScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS;
