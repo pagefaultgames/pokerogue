@@ -189,8 +189,6 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       return;
     }
 
-    
-
     const options: OptionSelectItem[] = [];
 
     for (const [index, entry] of resetCodes.entries()) {
