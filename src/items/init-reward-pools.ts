@@ -2,7 +2,6 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
-import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
@@ -13,6 +12,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
+import { getStatusedPartyMemberCount, hasMaximumBalls } from "#items/reward-pool-utils";
 import { rewardPool } from "#items/reward-pools";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
 
@@ -93,10 +93,13 @@ function initGreatRewardPool(): void {
     {
       id: RewardId.FULL_RESTORE,
       weight: () => {
-        const party = globalScene.getPlayerParty();
         const statusEffectPartyMemberCount = getStatusedPartyMemberCount(3);
         const thresholdPartyMemberCount = Math.floor(
-          (Math.min(party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length, 3)
+          (Math.min(
+            globalScene.getPlayerParty().filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted())
+              .length,
+            3,
+          )
             + statusEffectPartyMemberCount)
             / 2,
         );
@@ -534,6 +537,14 @@ function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedRewardWe
   };
 }
 
+/**
+ * Gets a function to determine weights for Potion rewards based on party members' HP, with a max of 3*baseweight
+ * A party member is considered in need of this item if it's below both HP thresholds
+ * @param hpThreshold The amount of HP the mon should be missing to be considered in need of a potion
+ * @param hpRatioThreshold The ratio of current:max HP under which the mon is considered in need of a potion
+ * @param baseWeight The standard weight of that potion, multiplied by up to 3 based on who needs it
+ * @returns A WeightedRewardFunc which yields the reward's weight multiplied by the number of mons that need it
+ */
 function potionWeightFunc(hpThreshold: number, hpRatioThreshold: number, baseWeight = 1): WeightedRewardWeightFunc {
   return () => {
     const party = globalScene.getPlayerParty();
@@ -545,6 +556,12 @@ function potionWeightFunc(hpThreshold: number, hpRatioThreshold: number, baseWei
   };
 }
 
+/**
+ * Gets a function to determine weights for Ether/Elixir rewards based on party members' PP, with a max of 3*baseweight
+ * A party member is considered in need of this item if it has a move with a PP of 5 or less, and less than half its max
+ * @param baseWeight The weight of the reward
+ * @returns A WeightedRewardFunc which yields the reward's weight multiplied by the number of mons that need it
+ */
 function etherWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
   return () => {
     const party = globalScene.getPlayerParty();
@@ -563,23 +580,15 @@ function etherWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
   };
 }
 
+/**
+ * Gets a function to determine weights for Revive rewards based on number of fainted party members
+ * @param baseWeight The weight to multiply by the amount of fainted party members
+ * @returns A WeightedRewardFunc which yields the number of fainted party members times base weight
+ */
 function reviveWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
   return () => {
     const party = globalScene.getPlayerParty();
     const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
     return faintedPartyMemberCount * baseWeight;
   };
-}
-
-function getStatusedPartyMemberCount(max = 1): number {
-  return Math.min(globalScene.getPlayerParty().filter(p => p.hp && !!p.status && !p.hasStatusFromOrb()).length, max);
-}
-
-/**
- * Used to check if the player has max of a given ball type in Classic
- * @param ballType The {@linkcode PokeballType} being checked
- * @returns boolean: true if the player has the maximum of a given ball type
- */
-function hasMaximumBalls(ballType: PokeballType): boolean {
-  return globalScene.gameMode.isClassic && globalScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS;
 }

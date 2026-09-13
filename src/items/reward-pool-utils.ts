@@ -1,5 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
+import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
+import type { PokeballType } from "#enums/pokeball";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import type { RewardPool, RewardPoolWeights, RewardSpecs } from "#types/rewards";
@@ -307,4 +309,22 @@ export function getRewardWeightsForType(poolType: RewardPoolType): RewardPoolWei
     case RewardPoolType.PLAYER:
       return rewardPoolWeights;
   }
+}
+
+/**
+ * Finds how many party members have a non-volatile status condition in need of healing
+ * @param max The maximum amount of statused party members to consider
+ * @returns The number of statused party members
+ */
+export function getStatusedPartyMemberCount(max = 1): number {
+  return Math.min(globalScene.getPlayerParty().filter(p => p.hp && !!p.status && !p.hasStatusFromOrb()).length, max);
+}
+
+/**
+ * Used to check if the player has max of a given ball type in Classic
+ * @param ballType The {@linkcode PokeballType} being checked
+ * @returns boolean: true if the player has the maximum of a given ball type
+ */
+export function hasMaximumBalls(ballType: PokeballType): boolean {
+  return globalScene.gameMode.isClassic && globalScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS;
 }

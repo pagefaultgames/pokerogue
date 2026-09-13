@@ -1196,6 +1196,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.heldItemManager.getItems();
   }
 
+  /**
+   * @returns Whether the mon's status was intentionally inflicted by its held item
+   */
   public hasStatusFromOrb(): boolean {
     return (
       (this.heldItemManager.hasItem(HeldItemId.FLAME_ORB) && this.status?.effect === StatusEffect.BURN)
