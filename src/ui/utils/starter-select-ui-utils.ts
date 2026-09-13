@@ -517,6 +517,7 @@ export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number):
   const { starterDataEntry } = getStarterData(starterId);
 
   const levelMoves = speciesDataRegistry.getLevelMoves(starterId, formIndex);
+  applyChallenges(ChallengeType.LEVEL_UP_MOVESET, speciesDataRegistry.getSpecies(starterId), levelMoves);
   for (const [level, moveId] of levelMoves) {
     if (level > 0 && level <= 5) {
       starterMoves.push(moveId);
