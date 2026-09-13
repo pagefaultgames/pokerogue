@@ -100,7 +100,7 @@ interface AssetManifest {
 function resolveAssetManifest(
   manifest: Record<string, ManifestEntry>,
   entry: ManifestEntry,
-  warn: (message: string) => void,
+  error: (message: string) => void,
 ): AssetManifest {
   const cssFiles = new Set<string>(entry.css ?? []);
   const preloadFiles: string[] = [];
@@ -108,8 +108,8 @@ function resolveAssetManifest(
   for (const importKey of entry.imports ?? []) {
     const chunk = manifest[importKey];
     if (!chunk) {
-      warn(`"${importKey}" referenced by entry imports but missing from manifest.`);
-      continue;
+      error(`"${importKey}" referenced by entry imports but missing from manifest.`);
+      throw new Error("Aborting build process!");
     }
     preloadFiles.push(chunk.file);
     for (const css of chunk.css ?? []) {
@@ -134,7 +134,7 @@ function resolveAssetManifest(
  */
 export function staticShellPlugin(): VitePlugin {
   let logger: Logger;
-  const { cyan, gray, green, yellow } = chalk;
+  const { cyan, gray, green, red } = chalk;
 
   return {
     name: NAME,
@@ -146,7 +146,7 @@ export function staticShellPlugin(): VitePlugin {
     },
     closeBundle(): void {
       const logSuffix = gray(` [${NAME}]`);
-      const warn = (message: string) => logger.warn(yellow(`${message}${logSuffix}`));
+      const error = (message: string) => logger.error(red(`${message}${logSuffix}`));
       logger.info(cyan(`\t→ Plugin: ${NAME} v${VERSION}`));
 
       const outDir = path.resolve("dist");
@@ -154,27 +154,28 @@ export function staticShellPlugin(): VitePlugin {
       const indexPath = path.join(outDir, "index.html");
 
       if (!fs.existsSync(manifestPath) || !fs.existsSync(indexPath)) {
-        warn(`Skipping: expected ${manifestPath} and ${indexPath} to exist.`);
-        return;
+        error(`Expected "${manifestPath}" and "${indexPath}" to exist!`);
+        throw new Error("Aborting build process!");
       }
 
       const manifest: Record<string, ManifestEntry> = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
       const entry = manifest["index.html"];
 
       if (!entry) {
-        warn(`Skipping: no "index.html" entry found in ${manifestPath}.`);
-        return;
+        error(`No "index.html" entry found in "${manifestPath}"!`);
+        throw new Error("Aborting build process!");
       }
 
-      const assetManifest = resolveAssetManifest(manifest, entry, warn);
+      const assetManifest = resolveAssetManifest(manifest, entry, error);
       fs.writeFileSync(path.join(outDir, "asset-manifest.json"), JSON.stringify(assetManifest));
 
       let html = fs.readFileSync(indexPath, "utf-8");
-      const hadEntryScript = ENTRY_SCRIPT_PATTERN.test(html);
+      const allScriptsFound =
+        ENTRY_SCRIPT_PATTERN.test(html) && MODULEPRELOAD_LINK_PATTERN.test(html) && STYLESHEET_LINK_PATTERN.test(html);
 
-      if (!hadEntryScript) {
-        warn(`"${indexPath}" did not contain the expected Vite entry <script> tag - static shell was not applied.`);
-        return;
+      if (!allScriptsFound) {
+        error(`"${indexPath}" did not contain the expected Vite entry <script> tag!`);
+        throw new Error("Aborting build process!");
       }
 
       html = html.replace(ENTRY_SCRIPT_PATTERN, CRITICAL_STYLE + BOOTSTRAP_SCRIPT);
