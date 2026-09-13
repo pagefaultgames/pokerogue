@@ -13,6 +13,47 @@ import type { SpeciesStatBoosterItemId } from "#items/stat-boost";
 import type { PokemonItemMap } from "#types/held-item-data-types";
 import type { TrainerItemSpecs } from "#types/trainer-item-data-types";
 
+// #region Legacy modifier data types
+
+/** Minimal required shape of a serialized legacy modifier. */
+interface LegacyModifierEntry {
+  className: string;
+  typeId: string;
+  stackCount: number;
+  args: readonly unknown[];
+}
+
+/**
+ * Ensure that a raw record has the properties required by {@linkcode LegacyModifierEntry}
+ */
+function isLegacyModifierEntry(entry: Record<string, unknown>): entry is Record<string, unknown> & LegacyModifierEntry {
+  return (
+    typeof entry.className === "string"
+    && typeof entry.typeId === "string"
+    && typeof entry.stackCount === "number"
+    && Array.isArray(entry.args)
+  );
+}
+
+type PokemonHeldItemModifierArgs = readonly [pokemonId: number];
+type PokemonFormChangeItemModifierArgs = readonly [pokemonId: number, formChangeItem: number, active: boolean];
+type BaseStatModifierArgs = readonly [pokemonId: number, stat: PermanentStat];
+type AttackTypeBoosterModifierArgs = readonly [pokemonId: number, moveType: PokemonType, boostPercent: number];
+type BerryModifierArgs = readonly [pokemonId: number, berryType: BerryType];
+type SpeciesStatBoosterModifierArgs = readonly [
+  pokemonId: number,
+  stats: readonly Stat[],
+  multiplier: number,
+  species: readonly SpeciesId[],
+];
+type PokemonExpBoosterModifierArgs = readonly [pokemonId: number, boostPercent: number];
+type PokemonBaseStatTotalModifierArgs = readonly [pokemonId: number, statModifier: number];
+type DoubleBattleChanceBoosterModifierArgs = readonly [maxBattles: number, battleCount: number];
+type TempStatStageBoosterModifierArgs = readonly [stat: Stat, maxBattles: number, battleCount: number];
+type ExpBoosterModifierArgs = readonly [boostPercent: number];
+type EnemyAttackStatusEffectChanceModifierArgs = readonly [effect: StatusEffect, chancePercent: number];
+// #endregion Legacy modifier data types
+
 // #region Held item conversion maps
 
 // These regrettably can't be typed better on the modifier side
@@ -129,9 +170,12 @@ function convertOldFormChangeItem(oldValue: number): FormChangeItemId | null {
  * Map a species stat booster (light ball, etc.) to the appropriate {@linkcode HeldItemId}
  * @returns The appropriate {@linkcode SpeciesStatBoosterItemId}, or `null` if the passed args don't represent a species stat booster
  */
-function mapSpeciesStatBoosterToItem(args: any[]): SpeciesStatBoosterItemId | null {
-  const stats: number[] = args[1];
-  const species: number[] = args[3];
+function mapSpeciesStatBoosterToItem([
+  ,
+  stats,
+  ,
+  species,
+]: SpeciesStatBoosterModifierArgs): SpeciesStatBoosterItemId | null {
   if (species.includes(SpeciesId.PIKACHU)) {
     return HeldItemId.LIGHT_BALL;
   }
@@ -156,31 +200,33 @@ function mapSpeciesStatBoosterToItem(args: any[]): SpeciesStatBoosterItemId | nu
 /**
  * Resolve a held item ID for modifiers whose identity depends on constructor args.
  */
-function mapArgsModifierToItem(name: string, typeId: string, args: any[]): HeldItemId | null {
-  switch (name) {
-    case "BaseStatModifier":
-      return permanentStatToHeldItem[args[1] as PermanentStat];
-
-    case "AttackTypeBoosterModifier":
-      return attackTypeToHeldItem[args[1] as PokemonType];
-
-    case "BerryModifier":
-      return berryTypeToHeldItem[args[1] as BerryType];
-
-    case "SpeciesStatBoosterModifier": {
-      return mapSpeciesStatBoosterToItem(args);
+function mapArgsModifierToItem(className: string, typeId: string, args: readonly unknown[]): HeldItemId | null {
+  switch (className) {
+    case "BaseStatModifier": {
+      const [, stat] = args as BaseStatModifierArgs;
+      return permanentStatToHeldItem[stat] ?? null;
     }
-
+    case "AttackTypeBoosterModifier": {
+      const [, moveType] = args as AttackTypeBoosterModifierArgs;
+      return attackTypeToHeldItem[moveType] ?? null;
+    }
+    case "BerryModifier": {
+      const [, berryType] = args as BerryModifierArgs;
+      return berryTypeToHeldItem[berryType] ?? null;
+    }
+    case "SpeciesStatBoosterModifier":
+      if (!Array.isArray(args[1]) || !Array.isArray(args[3])) {
+        return null;
+      }
+      return mapSpeciesStatBoosterToItem(args as SpeciesStatBoosterModifierArgs);
     case "TurnStatusEffectModifier":
       return typeId === "TOXIC_ORB" ? HeldItemId.TOXIC_ORB : typeId === "FLAME_ORB" ? HeldItemId.FLAME_ORB : null;
-
     case "PokemonExpBoosterModifier": {
-      const boost = args[1] as number;
-      return boost === 100 ? HeldItemId.GOLDEN_EGG : HeldItemId.LUCKY_EGG;
+      const [, boostPercent] = args as PokemonExpBoosterModifierArgs;
+      return boostPercent === 100 ? HeldItemId.GOLDEN_EGG : HeldItemId.LUCKY_EGG;
     }
-
     case "PokemonBaseStatTotalModifier": {
-      const statModifier = args[1] as number;
+      const [, statModifier] = args as PokemonBaseStatTotalModifierArgs;
       return statModifier > 0 ? HeldItemId.SHUCKLE_JUICE_GOOD : HeldItemId.SHUCKLE_JUICE_BAD;
     }
 
@@ -196,47 +242,36 @@ function mapArgsModifierToItem(name: string, typeId: string, args: any[]): HeldI
 /**
  * Resolve a trainer item for modifiers whose identity depends on constructor args.
  */
-function mapArgsModifierToTrainerItem(className: string, args: any[]): TrainerItemSpecs | null {
+function mapArgsModifierToTrainerItem(className: string, args: readonly unknown[]): TrainerItemSpecs | null {
   switch (className) {
     case "DoubleBattleChanceBoosterModifier": {
-      // [maxBattles, battleCount]
-      const maxBattles = args[0] as number;
-      const battleCount = args[1] as number;
+      const [maxBattles, battleCount] = args as DoubleBattleChanceBoosterModifierArgs;
       const id =
         maxBattles >= 30 ? TrainerItemId.MAX_LURE : maxBattles >= 15 ? TrainerItemId.SUPER_LURE : TrainerItemId.LURE;
       return { id, stack: battleCount };
     }
-
     case "TempStatStageBoosterModifier": {
-      // [stat, maxBattles, battleCount]
-      const stat = args[0] as number;
-      const battleCount = args[2] as number;
+      const [stat, , battleCount] = args as TempStatStageBoosterModifierArgs;
       const id = statToXItem[stat];
       return id ? { id, stack: battleCount } : null;
     }
-
     case "ExpBoosterModifier": {
-      // [boostPercent]
-      const boost = args[0] as number;
+      const [boostPercent] = args as ExpBoosterModifierArgs;
       const id =
-        boost >= 100
+        boostPercent >= 100
           ? TrainerItemId.GOLDEN_EXP_CHARM
-          : boost >= 60
+          : boostPercent >= 60
             ? TrainerItemId.SUPER_EXP_CHARM
             : TrainerItemId.EXP_CHARM;
       return { id, stack: 1 };
     }
-
     case "HealShopCostModifier":
       return { id: TrainerItemId.BLACK_SLUDGE, stack: 1 };
-
     case "EnemyAttackStatusEffectChanceModifier": {
-      // [effect, chancePercent]
-      const effect = args[0] as StatusEffect;
+      const [effect] = args as EnemyAttackStatusEffectChanceModifierArgs;
       const id = statusEffectToEnemyToken[effect];
       return id ? { id, stack: 1 } : null;
     }
-
     default:
       return null;
   }
@@ -261,25 +296,18 @@ interface ConvertedModifierData {
 export function convertModifierSaveData(data: readonly Record<string, unknown>[]): ConvertedModifierData {
   const heldItems: PokemonItemMap[] = [];
   const trainerItems: TrainerItemSpecs[] = [];
-
   for (const entry of data) {
-    const { typeId, args, stackCount, className } = entry;
-    if (
-      typeof className !== "string"
-      || typeof typeId !== "string"
-      || typeof stackCount !== "number"
-      || !Array.isArray(args)
-    ) {
+    if (!isLegacyModifierEntry(entry)) {
       console.warn("Skipping malformed modifier entry during item migration:", entry);
       continue;
     }
+    const { typeId, args, stackCount, className } = entry;
     if (className === "PokemonFormChangeItemModifier") {
-      // [pokemonId, oldFormChangeItemValue, active]
-      const pokemonId = args[0] as number;
-      const newId = convertOldFormChangeItem(args[1] as number);
+      const [pokemonId, oldFormChangeItem, active] = args as PokemonFormChangeItemModifierArgs;
+      const newId = convertOldFormChangeItem(oldFormChangeItem);
       if (newId) {
         heldItems.push({
-          item: { id: newId, stack: stackCount, active: !!args[2] },
+          item: { id: newId, stack: stackCount, active: !!active },
           pokemonId,
         });
       }
@@ -287,7 +315,7 @@ export function convertModifierSaveData(data: readonly Record<string, unknown>[]
     }
 
     if (className in uniqueModifierToItem) {
-      const pokemonId = args[0] as number;
+      const [pokemonId] = args as PokemonHeldItemModifierArgs;
       heldItems.push({
         item: { id: uniqueModifierToItem[className], stack: stackCount },
         pokemonId,
@@ -297,7 +325,7 @@ export function convertModifierSaveData(data: readonly Record<string, unknown>[]
 
     const categoryItemId = mapArgsModifierToItem(className, typeId, args);
     if (categoryItemId) {
-      const pokemonId = args[0] as number;
+      const [pokemonId] = args as PokemonHeldItemModifierArgs;
       heldItems.push({
         item: { id: categoryItemId, stack: stackCount },
         pokemonId,
