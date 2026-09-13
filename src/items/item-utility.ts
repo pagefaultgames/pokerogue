@@ -4,6 +4,8 @@ import type { Pokemon } from "#field/pokemon";
 import type { PokemonItemMap } from "#types/held-item-data-types";
 import type { NonEmptyTuple } from "type-fest";
 
+export const MAX_STACK_COUNT_TINT = 0xf89890;
+
 // Iterate over the party until an item is successfully given
 export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {
   for (const pokemon of party) {

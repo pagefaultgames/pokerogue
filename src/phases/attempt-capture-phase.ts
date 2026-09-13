@@ -295,7 +295,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {
             globalScene.validateAchv(achvs.SHINY_PARTY);
           }
-          globalScene.updateItems(true);
+          globalScene.updateItemBar(true);
           removePokemon();
           if (newPokemon) {
             newPokemon.leaveField(true, true, false);

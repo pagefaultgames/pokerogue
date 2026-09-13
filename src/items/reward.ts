@@ -1,12 +1,4 @@
-import type { RewardId } from "#enums/reward-id";
-import type { RarityTier } from "#enums/reward-tier";
-import type { PlayerPokemon } from "#field/pokemon";
-import type { Exact } from "#types/type-helpers";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
-import i18next from "i18next";
-
 /**
- * @module
  * The term "Reward" refers to items the player can access in the post-battle screen (although
  * they may be used in other places of the code as well).
 
@@ -49,7 +41,18 @@ import i18next from "i18next";
  * There are some more derived classes, in particular:
  * RewardGenerator, which creates Reward instances from a certain group (e.g. TMs, nature mints, or berries);
  * and RewardOption, which is displayed during the select reward phase at the end of each encounter.
+ *
+ * @packageDocumentation
 */
+
+import type { RewardId } from "#enums/reward-id";
+import type { RarityTier } from "#enums/reward-tier";
+import type { PlayerPokemon } from "#field/pokemon";
+// biome-ignore lint/correctness/noUnusedImports: used in TSDoc
+import type { SelectRewardPhase } from "#phases/select-reward-phase";
+import type { Exact } from "#types/type-helpers";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import i18next from "i18next";
 
 export abstract class Reward {
   // TODO: This is set inconsistently across classes and is only really used for category checks

@@ -167,14 +167,19 @@ function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
   }
 }
 
-// TODO: Add proper documentation to this function (once it fully works...)
-export function assignEnemyHeldItemsForWave(
-  waveIndex: number,
+/**
+ * Randomly generate held items from a pool and assign them to an enemy Pokemon.
+ * @param count - Max number of held items the enemy should end up holding (including existing items)
+ * @param enemy - The {@linkcode EnemyPokemon} to receive the items
+ * @param poolType - Which {@linkcode HeldItemPoolType | tiered pool} to draw from (Wild or Trainer)
+ * @param upgradeChanceDivisor - (Default `0`) If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
+ * to be bumped up one rarity tier. `0` disables tier upgrades.
+ */
+export function generateEnemyPokemonHeldItems(
   count: number,
   enemy: EnemyPokemon,
   poolType: HeldItemPoolType.WILD | HeldItemPoolType.TRAINER,
-  // TODO: This isn't a 'chance' (X%), it's a divisor (1 in X)
-  upgradeChance = 0,
+  upgradeChanceDivisor = 0,
 ): void {
   const existingItemCount = enemy.heldItemManager.getItemCount();
   count -= existingItemCount;
@@ -183,16 +188,11 @@ export function assignEnemyHeldItemsForWave(
   }
 
   for (let i = 0; i < count; i++) {
-    const upgraded = upgradeChance > 0 && randSeedInt(upgradeChance) === 0 ? 1 : 0;
+    const upgraded = upgradeChanceDivisor > 0 && randSeedInt(upgradeChanceDivisor) === 0 ? 1 : 0;
     const item = getNewHeldItemFromTieredPool(getHeldItemPool(poolType), enemy, upgraded);
     if (item) {
       enemy.heldItemManager.add(item);
     }
-  }
-
-  // TODO: Why is this handled here of all places...
-  if (!(waveIndex % 1000)) {
-    enemy.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
   }
 }
 
@@ -238,19 +238,19 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
       } else {
         pokemon.heldItemManager.add(entry, actualCount);
       }
-      return;
+      continue;
     }
 
     if (isHeldItemSpecs(entry)) {
       pokemon.heldItemManager.add(entry);
-      return;
+      continue;
     }
 
     // TODO: Overly permissive type - this should not be able to take a HeldItemCategoryEntry if
     // the result would be analogous to passing the category directly
     if (isHeldItemCategoryEntry(entry)) {
       assignItemsFromCategory(entry.id, pokemon, actualCount);
-      return;
+      continue;
     }
 
     entry satisfies HeldItemPool;
@@ -324,18 +324,23 @@ export function getNewAttackTypeBoosterHeldItem(
 ): HeldItemId | null {
   const party = coerceArray(pokemon);
 
-  // TODO: make this consider moves or abilities that change types
+  const attackMoveTypes = party.flatMap(p => {
+    const ret: PokemonType[] = [];
+    const moveset = p.getMoveset();
 
-  const attackMoveTypes = party
-    .values()
-    .flatMap(p =>
-      p
-        .getMoveset()
-        .filter(pm => pm.getMove().is("AttackMove"))
-        .map(pm => p.getMoveType(pm.getMove()))
-        .filter(type => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-    )
-    .toArray();
+    for (const pokemonMove of moveset) {
+      const move = pokemonMove.getMove();
+
+      if (move.is("AttackMove")) {
+        const moveType = p.getMoveType(move);
+
+        if (moveType !== PokemonType.UNKNOWN && moveType !== PokemonType.STELLAR) {
+          ret.push(moveType);
+        }
+      }
+    }
+    return ret;
+  });
 
   if (attackMoveTypes.length === 0) {
     return null;

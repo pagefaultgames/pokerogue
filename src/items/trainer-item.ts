@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
+import { MAX_STACK_COUNT_TINT } from "#items/item-utility";
 import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
 import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
@@ -13,20 +14,12 @@ import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
 export abstract class TrainerItemBase {
-  public readonly type: TrainerItemId;
+  public readonly id: TrainerItemId;
 
   /**
    * Private backing property for `maxStackCount`
    */
-  // TODO: This is added for the SOLE purpose of supporting endure tokens' dynamic max stack count.
-  readonly #maxStackCount: number | (() => number);
-  public get maxStackCount(): number {
-    return typeof this.#maxStackCount === "function" ? this.#maxStackCount() : this.#maxStackCount;
-  }
-  // TODO: Remove as we now expose the base property
-  getMaxStackCount(): number {
-    return this.maxStackCount;
-  }
+  public readonly maxStackCount: number;
 
   /**
    * Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts).
@@ -34,22 +27,22 @@ export abstract class TrainerItemBase {
    */
   public readonly isLapsing: boolean;
 
-  constructor(type: TrainerItemId, maxStackCount: number | (() => number), isLapsing = false) {
-    this.type = type;
-    this.#maxStackCount = maxStackCount;
+  constructor(type: TrainerItemId, maxStackCount: number, isLapsing = false) {
+    this.id = type;
+    this.maxStackCount = maxStackCount;
     this.isLapsing = isLapsing;
   }
 
   public get name(): string {
-    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.name`);
+    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.id])}.name`);
   }
 
   public get description(): string {
-    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.type])}.description`);
+    return i18next.t(`item:${toCamelCase(TrainerItemNames[this.id])}.description`);
   }
 
   public get iconName(): string {
-    return `${TrainerItemNames[this.type]?.toLowerCase()}`;
+    return `${TrainerItemNames[this.id]?.toLowerCase()}`;
   }
 
   public createIcon(stackCount: number): Phaser.GameObjects.Container {
@@ -71,7 +64,7 @@ export abstract class TrainerItemBase {
     if (this.isLapsing) {
       // Generate the text with a linearly interpolated hue based on remaining duration
       // Ranges from #f2dbd9 / #822017 (≈ 0% duration) to #d9f2db / #178220 (100% duration)
-      const hue = Math.floor(120 * (stackCount / this.getMaxStackCount()) + 5);
+      const hue = Math.floor(120 * (stackCount / this.maxStackCount) + 5);
       const typeHex = hslToHex(hue, 0.5, 0.9);
       const strokeHex = hslToHex(hue, 0.7, 0.3);
 
@@ -84,7 +77,7 @@ export abstract class TrainerItemBase {
         .setOrigin(1, 0);
     }
 
-    if (this.getMaxStackCount() === 1 || stackCount < 1) {
+    if (this.maxStackCount === 1 || stackCount < 1) {
       return;
     }
 
@@ -92,16 +85,11 @@ export abstract class TrainerItemBase {
       .bitmapText(10, 15, "item-count", stackCount.toString(), 11)
       .setLetterSpacing(-0.5)
       .setOrigin(0);
-    if (stackCount >= this.getMaxStackCount()) {
-      text.setTint(0xf89890);
+    if (stackCount >= this.maxStackCount) {
+      text.setTint(MAX_STACK_COUNT_TINT);
     }
 
     return text;
-  }
-
-  // TODO: This is unused
-  getScoreMultiplier(): number {
-    return 1;
   }
 }
 

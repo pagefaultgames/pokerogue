@@ -665,7 +665,7 @@ function restorePartyAndHeldItems() {
   // Restore original party
   globalScene.getPlayerParty().push(...encounter.misc.originalParty);
 
-  globalScene.updateItems(true);
+  globalScene.updateItemBar(true);
 }
 
 function onGameOver() {

@@ -36,10 +36,10 @@ export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolea
 
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";
-  private rerollCount: number;
-  private rarityTiers?: RarityTier[] | undefined;
-  private customRewardSettings?: CustomRewardSettings | undefined;
-  private isCopy: boolean;
+  private readonly rerollCount: number;
+  private readonly rarityTiers?: RarityTier[] | undefined;
+  private readonly customRewardSettings?: CustomRewardSettings | undefined;
+  private readonly isCopy: boolean;
 
   private typeOptions: RewardOption[];
 
@@ -173,7 +173,7 @@ export class SelectRewardPhase extends BattlePhase {
       }
     } else {
       globalScene.applyReward(reward, {}, true);
-      globalScene.updateItems(true);
+      globalScene.updateItemBar(true);
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
       super.end();

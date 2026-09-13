@@ -20,7 +20,7 @@ import { isHeldItemSpecs } from "#utils/item-utils";
 export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: HeldItemId): number {
-    return (allHeldItems[id] satisfies HeldItem | CosmeticHeldItem).getMaxStackCount();
+    return (allHeldItems[id] satisfies HeldItem | CosmeticHeldItem).maxStackCount;
   }
 
   protected override isSpecs(entry: unknown): entry is HeldItemSpecs {
@@ -57,16 +57,6 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
       return this.getItems().some(id => isItemInCategory(id, itemType) && allHeldItems[id].isTransferable);
     }
     return this.items.has(itemType) && allHeldItems[itemType].isTransferable;
-  }
-
-  // Use for tests if necessary to go over stack limit
-  // TODO: Remove - this is solely used for grip claw, and any tests that require exceeding the stack limit can simply access the underlying map
-  // (not that exceeding the stack limit should be a thing we test for anyways; a more appropriate approach would be stubbing out relevant functions)
-  public setStack(itemType: HeldItemId, stack: number): void {
-    const item = this.items.get(itemType);
-    if (item) {
-      item.stack = stack;
-    }
   }
 
   public filterRequestedItems(

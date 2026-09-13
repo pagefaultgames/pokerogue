@@ -4,6 +4,7 @@ import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { HeldItemBuilder } from "#items/held-item-builder";
+import { MAX_STACK_COUNT_TINT } from "#items/item-utility";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -13,10 +14,8 @@ import type { NonEmptyTuple } from "type-fest";
  * Base class for all held items, both functional and cosmetic.
  */
 export abstract class HeldItemBase {
-  // TODO: Rename parameter to `id` or similar
-  public readonly type: HeldItemId;
+  public readonly id: HeldItemId;
   public readonly maxStackCount: number;
-  // TODO: Consider converting these to a bitmask for efficiency
 
   /**
    * Whether this item can be transferred to another {@linkcode Pokemon}.
@@ -34,37 +33,33 @@ export abstract class HeldItemBase {
    */
   public isSuppressable = true;
 
-  // TODO: Remove these defaults for non-cosmetic held items (and maybe cosmetic ones as well)
-  // in favor of explicitly specifying them for each item
   public get name(): string {
-    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.name`);
+    return i18next.t(`item:${toCamelCase(HeldItemNames[this.id])}.name`);
   }
 
   public get description(): string {
-    return i18next.t(`item:${toCamelCase(HeldItemNames[this.type])}.description`);
+    return i18next.t(`item:${toCamelCase(HeldItemNames[this.id])}.description`);
   }
 
   public get iconName(): string {
-    return `${HeldItemNames[this.type]?.toLowerCase()}`;
+    return `${HeldItemNames[this.id]?.toLowerCase()}`;
   }
 
   /**
    * The name of the sound effect played when this item is obtained or transferred.
    * @defaultValue `"se/restore"`
-   * @todo As far as I can tell this was the "default" sfx before, but we should check and decide if that should be the case
+   *
+   * @privateRemarks
+   * The default value is arbitrary from before the modifier rework.
+   * We may want to revisit it at some point.
    */
   public get soundName(): string {
     return "se/restore";
   }
 
   constructor(type: HeldItemId, maxStackCount = 1) {
-    this.type = type;
+    this.id = type;
     this.maxStackCount = maxStackCount;
-  }
-
-  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
-  getMaxStackCount(): number {
-    return this.maxStackCount;
   }
 
   createSummaryIcon(pokemon?: Pokemon, overrideStackCount?: number): Phaser.GameObjects.Container {
@@ -100,7 +95,7 @@ export abstract class HeldItemBase {
   }
 
   getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
-    if (this.getMaxStackCount() === 1) {
+    if (this.maxStackCount === 1) {
       return null;
     }
 
@@ -108,16 +103,15 @@ export abstract class HeldItemBase {
       .bitmapText(10, 15, "item-count", stackCount.toString(), 11)
       .setLetterSpacing(-0.5)
       .setOrigin(0);
-    if (stackCount >= this.getMaxStackCount()) {
-      // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114955458
-      text.setTint(0xf89890);
+    if (stackCount >= this.maxStackCount) {
+      text.setTint(MAX_STACK_COUNT_TINT);
     }
 
     return text;
   }
 
   getStackCount(pokemon: Pokemon): number {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getStack(this.id);
     return stackCount;
   }
 

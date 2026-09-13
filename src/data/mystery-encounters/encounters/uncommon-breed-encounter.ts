@@ -219,7 +219,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
           randBerry.item.stack -= 1;
         }
-        await globalScene.updateItems(true);
+        globalScene.updateItemBar(true);
 
         // Pokemon joins the team, with 2 egg moves
         const encounter = globalScene.currentBattle.mysteryEncounter!;

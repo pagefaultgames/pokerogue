@@ -1,8 +1,7 @@
+import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 
-// TODO: make category the lower 2 bytes - makes it easier to add more items (and/or change category to first nibble)
-// TODO: Create subsets of HeldItemId for different types of items
 export const HeldItemId = {
   // Berries
   SITRUS_BERRY: 0x0101,
@@ -106,7 +105,6 @@ type HeldItemNameMap = {
 type HeldItemName = keyof typeof HeldItemId;
 
 /** `const object` mapping all held item IDs to their respective names. */
-// TODO: This stores names as UPPER_SNAKE_CASE, but the locales are in PascalCase...
 export const HeldItemNames = Object.freeze(
   Object.entries(HeldItemId).reduce(
     // Use a type-safe reducer to force number keys and values
@@ -156,4 +154,14 @@ export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemC
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
 
-// TODO: Add type test to make sure held items and trainer item IDs don't overlap with either themselves, each other or categories
+type Assert<T extends true> = T;
+
+// biome-ignore lint/correctness/noUnusedVariables: Compile time verifier
+type EnsureNoIdCollision = [
+  // No held item ID equals a held item category ID
+  Assert<HeldItemId & HeldItemCategoryId>,
+  // No held item ID equals a trainer item ID
+  Assert<HeldItemId & TrainerItemId>,
+  // No trainer item ID equals a held item category ID
+  Assert<TrainerItemId & HeldItemCategoryId>,
+];

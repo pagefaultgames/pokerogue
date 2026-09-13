@@ -64,7 +64,7 @@ export class FormChangeItemReward extends PokemonReward {
     // TODO: revise logic of this trigger based on active/inactive item
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
 
-    globalScene.updateItems(true);
+    globalScene.updateItemBar(true);
 
     return true;
   }
