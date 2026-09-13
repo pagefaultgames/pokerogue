@@ -538,12 +538,12 @@ function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedRewardWe
 }
 
 /**
- * Gets a function to determine weights for Potion rewards based on party members' HP, with a max of 3*baseweight
- * A party member is considered in need of this item if it's below both HP thresholds
- * @param hpThreshold The amount of HP the mon should be missing to be considered in need of a potion
- * @param hpRatioThreshold The ratio of current:max HP under which the mon is considered in need of a potion
- * @param baseWeight The standard weight of that potion, multiplied by up to 3 based on who needs it
- * @returns A WeightedRewardFunc which yields the reward's weight multiplied by the number of mons that need it
+ * Gets a function to determine weights for Potion rewards based on party members' HP, with a max of `3 * baseWeight`. \
+ * A party member is considered in need of this item if it's below both HP thresholds.
+ * @param hpThreshold - The amount of HP the mon should be missing to be considered in need of a potion
+ * @param hpRatioThreshold - The ratio of `current:max` HP under which the mon is considered in need of a potion
+ * @param baseWeight - The standard weight of that potion, multiplied by up to 3 based on who needs it
+ * @returns A {@linkcode WeightedRewardWeightFunc} which yields the reward's weight multiplied by the number of mons that need it
  */
 function potionWeightFunc(hpThreshold: number, hpRatioThreshold: number, baseWeight = 1): WeightedRewardWeightFunc {
   return () => {
@@ -557,10 +557,10 @@ function potionWeightFunc(hpThreshold: number, hpRatioThreshold: number, baseWei
 }
 
 /**
- * Gets a function to determine weights for Ether/Elixir rewards based on party members' PP, with a max of 3*baseweight
- * A party member is considered in need of this item if it has a move with a PP of 5 or less, and less than half its max
- * @param baseWeight The weight of the reward
- * @returns A WeightedRewardFunc which yields the reward's weight multiplied by the number of mons that need it
+ * Gets a function to determine weights for Ether/Elixir rewards based on party members' PP, with a max of `3 * baseWeight`. \
+ * A party member is considered in need of this item if it has a move with a PP of 5 or less, and less than half its max.
+ * @param baseWeight - The weight of the reward
+ * @returns A {@linkcode WeightedRewardWeightFunc} which yields the reward's weight multiplied by the number of mons that need it
  */
 function etherWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
   return () => {
@@ -581,9 +581,9 @@ function etherWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
 }
 
 /**
- * Gets a function to determine weights for Revive rewards based on number of fainted party members
- * @param baseWeight The weight to multiply by the amount of fainted party members
- * @returns A WeightedRewardFunc which yields the number of fainted party members times base weight
+ * Gets a function to determine weights for Revive rewards based on number of fainted party members.
+ * @param baseWeight - The weight to multiply by the amount of fainted party members
+ * @returns A {@linkcode WeightedRewardWeightFunc} which yields the number of fainted party members times base weight
  */
 function reviveWeightFunc(baseWeight = 1): WeightedRewardWeightFunc {
   return () => {
