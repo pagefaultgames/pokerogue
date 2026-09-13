@@ -11,7 +11,6 @@ import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
 import type { SpeciesStatBoosterItemId } from "#items/stat-boost";
 import type { PokemonItemMap } from "#types/held-item-data-types";
-import type { LegacyModifierData } from "#types/legacy-data";
 import type { TrainerItemSpecs } from "#types/trainer-item-data-types";
 
 // #region Held item conversion maps
@@ -254,17 +253,26 @@ interface ConvertedModifierData {
 
 /**
  * Convert an array of legacy `ModifierData` into the held item + trainer item format.
+ * Malformed entries are skipped.
  *
- * @param data - Array of serialized modifier data from the old save
+ * @param data - Array of (unvalidated) serialized modifier data from the old save
  * @returns An object containing the converted held items (per-pokemon) and trainer items
  */
-export function convertModifierSaveData(data: LegacyModifierData[]): ConvertedModifierData {
+export function convertModifierSaveData(data: readonly Record<string, unknown>[]): ConvertedModifierData {
   const heldItems: PokemonItemMap[] = [];
   const trainerItems: TrainerItemSpecs[] = [];
 
   for (const entry of data) {
     const { typeId, args, stackCount, className } = entry;
-
+    if (
+      typeof className !== "string"
+      || typeof typeId !== "string"
+      || typeof stackCount !== "number"
+      || !Array.isArray(args)
+    ) {
+      console.warn("Skipping malformed modifier entry during item migration:", entry);
+      continue;
+    }
     if (className === "PokemonFormChangeItemModifier") {
       // [pokemonId, oldFormChangeItemValue, active]
       const pokemonId = args[0] as number;
