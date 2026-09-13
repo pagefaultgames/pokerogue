@@ -173,8 +173,7 @@ export function staticShellPlugin(): VitePlugin {
       const hadEntryScript = ENTRY_SCRIPT_PATTERN.test(html);
 
       if (!hadEntryScript) {
-        warn(`"${indexPath}" did not contain the expected Vite entry <script> tag - static shell was not applied.`);
-        return;
+        throw new Error(`"${indexPath}" did not contain the expected Vite entry <script> tag - static shell was not applied.`);
       }
 
       html = html.replace(ENTRY_SCRIPT_PATTERN, CRITICAL_STYLE + BOOTSTRAP_SCRIPT);
