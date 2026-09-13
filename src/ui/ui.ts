@@ -242,11 +242,19 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   public getHandler<H extends UiHandler = UiHandler>(): H {
-    return this.handlers[this._mode] as H;
+    return this.handlers[this.mode] as H;
   }
 
   public getMessageHandler(): BattleMessageUiHandler {
     return this.handlers[UiMode.MESSAGE] as BattleMessageUiHandler;
+  }
+
+  public getCurrentMessageHandler(): MessageUiHandler {
+    const handler = this.getHandler();
+    if (handler instanceof MessageUiHandler && handler.message) {
+      return handler;
+    }
+    return this.getMessageHandler();
   }
 
   public processInfoButton(pressed: boolean) {
@@ -312,15 +320,10 @@ export class UI extends Phaser.GameObjects.Container {
       }
       showMessageAndCallback();
     } else {
-      const handler = this.getHandler();
       for (let p = 0; p < globalScene.getPlayerField().length; p++) {
         text = text.split(repname[p]).join(pokename[p]);
       }
-      if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
-      } else {
-        this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
-      }
+      this.getCurrentMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     }
   }
 
@@ -363,28 +366,15 @@ export class UI extends Phaser.GameObjects.Container {
       }
       showMessageAndCallback();
     } else {
-      const handler = this.getHandler();
-      if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showDialogue(
-          text,
-          name,
-          delay,
-          showMessageAndCallback,
-          callbackDelay,
-          true,
-          promptDelay,
-        );
-      } else {
-        this.getMessageHandler().showDialogue(
-          text,
-          name,
-          delay,
-          showMessageAndCallback,
-          callbackDelay,
-          true,
-          promptDelay,
-        );
-      }
+      this.getCurrentMessageHandler().showDialogue(
+        text,
+        name,
+        delay,
+        showMessageAndCallback,
+        callbackDelay,
+        true,
+        promptDelay,
+      );
     }
   }
 
@@ -469,12 +459,7 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   public clearText(): void {
-    const handler = this.getHandler();
-    if (handler instanceof MessageUiHandler) {
-      (handler as MessageUiHandler).clearText();
-    } else {
-      this.getMessageHandler().clearText();
-    }
+    this.getCurrentMessageHandler().clearText();
   }
 
   public setCursor(cursor: number): boolean {

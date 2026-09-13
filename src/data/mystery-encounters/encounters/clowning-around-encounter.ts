@@ -46,10 +46,9 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectConfig } from "#types/ui-types";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
-import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/clowningAround";
@@ -449,29 +448,19 @@ async function handleSwapAbility(): Promise<boolean> {
 
 function displayYesNoOptions(resolve: { (value: boolean | PromiseLike<boolean>): void; (arg0: boolean): void }): void {
   showEncounterText(`${namespace}:option.1.abilityPrompt`, null, 500, false);
-  const fullOptions = [
-    {
-      label: i18next.t("menu:yes"),
-      handler: () => {
-        onYesAbilitySwap(resolve);
-        return true;
-      },
-    },
-    {
-      label: i18next.t("menu:no"),
-      handler: () => {
-        resolve(false);
-        return true;
-      },
-    },
-  ];
 
-  const config: OptionSelectConfig = {
-    options: fullOptions,
-    maxOptions: 7,
-    yOffset: 0,
+  const confirmMenuConfig: ConfirmModeConfig = {
+    yesHandler: () => {
+      onYesAbilitySwap(resolve);
+      return true;
+    },
+    noHandler: () => {
+      resolve(false);
+      return true;
+    },
   };
-  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+
+  globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, confirmMenuConfig);
 }
 
 function onYesAbilitySwap(resolve: {
