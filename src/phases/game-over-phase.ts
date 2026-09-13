@@ -134,8 +134,16 @@ export class GameOverPhase extends BattlePhase {
    * based on the current game mode and challenges.
    */
   private awardRibbons(): void {
+    const { gameMode } = globalScene;
+    const { challenges, isClassic } = gameMode;
+
+    const ribbonBlockChallenges = [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER];
+    if (challenges.some(c => ribbonBlockChallenges.includes(c.id) && c.value > 0)) {
+      return;
+    }
+
     let ribbonFlags = 0n;
-    for (const challenge of globalScene.gameMode.challenges) {
+    for (const challenge of challenges) {
       const ribbon = challenge.ribbonAwarded;
       if (challenge.value && ribbon) {
         ribbonFlags |= ribbon;
@@ -149,10 +157,10 @@ export class GameOverPhase extends BattlePhase {
     const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
     if (flip_or_inverse) {
       ribbonFlags = flip_or_inverse;
-    } else if (globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+    } else if (challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
       ribbonFlags = passives;
     } else {
-      if (globalScene.gameMode.isClassic) {
+      if (isClassic) {
         ribbonFlags |= RibbonData.CLASSIC;
       }
       if (isNuzlockeChallenge()) {
