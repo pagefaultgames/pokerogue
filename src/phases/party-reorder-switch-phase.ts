@@ -10,6 +10,15 @@ import i18next from "i18next";
 
 const REPOSITION_SLIDE_DURATION = 500;
 
+/**
+ * If the player reorders Pokémon in the party during the reward select phase,
+ * the Pokémon on the field will not correspond to the first one or two Pokémon
+ * in the party. This phase recalls and sends out Pokémon, or moves them in a
+ * different position on the field, to account for the new order.
+ *
+ * Reordering is only necessary when the next battle is a wild battle in the same biome.
+ * If that is not the case, all Pokémon on the field are recalled, and the phase ends.
+ */
 export class PartyReorderSwitchPhase extends BattlePhase {
   public readonly phaseName = "PartyReorderSwitchPhase";
 
@@ -31,7 +40,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
       return;
     }
 
-    if (globalScene.currentBattle.battleType !== BattleType.WILD) {
+    if (globalScene.currentBattle.battleType !== BattleType.WILD || this.hasBiomeChanged()) {
       const displacedPokemon = party.filter(pokemon => pokemon.isOnField());
       await this.recallPokemon(displacedPokemon);
       this.end();
@@ -53,6 +62,18 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     });
 
     this.end();
+  }
+
+  /**
+   * Utility function to check whether the biome has changed with the current wave.
+   */
+  //TODO: It should not be necessary to have this function here. There is already globalScene.isNewBiome(),
+  // but it returns `true` if the _next_ wave will be in a new biome.
+  hasBiomeChanged() {
+    const isEndlessOrDaily = globalScene.gameMode.hasShortBiomes || globalScene.gameMode.isDaily;
+    const isEndlessSixthWave = globalScene.gameMode.hasShortBiomes && globalScene.currentBattle.waveIndex % 10 === 6;
+    const isWaveIndexMultipleOfFifty = globalScene.currentBattle.waveIndex % 50 === 0;
+    return isEndlessSixthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFifty);
   }
 
   /**
@@ -94,7 +115,6 @@ export class PartyReorderSwitchPhase extends BattlePhase {
    * Play the "come back" recall animation for the given pokemon, removing them
    * from the field once the animation completes.
    * @param leavingPokemon - The pokemon to recall
-   * @param onComplete - Callback invoked once every recall animation has finished
    */
   private async recallPokemon(leavingPokemon: Pokemon[]): Promise<void> {
     for (const pokemon of leavingPokemon) {
