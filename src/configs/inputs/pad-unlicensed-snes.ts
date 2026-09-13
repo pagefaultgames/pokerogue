@@ -1,6 +1,6 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
-import type { PadConfig, UnlicensedSnesButtons } from "#types/configs/inputs";
+import type { PadConfig, UnlicensedSnesButtons } from "#types/inputs";
 
 /**
  * 081f-e401 - UnlicensedSNES

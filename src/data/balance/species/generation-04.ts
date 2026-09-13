@@ -435,6 +435,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.SMACK_DOWN,
       MoveId.RETALIATE,
+      MoveId.DUAL_CHOP,
       MoveId.LASH_OUT,
       MoveId.UPPER_HAND,
     ],
@@ -5488,7 +5489,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       [66, MoveId.SANDSTORM],
       [74, MoveId.DRAGON_RUSH],
     ],
-    tms: [MoveId.CRUNCH, MoveId.POWER_GEM, MoveId.BREAKING_SWIPE],
+    tms: [MoveId.CRUNCH, MoveId.POWER_GEM, MoveId.DUAL_CHOP, MoveId.BREAKING_SWIPE],
   };
   generationFourSpeciesData[SpeciesId.GARCHOMP] = {
     species: new PokemonSpecies({
@@ -5638,6 +5639,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.POISON_JAB,
       MoveId.AQUA_TAIL,
       MoveId.GIGA_IMPACT,
+      MoveId.DUAL_CHOP,
       MoveId.BRUTAL_SWING,
       MoveId.STOMPING_TANTRUM,
       MoveId.LIQUIDATION,
@@ -5916,6 +5918,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.COACHING,
@@ -6569,6 +6572,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.VENOM_DRENCH,
       MoveId.POWER_UP_PUNCH,
@@ -8277,6 +8281,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.POWER_UP_PUNCH,
       MoveId.SOLAR_BLADE,
       MoveId.THROAT_CHOP,

@@ -6,6 +6,11 @@ Note that these comment blocks are purely informative and can be removed once yo
 -->
 
 <!--
+Some additional information not specified here is contained within
+https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request
+-->
+
+<!--
 Make sure your title matches the https://www.conventionalcommits.org/en/v1.0.0/ format.
 Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.
 
@@ -109,3 +114,10 @@ Are there any localization additions or changes? If so:
 Does this require any additions or changes to in-game assets? If so:
 - [ ] I have created an associated PR on the [assets](https://github.com/pagefaultgames/pokerogue-assets) repository
   - If so, include a link to the PR here: _____
+
+
+<!-- If you used any AI assistance in the making of this PR, you *must* uncomment the below block and describe the extent of your AI usage. -->
+<!--
+## AI Assistance Disclosure
+Description goes here.
+-->

@@ -49,7 +49,7 @@ describe("Items - Multi Lens", () => {
       vi.spyOn(enemyPokemon, "getBaseDamage").mockReturnValue(100);
 
       game.move.select(MoveId.TACKLE);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
       await game.phaseInterceptor.to("MoveEndPhase", false);
       const damageResults = spy.mock.results.map(result => result.value?.damage);
@@ -105,7 +105,7 @@ describe("Items - Multi Lens", () => {
     game.move.select(MoveId.SWIFT, 0);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -122,7 +122,7 @@ describe("Items - Multi Lens", () => {
     const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
 
     game.move.select(MoveId.SEISMIC_TOSS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     const damageResults = spy.mock.results.map(result => result.value?.damage);

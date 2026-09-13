@@ -134,7 +134,7 @@ describe("Abilities - Protean/Libero", () => {
 
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       // We stop before running `TurnEndPhase` so that the effects of `BattlerTag`s (such as from Electrify)
       // are still active when checking the move's type
       await game.phaseInterceptor.to("TurnEndPhase", false);

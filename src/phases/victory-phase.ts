@@ -58,36 +58,30 @@ export class VictoryPhase extends PokemonPhase {
         globalScene.phaseManager.pushNew("EggLapsePhase");
         if (gameMode.isClassic) {
           switch (currentWaveIndex) {
-            case ClassicFixedBossWaves.RIVAL_1:
-            case ClassicFixedBossWaves.RIVAL_2:
-            case ClassicFixedBossWaves.RIVAL_3:
-            case ClassicFixedBossWaves.RIVAL_4:
-            case ClassicFixedBossWaves.RIVAL_5:
-            case ClassicFixedBossWaves.RIVAL_6: {
-              // Get event modifiers for this wave
-              const fixedRewards = timedEventManager.getFixedBattleEventRewards(currentWaveIndex);
-
-              for (const fixedReward of fixedRewards) {
-                let reward = fixedReward;
-                const existingItem = globalScene.modifiers.find(m => m.type.id === reward);
-                if (existingItem && existingItem.getStackCount() + 1 > existingItem.getMaxStackCount()) {
-                  const tier = existingItem.type.getOrInferTier();
-                  if (!tier) {
-                    console.warn(`Modifier ${reward} is at max stacks but has no tier.`);
-                    break;
-                  }
-                  reward = `${ModifierTier[tier]}_BALL` as keyof typeof modifierTypes;
-                }
-                globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes[reward]);
-              }
-              break;
-            }
             case ClassicFixedBossWaves.EVIL_BOSS_2:
               // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
               globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.LOCK_CAPSULE);
               break;
           }
+
+          // Get event modifiers for this wave
+          const fixedRewards = timedEventManager.getFixedBattleEventRewards(currentWaveIndex);
+
+          for (const fixedReward of fixedRewards) {
+            let reward = fixedReward;
+            const existingItem = globalScene.modifiers.find(m => m.type.id === reward);
+            if (existingItem && existingItem.getStackCount() + 1 > existingItem.getMaxStackCount()) {
+              const tier = existingItem.type.getOrInferTier();
+              if (!tier) {
+                console.warn(`Modifier ${reward} is at max stacks but has no tier.`);
+                break;
+              }
+              reward = `${ModifierTier[tier]}_BALL` as keyof typeof modifierTypes;
+            }
+            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes[reward]);
+          }
         }
+
         if (currentWaveIndex % 10) {
           globalScene.phaseManager.pushNew(
             "SelectModifierPhase",

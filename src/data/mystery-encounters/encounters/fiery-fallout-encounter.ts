@@ -91,11 +91,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           isBoss: false,
           gender: Gender.MALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
-          mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
+          mysteryEncounterBattleEffects: (pkmn: Pokemon) => {
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-              battlerIndex: pokemon.getBattlerIndex(),
+              battlerIndex: pkmn.getBattlerIndex(),
               changes: groupStatChange([Stat.SPDEF, Stat.SPD], 1),
-              sourcePokemon: pokemon,
+              sourcePokemon: pkmn,
             });
           },
         },
@@ -104,11 +104,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           isBoss: false,
           gender: Gender.FEMALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
-          mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
+          mysteryEncounterBattleEffects: (pkmn: Pokemon) => {
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-              battlerIndex: pokemon.getBattlerIndex(),
+              battlerIndex: pkmn.getBattlerIndex(),
               changes: groupStatChange([Stat.SPDEF, Stat.SPD], 1),
-              sourcePokemon: pokemon,
+              sourcePokemon: pkmn,
             });
           },
         },

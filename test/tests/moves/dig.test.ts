@@ -97,7 +97,7 @@ describe("Moves - Dig", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
-    expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
     expect(playerDig?.ppUsed).toBe(1);
@@ -115,7 +115,7 @@ describe("Moves - Dig", () => {
     }).damage;
 
     game.move.select(MoveId.DIG);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 

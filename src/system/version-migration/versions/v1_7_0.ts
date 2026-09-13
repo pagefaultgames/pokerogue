@@ -1,11 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { DexAttr } from "#enums/dex-attr";
-import type { SpeciesId } from "#enums/species-id";
+import { SpeciesId } from "#enums/species-id";
 import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -20,8 +19,9 @@ const migrateUnselectableForms: SystemSaveMigrator = {
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
         const speciesNumber = Number(sd);
-        if (!speciesNumber) {
-          // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
+        if (!speciesNumber || !SpeciesId[speciesNumber]) {
+          // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes.
+          // An unknown bug caused some accounts to have data for species that don't exist.
           return;
         }
         const species = speciesDataRegistry.getSpecies(speciesNumber);
@@ -73,7 +73,7 @@ const migrateTera: SessionSaveMigrator = {
 
       data.party.forEach(p => {
         if (p.teraType == null) {
-          p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
+          p.teraType = speciesDataRegistry.getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
         }
       });
     }
@@ -109,7 +109,7 @@ const migrateTera: SessionSaveMigrator = {
 
     data.enemyParty.forEach(p => {
       if (p.teraType == null) {
-        p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
+        p.teraType = speciesDataRegistry.getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
       }
     });
   },

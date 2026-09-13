@@ -1,12 +1,12 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { initializeGame } from "#app/init/init";
 import { activeOverrides } from "#app/overrides";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { BiomeId } from "#enums/biome-id";
 import { GachaType } from "#enums/gacha-types";
 import { getBiomeHasProps } from "#field/arena";
+import { initializeGame } from "#init/init";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
 import { hasAllLocalizedSprites, localPing } from "#utils/common";

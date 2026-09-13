@@ -1,6 +1,6 @@
 import { getIconForLatestInput, getSettingNameWithKeycode } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { InterfaceConfig, MappingSettingName, SelectedDevice } from "#types/configs/inputs";
+import type { InterfaceConfig, MappingSettingName, SelectedDevice } from "#types/inputs";
 import { toUpperSnakeCase } from "#utils/strings";
 import { expect } from "vitest";
 

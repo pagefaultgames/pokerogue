@@ -6,7 +6,6 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { supportedLngs } from "#app/i18n-supported-lngs";
 import {
   SpeciesFormChangeAbilityTrigger,
   SpeciesFormChangeActiveTrigger,
@@ -28,6 +27,7 @@ import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { toCamelCase } from "#utils/strings";
 import i18next, { type TFunction } from "i18next";
 import { writeData } from "../helpers";
@@ -51,7 +51,7 @@ export async function generateFormChangeTextsData() {
     }
   }
 
-  for (const lng of supportedLngs) {
+  for (const lng of SUPPORTED_LANGUAGES) {
     const translate = i18next.getFixedT(lng);
     for (const [index, fc] of entryFormChanges.entries()) {
       const triggers = getTriggerText(fc.trigger, translate);

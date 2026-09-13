@@ -10,8 +10,8 @@ import {
   getDailyStartingBiome,
   getDailyStartingMoney,
   getDailyTrainerManipulation,
-} from "#data/daily-seed/daily-run";
-import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
+} from "#data/daily-run";
+import { parseDailySeed } from "#data/daily-seed-utils";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";

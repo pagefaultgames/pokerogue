@@ -1,4 +1,4 @@
-import type { FORCED_SIGNATURE_MOVE_CHANCE } from "#balance/moves/moveset-generation";
+import type { FORCED_SIGNATURE_MOVE_CHANCE } from "#balance/moveset-generation";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 

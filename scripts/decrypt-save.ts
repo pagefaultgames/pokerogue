@@ -10,6 +10,7 @@
  */
 
 import { saveKey as SAVE_KEY } from "#app/constants";
+import { systemSaveShortKeyMap } from "#constants/app-constants";
 import { defaultCommanderHelpArgs } from "#script-utils/arguments";
 import fs from "node:fs";
 import { Command } from "@commander-js/extra-typings";
@@ -20,34 +21,12 @@ const { AES, enc } = cryptoJs;
 const version = "1.0.0";
 
 /**
- * A map of condensed keynames to their associated full names.
- */
-// TODO: Move `src/system/game-data#systemShortKeys` to a new file and import it here
-const systemShortKeys = {
-  seenAttr: "$sa",
-  caughtAttr: "$ca",
-  natureAttr: "$na",
-  seenCount: "$s",
-  caughtCount: "$c",
-  hatchedCount: "$hc",
-  ivs: "$i",
-  moveset: "$m",
-  eggMoves: "$em",
-  candyCount: "$x",
-  friendship: "$f",
-  abilityAttr: "$a",
-  passiveAttr: "$pa",
-  valueReduction: "$vr",
-  classicWinCount: "$wc",
-} as const;
-
-/**
  * Replace the shortened key names with their full names.
  * @param dataStr - The string to convert
  * @returns The string with shortened keynames replaced with full names
  */
 function convertSystemDataStr(dataStr: string): string {
-  for (const [fullKey, abbreviated] of Object.entries(systemShortKeys)) {
+  for (const [fullKey, abbreviated] of Object.entries(systemSaveShortKeyMap)) {
     dataStr = dataStr.replace(new RegExp(`${abbreviated.replace("$", "\\$")}`, "g"), fullKey);
   }
   return dataStr;
