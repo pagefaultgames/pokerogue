@@ -1338,8 +1338,6 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
-        SpeciesId.NIDORAN_F,
-        SpeciesId.NIDORAN_M,
         SpeciesId.MACHOP,
         SpeciesId.MAKUHITA,
         SpeciesId.MEDITITE,
@@ -1454,6 +1452,91 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.TWO_AVG_ONE_STRONG,
     )
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.RATTATA,
+        SpeciesId.PIDGEY,
+        SpeciesId.SPEAROW,
+        SpeciesId.SANDSHREW,
+        SpeciesId.EKANS,
+        SpeciesId.NIDORAN_F,
+        SpeciesId.NIDORAN_M,
+        SpeciesId.VULPIX,
+        SpeciesId.ODDISH,
+        SpeciesId.VENONAT,
+        SpeciesId.DIGLETT,
+        SpeciesId.MEOWTH,
+        SpeciesId.PSYDUCK,
+        SpeciesId.MANKEY,
+        SpeciesId.GROWLITHE,
+        SpeciesId.POLIWAG,
+        SpeciesId.GEODUDE,
+        SpeciesId.PONYTA,
+        SpeciesId.GOLDEEN,
+        SpeciesId.SENTRET,
+        SpeciesId.HOOTHOOT,
+        SpeciesId.PICHU,
+        SpeciesId.CLEFFA,
+        SpeciesId.IGGLYBUFF,
+        SpeciesId.MAREEP,
+        SpeciesId.HOPPIP,
+        SpeciesId.AIPOM,
+        SpeciesId.ZIGZAGOON,
+        SpeciesId.WURMPLE,
+        SpeciesId.LOTAD,
+        SpeciesId.SEEDOT,
+        SpeciesId.TAILLOW,
+        SpeciesId.SHROOMISH,
+        SpeciesId.AZURILL,
+        SpeciesId.SKITTY,
+        SpeciesId.GULPIN,
+        SpeciesId.SPOINK,
+        SpeciesId.CACNEA,
+        SpeciesId.SWABLU,
+        SpeciesId.BIDOOF,
+        SpeciesId.STARLY,
+        SpeciesId.SHINX,
+        SpeciesId.BUDEW,
+        SpeciesId.BUIZEL,
+        SpeciesId.STUNKY,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.TANGELA,
+        SpeciesId.HORSEA,
+        SpeciesId.SLUGMA,
+        SpeciesId.SLAKOTH,
+        SpeciesId.MEDITITE,
+        SpeciesId.BALTOY,
+        SpeciesId.PACHIRISU,
+        SpeciesId.BONSLY,
+      ],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.BELLSPROUT,
+        SpeciesId.TENTACOOL,
+        SpeciesId.SEEL,
+        SpeciesId.CUBONE,
+        SpeciesId.PINSIR,
+        SpeciesId.TAUROS,
+        SpeciesId.CHINCHOU,
+        SpeciesId.NATU,
+        SpeciesId.HERACROSS,
+        SpeciesId.MILTANK,
+        SpeciesId.PLUSLE,
+        SpeciesId.MINUN,
+        SpeciesId.VOLBEAT,
+        SpeciesId.ILLUMISE,
+        SpeciesId.KECLEON,
+        SpeciesId.CHERUBI,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.BULBASAUR,
+        SpeciesId.CHARMANDER,
+        SpeciesId.SQUIRTLE,
+        SpeciesId.TURTWIG,
+        SpeciesId.CHIMCHAR,
+        SpeciesId.PIPLUP,
+      ],
+    })
     .setSpeciesFilter(
       s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.GROUND) || s.isOfType(PokemonType.BUG),
     ),
@@ -1568,7 +1651,28 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
       trainerPartyTemplates.FOUR_WEAK,
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.DRAGON)),
+    .setSpecialtyType(PokemonType.DRAGON)
+    .setSpeciesPools([
+      SpeciesId.HORSEA,
+      SpeciesId.MAGIKARP,
+      SpeciesId.DRATINI,
+      SpeciesId.TRAPINCH,
+      SpeciesId.SWABLU,
+      SpeciesId.BAGON,
+      SpeciesId.GIBLE,
+      SpeciesId.AXEW,
+      SpeciesId.DRUDDIGON,
+      SpeciesId.DEINO,
+      SpeciesId.SKRELP,
+      SpeciesId.TYRUNT,
+      SpeciesId.GOOMY,
+      SpeciesId.NOIBAT,
+      SpeciesId.DRAMPA,
+      SpeciesId.JANGMO_O,
+      SpeciesId.APPLIN,
+      SpeciesId.DREEPY,
+      SpeciesId.FRIGIBAX,
+    ]),
   [TrainerType.FAIRY_TALE_GIRL]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.2)
     .setEncounterBgm(TrainerType.PSYCHIC)
@@ -1580,6 +1684,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_STRONG,
       trainerPartyTemplates.FOUR_WEAK,
     )
+    .setSpecialtyType(PokemonType.FAIRY)
     .setSpeciesFilter(s => s.isOfType(PokemonType.FAIRY)),
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
@@ -1814,21 +1919,83 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.ONE_STRONG,
     )
-    .setSpeciesFilter(
-      s =>
-        [s.ability1, s.ability2, s.abilityHidden].some(
-          a =>
-            !!a
-            && [
-              AbilityId.DRIZZLE,
-              AbilityId.SWIFT_SWIM,
-              AbilityId.HYDRATION,
-              AbilityId.RAIN_DISH,
-              AbilityId.DRY_SKIN,
-              AbilityId.WIND_POWER,
-            ].includes(a),
-        ) || s.getLevelMoves().some(plm => plm[1] === MoveId.RAIN_DANCE),
-    ), // Mons with rain abilities or who learn Rain Dance by level
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.PSYDUCK,
+        SpeciesId.POLIWAG,
+        SpeciesId.SLOWPOKE,
+        SpeciesId.SEEL,
+        SpeciesId.GOLDEEN,
+        SpeciesId.WOOPER,
+        SpeciesId.FINNEON,
+        SpeciesId.LOTAD,
+        SpeciesId.WINGULL,
+        SpeciesId.SURSKIT,
+        SpeciesId.AZURILL,
+        SpeciesId.BUIZEL,
+        SpeciesId.SHELLOS,
+        SpeciesId.TYMPOLE,
+        SpeciesId.DUCKLETT,
+        SpeciesId.ARROKUDA,
+        SpeciesId.WATTREL,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.PARAS,
+        SpeciesId.TENTACOOL,
+        SpeciesId.HORSEA,
+        SpeciesId.STARYU,
+        SpeciesId.WAILMER,
+        SpeciesId.SWABLU,
+        SpeciesId.BARBOACH,
+        SpeciesId.LUVDISC,
+        SpeciesId.BIDOOF,
+        SpeciesId.CROAGUNK,
+        SpeciesId.FRILLISH,
+        SpeciesId.HELIOPTILE,
+        SpeciesId.MORELULL,
+        SpeciesId.CHEWTLE,
+        SpeciesId.TADBULB,
+      ],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.MAGIKARP,
+        SpeciesId.JOLTEON,
+        SpeciesId.VAPOREON,
+        SpeciesId.OMANYTE,
+        SpeciesId.KABUTO,
+        SpeciesId.QWILFISH,
+        SpeciesId.FEEBAS,
+        SpeciesId.CASTFORM,
+        SpeciesId.CLAMPERL,
+        SpeciesId.BUDEW,
+        SpeciesId.MANTYKE,
+        SpeciesId.TIRTOUGA,
+        SpeciesId.ALOMOMOLA,
+        SpeciesId.SHELMET,
+        SpeciesId.STUNFISK,
+        SpeciesId.GALAR_SLOWPOKE,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.SQUIRTLE,
+        SpeciesId.LAPRAS,
+        SpeciesId.DRATINI,
+        SpeciesId.MUDKIP,
+        SpeciesId.RELICANTH,
+        SpeciesId.GOOMY,
+        SpeciesId.SOBBLE,
+        SpeciesId.DONDOZO,
+        SpeciesId.HISUI_QWILFISH,
+        SpeciesId.HISUI_BASCULIN,
+      ],
+      [TrainerPoolTier.ULTRA_RARE]: [
+        SpeciesId.ZAPDOS,
+        SpeciesId.RAIKOU,
+        SpeciesId.SUICUNE,
+        SpeciesId.KYOGRE,
+        SpeciesId.TORNADUS,
+        SpeciesId.THUNDURUS,
+        SpeciesId.OGERPON,
+      ],
+    }), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.75)
     .setEncounterBgm(TrainerType.CLERK)
@@ -1894,6 +2061,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
       trainerPartyTemplates.ONE_STRONGER,
     )
+    .setSpecialtyType(PokemonType.PSYCHIC)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         SpeciesId.ABRA,
@@ -1911,7 +2079,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.EXEGGCUTE,
         SpeciesId.MEDITITE,
         SpeciesId.NATU,
-        SpeciesId.EXEGGCUTE,
         SpeciesId.WOOBAT,
         SpeciesId.INKAY,
         SpeciesId.ORANGURU,
