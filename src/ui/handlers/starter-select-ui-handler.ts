@@ -1060,12 +1060,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     switch (button) {
       case Button.ACTION: {
+        // This prevents repeated rapid button presses from adding duplicate starters to the party
+        this.blockInput = true;
+
         if (this.partyStarterIds.length >= 6) {
+          this.blockInput = false;
           error = true;
           break;
         }
+
         const currentPartyValue = getPartyValue(this.partyStarterIds);
-        // Filter valid starters
         const validStarters = this.filteredStarterIds.filter(starterId => {
           const [isDupe] = this.isInParty(starterId);
           const starterCost = globalScene.gameData.getSpeciesStarterValue(starterId);
@@ -1078,13 +1082,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           return !isDupe && isValidForChallenge && currentPartyValue + starterCost <= getRunValueLimit() && isCaught;
         });
         if (validStarters.length === 0) {
-          error = true; // No valid starters available
+          this.blockInput = false;
+          error = true;
           break;
         }
-        // Select random starter
+
         const randomStarterId = validStarters[Math.floor(Math.random() * validStarters.length)];
-        // Set species and prepare attributes
         this.setStarter(randomStarterId);
+
         // TODO: this might not be needed if we change .addToParty
         const dexAttr = getDexAttrFromPreferences(randomStarterId, this.starterPreferences[randomStarterId]);
         const props = this.getStarterDexAttrPropsFromPreferences(randomStarterId);
@@ -1095,12 +1100,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
         const starterCost = globalScene.gameData.getSpeciesStarterValue(randomStarterId);
         const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(randomStarterId, props.formIndex);
-        // Load assets and add to party
         speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
             this.addToParty(randomStarterId, dexAttr, abilityIndex, natureIndex, moveset, teraType);
             this.getUi().playSelect();
           }
+
+          this.blockInput = false;
         });
         break;
       }
