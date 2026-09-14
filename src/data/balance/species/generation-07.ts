@@ -4494,6 +4494,11 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SNARL,
       MoveId.THROAT_CHOP,
       MoveId.LIQUIDATION,
+      MoveId.AGILITY,
+      MoveId.CHILLING_WATER,
+      MoveId.GUNK_SHOT,
+      MoveId.POUNCE,
+      MoveId.U_TURN,
     ],
   };
   generationSevenSpeciesData[SpeciesId.SANDYGAST] = {

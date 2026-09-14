@@ -2139,6 +2139,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
+      MoveId.LUNGE,
+      MoveId.SEED_BOMB,
     ],
   };
   generationNineSpeciesData[SpeciesId.NACLI] = {
@@ -2967,6 +2969,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.FOCUS_ENERGY,
     ],
   };
   generationNineSpeciesData[SpeciesId.MABOSSTIFF] = {
@@ -8299,6 +8302,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.BREAKING_SWIPE,
       MoveId.SCALE_SHOT,
       MoveId.DRAGON_CHEER,
+      MoveId.FROST_BREATH,
     ],
   };
   generationNineSpeciesData[SpeciesId.GIMMIGHOUL] = {

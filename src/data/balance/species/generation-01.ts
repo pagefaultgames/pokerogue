@@ -8210,6 +8210,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.TRAILBLAZE,
     ],
   };
   generationOneSpeciesData[SpeciesId.DODUO] = {

@@ -1634,6 +1634,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.GRASS_KNOT,
       MoveId.ACROBATICS,
       MoveId.BURNING_JEALOUSY,
+      MoveId.DOUBLE_TEAM,
+      MoveId.ROAR,
+      MoveId.TRAILBLAZE,
     ],
   };
   generationEightSpeciesData[SpeciesId.GOSSIFLEUR] = {
@@ -4086,6 +4089,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationEightSpeciesData[SpeciesId.GRAPPLOCT] = {
@@ -5235,6 +5239,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.SPIKES,
+      MoveId.THUNDER_WAVE,
     ],
   };
   generationEightSpeciesData[SpeciesId.CURSOLA] = {
@@ -5451,6 +5457,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.AERIAL_ACE,
+      MoveId.FEATHER_DANCE,
     ],
   };
   generationEightSpeciesData[SpeciesId.MR_RIME] = {

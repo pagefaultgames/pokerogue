@@ -6423,6 +6423,8 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.ZEN_HEADBUTT,
       MoveId.BULLDOZE,
       MoveId.BODY_PRESS,
+      MoveId.CORROSIVE_GAS,
+      MoveId.SKITTER_SMACK
     ],
   };
   generationThreeSpeciesData[SpeciesId.CARVANHA] = {
