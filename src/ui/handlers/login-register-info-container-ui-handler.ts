@@ -189,6 +189,8 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       return;
     }
 
+    ui.showText(i18next.t("menu:resetCodeLoginDescription"));
+
     const options: OptionSelectItem[] = [];
 
     for (const [index, entry] of resetCodes.entries()) {
@@ -208,6 +210,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       ui.revertMode();
       this.infoContainer.disableInteractive();
       this.setInteractive(true);
+      ui.showText(i18next.t("menu:logInOrCreateAccount"));
       return true;
     };
     options.push({

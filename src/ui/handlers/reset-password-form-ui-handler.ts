@@ -65,6 +65,7 @@ export class ResetPasswordFormUiHandler extends FormModalUiHandler {
 
   override show(args: [ModalConfig, ...any]): boolean {
     if (super.show(args)) {
+      globalScene.ui.showText(i18next.t("menu:resetPasswordWarning"));
       const config = args[0];
       const originalSubmitAction = this.submitAction;
       this.submitAction = () => {
@@ -117,6 +118,7 @@ export class ResetPasswordFormUiHandler extends FormModalUiHandler {
         for (const input of this.inputs) {
           input.setText("");
         }
+        globalScene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
         originalCancelAction?.();
       };
       return true;
