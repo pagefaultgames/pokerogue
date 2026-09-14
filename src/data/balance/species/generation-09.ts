@@ -975,6 +975,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.SPIDOPS] = {
@@ -1115,6 +1116,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.LOKIX] = {
@@ -3190,6 +3192,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.SHADOW_CLAW,
       MoveId.LOW_SWEEP,
       MoveId.THROAT_CHOP,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.BRAMBLIN] = {
@@ -7294,6 +7297,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.TEMPER_FLARE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.SANDY_SHOCKS] = {

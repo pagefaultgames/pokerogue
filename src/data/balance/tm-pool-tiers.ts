@@ -280,6 +280,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.DAZZLING_GLEAM]: ModifierTier.ULTRA,
   [MoveId.INFESTATION]: ModifierTier.COMMON,
   [MoveId.POWER_UP_PUNCH]: ModifierTier.GREAT,
+  [MoveId.FIRST_IMPRESSION]: ModifierTier.ULTRA,
   [MoveId.DARKEST_LARIAT]: ModifierTier.GREAT,
   [MoveId.HIGH_HORSEPOWER]: ModifierTier.ULTRA,
   [MoveId.SOLAR_BLADE]: ModifierTier.ULTRA,

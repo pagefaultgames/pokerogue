@@ -8968,6 +8968,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.POLLEN_PUFF,
       MoveId.TERA_BLAST,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationFiveSpeciesData[SpeciesId.AMOONGUSS] = {
@@ -10678,6 +10679,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.DRAGON_CHEER,
       MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationFiveSpeciesData[SpeciesId.FRAXURE] = {
@@ -12821,6 +12823,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationFiveSpeciesData[SpeciesId.DEINO] = {

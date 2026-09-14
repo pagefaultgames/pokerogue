@@ -7619,6 +7619,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationThreeSpeciesData[SpeciesId.VIBRAVA] = {
@@ -10325,6 +10326,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SHUPPET] = {

@@ -1570,6 +1570,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationEightSpeciesData[SpeciesId.THIEVUL] = {
@@ -5461,6 +5462,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.AERIAL_ACE,
       MoveId.FEATHER_DANCE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationEightSpeciesData[SpeciesId.MR_RIME] = {

@@ -9868,6 +9868,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.HARD_PRESS,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationFourSpeciesData[SpeciesId.REGIGIGAS] = {

@@ -4501,6 +4501,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.U_TURN,
       MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationSevenSpeciesData[SpeciesId.SANDYGAST] = {

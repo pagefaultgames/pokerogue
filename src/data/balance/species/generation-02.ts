@@ -1581,6 +1581,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.SMART_STRIKE,
       MoveId.STOMPING_TANTRUM,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CROBAT] = {
