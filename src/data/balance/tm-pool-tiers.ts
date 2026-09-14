@@ -184,6 +184,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.ROCK_POLISH]: ModifierTier.GREAT,
   [MoveId.POISON_JAB]: ModifierTier.GREAT,
   [MoveId.DARK_PULSE]: ModifierTier.GREAT,
+  [MoveId.NIGHT_SLASH]: ModifierTier.GREAT,
   [MoveId.AQUA_TAIL]: ModifierTier.GREAT,
   [MoveId.SEED_BOMB]: ModifierTier.GREAT,
   [MoveId.AIR_SLASH]: ModifierTier.GREAT,
