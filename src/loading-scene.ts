@@ -149,6 +149,7 @@ export class LoadingScene extends SceneBase {
       .loadImage("select_gen_cursor", "ui")
       .loadImage("select_gen_cursor_highlight", "ui")
 
+      .loadImage("silver_key", "ui")
       .loadImage("language_icon", "ui")
       .loadImage("saving_icon", "ui")
       .loadImage("discord_oauth", "ui")
