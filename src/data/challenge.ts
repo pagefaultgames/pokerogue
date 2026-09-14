@@ -34,7 +34,7 @@ import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import { type BooleanHolder, isBetween, type NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
+import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem, randSeedShuffle } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
@@ -1350,7 +1350,6 @@ export class MovesetRandomizerChallenge extends Challenge {
   }
 
   private static _validMoveIds: MoveId[];
-
   private get validMoveIds(): MoveId[] {
     // it's necessary to do it this way due to the static variable
     // being initialized before the `allMoves` array is
@@ -1360,6 +1359,12 @@ export class MovesetRandomizerChallenge extends Challenge {
         .filter(m => !disallowedMoves.includes(m) && !allMoves[m].isUnimplemented);
     }
     return MovesetRandomizerChallenge._validMoveIds;
+  }
+
+  private static _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
+  private get globalTmList(): MoveId[] {
+    // cloned so that the original list doesn't get mutated by `randSeedShuffle`
+    return [...MovesetRandomizerChallenge._globalTmList];
   }
 
   public override applyStarterSelectModify(
@@ -1480,14 +1485,14 @@ export class MovesetRandomizerChallenge extends Challenge {
   }
 
   public override applyPlayerTMCompatibility(pokemon: PlayerPokemon, tms: Set<MoveId>): boolean {
+    const numTms = tms.size;
     tms.clear();
 
     const seedOffset = 500 * pokemon.species.speciesId;
     globalScene.executeWithSeedOffset(() => {
-      for (const tm of Object.keys(tmPoolTiers)) {
-        if (randSeedInt(2)) {
-          tms.add(Number(tm));
-        }
+      const shuffledTms = randSeedShuffle(this.globalTmList);
+      for (let i = 0; i < numTms; i++) {
+        tms.add(shuffledTms[i]);
       }
     }, seedOffset);
 
@@ -1495,14 +1500,14 @@ export class MovesetRandomizerChallenge extends Challenge {
   }
 
   public override applyEnemyTMCompatibility(species: PokemonSpecies, tmList: MoveId[]): boolean {
+    const numTms = tmList.length;
     tmList.splice(0);
 
     const seedOffset = 500 * species.speciesId;
     globalScene.executeWithSeedOffset(() => {
-      for (const tm of Object.keys(tmPoolTiers)) {
-        if (randSeedInt(2)) {
-          tmList.push(Number(tm));
-        }
+      const shuffledTms = randSeedShuffle(this.globalTmList);
+      for (let i = 0; i < numTms; i++) {
+        tmList.push(shuffledTms[i]);
       }
     }, seedOffset);
 
