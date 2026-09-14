@@ -1,14 +1,11 @@
-import type { BerryType } from "#enums/berry-type";
-import { FormChangeItemId } from "#enums/form-change-item-id";
+import { BerryType } from "#enums/berry-type";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemId } from "#enums/held-item-id";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { attackTypeToHeldItem } from "#items/attack-type-booster";
-import { permanentStatToHeldItem } from "#items/base-stat-multiply";
-import { berryTypeToHeldItem } from "#items/berry";
 import type { SpeciesStatBoosterItemId } from "#items/stat-boost";
 import type { PokemonItemMap } from "#types/held-item-data-types";
 import type { TrainerItemSpecs } from "#types/trainer-item-data-types";
@@ -38,7 +35,7 @@ function isLegacyModifierEntry(entry: Record<string, unknown>): entry is Record<
 type PokemonHeldItemModifierArgs = readonly [pokemonId: number];
 type PokemonFormChangeItemModifierArgs = readonly [pokemonId: number, formChangeItem: number, active: boolean];
 type BaseStatModifierArgs = readonly [pokemonId: number, stat: PermanentStat];
-type AttackTypeBoosterModifierArgs = readonly [pokemonId: number, moveType: PokemonType, boostPercent: number];
+type AttackTypeBoosterModifierArgs = readonly [pokemonId: number, moveType: RegularPokemonType, boostPercent: number];
 type BerryModifierArgs = readonly [pokemonId: number, berryType: BerryType];
 type SpeciesStatBoosterModifierArgs = readonly [
   pokemonId: number,
@@ -48,10 +45,11 @@ type SpeciesStatBoosterModifierArgs = readonly [
 ];
 type PokemonExpBoosterModifierArgs = readonly [pokemonId: number, boostPercent: number];
 type PokemonBaseStatTotalModifierArgs = readonly [pokemonId: number, statModifier: number];
-type DoubleBattleChanceBoosterModifierArgs = readonly [maxBattles: number, battleCount: number];
 type TempStatStageBoosterModifierArgs = readonly [stat: Stat, maxBattles: number, battleCount: number];
+type LapsingModifierArgs = readonly [maxBattles: number, battleCount: number];
 type ExpBoosterModifierArgs = readonly [boostPercent: number];
 type EnemyAttackStatusEffectChanceModifierArgs = readonly [effect: StatusEffect, chancePercent: number];
+
 // #endregion Legacy modifier data types
 
 // #region Held item conversion maps
@@ -80,7 +78,52 @@ const uniqueModifierToItem: Record<string, HeldItemId> = {
   EvolutionStatBoosterModifier: HeldItemId.EVIOLITE,
   CritBoosterModifier: HeldItemId.SCOPE_LENS,
   SpeciesCritBoosterModifier: HeldItemId.LEEK,
-};
+} as const;
+
+// These are duplicated to avoid breaking this migrator if the live versions change in the future
+const permanentStatToHeldItem: Partial<Record<PermanentStat, HeldItemId>> = {
+  [Stat.HP]: HeldItemId.HP_UP,
+  [Stat.ATK]: HeldItemId.PROTEIN,
+  [Stat.DEF]: HeldItemId.IRON,
+  [Stat.SPATK]: HeldItemId.CALCIUM,
+  [Stat.SPDEF]: HeldItemId.ZINC,
+  [Stat.SPD]: HeldItemId.CARBOS,
+} as const;
+
+const attackTypeToHeldItem: Partial<Record<PokemonType, HeldItemId>> = {
+  [PokemonType.NORMAL]: HeldItemId.SILK_SCARF,
+  [PokemonType.FIGHTING]: HeldItemId.BLACK_BELT,
+  [PokemonType.FLYING]: HeldItemId.SHARP_BEAK,
+  [PokemonType.POISON]: HeldItemId.POISON_BARB,
+  [PokemonType.GROUND]: HeldItemId.SOFT_SAND,
+  [PokemonType.ROCK]: HeldItemId.HARD_STONE,
+  [PokemonType.BUG]: HeldItemId.SILVER_POWDER,
+  [PokemonType.GHOST]: HeldItemId.SPELL_TAG,
+  [PokemonType.STEEL]: HeldItemId.METAL_COAT,
+  [PokemonType.FIRE]: HeldItemId.CHARCOAL,
+  [PokemonType.WATER]: HeldItemId.MYSTIC_WATER,
+  [PokemonType.GRASS]: HeldItemId.MIRACLE_SEED,
+  [PokemonType.ELECTRIC]: HeldItemId.MAGNET,
+  [PokemonType.PSYCHIC]: HeldItemId.TWISTED_SPOON,
+  [PokemonType.ICE]: HeldItemId.NEVER_MELT_ICE,
+  [PokemonType.DRAGON]: HeldItemId.DRAGON_FANG,
+  [PokemonType.DARK]: HeldItemId.BLACK_GLASSES,
+  [PokemonType.FAIRY]: HeldItemId.FAIRY_FEATHER,
+} as const;
+
+const berryTypeToHeldItem: Partial<Record<BerryType, HeldItemId>> = {
+  [BerryType.SITRUS]: HeldItemId.SITRUS_BERRY,
+  [BerryType.LUM]: HeldItemId.LUM_BERRY,
+  [BerryType.ENIGMA]: HeldItemId.ENIGMA_BERRY,
+  [BerryType.LIECHI]: HeldItemId.LIECHI_BERRY,
+  [BerryType.GANLON]: HeldItemId.GANLON_BERRY,
+  [BerryType.PETAYA]: HeldItemId.PETAYA_BERRY,
+  [BerryType.APICOT]: HeldItemId.APICOT_BERRY,
+  [BerryType.SALAC]: HeldItemId.SALAC_BERRY,
+  [BerryType.LANSAT]: HeldItemId.LANSAT_BERRY,
+  [BerryType.STARF]: HeldItemId.STARF_BERRY,
+  [BerryType.LEPPA]: HeldItemId.LEPPA_BERRY,
+} as const;
 
 // #endregion Held item conversion maps
 
@@ -105,7 +148,7 @@ const uniqueModifierToTrainerItem: Record<string, TrainerItemId> = {
   IvScannerModifier: TrainerItemId.IV_SCANNER,
   ExtraModifierModifier: TrainerItemId.GOLDEN_POKEBALL,
   BoostBugSpawnModifier: TrainerItemId.GOLDEN_BUG_NET,
-  TempCritBoosterModifier: TrainerItemId.DIRE_HIT,
+  HealShopCostModifier: TrainerItemId.BLACK_SLUDGE,
 
   // tokens
   EnemyDamageBoosterModifier: TrainerItemId.ENEMY_DAMAGE_BOOSTER,
@@ -114,22 +157,22 @@ const uniqueModifierToTrainerItem: Record<string, TrainerItemId> = {
   EnemyStatusEffectHealChanceModifier: TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE,
   EnemyEndureChanceModifier: TrainerItemId.ENEMY_ENDURE_CHANCE,
   EnemyFusionChanceModifier: TrainerItemId.ENEMY_FUSED_CHANCE,
-};
+} as const;
 
 const statusEffectToEnemyToken: Partial<Record<StatusEffect, TrainerItemId>> = {
   [StatusEffect.POISON]: TrainerItemId.ENEMY_ATTACK_POISON_CHANCE,
   [StatusEffect.PARALYSIS]: TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE,
   [StatusEffect.BURN]: TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
-};
+} as const;
 
-const statToXItem: Record<number, TrainerItemId> = {
+const statToXItem: Partial<Record<Stat, TrainerItemId>> = {
   [Stat.ATK]: TrainerItemId.X_ATTACK,
   [Stat.DEF]: TrainerItemId.X_DEFENSE,
   [Stat.SPATK]: TrainerItemId.X_SP_ATK,
   [Stat.SPDEF]: TrainerItemId.X_SP_DEF,
   [Stat.SPD]: TrainerItemId.X_SPEED,
   [Stat.ACC]: TrainerItemId.X_ACCURACY,
-};
+} as const;
 
 // #endregion Trainer item conversion maps
 
@@ -137,45 +180,44 @@ const statToXItem: Record<number, TrainerItemId> = {
 
 /**
  * Convert a legacy `FormChangeItem` numerical enum value to a {@linkcode FormChangeItemId}.
- * @returns The appropriate {@linkcode FormChangeItemId}, or `null` of the passed number was not a valid `FormChangeItem`
+ * @param oldFormChangeItem - The numerical value of the legacy `FormChangeItem` enum member
+ * @returns The appropriate {@linkcode FormChangeItemId}, or `undefined` if the passed number was not a valid `FormChangeItem`
  */
-function convertOldFormChangeItem(oldValue: number): FormChangeItemId | null {
+function convertOldFormChangeItem(oldFormChangeItem: number): FormChangeItemId | undefined {
   // Mega stones: old 1-93 -> 0x0b01-0x0b5d
-  if (oldValue >= 1 && oldValue <= 93) {
-    return (oldValue + 0x0b00) as FormChangeItemId;
+  if (oldFormChangeItem >= 1 && oldFormChangeItem <= 93) {
+    return (oldFormChangeItem + 0x0b00) as FormChangeItemId;
   }
-  // Blue/Red Orb: old 100-101 -> 0x0b5e-0x0b5f
-  if (oldValue === 100) {
-    return FormChangeItemId.BLUE_ORB;
+  // Blue Orb: old 100 -> 0x0b5e
+  if (oldFormChangeItem === 100) {
+    return 0x0b5e as FormChangeItemId;
   }
-  if (oldValue === 101) {
-    return FormChangeItemId.RED_ORB;
+  // Red Orb: old 101 -> 0x0b5f
+  if (oldFormChangeItem === 101) {
+    return 0x0b5f as FormChangeItemId;
   }
   // Rare form change items: old 102-114 -> 0x0bff-0x0bf3 (reversed order)
-  if (oldValue >= 102 && oldValue <= 114) {
-    return (0x0bff - (oldValue - 102)) as FormChangeItemId;
+  if (oldFormChangeItem >= 102 && oldFormChangeItem <= 114) {
+    return (0x0bff - (oldFormChangeItem - 102)) as FormChangeItemId;
   }
   // Regular form change items: old 150-199 -> 0x0c01-0x0c32
-  if (oldValue >= 150 && oldValue <= 199) {
-    return (oldValue - 150 + 0x0c01) as FormChangeItemId;
+  if (oldFormChangeItem >= 150 && oldFormChangeItem <= 199) {
+    return (oldFormChangeItem - 150 + 0x0c01) as FormChangeItemId;
   }
-  return null;
+  return;
 }
 
-// #endregion
+// #endregion Form change item conversion
 
 // #region Category-based held item conversion
 
 /**
  * Map a species stat booster (light ball, etc.) to the appropriate {@linkcode HeldItemId}
- * @returns The appropriate {@linkcode SpeciesStatBoosterItemId}, or `null` if the passed args don't represent a species stat booster
+ * @returns The appropriate {@linkcode SpeciesStatBoosterItemId}, or `undefined` if the passed args don't represent a species stat booster
  */
-function mapSpeciesStatBoosterToItem([
-  ,
-  stats,
-  ,
-  species,
-]: SpeciesStatBoosterModifierArgs): SpeciesStatBoosterItemId | null {
+function mapSpeciesStatBoosterToItem([, stats, , species]: SpeciesStatBoosterModifierArgs):
+  | SpeciesStatBoosterItemId
+  | undefined {
   if (species.includes(SpeciesId.PIKACHU)) {
     return HeldItemId.LIGHT_BALL;
   }
@@ -194,90 +236,129 @@ function mapSpeciesStatBoosterToItem([
   if (species.includes(SpeciesId.CLAMPERL) && stats.includes(Stat.SPATK)) {
     return HeldItemId.DEEP_SEA_TOOTH;
   }
-  return null;
+  return;
 }
 
 /**
  * Resolve a held item ID for modifiers whose identity depends on constructor args.
+ * @param className - The legacy modifier's class name
+ * @param typeId - The legacy modifier's type ID
+ * @param args - The legacy modifier's constructor args (unvalidated)
+ * @returns The converted {@linkcode HeldItemId}, or `undefined` if no conversion applies or the args are malformed
  */
-function mapArgsModifierToItem(className: string, typeId: string, args: readonly unknown[]): HeldItemId | null {
+function mapArgsModifierToItem(className: string, typeId: string, args: readonly unknown[]): HeldItemId | undefined {
   switch (className) {
     case "BaseStatModifier": {
       const [, stat] = args as BaseStatModifierArgs;
-      return permanentStatToHeldItem[stat] ?? null;
+      return permanentStatToHeldItem[stat];
     }
     case "AttackTypeBoosterModifier": {
       const [, moveType] = args as AttackTypeBoosterModifierArgs;
-      return attackTypeToHeldItem[moveType] ?? null;
+      return attackTypeToHeldItem[moveType];
     }
     case "BerryModifier": {
       const [, berryType] = args as BerryModifierArgs;
-      return berryTypeToHeldItem[berryType] ?? null;
+      return berryTypeToHeldItem[berryType];
     }
     case "SpeciesStatBoosterModifier":
       if (!Array.isArray(args[1]) || !Array.isArray(args[3])) {
-        return null;
+        return;
       }
       return mapSpeciesStatBoosterToItem(args as SpeciesStatBoosterModifierArgs);
     case "TurnStatusEffectModifier":
-      return typeId === "TOXIC_ORB" ? HeldItemId.TOXIC_ORB : typeId === "FLAME_ORB" ? HeldItemId.FLAME_ORB : null;
+      return {
+        TOXIC_ORB: HeldItemId.TOXIC_ORB,
+        FLAME_ORB: HeldItemId.FLAME_ORB,
+      }[typeId];
     case "PokemonExpBoosterModifier": {
       const [, boostPercent] = args as PokemonExpBoosterModifierArgs;
+      if (typeof boostPercent !== "number") {
+        return;
+      }
       return boostPercent === 100 ? HeldItemId.GOLDEN_EGG : HeldItemId.LUCKY_EGG;
     }
     case "PokemonBaseStatTotalModifier": {
       const [, statModifier] = args as PokemonBaseStatTotalModifierArgs;
+      if (typeof statModifier !== "number") {
+        return;
+      }
       return statModifier > 0 ? HeldItemId.SHUCKLE_JUICE_GOOD : HeldItemId.SHUCKLE_JUICE_BAD;
     }
-
-    default:
-      return null;
   }
 }
 
-// #endregion
+// #endregion Category-based held item conversion
 
 // #region Trainer item conversion for special cases
 
 /**
- * Resolve a trainer item for modifiers whose identity depends on constructor args.
+ * Build the trainer item for a lapsing legacy modifier.
+ * @param id - The {@linkcode TrainerItemId} to produce
+ * @param battleCount - The legacy modifier's remaining battle count (unvalidated)
+ * @returns The item specs, or `undefined` if `battleCount` is malformed or no battles remain
  */
-function mapArgsModifierToTrainerItem(className: string, args: readonly unknown[]): TrainerItemSpecs | null {
+function lapsingTrainerItem(id: TrainerItemId, battleCount: unknown): TrainerItemSpecs | undefined {
+  if (typeof battleCount !== "number" || Number.isNaN(battleCount) || battleCount <= 0) {
+    return;
+  }
+  return { id, stack: battleCount };
+}
+
+/**
+ * Resolve a trainer item for modifiers whose identity depends on constructor args.
+ * @param className - The legacy modifier's class name
+ * @param args - The legacy modifier's constructor args (unvalidated)
+ * @param stackCount - The legacy modifier's stack count
+ * @returns The converted item specs or `undefined` if no conversion applies
+ */
+function mapArgsModifierToTrainerItem(
+  className: string,
+  args: readonly unknown[],
+  stackCount: number,
+): TrainerItemSpecs | undefined {
   switch (className) {
     case "DoubleBattleChanceBoosterModifier": {
-      const [maxBattles, battleCount] = args as DoubleBattleChanceBoosterModifierArgs;
-      const id =
-        maxBattles >= 30 ? TrainerItemId.MAX_LURE : maxBattles >= 15 ? TrainerItemId.SUPER_LURE : TrainerItemId.LURE;
-      return { id, stack: battleCount };
+      const [maxBattles, battleCount] = args as LapsingModifierArgs;
+      if (maxBattles >= 30) {
+        return lapsingTrainerItem(TrainerItemId.MAX_LURE, battleCount);
+      }
+      if (maxBattles >= 15) {
+        return lapsingTrainerItem(TrainerItemId.SUPER_LURE, battleCount);
+      }
+      return lapsingTrainerItem(TrainerItemId.LURE, battleCount);
     }
     case "TempStatStageBoosterModifier": {
       const [stat, , battleCount] = args as TempStatStageBoosterModifierArgs;
       const id = statToXItem[stat];
-      return id ? { id, stack: battleCount } : null;
+      return id ? lapsingTrainerItem(id, battleCount) : undefined;
     }
+    case "TempCritBoosterModifier": {
+      const [, battleCount] = args as LapsingModifierArgs;
+      return lapsingTrainerItem(TrainerItemId.DIRE_HIT, battleCount);
+    }
+
     case "ExpBoosterModifier": {
       const [boostPercent] = args as ExpBoosterModifierArgs;
-      const id =
-        boostPercent >= 100
-          ? TrainerItemId.GOLDEN_EXP_CHARM
-          : boostPercent >= 60
-            ? TrainerItemId.SUPER_EXP_CHARM
-            : TrainerItemId.EXP_CHARM;
-      return { id, stack: 1 };
+      if (boostPercent >= 100) {
+        return { id: TrainerItemId.GOLDEN_EXP_CHARM, stack: stackCount };
+      }
+      if (boostPercent >= 60) {
+        return { id: TrainerItemId.SUPER_EXP_CHARM, stack: stackCount };
+      }
+      return { id: TrainerItemId.EXP_CHARM, stack: stackCount };
     }
-    case "HealShopCostModifier":
-      return { id: TrainerItemId.BLACK_SLUDGE, stack: 1 };
     case "EnemyAttackStatusEffectChanceModifier": {
       const [effect] = args as EnemyAttackStatusEffectChanceModifierArgs;
       const id = statusEffectToEnemyToken[effect];
-      return id ? { id, stack: 1 } : null;
+      return id ? { id, stack: stackCount } : undefined;
     }
+
     default:
-      return null;
+      return;
   }
 }
 
-// #endregion
+// #endregion Trainer item conversion for special cases
 
 // #region Main conversion
 
@@ -288,7 +369,6 @@ interface ConvertedModifierData {
 
 /**
  * Convert an array of legacy `ModifierData` into the held item + trainer item format.
- * Malformed entries are skipped.
  *
  * @param data - Array of (unvalidated) serialized modifier data from the old save
  * @returns An object containing the converted held items (per-pokemon) and trainer items
@@ -302,6 +382,7 @@ export function convertModifierSaveData(data: readonly Record<string, unknown>[]
       continue;
     }
     const { typeId, args, stackCount, className } = entry;
+
     if (className === "PokemonFormChangeItemModifier") {
       const [pokemonId, oldFormChangeItem, active] = args as PokemonFormChangeItemModifierArgs;
       const newId = convertOldFormChangeItem(oldFormChangeItem);
@@ -310,6 +391,8 @@ export function convertModifierSaveData(data: readonly Record<string, unknown>[]
           item: { id: newId, stack: stackCount, active: !!active },
           pokemonId,
         });
+      } else {
+        console.warn(`Unrecognized legacy value ${oldFormChangeItem} during item migration:`, entry);
       }
       continue;
     }
@@ -341,13 +424,16 @@ export function convertModifierSaveData(data: readonly Record<string, unknown>[]
       continue;
     }
 
-    const trainerItem = mapArgsModifierToTrainerItem(className, args);
+    const trainerItem = mapArgsModifierToTrainerItem(className, args, stackCount);
     if (trainerItem) {
       trainerItems.push(trainerItem);
+      continue;
     }
+
+    console.warn(`No item conversion or lapsed modifier "${className}", dropped entry:`, entry);
   }
 
   return { heldItems, trainerItems };
 }
 
-// #endregion
+// #endregion Main conversion
