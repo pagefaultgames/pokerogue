@@ -217,13 +217,13 @@ const heldItems = {
 
   [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(), //
   [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
-    .attr(BypassSpeedChanceHeldItemAttr)
+    .attr(BypassSpeedChanceHeldItemAttr, 10)
     .build(),
   [HeldItemId.KINGS_ROCK]: new HeldItemBuilder(HeldItemId.KINGS_ROCK, 3) //
     .attr(FlinchChanceHeldItemAttr, 10)
     .build(),
   [HeldItemId.MYSTICAL_ROCK]: new HeldItemBuilder(HeldItemId.MYSTICAL_ROCK, 2) //
-    .attr(FieldEffectHeldItemAttr)
+    .attr(FieldEffectHeldItemAttr, 2)
     .build(),
   [HeldItemId.SOUL_DEW]: new HeldItemBuilder(HeldItemId.SOUL_DEW, 10) //
     .attr(NatureWeightBoosterHeldItemAttr)
@@ -236,7 +236,7 @@ const heldItems = {
     .attr(MultiHitDamageModifyHeldItemAttr)
     .build(),
   [HeldItemId.GOLDEN_PUNCH]: new HeldItemBuilder(HeldItemId.GOLDEN_PUNCH, 5) //
-    .attr(DamageMoneyRewardHeldItemAttr)
+    .attr(DamageMoneyRewardHeldItemAttr, 0.5)
     .build(),
   [HeldItemId.BATON]: new HeldItemBuilder(HeldItemId.BATON, 1) //
     .attr(BatonHeldItemAttr)

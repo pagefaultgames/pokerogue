@@ -15,9 +15,16 @@ import i18next from "i18next";
 export class BypassSpeedChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.BYPASS_SPEED_CHANCE> {
   public override readonly effect = HeldItemEffect.BYPASS_SPEED_CHANCE;
 
+  private readonly chance: number;
+
+  constructor(chance: number) {
+    super();
+    this.chance = chance;
+  }
+
   public override shouldApply({ pokemon }: BypassSpeedChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    return pokemon.randBattleSeedInt(10) < stackCount;
+    return pokemon.randBattleSeedInt(this.chance) < stackCount;
   }
 
   public override apply({ pokemon }: BypassSpeedChanceParams): void {
