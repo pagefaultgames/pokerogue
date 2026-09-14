@@ -1,6 +1,6 @@
 import { allHeldItems } from "#data/data-lists";
 import type { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemNames } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { TrainerItemNames } from "#enums/trainer-item-id";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { HeldItemCategoryEntry, HeldItemPool, HeldItemSpecs } from "#types/held-item-data-types";
@@ -24,7 +24,7 @@ export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
   }
   const specs = entry as HeldItemSpecs;
 
-  return typeof specs.id === "number" && typeof specs.stack === "number" && specs.id in HeldItemNames;
+  return typeof specs.id === "number" && typeof specs.stack === "number" && HeldItemId[specs.id] != null;
 }
 
 // TODO: These predicate functions should use `unknown` instead of `any`,
@@ -35,7 +35,7 @@ export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEn
 }
 
 export function isHeldItemPool(value: any): value is HeldItemPool {
-  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
+  return Array.isArray(value) && value.length > 0 && value.every(entry => "entry" in entry && "weight" in entry);
 }
 
 export function isTrainerItemSpecs(entry: unknown): entry is TrainerItemSpecs {
@@ -48,5 +48,5 @@ export function isTrainerItemSpecs(entry: unknown): entry is TrainerItemSpecs {
 }
 
 export function isTrainerItemPool(value: any): value is TrainerItemPool {
-  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
+  return Array.isArray(value) && value.length > 0 && value.every(entry => "entry" in entry && "weight" in entry);
 }

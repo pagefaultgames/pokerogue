@@ -4180,7 +4180,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
 
     pokemon.heldItemManager.add(chosenBerry);
 
-    globalScene.updateItems(pokemon.isPlayer());
+    globalScene.updateItemBar(pokemon.isPlayer());
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),

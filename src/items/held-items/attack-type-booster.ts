@@ -1,6 +1,6 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
-import { PokemonType } from "#enums/pokemon-type";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { AttackTypeBoostParams } from "#types/held-item-parameter";
 
@@ -23,7 +23,7 @@ export const attackTypeToHeldItem = {
   [PokemonType.DRAGON]: HeldItemId.DRAGON_FANG,
   [PokemonType.DARK]: HeldItemId.BLACK_GLASSES,
   [PokemonType.FAIRY]: HeldItemId.FAIRY_FEATHER,
-} as const satisfies Record<Exclude<PokemonType, PokemonType.UNKNOWN | PokemonType.STELLAR>, HeldItemId>;
+} as const satisfies Record<RegularPokemonType, HeldItemId>;
 
 export class AttackTypeBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.ATTACK_TYPE_BOOST> {
   public override readonly effect = HeldItemEffect.ATTACK_TYPE_BOOST;

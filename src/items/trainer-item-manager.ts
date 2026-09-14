@@ -8,7 +8,7 @@ import { isTrainerItemSpecs } from "#utils/item-utils";
 export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: TrainerItemId): number {
-    return allTrainerItems[id].getMaxStackCount();
+    return allTrainerItems[id].maxStackCount;
   }
 
   protected override isSpecs(entry: TrainerItemId | TrainerItemSpecs): entry is TrainerItemSpecs {

@@ -31,8 +31,7 @@ function initEnemyBuffTokenPool() {
     { entry: TrainerItemId.ENEMY_ENDURE_CHANCE, weight: 10 },
     { entry: TrainerItemId.ENEMY_FUSED_CHANCE, weight: 5 },
   ];
-  enemyBuffTokenPool[RarityTier.ROGUE] = [];
-  enemyBuffTokenPool[RarityTier.MASTER] = [];
+  // nothing in rogue/master tier
 }
 
 export function initTrainerItemPools() {

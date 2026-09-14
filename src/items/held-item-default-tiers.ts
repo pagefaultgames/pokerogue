@@ -1,8 +1,7 @@
 import { getHeldItemCategory, HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { RarityTier } from "#enums/reward-tier";
 
-// TODO: should this be exported? why?
-export const heldItemRarities = {
+const heldItemRarities = {
   [HeldItemCategoryId.BERRY]: RarityTier.COMMON,
 
   [HeldItemCategoryId.BASE_STAT_BOOST]: RarityTier.GREAT,

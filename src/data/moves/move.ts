@@ -3313,7 +3313,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
     // Decrease item amount and update icon
     target.loseHeldItem(removedItem);
-    globalScene.updateItems(target.isPlayer());
+    globalScene.updateItemBar(target.isPlayer());
 
     if (this.berriesOnly) {
       globalScene.phaseManager.queueMessage(
@@ -3390,7 +3390,7 @@ export class EatBerryAttr extends MoveEffectAttr {
 
   protected reduceBerryItem(target: Pokemon) {
     target.loseHeldItem(this.chosenBerry);
-    globalScene.updateItems(target.isPlayer());
+    globalScene.updateItemBar(target.isPlayer());
   }
 
   protected getTargetHeldBerries(target: Pokemon): BerryItemId[] {

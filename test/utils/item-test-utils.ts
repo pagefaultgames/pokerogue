@@ -29,8 +29,8 @@ export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends Ex
   const { pokemon } = params;
   const itemObj = allHeldItems[itemId] as HeldItem<HeldItemAttr<E>>;
   expect(
-    pokemon.heldItemManager.hasItem(itemObj.type),
-    `Pokemon ${getPokemonNameWithAffix(pokemon)} lacks item of type ${HeldItemNames[itemObj.type]}`,
+    pokemon.heldItemManager.hasItem(itemObj.id),
+    `Pokemon ${getPokemonNameWithAffix(pokemon)} lacks item of type ${HeldItemNames[itemObj.id]}`,
   ).toBe(true);
 
   itemObj["apply"](effect, params);

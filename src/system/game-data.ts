@@ -982,8 +982,8 @@ export class GameData {
     globalScene.trainerItems.clearItems();
     globalScene.assignTrainerItemsFromSaveData(fromSession.trainerItems, true);
 
-    globalScene.updateItems(true);
-    globalScene.updateItems(false);
+    globalScene.updateItemBar(true);
+    globalScene.updateItemBar(false);
 
     await Promise.all(loadPokemonAssets);
   }

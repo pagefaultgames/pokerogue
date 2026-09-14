@@ -1,12 +1,13 @@
 import type { BattleScene } from "#app/battle-scene";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { getPartyBerries } from "#items/item-utility";
+import { getPartyItemsInCategory } from "#items/item-utility";
 import { BerriesAboundEncounter } from "#mystery-encounters/berries-abound-encounter";
 import * as EncounterDialogueUtils from "#mystery-encounters/encounter-dialogue-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -14,7 +15,6 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -126,8 +126,8 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(game).toBeAtPhase("SelectRewardPhase");
 
-      const berriesAfter = getPartyBerries();
-      const berriesAfterCount = berriesAfter.reduce((a, b) => a + (b.item as HeldItemSpecs).stack, 0);
+      const berriesAfter = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
+      const berriesAfterCount = berriesAfter.reduce((a, b) => a + b.item.stack, 0);
 
       expect(numBerries).toBe(berriesAfterCount);
     });

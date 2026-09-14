@@ -38,7 +38,7 @@ export function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedR
   return () => {
     const lureCount = globalScene.trainerItems.getStack(lureId);
     return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199)
-      && lureCount < allTrainerItems[lureId].getMaxStackCount() * 0.6
+      && lureCount < allTrainerItems[lureId].maxStackCount * 0.6
       ? weight
       : 0;
   };

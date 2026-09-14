@@ -200,7 +200,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       // Berries on party lead
       scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
       scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.GANLON_BERRY, 3);
-      scene.updateItems(true);
+      scene.updateItemBar(true);
 
       await runMysteryEncounterToEnd(game, 2);
 

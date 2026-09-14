@@ -78,7 +78,7 @@ import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-spar
 import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
-import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
 import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
@@ -970,7 +970,7 @@ export class BattleScene extends SceneBase {
       this.field.remove(pokemon, true);
       pokemon.destroy();
     }
-    this.updateItems(true);
+    this.updateItemBar(true);
   }
 
   addPokemonIcon(
@@ -2421,7 +2421,7 @@ export class BattleScene extends SceneBase {
     const itemStack = source.heldItemManager.getStack(heldItemId);
     const matchingItemStack = target.heldItemManager.getStack(heldItemId);
 
-    const maxStackCount = allHeldItems[heldItemId].getMaxStackCount();
+    const maxStackCount = allHeldItems[heldItemId].maxStackCount;
     if (matchingItemStack >= maxStackCount) {
       return false;
     }
@@ -2442,7 +2442,7 @@ export class BattleScene extends SceneBase {
     }
 
     if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-      this.updateItems(source.isPlayer());
+      this.updateItemBar(source.isPlayer());
     }
 
     // TODO: held items don't have sounds
@@ -2468,7 +2468,7 @@ export class BattleScene extends SceneBase {
     const itemStack = source.heldItemManager.getStack(heldItemId);
     const matchingItemStack = target.heldItemManager.getStack(heldItemId);
 
-    const maxStackCount = allHeldItems[heldItemId].getMaxStackCount();
+    const maxStackCount = allHeldItems[heldItemId].maxStackCount;
     if (matchingItemStack >= maxStackCount) {
       return false;
     }
@@ -2481,10 +2481,9 @@ export class BattleScene extends SceneBase {
     const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
     config.forEach(item => {
       const { entry, count } = item;
-      const actualCount = typeof count === "function" ? count() : count;
 
       if (typeof entry === "number") {
-        manager.add(entry, actualCount);
+        manager.add(entry, count);
       }
 
       if (isTrainerItemSpecs(entry)) {
@@ -2492,7 +2491,7 @@ export class BattleScene extends SceneBase {
       }
 
       if (isTrainerItemPool(entry)) {
-        for (let i = 1; i <= (actualCount ?? 1); i++) {
+        for (let i = 1; i <= (count ?? 1); i++) {
           const newItem = getNewTrainerItemFromPool(entry, manager);
           if (newItem) {
             manager.add(newItem);
@@ -2509,7 +2508,7 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
+  public generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
     if (this.currentBattle.isClassicFinalBoss) {
       return;
     }
@@ -2530,7 +2529,7 @@ export class BattleScene extends SceneBase {
     }
 
     for (const [i, enemyPokemon] of party.entries()) {
-      if (heldItemConfigs && heldItemConfigs[i]) {
+      if (heldItemConfigs?.[i]) {
         assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
         continue;
       }
@@ -2556,15 +2555,18 @@ export class BattleScene extends SceneBase {
       if (isBoss) {
         count = Math.max(count, Math.floor(chances / 2));
       }
-      assignEnemyHeldItemsForWave(
-        difficultyWaveIndex,
+      generateEnemyPokemonHeldItems(
         count,
         enemyPokemon,
         this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
         upgradeChance,
       );
     }
-    this.updateItems(false);
+    // gives Eternatus the MBH item on Endless X000 waves
+    if (!(difficultyWaveIndex % 1000)) {
+      party[0].heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
+    }
+    this.updateItemBar(false);
   }
 
   /**
@@ -2575,7 +2577,7 @@ export class BattleScene extends SceneBase {
     for (const p of this.getEnemyParty()) {
       p.heldItemManager.clearItems();
     }
-    this.updateItems(false);
+    this.updateItemBar(false);
     this.updateUIPositions();
   }
 
@@ -2588,7 +2590,7 @@ export class BattleScene extends SceneBase {
     for (const p of this.getEnemyParty()) {
       p.heldItemManager.clearItems();
     }
-    this.updateItems(false);
+    this.updateItemBar(false);
     this.updateUIPositions();
   }
 
@@ -2596,14 +2598,15 @@ export class BattleScene extends SceneBase {
     [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
 
-  // TODO: Document this
-  updateItems(player = true, showHeldItems = true): void {
+  /**
+   * Update the item bar for the given side.
+   * @param player - (Default `true`) Whether to use the player (`true`) or enemy side
+   * @param showHeldItems - (Default `true`) Whether to include the held items of the first Pokemon in the party
+   */
+  public updateItemBar(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
-
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
-
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
-
     const bar = player ? this.itemBar : this.enemyItemBar;
 
     if (showHeldItems) {
@@ -3036,7 +3039,7 @@ export class BattleScene extends SceneBase {
           const hasMachoBrace = partyMember.heldItemManager.hasItem(HeldItemId.MACHO_BRACE);
           if (hasMachoBrace) {
             partyMember.heldItemManager.add(HeldItemId.MACHO_BRACE);
-            this.updateItems(true);
+            this.updateItemBar(true);
             partyMember.updateInfo();
           }
         }
