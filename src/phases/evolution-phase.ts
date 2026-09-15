@@ -10,6 +10,7 @@ import { getTypeRgb } from "#data/type";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
@@ -18,6 +19,7 @@ export class EvolutionPhase extends Phase {
   // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
   // We have to use the union here
   public readonly phaseName: "EvolutionPhase" | "FormChangePhase" = "EvolutionPhase";
+
   protected pokemon: PlayerPokemon;
   protected lastLevel: number;
 
@@ -25,8 +27,8 @@ export class EvolutionPhase extends Phase {
 
   private preEvolvedPokemonName: string;
 
-  private evolution: SpeciesFormEvolution | null;
-  private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
+  private readonly evolution: SpeciesFormEvolution | null;
+  private readonly fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
   private evolutionBgm: BackgroundMusic | null;
   private evolutionHandler: EvolutionSceneUiHandler;
 
@@ -312,25 +314,23 @@ export class EvolutionPhase extends Phase {
    *  This should end the evolution phase
    */
   private showPauseEvolutionConfirmation(endCallback: () => void): void {
-    globalScene.ui.setOverlayMode(
-      UiMode.CONFIRM,
-      () => {
+    const options: ConfirmModeConfig = {
+      yesHandler: () => {
         globalScene.ui.revertMode();
         this.pokemon.pauseEvolutions = true;
         globalScene.ui.showText(
-          i18next.t("menu:evolutionsPaused", {
-            pokemonName: this.preEvolvedPokemonName,
-          }),
+          i18next.t("menu:evolutionsPaused", { pokemonName: this.preEvolvedPokemonName }),
           null,
           endCallback,
           3000,
         );
       },
-      () => {
+      noHandler: () => {
         globalScene.ui.revertMode();
         globalScene.time.delayedCall(3000, endCallback);
       },
-    );
+    };
+    globalScene.ui.setOverlayMode(UiMode.CONFIRM, options);
   }
 
   /**
