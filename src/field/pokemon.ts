@@ -2535,7 +2535,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
 
-    if (this.isOfType(PokemonType.GHOST)) {
+    if (this.isOfType(PokemonType.GHOST) || this.hasAbility(AbilityId.RUN_AWAY)) {
       return false;
     }
 
