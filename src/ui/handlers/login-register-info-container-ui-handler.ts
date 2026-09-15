@@ -4,7 +4,9 @@ import { UiMode } from "#enums/ui-mode";
 import { SUPPORTED_LANGUAGE_ENTRIES } from "#system/supported-languages";
 import type { ModalConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { fixedInt } from "#utils/common";
+import { getResetCodes } from "#utils/reset-code";
 import i18next from "i18next";
 import JSZip from "jszip";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
@@ -77,7 +79,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
   }
 
   private buildInfoContainer() {
-    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", { x: 0, scale: 0.5 });
+    this.usernameInfoImage = this.buildInteractableImage("silver_key", "username-info-icon", { x: 0, scale: 0.75 });
     this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", { x: 20, scale: 0.75 });
     this.changeLanguageImage = this.buildInteractableImage("language_icon", "change-language-icon", {
       x: 40,
@@ -176,33 +178,51 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       return;
     }
 
-    const localStorageKeys = Object.keys(localStorage);
-    const keyToFind = "data_";
-    const dataKeys = localStorageKeys.filter(ls => ls.includes(keyToFind));
+    const resetCodes = getResetCodes();
 
-    if (dataKeys.length === 0) {
+    if (resetCodes.length === 0) {
       this.onFail(ERR_NO_SAVES, config);
       return;
     }
-    if (dataKeys.length > MAX_SAVES_FOR_USERNAME_PANEL) {
+    if (resetCodes.length > MAX_SAVES_FOR_USERNAME_PANEL) {
       this.onFail(ERR_TOO_MANY_SAVES, config);
       return;
     }
 
+    ui.showText(i18next.t("menu:resetCodeLoginDescription"));
+
     const options: OptionSelectItem[] = [];
-    const handler = () => {
+
+    for (const [index, entry] of resetCodes.entries()) {
+      const { username, resetCode } = entry;
+      let codeVisible = false;
+      const codeHandler = () => {
+        codeVisible = !codeVisible;
+        const label = `${username}: ${codeVisible ? resetCode : "********"}`;
+        (ui.getHandler() as OptionSelectUiHandler).updateLabel(index, label);
+        return true;
+      };
+
+      options.push({ label: `${username}: ********`, handler: codeHandler, keepOpen: true });
+    }
+
+    const previousText =
+      ui.mode === UiMode.RESET_PASSWORD_FORM ? "menu:resetPasswordText" : "menu:logInOrCreateAccount";
+    const closeHandler = () => {
       ui.revertMode();
       this.infoContainer.disableInteractive();
       this.setInteractive(true);
+      ui.showText(i18next.t(previousText));
       return true;
     };
-
-    for (const key of dataKeys) {
-      options.push({ label: key.replace(keyToFind, ""), handler });
-    }
+    options.push({
+      label: i18next.t("cancel"),
+      handler: closeHandler,
+      keepOpen: false,
+    });
 
     const xOffset = scaledCanvas.width;
-    const yOffset = scaledCanvas.height - this.usernameInfoImage.displayHeight - 16 * dataKeys.length - 22;
+    const yOffset = scaledCanvas.height - this.usernameInfoImage.displayHeight - 16 * resetCodes.length - 22;
     const optionSelectConfig: OptionSelectModeConfig = { options, inputDelay: 1000, xOffset, yOffset };
     ui.setOverlayMode(UiMode.OPTION_SELECT, optionSelectConfig);
 
