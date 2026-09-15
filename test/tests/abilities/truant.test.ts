@@ -40,16 +40,14 @@ describe("Ability - Truant", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.getLastXMoves(1)[0]).toEqual(
-      expect.objectContaining({ move: MoveId.SPLASH, result: MoveResult.SUCCESS }),
-    );
+    expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
 
     // Turn 2: Truant activates, cancelling tackle and displaying message
     game.move.select(MoveId.TACKLE);
     await game.toNextTurn();
 
-    expect(player.getLastXMoves(1)[0]).toEqual(expect.objectContaining({ move: MoveId.NONE, result: MoveResult.FAIL }));
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
+    expect(enemy).toHaveFullHp();
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:truantLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(player),
@@ -60,9 +58,7 @@ describe("Ability - Truant", () => {
     game.move.select(MoveId.TACKLE);
     await game.toNextTurn();
 
-    expect(player.getLastXMoves(1)[0]).toEqual(
-      expect.objectContaining({ move: MoveId.TACKLE, result: MoveResult.SUCCESS }),
-    );
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
+    expect(enemy).not.toHaveFullHp();
   });
 });
