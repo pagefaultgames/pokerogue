@@ -11,13 +11,14 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   private resetCodeDescriptionText: Phaser.GameObjects.Text;
   private resetCodeWarningText: Phaser.GameObjects.Text;
   private isCodeVisible = false;
+  private width: number;
 
   public override getModalTitle(): string {
     return i18next.t("menu:resetCodeFor", { username: loggedInUser?.username ?? "" });
   }
 
   public override getWidth(): number {
-    return 224;
+    return this.width;
   }
 
   public override getHeight(): number {
@@ -35,23 +36,29 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   public override setup(): void {
     super.setup();
 
-    this.resetCodeText = addTextObject(this.getWidth() / 2, 30, "", TextStyle.WINDOW).setOrigin(0.5, 0);
-    this.resetCodeDescriptionText = addTextObject(
-      this.getWidth() / 2,
-      20,
-      i18next.t("menu:resetCodeDescription"),
-      TextStyle.WINDOW,
-      { fontSize: "48px" },
-    ).setOrigin(0.5, 0);
-    this.resetCodeWarningText = addTextObject(
-      this.getWidth() / 2,
-      46,
-      i18next.t("menu:resetCodeWarning"),
-      TextStyle.WINDOW,
-      { fontSize: "48px" },
-    )
+    this.resetCodeText = addTextObject(0, 30, "", TextStyle.WINDOW).setOrigin(0.5, 0);
+    this.resetCodeDescriptionText = addTextObject(0, 20, i18next.t("menu:resetCodeDescription"), TextStyle.WINDOW, {
+      fontSize: "48px",
+    }).setOrigin(0.5, 0);
+    this.resetCodeWarningText = addTextObject(0, 46, i18next.t("menu:resetCodeWarning"), TextStyle.WINDOW, {
+      fontSize: "48px",
+    })
       .setOrigin(0.5, 0)
       .setColor(getTextColor(TextStyle.PARTY_RED));
+
+    // the base `this.titleText` does not have a width yet, so we set the text here
+    this.titleText.setText(this.getModalTitle());
+    this.width =
+      Math.max(
+        this.titleText.displayWidth,
+        this.resetCodeText.displayWidth,
+        this.resetCodeDescriptionText.displayWidth,
+        this.resetCodeWarningText.displayWidth,
+      ) + 50;
+
+    this.resetCodeText.setX(this.width / 2);
+    this.resetCodeDescriptionText.setX(this.width / 2);
+    this.resetCodeWarningText.setX(this.width / 2);
 
     this.modalContainer.add([this.resetCodeText, this.resetCodeDescriptionText, this.resetCodeWarningText]);
   }
