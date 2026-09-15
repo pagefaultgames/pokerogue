@@ -1240,7 +1240,6 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
   if (hasTrainer) {
     getAndWeightEggMoves(pokemon, learnPool, eggMovePool);
     if (eggMovePool.size > 0) {
-      filterSupercededMoves(eggMovePool, learnPool);
       debugMoveWeights(pokemon, eggMovePool, "Initial Egg Moves");
     }
     getAndWeightTmMoves(pokemon, learnPool, eggMovePool, tmPool);
