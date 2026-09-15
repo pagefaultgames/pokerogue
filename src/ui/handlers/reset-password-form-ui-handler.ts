@@ -109,7 +109,7 @@ export class ResetPasswordFormUiHandler extends LoginRegisterInfoContainerUiHand
                 globalScene.ui.setOverlayMode(
                   UiMode.ALERT_MODAL,
                   i18next.t("menu:resetPasswordSuccess"),
-                  0,
+                  5000,
                   originalSubmitAction,
                 );
               } else {
