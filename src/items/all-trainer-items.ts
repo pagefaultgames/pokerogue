@@ -100,7 +100,7 @@ const trainerItems = {
     .attr(LevelIncrementBoosterTrainerItemAttr)
     .build(),
   [TrainerItemId.BERRY_POUCH]: new TrainerItemBuilder(TrainerItemId.BERRY_POUCH, 3) //
-    .attr(PreserveBerryTrainerItemAttr)
+    .attr(PreserveBerryTrainerItemAttr, 10)
     .build(),
 
   [TrainerItemId.HEALING_CHARM]: new TrainerItemBuilder(TrainerItemId.HEALING_CHARM, 5) //
