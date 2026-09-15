@@ -5041,7 +5041,14 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [47, MoveId.EARTHQUAKE],
       [53, MoveId.FISSURE],
     ],
-    tms: [MoveId.HYPER_BEAM, MoveId.TRI_ATTACK, MoveId.GIGA_IMPACT, MoveId.SLUDGE_WAVE, MoveId.HIGH_HORSEPOWER,MoveId.NIGHT_SLASH],
+    tms: [
+      MoveId.HYPER_BEAM,
+      MoveId.TRI_ATTACK,
+      MoveId.GIGA_IMPACT,
+      MoveId.SLUDGE_WAVE,
+      MoveId.HIGH_HORSEPOWER,
+      MoveId.NIGHT_SLASH,
+    ],
   };
   generationOneSpeciesData[SpeciesId.MEOWTH] = {
     species: new PokemonSpecies({

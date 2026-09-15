@@ -1638,7 +1638,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [56, MoveId.TAILWIND],
       [62, MoveId.TOXIC],
     ],
-    tms: [MoveId.DARK_PULSE, MoveId.X_SCISSOR, MoveId.CROSS_POISON, MoveId.HEX, MoveId.HURRICANE,MoveId.NIGHT_SLASH],
+    tms: [MoveId.DARK_PULSE, MoveId.X_SCISSOR, MoveId.CROSS_POISON, MoveId.HEX, MoveId.HURRICANE, MoveId.NIGHT_SLASH],
   };
   generationTwoSpeciesData[SpeciesId.CHINCHOU] = {
     species: new PokemonSpecies({

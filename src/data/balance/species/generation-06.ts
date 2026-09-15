@@ -4049,7 +4049,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.HIGH_HORSEPOWER,
       MoveId.THROAT_CHOP,
-      MoveId.MEGAHORN
+      MoveId.MEGAHORN,
     ],
   };
   generationSixSpeciesData[SpeciesId.PANCHAM] = {
