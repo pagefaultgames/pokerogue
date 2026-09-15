@@ -709,7 +709,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
-    const newTeraType = teraType;
+    let newTeraType = teraType;
+    if (species.speciesId === SpeciesId.TERAPAGOS) {
+      newTeraType = PokemonType.STELLAR;
+    }
     this.teraIcon.setFrame(PokemonType[newTeraType].toLowerCase());
     this.teraIcon.setVisible(!this.statsMode && this.allowTera);
   }
