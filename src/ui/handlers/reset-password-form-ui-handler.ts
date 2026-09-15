@@ -3,9 +3,10 @@ import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#types/ui-types";
 import i18next from "i18next";
-import { FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";
+import type { InputFieldConfig } from "./form-modal-ui-handler";
+import { LoginRegisterInfoContainerUiHandler } from "./login-register-info-container-ui-handler";
 
-export class ResetPasswordFormUiHandler extends FormModalUiHandler {
+export class ResetPasswordFormUiHandler extends LoginRegisterInfoContainerUiHandler {
   private readonly ERR_PASSWORD: string = "invalid password";
   private readonly ERR_USERNAME_RESET_CODE_MISMATCH: string = "username and reset code do not match";
   private readonly ERR_PASSWORD_MISMATCH: string = "password doesn't match";
@@ -65,7 +66,8 @@ export class ResetPasswordFormUiHandler extends FormModalUiHandler {
 
   override show(args: [ModalConfig, ...any]): boolean {
     if (super.show(args)) {
-      globalScene.ui.showText(i18next.t("menu:resetPasswordWarning"));
+      this.showInfoContainer(args[0]);
+      globalScene.ui.showText(i18next.t("menu:resetPasswordText"));
       const config = args[0];
       const originalSubmitAction = this.submitAction;
       this.submitAction = () => {
@@ -101,10 +103,15 @@ export class ResetPasswordFormUiHandler extends FormModalUiHandler {
             .then(error => {
               if (!error && originalSubmitAction) {
                 globalScene.ui.playSelect();
-                originalSubmitAction();
                 for (const input of this.inputs) {
                   input.setText("");
                 }
+                globalScene.ui.setOverlayMode(
+                  UiMode.ALERT_MODAL,
+                  i18next.t("menu:resetPasswordSuccess"),
+                  0,
+                  originalSubmitAction,
+                );
               } else {
                 onFail(error);
               }
