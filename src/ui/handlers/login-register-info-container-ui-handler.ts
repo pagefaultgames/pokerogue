@@ -206,11 +206,13 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       options.push({ label: `${username}: ********`, handler: codeHandler, keepOpen: true });
     }
 
+    const previousText =
+      ui.mode === UiMode.RESET_PASSWORD_FORM ? "menu:resetPasswordText" : "menu:logInOrCreateAccount";
     const closeHandler = () => {
       ui.revertMode();
       this.infoContainer.disableInteractive();
       this.setInteractive(true);
-      ui.showText(i18next.t("menu:logInOrCreateAccount"));
+      ui.showText(i18next.t(previousText));
       return true;
     };
     options.push({
