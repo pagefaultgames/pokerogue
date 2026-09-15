@@ -12,6 +12,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   private resetCodeWarningText: Phaser.GameObjects.Text;
   private isCodeVisible = false;
   private width: number;
+  private height: number;
 
   public override getModalTitle(): string {
     return i18next.t("menu:resetCodeFor", { username: loggedInUser?.username ?? "" });
@@ -22,7 +23,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   }
 
   public override getHeight(): number {
-    return 80;
+    return this.height;
   }
 
   public override getMargin(): [number, number, number, number] {
@@ -46,19 +47,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
       .setOrigin(0.5, 0)
       .setColor(getTextColor(TextStyle.PARTY_RED));
 
-    // the base `this.titleText` does not have a width yet, so we set the text here
-    this.titleText.setText(this.getModalTitle());
-    this.width =
-      Math.max(
-        this.titleText.displayWidth,
-        this.resetCodeText.displayWidth,
-        this.resetCodeDescriptionText.displayWidth,
-        this.resetCodeWarningText.displayWidth,
-      ) + 50;
-
-    this.resetCodeText.setX(this.width / 2);
-    this.resetCodeDescriptionText.setX(this.width / 2);
-    this.resetCodeWarningText.setX(this.width / 2);
+    this.setSize();
 
     this.modalContainer.add([this.resetCodeText, this.resetCodeDescriptionText, this.resetCodeWarningText]);
   }
@@ -99,5 +88,28 @@ export class ResetCodeUiHandler extends ModalUiHandler {
     const resetCode = loggedInUser?.resetCode ?? i18next.t("menu:noResetCode");
     this.resetCodeText.setText(this.isCodeVisible ? resetCode : "********");
     this.buttonLabels[0].setText(this.isCodeVisible ? i18next.t("menu:hide") : i18next.t("menu:show"));
+  }
+
+  private setSize(): void {
+    // the base `this.titleText` does not have a width yet, so we set the text here
+    this.titleText.setText(this.getModalTitle()).setAlign("center");
+    this.width =
+      Math.max(
+        this.titleText.displayWidth,
+        this.resetCodeText.displayWidth,
+        this.resetCodeDescriptionText.displayWidth,
+        this.resetCodeWarningText.displayWidth,
+      ) + 50;
+
+    let y = this.titleText.displayHeight + 10;
+    for (const text of [this.resetCodeDescriptionText, this.resetCodeText, this.resetCodeWarningText]) {
+      text
+        .setX(this.width / 2)
+        .setY(y)
+        .setAlign("center");
+      y += text.displayHeight;
+    }
+
+    this.height = this.resetCodeWarningText.y + this.resetCodeWarningText.displayHeight + 30;
   }
 }
