@@ -11100,9 +11100,9 @@ export function initGenerationThree(): SpeciesDataMapConfig {
           type2: PokemonType.GHOST,
           height: 1.2,
           weight: 49,
-          ability1: AbilityId.SUPER_LUCK,
-          ability2: AbilityId.SUPER_LUCK,
-          abilityHidden: AbilityId.SUPER_LUCK,
+          ability1: AbilityId.SHARPNESS,
+          ability2: AbilityId.SHARPNESS,
+          abilityHidden: AbilityId.SHARPNESS,
           baseTotal: 565,
           baseHp: 65,
           baseAtk: 154,
@@ -11138,7 +11138,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.TOUGH_CLAWS,
       1: AbilityId.SHADOW_SHIELD,
-      2: AbilityId.SHARPNESS,
+      2: AbilityId.SUPER_LUCK,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.CONFUSE_RAY],
