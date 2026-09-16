@@ -224,7 +224,7 @@ export class UngroundedAbAttr extends AbAttr {
 }
 
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -241,7 +241,7 @@ export interface DoubleBattleChanceAbAttrParams extends AbAttrBaseParams {
 
 /** Attribute for abilities that increase the chance of a double battle occurring. */
 export class DoubleBattleChanceAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -254,7 +254,7 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
 }
 
 export class PostBattleInitAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
@@ -304,7 +304,7 @@ export interface PreDefendModifyDamageAbAttrParams extends AugmentMoveInteractio
  */
 // TODO: this class is effectively useless
 export abstract class PreDefendAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
@@ -437,7 +437,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 }
 
 export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
   constructor(immuneType: PokemonType) {
     super(immuneType);
   }
@@ -663,7 +662,7 @@ export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionA
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   override canApply(_params: PostMoveInteractionAbAttrParams): boolean {
     return true;
   }
@@ -1201,7 +1200,7 @@ export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
 }
 
 export class PostStatStageChangeAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 
   override canApply(_params: Closed<PostStatStageChangeAbAttrParams>) {
     return true;
@@ -1235,7 +1234,7 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
 }
 
 export abstract class PreAttackAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export interface MoveHealBoostAbAttrParams extends AugmentMoveInteractionAbAttrParams {
@@ -1547,7 +1546,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
 
 export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   // Need to use declare here to override the parent class's property, allows for modification in subclass' constructor
-  protected declare readonly skipDuringMovesetGen: boolean;
+  declare protected readonly skipDuringMovesetGen: boolean;
   constructor(boostedType: PokemonType, powerMultiplier?: number, skipDuringMovesetGen?: boolean) {
     super((pokemon, _defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5, false);
     if (skipDuringMovesetGen != null) {
@@ -1558,7 +1557,7 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
 
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   protected override readonly skipDuringMovesetGen = true;
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the constructor params
+
   constructor(boostedType: PokemonType) {
     super(boostedType);
   }
@@ -1681,7 +1680,7 @@ export interface StatMultiplierAbAttrParams extends AbAttrBaseParams {
 }
 
 export class StatMultiplierAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   public readonly stat: BattleStat;
   public readonly multiplier: number;
   /**
@@ -3290,7 +3289,7 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
 
 /** Provides immunity to status effects to the user's field. */
 export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
@@ -3658,7 +3657,7 @@ export class ChangeMovePriorityInBracketAbAttr extends AbAttr {
 }
 
 export class IgnoreContactAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 /** Shared interface for attributes that respond to a weather. */
@@ -4479,7 +4478,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
 
 // TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -4673,7 +4672,7 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
 }
 
 export class BypassBurnDamageReductionAbAttr extends CancelInteractionAbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -4844,7 +4843,7 @@ export interface PostBattleAbAttrParams extends AbAttrBaseParams {
 }
 
 export abstract class PostBattleAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor(showAbility = true) {
     super(showAbility);
   }
@@ -5077,7 +5076,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 }
 
 export class BlockRedirectAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export interface ReduceStatusEffectDurationAbAttrParams extends AbAttrBaseParams {
@@ -5266,7 +5265,7 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
 
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
 export class IgnoreProtectOnContactAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
@@ -5280,7 +5279,7 @@ export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
  * @sealed
  */
 export class InfiltratorAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -5324,7 +5323,7 @@ export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
 // TODO: Make these ability attributes be flags instead of dummy attributes
 /** @sealed */
 export class NoTransformAbilityAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -5332,7 +5331,7 @@ export class NoTransformAbilityAbAttr extends AbAttr {
 
 /** @sealed */
 export class NoFusionAbilityAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -5512,7 +5511,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
  */
 
 export class PreSummonAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   apply(_params: Closed<AbAttrBaseParams>): void {}
 
   canApply(_params: Closed<AbAttrBaseParams>): boolean {
@@ -5565,7 +5564,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 
 /** @sealed */
 export class IllusionBreakAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   // TODO: Consider adding a `canApply` method that checks if the pokemon has an active illusion
   override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.breakIllusion();

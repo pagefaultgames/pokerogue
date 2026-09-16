@@ -13,8 +13,7 @@ export type Stringify<S extends Stringable> = PreventHoverExpansion<
   // NB: We cannot tag the produced string literal to preserve enum types, as TS does not allow indexing objects with tagged types
   // (which would break uses of `Object.keys`/etc).
   // Since we are actively removing TypeScript enums from the codebase anyways, this is fairly benign.
-  S extends unknown ? `${S}` : never
->;
+  S extends unknown ? `${S}` : never>;
 
 /**
  * Convert a stringified type to its un-stringified counterpart.
