@@ -1512,6 +1512,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.ARIADOS] = {
@@ -1580,6 +1581,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.SMART_STRIKE,
       MoveId.STOMPING_TANTRUM,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CROBAT] = {
@@ -1636,7 +1638,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [56, MoveId.TAILWIND],
       [62, MoveId.TOXIC],
     ],
-    tms: [MoveId.DARK_PULSE, MoveId.X_SCISSOR, MoveId.CROSS_POISON, MoveId.HEX, MoveId.HURRICANE],
+    tms: [MoveId.DARK_PULSE, MoveId.X_SCISSOR, MoveId.CROSS_POISON, MoveId.HEX, MoveId.HURRICANE, MoveId.NIGHT_SLASH],
   };
   generationTwoSpeciesData[SpeciesId.CHINCHOU] = {
     species: new PokemonSpecies({
@@ -4385,6 +4387,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SLOWKING] = {
@@ -6053,6 +6056,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SKITTER_SMACK,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.STEELIX] = {
@@ -6968,6 +6972,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SNEASEL] = {
@@ -7243,6 +7248,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.URSARING] = {
@@ -8331,6 +8337,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HOUNDOUR] = {

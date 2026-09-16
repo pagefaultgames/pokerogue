@@ -1325,6 +1325,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.SHINX] = {
@@ -1432,6 +1433,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.RISING_VOLTAGE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.LUXIO] = {
@@ -4187,6 +4189,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.PLAY_ROUGH,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.PURUGLY] = {
@@ -4488,6 +4491,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.TEMPER_FLARE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.SKUNTANK] = {
@@ -6367,6 +6371,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.DRAPION] = {
@@ -7307,6 +7312,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.MAGNEZONE] = {
@@ -7800,6 +7806,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CRUNCH,
       MoveId.GIGA_IMPACT,
       MoveId.DUAL_WINGBEAT,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.LEAFEON] = {
@@ -8287,6 +8294,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.COACHING,
       MoveId.UPPER_HAND,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.PROBOPASS] = {
@@ -9860,6 +9868,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.HARD_PRESS,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationFourSpeciesData[SpeciesId.REGIGIGAS] = {

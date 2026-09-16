@@ -1569,6 +1569,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.PLAY_ROUGH,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationEightSpeciesData[SpeciesId.THIEVUL] = {
@@ -1634,6 +1636,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.GRASS_KNOT,
       MoveId.ACROBATICS,
       MoveId.BURNING_JEALOUSY,
+      MoveId.DOUBLE_TEAM,
+      MoveId.ROAR,
+      MoveId.TRAILBLAZE,
     ],
   };
   generationEightSpeciesData[SpeciesId.GOSSIFLEUR] = {
@@ -3409,6 +3414,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.BARRASKEWDA] = {
@@ -4086,6 +4092,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationEightSpeciesData[SpeciesId.GRAPPLOCT] = {
@@ -5235,6 +5242,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.SPIKES,
+      MoveId.THUNDER_WAVE,
     ],
   };
   generationEightSpeciesData[SpeciesId.CURSOLA] = {
@@ -5451,6 +5460,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.AERIAL_ACE,
+      MoveId.FEATHER_DANCE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationEightSpeciesData[SpeciesId.MR_RIME] = {
@@ -8135,6 +8147,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.TERA_BLAST,
       MoveId.DRAGON_CHEER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.DREEPY] = {
@@ -10944,6 +10957,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_PONYTA] = {
@@ -11423,6 +11437,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_WEEZING] = {
@@ -12297,6 +12312,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.STOMPING_TANTRUM,
       MoveId.BODY_PRESS,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_DARUMAKA] = {
@@ -13430,6 +13446,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.HISUI_SAMUROTT] = {
