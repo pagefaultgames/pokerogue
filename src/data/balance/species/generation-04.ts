@@ -6899,7 +6899,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       [53, MoveId.BOUNCE],
       [56, MoveId.SILVER_WIND],
       [59, MoveId.TAILWIND],
-      [66, MoveId.SOAK],
+      [66, MoveId.HYDRO_PUMP],
     ],
     tms: [MoveId.HYPER_BEAM, MoveId.ENCORE, MoveId.AIR_SLASH, MoveId.GIGA_IMPACT],
   };
