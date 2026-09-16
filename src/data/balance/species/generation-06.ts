@@ -758,6 +758,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.FROGADIER] = {
@@ -4048,6 +4049,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.HIGH_HORSEPOWER,
       MoveId.THROAT_CHOP,
+      MoveId.MEGAHORN,
     ],
   };
   generationSixSpeciesData[SpeciesId.PANCHAM] = {
@@ -4255,6 +4257,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.DARKEST_LARIAT,
       MoveId.THROAT_CHOP,
       MoveId.STOMPING_TANTRUM,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.FURFROU] = {
@@ -5002,9 +5005,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [12, MoveId.AERIAL_ACE],
       [15, MoveId.PURSUIT],
       [18, MoveId.METAL_SOUND],
-      [20, MoveId.SLASH],
+      [20, MoveId.RETALIATE],
       [24, MoveId.NIGHT_SLASH],
-      [27, MoveId.RETALIATE],
+      [27, MoveId.SLASH],
       [30, MoveId.SHADOW_CLAW],
       [32, MoveId.IRON_DEFENSE],
       [36, MoveId.IRON_HEAD],
@@ -5054,6 +5057,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.STEEL_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.DOUBLADE] = {
@@ -5100,9 +5104,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [12, MoveId.AERIAL_ACE],
       [15, MoveId.PURSUIT],
       [18, MoveId.METAL_SOUND],
-      [20, MoveId.SLASH],
+      [20, MoveId.RETALIATE],
       [24, MoveId.NIGHT_SLASH],
-      [27, MoveId.RETALIATE],
+      [27, MoveId.SLASH],
       [30, MoveId.SHADOW_CLAW],
       [32, MoveId.IRON_DEFENSE],
       [38, MoveId.IRON_HEAD],
@@ -5227,9 +5231,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [12, MoveId.AERIAL_ACE],
       [15, MoveId.PURSUIT],
       [18, MoveId.METAL_SOUND],
-      [20, MoveId.SLASH],
+      [20, MoveId.RETALIATE],
       [24, MoveId.NIGHT_SLASH],
-      [27, MoveId.RETALIATE],
+      [27, MoveId.SLASH],
       [30, MoveId.SHADOW_CLAW],
       [32, MoveId.IRON_DEFENSE],
       [38, MoveId.IRON_HEAD],
@@ -5702,6 +5706,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.MALAMAR] = {
@@ -5950,6 +5955,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.BARBARACLE] = {
@@ -9014,6 +9020,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.MISTY_EXPLOSION,
       MoveId.TERRAIN_PULSE,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.YVELTAL] = {

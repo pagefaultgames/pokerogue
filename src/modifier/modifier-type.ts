@@ -1566,7 +1566,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           }),
       ]
         .flat()
-        .flatMap(e => e.evoItem)
+        .flatMap(e => e.item)
         .filter(i => !!i && i > 50 === rare);
 
       if (evolutionItemPool.length === 0) {
