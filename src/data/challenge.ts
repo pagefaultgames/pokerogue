@@ -1730,6 +1730,55 @@ export class AbilityRandomizerChallenge extends Challenge {
     return true;
   }
 
+  public override applyStarterCost(speciesId: SpeciesId, cost: ValueHolder<number>): boolean {
+    switch (speciesId) {
+      case SpeciesId.NINCADA:
+        cost.value -= 2; // 4 -> 2
+        return true;
+      case SpeciesId.MEDITITE:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.AZURILL:
+        cost.value -= 1; // 4 -> 3
+        return true;
+      case SpeciesId.WISHIWASHI:
+        cost.value -= 1; // 2 -> 1
+        return true;
+      case SpeciesId.ZYGARDE:
+        cost.value -= 2; // 9 -> 7
+        return true;
+      case SpeciesId.BATTLE_BOND_GRENINJA:
+        cost.value -= 1; // 6 -> 5
+        return true;
+      case SpeciesId.DEWPIDER:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.MIMIKYU:
+        cost.value -= 1; // 4 -> 3
+        return true;
+      case SpeciesId.EISCUE:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.FINIZEN:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.TERAPAGOS:
+        cost.value -= 5; // 9 -> 4
+        return true;
+      case SpeciesId.ARCHEN:
+        cost.value += 1; // 3 -> 4
+        return true;
+      case SpeciesId.SLAKOTH:
+        cost.value += 2; // 4 -> 6
+        return true;
+      case SpeciesId.REGIGIGAS:
+        cost.value += 1; // 7 -> 8
+        return true;
+    }
+
+    return false;
+  }
+
   public static override loadChallenge(source: Challenge | any): Challenge {
     const newChallenge = new AbilityRandomizerChallenge();
     newChallenge.value = source.value;
