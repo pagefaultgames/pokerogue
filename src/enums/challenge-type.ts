@@ -154,4 +154,9 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyMysteryEncounterMovesetModify}
    */
   ME_MOVESET_MODIFY,
+  /**
+   * Challenges which modify the ability to relearn egg moves via Memory Mushroom for player Pokemon.
+   * @see {@linkcode Challenge.applyEggMoveRelearnAvailability}
+   */
+  EGG_MOVE_RELEARN_AVAILABILITY,
 }

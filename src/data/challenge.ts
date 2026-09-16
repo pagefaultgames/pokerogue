@@ -39,6 +39,7 @@ import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -528,6 +529,16 @@ export abstract class Challenge {
    * @returns Whether this modification was applied
    */
   public applyMysteryEncounterMovesetModify(pokemon: Pokemon): boolean {
+    return false;
+  }
+
+  /**
+   * Modifies the ability to relearn egg moves via Memory Mushroom for player Pokemon.
+   * @param pokemon - The {@linkcode Pokemon} to set egg move legality for
+   * @param isAvailable - A holder used to set egg move legality
+   * @returns Whether this modification was applied
+   */
+  public applyEggMoveRelearnAvailability(pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
     return false;
   }
 
@@ -1040,7 +1051,13 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  override getDifficulty(): number {
+  public override applyEggMoveRelearnAvailability(_pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
+    isAvailable.value = false;
+
+    return true;
+  }
+
+  public override getDifficulty(): number {
     return 0;
   }
 
@@ -1586,6 +1603,12 @@ export class MovesetRandomizerChallenge extends Challenge {
     }
 
     return false;
+  }
+
+  public override applyEggMoveRelearnAvailability(_pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
+    isAvailable.value = false;
+
+    return true;
   }
 
   public static override loadChallenge(source: Challenge | any): Challenge {
