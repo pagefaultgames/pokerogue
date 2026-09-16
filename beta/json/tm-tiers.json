@@ -708,6 +708,10 @@
     "tier": "GREAT"
   },
   {
+    "move": "NIGHT_SLASH",
+    "tier": "GREAT"
+  },
+  {
     "move": "AQUA_TAIL",
     "tier": "GREAT"
   },
@@ -1086,6 +1090,10 @@
   {
     "move": "POWER_UP_PUNCH",
     "tier": "GREAT"
+  },
+  {
+    "move": "FIRST_IMPRESSION",
+    "tier": "ULTRA"
   },
   {
     "move": "DARKEST_LARIAT",

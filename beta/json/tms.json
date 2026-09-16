@@ -9300,6 +9300,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 27,
+    "id": "SANDSHREW",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 28,
     "id": "SANDSLASH",
     "form": null,
@@ -9754,6 +9760,12 @@
     "id": "SANDSLASH",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 28,
+    "id": "SANDSLASH",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 29,
@@ -19287,6 +19299,12 @@
     "dexNum": 51,
     "id": "DUGTRIO",
     "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 51,
+    "id": "DUGTRIO",
+    "form": null,
     "move": "SWORDS_DANCE"
   },
   {
@@ -20112,6 +20130,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 52,
+    "id": "MEOWTH",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 53,
     "id": "PERSIAN",
     "form": null,
@@ -20608,6 +20632,12 @@
     "id": "PERSIAN",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 53,
+    "id": "PERSIAN",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 54,
@@ -22248,6 +22278,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 56,
+    "id": "MANKEY",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 57,
     "id": "PRIMEAPE",
     "form": null,
@@ -22810,6 +22846,12 @@
     "id": "PRIMEAPE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 57,
+    "id": "PRIMEAPE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 58,
@@ -33426,6 +33468,24 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 83,
+    "id": "FARFETCHD",
+    "form": null,
+    "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 83,
+    "id": "FARFETCHD",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 83,
+    "id": "FARFETCHD",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 84,
     "id": "DODUO",
     "form": null,
@@ -39714,6 +39774,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 98,
+    "id": "KRABBY",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 99,
     "id": "KINGLER",
     "form": null,
@@ -40096,6 +40162,12 @@
     "id": "KINGLER",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 99,
+    "id": "KINGLER",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 100,
@@ -50148,6 +50220,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 123,
+    "id": "SCYTHER",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 124,
     "id": "JYNX",
     "form": null,
@@ -56346,6 +56424,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 140,
+    "id": "KABUTO",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 141,
     "id": "KABUTOPS",
     "form": null,
@@ -56800,6 +56884,12 @@
     "id": "KABUTOPS",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 141,
+    "id": "KABUTOPS",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 142,
@@ -69774,6 +69864,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 167,
+    "id": "SPINARAK",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 168,
     "id": "ARIADOS",
     "form": null,
@@ -69820,6 +69916,12 @@
     "id": "ARIADOS",
     "form": null,
     "move": "STOMPING_TANTRUM"
+  },
+  {
+    "dexNum": 168,
+    "id": "ARIADOS",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 168,
@@ -70182,6 +70284,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 168,
+    "id": "ARIADOS",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 169,
     "id": "CROBAT",
     "form": null,
@@ -70210,6 +70318,12 @@
     "id": "CROBAT",
     "form": null,
     "move": "HURRICANE"
+  },
+  {
+    "dexNum": 169,
+    "id": "CROBAT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 169,
@@ -82666,6 +82780,12 @@
     "id": "MURKROW",
     "form": null,
     "move": "PSYCHIC_NOISE"
+  },
+  {
+    "dexNum": 198,
+    "id": "MURKROW",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 199,
@@ -86376,6 +86496,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 207,
+    "id": "GLIGAR",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 208,
     "id": "STEELIX",
     "form": null,
@@ -88932,6 +89058,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 212,
+    "id": "SCIZOR",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 213,
     "id": "SHUCKLE",
     "form": null,
@@ -89740,6 +89872,12 @@
     "id": "HERACROSS",
     "form": null,
     "move": "UPPER_HAND"
+  },
+  {
+    "dexNum": 214,
+    "id": "HERACROSS",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 215,
@@ -90708,6 +90846,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 216,
+    "id": "TEDDIURSA",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 217,
     "id": "URSARING",
     "form": null,
@@ -91204,6 +91348,12 @@
     "id": "URSARING",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 217,
+    "id": "URSARING",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 218,
@@ -95116,6 +95266,12 @@
     "id": "SKARMORY",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 227,
+    "id": "SKARMORY",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 228,
@@ -105600,6 +105756,12 @@
     "move": "UPPER_HAND"
   },
   {
+    "dexNum": 252,
+    "id": "TREECKO",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 253,
     "id": "GROVYLE",
     "form": null,
@@ -106054,6 +106216,12 @@
     "id": "GROVYLE",
     "form": null,
     "move": "UPPER_HAND"
+  },
+  {
+    "dexNum": 253,
+    "id": "GROVYLE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 254,
@@ -106632,6 +106800,12 @@
     "move": "UPPER_HAND"
   },
   {
+    "dexNum": 254,
+    "id": "SCEPTILE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 255,
     "id": "TORCHIC",
     "form": null,
@@ -106990,6 +107164,12 @@
     "id": "TORCHIC",
     "form": null,
     "move": "TEMPER_FLARE"
+  },
+  {
+    "dexNum": 255,
+    "id": "TORCHIC",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 256,
@@ -107452,6 +107632,12 @@
     "id": "COMBUSKEN",
     "form": null,
     "move": "TEMPER_FLARE"
+  },
+  {
+    "dexNum": 256,
+    "id": "COMBUSKEN",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 257,
@@ -108022,6 +108208,12 @@
     "id": "BLAZIKEN",
     "form": null,
     "move": "TEMPER_FLARE"
+  },
+  {
+    "dexNum": 257,
+    "id": "BLAZIKEN",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 258,
@@ -113130,6 +113322,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 273,
+    "id": "SEEDOT",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 274,
     "id": "NUZLEAF",
     "form": null,
@@ -113626,6 +113824,12 @@
     "id": "NUZLEAF",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 274,
+    "id": "NUZLEAF",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 275,
@@ -114280,6 +114484,12 @@
     "id": "SHIFTRY",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 275,
+    "id": "SHIFTRY",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 276,
@@ -119088,6 +119298,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 287,
+    "id": "SLAKOTH",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 288,
     "id": "VIGOROTH",
     "form": null,
@@ -119656,6 +119872,12 @@
     "id": "VIGOROTH",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 288,
+    "id": "VIGOROTH",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 289,
@@ -120288,6 +120510,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 289,
+    "id": "SLAKING",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 290,
     "id": "NINCADA",
     "form": null,
@@ -120508,6 +120736,12 @@
     "id": "NINCADA",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 290,
+    "id": "NINCADA",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 291,
@@ -120840,6 +121074,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 291,
+    "id": "NINJASK",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 292,
     "id": "SHEDINJA",
     "form": null,
@@ -121138,6 +121378,12 @@
     "id": "SHEDINJA",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 292,
+    "id": "SHEDINJA",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 293,
@@ -125320,6 +125566,12 @@
     "id": "SABLEYE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 302,
+    "id": "SABLEYE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 303,
@@ -131253,6 +131505,18 @@
     "dexNum": 317,
     "id": "SWALOT",
     "form": null,
+    "move": "CORROSIVE_GAS"
+  },
+  {
+    "dexNum": 317,
+    "id": "SWALOT",
+    "form": null,
+    "move": "SKITTER_SMACK"
+  },
+  {
+    "dexNum": 317,
+    "id": "SWALOT",
+    "form": null,
     "move": "FIRE_PUNCH"
   },
   {
@@ -132028,6 +132292,12 @@
     "id": "SHARPEDO",
     "form": null,
     "move": "BULLDOZE"
+  },
+  {
+    "dexNum": 319,
+    "id": "SHARPEDO",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 319,
@@ -135990,6 +136260,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 328,
+    "id": "TRAPINCH",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 329,
     "id": "VIBRAVA",
     "form": null,
@@ -136402,6 +136678,12 @@
     "id": "VIBRAVA",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 329,
+    "id": "VIBRAVA",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 330,
@@ -136942,6 +137224,12 @@
     "id": "FLYGON",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 330,
+    "id": "FLYGON",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 331,
@@ -139320,6 +139608,12 @@
     "move": "UPPER_HAND"
   },
   {
+    "dexNum": 335,
+    "id": "ZANGOOSE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 336,
     "id": "SEVIPER",
     "form": null,
@@ -139792,6 +140086,12 @@
     "id": "SEVIPER",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 336,
+    "id": "SEVIPER",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 337,
@@ -141882,6 +142182,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 341,
+    "id": "CORPHISH",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 342,
     "id": "CRAWDAUNT",
     "form": null,
@@ -142354,6 +142660,12 @@
     "id": "CRAWDAUNT",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 342,
+    "id": "CRAWDAUNT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 343,
@@ -146064,6 +146376,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 352,
+    "id": "KECLEON",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 353,
     "id": "SHUPPET",
     "form": null,
@@ -149224,6 +149542,12 @@
     "id": "ABSOL",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 359,
+    "id": "ABSOL",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 360,
@@ -165735,6 +166059,12 @@
     "dexNum": 402,
     "id": "KRICKETUNE",
     "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 402,
+    "id": "KRICKETUNE",
+    "form": null,
     "move": "SNORE"
   },
   {
@@ -166116,6 +166446,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 403,
+    "id": "SHINX",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 404,
     "id": "LUXIO",
     "form": null,
@@ -166444,6 +166780,12 @@
     "id": "LUXIO",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 404,
+    "id": "LUXIO",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 405,
@@ -166816,6 +167158,12 @@
     "id": "LUXRAY",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 405,
+    "id": "LUXRAY",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 406,
@@ -176172,6 +176520,12 @@
     "move": "PSYCHIC_NOISE"
   },
   {
+    "dexNum": 430,
+    "id": "HONCHKROW",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 431,
     "id": "GLAMEOW",
     "form": null,
@@ -176476,6 +176830,12 @@
     "id": "GLAMEOW",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 431,
+    "id": "GLAMEOW",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 432,
@@ -176824,6 +177184,12 @@
     "id": "PURUGLY",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 432,
+    "id": "PURUGLY",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 433,
@@ -177612,6 +177978,12 @@
     "move": "TEMPER_FLARE"
   },
   {
+    "dexNum": 434,
+    "id": "STUNKY",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 435,
     "id": "SKUNTANK",
     "form": null,
@@ -178066,6 +178438,12 @@
     "id": "SKUNTANK",
     "form": null,
     "move": "TEMPER_FLARE"
+  },
+  {
+    "dexNum": 435,
+    "id": "SKUNTANK",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 436,
@@ -184524,6 +184902,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 451,
+    "id": "SKORUPI",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 452,
     "id": "DRAPION",
     "form": null,
@@ -184996,6 +185380,12 @@
     "id": "DRAPION",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 452,
+    "id": "DRAPION",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 453,
@@ -188170,6 +188560,12 @@
     "id": "WEAVILE",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 461,
+    "id": "WEAVILE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 461,
@@ -192279,6 +192675,12 @@
     "dexNum": 469,
     "id": "YANMEGA",
     "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 469,
+    "id": "YANMEGA",
+    "form": null,
     "move": "SWORDS_DANCE"
   },
   {
@@ -193998,6 +194400,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 472,
+    "id": "GLISCOR",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 473,
     "id": "MAMOSWINE",
     "form": null,
@@ -195064,6 +195472,12 @@
     "id": "GALLADE",
     "form": null,
     "move": "UPPER_HAND"
+  },
+  {
+    "dexNum": 475,
+    "id": "GALLADE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 475,
@@ -200358,6 +200772,12 @@
     "move": "HARD_PRESS"
   },
   {
+    "dexNum": 485,
+    "id": "HEATRAN",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 486,
     "id": "REGIGIGAS",
     "form": null,
@@ -207396,6 +207816,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 501,
+    "id": "OSHAWOTT",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 502,
     "id": "DEWOTT",
     "form": null,
@@ -207778,6 +208204,12 @@
     "id": "DEWOTT",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 502,
+    "id": "DEWOTT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 503,
@@ -208240,6 +208672,12 @@
     "id": "SAMUROTT",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 503,
+    "id": "SAMUROTT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 504,
@@ -210192,6 +210630,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 509,
+    "id": "PURRLOIN",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 510,
     "id": "LIEPARD",
     "form": null,
@@ -210598,6 +211042,12 @@
     "id": "LIEPARD",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 510,
+    "id": "LIEPARD",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 511,
@@ -213942,6 +214392,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 519,
+    "id": "PIDOVE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 520,
     "id": "TRANQUILL",
     "form": null,
@@ -214174,6 +214630,12 @@
     "id": "TRANQUILL",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 520,
+    "id": "TRANQUILL",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 521,
@@ -214438,6 +214900,12 @@
     "id": "UNFEZANT",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 521,
+    "id": "UNFEZANT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 522,
@@ -227274,6 +227742,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 557,
+    "id": "DWEBBLE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 558,
     "id": "CRUSTLE",
     "form": null,
@@ -227596,6 +228070,12 @@
     "id": "CRUSTLE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 558,
+    "id": "CRUSTLE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 559,
@@ -232534,6 +233014,12 @@
     "id": "ZOROARK",
     "form": null,
     "move": "THROAT_CHOP"
+  },
+  {
+    "dexNum": 571,
+    "id": "ZOROARK",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 571,
@@ -238938,6 +239424,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 588,
+    "id": "KARRABLAST",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 589,
     "id": "ESCAVALIER",
     "form": null,
@@ -239268,6 +239760,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 589,
+    "id": "ESCAVALIER",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 590,
     "id": "FOONGUS",
     "form": null,
@@ -239500,6 +239998,12 @@
     "id": "FOONGUS",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 590,
+    "id": "FOONGUS",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 591,
@@ -239764,6 +240268,12 @@
     "id": "AMOONGUSS",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 591,
+    "id": "AMOONGUSS",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 592,
@@ -246096,6 +246606,18 @@
     "move": "DRAGON_CHEER"
   },
   {
+    "dexNum": 610,
+    "id": "AXEW",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 610,
+    "id": "AXEW",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 611,
     "id": "FRAXURE",
     "form": null,
@@ -246502,6 +247024,18 @@
     "id": "FRAXURE",
     "form": null,
     "move": "DRAGON_CHEER"
+  },
+  {
+    "dexNum": 611,
+    "id": "FRAXURE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 611,
+    "id": "FRAXURE",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 612,
@@ -246972,6 +247506,18 @@
     "move": "DRAGON_CHEER"
   },
   {
+    "dexNum": 612,
+    "id": "HAXORUS",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 612,
+    "id": "HAXORUS",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 613,
     "id": "CUBCHOO",
     "form": null,
@@ -247390,6 +247936,12 @@
     "id": "CUBCHOO",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 613,
+    "id": "CUBCHOO",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 614,
@@ -247914,6 +248466,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 614,
+    "id": "BEARTIC",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 615,
     "id": "CRYOGONAL",
     "form": null,
@@ -248218,6 +248776,12 @@
     "id": "CRYOGONAL",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 615,
+    "id": "CRYOGONAL",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 616,
@@ -250446,6 +251010,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 621,
+    "id": "DRUDDIGON",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 622,
     "id": "GOLETT",
     "form": null,
@@ -251868,6 +252438,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 624,
+    "id": "PAWNIARD",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 625,
     "id": "BISHARP",
     "form": null,
@@ -252292,6 +252868,12 @@
     "id": "BISHARP",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 625,
+    "id": "BISHARP",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 626,
@@ -254466,6 +255048,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 631,
+    "id": "HEATMOR",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 632,
     "id": "DURANT",
     "form": null,
@@ -254788,6 +255376,12 @@
     "id": "DURANT",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 632,
+    "id": "DURANT",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 633,
@@ -265494,6 +266088,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 656,
+    "id": "FROAKIE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 657,
     "id": "FROGADIER",
     "form": null,
@@ -265888,6 +266488,12 @@
     "id": "FROGADIER",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 657,
+    "id": "FROGADIER",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 658,
@@ -266344,6 +266950,12 @@
     "id": "GRENINJA",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 658,
+    "id": "GRENINJA",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 659,
@@ -270651,6 +271263,12 @@
     "dexNum": 673,
     "id": "GOGOAT",
     "form": null,
+    "move": "MEGAHORN"
+  },
+  {
+    "dexNum": 673,
+    "id": "GOGOAT",
+    "form": null,
     "move": "BODY_SLAM"
   },
   {
@@ -271558,6 +272176,12 @@
     "id": "PANGORO",
     "form": null,
     "move": "STOMPING_TANTRUM"
+  },
+  {
+    "dexNum": 675,
+    "id": "PANGORO",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 675,
@@ -273384,6 +274008,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 679,
+    "id": "HONEDGE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 680,
     "id": "DOUBLADE",
     "form": null,
@@ -273634,6 +274264,12 @@
     "id": "DOUBLADE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 680,
+    "id": "DOUBLADE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 681,
@@ -273916,6 +274552,12 @@
     "id": "AEGISLASH",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 681,
+    "id": "AEGISLASH",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 682,
@@ -275482,6 +276124,12 @@
     "id": "INKAY",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 686,
+    "id": "INKAY",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 687,
@@ -275908,6 +276556,12 @@
     "id": "MALAMAR",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 687,
+    "id": "MALAMAR",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 688,
@@ -276340,6 +276994,12 @@
     "id": "BINACLE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 688,
+    "id": "BINACLE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 689,
@@ -276862,6 +277522,12 @@
     "id": "BARBARACLE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 689,
+    "id": "BARBARACLE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 690,
@@ -287104,6 +287770,12 @@
     "id": "XERNEAS",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 716,
+    "id": "XERNEAS",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 717,
@@ -300837,6 +301509,12 @@
     "dexNum": 754,
     "id": "LURANTIS",
     "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 754,
+    "id": "LURANTIS",
+    "form": null,
     "move": "SWORDS_DANCE"
   },
   {
@@ -305925,6 +306603,48 @@
     "dexNum": 768,
     "id": "GOLISOPOD",
     "form": null,
+    "move": "AGILITY"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "GUNK_SHOT"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "POUNCE"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "U_TURN"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
+    "dexNum": 768,
+    "id": "GOLISOPOD",
+    "form": null,
     "move": "SURF"
   },
   {
@@ -309640,6 +310360,12 @@
     "id": "MIMIKYU",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 778,
+    "id": "MIMIKYU",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 779,
@@ -317406,6 +318132,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 800,
+    "id": "NECROZMA",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 801,
     "id": "MAGEARNA",
     "form": null,
@@ -325758,6 +326490,18 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 827,
+    "id": "NICKIT",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 827,
+    "id": "NICKIT",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 828,
     "id": "THIEVUL",
     "form": null,
@@ -325845,6 +326589,24 @@
     "dexNum": 828,
     "id": "THIEVUL",
     "form": null,
+    "move": "DOUBLE_TEAM"
+  },
+  {
+    "dexNum": 828,
+    "id": "THIEVUL",
+    "form": null,
+    "move": "ROAR"
+  },
+  {
+    "dexNum": 828,
+    "id": "THIEVUL",
+    "form": null,
+    "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 828,
+    "id": "THIEVUL",
+    "form": null,
     "move": "DIG"
   },
   {
@@ -325858,12 +326620,6 @@
     "id": "THIEVUL",
     "form": null,
     "move": "SCREECH"
-  },
-  {
-    "dexNum": 828,
-    "id": "THIEVUL",
-    "form": null,
-    "move": "DOUBLE_TEAM"
   },
   {
     "dexNum": 828,
@@ -326044,6 +326800,18 @@
     "id": "THIEVUL",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 828,
+    "id": "THIEVUL",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 828,
+    "id": "THIEVUL",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 829,
@@ -330672,6 +331440,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 846,
+    "id": "ARROKUDA",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 847,
     "id": "BARRASKEWDA",
     "form": null,
@@ -330946,6 +331720,12 @@
     "id": "BARRASKEWDA",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 847,
+    "id": "BARRASKEWDA",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 848,
@@ -332184,6 +332964,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 852,
+    "id": "CLOBBOPUS",
+    "form": null,
+    "move": "CHILLING_WATER"
+  },
+  {
     "dexNum": 853,
     "id": "GRAPPLOCT",
     "form": null,
@@ -332482,6 +333268,12 @@
     "id": "GRAPPLOCT",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 853,
+    "id": "GRAPPLOCT",
+    "form": null,
+    "move": "CHILLING_WATER"
   },
   {
     "dexNum": 854,
@@ -335445,6 +336237,12 @@
     "dexNum": 862,
     "id": "OBSTAGOON",
     "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 862,
+    "id": "OBSTAGOON",
+    "form": null,
     "move": "KNOCK_OFF"
   },
   {
@@ -335925,7 +336723,25 @@
     "dexNum": 863,
     "id": "PERRSERKER",
     "form": null,
+    "move": "SPIKES"
+  },
+  {
+    "dexNum": 863,
+    "id": "PERRSERKER",
+    "form": null,
+    "move": "THUNDER_WAVE"
+  },
+  {
+    "dexNum": 863,
+    "id": "PERRSERKER",
+    "form": null,
     "move": "AERIAL_ACE"
+  },
+  {
+    "dexNum": 863,
+    "id": "PERRSERKER",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 864,
@@ -336610,6 +337426,30 @@
     "id": "SIRFETCHD",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 865,
+    "id": "SIRFETCHD",
+    "form": null,
+    "move": "AERIAL_ACE"
+  },
+  {
+    "dexNum": 865,
+    "id": "SIRFETCHD",
+    "form": null,
+    "move": "FEATHER_DANCE"
+  },
+  {
+    "dexNum": 865,
+    "id": "SIRFETCHD",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
+    "dexNum": 865,
+    "id": "SIRFETCHD",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 866,
@@ -342774,6 +343614,12 @@
     "move": "DRAGON_CHEER"
   },
   {
+    "dexNum": 884,
+    "id": "DURALUDON",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 885,
     "id": "DREEPY",
     "form": null,
@@ -348702,6 +349548,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 900,
+    "id": "KLEAVOR",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 901,
     "id": "URSALUNA",
     "form": null,
@@ -349240,6 +350092,12 @@
     "id": "URSALUNA",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 901,
+    "id": "URSALUNA",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 902,
@@ -350038,6 +350896,12 @@
     "id": "SNEASLER",
     "form": null,
     "move": "WILD_CHARGE"
+  },
+  {
+    "dexNum": 903,
+    "id": "SNEASLER",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 904,
@@ -351358,6 +352222,12 @@
     "id": "MEOWSCARADA",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 908,
+    "id": "MEOWSCARADA",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 908,
@@ -354084,6 +354954,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 917,
+    "id": "TAROUNTULA",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 918,
     "id": "SPIDOPS",
     "form": null,
@@ -354396,6 +355272,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 918,
+    "id": "SPIDOPS",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
+  },
+  {
     "dexNum": 919,
     "id": "NYMBLE",
     "form": null,
@@ -354568,6 +355450,12 @@
     "id": "NYMBLE",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 919,
+    "id": "NYMBLE",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 920,
@@ -354850,6 +355738,12 @@
     "id": "LOKIX",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 920,
+    "id": "LOKIX",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 921,
@@ -357714,6 +358608,18 @@
     "move": "POUNCE"
   },
   {
+    "dexNum": 931,
+    "id": "SQUAWKABILLY",
+    "form": null,
+    "move": "LUNGE"
+  },
+  {
+    "dexNum": 931,
+    "id": "SQUAWKABILLY",
+    "form": null,
+    "move": "SEED_BOMB"
+  },
+  {
     "dexNum": 932,
     "id": "NACLI",
     "form": null,
@@ -358680,6 +359586,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 935,
+    "id": "CHARCADET",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 936,
     "id": "ARMAROUGE",
     "form": null,
@@ -359028,6 +359940,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 936,
+    "id": "ARMAROUGE",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 937,
     "id": "CERULEDGE",
     "form": null,
@@ -359362,6 +360280,12 @@
     "id": "CERULEDGE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 937,
+    "id": "CERULEDGE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 938,
@@ -360594,6 +361518,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 942,
+    "id": "MASCHIFF",
+    "form": null,
+    "move": "FOCUS_ENERGY"
+  },
+  {
     "dexNum": 943,
     "id": "MABOSSTIFF",
     "form": null,
@@ -360886,6 +361816,12 @@
     "id": "MABOSSTIFF",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 943,
+    "id": "MABOSSTIFF",
+    "form": null,
+    "move": "FOCUS_ENERGY"
   },
   {
     "dexNum": 944,
@@ -361228,6 +362164,12 @@
     "id": "GRAFAIAI",
     "form": null,
     "move": "THROAT_CHOP"
+  },
+  {
+    "dexNum": 945,
+    "id": "GRAFAIAI",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 945,
@@ -370212,6 +371154,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 976,
+    "id": "VELUZA",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 977,
     "id": "DONDOZO",
     "form": null,
@@ -371242,6 +372190,12 @@
     "id": "ANNIHILAPE",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 979,
+    "id": "ANNIHILAPE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 980,
@@ -373200,6 +374154,12 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 983,
+    "id": "KINGAMBIT",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 984,
     "id": "GREAT_TUSK",
     "form": null,
@@ -374842,6 +375802,12 @@
     "id": "SLITHER_WING",
     "form": null,
     "move": "TEMPER_FLARE"
+  },
+  {
+    "dexNum": 988,
+    "id": "SLITHER_WING",
+    "form": null,
+    "move": "FIRST_IMPRESSION"
   },
   {
     "dexNum": 989,
@@ -377667,6 +378633,12 @@
     "dexNum": 998,
     "id": "BAXCALIBUR",
     "form": null,
+    "move": "FROST_BREATH"
+  },
+  {
+    "dexNum": 998,
+    "id": "BAXCALIBUR",
+    "form": null,
     "move": "SCARY_FACE"
   },
   {
@@ -378798,6 +379770,12 @@
     "move": "SNOWSCAPE"
   },
   {
+    "dexNum": 1002,
+    "id": "CHIEN_PAO",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 1003,
     "id": "TING_LU",
     "form": null,
@@ -379704,6 +380682,12 @@
     "move": "DRAGON_CHEER"
   },
   {
+    "dexNum": 1005,
+    "id": "ROARING_MOON",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 1006,
     "id": "IRON_VALIANT",
     "form": null,
@@ -380134,6 +381118,12 @@
     "id": "IRON_VALIANT",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 1006,
+    "id": "IRON_VALIANT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 1007,
@@ -381526,6 +382516,12 @@
     "id": "IRON_LEAVES",
     "form": null,
     "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 1010,
+    "id": "IRON_LEAVES",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 1011,
@@ -383974,6 +384970,12 @@
     "id": "ARCHALUDON",
     "form": null,
     "move": "DRAGON_CHEER"
+  },
+  {
+    "dexNum": 1018,
+    "id": "ARCHALUDON",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 1019,
@@ -387714,6 +388716,12 @@
     "move": "SNOWSCAPE"
   },
   {
+    "dexNum": 2027,
+    "id": "ALOLA_SANDSHREW",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 2028,
     "id": "ALOLA_SANDSLASH",
     "form": null,
@@ -388198,6 +389206,12 @@
     "id": "ALOLA_SANDSLASH",
     "form": null,
     "move": "SNOWSCAPE"
+  },
+  {
+    "dexNum": 2028,
+    "id": "ALOLA_SANDSLASH",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 2037,
@@ -389469,6 +390483,12 @@
     "dexNum": 2051,
     "id": "ALOLA_DUGTRIO",
     "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 2051,
+    "id": "ALOLA_DUGTRIO",
+    "form": null,
     "move": "SWORDS_DANCE"
   },
   {
@@ -390300,6 +391320,12 @@
     "move": "CHILLING_WATER"
   },
   {
+    "dexNum": 2052,
+    "id": "ALOLA_MEOWTH",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 2053,
     "id": "ALOLA_PERSIAN",
     "form": null,
@@ -390796,6 +391822,12 @@
     "id": "ALOLA_PERSIAN",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 2053,
+    "id": "ALOLA_PERSIAN",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 2074,
@@ -395478,6 +396510,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 4052,
+    "id": "GALAR_MEOWTH",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 4077,
     "id": "GALAR_PONYTA",
     "form": null,
@@ -397306,6 +398344,12 @@
     "id": "GALAR_FARFETCHD",
     "form": null,
     "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 4083,
+    "id": "GALAR_FARFETCHD",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 4110,
@@ -400666,6 +401710,12 @@
     "id": "GALAR_LINOONE",
     "form": null,
     "move": "BODY_PRESS"
+  },
+  {
+    "dexNum": 4264,
+    "id": "GALAR_LINOONE",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 4264,
@@ -404808,6 +405858,12 @@
     "move": "TRAILBLAZE"
   },
   {
+    "dexNum": 6215,
+    "id": "HISUI_SNEASEL",
+    "form": null,
+    "move": "NIGHT_SLASH"
+  },
+  {
     "dexNum": 6503,
     "id": "HISUI_SAMUROTT",
     "form": null,
@@ -405286,6 +406342,12 @@
     "id": "HISUI_SAMUROTT",
     "form": null,
     "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 6503,
+    "id": "HISUI_SAMUROTT",
+    "form": null,
+    "move": "NIGHT_SLASH"
   },
   {
     "dexNum": 6549,
