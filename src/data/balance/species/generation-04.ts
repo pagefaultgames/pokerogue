@@ -1325,6 +1325,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.SHINX] = {
@@ -1432,6 +1433,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.RISING_VOLTAGE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.LUXIO] = {
@@ -4187,6 +4189,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.PLAY_ROUGH,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.PURUGLY] = {
@@ -4488,6 +4491,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.TEMPER_FLARE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.SKUNTANK] = {
@@ -5571,9 +5575,9 @@ export function initGenerationFour(): SpeciesDataMapConfig {
           type2: null,
           height: 1.9,
           weight: 99,
-          ability1: AbilityId.ROUGH_SKIN,
+          ability1: AbilityId.LEVITATE,
           ability2: AbilityId.NONE,
-          abilityHidden: AbilityId.ROUGH_SKIN,
+          abilityHidden: AbilityId.LEVITATE,
           baseTotal: 700,
           baseHp: 108,
           baseAtk: 130,
@@ -5608,7 +5612,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.ARENA_TRAP,
       1: AbilityId.MOLD_BREAKER,
-      2: AbilityId.LEVITATE,
+      2: AbilityId.INTIMIDATE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.DRAGON_PULSE],
@@ -6006,9 +6010,9 @@ export function initGenerationFour(): SpeciesDataMapConfig {
           type2: PokemonType.STEEL,
           height: 1.3,
           weight: 49.4,
-          ability1: AbilityId.INNER_FOCUS,
-          ability2: AbilityId.INNER_FOCUS,
-          abilityHidden: AbilityId.INNER_FOCUS,
+          ability1: AbilityId.AURA_GUARD,
+          ability2: AbilityId.AURA_GUARD,
+          abilityHidden: AbilityId.AURA_GUARD,
           baseTotal: 625,
           baseHp: 70,
           baseAtk: 100,
@@ -6042,7 +6046,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.MINDS_EYE,
       1: AbilityId.MINDS_EYE,
-      2: AbilityId.MEGA_LAUNCHER,
+      2: AbilityId.NEUROFORCE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.DARK_PULSE],
@@ -6367,6 +6371,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.DRAPION] = {
@@ -7307,6 +7312,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.MAGNEZONE] = {
@@ -7800,6 +7806,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CRUNCH,
       MoveId.GIGA_IMPACT,
       MoveId.DUAL_WINGBEAT,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.LEAFEON] = {
@@ -8287,6 +8294,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.COACHING,
       MoveId.UPPER_HAND,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationFourSpeciesData[SpeciesId.PROBOPASS] = {
@@ -9860,6 +9868,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.HARD_PRESS,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationFourSpeciesData[SpeciesId.REGIGIGAS] = {
