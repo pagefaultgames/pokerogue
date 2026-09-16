@@ -1938,7 +1938,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     });
 
     const allowEggMoves = new ValueHolder(true);
-    applyChallenges(ChallengeType.EGG_MOVE_AVAILABILITY, this, allowEggMoves);
+    applyChallenges(ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY, this, allowEggMoves);
 
     if (this.metBiome === -1 && allowEggMoves.value && !globalScene.gameMode.isDaily) {
       const eggMoves: LearnableLevelMoves = this.getUnlockedEggMoves().map(em => [null, em, LearnableMoveSource.EGG]);

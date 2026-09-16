@@ -150,8 +150,8 @@ export enum ChallengeType {
    */
   MODIFY_EVOLUTIONS,
   /**
-   * Challenges which modify the availability of egg moves for player Pokemon
-   * @see {@linkcode Challenge.applyEggMoveAvailability}
+   * Challenges which modify the ability to relearn egg moves via Memory Mushroom for player Pokemon.
+   * @see {@linkcode Challenge.applyEggMoveRelearnAvailability}
    */
-  EGG_MOVE_AVAILABILITY,
+  EGG_MOVE_RELEARN_AVAILABILITY,
 }

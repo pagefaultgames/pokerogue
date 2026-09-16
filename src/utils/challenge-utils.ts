@@ -357,14 +357,14 @@ export function applyChallenges(
 ): boolean;
 
 /**
- * Apply all challenges that modify the availability of egg moves for player Pokemon.
- * @param challengeType - {@linkcode ChallengeType.EGG_MOVE_AVAILABILITY}
+ * Apply all challenges that modify the ability to relearn egg moves via Memory Mushroom for player Pokemon.
+ * @param challengeType - {@linkcode ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY}
  * @param pokemon - The {@linkcode Pokemon} to set egg move legality for
  * @param isAvailable - A holder used to set egg move legality
  * @returns Whether any challenge was sucessfully applied
  */
 export function applyChallenges(
-  challengeType: ChallengeType.EGG_MOVE_AVAILABILITY,
+  challengeType: ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY,
   pokemon: Pokemon,
   isAvailable: ValueHolder<boolean>,
 ): boolean;
@@ -464,8 +464,8 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
         case ChallengeType.MODIFY_EVOLUTIONS:
           ret ||= c.applyModifyEvolutions(args[0], args[1]);
           break;
-        case ChallengeType.EGG_MOVE_AVAILABILITY:
-          ret ||= c.applyEggMoveAvailability(args[0], args[1]);
+        case ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY:
+          ret ||= c.applyEggMoveRelearnAvailability(args[0], args[1]);
           break;
         default:
           challengeType satisfies never;

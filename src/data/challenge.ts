@@ -524,12 +524,12 @@ export abstract class Challenge {
   }
 
   /**
-   * Modifies the availability of egg moves for player Pokemon.
+   * Modifies the ability to relearn egg moves via Memory Mushroom for player Pokemon.
    * @param pokemon - The {@linkcode Pokemon} to set egg move legality for
    * @param isAvailable - A holder used to set egg move legality
    * @returns Whether this modification was applied
    */
-  public applyEggMoveAvailability(pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
+  public applyEggMoveRelearnAvailability(pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
     return false;
   }
 
@@ -1042,7 +1042,7 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  public override applyEggMoveAvailability(_pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
+  public override applyEggMoveRelearnAvailability(_pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
     isAvailable.value = false;
 
     return true;
@@ -1568,7 +1568,7 @@ export class MovesetRandomizerChallenge extends Challenge {
     return modified;
   }
 
-  public override applyEggMoveAvailability(_pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
+  public override applyEggMoveRelearnAvailability(_pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
     isAvailable.value = false;
 
     return true;
