@@ -2978,6 +2978,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.SANDSLASH] = {
@@ -5040,7 +5041,14 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [47, MoveId.EARTHQUAKE],
       [53, MoveId.FISSURE],
     ],
-    tms: [MoveId.HYPER_BEAM, MoveId.TRI_ATTACK, MoveId.GIGA_IMPACT, MoveId.SLUDGE_WAVE, MoveId.HIGH_HORSEPOWER],
+    tms: [
+      MoveId.HYPER_BEAM,
+      MoveId.TRI_ATTACK,
+      MoveId.GIGA_IMPACT,
+      MoveId.SLUDGE_WAVE,
+      MoveId.HIGH_HORSEPOWER,
+      MoveId.NIGHT_SLASH,
+    ],
   };
   generationOneSpeciesData[SpeciesId.MEOWTH] = {
     species: new PokemonSpecies({
@@ -5238,6 +5246,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.PERSIAN] = {
@@ -5642,6 +5651,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.PRIMEAPE] = {
@@ -8210,6 +8220,9 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationOneSpeciesData[SpeciesId.DODUO] = {
@@ -9725,6 +9738,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.KINGLER] = {
@@ -12356,6 +12370,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.JYNX] = {
@@ -14369,6 +14384,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.KABUTOPS] = {
