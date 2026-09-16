@@ -955,7 +955,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
     ],
     passives: {
       0: AbilityId.REGENERATOR,
-      1: AbilityId.DRIZZLE,
+      1: AbilityId.REGENERATOR,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.SURF],
@@ -5881,7 +5881,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
     starterCost: 2,
     evolutions: [],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.POWER_SPOT,
+    passives: AbilityId.FRIEND_GUARD,
     levelMoves: [
       [RELEARN_MOVE, MoveId.NUZZLE],
       [1, MoveId.GROWL],
