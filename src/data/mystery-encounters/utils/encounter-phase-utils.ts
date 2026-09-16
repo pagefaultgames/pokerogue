@@ -478,11 +478,8 @@ export function updatePlayerMoney(moneyAmount: number, playSound = true, showMes
   if (showMessage) {
     const i18nKey = isIncrease ? "receive" : "paid";
     const amount = isIncrease ? moneyAmount : -moneyAmount;
-    globalScene.phaseManager.queueMessage(
-      i18next.t(`mysteryEncounterMessages:${i18nKey}Money`, { amount }),
-      null,
-      true,
-    );
+    const text = i18next.t(`mysteryEncounterMessages:${i18nKey}Money`, { amount });
+    globalScene.phaseManager.queueMessage(text, { prompt: true });
   }
 }
 
@@ -592,7 +589,7 @@ export function selectPokemonForOption(
                 return true;
               },
               onHover: () => {
-                showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
+                showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), { delay: 0, prompt: false });
               },
             });
 
@@ -639,7 +636,7 @@ export function selectOptionThenPokemon(
   return new Promise<PokemonAndOptionSelected | null>(resolve => {
     const modeToSetOnExit = globalScene.ui.mode;
 
-    const displayOptions = async (config: OptionSelectModeConfig) => {
+    const displayOptions = async (cfg: OptionSelectModeConfig) => {
       await globalScene.ui.setMode(UiMode.MESSAGE);
       if (optionSelectPromptKey) {
         showEncounterText(optionSelectPromptKey);
@@ -648,7 +645,7 @@ export function selectOptionThenPokemon(
       if (fullOptions[0]?.onHover) {
         fullOptions[0].onHover();
       }
-      globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
+      globalScene.ui.setMode(UiMode.OPTION_SELECT, cfg);
     };
 
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
@@ -701,7 +698,7 @@ export function selectOptionThenPokemon(
           if (onHoverOverCancelOption) {
             onHoverOverCancelOption();
           }
-          showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
+          showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), { delay: 0, prompt: false });
         },
       });
 
@@ -969,7 +966,7 @@ export function handleMysteryEncounterBattleStartEffects(): void {
  */
 export function handleMysteryEncounterTurnStartEffects(): boolean {
   const encounter = globalScene.currentBattle.mysteryEncounter;
-  if (globalScene.currentBattle.isBattleMysteryEncounter() && encounter && encounter.onTurnStart) {
+  if (globalScene.currentBattle.isBattleMysteryEncounter() && encounter?.onTurnStart) {
     return encounter.onTurnStart();
   }
 

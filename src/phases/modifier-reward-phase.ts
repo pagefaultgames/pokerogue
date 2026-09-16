@@ -11,6 +11,7 @@ export class ModifierRewardPhase extends BattlePhase {
   // we need to use a union type here
   public readonly phaseName: "ModifierRewardPhase" | "RibbonModifierRewardPhase" | "GameOverModifierRewardPhase" =
     "ModifierRewardPhase";
+
   protected modifierType: ModifierType;
 
   constructor(modifierTypeFunc: ModifierTypeFunc) {
@@ -19,26 +20,20 @@ export class ModifierRewardPhase extends BattlePhase {
     this.modifierType = getModifierType(modifierTypeFunc);
   }
 
-  start() {
+  public override async start(): Promise<void> {
     super.start();
 
-    this.doReward().then(() => this.end());
+    await this.doReward();
+
+    this.end();
   }
 
-  doReward(): Promise<void> {
-    return new Promise<void>(resolve => {
-      const newModifier = this.modifierType.newModifier();
-      globalScene.addModifier(newModifier);
-      audioManager.playSound("se/item_fanfare");
-      globalScene.ui.showText(
-        i18next.t("battle:rewardGain", {
-          modifierName: newModifier?.type.name,
-        }),
-        null,
-        () => resolve(),
-        null,
-        true,
-      );
-    });
+  public async doReward(): Promise<void> {
+    const newModifier = this.modifierType.newModifier();
+    globalScene.addModifier(newModifier);
+
+    audioManager.playSound("se/item_fanfare");
+
+    await globalScene.ui.showTextPromise(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
   }
 }

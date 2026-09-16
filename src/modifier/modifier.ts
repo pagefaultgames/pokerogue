@@ -2953,7 +2953,7 @@ export class MoneyInterestModifier extends PersistentModifier {
       moneyAmount: formattedMoneyAmount,
       typeName: this.type.name,
     });
-    globalScene.phaseManager.queueMessage(message, undefined, true);
+    globalScene.phaseManager.queueMessage(message, { prompt: true });
 
     return true;
   }

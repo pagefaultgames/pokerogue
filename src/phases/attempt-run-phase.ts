@@ -13,11 +13,13 @@ import i18next from "i18next";
 export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";
 
-  public start() {
+  public override start(): void {
     super.start();
 
+    const { arenaEnemy, currentBattle, gameMode, phaseManager, tweens } = globalScene;
+
     // Increment escape attempts count on entry
-    const currentAttempts = globalScene.currentBattle.escapeAttempts++;
+    const currentAttempts = currentBattle.escapeAttempts++;
     const enemyField = globalScene.getEnemyField();
 
     const escapeRoll = globalScene.randBattleSeedInt(100);
@@ -31,12 +33,12 @@ export class AttemptRunPhase extends FieldPhase {
       enemyField.forEach(pokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon }));
 
       audioManager.playSound("se/flee");
-      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
+      phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), { prompt: true, promptDelay: 500 });
 
       globalScene.currentBattle.successfulRun = true;
 
-      globalScene.tweens.add({
-        targets: [globalScene.arenaEnemy, enemyField].flat(),
+      tweens.add({
+        targets: [arenaEnemy, enemyField].flat(),
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
@@ -51,19 +53,19 @@ export class AttemptRunPhase extends FieldPhase {
         enemyPokemon.doSetStatus(StatusEffect.FAINT);
       });
 
-      globalScene.phaseManager.pushNew("BattleEndPhase", false);
+      phaseManager.pushNew("BattleEndPhase", false);
 
-      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.phaseManager.pushNew("SelectBiomePhase");
+      if (gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        phaseManager.pushNew("SelectBiomePhase");
       }
 
-      globalScene.phaseManager.pushNew("NewBattlePhase");
+      phaseManager.pushNew("NewBattlePhase");
     } else {
       globalScene.getPlayerField(true).forEach(p => {
         p.turnData.failedRunAway = true;
       });
 
-      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
+      phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), { prompt: true, promptDelay: 500 });
     }
 
     this.end();

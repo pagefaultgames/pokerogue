@@ -6,22 +6,15 @@ import i18next from "i18next";
 
 export class LevelCapPhase extends FieldPhase {
   public readonly phaseName = "LevelCapPhase";
-  start(): void {
+
+  public override async start(): Promise<void> {
     super.start();
 
-    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-      // Sound loaded into game as is
-      audioManager.playSound("se/level_up_fanfare");
-      globalScene.ui.showText(
-        i18next.t("battle:levelCapUp", {
-          levelCap: globalScene.getMaxExpLevel(),
-        }),
-        null,
-        () => this.end(),
-        null,
-        true,
-      );
-      this.executeForAll(pokemon => pokemon.updateInfo(true));
-    });
+    await globalScene.ui.setMode(UiMode.MESSAGE);
+    audioManager.playSound("se/level_up_fanfare");
+
+    await globalScene.ui.showTextPromise(i18next.t("battle:levelCapUp", { levelCap: globalScene.getMaxExpLevel() }));
+    this.executeForAll(pokemon => pokemon.updateInfo(true));
+    this.end();
   }
 }
