@@ -149,4 +149,9 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyModifyEvolutions}
    */
   MODIFY_EVOLUTIONS,
+  /**
+   * Challenges which modify the moveset of an enemy Pokemon after it's generated in Mystery Encounters
+   * @see {@linkcode Challenge.applyMysteryEncounterMovesetModify}
+   */
+  ME_MOVESET_MODIFY,
 }

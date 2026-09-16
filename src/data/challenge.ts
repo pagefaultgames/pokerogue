@@ -522,6 +522,15 @@ export abstract class Challenge {
     return false;
   }
 
+  /**
+   * Modifies a Pokemon's moveset after generation during a Mystery Encounter
+   * @param pokemon - The Pokemon whose moveset is being modified
+   * @returns Whether this modification was applied
+   */
+  public applyMysteryEncounterMovesetModify(pokemon: Pokemon): boolean {
+    return false;
+  }
+
   // biome-ignore-end lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
 }
 
@@ -1358,7 +1367,7 @@ export class MovesetRandomizerChallenge extends Challenge {
       MovesetRandomizerChallenge._validMoveIds = getEnumValues(MoveId) //
         .filter(m => !disallowedMoves.includes(m) && !allMoves[m].isUnimplemented);
     }
-    return MovesetRandomizerChallenge._validMoveIds;
+    return [...MovesetRandomizerChallenge._validMoveIds];
   }
 
   private static _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
@@ -1549,6 +1558,34 @@ export class MovesetRandomizerChallenge extends Challenge {
     }
 
     return modified;
+  }
+
+  public override applyMysteryEncounterMovesetModify(pokemon: Pokemon): boolean {
+    const encounters: readonly MysteryEncounterType[] = [
+      MysteryEncounterType.ABSOLUTE_AVARICE,
+      MysteryEncounterType.CLOWNING_AROUND,
+      MysteryEncounterType.MYSTERIOUS_CHEST,
+      MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER,
+      MysteryEncounterType.THE_STRONG_STUFF,
+      MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
+      MysteryEncounterType.TRASH_TO_TREASURE,
+    ];
+
+    const encounterType = globalScene.currentBattle.mysteryEncounter?.encounterType;
+    if (encounters.includes(encounterType!)) {
+      globalScene.executeWithSeedOffset(() => {
+        pokemon.moveset = [];
+        const shuffledMoves = randSeedShuffle(this.validMoveIds);
+        for (let i = 0; i < 4; i++) {
+          pokemon.moveset.push(new PokemonMove(shuffledMoves[i]));
+        }
+        pokemon.summonData.moveset = pokemon.moveset;
+      }, pokemon.id);
+
+      return true;
+    }
+
+    return false;
   }
 
   public static override loadChallenge(source: Challenge | any): Challenge {
