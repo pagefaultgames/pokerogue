@@ -5608,7 +5608,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.ARENA_TRAP,
       1: AbilityId.MOLD_BREAKER,
-      2: AbilityId.ROUGH_SKIN,
+      2: AbilityId.INTIMIDATE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.DRAGON_PULSE],
@@ -6042,7 +6042,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.MINDS_EYE,
       1: AbilityId.MINDS_EYE,
-      2: AbilityId.MEGA_LAUNCHER,
+      2: AbilityId.NEUROFORCE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.DARK_PULSE],
