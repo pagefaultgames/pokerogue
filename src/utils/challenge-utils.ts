@@ -355,6 +355,14 @@ export function applyChallenges(
   evos: SpeciesFormEvolution[],
 ): boolean;
 
+/**
+ * Apply all challenges that modify a Pokemon's moveset after generation during a Mystery Encounter
+ * @param challengeType - {@linkcode ChallengeType.ME_MOVESET_MODIFY}
+ * @param pokemon - The Pokemon whose moveset is being modified
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(challengeType: ChallengeType.ME_MOVESET_MODIFY, pokemon: Pokemon): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -449,6 +457,9 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           break;
         case ChallengeType.MODIFY_EVOLUTIONS:
           ret ||= c.applyModifyEvolutions(args[0], args[1]);
+          break;
+        case ChallengeType.ME_MOVESET_MODIFY:
+          ret ||= c.applyMysteryEncounterMovesetModify(args[0]);
           break;
         default:
           challengeType satisfies never;
