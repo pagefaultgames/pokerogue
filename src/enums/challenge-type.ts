@@ -149,4 +149,9 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyModifyEvolutions}
    */
   MODIFY_EVOLUTIONS,
+  /**
+   * Challenges which modify the availability of egg moves for player Pokemon
+   * @see {@linkcode Challenge.applyEggMoveAvailability}
+   */
+  EGG_MOVE_AVAILABILITY,
 }
