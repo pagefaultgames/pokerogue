@@ -1184,7 +1184,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.LARVESTA,
         SpeciesId.GALAR_SLOWPOKE,
       ],
-    }), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
+    }),
   [TrainerType.BEAUTY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
     .setEncounterBgm(TrainerType.PARASOL_LADY)
@@ -1346,29 +1346,31 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.UNCOMMON]: [
         SpeciesId.MANKEY,
-        SpeciesId.POLIWRATH,
+        SpeciesId.POLIWAG,
         SpeciesId.TYROGUE,
-        SpeciesId.BRELOOM,
         SpeciesId.SCRAGGY,
         SpeciesId.MIENFOO,
         SpeciesId.PANCHAM,
         SpeciesId.STUFFUL,
         SpeciesId.CRABRAWLER,
+        SpeciesId.CLOBBOPUS,
       ],
       [TrainerPoolTier.RARE]: [
         SpeciesId.HERACROSS,
+        SpeciesId.SHROOMISH,
         SpeciesId.RIOLU,
         SpeciesId.THROH,
         SpeciesId.SAWK,
         SpeciesId.PASSIMIAN,
-        SpeciesId.CLOBBOPUS,
+        SpeciesId.FALINKS,
+        SpeciesId.PAWMI,
       ],
       [TrainerPoolTier.SUPER_RARE]: [
-        SpeciesId.HITMONTOP,
-        SpeciesId.INFERNAPE,
-        SpeciesId.GALLADE,
+        SpeciesId.CHIMCHAR,
+        SpeciesId.RALTS,
         SpeciesId.HAWLUCHA,
-        SpeciesId.HAKAMO_O,
+        SpeciesId.JANGMO_O,
+        SpeciesId.PALDEA_TAUROS,
       ],
       [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.KUBFU],
     }),
@@ -1441,7 +1443,8 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.FOUR_WEAK,
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.BUG)),
+    .setSpeciesFilter(s => s.isOfType(PokemonType.BUG))
+    .setSpecialtyType(PokemonType.BUG),
   [TrainerType.CAMPER]: new TrainerConfig(++t)
     .setHasGenders("Picnicker", "lass")
     .setMoneyMultiplier(1.1)
@@ -1467,7 +1470,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.DIGLETT,
         SpeciesId.MEOWTH,
         SpeciesId.PSYDUCK,
-        SpeciesId.MANKEY,
         SpeciesId.GROWLITHE,
         SpeciesId.POLIWAG,
         SpeciesId.GEODUDE,
@@ -1475,7 +1477,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.GOLDEEN,
         SpeciesId.SENTRET,
         SpeciesId.HOOTHOOT,
-        SpeciesId.PICHU,
         SpeciesId.CLEFFA,
         SpeciesId.IGGLYBUFF,
         SpeciesId.MAREEP,
@@ -1491,8 +1492,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.SKITTY,
         SpeciesId.GULPIN,
         SpeciesId.SPOINK,
-        SpeciesId.CACNEA,
-        SpeciesId.SWABLU,
         SpeciesId.BIDOOF,
         SpeciesId.STARLY,
         SpeciesId.SHINX,
@@ -1501,11 +1500,15 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.STUNKY,
       ],
       [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.MANKEY,
         SpeciesId.TANGELA,
         SpeciesId.HORSEA,
+        SpeciesId.PICHU,
         SpeciesId.SLUGMA,
         SpeciesId.SLAKOTH,
         SpeciesId.MEDITITE,
+        SpeciesId.CACNEA,
+        SpeciesId.SWABLU,
         SpeciesId.BALTOY,
         SpeciesId.PACHIRISU,
         SpeciesId.BONSLY,
@@ -1513,7 +1516,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [
         SpeciesId.BELLSPROUT,
         SpeciesId.TENTACOOL,
-        SpeciesId.SEEL,
         SpeciesId.CUBONE,
         SpeciesId.PINSIR,
         SpeciesId.TAUROS,
@@ -1536,10 +1538,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.CHIMCHAR,
         SpeciesId.PIPLUP,
       ],
-    })
-    .setSpeciesFilter(
-      s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.GROUND) || s.isOfType(PokemonType.BUG),
-    ),
+    }),
   [TrainerType.CLERK]: new TrainerConfig(++t)
     .setHasGenders("Clerk Female")
     .setHasDouble("Colleagues")
@@ -1904,7 +1903,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.YAMPER,
         SpeciesId.FIDOUGH,
       ],
-      [TrainerPoolTier.UNCOMMON]: [SpeciesId.HOUNDOUR, SpeciesId.ROCKRUFF, SpeciesId.MASCHIFF],
+      [TrainerPoolTier.UNCOMMON]: [SpeciesId.HOUNDOUR, SpeciesId.ROCKRUFF, SpeciesId.MASCHIFF, SpeciesId.GREAVARD],
       [TrainerPoolTier.RARE]: [SpeciesId.JOLTEON, SpeciesId.RIOLU],
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SLAKOTH],
       [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.ENTEI, SpeciesId.SUICUNE, SpeciesId.RAIKOU],
@@ -1937,7 +1936,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.TYMPOLE,
         SpeciesId.DUCKLETT,
         SpeciesId.ARROKUDA,
-        SpeciesId.WATTREL,
       ],
       [TrainerPoolTier.UNCOMMON]: [
         SpeciesId.PARAS,
@@ -1955,6 +1953,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.MORELULL,
         SpeciesId.CHEWTLE,
         SpeciesId.TADBULB,
+        SpeciesId.WATTREL,
       ],
       [TrainerPoolTier.RARE]: [
         SpeciesId.MAGIKARP,
@@ -1986,16 +1985,8 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.HISUI_QWILFISH,
         SpeciesId.HISUI_BASCULIN,
       ],
-      [TrainerPoolTier.ULTRA_RARE]: [
-        SpeciesId.ZAPDOS,
-        SpeciesId.RAIKOU,
-        SpeciesId.SUICUNE,
-        SpeciesId.KYOGRE,
-        SpeciesId.TORNADUS,
-        SpeciesId.THUNDURUS,
-        SpeciesId.OGERPON,
-      ],
-    }), // Mons with rain abilities or who learn Rain Dance by level
+      [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.TORNADUS, SpeciesId.THUNDURUS],
+    }),
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.75)
     .setEncounterBgm(TrainerType.CLERK)
@@ -2083,13 +2074,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.INKAY,
         SpeciesId.ORANGURU,
       ],
-      [TrainerPoolTier.RARE]: [
-        SpeciesId.ELGYEM,
-        SpeciesId.SIGILYPH,
-        SpeciesId.BALTOY,
-        SpeciesId.GIRAFARIG,
-        SpeciesId.MEOWSTIC,
-      ],
+      [TrainerPoolTier.RARE]: [SpeciesId.ELGYEM, SpeciesId.SIGILYPH, SpeciesId.BALTOY, SpeciesId.GIRAFARIG],
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.BELDUM, SpeciesId.ESPEON, SpeciesId.STANTLER],
     }),
   [TrainerType.RANGER]: new TrainerConfig(++t)
