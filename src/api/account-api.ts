@@ -97,6 +97,21 @@ export class PokerogueAccountApi extends ApiBase {
     removeCookie(SESSION_ID_COOKIE_NAME); // we are always clearing the cookie.
   }
 
+  public async getResetCode(): Promise<string | null> {
+    try {
+      const response = await this.doGet("/account/resetcode");
+      if (response.ok) {
+        const resetCode = (await response.text()) as string;
+        return resetCode;
+      }
+      console.warn("Get reset code failed!", response.status, response.statusText);
+      return null;
+    } catch (error) {
+      console.warn("Get reset code failed!", error);
+      return null;
+    }
+  }
+
   public async changePassword(changePwData: AccountChangePwRequest): Promise<string | null> {
     try {
       const response = await this.doPost("/account/changepw", changePwData, "form-urlencoded");

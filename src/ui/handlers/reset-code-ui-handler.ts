@@ -1,3 +1,4 @@
+import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
@@ -13,6 +14,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   private isCodeVisible = false;
   private width: number;
   private height: number;
+  private resetCode: string | null = null;
 
   public override getModalTitle(): string {
     return i18next.t("menu:resetCodeFor", { username: loggedInUser?.username ?? "" });
@@ -56,6 +58,11 @@ export class ResetCodeUiHandler extends ModalUiHandler {
     this.isCodeVisible = false;
     this.updateResetCodeText();
 
+    pokerogueApi.account.getResetCode().then(resetCode => {
+      this.resetCode = resetCode;
+      this.updateResetCodeText();
+    });
+
     return super.show([
       {
         buttonActions: [
@@ -85,7 +92,7 @@ export class ResetCodeUiHandler extends ModalUiHandler {
   }
 
   private updateResetCodeText(): void {
-    const resetCode = loggedInUser?.resetCode ?? i18next.t("menu:noResetCode");
+    const resetCode = this.resetCode ?? i18next.t("menu:noResetCode");
     this.resetCodeText.setText(this.isCodeVisible ? resetCode : "********");
     this.buttonLabels[0].setText(this.isCodeVisible ? i18next.t("menu:hide") : i18next.t("menu:show"));
   }
@@ -111,5 +118,11 @@ export class ResetCodeUiHandler extends ModalUiHandler {
     }
 
     this.height = this.resetCodeWarningText.y + this.resetCodeWarningText.displayHeight + 30;
+  }
+
+  override clear(): void {
+    // Should this actually clear the code or keep it so no new request is needed when checking the code again?
+    super.clear();
+    this.resetCode = null;
   }
 }

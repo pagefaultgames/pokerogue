@@ -6,7 +6,7 @@ export interface UserInfo {
   discordId: string;
   googleId: string;
   hasAdminRole: boolean;
-  resetCode: string;
+  resetCode?: string;
 }
 
 export interface TitleStatsResponse {
