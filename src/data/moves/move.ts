@@ -35,7 +35,6 @@ import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-tri
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import { getTypeDamageMultiplier } from "#data/type";
-import { isWeatherSuppressed } from "#data/weather";
 import { getEffectiveWeatherForMove } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";

@@ -64,8 +64,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
-import { isWeatherSuppressed } from "#data/weather";
-import { getEffectiveWeatherForMove, getWeatherMultiplierForMove } from "#data/weather";
+import { getEffectiveWeatherForMove, getWeatherMultiplierForMove, isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
