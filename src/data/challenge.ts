@@ -1380,7 +1380,7 @@ export class MovesetRandomizerChallenge extends Challenge {
     // it's necessary to do it this way due to the static variable
     // being initialized before the `allMoves` array is
     if (!MovesetRandomizerChallenge._validMoveIds) {
-      const disallowedMoves = [MoveId.NONE, MoveId.SPLASH, MoveId.HOLD_HANDS];
+      const disallowedMoves = [MoveId.NONE, MoveId.SPLASH, MoveId.HOLD_HANDS, MoveId.STRUGGLE];
       MovesetRandomizerChallenge._validMoveIds = getEnumValues(MoveId) //
         .filter(m => !disallowedMoves.includes(m) && !allMoves[m].isUnimplemented);
     }
