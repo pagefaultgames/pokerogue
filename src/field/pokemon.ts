@@ -1116,16 +1116,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public canTransformInto(target: Pokemon): boolean {
     return !(
-      // Neither pokemon can be already transformed
-      (
-        this.isTransformed()
-        || target.isTransformed() // Neither pokemon can be behind an illusion
-        || target.summonData.illusion
-        || this.summonData.illusion // The target cannot be behind a substitute
-        || target.getTag(BattlerTagType.SUBSTITUTE) // Transforming to/from fusion pokemon causes various problems (crashes, etc.) // TODO: Consider lifting restriction once bug is fixed
-        || this.isFusion()
-        || target.isFusion()
-      )
+      this.isTransformed()
+      || target.isTransformed()
+      || target.summonData.illusion
+      || this.summonData.illusion
+      || target.getTag(BattlerTagType.SUBSTITUTE)
+      // Transforming to/from fusion pokemon causes various problems (crashes, etc.)
+      // TODO: Consider lifting restriction once bug is fixed
+      || this.isFusion()
+      || target.isFusion()
     );
   }
 
