@@ -13,16 +13,16 @@ import { ValueHolder } from "#utils/value-holder";
 export class DamageMoneyRewardHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.DAMAGE_MONEY_REWARD> {
   public override readonly effect = HeldItemEffect.DAMAGE_MONEY_REWARD;
 
-  private readonly value: number;
+  private readonly fractionOfDamage: number;
 
   constructor(value: number) {
     super();
-    this.value = value;
+    this.value = fractionOfDamage;
   }
 
   public override apply({ pokemon, damage }: DamageMoneyRewardParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    const moneyAmount = new ValueHolder(Math.floor(damage * (this.value * stackCount)));
+    const moneyAmount = new ValueHolder(Math.floor(damage * (this.fractionOfDamage * stackCount)));
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     globalScene.addMoney(moneyAmount.value);
   }
