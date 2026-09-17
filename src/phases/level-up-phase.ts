@@ -1,7 +1,11 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allMoves } from "#data/data-lists";
 import { ExpNotification } from "#enums/exp-notification";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
+import { getBaseLearnableMoveSource } from "#field/learnsets";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#system/achv";
@@ -35,7 +39,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     this.pokemon.calculateStats();
     this.pokemon.updateInfo();
 
-    switch (globalScene.expParty) {
+    switch (settings.general.partyExpNotificationMode) {
       case ExpNotification.DEFAULT:
         this.showLevelUpMessages(prevStats).then(() => this.end());
         return;
@@ -76,11 +80,31 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   }
 
   public override end(): void {
-    // this `if` check feels like an unnecessary optimization
+    // this if check feels like an unnecessary optimization
     if (this.lastLevel < 100) {
-      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
-      for (const lm of levelMoves) {
-        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, lm[1]);
+      const levelMoves = this.getPokemon().getLevelMoves({
+        startingLevel: this.lastLevel + 1,
+        includePrevolutionMoves: true,
+      });
+      const prevoMoves = levelMoves.filter(
+        ([, , source]) => getBaseLearnableMoveSource(source) === LearnableMoveSource.PREVO,
+      );
+      const newMoves = levelMoves.filter(
+        ([, , source]) => getBaseLearnableMoveSource(source) !== LearnableMoveSource.PREVO,
+      );
+
+      for (const [, moveId] of newMoves) {
+        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, moveId);
+      }
+      for (const [, moveId] of prevoMoves) {
+        globalScene.phaseManager.queueMessage(
+          i18next.t("battle:prevoMovePrompt", {
+            pokemonName: getPokemonNameWithAffix(this.pokemon),
+            moveName: allMoves[moveId].name,
+          }),
+          null,
+          true,
+        );
       }
     }
     if (!this.pokemon.pauseEvolutions) {

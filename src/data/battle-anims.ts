@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -292,6 +293,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
   execute(battleAnim: BattleAnim): number {
     const soundConfig = { rate: this.pitch * 0.01, volume: this.volume * 0.01 };
     if (this.resourceName) {
+      // TODO: this `try` shouldn't be necessary, `playSound()` already encases itself in a `try`/`catch`
       try {
         audioManager.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
@@ -911,7 +913,7 @@ export abstract class BattleAnim {
       }
     };
 
-    if (!globalScene.moveAnimations && !this.playRegardlessOfIssues) {
+    if (!settings.display.enableMoveAnimations && !this.playRegardlessOfIssues) {
       return cleanUpAndComplete();
     }
 
@@ -1200,7 +1202,7 @@ export abstract class BattleAnim {
       }
     };
 
-    if (!globalScene.moveAnimations && !this.playRegardlessOfIssues) {
+    if (!settings.display.enableMoveAnimations && !this.playRegardlessOfIssues) {
       return cleanUpAndComplete();
     }
 

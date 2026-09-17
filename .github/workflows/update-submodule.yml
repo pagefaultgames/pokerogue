@@ -1,4 +1,4 @@
-name: Update Submodule
+name: Update Submodules
 
 on:
   workflow_run:
@@ -17,52 +17,46 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: "Download artifact"
-        uses: actions/github-script@v8
+      - name: Check out Git repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
-          script: |
-            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.payload.workflow_run.id,
-            });
-            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "pr-data"
-            })[0];
-            let download = await github.rest.actions.downloadArtifact({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              artifact_id: matchArtifact.id,
-              archive_format: 'zip',
-            });
-            const fs = require('fs');
-            const path = require('path');
-            const temp = '${{ runner.temp }}/artifacts';
-            if (!fs.existsSync(temp)){
-              fs.mkdirSync(temp);
-            }
-            fs.writeFileSync(path.join(temp, 'pr-data.zip'), Buffer.from(download.data));
+          submodules: false
+          sparse-checkout: |
+            pnpm-lock.yaml
+            .nvmrc
+            .github/scripts/update-submodule/download-artifact.mts
+            .github/scripts/update-submodule/read-label-data.mts
+          sparse-checkout-cone-mode: false
 
-      - name: "Unzip artifact"
+      - name: Install pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install Node.js dependencies
+        run: pnpm add @actions/core @actions/github
+
+      - name: Download artifact
+        run: node .github/scripts/update-submodule/download-artifact.mts
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_RUNNER_TEMP: ${{ runner.temp }}
+
+      - name: Unzip artifact
         run: unzip "${{ runner.temp }}/artifacts/pr-data.zip" -d "${{ runner.temp }}/artifacts"
 
-      - name: "Read label data"
+      - name: Read label data
         id: read-label-data
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-            const temp = '${{ runner.temp }}/artifacts';
-            const prNumber = Number(fs.readFileSync(path.join(temp, 'NR')));
-            const label = fs.readFileSync(path.join(temp, 'LABEL')).toString().trim();
-            const ref = fs.readFileSync(path.join(temp, 'REF')).toString().trim();
-            const repo = fs.readFileSync(path.join(temp, 'REPO')).toString().trim();
-            core.setOutput('label', label);
-            core.setOutput('prNumber', prNumber);
-            core.setOutput('ref', ref);
-            core.setOutput('repo', repo);
+        run: node .github/scripts/update-submodule/read-label-data.mts
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_RUNNER_TEMP: ${{ runner.temp }}
 
     outputs:
       label: ${{ steps.read-label-data.outputs.label }}
@@ -76,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
           sparse-checkout: |
             .nvmrc
@@ -93,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
           sparse-checkout: |
             .nvmrc
@@ -109,15 +103,16 @@ jobs:
     if: needs.read-label-data.outputs.label == 'Update Locales'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
           app-id: ${{ secrets.PAGEFAULT_APP_ID }}
           private-key: ${{ secrets.PAGEFAULT_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
+          allow-unsafe-pr-checkout: true
           repository: ${{ needs.read-label-data.outputs.repo }}
           ref: ${{ needs.read-label-data.outputs.ref }}
           sparse-checkout: |
@@ -160,15 +155,16 @@ jobs:
     if: needs.read-label-data.outputs.label == 'Update Assets'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
           app-id: ${{ secrets.PAGEFAULT_APP_ID }}
           private-key: ${{ secrets.PAGEFAULT_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
+          allow-unsafe-pr-checkout: true
           repository: ${{ needs.read-label-data.outputs.repo }}
           ref: ${{ needs.read-label-data.outputs.ref }}
           sparse-checkout: |

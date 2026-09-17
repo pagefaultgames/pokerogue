@@ -1,13 +1,13 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
-import type { TextStyleOptions } from "#types/ui";
+import type { TextStyleOptions } from "#types/ui-types";
 import i18next from "i18next";
 import type Phaser from "phaser";
-import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export function addTextObject(
@@ -55,9 +55,10 @@ export function addBBCodeTextObject(
 ): BBCodeText {
   const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, extraStyleOptions);
 
-  const ret = new BBCodeText(globalScene, x, y, content, styleOptions as BBCodeText.TextStyle);
-  globalScene.add.existing(ret);
-  ret.setScale(scale).setShadow(shadowXpos, shadowYpos, shadowColor);
+  const ret = globalScene.add
+    .rexBBCodeText(x, y, content, styleOptions as BBCodeText.TextStyle)
+    .setScale(scale)
+    .setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 60);
   }
@@ -75,8 +76,9 @@ export function addTextInputObject(
 ): InputText {
   const { scale, styleOptions } = getTextStyleOptions(style, extraStyleOptions);
 
-  const ret = globalScene.add.rexInputText(x, y, width, height, styleOptions as InputText.IConfig);
-  ret.setScale(scale);
+  const ret = globalScene.add //
+    .rexInputText(x, y, width, height, styleOptions as InputText.IConfig)
+    .setScale(scale);
 
   return ret;
 }
@@ -103,11 +105,6 @@ export function getTextStyleOptions(
   switch (style) {
     case TextStyle.SUMMARY: {
       const fontSizeLabel = "96px";
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { top: 6, bottom: 4 };
-          break;
-      }
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
@@ -118,6 +115,8 @@ export function getTextStyleOptions(
       let fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
+        case "zh-Hans":
+        case "zh-Hant":
           styleOptions.padding = { bottom: 7 };
           fontSizeLabel = "80px";
           break;
@@ -155,6 +154,24 @@ export function getTextStyleOptions(
       shadowYpos = 5;
       break;
     }
+    case TextStyle.SUMMARY_STATS:
+    case TextStyle.SUMMARY_STATS_BLUE:
+    case TextStyle.SUMMARY_STATS_PINK:
+    case TextStyle.SUMMARY_STATS_GOLD: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "pt-BR":
+        case "id":
+        case "vi":
+          styleOptions.padding = { top: 2, bottom: 10 };
+          fontSizeLabel = "90px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      shadowXpos = 5;
+      shadowYpos = 5;
+      break;
+    }
     case TextStyle.SUMMARY_ALT:
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_RED:
@@ -162,10 +179,6 @@ export function getTextStyleOptions(
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.SUMMARY_GRAY:
     case TextStyle.SUMMARY_GREEN:
-    case TextStyle.SUMMARY_STATS:
-    case TextStyle.SUMMARY_STATS_BLUE:
-    case TextStyle.SUMMARY_STATS_PINK:
-    case TextStyle.SUMMARY_STATS_GOLD:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
     case TextStyle.ME_OPTION_DEFAULT:
@@ -481,29 +494,35 @@ export function getTextStyleOptions(
   return { scale, styleOptions, shadowColor, shadowXpos, shadowYpos };
 }
 
-export function getBBCodeFrag(content: string, textStyle: TextStyle): string {
-  return `[color=${getTextColor(textStyle, false)}][shadow=${getTextColor(textStyle, true)}]${content}`;
+export function getBBCodeFrag(content: string, textStyle: TextStyle, closeFragment = false): string {
+  const openingFragment = `[color=${getTextColor(textStyle, false)}][shadow=${getTextColor(textStyle, true)}]`;
+  const closingFragment = closeFragment ? "[/color][/shadow]" : "";
+  return `${openingFragment}${content}${closingFragment}`;
 }
 
 /**
- * Should only be used with BBCodeText (see {@linkcode addBBCodeTextObject()})
- * This does NOT work with UI showText() or showDialogue() methods.
- * Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
- * @[<TextStyle>]{<text to color>}
+ * Should only be used with BBCodeText (see {@linkcode addBBCodeTextObject}).
  *
- * Example: passing a content string of "@[SUMMARY_BLUE]{blue text} primaryStyle text @[SUMMARY_RED]{red text}" will result in:
- * - "blue text" with TextStyle.SUMMARY_BLUE applied
- * - " primaryStyle text " with primaryStyle TextStyle applied
- * - "red text" with TextStyle.SUMMARY_RED applied
- * @param content string with styling that need to be applied for BBCodeTextObject
- * @param primaryStyle Primary style is required in order to escape BBCode styling properly.
- * @param uiTheme the {@linkcode UiTheme} to get TextStyle for
- * @param forWindow set to `true` if the text is to be displayed in a window ({@linkcode BattleScene.addWindow})
- *  it will replace all instances of the default MONEY TextStyle by {@linkcode TextStyle.MONEY_WINDOW}
+ * This does NOT work with UI `showText` or `showDialogue` methods.
+ *
+ * Method will do pattern match/replace and apply BBCode color/shadow styling to substrings within the content:
+ * `@[<TextStyle>]{<text to color>}`
+ *
+ * @example
+ * ```markdown
+ * passing a content string of `"@[SUMMARY_BLUE]{blue text} primaryStyle text @[SUMMARY_RED]{red text}"` will result in:
+ * - "blue text" with `TextStyle.SUMMARY_BLUE` applied
+ * - " primaryStyle text " with `primaryStyle` `TextStyle` applied
+ * - "red text" with `TextStyle.SUMMARY_RED` applied
+ * ```
+ * @param content - The string with styling that needs to be applied for the {@linkcode BBCodeText} object
+ * @param primaryStyle - The primary style to use
+ * @param forWindow - Whether the text is going to be displayed in a window. \
+ * It will replace all instances of the default MONEY TextStyle by {@linkcode TextStyle.MONEY_WINDOW}
  */
 export function getTextWithColors(content: string, primaryStyle: TextStyle, forWindow?: boolean): string {
   // Apply primary styling before anything else
-  let text = getBBCodeFrag(content, primaryStyle) + "[/color][/shadow]";
+  let text = getBBCodeFrag(content, primaryStyle, true);
   const primaryStyleString = [...text.match(new RegExp(/\[color=[^[]*\]\[shadow=[^[]*\]/i))!][0];
 
   /* For money text displayed in game windows, we can't use the default {@linkcode TextStyle.MONEY}
@@ -515,9 +534,7 @@ export function getTextWithColors(content: string, primaryStyle: TextStyle, forW
 
   // Set custom colors
   text = text.replace(/@\[([^{]*)\]{([^}]*)}/gi, (_substring, textStyle: string, textToColor: string) => {
-    return (
-      "[/color][/shadow]" + getBBCodeFrag(textToColor, TextStyle[textStyle]) + "[/color][/shadow]" + primaryStyleString
-    );
+    return "[/color][/shadow]" + getBBCodeFrag(textToColor, TextStyle[textStyle], true) + primaryStyleString;
   });
 
   // Remove extra style block at the end
@@ -526,7 +543,7 @@ export function getTextWithColors(content: string, primaryStyle: TextStyle, forW
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a giant switch which is the best option.
 export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
-  const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
+  const isLegacyTheme = settings.isLegacyTheme;
   switch (textStyle) {
     case TextStyle.MESSAGE:
       return shadow ? "#6b5a73" : "#f8f8f8";

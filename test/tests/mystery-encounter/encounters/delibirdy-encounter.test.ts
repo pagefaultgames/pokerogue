@@ -19,8 +19,8 @@ import {
 import { DelibirdyEncounter } from "#mystery-encounters/delibirdy-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import type { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
@@ -100,7 +100,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const price = (scene.currentBattle.mysteryEncounter?.options[0].requirements[0] as MoneyRequirement)
+      const price = (scene.currentBattle.mysteryEncounter!.options[0].requirements[0] as MoneyRequirement)
         .requiredMoney;
 
       expect(updateMoneySpy).toHaveBeenCalledWith(-price, true, false);

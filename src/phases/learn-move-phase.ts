@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
@@ -11,16 +12,18 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";
-  private moveId: MoveId;
+
+  private readonly moveId: MoveId;
   private messageMode: UiMode;
-  private learnMoveType: LearnMoveType;
-  private cost: number;
+  private readonly learnMoveType: LearnMoveType;
+  private readonly cost: number;
 
   constructor(
     partyMemberIndex: number,
@@ -29,29 +32,33 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     cost = -1,
   ) {
     super(partyMemberIndex);
+
     this.moveId = moveId;
     this.learnMoveType = learnMoveType;
     this.cost = cost;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
 
-    // The game first checks if the Pokemon already has the move and ends the phase if it does.
+    if (move.isUnimplemented) {
+      this.end();
+      return;
+    }
+
     const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== MoveId.SKETCH;
     if (hasMoveAlready) {
-      return this.end();
+      this.end();
+      return;
     }
 
     this.messageMode =
       globalScene.ui.getHandler() instanceof EvolutionSceneUiHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
     globalScene.ui.setMode(this.messageMode);
-    // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
-    // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
       this.learnMove(currentMoveset.length, move, pokemon);
     } else {
@@ -62,35 +69,34 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   /**
    * This displays a chain of messages (listed below) and asks if the user wishes to forget a move.
    *
-   * > [Pokemon] wants to learn the move [MoveName]
-   * > However, [Pokemon] already knows four moves.
-   * > Should a move be forgotten and replaced with [MoveName]? --> `Mode.CONFIRM` -> Yes: Go to `this.forgetMoveProcess()`, No: Go to `this.rejectMoveAndEnd()`
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * > [Pokemon] wants to learn the move [MoveName] \
+   * > However, [Pokemon] already knows four moves. \
+   * > Should a move be forgotten and replaced with [MoveName]? --> `UiMode.CONFIRM` -> Yes: Go to `this.forgetMoveProcess()`, No: Go to `this.rejectMoveAndEnd()`
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
-  async replaceMoveCheck(move: Move, pokemon: Pokemon) {
-    const learnMovePrompt = i18next.t("battle:learnMovePrompt", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
-      moveName: move.name,
-    });
-    const moveLimitReached = i18next.t("battle:learnMoveLimitReached", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
-    });
-    const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", {
-      moveName: move.name,
-    });
+  private async replaceMoveCheck(move: Move, pokemon: Pokemon): Promise<void> {
+    const { ui } = globalScene;
+    const pokemonName = getPokemonNameWithAffix(pokemon);
+    const moveName = move.name;
+
+    const learnMovePrompt = i18next.t("battle:learnMovePrompt", { pokemonName, moveName });
+    const moveLimitReached = i18next.t("battle:learnMoveLimitReached", { pokemonName });
+    const shouldReplaceQ = i18next.t("battle:learnMoveReplaceQuestion", { moveName });
+
     const preQText = [learnMovePrompt, moveLimitReached].join("$");
-    await globalScene.ui.showTextPromise(preQText);
-    await globalScene.ui.showTextPromise(shouldReplaceQ, undefined, false);
-    await globalScene.ui.setModeWithoutClear(
-      UiMode.CONFIRM,
-      () => this.forgetMoveProcess(move, pokemon), // Yes
-      () => {
-        // No
-        globalScene.ui.setMode(this.messageMode);
+
+    await ui.showTextPromise(preQText);
+    await ui.showTextPromise(shouldReplaceQ, undefined, false);
+
+    const options: ConfirmModeConfig = {
+      yesHandler: () => this.forgetMoveProcess(move, pokemon),
+      noHandler: () => {
+        ui.setMode(this.messageMode);
         this.rejectMoveAndEnd(move, pokemon);
       },
-    );
+    };
+    await ui.setModeWithoutClear(UiMode.CONFIRM, options);
   }
 
   /**
@@ -98,13 +104,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    *
    * > Which move should be forgotten?
    *
-   * The game then goes `Mode.SUMMARY` to select a move to be forgotten.
-   * If a player does not select a move or chooses the new move (`moveIndex === 4`), the game goes to `this.rejectMoveAndEnd()`.
+   * The game then goes `Mode.SUMMARY` to select a move to be forgotten. \
+   * If a player does not select a move or chooses the new move (`moveIndex === 4`), the game goes to `this.rejectMoveAndEnd()`. \
    * If an old move is selected, the function then passes the `moveIndex` to `this.learnMove()`
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
-  async forgetMoveProcess(move: Move, pokemon: Pokemon) {
+  private async forgetMoveProcess(move: Move, pokemon: Pokemon): Promise<void> {
     globalScene.ui.setMode(this.messageMode);
     await globalScene.ui.showTextPromise(i18next.t("battle:learnMoveForgetQuestion"), undefined, true);
     await globalScene.ui.setModeWithoutClear(
@@ -132,76 +138,63 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   /**
    * This asks the player if they wish to end the current move learning process.
    *
-   * > Stop trying to teach [MoveName]? --> `Mode.CONFIRM` --> Yes: > [Pokemon] did not learn the move [MoveName], No: `this.replaceMoveCheck()`
+   * > "Stop trying to teach [MoveName]?"" --> `UiMode.CONFIRM` --> Yes: "[Pokemon] did not learn the move [MoveName]", No: `this.replaceMoveCheck()`
    *
-   * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase.
+   * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase. \
    * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
-  async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
-    if (globalScene.hideMoveSkipConfirm) {
-      globalScene.ui.setMode(this.messageMode);
-      globalScene.ui
-        .showTextPromise(
-          i18next.t("battle:learnMoveNotLearned", {
-            pokemonName: getPokemonNameWithAffix(pokemon),
-            moveName: move.name,
-          }),
-          undefined,
-          true,
-        )
-        .then(() => this.end());
+  private async rejectMoveAndEnd(move: Move, pokemon: Pokemon): Promise<void> {
+    const { ui } = globalScene;
+
+    const pokemonName = getPokemonNameWithAffix(pokemon);
+    const moveName = move.name;
+
+    if (!settings.general.levelMoveConfirmation) {
+      await ui.setMode(this.messageMode);
+      await ui.showTextPromise(i18next.t("battle:learnMoveNotLearned", { pokemonName, moveName }), undefined, true);
+      this.end();
       return;
     }
-    await globalScene.ui.showTextPromise(
-      i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }),
-      undefined,
-      false,
-    );
-    globalScene.ui.setModeWithoutClear(
-      UiMode.CONFIRM,
-      () => {
-        globalScene.ui.setMode(this.messageMode);
-        globalScene.ui
-          .showTextPromise(
-            i18next.t("battle:learnMoveNotLearned", {
-              pokemonName: getPokemonNameWithAffix(pokemon),
-              moveName: move.name,
-            }),
-            undefined,
-            true,
-          )
+
+    await ui.showTextPromise(i18next.t("battle:learnMoveStopTeaching", { moveName }), undefined, false);
+
+    const options: ConfirmModeConfig = {
+      yesHandler: () => {
+        ui.setMode(this.messageMode);
+        ui.showTextPromise(i18next.t("battle:learnMoveNotLearned", { pokemonName, moveName }), undefined, true) //
           .then(() => this.end());
       },
-      () => {
-        globalScene.ui.setMode(this.messageMode);
+      noHandler: () => {
+        ui.setMode(this.messageMode);
         this.replaceMoveCheck(move, pokemon);
       },
-    );
+    };
+
+    await ui.setModeWithoutClear(UiMode.CONFIRM, options);
   }
 
   /**
-   * This teaches the Pokemon the new move and ends the phase.
+   * This teaches the Pokemon the new move and ends the phase. \
    * When a Pokemon forgets a move and learns a new one, its 'Learn Move' message is significantly longer.
    *
    * Pokemon with a `moveset.length < 4`
    * > [Pokemon] learned [MoveName]
    *
    * Pokemon with a `moveset.length > 4`
-   * > 1... 2... and 3... and Poof!
-   * > [Pokemon] forgot how to use [MoveName]
-   * > And...
+   * > 1... 2... and 3... and Poof! \
+   * > [Pokemon] forgot how to use [MoveName] \
+   * > And... \
    * > [Pokemon] learned [MoveName]!
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
-  async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
+  private async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string): Promise<void> {
     if (this.learnMoveType === LearnMoveType.TM) {
-      if (!pokemon.usedTMs) {
-        pokemon.usedTMs = [];
+      if (!pokemon.usedTMs.includes(this.moveId)) {
+        pokemon.usedTMs.push(this.moveId);
       }
-      pokemon.usedTMs.push(this.moveId);
       globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
       if (this.cost === -1) {

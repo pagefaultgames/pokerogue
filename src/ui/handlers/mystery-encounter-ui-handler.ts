@@ -3,13 +3,13 @@ import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
@@ -23,7 +23,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
   private optionsContainer: Phaser.GameObjects.Container;
   // Length = max number of allowable options (4)
-  private optionScrollTweens: (Phaser.Tweens.Tween | null)[] = new Array(4).fill(null);
+  private readonly optionScrollTweens: (Phaser.Tweens.Tween | null)[] = new Array(4).fill(null);
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
@@ -46,10 +46,6 @@ export class MysteryEncounterUiHandler extends UiHandler {
   protected viewPartyXPosition = 0;
 
   protected blockInput = true;
-
-  constructor() {
-    super(UiMode.MYSTERY_ENCOUNTER);
-  }
 
   override setup() {
     const ui = this.getUi();

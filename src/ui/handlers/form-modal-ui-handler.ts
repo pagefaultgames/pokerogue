@@ -1,17 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { FormModalConfig, ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, truncateString } from "#utils/common";
 import type Phaser from "phaser";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-
-export interface FormModalConfig extends ModalConfig {
-  errorMessage?: string;
-}
 
 export abstract class FormModalUiHandler extends ModalUiHandler {
   protected editing = false;

@@ -3,14 +3,12 @@ import { SubstituteTag } from "#data/battler-tags";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import type { MoveId } from "#enums/move-id";
-import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
+import type { TargetSelectCallback } from "#types/ui-types";
 import { UiHandler } from "#ui/ui-handler";
 import { fixedInt } from "#utils/common";
-
-export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
@@ -27,7 +25,7 @@ export class TargetSelectUiHandler extends UiHandler {
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor() {
-    super(UiMode.TARGET_SELECT);
+    super();
 
     this.cursor = -1;
   }

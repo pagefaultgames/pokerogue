@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -38,7 +39,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { PersistentModifierRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { randInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -231,7 +232,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       levelAdditiveModifier: 1,
       pokemonConfigs: [
         {
-          species: getPokemonSpecies(SpeciesId.GREEDENT),
+          species: speciesDataRegistry.getSpecies(SpeciesId.GREEDENT),
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
@@ -240,20 +241,18 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              statChangesForBattle,
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange(statChangesForBattle, 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],
     };
 
     encounter.enemyPartyConfigs = [config];
-    encounter.setDialogueToken("greedentName", getPokemonSpecies(SpeciesId.GREEDENT).getName());
+    encounter.setDialogueToken("greedentName", speciesDataRegistry.getSpecies(SpeciesId.GREEDENT).getName());
 
     return true;
   })
@@ -380,7 +379,13 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Let it have the food
         // Greedent joins the team, level equal to 2 below highest party member (shiny locked)
         const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-        const greedent = new EnemyPokemon(getPokemonSpecies(SpeciesId.GREEDENT), level, TrainerSlot.NONE, false, true);
+        const greedent = new EnemyPokemon(
+          speciesDataRegistry.getSpecies(SpeciesId.GREEDENT),
+          level,
+          TrainerSlot.NONE,
+          false,
+          true,
+        );
         greedent.moveset = [
           new PokemonMove(MoveId.THRASH),
           new PokemonMove(MoveId.BODY_PRESS),

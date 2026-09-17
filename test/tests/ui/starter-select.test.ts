@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { TitlePhase } from "#phases/title-phase";
 import { GameManager } from "#test/framework/game-manager";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
@@ -56,7 +56,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -116,7 +116,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -179,7 +179,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -241,7 +241,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -301,7 +301,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -362,7 +362,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -422,7 +422,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -481,7 +481,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -545,7 +545,7 @@ describe.todo("UI - Starter select", () => {
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
-        options = optionSelectUiHandler.getOptionsWithScroll();
+        options = optionSelectUiHandler["options"];
         resolve();
       });
     });
@@ -565,9 +565,11 @@ describe.todo("UI - Starter select", () => {
       });
     });
 
-    expect(starterSelectUiHandler?.starterSpecies.length).toBe(1);
-    expect(starterSelectUiHandler?.starterSpecies[0].generation).toBe(1);
-    expect(starterSelectUiHandler?.starterSpecies[0].speciesId).toBe(32);
+    expect(starterSelectUiHandler?.partyStarterIds.length).toBe(1);
+    const starterId = starterSelectUiHandler?.partyStarterIds[0];
+    const starterSpecies = speciesDataRegistry.getSpecies(starterId!);
+    expect(starterSpecies.generation).toBe(1);
+    expect(starterSpecies.speciesId).toBe(32);
     expect(starterSelectUiHandler?.cursorObj.x).toBe(53);
     expect(starterSelectUiHandler?.cursorObj.y).toBe(31);
 

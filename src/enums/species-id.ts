@@ -2085,6 +2085,8 @@ export enum SpeciesId {
   ALOLA_EXEGGUTOR = 2103,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Marowak_(Pokémon) | Source} */
   ALOLA_MAROWAK = 2105,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Greninja_(Pokémon) | Source} */
+  BATTLE_BOND_GRENINJA = 2658,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Floette_(Pokémon) | Source} */
   ETERNAL_FLOETTE = 2670,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Meowth_(Pokémon) | Source} */
@@ -2143,6 +2145,8 @@ export enum SpeciesId {
   HISUI_SAMUROTT = 6503,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lilligant_(Pokémon) | Source} */
   HISUI_LILLIGANT = 6549,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Basculin_(Pokémon) | Source} */
+  HISUI_BASCULIN = 6550,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zorua_(Pokémon) | Source} */
   HISUI_ZORUA = 6570,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zoroark_(Pokémon) | Source} */

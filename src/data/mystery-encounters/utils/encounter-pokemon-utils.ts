@@ -1,6 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
@@ -16,7 +17,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
-import { PlayerGender } from "#enums/player-gender";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -32,12 +33,11 @@ import {
   showEncounterText,
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
+import type { OptionSelectModeConfig } from "#types/ui-types";
 import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** Will give +1 level every 10 waves */
@@ -45,31 +45,22 @@ export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
 
 /**
  * Gets the sprite key and file root for a given PokemonSpecies (accounts for gender, shiny, variants, forms, and experimental)
- * @param species
+ * @param speciesId
  * @param female
  * @param formIndex
  * @param shiny
  * @param variant
  */
 export function getSpriteKeysFromSpecies(
-  species: SpeciesId,
+  speciesId: SpeciesId,
   female?: boolean,
   formIndex?: number,
   shiny?: boolean,
   variant?: number,
 ): { spriteKey: string; fileRoot: string } {
-  const spriteKey = getPokemonSpecies(species).getSpriteKey(
-    female ?? false,
-    formIndex ?? 0,
-    shiny ?? false,
-    variant ?? 0,
-  );
-  const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(
-    female ?? false,
-    formIndex ?? 0,
-    shiny ?? false,
-    variant ?? 0,
-  );
+  const species = speciesDataRegistry.getSpecies(speciesId);
+  const spriteKey = species.getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
+  const fileRoot = species.getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
   return { spriteKey, fileRoot };
 }
 
@@ -261,20 +252,19 @@ export function getRandomSpeciesByStarterCost(
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = speciesDataRegistry
-    .getAllStarters()
-    .map(s => [s, speciesDataRegistry.getStarterCost(s)])
-    .filter(s => {
-      const pokemonSpecies = getPokemonSpecies(s[0]);
-      return (
-        pokemonSpecies
-        && (!excludedSpecies || !excludedSpecies.includes(s[0]))
-        && (allowSubLegendary || !pokemonSpecies.subLegendary)
-        && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical)
-      );
-    })
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
+  let filteredSpecies: [species: PokemonSpecies, cost: number][] = [];
+
+  for (const species of speciesDataRegistry.getAllStarters(true)) {
+    if (
+      species
+      && !excludedSpecies?.includes(species.speciesId)
+      && (allowSubLegendary || !species.subLegendary)
+      && (allowLegendary || !species.legendary)
+      && (allowMythical || !species.mythical)
+    ) {
+      filteredSpecies.push([species, speciesDataRegistry.getStarterCost(species.speciesId)]);
+    }
+  }
 
   if (types && types.length > 0) {
     filteredSpecies = filteredSpecies.filter(
@@ -470,9 +460,7 @@ export function trainerThrowPokeball(
   });
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(512, () => {
       audioManager.playSound("se/pb_throw");
 
@@ -481,9 +469,7 @@ export function trainerThrowPokeball(
       globalScene.time.delayedCall(256, () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(768, () => {
-          globalScene.trainer.setTexture(
-            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-          );
+          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
         });
       });
 
@@ -647,6 +633,8 @@ export async function catchPokemon(
   showCatchObtainMessage = true,
   isObtain = false,
 ): Promise<void> {
+  const { gameData, phaseManager, pokemonInfoContainer, ui } = globalScene;
+
   const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
@@ -668,10 +656,11 @@ export async function catchPokemon(
     globalScene.validateAchv(achvs.CATCH_MYTHICAL);
   }
 
-  globalScene.pokemonInfoContainer.show(pokemon, true);
+  pokemonInfoContainer.show(pokemon, true);
 
-  globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
+  gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
+  // TODO: remove all this duplicated code from `AttemptCapturePhase`
   return new Promise(resolve => {
     const addStatus = new BooleanHolder(true);
     applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
@@ -681,8 +670,8 @@ export async function catchPokemon(
         if (!globalScene.getEnemyParty().some(p => p.id === pokemon.id)) {
           globalScene.getEnemyParty().push(pokemon);
         }
-        globalScene.phaseManager.unshiftNew("VictoryPhase", pokemon.id, true);
-        globalScene.pokemonInfoContainer.hide();
+        phaseManager.unshiftNew("VictoryPhase", pokemon.id, true);
+        pokemonInfoContainer.hide();
         if (pokeball) {
           removePb(pokeball);
         }
@@ -709,96 +698,96 @@ export async function catchPokemon(
           }
         });
       };
-      Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+      Promise.all([pokemon.hideInfo(), gameData.setPokemonCaught(pokemon)]).then(() => {
         if (!(isObtain || addStatus.value)) {
           removePokemon();
           end();
           return;
         }
         if (globalScene.getPlayerParty().length === 6) {
-          const promptRelease = () => {
-            globalScene.ui.showText(
-              i18next.t("battle:partyFull", {
-                pokemonName: pokemon.getNameToRender(),
-              }),
-              null,
-              () => {
-                globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
-                globalScene.ui.setMode(
-                  UiMode.CONFIRM,
-                  () => {
-                    const newPokemon = globalScene.addPlayerPokemon(
-                      pokemon.species,
-                      pokemon.level,
-                      pokemon.abilityIndex,
-                      pokemon.formIndex,
-                      pokemon.gender,
-                      pokemon.shiny,
-                      pokemon.variant,
-                      pokemon.ivs,
-                      pokemon.nature,
-                      pokemon,
-                    );
-                    globalScene.ui.setMode(
-                      UiMode.SUMMARY,
-                      newPokemon,
-                      0,
-                      SummaryUiMode.DEFAULT,
-                      () => {
-                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-                          promptRelease();
-                        });
-                      },
-                      false,
-                    );
-                  },
-                  () => {
-                    const attributes = {
-                      shiny: pokemon.shiny,
-                      variant: pokemon.variant,
-                      form: pokemon.formIndex,
-                      female: pokemon.gender === Gender.FEMALE,
-                    };
-                    globalScene.ui.setOverlayMode(
-                      UiMode.POKEDEX_PAGE,
-                      pokemon.species,
-                      pokemon.formIndex,
-                      [attributes],
-                      null,
-                      () => {
-                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-                          promptRelease();
-                        });
-                      },
-                    );
-                  },
-                  () => {
-                    globalScene.ui.setMode(
-                      UiMode.PARTY,
-                      PartyUiMode.RELEASE,
-                      0,
-                      (slotIndex: number, _option: PartyOption) => {
-                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-                          if (slotIndex < 6) {
-                            addToParty(slotIndex);
-                          } else {
-                            promptRelease();
-                          }
-                        });
-                      },
-                    );
-                  },
-                  () => {
-                    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-                      removePokemon();
-                      end();
-                    });
-                  },
-                  "fullParty",
-                );
+          const addToPartyMenuConfig: OptionSelectModeConfig = {
+            options: [
+              {
+                label: i18next.t("partyUiHandler:summary"),
+                handler: () => {
+                  const newPokemon = globalScene.addPlayerPokemon(
+                    pokemon.species,
+                    pokemon.level,
+                    pokemon.abilityIndex,
+                    pokemon.formIndex,
+                    pokemon.gender,
+                    pokemon.shiny,
+                    pokemon.variant,
+                    pokemon.ivs,
+                    pokemon.nature,
+                    pokemon,
+                  );
+                  ui.setMode(
+                    UiMode.SUMMARY,
+                    newPokemon,
+                    0,
+                    SummaryUiMode.DEFAULT,
+                    () => {
+                      ui.setMode(UiMode.MESSAGE).then(() => promptRelease());
+                    },
+                    false,
+                  );
+                  return true;
+                },
               },
-            );
+              {
+                label: i18next.t("menuUiHandler:pokedex"),
+                handler: () => {
+                  const attributes = {
+                    shiny: pokemon.shiny,
+                    variant: pokemon.variant,
+                    form: pokemon.formIndex,
+                    female: pokemon.gender === Gender.FEMALE,
+                  };
+                  ui.setOverlayMode(UiMode.POKEDEX_PAGE, pokemon.species, pokemon.formIndex, [attributes], null, () => {
+                    ui.setMode(UiMode.MESSAGE).then(() => promptRelease());
+                  });
+                  return true;
+                },
+              },
+              {
+                label: i18next.t("menu:yes"),
+                handler: () => {
+                  ui.setMode(UiMode.PARTY, PartyUiMode.RELEASE, 0, (slotIndex: number, _option: PartyOption) => {
+                    ui.setMode(UiMode.MESSAGE).then(() => {
+                      if (slotIndex < 6) {
+                        addToParty(slotIndex);
+                      } else {
+                        promptRelease();
+                      }
+                    });
+                  });
+                  return true;
+                },
+              },
+              {
+                label: i18next.t("menu:no"),
+                handler: () => {
+                  ui.setMode(UiMode.MESSAGE).then(() => {
+                    removePokemon();
+                    end();
+                  });
+                  return true;
+                },
+              },
+            ],
+            yOffset: 48,
+            onResize: (w: number, _h: number) => {
+              pokemonInfoContainer.makeRoomForOptionSelectUi(w);
+            },
           };
+
+          const promptRelease = (): void => {
+            ui.showText(i18next.t("battle:partyFull", { pokemonName: pokemon.getNameToRender() }), null, () => {
+              ui.setMode(UiMode.OPTION_SELECT, addToPartyMenuConfig);
+            });
+          };
+
           promptRelease();
         } else {
           addToParty();
@@ -815,7 +804,7 @@ export async function catchPokemon(
       } else {
         catchMessage = "battle:pokemonCaughtButChallenge";
       }
-      globalScene.ui.showText(
+      ui.showText(
         i18next.t(catchMessage, { pokemonName: pokemon.getNameToRender() }),
         null,
         doPokemonCatchMenu,
@@ -962,13 +951,15 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
     w += speciesWeightPair[1];
     if (roll < w) {
-      const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
-      return getPokemonSpecies(initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode));
+      const initialSpecies = speciesDataRegistry.getSpecies(speciesWeightPair[0]);
+      return speciesDataRegistry.getSpecies(
+        initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode),
+      );
     }
   }
 
   // Defaults to Scyther
-  return getPokemonSpecies(SpeciesId.SCYTHER);
+  return speciesDataRegistry.getSpecies(SpeciesId.SCYTHER);
 }
 
 /**

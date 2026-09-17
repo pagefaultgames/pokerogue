@@ -69,7 +69,7 @@ describe("Moves - Sparkly Swirl", () => {
     expect(leftOpp.status?.effect).toBeTruthy();
     expect(rightOpp.status?.effect).toBeTruthy();
 
-    expect(leftOpp.status?.effect).toBe(StatusEffect.BURN);
-    expect(rightOpp.status?.effect).toBe(StatusEffect.BURN);
+    expect(leftOpp).toHaveStatusEffect(StatusEffect.BURN);
+    expect(rightOpp).toHaveStatusEffect(StatusEffect.BURN);
   });
 });

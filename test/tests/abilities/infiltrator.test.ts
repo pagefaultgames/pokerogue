@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -8,6 +9,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -24,11 +26,10 @@ describe("Abilities - Infiltrator", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.TACKLE, MoveId.WATER_GUN, MoveId.SPORE, MoveId.BABY_DOLL_EYES])
       .ability(AbilityId.INFILTRATOR)
       .battleStyle("single")
       .criticalHits(false)
-      .enemySpecies(SpeciesId.SNORLAX)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
@@ -51,65 +52,67 @@ describe("Abilities - Infiltrator", () => {
       tagType: ArenaTagType.AURORA_VEIL,
       move: MoveId.TACKLE,
     },
-  ])("should bypass the target's $effectName", async ({ tagType, move }) => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  ])("should bypass the target's $effectName when dealing damage", async ({ tagType, move }) => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
 
-    const preScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
+    const preScreenDmg = karp.getAttackDamage({ source: feebas, move: allMoves[move] }).damage;
 
-    game.scene.arena.addTag(tagType, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(tagType, 1, MoveId.NONE, karp.id, ArenaTagSide.ENEMY, true);
 
-    const postScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
+    const postScreenDmg = karp.getAttackDamage({ source: feebas, move: allMoves[move] }).damage;
 
     expect(postScreenDmg).toBe(preScreenDmg);
-    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
+    expect(feebas).toHaveAbilityApplied(AbilityId.INFILTRATOR);
   });
 
   it("should bypass the target's Safeguard", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
-
-    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, karp.id, ArenaTagSide.ENEMY, true);
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
-    expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
-    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
+    expect(feebas).toHaveAbilityApplied(AbilityId.INFILTRATOR);
+    expect(karp).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
-  // TODO: fix this interaction to pass this test
-  it.todo("should bypass the target's Mist", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("should bypass the target's Mist", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+    game.scene.arena.addTag(ArenaTagType.MIST, 1, MoveId.NONE, karp.id, ArenaTagSide.ENEMY, true);
 
-    game.scene.arena.addTag(ArenaTagType.MIST, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.move.use(MoveId.BABY_DOLL_EYES);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.BABY_DOLL_EYES);
-
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
+    expect(feebas).toHaveAbilityApplied(AbilityId.INFILTRATOR);
+    expect(karp).toHaveStatStage(Stat.ATK, -1);
+    expect(game).not.toHaveShownMessage(
+      i18next.t("arenaTag:mistApply", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+      }),
+    );
   });
 
   it("should bypass the target's Substitute", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+    karp.addTag(BattlerTagType.SUBSTITUTE, 1, MoveId.NONE, karp.id);
 
-    enemy.addTag(BattlerTagType.SUBSTITUTE, 1, MoveId.NONE, enemy.id);
+    game.move.use(MoveId.BREAKING_SWIPE);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.BABY_DOLL_EYES);
-
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
+    expect(feebas).toHaveAbilityApplied(AbilityId.INFILTRATOR);
+    expect(karp).not.toHaveFullHp();
+    expect(karp).toHaveStatStage(Stat.ATK, -1);
   });
 });

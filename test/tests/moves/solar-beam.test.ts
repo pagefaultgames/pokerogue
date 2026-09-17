@@ -1,8 +1,11 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
@@ -64,10 +67,19 @@ describe("Moves - Solar Beam", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
+    const unshiftNewSpy = vi.spyOn(game.scene.phaseManager, "unshiftNew");
 
     game.move.select(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
+    expect(unshiftNewSpy).toHaveBeenCalledWith(
+      "MovePhase",
+      playerPokemon,
+      [BattlerIndex.ENEMY],
+      expect.objectContaining({ moveId: MoveId.SOLAR_BEAM }),
+      MoveUseMode.IGNORE_PP,
+      MovePhaseTimingModifier.FIRST,
+    );
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);

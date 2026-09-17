@@ -1,10 +1,11 @@
 import { BerryType } from "#enums/berry-type";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
-import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -77,7 +78,7 @@ describe("UI - Transfer Item Options", () => {
     handler.processInput(Button.ACTION);
 
     await new Promise(r => setTimeout(r, 100));
-    expect(game.scene.ui.getMode()).toBe(UiMode.SUMMARY);
+    expect(game.scene.ui.mode).toBe(UiMode.SUMMARY);
   });
 
   it.todo("should open the pokèdex screen while transfering an item", async () => {
@@ -116,7 +117,7 @@ describe("UI - Transfer Item Options", () => {
     handler.processInput(Button.ACTION);
 
     await new Promise(r => setTimeout(r, 100));
-    expect(game.scene.ui.getMode()).toBe(UiMode.POKEDEX_PAGE);
+    expect(game.scene.ui.mode).toBe(UiMode.POKEDEX_PAGE);
   });
 
   it.todo("should open the rename screen and rename the pokemon while transfering an item", async () => {
@@ -166,7 +167,7 @@ describe("UI - Transfer Item Options", () => {
     expect(nickname).toBe(undefined);
 
     await new Promise(r => setTimeout(r, 100));
-    expect(game.scene.ui.getMode()).toBe(UiMode.RENAME_POKEMON);
+    expect(game.scene.ui.mode).toBe(UiMode.RENAME_POKEMON);
     await new Promise(r => setTimeout(r, 100));
     handler = game.scene.ui.getHandler() as RenameFormUiHandler;
     handler["inputs"][0].setText("New nickname");
@@ -225,7 +226,7 @@ describe("UI - Transfer Item Options", () => {
     handler.processInput(Button.ACTION);
 
     await new Promise(r => setTimeout(r, 100));
-    expect(game.scene.ui.getMode()).toBe(UiMode.PARTY);
+    expect(game.scene.ui.mode).toBe(UiMode.PARTY);
     expect(pokemon.pauseEvolutions).toBe(true);
   });
 });

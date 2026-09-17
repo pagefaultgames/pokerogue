@@ -7,7 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 export class TeraPhase extends BattlePhase {
@@ -26,7 +26,7 @@ export class TeraPhase extends BattlePhase {
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:pokemonTerastallized", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-        type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.pokemon.getTeraType()])}`),
+        type: i18next.t(getPokemonTypeLocaleKey(this.pokemon.getTeraType())),
       }),
     );
 

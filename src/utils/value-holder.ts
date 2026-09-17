@@ -53,7 +53,6 @@ export class ValueHolder<Value, Base extends Primitive = Primitive> {
    * @sealed
    */
   constructor(value: Value, ...MISMATCH: RestrictParamNoExtend<Value, Base>);
-  // biome-ignore lint/nursery/noShadow: bug in biome with constructor overloads
   constructor(value: Value) {
     this.value = value as Value & Base;
   }

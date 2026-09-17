@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
+import { LANGUAGE_MAX_OPTIONS } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
-import { languageOptions } from "#system/settings-language";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { SUPPORTED_LANGUAGE_ENTRIES } from "#system/supported-languages";
+import type { ModalConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import JSZip from "jszip";
@@ -111,11 +111,28 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       .setPositionRelative(this.infoContainer, 40, 0)
       .on("pointerdown", () => {
         this.setInteractive(false);
-        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-          options: languageOptions,
-          maxOptions: 7,
-          delay: 1000,
+
+        const options: OptionSelectItem[] = [];
+        const maxOptions = LANGUAGE_MAX_OPTIONS;
+
+        for (const [lang, props] of Object.entries(SUPPORTED_LANGUAGE_ENTRIES)) {
+          if (lang === i18next.resolvedLanguage) {
+            continue;
+          }
+
+          const label = props.label;
+          const handler = (): boolean => this.changeLanguageHandler(lang);
+
+          options.push({ label, handler });
+        }
+
+        options.push({
+          label: i18next.t("settings:back"),
+          handler: () => this.cancelLanguageChangeHandler(),
         });
+
+        const optionSelectConfig: OptionSelectModeConfig = { options, maxOptions, inputDelay: 1000 };
+        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, optionSelectConfig);
       });
 
     this.infoContainer.setAlpha(0);
@@ -128,6 +145,25 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     });
   }
 
+  private changeLanguageHandler(lang: string): boolean {
+    try {
+      i18next.changeLanguage(lang);
+      // Reloading the whole page is necessary to apply the new locales
+      // due to various static elements being translated
+      window.location.reload();
+      return true;
+    } catch (error) {
+      console.error("Error changing locale:", error);
+      return false;
+    }
+  }
+
+  private cancelLanguageChangeHandler(): boolean {
+    globalScene.ui.revertMode();
+    this.setInteractive(true);
+    return true;
+  }
+
   /**
    * Show a panel with all usernames found in localStorage
    * @remarks
@@ -135,7 +171,8 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
    * @param config - The modal configuration
    */
   private showUsernames(config: ModalConfig): void {
-    if (globalScene.tweens.getTweensOf(this.infoContainer).length > 0) {
+    const { scaledCanvas, tweens, ui } = globalScene;
+    if (tweens.getTweensOf(this.infoContainer).length > 0) {
       return;
     }
 
@@ -154,7 +191,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
 
     const options: OptionSelectItem[] = [];
     const handler = () => {
-      globalScene.ui.revertMode();
+      ui.revertMode();
       this.infoContainer.disableInteractive();
       this.setInteractive(true);
       return true;
@@ -164,7 +201,11 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       options.push({ label: key.replace(keyToFind, ""), handler });
     }
 
-    globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, delay: 1000 });
+    const xOffset = scaledCanvas.width;
+    const yOffset = scaledCanvas.height - this.usernameInfoImage.displayHeight - 16 * dataKeys.length - 22;
+    const optionSelectConfig: OptionSelectModeConfig = { options, inputDelay: 1000, xOffset, yOffset };
+    ui.setOverlayMode(UiMode.OPTION_SELECT, optionSelectConfig);
+
     this.setInteractive(false);
     this.infoContainer.setInteractive(
       new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),

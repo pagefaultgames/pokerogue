@@ -84,18 +84,5 @@ describe("Moves - Mist", () => {
     expect(feebas).toHaveStatStage(Stat.DEF, -1);
   });
 
-  it("should be ignored by opponents with Infiltrator", async () => {
-    game.override.ability(AbilityId.INFILTRATOR);
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    game.move.use(MoveId.GROWL);
-    await game.move.forceEnemyMove(MoveId.MIST);
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(game).toHaveArenaTag(ArenaTagType.MIST, ArenaTagSide.ENEMY);
-    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
-    await game.toEndOfTurn();
-
-    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
-  });
+  // infiltrator interaction tested inside infiltrator.test.ts
 });

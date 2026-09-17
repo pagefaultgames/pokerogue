@@ -1,5 +1,7 @@
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { SpeciesId } from "#enums/species-id";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#types/move-types";
 import type { BooleanHolder } from "#utils/common";
 
 /**
@@ -95,4 +97,77 @@ export interface RandomEncounterParams {
 
   /** An optional {@linkcode BooleanHolder} used to let the caller know if it pulled from an event. */
   isEventEncounter?: BooleanHolder;
+}
+
+/**
+ * Parameters for {@linkcode Pokemon#getEffectiveStat}
+ *
+ * @remarks
+ * Does not include the `stat` parameter, which is passed outside of the object.
+ */
+export interface GetEffectiveStatParams {
+  /** The other pokemon in the interaction
+   *
+   * @remarks
+   * Used to respect the abilities for the interaction; (unaware, mega sol, ally's flower gift)
+   */
+  opponent?: Pokemon;
+  /**
+   * The move being used in the interaction
+   *
+   * @remarks
+   * Passed to respect the effects of moves that ignore stat changes.
+   */
+  move?: Move;
+  /**
+   * Whether to ignore the user's ability during the calculation
+   * @defaultValue `false`
+   */
+  ignoreAbility?: boolean;
+  /**
+   * Whether to ignore the opponent's ability during the calculation
+   * @defaultValue `false`
+   */
+  ignoreOppAbility?: boolean;
+  /**
+   * Whether to ignore the ability of the opponent's ally
+   *
+   * @defaultValue `false`
+   *
+   * @remarks
+   * For example, the effects of the ally's
+   * {@link https://bulbapedia.bulbagarden.net/wiki/Flower_Gift_(Ability) | Flower Gift} ability
+   */
+  ignoreAllyAbility?: boolean;
+  /**
+   * Whether the move being used will land as a critical hit
+   * @defaultValue `false`
+   *
+   * @remarks
+   * Used to ignore offensive/defensive stat stage drops/boosts.
+   */
+  isCritical?: boolean;
+  /**
+   * Whether to suppress changes to game state
+   * @defaultValue `true`
+   *
+   * @remarks
+   * Passed to the `applyAbAttrs` method invocations
+   */
+  simulated?: boolean;
+  /**
+   * Whether to ignore this pokemon's held items
+   * @defaultValue `false`
+   */
+  ignoreHeldItems?: boolean;
+  /**
+   * Whether the stat is being calculated as though the move is being used
+   * _against_ this Pokémon.
+   * @defaultValue `false`
+   *
+   * @remarks
+   * Currently only used to ignore the weather boost for sandstorm/snow
+   * when the opponent has Mega Sol.
+   */
+  forDefend?: boolean;
 }

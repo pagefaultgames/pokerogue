@@ -9,6 +9,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { mockI18next } from "#test/utils/test-utils";
 import { beforeEach, describe, expect, it } from "vitest";
 
+// TODO: Do we even need this file at all?
 describe("Status Effect Messages", () => {
   beforeEach(() => {
     mockI18next();

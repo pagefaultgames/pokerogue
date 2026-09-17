@@ -6,7 +6,6 @@ import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /**
  * Controls the maximum level difference that a Pokémon spawned with
@@ -165,7 +164,7 @@ export function determineEnemySpecies(
   const randomLevel = randSeedIntRange(choice, Math.round(choice * multiplier));
   if (randomLevel <= level) {
     return determineEnemySpecies(
-      getPokemonSpecies(evoSpecies),
+      speciesDataRegistry.getSpecies(evoSpecies),
       level,
       true,
       forTrainer,

@@ -15,7 +15,7 @@ enumExp     = re.compile('.*,')                 # Regex for a regular enum line
 
 numberExp = re.compile(r' +\= +\d+,')
 
-replaceList = ['ALOLA', 'ETERNAL', 'GALAR', 'HISUI', 'PALDEA', 'BLOODMOON']
+replaceList = ['ALOLA', 'ETERNAL', 'GALAR', 'HISUI', 'PALDEA', 'BLOODMOON', 'BATTLE_BOND']
 
 for args in filenames:
 

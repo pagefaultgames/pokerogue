@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -11,7 +12,6 @@ import { applyDamageToPokemon } from "#mystery-encounters/encounter-pokemon-util
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 const OPTION_1_REQUIRED_MOVE = MoveId.SURF;
 const OPTION_2_REQUIRED_MOVE = MoveId.FLY;
@@ -129,7 +129,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  * Generic handler for using a guiding pokemon to guide you back.
  */
 function handlePokemonGuidingYouPhase() {
-  const laprasSpecies = getPokemonSpecies(SpeciesId.LAPRAS);
+  const laprasSpecies = speciesDataRegistry.getSpecies(SpeciesId.LAPRAS);
   const { mysteryEncounter } = globalScene.currentBattle;
 
   if (mysteryEncounter?.selectedOption?.primaryPokemon?.id) {

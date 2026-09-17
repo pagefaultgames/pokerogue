@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import * as BattleAnims from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
@@ -21,14 +22,13 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { ClowningAroundEncounter } from "#mystery-encounters/clowning-around-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/clowningAround";
@@ -103,12 +103,12 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(config.doubleBattle).toBe(true);
     expect(config.trainerConfig?.trainerType).toBe(TrainerType.HARLEQUIN);
     expect(config.pokemonConfigs?.[0]).toEqual({
-      species: getPokemonSpecies(SpeciesId.MR_MIME),
+      species: speciesDataRegistry.getSpecies(SpeciesId.MR_MIME),
       isBoss: true,
       moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
-      species: getPokemonSpecies(SpeciesId.BLACEPHALON),
+      species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
       moveSet: [MoveId.TRICK, MoveId.HYPNOSIS, MoveId.SHADOW_BALL, MoveId.MIND_BLOWN],
@@ -196,8 +196,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       });
 
       // Run to ability train option selection
-      const optionSelectUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
-      vi.spyOn(optionSelectUiHandler, "show");
+      const confirmUiHandler = game.scene.ui.handlers[UiMode.CONFIRM] as ConfirmUiHandler;
+      vi.spyOn(confirmUiHandler, "show");
       const partyUiHandler = game.scene.ui.handlers[UiMode.PARTY] as PartyUiHandler;
       vi.spyOn(partyUiHandler, "show");
       game.endPhase();
@@ -205,9 +205,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(game).toBeAtPhase("PostMysteryEncounterPhase");
 
       // Wait for Yes/No confirmation to appear
-      await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalled());
+      await vi.waitFor(() => expect(confirmUiHandler.show).toHaveBeenCalled());
       // Select "Yes" on train ability
-      optionSelectUiHandler.processInput(Button.ACTION);
+      confirmUiHandler.processInput(Button.ACTION);
       // Select first pokemon in party to train
       await vi.waitFor(() => expect(partyUiHandler.show).toHaveBeenCalled());
       partyUiHandler.processInput(Button.ACTION);

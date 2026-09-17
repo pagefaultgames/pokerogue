@@ -1,3 +1,4 @@
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import * as Messages from "#app/messages";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
@@ -6,7 +7,6 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { GameManager } from "#test/framework/game-manager";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -22,8 +22,8 @@ function testMoveEffectiveness(
   vi.spyOn(Messages, "getPokemonNameWithAffix").mockReturnValue("");
   game.override.enemyAbility(targetAbility);
 
-  const user = game.scene.addPlayerPokemon(getPokemonSpecies(SpeciesId.SNORLAX), 5);
-  const target = game.scene.addEnemyPokemon(getPokemonSpecies(targetSpecies), 5, TrainerSlot.NONE);
+  const user = game.scene.addPlayerPokemon(speciesDataRegistry.getSpecies(SpeciesId.SNORLAX), 5);
+  const target = game.scene.addEnemyPokemon(speciesDataRegistry.getSpecies(targetSpecies), 5, TrainerSlot.NONE);
 
   if (teraType !== undefined) {
     target.teraType = teraType;

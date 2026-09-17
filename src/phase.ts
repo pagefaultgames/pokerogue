@@ -1,11 +1,22 @@
 import { globalScene } from "#app/global-scene";
+import type { PhaseManager } from "#app/phase-manager";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 
+/** A Phase represents a discrete chunk of game logic that must be completed. */
 export abstract class Phase {
-  /** Start the current phase. */
+  /**
+   * Start the current phase.
+   * Called automatically by the {@linkcode PhaseManager} when it is this Phase's turn to run.
+   */
+  // TODO: make this abstract
   public start(): void {}
 
-  /** End the current phase and start a new one. */
+  /**
+   * End the current phase and start the next one.
+   * @remarks
+   * Phases that override `end()` are responsible for calling `super.end()` themselves (after any async operations resolve).
+   * Additionally, attempting to call this function multiple times from the same Phase will likely crash the game.
+   */
   public end(): void {
     globalScene.phaseManager.shiftPhase();
   }

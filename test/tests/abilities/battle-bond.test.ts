@@ -20,8 +20,8 @@ describe("Abilities - Battle Bond", () => {
   });
 
   describe("Greninja", () => {
-    const baseForm = 1;
-    const ashForm = 2;
+    const baseForm = 0;
+    const ashForm = 1;
 
     beforeEach(() => {
       game = new GameManager(phaserGame);
@@ -29,7 +29,7 @@ describe("Abilities - Battle Bond", () => {
         .battleStyle("single")
         .startingWave(4) // Leads to arena reset on Wave 5 trainer battle
         .ability(AbilityId.BATTLE_BOND)
-        .starterForms({ [SpeciesId.GRENINJA]: ashForm })
+        .starterForms({ [SpeciesId.BATTLE_BOND_GRENINJA]: ashForm })
         .enemySpecies(SpeciesId.BULBASAUR)
         .enemyMoveset(MoveId.SPLASH)
         .startingLevel(100) // Avoid levelling up
@@ -37,7 +37,7 @@ describe("Abilities - Battle Bond", () => {
     });
 
     it("check if fainted pokemon switches to base form on arena reset", async () => {
-      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.GRENINJA);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.BATTLE_BOND_GRENINJA);
 
       const greninja = game.scene.getPlayerParty()[1];
       expect(greninja.formIndex).toBe(ashForm);
@@ -56,7 +56,7 @@ describe("Abilities - Battle Bond", () => {
     });
 
     it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
-      await game.classicMode.startBattle(SpeciesId.GRENINJA);
+      await game.classicMode.startBattle(SpeciesId.BATTLE_BOND_GRENINJA);
 
       const waterShuriken = allMoves[MoveId.WATER_SHURIKEN];
       vi.spyOn(waterShuriken, "calculateBattlePower");
@@ -157,8 +157,8 @@ describe("Abilities - Battle Bond", () => {
     });
 
     it.each([
-      { baseSpecies: SpeciesId.GRENINJA, fusionSpecies: SpeciesId.MILOTIC, slot: "Base" },
-      { baseSpecies: SpeciesId.MILOTIC, fusionSpecies: SpeciesId.GRENINJA, slot: "Extra" },
+      { baseSpecies: SpeciesId.BATTLE_BOND_GRENINJA, fusionSpecies: SpeciesId.MILOTIC, slot: "Base" },
+      { baseSpecies: SpeciesId.MILOTIC, fusionSpecies: SpeciesId.BATTLE_BOND_GRENINJA, slot: "Extra" },
     ])("should not activate for fusions if Greninja is the $slot species", async ({ baseSpecies, fusionSpecies }) => {
       game.override.starterFusionSpecies(baseSpecies).enableStarterFusion();
       await game.classicMode.startBattle(fusionSpecies);

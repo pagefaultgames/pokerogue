@@ -11,8 +11,71 @@
   --color-dark: hsl(0, 0%, 10%);
 }
 
-html {
+html,
+body,
+#app,
+#touchControls {
   touch-action: none;
+}
+
+html[data-ui-theme="DEFAULT"][data-window-type="RED_ORANGE"] {
+  --color-base: #6b5a73;
+  --color-light: #DD5748;
+  --color-dark: #7E4955;
+}
+
+html[data-ui-theme="DEFAULT"][data-window-type="TEAL"] {
+  --color-base: #6b5a73;
+  --color-light: #48DDAA;
+  --color-dark: #4D7574;
+}
+
+html[data-ui-theme="DEFAULT"][data-window-type="LIGHT_GRAY"] {
+  --color-base: #6b5a73;
+  --color-light: #C5C5C5;
+  --color-dark: #766D7E;
+}
+
+html[data-ui-theme="DEFAULT"][data-window-type="GOLDENROD"] {
+  --color-base: #6b5a73;
+  --color-light: #EBC07C;
+  --color-dark: #836C66;
+}
+
+html[data-ui-theme="DEFAULT"][data-window-type="MEDIUM_GRAY"] {
+  --color-base: #686868;
+  --color-light: #E8E8E8;
+  --color-dark: #919191;
+}
+
+html[data-ui-theme="LEGACY"][data-window-type="RED_ORANGE"] {
+  --color-base: #706880;
+  --color-light: #8888c8;
+  --color-dark: #484868;
+}
+
+html[data-ui-theme="LEGACY"][data-window-type="TEAL"] {
+  --color-base: #d04028;
+  --color-light: #e0a028;
+  --color-dark: #902008;
+}
+
+html[data-ui-theme="LEGACY"][data-window-type="LIGHT_GRAY"] {
+  --color-base: #48b840;
+  --color-light: #88d880;
+  --color-dark: #089040;
+}
+
+html[data-ui-theme="LEGACY"][data-window-type="GOLDENROD"] {
+  --color-base: #2068d0;
+  --color-light: #80b0e0;
+  --color-dark: #104888;
+}
+
+html[data-ui-theme="LEGACY"][data-window-type="MEDIUM_GRAY"] {
+  --color-base: #706880;
+  --color-light: #8888c8;
+  --color-dark: #484868;
 }
 
 body {
@@ -55,11 +118,11 @@ body {
 
 @media (pointer: coarse) {
   /* hasTouchscreen() && !isTouchControlsEnabled */
-  body:has(> #touchControls[class="visible"]) #app {
+  body:has(> #touchControls.visible) #app {
     align-items: start;
   }
 
-  body:has(> #touchControls[class="visible"]) #app > div:first-child {
+  body:has(> #touchControls.visible) #app > div:first-child {
     transform-origin: top !important;
   }
 }
@@ -171,10 +234,10 @@ input:-internal-autofill-selected {
 /* Hide buttons on specific UIs */
 
 /* Show #apadPreviousTab and #apadNextTab only in settings, except in touch configuration panel */
-#touchControls:not([data-ui-mode^="SETTINGS"]) #apadPreviousTab,
-#touchControls:not([data-ui-mode^="SETTINGS"]) #apadNextTab,
-#touchControls:is(.config-mode) #apadPreviousTab,
-#touchControls:is(.config-mode) #apadNextTab {
+#touchControls:not([data-ui-mode^="SETTINGS"], [data-ui-mode="CHALLENGE_SELECT"]) #apadPreviousTab,
+#touchControls:not([data-ui-mode^="SETTINGS"], [data-ui-mode="CHALLENGE_SELECT"]) #apadNextTab,
+#touchControls:is([data-configuring]) #apadPreviousTab,
+#touchControls:is([data-configuring]) #apadNextTab {
   display: none;
 }
 
@@ -195,40 +258,40 @@ input:-internal-autofill-selected {
 }
 
 /* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
-#touchControls:not(.config-mode):not(
+#touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX"],
     [data-ui-mode="POKEDEX_PAGE"]
   )
   #apadOpenFilters,
-#touchControls:not(.config-mode):not(
+#touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX"],
     [data-ui-mode="POKEDEX_PAGE"],
     [data-ui-mode="RUN_INFO"]
   )
   #apadCycleForm,
-#touchControls:not(.config-mode):not(
+#touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX"],
     [data-ui-mode="POKEDEX_PAGE"],
     [data-ui-mode="RUN_INFO"]
   )
   #apadCycleShiny,
-#touchControls:not(.config-mode):not([data-ui-mode="STARTER_SELECT"])
+#touchControls:not([data-configuring]):not([data-ui-mode="STARTER_SELECT"])
   #apadCycleNature,
-#touchControls:not(.config-mode):not(
+#touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX_PAGE"],
     [data-ui-mode="RUN_INFO"]
   )
   #apadCycleAbility,
-#touchControls:not(.config-mode):not(
+#touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX_PAGE"]
   )
   #apadCycleGender,
-#touchControls:not(.config-mode):not(
+#touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX"]
   )

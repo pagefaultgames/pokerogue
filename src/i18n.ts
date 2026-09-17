@@ -1,12 +1,12 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { namespaceMap } from "#app/i18n-namespace-map";
+import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
-import { supportedLngs } from "./i18n-supported-lngs";
 
 // #region Interfaces/Types
 
@@ -60,7 +60,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "da",
       "tr",
       "th",
-      "ro",
       "ru",
       "uk",
       "id",
@@ -132,7 +131,7 @@ function i18nMoneyFormatter(amount: any): string {
 
 // #endregion Functions
 
-// assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
+// populated during post-processing in `plugins/vite/namespaces-i18n-plugin.ts`
 const nsEn: string[] = [];
 
 // #region Init
@@ -142,18 +141,13 @@ const nsEn: string[] = [];
  *
  * Q: How do I add a new language?
  * A: To add a new language, create a new folder in the locales directory with the language code.
- *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
- *    Don't forget to declare new language in `supportedLngs` i18next initializer
+ *    Each language folder should contain a file for each namespace (e.g. `menu.json`) with the translations.
+ *    Don't forget to add an entry to `SUPPORTED_LANGUAGE_ENTRIES` in `src/system/supported-languages.ts`
  *
  * Q: How do I add a new namespace?
  * A: To add a new namespace, create a new file .json in each language folder with the translations.
- *    The expected format for the file-name is kebab-case {@link https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case}
- *    If you want the namespace name to be different from the file name, configure it in namespace-map.ts.
- *    Then update the config file for that language in its locale directory
- *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
- *
- * Q: How do I make a language selectable in the settings?
- * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
+ *    The expected format for the file-name is kebab-case (see https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case).
+ *    If you want the namespace name to be different from the file name, configure it in `src/i18n-namespace-map.ts`.
  */
 
 await i18next
@@ -166,7 +160,7 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-      supportedLngs,
+      supportedLngs: SUPPORTED_LANGUAGES,
       backend: {
         loadPath(lng: string, [ns]: string[]) {
           // Use namespace maps where required
@@ -191,7 +185,15 @@ await i18next
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",
       interpolation: {
+        // Phaser is unable to parse the HTML escape codes produced by i18next, so turning this on results in codes like
+        // &amp; being displayed verbatim on screen.
+        // We use i18next solely for localizing values inside code anyways, so the risk of XSS from user input is virtually nonexistent.
         escapeValue: false,
+        // While using the `$t()` string syntax can allow nested locale keys to lazily look up interpolated text in the current chosen language,
+        // the fact that we reload the page after a language change renders this entirely moot - any nested lookups will be re-evaluated anyway.
+        // Moreover, this means of passing nested keys lacks the type-safety of calling `i18next.t` directly,
+        // which will be important once we get said strong typing set up correctly.
+        skipOnVariables: true,
       },
       postProcess: ["korean-postposition"],
     },

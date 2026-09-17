@@ -34,7 +34,7 @@ const pokemonPool: BiomePokemonPools = {
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.VAPOREON, SpeciesId.SLOWKING],
+    [TimeOfDay.ALL]: [SpeciesId.VAPOREON, SpeciesId.SLOWKING, SpeciesId.BATTLE_BOND_GRENINJA],
   },
   [BiomePoolTier.ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],
@@ -70,6 +70,7 @@ const pokemonPool: BiomePokemonPools = {
       SpeciesId.SAMUROTT,
       SpeciesId.GRENINJA,
       SpeciesId.INTELEON,
+      SpeciesId.BATTLE_BOND_GRENINJA,
     ],
   },
   [BiomePoolTier.BOSS_SUPER_RARE]: {

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -15,17 +15,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": [
-      "**",
-      "!src/data/balance/**",
-      "src/data/balance/species/**",
-      "src/data/balance/moves/forbidden-moves.ts",
-      "src/data/balance/moves/signature-moves.ts",
-      "src/data/balance/moves/superceded-moves.ts",
-      "src/data/balance/biomes/**",
-      "src/data/balance/timed-events.ts",
-      "src/data/balance/tm-pool-tiers.ts"
-    ], // TODO: enable formatting of balance folder
+    "includes": ["**"],
     "lineWidth": 120
   },
   "files": {
@@ -65,7 +55,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUndeclaredVariables": "error",
         // we virtually always use base 10 number conversion
@@ -240,7 +230,10 @@
               }
             }
           }
-        }
+        },
+        "noMultiAssign": "error",
+        "noMultilineString": "error",
+        "noNestedTernary": "warn" // TODO: fix existing instances and make "error"
       },
       "suspicious": {
         "noExtraNonNullAssertion": "error",
@@ -273,7 +266,9 @@
         },
         "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
         "noDuplicateDependencies": "error",
-        "noImportCycles": "error"
+        "noImportCycles": "error",
+        "noProto": "error",
+        "noShadow": "warn" // TODO: refactor and make "error"
       },
       "complexity": {
         "useWhile": "error",
@@ -293,7 +288,8 @@
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...
           "options": { "max": 7 }
-        }
+        },
+        "useArrayFind": "error"
       },
       "performance": {
         "noNamespaceImport": "error",
@@ -303,11 +299,6 @@
       "nursery": {
         // TODO: Fix violations then enable this
         "useAwaitThenable": "off",
-        "noMultiAssign": "error",
-        "noMultiStr": "error",
-        "noProto": "error",
-        "useFind": "error",
-        "noShadow": "warn", // TODO: refactor and make "error"
         // TODO: Change to error once promises are used properly
         "noMisusedPromises": "info"
       }
@@ -411,6 +402,12 @@
             }
           }
         }
+      }
+    },
+    {
+      "includes": ["src/data/balance/moves/egg-moves.ts"],
+      "formatter": {
+        "lineWidth": 150
       }
     }
   ]

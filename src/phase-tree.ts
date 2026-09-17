@@ -6,17 +6,19 @@ import type { PhaseConditionFunc, PhaseManager, PhaseMap, PhaseString } from "#t
  * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
  *
  * It has a tiered structure, where unshifted phases are added one level above the currently running Phase. \
- * Phases are generally popped from the Tree in FIFO order.
- *
- * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and
- * are not guaranteed to run FIFO (otherwise, they would not be dynamic)
+ * Generally speaking, Phases are removed from the tree and ran in FIFO order.
+ * @remarks
+ * Since dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s,
+ * they are not strictly guaranteed to run FIFO (otherwise, they would not be dynamic)
  */
 export class PhaseTree {
   /**
    * Storage for all levels in the tree.
-   * This is a simple array because only one Phase may run and have "children" at a time.
+   * The first level (index 0) represents the "bottom" of the tree, with each successive level running before all higher levels can run.
    * @remarks
    * This does _not_ include the currently-running Phase, which is removed prior to being run.
+   * @privateRemarks
+   * This is a simple 2D array because only one Phase may run and have "children" at a time.
    */
   private levels: Phase[][] = [[]];
   /** The level of the currently-running {@linkcode Phase} in the Tree. */

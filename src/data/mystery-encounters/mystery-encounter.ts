@@ -854,17 +854,17 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Specifies a party size requirement for an encounter.
    *
-   * @param min min wave (or exact size if only min is given)
-   * @param max optional max size. If not given, defaults to min => exact wave
-   * @param excludeDisallowedPokemon if true, only counts allowed (legal in Challenge/unfainted) mons
-   * @returns
+   * @param min - The minimum number of Pokemon required to be in the player's party
+   * @param max - (Default `6`) The maximum number of Pokemon that can be in the player's party
+   * @param excludeDisallowedPokemon - (Default `true`) Whether to exclude fainted and challenge-illegal Pokemon
+   * @returns `this`
    */
   withScenePartySizeRequirement(
     min: number,
-    max?: number,
-    excludeDisallowedPokemon = false,
+    max = 6,
+    excludeDisallowedPokemon = true,
   ): this & Required<Pick<IMysteryEncounter, "requirements">> {
-    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeDisallowedPokemon));
+    return this.withSceneRequirement(new PartySizeRequirement([min, max], excludeDisallowedPokemon));
   }
 
   /**

@@ -1,7 +1,7 @@
 import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { KeyboardConfig } from "#types/configs/inputs";
+import type { KeyboardConfig } from "#types/inputs";
 
 export const CFG_KEYBOARD_QWERTY: KeyboardConfig = {
   padID: "default",

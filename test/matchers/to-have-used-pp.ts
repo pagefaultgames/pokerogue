@@ -42,7 +42,7 @@ export function toHaveUsedPP(
   const pkmName = getPokemonNameWithAffix(received);
   const moveStr = getEnumStr(MoveId, moveId);
 
-  const movesetMoves = received.getMoveset().filter(pm => pm.moveId === moveId);
+  const movesetMoves = received.getMoveset().filter(pm => this.equals(pm.moveId, moveId, this.customTesters));
   if (movesetMoves.length !== 1) {
     return {
       pass: this.isNot,

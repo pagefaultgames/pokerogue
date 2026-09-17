@@ -49,6 +49,7 @@ const pokemonPool: BiomePokemonPools = {
       SpeciesId.CORSOLA,
       SpeciesId.OCTILLERY,
       SpeciesId.FEEBAS,
+      SpeciesId.HISUI_BASCULIN,
       SpeciesId.MANTYKE,
       SpeciesId.ALOMOMOLA,
       SpeciesId.TYNAMO,

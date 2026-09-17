@@ -65,6 +65,7 @@ export function rgbToHsv(r: number, g: number, b: number) {
  * @param rgb1 - First RGB color in array
  * @param rgb2 - Second RGB color in array
  */
+// TODO: This is used exactly once...
 export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;

@@ -48,7 +48,7 @@ const pokemonPool: BiomePokemonPools = {
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.SHAYMIN, SpeciesId.MELOETTA],
+    [TimeOfDay.ALL]: [SpeciesId.SHAYMIN, SpeciesId.MELOETTA, SpeciesId.ENAMORUS],
   },
   [BiomePoolTier.BOSS]: {
     [TimeOfDay.DAWN]: [
@@ -101,7 +101,7 @@ const pokemonPool: BiomePokemonPools = {
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.SHAYMIN, SpeciesId.MELOETTA],
+    [TimeOfDay.ALL]: [SpeciesId.SHAYMIN, SpeciesId.MELOETTA, SpeciesId.ENAMORUS],
   },
   [BiomePoolTier.BOSS_ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],

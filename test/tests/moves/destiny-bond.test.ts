@@ -47,7 +47,7 @@ describe("Moves - Destiny Bond", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
-    await game.setTurnOrder(enemyFirst);
+    game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -65,7 +65,7 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder(playerFirst);
+    game.setTurnOrder(playerFirst);
     await game.toNextTurn();
 
     expect(enemyPokemon.isFainted()).toBe(false);
@@ -90,7 +90,7 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder(enemyFirst);
+    game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
     expect(enemyPokemon.isFainted()).toBe(false);
@@ -115,7 +115,7 @@ describe("Moves - Destiny Bond", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
-    await game.setTurnOrder(enemyFirst);
+    game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -133,12 +133,12 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
     game.move.select(MoveId.SPORE);
-    await game.setTurnOrder(enemyFirst);
+    game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
     expect(enemyPokemon.isFainted()).toBe(false);
     expect(playerPokemon.isFainted()).toBe(false);
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     // Turn 2: Enemy should skip a turn due to sleep, then get KO'd
     game.move.select(moveToUse);
@@ -156,7 +156,7 @@ describe("Moves - Destiny Bond", () => {
     // Shedinja uses Destiny Bond, then ally Bulbasaur KO's Shedinja with Crunch
     game.move.select(MoveId.DESTINY_BOND, 0);
     game.move.select(MoveId.CRUNCH, 1, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon0).not.toHaveFainted();
@@ -176,7 +176,7 @@ describe("Moves - Destiny Bond", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
-    await game.setTurnOrder(enemyFirst);
+    game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon).toHaveFainted();
@@ -194,7 +194,7 @@ describe("Moves - Destiny Bond", () => {
 
     game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon0).toHaveFainted();
@@ -221,7 +221,7 @@ describe("Moves - Destiny Bond", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
-    await game.setTurnOrder(enemyFirst);
+    game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);

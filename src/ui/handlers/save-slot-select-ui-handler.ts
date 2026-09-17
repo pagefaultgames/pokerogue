@@ -9,7 +9,12 @@ import { UiMode } from "#enums/ui-mode";
 import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type {
+  ConfirmModeConfig,
+  OptionSelectItem,
+  OptionSelectModeConfig,
+  SaveSlotSelectCallback,
+} from "#types/ui-types";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -25,8 +30,6 @@ export enum SaveSlotUiMode {
   SAVE,
 }
 
-export type SaveSlotSelectCallback = (cursor: number) => void;
-
 export class SaveSlotSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectContainer: Phaser.GameObjects.Container;
   private sessionSlotsContainer: Phaser.GameObjects.Container;
@@ -36,17 +39,12 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   private uiMode: SaveSlotUiMode;
   private saveSlotSelectCallback: SaveSlotSelectCallback | null;
-  protected manageDataConfig: OptionSelectConfig;
 
   private scrollCursor = 0;
 
   private cursorObj: Phaser.GameObjects.Container | null;
 
   private sessionSlotsContainerInitialY: number;
-
-  constructor() {
-    super(UiMode.SAVE_SLOT);
-  }
 
   setup() {
     const ui = this.getUi();
@@ -103,9 +101,9 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  processInput(button: Button): boolean {
+  public override processInput(button: Button): boolean {
     const ui = this.getUi();
-    const manageDataOptions: any[] = [];
+    const manageDataOptions: OptionSelectItem[] = [];
 
     let success = false;
     let error = false;
@@ -119,7 +117,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
           error = true;
         } else {
           switch (this.uiMode) {
-            case SaveSlotUiMode.LOAD:
+            case SaveSlotUiMode.LOAD: {
               if (!sessionSlot.malformed) {
                 manageDataOptions.push({
                   label: i18next.t("menu:loadGame"),
@@ -167,44 +165,40 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                 });
               }
 
-              this.manageDataConfig = {
-                xOffset: 0,
-                yOffset: 48,
-                options: manageDataOptions,
-                maxOptions: 4,
+              const deleteDataConfig: ConfirmModeConfig = {
+                yesHandler: () => {
+                  globalScene.gameData //
+                    .deleteSession(cursor)
+                    .then(response => {
+                      if (response[0] === false) {
+                        globalScene.reset(true);
+                        return;
+                      }
+
+                      this.clearSessionSlots();
+                      this.cursorObj = null;
+                      this.populateSessionSlots();
+                      this.setScrollCursor(0);
+                      this.setCursor(0);
+                      ui.revertMode();
+                      ui.showText("", 0);
+                    });
+                },
+                noHandler: () => {
+                  ui.revertMode();
+                  ui.showText("", 0);
+                },
+                yOffset: 29,
+                inputDelay: isBeta || isDev ? 300 : 2000,
+                canBypassInputDelay: true,
               };
 
               manageDataOptions.push({
                 label: i18next.t("saveSlotSelectUiHandler:deleteRun"),
                 handler: () => {
-                  globalScene.ui.revertMode();
+                  ui.revertMode();
                   ui.showText(i18next.t("saveSlotSelectUiHandler:deleteData"), null, () => {
-                    ui.setOverlayMode(
-                      UiMode.CONFIRM,
-                      () => {
-                        globalScene.gameData.deleteSession(cursor).then(response => {
-                          if (response[0] === false) {
-                            globalScene.reset(true);
-                          } else {
-                            this.clearSessionSlots();
-                            this.cursorObj = null;
-                            this.populateSessionSlots();
-                            this.setScrollCursor(0);
-                            this.setCursor(0);
-                            ui.revertMode();
-                            ui.showText("", 0);
-                          }
-                        });
-                      },
-                      () => {
-                        ui.revertMode();
-                        ui.showText("", 0);
-                      },
-                      false,
-                      0,
-                      19,
-                      isBeta || isDev ? 300 : 2000,
-                    );
+                    ui.setOverlayMode(UiMode.CONFIRM, deleteDataConfig);
                   });
                   return true;
                 },
@@ -220,8 +214,11 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                 keepOpen: true,
               });
 
-              ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, this.manageDataConfig);
+              const manageDataConfig: OptionSelectModeConfig = { options: manageDataOptions };
+
+              ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, manageDataConfig);
               break;
+            }
 
             case SaveSlotUiMode.SAVE: {
               const saveAndCallback = () => {
@@ -232,34 +229,33 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                 ui.setMode(UiMode.MESSAGE);
                 originalCallback?.(cursor);
               };
-              if (this.sessionSlots[cursor].hasData) {
-                ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                  ui.setOverlayMode(
-                    UiMode.CONFIRM,
-                    () => {
-                      globalScene.gameData.deleteSession(cursor).then(response => {
-                        if (response === false) {
-                          globalScene.reset(true);
-                        } else {
-                          saveAndCallback();
-                        }
-                      });
-                    },
-                    () => {
-                      ui.revertMode();
-                      ui.showText("", 0);
-                    },
-                    false,
-                    0,
-                    19,
-                    isBeta || isDev ? 300 : 2000,
-                  );
-                });
-              } else if (this.sessionSlots[cursor].hasData === false) {
+              if (!this.sessionSlots[cursor].hasData) {
                 saveAndCallback();
-              } else {
-                return false;
+                break;
               }
+
+              const overwriteDataOptions: ConfirmModeConfig = {
+                yesHandler: () => {
+                  globalScene.gameData.deleteSession(cursor).then(response => {
+                    if (response === false) {
+                      globalScene.reset(true);
+                    } else {
+                      saveAndCallback();
+                    }
+                  });
+                },
+                noHandler: () => {
+                  ui.revertMode();
+                  ui.showText("", 0);
+                },
+                canBypassInputDelay: true,
+                yOffset: 29,
+                inputDelay: isBeta || isDev ? 300 : 2000,
+              };
+
+              ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
+                ui.setOverlayMode(UiMode.CONFIRM, overwriteDataOptions);
+              });
               break;
             }
           }

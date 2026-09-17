@@ -37,7 +37,7 @@ describe("Moves - Miracle Eye", () => {
     game.move.select(MoveId.MIRACLE_EYE);
     await game.toNextTurn();
     game.move.select(MoveId.CONFUSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());

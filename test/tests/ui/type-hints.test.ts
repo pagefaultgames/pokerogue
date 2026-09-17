@@ -1,6 +1,7 @@
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { TypeHints } from "#enums/type-hints";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
 import type { MockText } from "#test/mocks/mocks-container/mock-text";
@@ -21,7 +22,7 @@ describe("UI - Type Hints", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    game.settings.typeHints(true); //activate type hints
+    game.settings.typeHints(TypeHints.ON); //activate type hints
     game.override.battleStyle("single").startingLevel(100).startingWave(1).enemyMoveset(MoveId.SPLASH);
   });
 
@@ -33,7 +34,7 @@ describe("UI - Type Hints", () => {
       .enemySpecies(SpeciesId.FLORGES)
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.DRAGON_CLAW]);
-    game.settings.typeHints(true); //activate type hints
+    game.settings.typeHints(TypeHints.ON); //activate type hints
 
     await game.classicMode.startBattle(SpeciesId.RAYQUAZA);
 
@@ -54,6 +55,31 @@ describe("UI - Type Hints", () => {
       ui.getHandler().processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to("CommandPhase");
+  });
+
+  it("check super effective move color in high contrast mode", async () => {
+    game.override.enemySpecies(SpeciesId.GARCHOMP).moveset([MoveId.DRAGON_CLAW]);
+    game.settings.typeHints(TypeHints.HIGH_CONTRAST);
+
+    await game.classicMode.startBattle(SpeciesId.RAYQUAZA);
+
+    game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
+      const { ui } = game.scene;
+      const handler = ui.getHandler<FightUiHandler>();
+      handler.processInput(Button.ACTION); // select "Fight"
+    });
+
+    game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
+      const { ui } = game.scene;
+      const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
+      const dragonClawText = movesContainer
+        .getAll<Phaser.GameObjects.Text>()
+        .find(text => text.text === i18next.t("move:dragonClaw.name"))! as unknown as MockText;
+
+      expect.soft(dragonClawText.color).toBe("#2DB4FF");
+      ui.getHandler().processInput(Button.ACTION);
+    });
+    await game.phaseInterceptor.to("TurnStartPhase");
   });
 
   it("check status move color", async () => {

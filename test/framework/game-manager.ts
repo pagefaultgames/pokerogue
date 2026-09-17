@@ -112,8 +112,7 @@ export class GameManager {
 
     this.initDefaultOverrides();
 
-    // TODO: remove `any` assertion
-    global.fetch = vi.fn(MockFetch) as any;
+    global.fetch = vi.fn(MockFetch);
   }
 
   /**
@@ -157,7 +156,7 @@ export class GameManager {
    */
   // TODO: This is unused
   async waitMode(mode: UiMode): Promise<void> {
-    await vi.waitUntil(() => this.scene.ui?.getMode() === mode);
+    await vi.waitUntil(() => this.scene.ui?.mode === mode);
   }
 
   /**
@@ -414,7 +413,7 @@ export class GameManager {
    * @returns Whether the current mode matches the target mode.
    */
   isCurrentMode(mode: UiMode): boolean {
-    return this.scene.ui.getMode() === mode;
+    return this.scene.ui.mode === mode;
   }
 
   /**
@@ -439,12 +438,12 @@ export class GameManager {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
-    dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
+    dataStr = this.scene.gameData["convertSystemDataStr"](dataStr);
     const systemData = GameData.parseSystemData(dataStr);
     const valid = !!systemData.dexData && !!systemData.timestamp;
     if (valid) {
       await updateUserInfo();
-      await this.scene.gameData.initSystem(dataStr);
+      await this.scene.gameData["initSystem"](dataStr);
     }
     return updateUserInfo();
   }

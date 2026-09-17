@@ -6,13 +6,13 @@ import {
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
 } from "#balance/moves/moveset-generation";
 import { allMoves } from "#data/data-lists";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
@@ -51,7 +51,7 @@ function createTestablePokemon(
 ): EnemyPokemon {
   const pokemon = new EnemyPokemon(speciesDataRegistry.getSpecies(speciesId), level, trainerSlot, boss);
   if (formIndex !== 0) {
-    const formIndexLength = getPokemonSpecies(speciesId)?.forms.length;
+    const formIndexLength = speciesDataRegistry.getSpecies(speciesId)?.forms.length;
     const name = speciesDataRegistry.getSpecies(speciesId).name;
     expect(formIndex, `${name} does not have a form with index ${formIndex}`).toBeLessThan(formIndexLength);
     pokemon.formIndex = formIndex;
@@ -202,10 +202,10 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
       it("skips unimplemented moves", () => {
         createCharmander(pokemon);
         vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([
-          [1, MoveId.TACKLE],
-          [5, MoveId.GROWL],
+          [1, MoveId.TACKLE, LearnableMoveSource.OTHER],
+          [5, MoveId.GROWL, LearnableMoveSource.OTHER],
         ]);
-        vi.spyOn(allMoves[MoveId.TACKLE], "name", "get").mockReturnValue("Tackle (N)");
+        vi.spyOn(allMoves[MoveId.TACKLE], "isUnimplemented", "get").mockReturnValue(true);
         const result = getAndWeightLevelMoves(pokemon);
         expect(result).not.toHaveKey(MoveId.TACKLE);
         expect(result).toHaveKey(MoveId.GROWL);
@@ -214,8 +214,8 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
       it("skips moves already in the pool", () => {
         createCharmander(pokemon);
         vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([
-          [1, MoveId.TACKLE],
-          [5, MoveId.TACKLE],
+          [1, MoveId.TACKLE, LearnableMoveSource.OTHER],
+          [5, MoveId.TACKLE, LearnableMoveSource.OTHER],
         ]);
 
         const result = getAndWeightLevelMoves(pokemon);
@@ -225,9 +225,9 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
       it("weights moves based on level", () => {
         createCharmander(pokemon);
         vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([
-          [1, MoveId.TACKLE],
-          [5, MoveId.GROWL],
-          [9, MoveId.EMBER],
+          [1, MoveId.TACKLE, LearnableMoveSource.OTHER],
+          [5, MoveId.GROWL, LearnableMoveSource.OTHER],
+          [9, MoveId.EMBER, LearnableMoveSource.OTHER],
         ]);
 
         const result = getAndWeightLevelMoves(pokemon);
@@ -280,16 +280,25 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
       // Create a pokemon that can learn at least 4 moves
       pokemon = createTestablePokemon(SpeciesId.ROCKRUFF, { level: 15 });
       vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([
-        [1, MoveId.TACKLE],
-        [4, MoveId.LEER],
-        [7, MoveId.SAND_ATTACK],
-        [10, MoveId.ROCK_THROW],
-        [13, MoveId.DOUBLE_TEAM],
+        [1, MoveId.TACKLE, LearnableMoveSource.OTHER],
+        [4, MoveId.LEER, LearnableMoveSource.OTHER],
+        [7, MoveId.SAND_ATTACK, LearnableMoveSource.OTHER],
+        [10, MoveId.ROCK_THROW, LearnableMoveSource.OTHER],
+        [13, MoveId.DOUBLE_TEAM, LearnableMoveSource.OTHER],
       ]);
 
       // Generate the moveset
       generateMoveset(pokemon);
       expect(pokemon.moveset).toHaveLength(4);
+    });
+
+    it("should fall back to soft-blocked moves instead of generating an empty moveset", async () => {
+      pokemon = createTestablePokemon(SpeciesId.BLIPBUG, { level: 10, boss: true });
+      vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([[1, MoveId.HELPING_HAND, LearnableMoveSource.OTHER]]);
+
+      generateMoveset(pokemon);
+
+      expect(pokemon.moveset.map(m => m.moveId)).toEqual([MoveId.HELPING_HAND]);
     });
   });
 });

@@ -100,7 +100,9 @@ export class QuietFormChangePhase extends BattlePhase {
 
     applyOnLoseAbAttrs({ pokemon });
     await pokemon.changeForm(formChange);
-    applyPostFormChangeAbAttrs({ pokemon });
+    if (pokemon.isActive(true)) {
+      applyPostFormChangeAbAttrs({ pokemon });
+    }
   }
 
   private async playFormChangeTween(): Promise<void> {
@@ -138,11 +140,7 @@ export class QuietFormChangePhase extends BattlePhase {
     const spriteKey = this.pokemon.getBattleSpriteKey();
     // TODO: Why do we play and then immediately stop the form tint sprite?
     // The thing isn't even visible anyways at this point in the code
-    try {
-      pokemonFormTintSprite.play(spriteKey).stop();
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    pokemonFormTintSprite.play(spriteKey).stop();
 
     pokemonFormTintSprite.setVisible(true);
     globalScene.tweens.add({
@@ -183,12 +181,7 @@ export class QuietFormChangePhase extends BattlePhase {
     );
     sprite.setOrigin(0.5, 1);
     const spriteKey = this.pokemon.getBattleSpriteKey();
-    // TODO: Move error handling elsewhere
-    try {
-      sprite.play(spriteKey).stop();
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    sprite.play(spriteKey).stop();
     sprite.setPipeline(globalScene.spritePipeline, {
       tone: [0.0, 0.0, 0.0, 0.0],
       hasShadow: false,
@@ -205,31 +198,29 @@ export class QuietFormChangePhase extends BattlePhase {
     return sprite;
   }
 
-  end(): void {
-    // Autotomize's weight reduction is reset when form changing
-    this.pokemon.removeTag(BattlerTagType.AUTOTOMIZED);
+  public override end(): void {
+    const { pokemon } = this;
 
-    // TODO: This eternatus boss fight code should almost certainly go in its own superclass phase
-    if (globalScene.currentBattle.isClassicFinalBoss && this.pokemon.isEnemy()) {
+    // Autotomize's weight reduction is reset when form changing
+    pokemon.removeTag(BattlerTagType.AUTOTOMIZED);
+
+    // TODO: This eternatus boss fight code should almost certainly go in its own subclass phase
+    if (globalScene.currentBattle.isClassicFinalBoss && pokemon.isEnemy()) {
       audioManager.playBgm();
       globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        this.pokemon.getBattlerIndex(),
-        this.pokemon.getMaxHp(),
-        null,
-        false,
-        false,
-        false,
-        true,
+        "PokemonHealPhase", //
+        pokemon.getBattlerIndex(),
+        pokemon.getMaxHp(),
+        { showFullHpMessage: false, healStatus: true, fullRestorePP: true },
       );
       // TODO: Use or create a helper function to remove all tags on a Pokemon
-      this.pokemon.findAndRemoveTags(() => true);
-      this.pokemon.bossSegments = 5;
-      this.pokemon.bossSegmentIndex = 4;
-      this.pokemon.initBattleInfo();
-      this.pokemon.cry();
+      pokemon.findAndRemoveTags(() => true);
+      pokemon.bossSegments = 5;
+      pokemon.bossSegmentIndex = 4;
+      pokemon.initBattleInfo();
+      pokemon.cry();
 
-      globalScene.phaseManager.cancelMove(p => p.pokemon === this.pokemon);
+      globalScene.phaseManager.cancelMove(p => p.pokemon === pokemon);
     }
 
     super.end();

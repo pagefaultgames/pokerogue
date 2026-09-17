@@ -1,6 +1,6 @@
+import type { ModalConfig } from "#types/ui-types";
+import { FormModalUiHandler, type InputFieldConfig } from "#ui/form-modal-ui-handler";
 import i18next from "i18next";
-import { FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
 
 export class RenameRunFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {

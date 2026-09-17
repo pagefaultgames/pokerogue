@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { MoveChargeAnim } from "#data/battle-anims";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import type { MoveUseMode } from "#enums/move-use-mode";
 import type { Pokemon } from "#field/pokemon";
@@ -76,7 +77,14 @@ export class MoveChargePhase extends PokemonPhase {
     // TODO: This checks status twice for a single-turn usage...
     if (instantCharge.value) {
       globalScene.phaseManager.tryRemovePhase("MoveEndPhase", phase => phase.getPokemon() === user);
-      globalScene.phaseManager.unshiftNew("MovePhase", user, [this.targetIndex], this.move, this.useMode);
+      globalScene.phaseManager.unshiftNew(
+        "MovePhase",
+        user,
+        [this.targetIndex],
+        this.move,
+        this.useMode,
+        MovePhaseTimingModifier.FIRST,
+      );
     } else {
       user.pushMoveQueue({ move: move.id, targets: [this.targetIndex], useMode: this.useMode });
     }

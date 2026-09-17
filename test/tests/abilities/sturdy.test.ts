@@ -49,6 +49,28 @@ describe("Abilities - Sturdy", () => {
     expect(enemyPokemon).toHaveFainted();
   });
 
+  it("protects from moves that deal fixed damage", async () => {
+    await game.classicMode.startBattle(SpeciesId.LUCARIO);
+    const enemyPokemon = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.SEISMIC_TOSS);
+    await game.toEndOfTurn();
+
+    expect(enemyPokemon).toHaveHp(1);
+  });
+
+  it("doesn't protect from fixed damage when user is not at full HP", async () => {
+    await game.classicMode.startBattle(SpeciesId.LUCARIO);
+
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
+
+    game.move.use(MoveId.SEISMIC_TOSS);
+    await game.toEndOfTurn();
+
+    expect(enemyPokemon).toHaveFainted();
+  });
+
   it("protects from OHKO moves", async () => {
     await game.classicMode.startBattle(SpeciesId.LUCARIO);
 
