@@ -101,11 +101,11 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? RarityTier.ULTRA
             : RarityTier.GREAT;
-    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), globalScene.getPlayerParty(), 0);
+    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER));
     let item: RewardOption | null = null;
     // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
     while (!item || isTmReward(item.type) || (item.type as TrainerItemReward).itemId === TrainerItemId.CANDY_JAR) {
-      item = generatePlayerRewardOptions(1, globalScene.getPlayerParty(), [], {
+      item = generatePlayerRewardOptions(1, [], {
         guaranteedRarityTiers: [tier],
         allowLuckUpgrades: false,
       })[0];
