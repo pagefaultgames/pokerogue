@@ -1680,6 +1680,7 @@ export class AbilityRandomizerChallenge extends Challenge {
         AbilityId.NORMALIZE,
         AbilityId.SLOW_START,
         AbilityId.STALL,
+        AbilityId.TRUANT,
         AbilityId.WIMP_OUT, // Emergency Exit by itself is okay, Wimp Out is removed to not double up
       ];
       const disallowedAbilities = [AbilityId.NONE, AbilityId.COMMANDER, ...formChangeAbilities, ...negativeAbilities];
