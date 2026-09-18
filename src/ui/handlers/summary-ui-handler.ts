@@ -24,7 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import type { ConfirmModeConfig, OptionSelectModeConfig } from "#types/ui-types";
+import type { ConfirmModeConfig, OptionSelectItem } from "#types/ui-types";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
@@ -546,105 +546,93 @@ export class SummaryUiHandler extends UiHandler {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             this.moveSelectFunction?.(this.moveCursor);
           } else if (this.selectedMoveIndex === -1) {
-            const moveSelectConfig: OptionSelectModeConfig = {
-              options: [
-                {
-                  label: i18next.t("pokemonSummary:swapMove"),
-                  handler: () => {
-                    this.selectedMoveIndex = this.moveCursor;
-                    this.setCursor(this.moveCursor);
-                    ui.revertMode();
-                    return true;
-                  },
-                },
-                {
-                  label: i18next.t("pokemonSummary:deleteMove"),
-                  handler: () => {
-                    const moveDeleteConfirmOptions: ConfirmModeConfig = {
-                      yesHandler: () => {
-                        if (!this.pokemon) {
-                          ui.revertMode();
-                          return;
-                        }
-
-                        const movesetLength = this.pokemon.moveset.length;
-
-                        for (let i = this.moveCursor + 1; i < movesetLength; i++) {
-                          const nextMoveRow = this.moveRowsContainer.getAt(i) as Phaser.GameObjects.Container;
-                          this.moveRowsContainer.moveTo(nextMoveRow, i - 1);
-                          nextMoveRow.setY((i - 1) * 16);
-                        }
-                        // Remove move container (which has been pushed to the end)
-                        const currentMoveRow = this.moveRowsContainer.getAt(
-                          movesetLength - 1,
-                        ) as Phaser.GameObjects.Container;
-                        this.moveRowsContainer.remove(currentMoveRow);
-
-                        // Add a new, empty move container
-                        // TODO: create a custom container class form moves and modify the container in place
-                        // instead of destroying it and recreating it.
-                        const moveRowContainer = globalScene.add.container(0, 16 * (movesetLength - 1));
-                        this.moveRowsContainer.add(moveRowContainer);
-
-                        const moveText = addTextObject(35, 0, "-", TextStyle.SUMMARY);
-                        moveText.setOrigin(0, 1);
-                        moveRowContainer.add(moveText);
-
-                        const ppOverlay = globalScene.add.image(
-                          177,
-                          -5,
-                          getLocalizedSpriteKey("summary_moves_overlay_pp"),
-                        ); // Pixel text 'PP'
-                        ppOverlay.setOrigin(1, 0.5);
-                        moveRowContainer.add(ppOverlay);
-
-                        const ppText = addTextObject(178, 1, "--/--", TextStyle.WINDOW);
-                        ppText.setOrigin(0, 1);
-                        moveRowContainer.add(ppText);
-
-                        // Remove the move from the moveset
-                        this.pokemon.moveset.splice(this.moveCursor, 1);
-
-                        ui.revertMode();
-                      },
-                      noHandler: () => {
-                        ui.revertMode();
-                      },
-                      inputDelay: 1000,
-                    };
-
-                    ui.revertMode();
-                    ui.setOverlayMode(UiMode.CONFIRM, moveDeleteConfirmOptions);
-                    return true;
-                  },
-                },
-                {
-                  label: i18next.t("menuUiHandler:cancel"),
-                  handler: () => {
-                    ui.revertMode();
-                    return true;
-                  },
-                },
-              ],
-              yOffset: 48,
-            };
-
-            const oneMoveSelectConfig: OptionSelectModeConfig = {
-              options: [
-                {
-                  label: i18next.t("menuUiHandler:cancel"),
-                  handler: () => {
-                    ui.revertMode();
-                    return true;
-                  },
-                },
-              ],
-              yOffset: 48,
-            };
-            //            ui.showText(i18next.t("pokemonSummary:doWhatWithMove"), null, () => {
             const movesetLength = this.pokemon.moveset.length;
+            const moveSelectOptions: OptionSelectItem[] = [];
+            // Option to swap move around
+            if (movesetLength > 1) {
+              moveSelectOptions.push({
+                label: i18next.t("pokemonSummary:swapMove"),
+                handler: () => {
+                  this.selectedMoveIndex = this.moveCursor;
+                  this.setCursor(this.moveCursor);
+                  ui.revertMode();
+                  return true;
+                },
+              });
+            }
+            // Option to delete move
+            if (movesetLength > 1 && globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+              moveSelectOptions.push({
+                label: i18next.t("pokemonSummary:deleteMove"),
+                handler: () => {
+                  const moveDeleteConfirmOptions: ConfirmModeConfig = {
+                    yesHandler: () => {
+                      if (!this.pokemon || !globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+                        ui.revertMode();
+                        return;
+                      }
 
-            ui.setOverlayMode(UiMode.OPTION_SELECT, movesetLength <= 1 ? oneMoveSelectConfig : moveSelectConfig);
+                      for (let i = this.moveCursor + 1; i < movesetLength; i++) {
+                        const nextMoveRow = this.moveRowsContainer.getAt(i) as Phaser.GameObjects.Container;
+                        this.moveRowsContainer.moveTo(nextMoveRow, i - 1);
+                        nextMoveRow.setY((i - 1) * 16);
+                      }
+                      // Remove move container (which has been pushed to the end)
+                      const currentMoveRow = this.moveRowsContainer.getAt(
+                        movesetLength - 1,
+                      ) as Phaser.GameObjects.Container;
+                      this.moveRowsContainer.remove(currentMoveRow, true);
+
+                      // Add a new, empty move container
+                      // TODO: create a custom container class form moves and modify the container in place
+                      // instead of destroying it and recreating it.
+                      const moveRowContainer = globalScene.add.container(0, 16 * (movesetLength - 1));
+                      this.moveRowsContainer.add(moveRowContainer);
+
+                      const moveText = addTextObject(35, 0, "-", TextStyle.SUMMARY);
+                      moveText.setOrigin(0, 1);
+                      moveRowContainer.add(moveText);
+
+                      const ppOverlay = globalScene.add.image(
+                        177,
+                        -5,
+                        getLocalizedSpriteKey("summary_moves_overlay_pp"),
+                      ); // Pixel text 'PP'
+                      ppOverlay.setOrigin(1, 0.5);
+                      moveRowContainer.add(ppOverlay);
+
+                      const ppText = addTextObject(178, 1, "--/--", TextStyle.WINDOW);
+                      ppText.setOrigin(0, 1);
+                      moveRowContainer.add(ppText);
+
+                      // Remove the move from the moveset
+                      this.pokemon.moveset.splice(this.moveCursor, 1);
+
+                      ui.revertMode();
+                    },
+                    noHandler: () => {
+                      ui.revertMode();
+                    },
+                    inputDelay: 1000,
+                  };
+
+                  ui.revertMode();
+                  ui.setOverlayMode(UiMode.CONFIRM, moveDeleteConfirmOptions);
+                  return true;
+                },
+              });
+            }
+            moveSelectOptions.push({
+              label: i18next.t("menuUiHandler:cancel"),
+              handler: () => {
+                ui.revertMode();
+                return true;
+              },
+            });
+
+            //            ui.showText(i18next.t("pokemonSummary:doWhatWithMove"), null, () => {
+
+            ui.setOverlayMode(UiMode.OPTION_SELECT, { options: moveSelectOptions, yOffset: 48 });
             //            });
             success = true;
           } else {
