@@ -17,8 +17,8 @@ export enum ChallengeType {
    */
   STARTER_POINTS,
   /**
-   * Challenges which modify how many starter points you have
-   * @see {@linkcode Challenge.applyStarterPoints}
+   * Challenges which modify the point cost of starters
+   * @see {@linkcode Challenge.applyStarterCost}
    */
   STARTER_COST,
   /**

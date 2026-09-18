@@ -3004,7 +3004,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   // TODO: Dedupe from pokedex
   protected updateStarterValueLabel(starter: StarterContainer): void {
-    const speciesId = starter.species.speciesId;
+    const speciesId = starter.species.speciesId as StarterSpeciesId;
     const baseStarterValue = speciesDataRegistry.getStarterCost(speciesId);
     if (baseStarterValue == null) {
       return;
