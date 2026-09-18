@@ -5,49 +5,21 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { tmPoolTiers } from "#balance/tm-pool-tiers";
+import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import chalk from "chalk";
 import { writeData } from "../helpers";
-import type { TmEntry } from "../types";
+import type { TmTierEntry } from "../types";
 
-export async function generateTmsData(): Promise<void> {
-  const entries: TmEntry[] = [];
+export async function generateTmTiersData(): Promise<void> {
+  const entries: TmTierEntry[] = [];
 
-  for (const speciesData of Object.values(speciesDataRegistry.data)) {
-    for (const move of speciesDataRegistry.getTms(speciesData.species.speciesId)) {
-      const data: TmEntry = {
-        dexNum: speciesData.species.speciesId,
-        id: SpeciesId[speciesData.species.speciesId],
-        form: null,
-        move: MoveId[move],
-      };
-      entries.push(data);
-    }
-
-    const allFormKeys = speciesData.species.forms.map(f => f.formKey);
-    for (const formKey in speciesData.formTms) {
-      if (!allFormKeys.includes(formKey)) {
-        console.log(
-          chalk.yellow(
-            `⚠️  Warning(tms): FormKey "${formKey}" does not exist for species ${speciesData.species.speciesId} (${speciesData.species.name})`,
-          ),
-        );
-      }
-      if (speciesData.formTms) {
-        const formTms = speciesData.formTms[formKey];
-        for (const move of formTms) {
-          const data: TmEntry = {
-            dexNum: speciesData.species.speciesId,
-            id: SpeciesId[speciesData.species.speciesId],
-            form: formKey,
-            move: MoveId[move],
-          };
-          entries.push(data);
-        }
-      }
-    }
+  for (const [move, tier] of Object.entries(tmPoolTiers)) {
+    const data: TmTierEntry = {
+      move: MoveId[move],
+      tier: ModifierTier[tier],
+    };
+    entries.push(data);
   }
 
   writeData("tms", entries);
