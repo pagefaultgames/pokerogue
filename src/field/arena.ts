@@ -19,6 +19,7 @@ import {
   getWeatherAnim,
   getWeatherClearMessage,
   getWeatherStartMessage,
+  isWeatherSuppressed,
   Weather,
 } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
@@ -247,10 +248,16 @@ export class Arena {
 
   /**
    * Sets weather to the override specified in `overrides.ts`
+   *
+   * @remarks
+   * Before any call to this method, ensure that `activeOverrides.WEATHER_OVERRIDE` is not set to `WeatherType.NONE`
    */
   // TODO: make this apply at the start of a new biome like the terrain one - this would be a lot more useful for tests
   private overrideWeather(): void {
-    const weather = activeOverrides.WEATHER_OVERRIDE;
+    // the `as` cast is OK here, as the method is only called if `activeOverrides.WEATHER_OVERRIDE` is truthy
+    // and WeatherType.NONE is nonzero.
+    const weather = activeOverrides.WEATHER_OVERRIDE as Exclude<WeatherType, WeatherType.NONE>;
+
     this.weather = new Weather(weather, 0);
 
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(weather, 0));
@@ -295,7 +302,10 @@ export class Arena {
     if (weather === WeatherType.NONE) {
       this.weather = null;
       this.eventTarget.dispatchEvent(new WeatherChangedEvent(WeatherType.NONE));
-      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType));
+      // Cast is OK; `oldWEatherType` cannot be `WeatherType.NONE` here as `canSetWeather` would have returned false if it were
+      globalScene.phaseManager.queueMessage(
+        getWeatherClearMessage(oldWeatherType as Exclude<WeatherType, WeatherType.NONE>),
+      );
     } else {
       this.weather = new Weather(weather, weatherDuration.value, weatherDuration.value);
       // Use the durations stored on the `Weather` itself, as immutable weathers (Harsh Sun, etc.) ignore
@@ -310,9 +320,7 @@ export class Arena {
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       // TODO: Specify the type of tags which are being removed here
-      pokemon.findAndRemoveTags(
-        tag => "weatherTypes" in tag && !(tag.weatherTypes as WeatherType[]).find(w => w === weather),
-      );
+      pokemon.findAndRemoveTags(tag => "weatherTypes" in tag && !(tag.weatherTypes as WeatherType[]).includes(weather));
       applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
     }
 
@@ -320,7 +328,7 @@ export class Arena {
   }
 
   public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
-    return !!this.weather && !this.weather.isEffectSuppressed() && this.weather.isMoveWeatherCancelled(user, move);
+    return !!this.weather && !isWeatherSuppressed() && this.weather.isMoveWeatherCancelled(user, move);
   }
 
   /**
