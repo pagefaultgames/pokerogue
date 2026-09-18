@@ -245,8 +245,10 @@ const inverseAndFlipStatAchievementsBlock = () =>
 const passivesChallengeAchievementsBlock = () =>
   globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2);
 
-const movesetRandomizerChallengeAchvBlock = () =>
-  globalScene.gameMode.challenges.some(c => c.id === Challenges.MOVESET_RANDOMIZER && c.value > 0);
+const randomizerChallengesAchvBlock = () =>
+  globalScene.gameMode.challenges.some(
+    c => [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER].includes(c.id) && c.value > 0,
+  );
 
 export const achvs = {
   CLASSIC_VICTORY: new Achv(
@@ -309,7 +311,7 @@ export const achvs = {
       && c.value === 1
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   NUZLOCKE: new ChallengeAchv(
     "nuzlocke",
@@ -321,13 +323,13 @@ export const achvs = {
     "inverseBattle",
     "inverse",
     100,
-    c => c instanceof InverseBattleChallenge && c.value > 0 && !movesetRandomizerChallengeAchvBlock(),
+    c => c instanceof InverseBattleChallenge && c.value > 0 && !randomizerChallengesAchvBlock(),
   ),
   FLIP_STATS: new ChallengeAchv(
     "flipStats",
     "dubious_disc",
     100,
-    c => c instanceof FlipStatChallenge && c.value > 0 && !movesetRandomizerChallengeAchvBlock(),
+    c => c instanceof FlipStatChallenge && c.value > 0 && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv(
     "monoGenOne",
@@ -338,7 +340,7 @@ export const achvs = {
       && c.value === 1
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv(
     "monoGenTwo",
@@ -349,7 +351,7 @@ export const achvs = {
       && c.value === 2
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv(
     "monoGenThree",
@@ -360,7 +362,7 @@ export const achvs = {
       && c.value === 3
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_FOUR_VICTORY: new ChallengeAchv(
     "monoGenFour",
@@ -371,7 +373,7 @@ export const achvs = {
       && c.value === 4
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_FIVE_VICTORY: new ChallengeAchv(
     "monoGenFive",
@@ -382,7 +384,7 @@ export const achvs = {
       && c.value === 5
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_SIX_VICTORY: new ChallengeAchv(
     "monoGenSix",
@@ -393,7 +395,7 @@ export const achvs = {
       && c.value === 6
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_SEVEN_VICTORY: new ChallengeAchv(
     "monoGenSeven",
@@ -404,7 +406,7 @@ export const achvs = {
       && c.value === 7
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_EIGHT_VICTORY: new ChallengeAchv(
     "monoGenEight",
@@ -415,7 +417,7 @@ export const achvs = {
       && c.value === 8
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GEN_NINE_VICTORY: new ChallengeAchv(
     "monoGenNine",
@@ -426,7 +428,7 @@ export const achvs = {
       && c.value === 9
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_NORMAL: new MonoTypeChallengeAchv(
     "monoNormal",
@@ -438,7 +440,7 @@ export const achvs = {
       && c.value === 1
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_FIGHTING: new MonoTypeChallengeAchv(
     "monoFighting",
@@ -450,7 +452,7 @@ export const achvs = {
       && c.value === 2
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_FLYING: new MonoTypeChallengeAchv(
     "monoFlying",
@@ -462,7 +464,7 @@ export const achvs = {
       && c.value === 3
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_POISON: new MonoTypeChallengeAchv(
     "monoPoison",
@@ -474,7 +476,7 @@ export const achvs = {
       && c.value === 4
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GROUND: new MonoTypeChallengeAchv(
     "monoGround",
@@ -486,7 +488,7 @@ export const achvs = {
       && c.value === 5
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_ROCK: new MonoTypeChallengeAchv(
     "monoRock",
@@ -498,7 +500,7 @@ export const achvs = {
       && c.value === 6
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_BUG: new MonoTypeChallengeAchv(
     "monoBug",
@@ -510,7 +512,7 @@ export const achvs = {
       && c.value === 7
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GHOST: new MonoTypeChallengeAchv(
     "monoGhost",
@@ -522,7 +524,7 @@ export const achvs = {
       && c.value === 8
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_STEEL: new MonoTypeChallengeAchv(
     "monoSteel",
@@ -534,7 +536,7 @@ export const achvs = {
       && c.value === 9
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_FIRE: new MonoTypeChallengeAchv(
     "monoFire",
@@ -546,7 +548,7 @@ export const achvs = {
       && c.value === 10
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_WATER: new MonoTypeChallengeAchv(
     "monoWater",
@@ -558,7 +560,7 @@ export const achvs = {
       && c.value === 11
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_GRASS: new MonoTypeChallengeAchv(
     "monoGrass",
@@ -570,7 +572,7 @@ export const achvs = {
       && c.value === 12
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_ELECTRIC: new MonoTypeChallengeAchv(
     "monoElectric",
@@ -582,7 +584,7 @@ export const achvs = {
       && c.value === 13
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_PSYCHIC: new MonoTypeChallengeAchv(
     "monoPsychic",
@@ -594,7 +596,7 @@ export const achvs = {
       && c.value === 14
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_ICE: new MonoTypeChallengeAchv(
     "monoIce",
@@ -606,7 +608,7 @@ export const achvs = {
       && c.value === 15
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_DRAGON: new MonoTypeChallengeAchv(
     "monoDragon",
@@ -618,7 +620,7 @@ export const achvs = {
       && c.value === 16
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_DARK: new MonoTypeChallengeAchv(
     "monoDark",
@@ -630,7 +632,7 @@ export const achvs = {
       && c.value === 17
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   MONO_FAIRY: new MonoTypeChallengeAchv(
     "monoFairy",
@@ -642,7 +644,7 @@ export const achvs = {
       && c.value === 18
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   PASSIVES_CHALLENGE: new ChallengeAchv(
     "passives",
@@ -652,7 +654,7 @@ export const achvs = {
       c instanceof PassivesChallenge
       && c.value > 0
       && !inverseAndFlipStatAchievementsBlock()
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ),
   UNEVOLVED_CLASSIC_VICTORY: new Achv("unevolvedClassicVictory", "eviolite", 50, () =>
     globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)),
@@ -665,7 +667,7 @@ export const achvs = {
       ch instanceof FlipStatChallenge
       && ch.value > 0
       && globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)
-      && !movesetRandomizerChallengeAchvBlock(),
+      && !randomizerChallengesAchvBlock(),
   ).setSecret(),
   BREEDERS_IN_SPACE: new Achv("breedersInSpace", "moon_stone", 50).setSecret(),
 };

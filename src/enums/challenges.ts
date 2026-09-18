@@ -11,4 +11,5 @@ export enum Challenges {
   HARDCORE,
   PASSIVES,
   MOVESET_RANDOMIZER,
+  ABILITY_RANDOMIZER,
 }

@@ -66,14 +66,16 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
+import { fixedInt, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
+import { ValueHolder } from "#utils/value-holder";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -2008,33 +2010,29 @@ export class GameData {
   }
 
   /**
-   * Obtain the value of a particular starter by SpeciesID
-   * @param speciesId - The {@linkcode SpeciesId} of the starter
-   * @param valueReduction - The applied value reduction; defaults to the value stored in `this.starterData[speciesId].valueReduction`
-   * @returns The value/cost of the starter
+   * Get the cost of a starter, taking into account the number of purchased cost reduction and any active challenges.
+   * @param speciesId - The {@linkcode StarterSpeciesId} of the starter
+   * @param valueReduction - (Default `this.starterData[speciesId].valueReduction`) The value reduction to apply
+   * @returns The resolved point cost of the starter
    * @privateRemarks
    * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
    */
-  getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
+  public getSpeciesStarterValue(
+    speciesId: StarterSpeciesId,
+    valueReduction: number = this.starterData[speciesId].valueReduction,
+  ): number {
     const baseValue = speciesDataRegistry.getStarterCost(speciesId);
-    const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
-    let value = baseValue as number;
+    const cost = new ValueHolder<number>(baseValue);
 
-    const decrementValue = (v: number) => {
-      if (v > 1) {
-        v--;
-      } else {
-        v /= 2;
-      }
-      return v;
-    };
-
-    for (let v = 0; v < reduction; v++) {
-      value = decrementValue(value);
-    }
-
-    const cost = new NumberHolder(value);
     applyChallenges(ChallengeType.STARTER_COST, speciesId, cost);
+
+    for (let v = 0; v < valueReduction; v++) {
+      if (cost.value > 1) {
+        cost.value--;
+      } else {
+        cost.value /= 2;
+      }
+    }
 
     return cost.value;
   }
