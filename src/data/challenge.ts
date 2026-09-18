@@ -1387,7 +1387,7 @@ export class MovesetRandomizerChallenge extends Challenge {
     return [...MovesetRandomizerChallenge._validMoveIds];
   }
 
-  private static _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
+  private static readonly _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
   private get globalTmList(): MoveId[] {
     // cloned so that the original list doesn't get mutated by `randSeedShuffle`
     return [...MovesetRandomizerChallenge._globalTmList];
@@ -1609,6 +1609,14 @@ export class MovesetRandomizerChallenge extends Challenge {
     isAvailable.value = false;
 
     return true;
+  }
+
+  public override applyStarterCost(speciesId: SpeciesId, cost: ValueHolder<number>): boolean {
+    if (speciesId === SpeciesId.TYROGUE) {
+      cost.value -= 2; // 3 -> 1
+      return true;
+    }
+    return false;
   }
 
   public static override loadChallenge(source: Challenge | any): Challenge {
