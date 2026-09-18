@@ -687,7 +687,7 @@ export class MovePhase extends PokemonPhase {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         moveName: pokemonMove.getName(),
       }),
-      500,
+      { callbackDelay: 500 },
     );
 
     // Moves with pre-use messages (Magnitude, Chilly Reception, Fickle Beam, etc.) always display their messages even on failure

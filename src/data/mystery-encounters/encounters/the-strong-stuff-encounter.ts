@@ -181,7 +181,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
 
       encounter.setDialogueToken("reductionValue", HIGH_BST_REDUCTION_VALUE.toString());
       encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
-      await showEncounterText(`${namespace}:option.1.selected2`, null, undefined, true);
+      await showEncounterText(`${namespace}:option.1.selected2`);
 
       encounter.dialogue.outro = [
         {

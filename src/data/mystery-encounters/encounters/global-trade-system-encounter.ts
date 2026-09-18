@@ -193,7 +193,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
                   + " "
                   + getNatureName(tradePokemon.getNature())
                   + (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
-                showEncounterText(`${line1}\n${line2}`, 0, 0, false);
+                showEncounterText(`${line1}\n${line2}`, { delay: 0, prompt: false });
               },
             };
             return option;
@@ -245,7 +245,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Show the trade animation
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
-        await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
+        await showEncounterText(`${namespace}:tradeReceived`, { promptDelay: 4000 });
         audioManager.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
@@ -349,7 +349,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Show the trade animation
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
-        await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
+        await showEncounterText(`${namespace}:tradeReceived`, { promptDelay: 4000 });
         audioManager.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();

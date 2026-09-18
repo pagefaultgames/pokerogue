@@ -20,8 +20,9 @@ import i18next from "i18next";
  */
 export class EggHatchPhase extends Phase {
   public readonly phaseName = "EggHatchPhase";
+
   /** The egg that is hatching */
-  private egg: Egg;
+  private readonly egg: Egg;
   /** The new EggHatchData for the egg/pokemon that hatches */
   private eggHatchData: EggHatchData;
 
@@ -64,10 +65,12 @@ export class EggHatchPhase extends Phase {
   private skipped: boolean;
   /** The sound effect being played when the egg is hatched */
   private evolutionBgm: BackgroundMusic | null;
-  private eggLapsePhase: EggLapsePhase;
+
+  private readonly eggLapsePhase: EggLapsePhase;
 
   constructor(hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: number) {
     super();
+
     this.eggLapsePhase = hatchScene;
     this.egg = egg;
     this.eggsToHatchCount = eggsToHatchCount;
@@ -141,7 +144,8 @@ export class EggHatchPhase extends Phase {
         return ret;
       };
 
-      this.eggHatchContainer.add((this.pokemonSprite = getPokemonSprite()));
+      this.pokemonSprite = getPokemonSprite();
+      this.eggHatchContainer.add(this.pokemonSprite);
 
       this.pokemonShinySparkle = globalScene.add.sprite(this.pokemonSprite.x, this.pokemonSprite.y, "shiny");
       this.pokemonShinySparkle.setVisible(false);
@@ -392,15 +396,13 @@ export class EggHatchPhase extends Phase {
         const finishHatch = () => {
           globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
             this.eggHatchData.setEggMoveUnlocked(value);
-            globalScene.ui.showText("", 0);
+            globalScene.ui.showText("", { delay: 0 });
             this.end();
           });
         };
 
-        globalScene.ui.showText(
-          hatchText,
-          null,
-          () => {
+        globalScene.ui.showText(hatchText, {
+          callback: () => {
             if (isNewStarterCatch) {
               globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
               globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(finishHatch);
@@ -408,10 +410,9 @@ export class EggHatchPhase extends Phase {
               finishHatch();
             }
           },
-          null,
-          true,
-          3000,
-        );
+          prompt: true,
+          promptDelay: 3000,
+        });
 
         if (!isNewStarterCatch) {
           const printDuration = (hatchText.length + 1) * 20;
