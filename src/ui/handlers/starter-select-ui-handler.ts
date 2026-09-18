@@ -1265,8 +1265,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.lastStarterId,
           this.starterPreferences[this.lastStarterId],
         );
-        const natureIndexInArray = natures.indexOf(natureIndex);
-        const newNature = natures[natureIndexInArray < natures.length - 1 ? natureIndexInArray + 1 : 0];
+        const newNature = natures[Phaser.Math.Wrap(natures.indexOf(natureIndex) + 1, 0, natures.length)];
         // store cycled nature as default
         this.setNewNature(this.lastStarterId, newNature);
         cycled = true;
