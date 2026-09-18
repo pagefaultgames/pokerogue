@@ -12,7 +12,7 @@ import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
-import { initGlobalScene } from "#app/global-scene";
+import { globalScene, initGlobalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { InputsController } from "#app/inputs-controller";
@@ -1278,6 +1278,8 @@ export class BattleScene extends SceneBase {
       );
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
+
+    globalScene.phaseManager.unshiftNew("PartyReorderSwitchPhase");
 
     const lastBattle: Battle | null = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();

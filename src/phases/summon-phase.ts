@@ -267,6 +267,15 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   onEnd(): void {
+    // Ensures that the second player Pokémon is always on top, even after
+    // a new Pokémon is sent out in the first slot.
+    if (this.player) {
+      const playerPokemonOnField = globalScene.getPlayerParty().filter(pkmn => pkmn.isOnField());
+      if (playerPokemonOnField.length === 2) {
+        globalScene.field.bringToTop(playerPokemonOnField[1]);
+      }
+    }
+
     const pokemon = this.getPokemon();
 
     if (pokemon.isShiny(true)) {
