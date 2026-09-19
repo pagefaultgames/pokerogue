@@ -979,7 +979,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
       globalScene.currentBattle.waveIndex,
       level,
       0,
-      getPartyLuckValue(globalScene.getPlayerParty()),
+      getPartyLuckValue(),
       isBoss,
     );
   }
