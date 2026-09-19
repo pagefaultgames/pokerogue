@@ -77,7 +77,9 @@ async function main(): Promise<void> {
 
   try {
     // `seed` is required
-    customSeedConfig.seed = await promptSeed();
+    if (!customSeedConfig.seed) {
+      customSeedConfig.seed = await promptSeed();
+    }
     await promptOptions();
     if (process.exitCode != null) {
       return;
