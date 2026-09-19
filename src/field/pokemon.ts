@@ -2660,7 +2660,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const moveType = source.getMoveType(move);
 
-    const typeMultiplier = new ValueHolder(1);
+    const typeMultiplier = new NumberHolder(1);
     if (move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")) {
       typeMultiplier.value = this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion });
     }
@@ -2678,7 +2678,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value *= 2;
     }
 
-    const cancelledHolder = cancelled ?? new BooleanHolder(false);
+    const cancelledHolder = cancelled ?? new ValueHolder(false);
     // TypeMultiplierAbAttrParams is shared amongst the type of AbAttrs we will be invoking
     const commonAbAttrParams: TypeMultiplierAbAttrParams = {
       pokemon: this,
