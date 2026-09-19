@@ -584,7 +584,7 @@ export class SummaryUiHandler extends UiHandler {
                       this.moveRowsContainer.remove(currentMoveRow, true);
 
                       // Add a new, empty move container
-                      // TODO: create a custom container class form moves and modify the container in place
+                      // TODO: create a custom container class for moves and modify the container in place
                       // instead of destroying it and recreating it.
                       const moveRowContainer = globalScene.add.container(0, 16 * (movesetLength - 1));
                       this.moveRowsContainer.add(moveRowContainer);
@@ -630,10 +630,7 @@ export class SummaryUiHandler extends UiHandler {
               },
             });
 
-            //            ui.showText(i18next.t("pokemonSummary:doWhatWithMove"), null, () => {
-
             ui.setOverlayMode(UiMode.OPTION_SELECT, { options: moveSelectOptions, yOffset: 48 });
-            //            });
             success = true;
           } else {
             if (this.selectedMoveIndex !== this.moveCursor) {
