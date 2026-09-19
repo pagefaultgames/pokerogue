@@ -177,7 +177,8 @@ async function finish() {
     console.log(
       chalk.hex("#ffa500")("No outfile detected, logging to stdout...")
         + chalk.cyan("\n🌱 Your custom daily seed config is:")
-        + chalk.green(`\n${JSON.stringify(customSeedConfig)}`),
+        + chalk.green(`\n${JSON.stringify(customSeedConfig)}`)
+        + chalk.gray(`\n🧪 For testing use the "DAILY_RUN_SEED_OVERRIDE" override.`),
     );
   }
 }
