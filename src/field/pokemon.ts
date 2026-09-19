@@ -2660,11 +2660,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const moveType = source.getMoveType(move);
 
-    const typeMultiplier = new NumberHolder(
-      move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
-        ? this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion })
-        : 1,
-    );
+    const typeMultiplier = new ValueHolder(1);
+    if (move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")) {
+      typeMultiplier.value = this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion });
+    }
+
+    if (move.hasAttr("FixedDamageAttr") && typeMultiplier.value > 0) {
+      typeMultiplier.value = 1;
+    }
 
     if (move.isTypeImmune(source, this)) {
       typeMultiplier.value = 0;
