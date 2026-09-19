@@ -625,7 +625,7 @@ export class SummaryUiHandler extends UiHandler {
               });
             }
             moveSelectOptions.push({
-              label: i18next.t("menuUiHandler:cancel"),
+              label: i18next.t("pokemonSummary:cancel"),
               handler: () => {
                 ui.revertMode();
                 return true;
