@@ -548,20 +548,22 @@ export class SummaryUiHandler extends UiHandler {
           } else if (this.selectedMoveIndex === -1) {
             const movesetLength = this.pokemon.moveset.length;
             const moveSelectOptions: OptionSelectItem[] = [];
-            // Option to swap move around
-            if (movesetLength > 1) {
-              moveSelectOptions.push({
-                label: i18next.t("pokemonSummary:swapMove"),
-                handler: () => {
-                  this.selectedMoveIndex = this.moveCursor;
-                  this.setCursor(this.moveCursor);
-                  ui.revertMode();
-                  return true;
-                },
-              });
+            if (movesetLength <= 1) {
+              ui.playError();
+              return false;
             }
+            // Option to swap move around
+            moveSelectOptions.push({
+              label: i18next.t("pokemonSummary:swapMove"),
+              handler: () => {
+                this.selectedMoveIndex = this.moveCursor;
+                this.setCursor(this.moveCursor);
+                ui.revertMode();
+                return true;
+              },
+            });
             // Option to delete move
-            if (movesetLength > 1 && globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+            if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
               moveSelectOptions.push({
                 label: i18next.t("pokemonSummary:deleteMove"),
                 handler: () => {
