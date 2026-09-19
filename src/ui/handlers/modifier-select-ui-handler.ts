@@ -718,6 +718,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();
+    this.getUi().getMessageHandler().hideNameText();
     this.eraseCursor();
 
     // Reset cursor positions
