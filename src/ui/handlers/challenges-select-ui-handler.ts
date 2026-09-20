@@ -466,7 +466,7 @@ export class GameChallengesUiHandler extends UiHandler {
   private setAwardedRibbons(): void {
     const awardedRibbonFlags = getRibbonsToAward();
 
-    const text = "This run will award the following ribbons: ";
+    const text = i18next.t("ribbons:runAward");
     const labels: string[] = [];
 
     for (const ribbon of orderedRibbons) {
