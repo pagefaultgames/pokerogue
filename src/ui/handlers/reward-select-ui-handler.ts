@@ -37,7 +37,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
-  protected declare onActionInput: RewardSelectCallback | null;
+  declare protected onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;

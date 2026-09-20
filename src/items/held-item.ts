@@ -244,7 +244,7 @@ export abstract class CosmeticHeldItem extends HeldItemBase {
    * This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly differentiate cosmetic items from normal ones.
    */
-  private declare _: never;
+  declare private _: never;
 
   public override readonly isStealable = false;
   public override readonly isSuppressable = false;

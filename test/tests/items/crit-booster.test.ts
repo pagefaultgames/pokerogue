@@ -46,23 +46,22 @@ describe("Items - Crit Boosters", () => {
   });
 
   describe("Leek", () => {
-    it.each([
-      SpeciesId.FARFETCHD,
-      SpeciesId.GALAR_FARFETCHD,
-      SpeciesId.SIRFETCHD,
-    ])("should raise the critical hit stage by 2 for %s", async species => {
-      game.override.startingHeldItems([{ entry: HeldItemId.LEEK }]);
-      await game.classicMode.startBattle(species);
+    it.each([SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD])(
+      "should raise the critical hit stage by 2 for %s",
+      async species => {
+        game.override.startingHeldItems([{ entry: HeldItemId.LEEK }]);
+        await game.classicMode.startBattle(species);
 
-      const player = game.field.getPlayerPokemon();
-      const critStage = new ValueHolder(0);
+        const player = game.field.getPlayerPokemon();
+        const critStage = new ValueHolder(0);
 
-      const leek = allHeldItems[HeldItemId.LEEK];
-      expect(leek.getAttrs(HeldItemEffect.CRIT_BOOST)[0].shouldApply({ pokemon: player, critStage })).toBe(true);
+        const leek = allHeldItems[HeldItemId.LEEK];
+        expect(leek.getAttrs(HeldItemEffect.CRIT_BOOST)[0].shouldApply({ pokemon: player, critStage })).toBe(true);
 
-      applySingleHeldItem(HeldItemId.LEEK, HeldItemEffect.CRIT_BOOST, { pokemon: player, critStage });
-      expect(critStage.value).toBe(2);
-    });
+        applySingleHeldItem(HeldItemId.LEEK, HeldItemEffect.CRIT_BOOST, { pokemon: player, critStage });
+        expect(critStage.value).toBe(2);
+      },
+    );
 
     it("should not apply for other species", async () => {
       game.override.startingHeldItems([{ entry: HeldItemId.LEEK }]);

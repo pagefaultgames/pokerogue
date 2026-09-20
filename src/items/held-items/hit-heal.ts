@@ -31,6 +31,6 @@ export class HitHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.HIT_
           typeName: this.item.name,
         }),
       },
-    );    
+    );
   }
 }

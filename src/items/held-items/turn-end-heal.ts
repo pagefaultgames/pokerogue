@@ -30,6 +30,6 @@ export class TurnEndHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
           typeName: this.item.name,
         }),
       },
-    );    
+    );
   }
 }

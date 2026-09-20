@@ -41,7 +41,6 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import type { SilentReward } from "#types/rewards";
 import type {
   GenAIFunc,
@@ -4726,17 +4725,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc(
-        [SpeciesId.PIKACHU],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          p.formIndex = 1; // Partner Pikachu
-          p.gender = Gender.MALE;
-          p.generateAndPopulateMoveset();
-          p.heldItemManager.add(HeldItemId.LIGHT_BALL);
-        },
-      ),
+      getRandomPartyMemberFunc([SpeciesId.PIKACHU], TrainerSlot.TRAINER, true, p => {
+        p.formIndex = 1; // Partner Pikachu
+        p.gender = Gender.MALE;
+        p.generateAndPopulateMoveset();
+        p.heldItemManager.add(HeldItemId.LIGHT_BALL);
+      }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
     .setPartyMemberFunc(

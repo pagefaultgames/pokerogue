@@ -62,8 +62,8 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
-import type { ConfirmModeConfig } from "#types/ui-types";
 import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";

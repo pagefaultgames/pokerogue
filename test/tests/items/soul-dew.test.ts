@@ -43,29 +43,31 @@ describe("Items - Soul Dew", () => {
     expect(player.getStat(stat, false)).toBe(expected);
   }
 
-  it.each([
-    1, 2, 3,
-  ])("should amplify the holder's beneficial nature by an additional 0.1 per stack (%d stack(s))", async stacks => {
-    game.override
-      .startingHeldItems([{ entry: HeldItemId.SOUL_DEW, count: stacks }])
-      .playerIVs(31)
-      .startingLevel(50);
+  it.each([1, 2, 3])(
+    "should amplify the holder's beneficial nature by an additional 0.1 per stack (%d stack(s))",
+    async stacks => {
+      game.override
+        .startingHeldItems([{ entry: HeldItemId.SOUL_DEW, count: stacks }])
+        .playerIVs(31)
+        .startingLevel(50);
 
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
-    expectNatureBoost(Stat.ATK, 1.1, stacks);
-  });
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+      expectNatureBoost(Stat.ATK, 1.1, stacks);
+    },
+  );
 
-  it.each([
-    1, 2, 3,
-  ])("should amplify the holder's hindering nature by an additional -0.1 per stack (%d stack(s))", async stacks => {
-    game.override
-      .startingHeldItems([{ entry: HeldItemId.SOUL_DEW, count: stacks }])
-      .playerIVs(31)
-      .startingLevel(50);
+  it.each([1, 2, 3])(
+    "should amplify the holder's hindering nature by an additional -0.1 per stack (%d stack(s))",
+    async stacks => {
+      game.override
+        .startingHeldItems([{ entry: HeldItemId.SOUL_DEW, count: stacks }])
+        .playerIVs(31)
+        .startingLevel(50);
 
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
-    expectNatureBoost(Stat.SPATK, 0.9, stacks);
-  });
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+      expectNatureBoost(Stat.SPATK, 0.9, stacks);
+    },
+  );
 
   it("should not reduce a stat below the floor of 1", async () => {
     game.override.startingHeldItems([{ entry: HeldItemId.SOUL_DEW, count: 10 }]).startingLevel(20);

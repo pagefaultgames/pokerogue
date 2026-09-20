@@ -38,20 +38,20 @@ describe("Items - Type Boosters", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it.each(typeBoosterCases)("$itemName should boost the power of matching-type moves by 20%", async ({
-    item,
-    moveType,
-  }) => {
-    game.override.startingHeldItems([{ entry: item }]);
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it.each(typeBoosterCases)(
+    "$itemName should boost the power of matching-type moves by 20%",
+    async ({ item, moveType }) => {
+      game.override.startingHeldItems([{ entry: item }]);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const player = game.field.getPlayerPokemon();
-    const movePower = new ValueHolder(100);
+      const player = game.field.getPlayerPokemon();
+      const movePower = new ValueHolder(100);
 
-    applySingleHeldItem(item, HeldItemEffect.ATTACK_TYPE_BOOST, { pokemon: player, moveType, movePower });
+      applySingleHeldItem(item, HeldItemEffect.ATTACK_TYPE_BOOST, { pokemon: player, moveType, movePower });
 
-    expect(movePower.value).toBe(120);
-  });
+      expect(movePower.value).toBe(120);
+    },
+  );
 
   it.each([
     { scenario: "moves of a different type", moveType: PokemonType.WATER, movePower: 100 },

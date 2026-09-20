@@ -33,23 +33,23 @@ describe("Items - Grip Claw", () => {
   it.each([
     { roll: 0, steals: true },
     { roll: 99, steals: false },
-  ])("should steal the target's held item on contact only when the roll succeeds ($steals)", async ({
-    roll,
-    steals,
-  }) => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  ])(
+    "should steal the target's held item on contact only when the roll succeeds ($steals)",
+    async ({ roll, steals }) => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const player = game.field.getPlayerPokemon();
-    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(roll);
+      const player = game.field.getPlayerPokemon();
+      vi.spyOn(player, "randBattleSeedInt").mockReturnValue(roll);
 
-    game.move.use(MoveId.TACKLE);
-    await game.toEndOfTurn();
+      game.move.use(MoveId.TACKLE);
+      await game.toEndOfTurn();
 
-    if (steals) {
-      expect(player).toHaveHeldItem(HeldItemId.LEFTOVERS);
-      expect(game.field.getEnemyPokemon()).not.toHaveHeldItem(HeldItemId.LEFTOVERS);
-    } else {
-      expect(game.field.getEnemyPokemon()).toHaveHeldItem(HeldItemId.LEFTOVERS);
-    }
-  });
+      if (steals) {
+        expect(player).toHaveHeldItem(HeldItemId.LEFTOVERS);
+        expect(game.field.getEnemyPokemon()).not.toHaveHeldItem(HeldItemId.LEFTOVERS);
+      } else {
+        expect(game.field.getEnemyPokemon()).toHaveHeldItem(HeldItemId.LEFTOVERS);
+      }
+    },
+  );
 });
