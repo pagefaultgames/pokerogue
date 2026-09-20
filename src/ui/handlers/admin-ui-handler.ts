@@ -33,10 +33,6 @@ export class AdminUiHandler extends FormModalUiHandler {
     return `Username and ${service} successfully ${mode.toLowerCase()}ed`;
   }
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
-
   override getModalTitle(): string {
     return "Admin panel";
   }

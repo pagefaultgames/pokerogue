@@ -64,6 +64,7 @@ import {
   MoveAbilityBypassAbAttr,
   MoveDamageBoostAbAttr,
   MoveEffectChanceMultiplierAbAttr,
+  MoveHealBoostAbAttr,
   MoveImmunityAbAttr,
   MoveImmunityStatStageChangeAbAttr,
   MovePowerBoostAbAttr,
@@ -1207,6 +1208,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.MEGA_LAUNCHER, 6) //
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5)
+      .attr(MoveHealBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5)
       .build(),
     new AbBuilder(AbilityId.GRASS_PELT, 6) //
       .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), StatMultiplierAbAttr, Stat.DEF, 1.5)
@@ -1405,7 +1407,7 @@ export function initAbilities() {
       )
       .build(),
     new AbBuilder(AbilityId.TRIAGE, 7) //
-      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3)
+      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.hasFlag(MoveFlags.HEALING_MOVE), 3)
       .build(),
     new AbBuilder(AbilityId.GALVANIZE, 7) //
       .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, normalTypeMoveConversionCondition)
@@ -2198,6 +2200,14 @@ export function initAbilities() {
     new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
       .attr(PostDefendApplyStatusEffectAbAttr, 100, false, StatusEffect.BURN)
       .bypassFaint()
+      .build(),
+    new AbBuilder(AbilityId.AURA_GUARD, 9) //
+      .attr(
+        ReceivedMoveDamageMultiplierAbAttr,
+        (target, user, move) => move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user, target }),
+        0.5,
+      )
+      .ignorable()
       .build(),
   );
 }

@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemAttr } from "#items/held-item-attr";
-import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import type { TurnEndHealParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -21,17 +20,16 @@ export class TurnEndHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
 
   public override apply({ pokemon }: TurnEndHealParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    globalScene.phaseManager.unshiftPhase(
-      new PokemonHealPhase(
-        pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
-        i18next.t("itemApply:turnHealApply", {
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      pokemon.getBattlerIndex(),
+      toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
+      {
+        message: i18next.t("modifier:turnHealApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          // TODO: consider removing the parameter
           typeName: this.item.name,
         }),
-        true,
-      ),
-    );
+      },
+    );    
   }
 }

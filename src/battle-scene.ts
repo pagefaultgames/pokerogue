@@ -366,6 +366,7 @@ export class BattleScene extends SceneBase {
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     await Promise.all([
+      this.initExpSprites(),
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
@@ -3239,7 +3240,6 @@ export class BattleScene extends SceneBase {
     ];
 
     // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
-    // biome-ignore format: biome sucks at formatting this line
     for (const seenEncounterData of this.mysteryEncounterSaveData.encounteredEvents) {
       if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] -= 6;

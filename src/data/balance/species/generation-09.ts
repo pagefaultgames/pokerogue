@@ -235,6 +235,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TRIPLE_AXEL,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.FUECOCO] = {
@@ -975,6 +976,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.SPIDOPS] = {
@@ -1115,6 +1117,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.LOKIX] = {
@@ -2140,6 +2143,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
+      MoveId.LUNGE,
+      MoveId.SEED_BOMB,
     ],
   };
   generationNineSpeciesData[SpeciesId.NACLI] = {
@@ -2428,6 +2433,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.FLAME_CHARGE,
       MoveId.INCINERATE,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.ARMAROUGE] = {
@@ -2920,10 +2926,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       [26, MoveId.PAYBACK],
       [31, MoveId.CRUNCH],
       [35, MoveId.SWAGGER],
-      [37, MoveId.BOUNCE],
       [39, MoveId.REVERSAL],
       [43, MoveId.JAW_LOCK],
-      [46, MoveId.LUNGE],
       [49, MoveId.DOUBLE_EDGE],
     ],
     tms: [
@@ -2968,6 +2972,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.FOCUS_ENERGY,
     ],
   };
   generationNineSpeciesData[SpeciesId.MABOSSTIFF] = {
@@ -3013,10 +3018,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       [26, MoveId.PAYBACK],
       [34, MoveId.CRUNCH],
       [39, MoveId.SWAGGER],
-      [41, MoveId.BOUNCE],
       [43, MoveId.REVERSAL],
       [48, MoveId.JAW_LOCK],
-      [51, MoveId.LUNGE],
       [55, MoveId.DOUBLE_EDGE],
       [60, MoveId.OUTRAGE],
     ],
@@ -3186,6 +3189,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.SHADOW_CLAW,
       MoveId.LOW_SWEEP,
       MoveId.THROAT_CHOP,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.BRAMBLIN] = {
@@ -6011,6 +6015,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.DONDOZO] = {
@@ -7289,6 +7294,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.TEMPER_FLARE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationNineSpeciesData[SpeciesId.SANDY_SHOCKS] = {
@@ -8282,7 +8288,6 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       [48, MoveId.ICE_BEAM],
       [55, MoveId.CRUNCH],
       [62, MoveId.ICICLE_CRASH],
-      [70, MoveId.ICE_HAMMER],
     ],
     tms: [
       MoveId.DOUBLE_EDGE,
@@ -8300,6 +8305,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.BREAKING_SWIPE,
       MoveId.SCALE_SHOT,
       MoveId.DRAGON_CHEER,
+      MoveId.FROST_BREATH,
     ],
   };
   generationNineSpeciesData[SpeciesId.GIMMIGHOUL] = {
@@ -8701,6 +8707,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.TING_LU] = {
@@ -9019,6 +9026,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.DRAGON_CHEER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.IRON_VALIANT] = {
@@ -9146,6 +9154,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.KORAIDON] = {
@@ -9647,6 +9656,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationNineSpeciesData[SpeciesId.DIPPLIN] = {
@@ -11906,18 +11916,18 @@ export function initGenerationNine(): SpeciesDataMapConfig {
     passives: AbilityId.BERSERK,
     levelMoves: [
       [RELEARN_MOVE, MoveId.MOONLIGHT],
-      [1, MoveId.ROUND],
-      [1, MoveId.MUD_SLAP],
       [1, MoveId.SCRATCH],
       [1, MoveId.LICK],
+      [1, MoveId.MUD_SHOT],
+      [1, MoveId.HARDEN],
       [1, MoveId.LEER],
       [8, MoveId.FURY_SWIPES],
       [11, MoveId.MUD_SHOT],
       [13, MoveId.PAYBACK],
-      [15, MoveId.FEINT_ATTACK],
-      [18, MoveId.HARDEN],
-      [22, MoveId.SLASH],
-      [25, MoveId.PLAY_NICE],
+      [15, MoveId.ROUND],
+      [18, MoveId.FEINT_ATTACK],
+      [22, MoveId.PLAY_NICE],
+      [25, MoveId.SLASH],
       [29, MoveId.PLAY_ROUGH],
       [35, MoveId.SCARY_FACE],
       [41, MoveId.REST],

@@ -4,6 +4,7 @@ import { CustomPokemonData } from "#data/pokemon-data";
 import { AiType } from "#enums/ai-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { HeldItemId } from "#enums/held-item-id";
+import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -41,6 +42,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.SLUMBERING_SNORLAX,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
+  .withDisallowedChallenges(Challenges.MOVESET_RANDOMIZER)
   .withSceneWaveRangeRequirement(15, 150)
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)

@@ -16,7 +16,6 @@ import { saveDataToConfig } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import type { HeldItemSaveData } from "#types/held-item-data-types";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export class PokemonData {
   public id: number;
@@ -192,7 +191,7 @@ export class PokemonData {
     // when loading from saved session, recover summonData.speciesFrom and form index species object
     // used to stay transformed on reload session
     if (this.summonData.speciesForm) {
-      ret.summonData.speciesForm = getPokemonSpeciesForm(
+      ret.summonData.speciesForm = speciesDataRegistry.getPokemonSpeciesForm(
         this.summonData.speciesForm.speciesId,
         this.summonDataSpeciesFormIndex,
       );

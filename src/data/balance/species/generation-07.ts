@@ -3178,6 +3178,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.CROSS_POISON,
       MoveId.LOW_SWEEP,
       MoveId.SOLAR_BLADE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.MORELULL] = {
@@ -4400,9 +4401,9 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
           type2: PokemonType.STEEL,
           height: 2.3,
           weight: 148,
-          ability1: AbilityId.SHELL_ARMOR,
+          ability1: AbilityId.TOUGH_CLAWS,
           ability2: AbilityId.NONE,
-          abilityHidden: AbilityId.SHELL_ARMOR,
+          abilityHidden: AbilityId.TOUGH_CLAWS,
           baseTotal: 630,
           baseHp: 75,
           baseAtk: 150,
@@ -4495,6 +4496,13 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SNARL,
       MoveId.THROAT_CHOP,
       MoveId.LIQUIDATION,
+      MoveId.AGILITY,
+      MoveId.CHILLING_WATER,
+      MoveId.GUNK_SHOT,
+      MoveId.POUNCE,
+      MoveId.U_TURN,
+      MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationSevenSpeciesData[SpeciesId.SANDYGAST] = {
@@ -6583,6 +6591,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.BRUXISH] = {
@@ -9139,6 +9148,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.MAGEARNA] = {
@@ -10761,6 +10771,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_SANDSLASH] = {
@@ -11204,6 +11215,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SLUDGE_WAVE,
       MoveId.HIGH_HORSEPOWER,
       MoveId.THROAT_CHOP,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_MEOWTH] = {
@@ -11342,6 +11354,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_PERSIAN] = {

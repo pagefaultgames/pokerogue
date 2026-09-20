@@ -88,16 +88,13 @@ export class EnemyTurnHealTrainerItemAttr extends TrainerItemAttr<typeof Trainer
     globalScene.phaseManager.unshiftNew(
       "PokemonHealPhase",
       enemyPokemon.getBattlerIndex(),
-      // TODO: Do we need to round this?
-      Math.max(Math.floor(enemyPokemon.getMaxHp() * this.healPercent * stack), 1),
-      i18next.t("itemApply:enemyTurnHealApply", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
-      }),
-      true,
-      false,
-      false,
-      false,
-      true,
+      (enemyPokemon.getMaxHp() * stack * this.healPercent) / 100,
+      {
+        message: i18next.t("modifier:enemyTurnHealApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
+        }),
+        preventFullHeal: true,
+      },
     );
   }
 }

@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { ConsumableHeldItemAttr } from "#items/held-item-attr";
-import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import type { InstantReviveParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -22,18 +21,17 @@ export class InstantReviveHeldItemAttr extends ConsumableHeldItemAttr<typeof Hel
     }
     // TODO: Since this should be the only place `revive=true` is passed to `PokemonHealPhase`, we can remove it
     // later on
-    globalScene.phaseManager.unshiftPhase(
-      new PokemonHealPhase(
-        pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.getMaxHp() / 2),
-        i18next.t("itemApply:pokemonInstantReviveApply", {
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      pokemon.getBattlerIndex(),
+      toDmgValue(pokemon.getMaxHp() / 2),
+      {
+        message: i18next.t("modifier:pokemonInstantReviveApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.item.name,
         }),
-        false,
-        false,
-        true,
-      ),
+        revive: true,
+      },
     );
 
     // Remove the Pokemon's FAINT status

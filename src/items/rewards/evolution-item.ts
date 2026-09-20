@@ -60,13 +60,13 @@ export class EvolutionItemReward extends PokemonReward {
     let matchingEvolution = speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
       ? speciesDataRegistry
           .getEvolutions(pokemon.species.speciesId)
-          .find(e => e.evoItem === this.evolutionItem && e.validate(pokemon, false, e.item!))
+          .find(e => e.item === this.evolutionItem && e.validate(pokemon, false, e.item!))
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
       matchingEvolution = speciesDataRegistry
         .getEvolutions(pokemon.fusionSpecies!.speciesId)
-        .find(e => e.evoItem === this.evolutionItem && e.validate(pokemon, true, e.item!));
+        .find(e => e.item === this.evolutionItem && e.validate(pokemon, true, e.item!));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
       }
@@ -129,7 +129,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
         }),
     ]
       .flat()
-      .flatMap(e => e.evoItem)
+      .flatMap(e => e.item)
       .filter(i => !!i && i > 50 === this.rare);
 
     if (evolutionItemPool.length === 0) {

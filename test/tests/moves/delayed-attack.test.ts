@@ -404,7 +404,7 @@ describe("Moves - Delayed Attacks", () => {
 
     // Throw master ball and release the enemy
     game.doThrowPokeball(PokeballType.MASTER_BALL);
-    game.onNextPrompt("AttemptCapturePhase", UiMode.CONFIRM, () => {
+    game.onNextPrompt("AttemptCapturePhase", UiMode.OPTION_SELECT, () => {
       game.scene.ui.processInput(Button.CANCEL);
     });
     await game.toEndOfTurn();

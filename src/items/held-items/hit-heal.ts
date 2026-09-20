@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemAttr } from "#items/held-item-attr";
-import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import type { HitHealParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -22,17 +21,16 @@ export class HitHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.HIT_
   public override apply({ pokemon }: HitHealParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
 
-    // TODO: This will need to be adjusted after the pokemon heal phase refactor
-    globalScene.phaseManager.unshiftPhase(
-      new PokemonHealPhase(
-        pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * stackCount,
-        i18next.t("itemApply:hitHealApply", {
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      pokemon.getBattlerIndex(),
+      toDmgValue((pokemon.turnData.totalDamageDealt * stackCount) / 8),
+      {
+        message: i18next.t("modifier:hitHealApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.item.name,
         }),
-        true,
-      ),
-    );
+      },
+    );    
   }
 }

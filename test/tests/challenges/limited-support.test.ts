@@ -37,7 +37,7 @@ describe("Challenges - Limited Support", () => {
     await game.doKillOpponents();
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(game.scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(game.scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -79,7 +79,7 @@ describe("Challenges - Limited Support", () => {
     await game.doKillOpponents();
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(game.scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(game.scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;

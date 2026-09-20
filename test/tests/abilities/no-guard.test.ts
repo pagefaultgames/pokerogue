@@ -37,7 +37,7 @@ describe("Abilities - No Guard", () => {
 
     game.move.select(MoveId.ZAP_CANNON);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase", false);
 

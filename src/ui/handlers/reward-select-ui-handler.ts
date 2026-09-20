@@ -11,7 +11,6 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TextStyle } from "#enums/text-style";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { UiMode } from "#enums/ui-mode";
 import type { RewardOption } from "#items/reward";
 import { getPlayerShopRewardOptionsForWave, isTmReward } from "#items/reward-utils";
 import type { RewardSelectCallback } from "#phases/select-reward-phase";
@@ -38,7 +37,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
-  protected declare onActionInput: RewardSelectCallback | null;
+  declare protected onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -50,17 +49,10 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private transferButtonWidth: number;
   private checkButtonWidth: number;
 
-  public options: ModifierOption[];
-  public shopOptionsRows: ModifierOption[][];
+  public options: ModifierOption[] = [];
+  public shopOptionsRows: ModifierOption[][] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
-
-  constructor() {
-    super(UiMode.CONFIRM);
-
-    this.options = [];
-    this.shopOptionsRows = [];
-  }
 
   setup() {
     const ui = this.getUi();
@@ -730,6 +722,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();
+    this.getUi().getMessageHandler().hideNameText();
     this.eraseCursor();
 
     // Reset cursor positions

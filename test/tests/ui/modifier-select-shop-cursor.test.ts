@@ -42,7 +42,7 @@ describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
 
     const handler = scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler) as RewardSelectUiHandler;
 

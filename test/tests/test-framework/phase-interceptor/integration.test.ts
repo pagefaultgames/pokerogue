@@ -22,7 +22,7 @@ describe("Utils - Phase Interceptor - Integration", () => {
   it("runToTitle", async () => {
     await game.runToTitle();
 
-    expect(game.scene.ui.getMode()).toBe(UiMode.TITLE);
+    expect(game.scene.ui.mode).toBe(UiMode.TITLE);
     expect(game).toBeAtPhase("TitlePhase");
   });
 
@@ -35,7 +35,7 @@ describe("Utils - Phase Interceptor - Integration", () => {
   it("startBattle", async () => {
     await game.classicMode.startBattle(SpeciesId.RABOOT);
 
-    expect(game.scene.ui.getMode()).toBe(UiMode.COMMAND);
+    expect(game.scene.ui.mode).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
@@ -46,7 +46,7 @@ describe("Utils - Phase Interceptor - Integration", () => {
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.ui.getMode()).toBe(UiMode.COMMAND);
+    expect(game.scene.ui.mode).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 

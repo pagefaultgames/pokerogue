@@ -292,7 +292,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectRewardPhase");
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
@@ -334,7 +334,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectRewardPhase");
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;

@@ -15,7 +15,6 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TrainerVariant } from "#enums/trainer-variant";
-import { UiMode } from "#enums/ui-mode";
 import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
@@ -67,10 +66,6 @@ export class RunInfoUiHandler extends UiHandler {
   private endCardContainer: Phaser.GameObjects.Container;
 
   private partyVisibility: boolean;
-
-  constructor() {
-    super(UiMode.RUN_INFO);
-  }
 
   override async setup() {
     this.runContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);

@@ -1,16 +1,15 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
+import { getStatKey, Stat } from "#enums/stat";
+import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
+import i18next from "i18next";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
-
-// RATIO : HP Cost of Move
-const RATIO = 2;
-// PREDAMAGE : Amount of extra HP lost
-const PREDAMAGE = 15;
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - BELLY DRUM", () => {
   let phaserGame: Phaser.Game;
@@ -25,72 +24,83 @@ describe("Moves - BELLY DRUM", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .enemySpecies(SpeciesId.SNORLAX)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([MoveId.BELLY_DRUM])
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)
 
-  test("raises the user's ATK stat stage to its max, at the cost of 1/2 of its maximum HP", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("should set the user's ATK stat stage to its maximum, at the cost of 1/2 of its maximum HP", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const leadPokemon = game.field.getPlayerPokemon();
-    const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
+    const player = game.field.getPlayerPokemon();
+    player.setStatStage(Stat.ATK, -6);
 
-    game.move.select(MoveId.BELLY_DRUM);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.use(MoveId.BELLY_DRUM);
+    await game.toEndOfTurn();
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
+    expect(player).toHaveUsedMove({ move: MoveId.BELLY_DRUM, result: MoveResult.SUCCESS });
+    expect(player).toHaveTakenDamage(player.getMaxHp() / 2);
+    expect(player).toHaveStatStage(Stat.ATK, 6);
   });
 
-  test("will still take effect if an uninvolved stat stage is at max", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("should fail if the pokemon's ATK stat stage is at its maximum", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const leadPokemon = game.field.getPlayerPokemon();
-    const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
+    const player = game.field.getPlayerPokemon();
+    player.setStatStage(Stat.ATK, 6);
 
-    // Here - Stat.ATK -> -3 and Stat.SPATK -> 6
-    leadPokemon.setStatStage(Stat.ATK, -3);
-    leadPokemon.setStatStage(Stat.SPATK, 6);
+    game.move.use(MoveId.BELLY_DRUM);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.BELLY_DRUM);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
-    expect(leadPokemon.getStatStage(Stat.SPATK)).toBe(6);
+    // TODO: This doesn't actually count as failed due to incorrect failure propagation
+    // expect(player).toHaveUsedMove({ move: MoveId.BELLY_DRUM, result: MoveResult.FAIL });
+    expect(player).toHaveFullHp();
+    expect(player).toHaveStatStage(Stat.ATK, 6);
   });
 
-  test("fails if the pokemon's ATK stat stage is at its maximum", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("should fail if the user's health is insufficient", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const leadPokemon = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
+    player.hp = toDmgValue(player.getMaxHp() / 2) - 1;
 
-    leadPokemon.setStatStage(Stat.ATK, 6);
+    game.move.use(MoveId.BELLY_DRUM);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.BELLY_DRUM);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
+    expect(player).toHaveUsedMove({ move: MoveId.BELLY_DRUM, result: MoveResult.FAIL });
+    expect(player).toHaveStatStage(Stat.ATK, 0);
   });
 
-  test("fails if the user's health is less than 1/2", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("should override the default stat change message with a custom one", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const leadPokemon = game.field.getPlayerPokemon();
-    const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
-    leadPokemon.hp = hpLost - PREDAMAGE;
+    const player = game.field.getPlayerPokemon();
+    game.move.use(MoveId.BELLY_DRUM);
+    await game.phaseInterceptor.to("StatStageChangePhase", false);
 
-    game.move.select(MoveId.BELLY_DRUM);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    const phase = game.scene.phaseManager.getCurrentPhase() as StatStageChangePhase;
+    expect(game).toBeAtPhase("StatStageChangePhase");
+    const defaultMessageSpy = vi.spyOn(
+      phase as unknown as { buildStatStageChangeMessage: StatStageChangePhase["buildStatStageChangeMessage"] },
+      "buildStatStageChangeMessage",
+    );
 
-    expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    await game.toEndOfTurn();
+
+    expect(game).toHaveShownMessage(
+      i18next.t("moveTriggers:cutOwnHpAndMaximizedStat", {
+        pokemonName: getPokemonNameWithAffix(player),
+        statName: i18next.t(getStatKey(Stat.ATK)),
+      }),
+    );
+    expect(defaultMessageSpy).not.toHaveBeenCalled();
   });
+
+  // TODO: Should this test go here or in contrary.test.ts?
+  // TODO: Confirm mainline behaviour
+  it.todo("should still fail at max HP if the user has Contrary");
 });

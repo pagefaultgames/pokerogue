@@ -27,6 +27,7 @@ import {
 import { getPlayerShopRewardOptionsForWave, isMoveReward, isRememberMoveReward, isTmReward } from "#items/reward-utils";
 import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { PartyOption, PartyUiHandler, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
 import { NumberHolder } from "#utils/common";
@@ -80,17 +81,16 @@ export class SelectRewardPhase extends BattlePhase {
 
     const rewardSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
-        // Attempt to skip the item pickup
         globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
-          globalScene.ui.setOverlayMode(
-            UiMode.CONFIRM,
-            () => {
+          const skipRewardConfirmOptions: ConfirmModeConfig = {
+            yesHandler: () => {
               globalScene.ui.revertMode();
               globalScene.ui.setMode(UiMode.MESSAGE);
               super.end();
             },
-            () => this.resetRewardSelect(rewardSelectCallback),
-          );
+            noHandler: () => this.resetRewardSelect(rewardSelectCallback),
+          };
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, skipRewardConfirmOptions);
         });
         return false;
       }
