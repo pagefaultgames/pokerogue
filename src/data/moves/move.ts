@@ -1905,7 +1905,7 @@ export class PreMoveChooseItemAttr extends MoveAttr {
     const failureMessage =
       typeof this.failureMessage === "function" ? this.failureMessage(user, target, move) : this.failureMessage;
 
-    const items = user.heldItemManager.getActiveHeldItems();
+    const items = user.heldItemManager.getActiveTransferableHeldItems();
 
     if (items.length === 0) {
       globalScene.phaseManager.queueMessage(failureMessage, 500);
