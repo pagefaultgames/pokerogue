@@ -127,39 +127,37 @@ describe("Enemy Commands - Move Selection", () => {
       aiType: AiType.SMART_RANDOM,
       condition: "weather",
     },
-  ])("should not select a move that will fail due to $condition", async ({
-    enemyLvl = 1,
-    terrain = TerrainType.NONE,
-    weather = WeatherType.NONE,
-    aiType = AiType.SMART,
-  }) => {
-    game.override
-      .enemySpecies(SpeciesId.ARCANINE)
-      .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
-      .startingLevel(1)
-      .enemyLevel(enemyLvl)
-      .startingTerrain(terrain)
-      .weather(weather);
+  ])(
+    "should not select a move that will fail due to $condition",
+    async ({ enemyLvl = 1, terrain = TerrainType.NONE, weather = WeatherType.NONE, aiType = AiType.SMART }) => {
+      game.override
+        .enemySpecies(SpeciesId.ARCANINE)
+        .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
+        .startingLevel(1)
+        .enemyLevel(enemyLvl)
+        .startingTerrain(terrain)
+        .weather(weather);
 
-    await game.classicMode.startBattle(SpeciesId.RATTATA);
+      await game.classicMode.startBattle(SpeciesId.RATTATA);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    enemyPokemon.aiType = aiType;
+      const enemyPokemon = game.field.getEnemyPokemon();
+      enemyPokemon.aiType = aiType;
 
-    const moveChoices: MoveChoiceSet = {};
-    const enemyMoveset = enemyPokemon.getMoveset();
-    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
-    getEnemyMoveChoices(enemyPokemon, moveChoices);
+      const moveChoices: MoveChoiceSet = {};
+      const enemyMoveset = enemyPokemon.getMoveset();
+      enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
+      getEnemyMoveChoices(enemyPokemon, moveChoices);
 
-    enemyMoveset.forEach(mv => {
-      if (mv?.moveId === MoveId.EXTREME_SPEED && terrain === TerrainType.PSYCHIC) {
-        expect(moveChoices[mv.moveId]).toBe(0);
-      } else if (
-        (mv?.moveId === MoveId.FIRE_FANG || mv?.moveId === MoveId.FLAMETHROWER)
-        && weather === WeatherType.HEAVY_RAIN
-      ) {
-        expect(moveChoices[mv.moveId]).toBe(0);
-      }
-    });
-  });
+      enemyMoveset.forEach(mv => {
+        if (mv?.moveId === MoveId.EXTREME_SPEED && terrain === TerrainType.PSYCHIC) {
+          expect(moveChoices[mv.moveId]).toBe(0);
+        } else if (
+          (mv?.moveId === MoveId.FIRE_FANG || mv?.moveId === MoveId.FLAMETHROWER)
+          && weather === WeatherType.HEAVY_RAIN
+        ) {
+          expect(moveChoices[mv.moveId]).toBe(0);
+        }
+      });
+    },
+  );
 });

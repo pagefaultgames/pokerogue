@@ -5,10 +5,18 @@ import { UiMode } from "#enums/ui-mode";
 import type { LoginPhase } from "#phases/login-phase";
 import type { ModalConfig } from "#types/ui-types";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
 import { addTextObject } from "#ui/text";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
-import { LoginRegisterInfoContainerUiHandler } from "./login-register-info-container-ui-handler";
+
+// TODO: Consider replacing server error strings with numeric error codes for better maintainability
+// TODO: Centralize server error constants
+const ERR_INVALID_USERNAME = "invalid username";
+const ERR_INVALID_PASSWORD = "invalid password";
+const ERR_USERNAME_IN_USE = "failed to add account record";
+const ERR_FAILED_TO_GENERATE_UUID = "failed to generate uuid";
+const ERR_FAILED_TO_GENERATE_PASSWORD = "failed to generate salt";
 
 export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandler {
   public override getModalTitle(): string {
@@ -36,13 +44,18 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
     if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
     }
+
     switch (error) {
-      case "invalid username":
+      case ERR_INVALID_USERNAME:
         return i18next.t("menu:invalidRegisterUsername");
-      case "invalid password":
+      case ERR_INVALID_PASSWORD:
         return i18next.t("menu:invalidRegisterPassword");
-      case "failed to add account record":
+      case ERR_USERNAME_IN_USE:
         return i18next.t("menu:usernameAlreadyUsed");
+      case ERR_FAILED_TO_GENERATE_UUID:
+        return `${i18next.t("menu:serverErrorGenerateUuid")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
+      case ERR_FAILED_TO_GENERATE_PASSWORD:
+        return `${i18next.t("menu:serverErrorGenerateSalt")}\n${i18next.t("menu:pleaseTryAgainLater")}`;
     }
 
     return super.getReadableErrorMessage(error);

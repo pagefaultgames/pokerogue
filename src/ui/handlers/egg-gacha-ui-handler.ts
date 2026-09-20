@@ -9,7 +9,6 @@ import { Button } from "#enums/buttons";
 import { EggTier } from "#enums/egg-type";
 import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { VoucherType } from "#enums/voucher-type";
 import { getVoucherTypeIcon } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -25,14 +24,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaOptionsContainer: Phaser.GameObjects.Container;
   private eggGachaOptionSelectBg: Phaser.GameObjects.NineSlice;
 
-  private readonly gachaContainers: Phaser.GameObjects.Container[];
-  private readonly gachaKnobs: Phaser.GameObjects.Sprite[];
-  private readonly gachaHatches: Phaser.GameObjects.Sprite[];
-  private readonly gachaInfoContainers: Phaser.GameObjects.Container[];
+  private readonly gachaContainers: Phaser.GameObjects.Container[] = [];
+  private readonly gachaKnobs: Phaser.GameObjects.Sprite[] = [];
+  private readonly gachaHatches: Phaser.GameObjects.Sprite[] = [];
+  private readonly gachaInfoContainers: Phaser.GameObjects.Container[] = [];
   private eggGachaOverlay: Phaser.GameObjects.Rectangle;
   private eggGachaSummaryContainer: Phaser.GameObjects.Container;
 
-  private readonly voucherCountLabels: Phaser.GameObjects.Text[];
+  private readonly voucherCountLabels: Phaser.GameObjects.Text[] = [];
 
   private gachaCursor: number;
 
@@ -40,7 +39,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private transitioning: boolean;
   private transitionCancelled: boolean;
   private summaryFinished: boolean;
-  private readonly defaultText: string;
+  private readonly defaultText: string = i18next.t("egg:selectMachine");
 
   /** The tween chain playing the egg drop animation sequence */
   private eggDropTweenChain?: Phaser.Tweens.TweenChain | undefined;
@@ -49,18 +48,6 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
   private readonly legendaryExpiration = addTextObject(0, 0, "", TextStyle.WINDOW_ALT);
   private playTimeTimer: Phaser.Time.TimerEvent | null;
-
-  constructor() {
-    super(UiMode.EGG_GACHA);
-
-    this.gachaContainers = [];
-    this.gachaKnobs = [];
-    this.gachaHatches = [];
-    this.gachaInfoContainers = [];
-
-    this.voucherCountLabels = [];
-    this.defaultText = i18next.t("egg:selectMachine");
-  }
 
   private setupGachaType(key: keyof typeof GachaType, gachaType: GachaType): void {
     const gachaTypeKey = key.toLowerCase();

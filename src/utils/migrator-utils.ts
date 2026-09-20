@@ -43,3 +43,55 @@ export function isPropertyAnObject<const T extends string>(
 ): data is Record<string, unknown> & Record<T, Record<string, unknown>> {
   return typeof data[property] === "object" && data[property] !== null;
 }
+
+/**
+ * Converts a version string into an array of numbers for use in the comparison function.
+ * @param versionString - The version to convert
+ * @returns An array of numbers corresponding to the input version
+ * @throws An error if the version string is not valid (of the form "#.#.#[.#]")
+ * @example
+ * ```ts
+ * extractVersion("1.2.3"); // output: [1, 2, 3, 0]
+ * extractVersion("1.2.3.4"); // output: [1, 2, 3, 4]
+ * extractVersion("1..2.3"); // throws error
+ * extractVersion("1.2.3.4.5"); // throws error
+ * ```
+ */
+function extractVersion(versionString: string): number[] {
+  // https://regex101.com/r/7r1299/1
+  const regex = /^\d+\.\d+\.\d+(?:\.\d+)?$/;
+  if (!regex.test(versionString)) {
+    throw new Error(`Invalid version string (${versionString}) in version migrator!`);
+  }
+
+  const versionArray = versionString.split(".").map(v => Number.parseInt(v));
+  if (versionArray.length === 3) {
+    versionArray.push(0);
+  }
+  return versionArray;
+}
+
+/**
+ * Compares two versions and returns whether one is newer than the other.
+ * @param versionA - The first version to compare
+ * @param versionB - The second version to compare
+ * @returns The result of the comparison:
+ * - `1`: `versionA` is newer
+ * - `-1`: `versionB` is newer
+ * - `0`: The versions are equal
+ */
+export function compareVersions(versionA: string, versionB: string): -1 | 0 | 1 {
+  const a = extractVersion(versionA);
+  const b = extractVersion(versionB);
+
+  for (let i = 0; i < 4; i++) {
+    if (a[i] > b[i]) {
+      return 1;
+    }
+    if (a[i] < b[i]) {
+      return -1;
+    }
+  }
+
+  return 0;
+}

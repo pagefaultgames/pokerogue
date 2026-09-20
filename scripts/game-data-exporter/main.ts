@@ -18,8 +18,8 @@ import { generateEvolutionsData } from "./data-generators/evolutions";
 import { generateFormChangeTextsData } from "./data-generators/form-change-texts";
 import { generateLevelMovesData } from "./data-generators/level-moves";
 import { generateSpeciesData } from "./data-generators/species";
-import { generateTmTiersData } from "./data-generators/tm-tiers";
-import { generateTmsData } from "./data-generators/tms";
+import { generateTmsData } from "./data-generators/species-tms";
+import { generateTmTiersData } from "./data-generators/tms";
 
 chalk.level = 2;
 
@@ -29,7 +29,7 @@ async function main(): Promise<void> {
   const { clean, debug } = cliArgs;
   let hasPrintedTimer = false;
 
-  console.log(chalk.grey(`📚 Species Data Exporter - v${SCRIPT_VERSION}\n`));
+  console.log(chalk.grey(`📚 Game Data Exporter - v${SCRIPT_VERSION}\n`));
   if (existsSync(OUTPUT_DIR) && clean) {
     console.log(chalk.yellow("🧹 Cleaning output directory...\n"));
     rmSync(OUTPUT_DIR, { recursive: true });

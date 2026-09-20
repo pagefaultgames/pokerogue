@@ -2,7 +2,6 @@ import { updateUserInfo } from "#app/account";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -19,8 +18,9 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
 
   private readonly randVarianceTime = 1000 * 10;
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
+
     this.reconnectDuration = this.minTime;
   }
 

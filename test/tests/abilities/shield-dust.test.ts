@@ -39,7 +39,7 @@ describe("Abilities - Shield Dust", () => {
 
     game.move.select(MoveId.AIR_SLASH);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     // Shield Dust negates secondary effect

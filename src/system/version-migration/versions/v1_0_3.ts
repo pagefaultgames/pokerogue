@@ -33,7 +33,9 @@ const createStarterData: SystemSaveMigrator = {
     if (data["starterMoveData"]) {
       const starterMoveData = data["starterMoveData"];
       for (const s of Object.keys(starterMoveData)) {
-        data.starterData[s].moveset = starterMoveData[s];
+        if (data.starterData[s]) {
+          data.starterData[s].moveset = starterMoveData[s];
+        }
       }
       data["starterMoveData"] = undefined;
     }
@@ -41,7 +43,9 @@ const createStarterData: SystemSaveMigrator = {
     if (data["starterEggMoveData"]) {
       const starterEggMoveData = data["starterEggMoveData"];
       for (const s of Object.keys(starterEggMoveData)) {
-        data.starterData[s].eggMoves = starterEggMoveData[s];
+        if (data.starterData[s]) {
+          data.starterData[s].eggMoves = starterEggMoveData[s];
+        }
       }
       data["starterEggMoveData"] = undefined;
     }

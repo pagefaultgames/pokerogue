@@ -10,6 +10,7 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { MoveId } from "#enums/move-id";
@@ -23,13 +24,13 @@ import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
+import type { LevelMoves } from "#types/level-moves";
 import type { Localizable } from "#types/locales";
-import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { applyChallenges } from "#utils/challenge-utils";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
 import { randSeedFloat } from "#utils/common";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -159,6 +160,7 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
+  // TODO: This is pointless. Remove these getters and make the fields public.
   get generation(): number {
     return this._generation;
   }
@@ -215,11 +217,12 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Get a list of all level moves for this species, including form specific moves.
-   * @param formKey - (Optional) The key for the form to be checked. Uses the base form if not specified
+   * @param form - (Optional) The key or index for the form to be checked. Uses the base form if not specified
    * @returns A list of all level moves that can be learned by this species
    */
-  public getLevelMoves(formKey?: string): LevelMoves {
-    const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, formKey);
+  public getLevelMoves(form?: string | number): LevelMoves {
+    const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, form);
+    applyChallenges(ChallengeType.LEVEL_UP_MOVESET, this, levelMoves);
     return levelMoves.sort((a, b) => a[0] - b[0]);
   }
 
@@ -453,7 +456,7 @@ export abstract class PokemonSpeciesForm {
 
     const replacementSpecies = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
     const generation = replacementSpecies
-      ? getPokemonSpeciesForm(replacementSpecies.speciesId, replacementSpecies.formIndex).generation
+      ? speciesDataRegistry.getPokemonSpeciesForm(replacementSpecies.speciesId, replacementSpecies.formIndex).generation
       : this.generation;
     return `pokemon_icons_${generation}${isVariant ? "v" : ""}`;
   }
@@ -507,9 +510,9 @@ export abstract class PokemonSpeciesForm {
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
     if (replacement) {
-      formSpriteKey = getPokemonSpeciesForm(replacement.speciesId, replacement.formIndex).getFormSpriteKey(
-        replacement.formIndex,
-      );
+      formSpriteKey = speciesDataRegistry
+        .getPokemonSpeciesForm(replacement.speciesId, replacement.formIndex)
+        .getFormSpriteKey(replacement.formIndex);
     }
     if (formSpriteKey) {
       switch (this.speciesId) {
@@ -1316,10 +1319,10 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   /**
    * Get a list of all level moves for this species, including form specific moves.
-   * @param formKey - (Optional) The key for the form to be checked. Uses this form if not specified
+   * @param form - (Optional) The key for the form to be checked. Uses this form if not specified
    * @returns A list of all level moves that can be learned by this species
    */
-  public override getLevelMoves(formKey?: string): LevelMoves {
-    return super.getLevelMoves(formKey ?? this.getFormKey());
+  public override getLevelMoves(form?: string | number): LevelMoves {
+    return super.getLevelMoves(form ?? this.getFormKey());
   }
 }

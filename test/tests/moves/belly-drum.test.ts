@@ -1,10 +1,13 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
+import { getStatKey, Stat } from "#enums/stat";
+import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -21,7 +24,7 @@ describe("Move - Belly Drum", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .enemySpecies(SpeciesId.SNORLAX)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .startingLevel(100)
       .enemyLevel(100)
       .enemyMoveset(MoveId.SPLASH)
