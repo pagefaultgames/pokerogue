@@ -241,7 +241,7 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
    * String denoting when to add the phases.
    * Possible values are:
    *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
-   *  - `"delayed"`: Adds the phase via {@linkcode PhaseManager.pushPhase} to run after all phases finish running.
+   *  - `"delayed"`: Adds the phase via {@linkcode PhaseManager.pushPhase | pu} to run after all phases finish running.
    */
   // TODO: Figure out a default value for this and remove it from existing callsites
   when: "eager" | "delayed";
@@ -548,7 +548,7 @@ export class PhaseManager {
    * @param callbackDelay - optional param for MessagePhase constructor
    * @param prompt - optional param for MessagePhase constructor
    * @param promptDelay - optional param for MessagePhase constructor
-   * @param defer - If `true`, push the phase instead of unshifting; default `false`
+   * @param delay - If `true`, push the phase instead of unshifting; default `false`
    *
    * @see {@linkcode MessagePhase} for more details on the parameters
    */
@@ -557,10 +557,10 @@ export class PhaseManager {
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
-    defer?: boolean | null,
+    delay?: boolean | null,
   ) {
     const phase = new MessagePhase(message, callbackDelay, prompt, promptDelay);
-    if (defer) {
+    if (delay) {
       this.pushPhase(phase);
     } else {
       this.unshiftPhase(phase);
