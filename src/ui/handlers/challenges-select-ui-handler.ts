@@ -5,11 +5,14 @@ import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
+import { ribbonFlagToAssetKey } from "#system/ribbon-methods";
 import { TabMenu } from "#ui/tab-menu";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
+import { getRibbonsToAward } from "#utils/challenge-utils";
 import { getLocalizedSpriteKey } from "#utils/common";
+import { getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -59,6 +62,8 @@ export class GameChallengesUiHandler extends UiHandler {
     ChallengeCategory.NUZLOCKE,
     ChallengeCategory.MISC,
   ];
+
+  private ribbonIcons: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Image)[] = [];
 
   public override setup(): void {
     const ui = this.getUi();
@@ -458,16 +463,52 @@ export class GameChallengesUiHandler extends UiHandler {
     }
   }
 
+  private setAwardedRibbons(): void {
+    const awardedRibbonFlags = getRibbonsToAward();
+
+    const text = "This run will award the following ribbons: ";
+    const labels: string[] = [];
+
+    for (const ribbon of orderedRibbons) {
+      if (!(ribbon & awardedRibbonFlags)) {
+        continue;
+      }
+      const label = i18next.t(`ribbons:name.${getRibbonKey(ribbon)}`);
+      if (labels.length > 0) {
+        labels.push(", ");
+      }
+      labels.push(label);
+
+      const icon = ribbonFlagToAssetKey(ribbon);
+      this.challengesContainer.add(icon);
+      this.ribbonIcons.push(icon);
+    }
+
+    this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${text.concat(...labels)}`);
+    const baseX = this.descriptionText.x + 8;
+    const baseY = this.descriptionText.y + this.descriptionText.displayHeight + 12;
+    for (const [index, icon] of this.ribbonIcons.entries()) {
+      icon.setPosition(baseX + (index % 7) * 16, baseY + Math.floor(index / 7) * 16);
+    }
+  }
+
   private activateStartCursor(): void {
     this.startCursor.setVisible(true);
     this.cursorObj?.setVisible(false);
     this.updateChallengeArrowsTint(this.startCursor.visible);
+
+    this.setAwardedRibbons();
   }
 
   private deactivateStartCursor(): void {
     this.startCursor.setVisible(false);
     this.cursorObj?.setVisible(true);
     this.updateChallengeArrowsTint(this.startCursor.visible);
+
+    for (const icon of this.ribbonIcons) {
+      icon.destroy();
+    }
+    this.ribbonIcons = [];
   }
 
   private goToBottomOfChallengeList(): boolean {
