@@ -27,6 +27,7 @@ import { awardRibbonsToSpeciesLine } from "#system/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { applyChallenges, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { fixedInt, isLocalServerConnected } from "#utils/common";
 import { ValueHolder } from "#utils/value-holder";
@@ -44,7 +45,7 @@ export class GameOverPhase extends BattlePhase {
     this.isVictory = isVictory;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     globalScene.phaseManager.hideAbilityBar();
@@ -62,7 +63,8 @@ export class GameOverPhase extends BattlePhase {
       && !globalScene.currentBattle.mysteryEncounter.onGameOver()
     ) {
       // Do not end the game
-      return this.end();
+      this.end();
+      return;
     }
     // Otherwise, continue standard Game Over logic
 
@@ -77,39 +79,49 @@ export class GameOverPhase extends BattlePhase {
         0,
         fixedInt(3000),
       );
-    } else if (this.isVictory || !settings.general.enableRetries) {
-      this.handleGameOver();
-    } else {
-      globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          async () => {
-            await globalScene.ui.fadeOut(1250);
-            globalScene.reset();
-            globalScene.phaseManager.clearPhaseQueue();
-            await globalScene.gameData.loadSession(globalScene.sessionSlotId);
-            globalScene.phaseManager.pushNew("EncounterPhase", true);
-
-            globalScene.ui.fadeIn(1250);
-            this.end();
-          },
-          () => this.handleGameOver(),
-          false,
-          0,
-          0,
-          1000,
-        );
-      });
+      return;
     }
+
+    if (this.isVictory || !settings.general.enableRetries) {
+      this.handleGameOver();
+      return;
+    }
+
+    const retryOptions: ConfirmModeConfig = {
+      yesHandler: async () => {
+        await globalScene.ui.fadeOut(1250);
+        globalScene.reset();
+        globalScene.phaseManager.clearPhaseQueue();
+        await globalScene.gameData.loadSession(globalScene.sessionSlotId);
+        globalScene.phaseManager.pushNew("EncounterPhase", true);
+
+        globalScene.ui.fadeIn(1250);
+        this.end();
+      },
+
+      noHandler: () => this.handleGameOver(),
+      inputDelay: 1000,
+    };
+
+    globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
+      globalScene.ui.setMode(UiMode.CONFIRM, retryOptions);
+    });
   }
 
   /**
-   * Submethod of {@linkcode handleGameOver} that awards ribbons to Pokémon in the player's party based on the current
-   * game mode and challenges.
+   * Submethod of {@linkcode handleGameOver} that awards ribbons to Pokémon in the player's party
+   * based on the current game mode and challenges.
    */
   private awardRibbons(): void {
+    const { gameMode } = globalScene;
+    const { challenges, isClassic } = gameMode;
+
+    if (challenges.some(c => [Challenges.MOVESET_RANDOMIZER].includes(c.id) && c.value > 0)) {
+      return;
+    }
+
     let ribbonFlags = 0n;
-    for (const challenge of globalScene.gameMode.challenges) {
+    for (const challenge of challenges) {
       const ribbon = challenge.ribbonAwarded;
       if (challenge.value && ribbon) {
         ribbonFlags |= ribbon;
@@ -123,10 +135,10 @@ export class GameOverPhase extends BattlePhase {
     const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
     if (flip_or_inverse) {
       ribbonFlags = flip_or_inverse;
-    } else if (globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+    } else if (challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
       ribbonFlags = passives;
     } else {
-      if (globalScene.gameMode.isClassic) {
+      if (isClassic) {
         ribbonFlags |= RibbonData.CLASSIC;
       }
       if (isNuzlockeChallenge()) {

@@ -113,7 +113,10 @@ export class CheckSwitchPhase extends BattlePhase {
       }),
       null,
       () => {
-        globalScene.ui.setMode(UiMode.CONFIRM, this.onConfirm.bind(this), this.onDeny.bind(this));
+        globalScene.ui.setMode(UiMode.CONFIRM, {
+          yesHandler: () => this.onConfirm();
+          noHandler: () => this.onDeny();
+        });
       },
     );
   }

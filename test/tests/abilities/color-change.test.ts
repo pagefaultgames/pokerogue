@@ -87,19 +87,18 @@ describe("Ability - Color Change", () => {
   it.each([
     { moveId: MoveId.NUZZLE, moveName: "Nuzzle", status: StatusEffect.PARALYSIS, type: PokemonType.ELECTRIC },
     { moveId: MoveId.MORTAL_SPIN, moveName: "Mortal Spin", status: StatusEffect.POISON, type: PokemonType.POISON },
-  ])("should change the pokemon's type after status effects would be inflicted ($moveName)", async ({
-    moveId,
-    status,
-    type,
-  }) => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+  ])(
+    "should change the pokemon's type after status effects would be inflicted ($moveName)",
+    async ({ moveId, status, type }) => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.use(moveId);
-    await game.toEndOfTurn();
+      game.move.use(moveId);
+      await game.toEndOfTurn();
 
-    checkTypeChange(true, type);
-    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(status);
-  });
+      checkTypeChange(true, type);
+      expect(game.field.getEnemyPokemon()).toHaveStatusEffect(status);
+    },
+  );
 
   it("should not change the pokemon's type when hit by pain split", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
