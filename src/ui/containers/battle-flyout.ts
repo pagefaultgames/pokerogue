@@ -1,39 +1,36 @@
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { TextStyle } from "#enums/text-style";
-import type { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
+import type { MovesetChangedEvent, SummonDataResetEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import type { Move } from "#moves/move";
+import type { Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { BattleInfo } from "#ui/battle-info";
 import { addTextObject } from "#ui/text";
 import { fixedInt } from "#utils/common";
+import type { TupleOf } from "type-fest";
 
-/** Container for info about a {@linkcode Move} */
-interface MoveInfo {
-  /** The {@linkcode Move} itself */
-  move: Move;
+/**
+ * A 4-length tuple consisting of all moves that each {@linkcode Pokemon} has used in the given battle. \
+ * Entries that are `undefined` indicate moves which have not been used yet.
+ */
+type MoveInfoTuple = Partial<TupleOf<4, PokemonMove>>;
 
-  /** The maximum PP of the {@linkcode Move} */
-  maxPp: number;
-  /** The amount of PP used by the {@linkcode Move} */
-  ppUsed: number;
-}
+/** The restricted width of the flyout which should be drawn to */
+const FLYOUT_WIDTH = 118;
+/** The restricted height of the flyout which should be drawn to */
+const FLYOUT_HEIGHT = 23;
 
-/** A Flyout Menu attached to each {@linkcode BattleInfo} object on the field UI */
+/**
+ * A Flyout Menu attached to each Pokemon's {@linkcode BattleInfo} object,
+ * showing all revealed moves and their current PP counts.
+ */
+// TODO: Stop tracking player move uses in this flyout
 export class BattleFlyout extends Phaser.GameObjects.Container {
-  /** Is this object linked to a player's Pokemon? */
-  private readonly player: boolean;
-
-  /** The Pokemon this object is linked to */
+  /** The Pokemon this object is linked to. */
   private pokemon: Pokemon;
-
-  /** The restricted width of the flyout which should be drawn to */
-  private readonly flyoutWidth = 118;
-  /** The restricted height of the flyout which should be drawn to */
-  private readonly flyoutHeight = 23;
 
   /** The amount of translation animation on the x-axis */
   private readonly translationX: number;
@@ -42,165 +39,152 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   /** The y-axis point where the flyout should sit when activated */
   private readonly anchorY: number;
 
-  /** The initial container which defines where the flyout should be attached */
-  private readonly flyoutParent: Phaser.GameObjects.Container;
-  /** The background {@linkcode Phaser.GameObjects.Sprite;} for the flyout */
+  /** The background {@linkcode Phaser.GameObjects.Sprite} for the flyout */
   private readonly flyoutBackground: Phaser.GameObjects.Sprite;
 
   /** The container which defines the drawable dimensions of the flyout */
   private readonly flyoutContainer: Phaser.GameObjects.Container;
 
   /** The array of {@linkcode Phaser.GameObjects.Text} objects which are drawn on the flyout */
-  private readonly flyoutText: Phaser.GameObjects.Text[] = new Array(4);
-  /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
-  private readonly moveInfo: MoveInfo[] = [];
+  private readonly flyoutText: Phaser.GameObjects.Text[] = [];
+  /** An array of {@linkcode PokemonMove}s used to track moves used by the attached Pokemon. */
+  private readonly moveInfo: MoveInfoTuple = [];
+  /**
+   * A sparse array of {@linkcode PokemonMove}s used to track move slots
+   * temporarily overridden by Transform or Mimic-like effects.
+   *
+   * Reset once `pokemon` switches out via a {@linkcode SummonDataResetEvent}.
+   */
+  private readonly tempMoveInfo: MoveInfoTuple = [];
 
-  /** Current state of the flyout's visibility */
-  public flyoutVisible = false;
-
-  // Stores callbacks in a variable so they can be unsubscribed from when destroyed
-  private readonly onMoveUsedEvent = (event: Event) => this.onMoveUsed(event);
-  private readonly onBerryUsedEvent = (event: Event) => this.onBerryUsed(event);
-
-  constructor(player: boolean) {
+  constructor(isPlayer: boolean) {
     super(globalScene, 0, 0);
 
-    // Note that all player based flyouts are disabled. This is included in case of future development
-    this.player = player;
+    this.translationX = isPlayer ? -FLYOUT_WIDTH : FLYOUT_WIDTH;
+    this.anchorX = isPlayer ? -130 : -40;
+    this.anchorY = -2.5 + (isPlayer ? -18.5 : -13);
 
-    this.translationX = this.player ? -this.flyoutWidth : this.flyoutWidth;
-    this.anchorX = this.player ? -130 : -40;
-    this.anchorY = -2.5 + (this.player ? -18.5 : -13);
+    this.setPosition(this.anchorX - this.translationX, this.anchorY) //
+      .setAlpha(0);
 
-    this.flyoutParent = globalScene.add.container(this.anchorX - this.translationX, this.anchorY);
-    this.flyoutParent.setAlpha(0);
-    this.add(this.flyoutParent);
+    this.flyoutBackground = globalScene.add
+      .sprite(0, 0, "pbinfo_enemy_boss_stats") //
+      .setOrigin(0, 0);
 
-    // Load the background image
-    this.flyoutBackground = globalScene.add.sprite(0, 0, "pbinfo_enemy_boss_stats");
-    this.flyoutBackground.setOrigin(0, 0);
+    this.flyoutContainer = globalScene.add.container(44 + (isPlayer ? -FLYOUT_WIDTH : 0), 2);
+    this.add([this.flyoutBackground, this.flyoutContainer]);
 
-    this.flyoutParent.add(this.flyoutBackground);
-
-    this.flyoutContainer = globalScene.add.container(44 + (this.player ? -this.flyoutWidth : 0), 2);
-    this.flyoutParent.add(this.flyoutContainer);
-
-    // Loops through and sets the position of each text object according to the width and height of the flyout
+    // Create a 2x2 grid of text objects for move infos
     for (let i = 0; i < 4; i++) {
       this.flyoutText[i] = addTextObject(
-        this.flyoutWidth / 4 + (this.flyoutWidth / 2) * (i % 2),
-        this.flyoutHeight / 4 + (this.flyoutHeight / 2) * (i < 2 ? 0 : 1),
+        FLYOUT_WIDTH / 4 + (FLYOUT_WIDTH / 2) * (i % 2),
+        FLYOUT_HEIGHT / 4 + (FLYOUT_HEIGHT / 2) * (i < 2 ? 0 : 1),
         "???",
         TextStyle.BATTLE_INFO,
-      );
-      this.flyoutText[i].setFontSize(45);
-      this.flyoutText[i].setLineSpacing(-10);
-      this.flyoutText[i].setAlign("center");
-      this.flyoutText[i].setOrigin();
+      )
+        .setFontSize(45)
+        .setLineSpacing(-10)
+        .setAlign("center")
+        .setOrigin(0.5, 0.5);
     }
 
-    this.flyoutContainer.add(this.flyoutText);
-
-    this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(
-        globalScene,
-        this.flyoutWidth / 2,
-        0,
-        1,
-        this.flyoutHeight + (settings.isLegacyTheme ? 1 : 0),
-        0x212121,
-      ).setOrigin(0.5, 0),
-    );
-    this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(
-        globalScene,
-        0,
-        this.flyoutHeight / 2,
-        this.flyoutWidth + 6,
-        1,
-        0x212121,
-      ).setOrigin(0, 0.5),
-    );
+    this.flyoutContainer
+      .add(this.flyoutText)
+      // TODO: What are these rectangles for?
+      .add(
+        new Phaser.GameObjects.Rectangle(
+          globalScene,
+          FLYOUT_WIDTH / 2,
+          0,
+          1,
+          FLYOUT_HEIGHT + (settings.isLegacyTheme ? 1 : 0),
+          0x212121,
+        ).setOrigin(0.5, 0),
+      )
+      .add(
+        new Phaser.GameObjects.Rectangle(globalScene, 0, FLYOUT_HEIGHT / 2, FLYOUT_WIDTH + 6, 1, 0x212121) //
+          .setOrigin(0, 0.5),
+      );
   }
 
   /**
-   * Links the given {@linkcode Pokemon} and subscribes to the {@linkcode BattleSceneEventType.MOVE_USED} event
-   * @param pokemon {@linkcode Pokemon} to link to this flyout
+   * Link the given `Pokemon` to this flyout and subscribe to the {@linkcode BattleSceneEventType.MOVESET_CHANGED} event.
+   * @param pokemon - The {@linkcode Pokemon} to link to this flyout
    */
-  initInfo(pokemon: EnemyPokemon) {
+  public initInfo(pokemon: Pokemon): void {
     this.pokemon = pokemon;
 
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
-    this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
-    globalScene.eventTarget.addEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    globalScene.eventTarget.addEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.MOVESET_CHANGED, this.#onMovesetChanged);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.SUMMON_DATA_RESET, this.#onSummonDataReset);
   }
 
-  /** Sets and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array */
-  private setText() {
-    for (let i = 0; i < this.flyoutText.length; i++) {
-      const flyoutText = this.flyoutText[i];
-      const moveInfo = this.moveInfo[i];
-
-      if (!moveInfo) {
-        continue;
-      }
-
-      const currentPp = moveInfo.maxPp - moveInfo.ppUsed;
-      flyoutText.text = `${moveInfo.move.name}  ${currentPp}/${moveInfo.maxPp}`;
-    }
-  }
-
-  /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
-  private onMoveUsed(event: Event) {
-    const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === MoveId.STRUGGLE) {
-      // Ignore Struggle
+  /**
+   * Set and format the text of a given {@linkcode Phaser.GameObjects.Text} in the `flyoutText` array.
+   * @param index - The 0-indexed position of the flyout text object to update
+   */
+  private updateText(index: number): void {
+    const move = this.tempMoveInfo[index] ?? this.moveInfo[index];
+    if (move == null) {
       return;
     }
 
-    const foundInfo = this.moveInfo.find(x => x?.move.id === moveUsedEvent.move.id);
-    if (foundInfo) {
-      foundInfo.ppUsed = moveUsedEvent.ppUsed;
-    } else {
-      this.moveInfo.push({
-        move: moveUsedEvent.move,
-        maxPp: moveUsedEvent.move.pp,
-        ppUsed: moveUsedEvent.ppUsed,
-      });
-    }
-
-    this.setText();
+    const flyoutText = this.flyoutText[index];
+    const maxPp = move.getMovePp();
+    const currentPp = maxPp - move.ppUsed;
+    flyoutText.text = `${move.getName()}  ${currentPp}/${maxPp}`;
   }
 
-  private onBerryUsed(event: Event) {
-    const berryUsedEvent = event as BerryUsedEvent;
-    if (
-      !berryUsedEvent
-      || berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id
-      || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA
-    ) {
-      // We only care about Leppa berries
+  /**
+   * Update the corresponding {@linkcode MoveInfo} object in the moveInfo array.
+   * @param event - The {@linkcode MovesetChangedEvent} having been emitted
+   */
+  readonly #onMovesetChanged = (event: MovesetChangedEvent): void => {
+    const { pokemonId, move: movesetMove } = event;
+    if (pokemonId !== this.pokemon.id || movesetMove.moveId === MoveId.NONE || movesetMove.moveId === MoveId.STRUGGLE) {
       return;
     }
 
-    const foundInfo = this.moveInfo.find(info => info.ppUsed === info.maxPp);
-    if (!foundInfo) {
-      // This will only happen on a de-sync of PP tracking
+    // Push to either the temporary or permanent move arrays, depending on which array the move was found in.
+    const isPermanent = this.pokemon.getMoveset(true).includes(movesetMove);
+    const infoArray = isPermanent ? this.moveInfo : this.tempMoveInfo;
+
+    const moveset = this.pokemon.getMoveset(isPermanent);
+    const index = moveset.indexOf(movesetMove);
+    if (index === -1) {
+      console.warn(
+        "Updated move passed to move flyout was not found in moveset!",
+        movesetMove.getName(),
+        moveset.map(p => p.getName()),
+      );
       return;
     }
-    foundInfo.ppUsed = Math.max(foundInfo.ppUsed - 10, 0);
 
-    this.setText();
-  }
+    infoArray[index] = movesetMove;
+    this.updateText(index);
+  };
 
-  /** Animates the flyout to either show or hide it by applying a fade and translation */
-  toggleFlyout(visible: boolean): void {
-    this.flyoutVisible = visible;
+  /**
+   * Reset the linked Pokemon's temporary moveset data when it is switched out.
+   * @param event - The {@linkcode SummonDataResetEvent} having been emitted
+   */
+  readonly #onSummonDataReset = (event: SummonDataResetEvent) => {
+    if (event.pokemonId !== this.pokemon.id) {
+      return;
+    }
 
+    this.tempMoveInfo.splice(0, this.tempMoveInfo.length);
+  };
+
+  /**
+   * Animate the flyout to either show or hide the modal.
+   * @param visible - Whether the flyout should be shown
+   */
+  public toggleFlyout(visible: boolean): void {
+    // TODO: Figure out how to get this to use Phaser's `visible` property without messing with the animation
     globalScene.tweens.add({
-      targets: this.flyoutParent,
+      targets: this,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: fixedInt(125),
       ease: "Sine.easeInOut",
@@ -208,9 +192,15 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
     });
   }
 
-  destroy(fromScene?: boolean): void {
-    globalScene.eventTarget.removeEventListener(BattleSceneEventType.MOVE_USED, this.onMoveUsedEvent);
-    globalScene.eventTarget.removeEventListener(BattleSceneEventType.BERRY_USED, this.onBerryUsedEvent);
+  /** @returns Whether the flyout is currently visible. */
+  // TODO: Explain why this is even needed?
+  public get isVisible(): boolean {
+    return this.alpha > 0;
+  }
+
+  public override destroy(fromScene?: boolean): void {
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.MOVESET_CHANGED, this.#onMovesetChanged);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.SUMMON_DATA_RESET, this.#onSummonDataReset);
 
     super.destroy(fromScene);
   }

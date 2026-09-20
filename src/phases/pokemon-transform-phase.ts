@@ -3,8 +3,8 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/move-id";
 import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import i18next from "i18next";
@@ -51,13 +51,11 @@ export class PokemonTransformPhase extends PokemonPhase {
       user.setStatStage(s, target.getStatStage(s));
     }
 
-    user.summonData.moveset = target.getMoveset().map(m => {
-      if (m) {
-        // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
-        return new PokemonMove(m.moveId, 0, 0, Math.min(m.getMove().pp, 5));
-      }
-      console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
-      return new PokemonMove(MoveId.NONE);
+    user.summonData.moveset = target.getMoveset().map(oldMove => {
+      // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
+      const newMove = new PokemonMove(oldMove.moveId, 0, 0, Math.min(oldMove.getMove().pp, 5));
+      this.emitMovesetChange(oldMove, newMove);
+      return newMove;
     });
 
     // TODO: This should fallback to the target's original typing if none are left (from Burn Up, etc.)
@@ -86,5 +84,22 @@ export class PokemonTransformPhase extends PokemonPhase {
     );
 
     Promise.allSettled(promises).then(() => this.end());
+  }
+
+  /**
+   * Emit an event upon transforming and changing movesets.
+   * @param origMove - The target's original {@linkcode PokemonMove} from the target's moveset
+   * @param copiedMove - The new `PokemonMove` being added to the user's moveset
+   */
+  private emitMovesetChange(origMove: PokemonMove, copiedMove: PokemonMove): void {
+    const user = this.getPokemon();
+    const target = globalScene.getField()[this.targetIndex];
+
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(user.id, copiedMove));
+    // If a player pokemon transforms into an enemy, permanently reveal all moves in their moveset.
+    // TODO: This can be extended to the enemy AI once a record of "seen moves" is added
+    if (user.isPlayer() && target.isEnemy()) {
+      globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, origMove));
+    }
   }
 }
