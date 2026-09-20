@@ -279,9 +279,9 @@ export class SummonPhase extends PokemonPhase {
     pokemon.playAnim();
     pokemon //
       .setVisible(true)
-      .setScale(0.5)
-      .getSprite()
-      .setVisible(true);
+      .setScale(0.5);
+
+    pokemon.getSprite().setVisible(true);
     pokemon.tint(getPokeballTintColor(pokemon.pokeball));
     pokemon.untint(250, "Sine.easeIn");
 
