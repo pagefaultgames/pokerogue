@@ -45,7 +45,7 @@ describe("Abilities - Flower Veil", () => {
     const user = game.field.getPlayerPokemon();
     game.move.select(MoveId.REST);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(user).toHaveStatusEffect(StatusEffect.SLEEP);
 

@@ -71,12 +71,7 @@ async function testUnseenFistHitResult(
 
   await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-  const leadPokemon = game.field.getPlayerPokemon();
-  expect(leadPokemon).not.toBe(undefined);
-
   const enemyPokemon = game.field.getEnemyPokemon();
-  expect(enemyPokemon).not.toBe(undefined);
-
   const enemyStartingHp = enemyPokemon.hp;
 
   game.move.select(attackMove);

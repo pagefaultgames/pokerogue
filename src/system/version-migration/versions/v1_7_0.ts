@@ -5,7 +5,6 @@ import { SpeciesId } from "#enums/species-id";
 import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -73,7 +72,7 @@ const migrateTera = {
 
       data.party.forEach(p => {
         if (p.teraType == null) {
-          p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
+          p.teraType = speciesDataRegistry.getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
         }
       });
     }
@@ -109,7 +108,7 @@ const migrateTera = {
 
     data.enemyParty.forEach(p => {
       if (p.teraType == null) {
-        p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
+        p.teraType = speciesDataRegistry.getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
       }
     });
   },

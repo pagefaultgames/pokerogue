@@ -38,7 +38,7 @@ describe("Moves - Burning Jealousy", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BURNING_JEALOUSY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy).toHaveStatusEffect(StatusEffect.BURN);
@@ -52,7 +52,7 @@ describe("Moves - Burning Jealousy", () => {
 
     game.move.select(MoveId.BURNING_JEALOUSY);
     game.move.select(MoveId.GROWL, 1);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy).toHaveStatusEffect(StatusEffect.BURN);
