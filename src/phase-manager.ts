@@ -43,6 +43,7 @@ import { GameOverRewardPhase } from "#phases/game-over-reward-phase";
 import { HideAbilityPhase } from "#phases/hide-ability-phase";
 import { HidePartyExpBarPhase } from "#phases/hide-party-exp-bar-phase";
 import { InitEncounterPhase } from "#phases/init-encounter-phase";
+import { ItemSelectPhase } from "#phases/item-select-phase";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { LevelCapPhase } from "#phases/level-cap-phase";
 import { LevelUpPhase } from "#phases/level-up-phase";
@@ -153,6 +154,7 @@ const PHASES = Object.freeze({
   HideAbilityPhase,
   HidePartyExpBarPhase,
   InitEncounterPhase,
+  ItemSelectPhase,
   LearnMovePhase,
   LevelCapPhase,
   LevelUpPhase,

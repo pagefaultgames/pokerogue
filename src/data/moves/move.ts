@@ -109,6 +109,7 @@ import { getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
+import type { HeldItemSortFunc } from "#types/held-item-data-types";
 import type { Localizable } from "#types/locales";
 import type {
   ChargingMove,
@@ -143,6 +144,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
+import { flingFilter, flingPower } from "./fling-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -1884,6 +1886,50 @@ export class PreMoveMessageAttr extends MoveAttr {
 }
 
 /**
+ * Attribute to prompt the user to choose an item before the move is executed.
+ */
+export class PreMoveChooseItemAttr extends MoveAttr {
+  public readonly message: string | MoveMessageFunc;
+  public readonly failureMessage: string | MoveMessageFunc;
+  private sortFunc: HeldItemSortFunc;
+
+  constructor(message: string | MoveMessageFunc, failureMessage: string | MoveMessageFunc, sortFunc: HeldItemSortFunc) {
+    super();
+    this.message = message;
+    this.failureMessage = failureMessage;
+    this.sortFunc = sortFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
+    const failureMessage =
+      typeof this.failureMessage === "function" ? this.failureMessage(user, target, move) : this.failureMessage;
+
+    const items = user.heldItemManager.getActiveHeldItems();
+
+    if (items.length === 0) {
+      globalScene.phaseManager.queueMessage(failureMessage, 500);
+      return false;
+    }
+
+    items.sort((a, b) => this.sortFunc(a, b));
+
+    if (message) {
+      globalScene.phaseManager.queueMessage(message, 500);
+
+      const chooseItemPhase = globalScene.phaseManager.create("ItemSelectPhase", items, (itemId: HeldItemId) => {
+        user.addTag(BattlerTagType.CHOSEN_ITEM, 0, move.id);
+        user.getTag(BattlerTagType.CHOSEN_ITEM)?.chooseItem(itemId);
+      });
+      globalScene.phaseManager.unshiftPhase(chooseItemPhase);
+
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
  * Attribute for moves that can be conditionally interrupted to be considered to
  * have failed before their "useMove" message is displayed. Currently used by
  * Focus Punch.
@@ -3112,6 +3158,55 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
 
     return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
   }
+}
+
+/**
+ * Attribute to apply one of several statuses to the target based on the item used.
+ * Used for {@linkcode Moves.FLING}.
+ */
+export class FlingStatusEffectAttr extends StatusEffectAttr {
+  constructor() {
+    super(StatusEffect.NONE, false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+
+    if (!item) {
+      return false;
+    }
+
+    switch (item) {
+      case HeldItemId.POISON_BARB:
+        this.effect = StatusEffect.POISON;
+        break;
+      case HeldItemId.LIGHT_BALL:
+        this.effect = StatusEffect.PARALYSIS;
+        break;
+      case HeldItemId.FLAME_ORB:
+        this.effect = StatusEffect.BURN;
+        break;
+      case HeldItemId.TOXIC_ORB:
+        this.effect = StatusEffect.TOXIC;
+        break;
+    }
+
+    if (this.effect === StatusEffect.NONE) {
+      return false;
+    }
+
+    const result = super.apply(user, target, move, args);
+    return result;
+  }
+
+  // TODO: code this correctly
+  //  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+  //    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
+  //    const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
+  //    const pokemon = this.selfTarget ? user : target;
+
+  //    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
+  //  }
 }
 
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
@@ -4715,6 +4810,38 @@ export class WeightPowerAttr extends VariablePowerAttr {
     }
 
     power.value = (w + 1) * 20;
+
+    return true;
+  }
+}
+
+export class FlingPowerAttr extends VariablePowerAttr {
+  /**
+   * Move power depends on the item being thrown
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const power = args[0] as NumberHolder;
+
+    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    if (!item) {
+      power.value = -1;
+      return false;
+    }
+
+    if (!item) {
+      power.value = -1;
+      return true;
+    }
+
+    power.value = flingPower[item] ?? 10;
+
+    user.heldItemManager.disable(item);
+    globalScene.updateItemBar(user.isPlayer());
 
     return true;
   }
@@ -8966,6 +9093,15 @@ const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.i
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
   target.heldItemManager.getTransferableHeldItems().length > 0;
 
+const failIfNoItemChosenCondition: MoveConditionFunc = (user, _target) => {
+  const chosenItem = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+  if (!chosenItem) {
+    return false;
+  }
+  const item = user.heldItemManager.getItemSpecs(chosenItem);
+  return !!item && !item.disabled;
+};
+
 // #endregion Condition functions
 
 const attackedByItemMessageFunc: MoveMessageFunc = (_user, target) => {
@@ -9166,6 +9302,7 @@ const MoveAttrs = Object.freeze({
   AddBattlerTagHeaderAttr,
   BeakBlastHeaderAttr,
   PreMoveMessageAttr,
+  PreMoveChooseItemAttr,
   PreUseInterruptAttr,
   RespectAttackTypeImmunityAttr,
   IgnoreOpponentStatStagesAttr,
@@ -10627,8 +10764,17 @@ export function initMoves() {
       .reflectable()
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to Fling?",
+        (_user, _target, _move) => "No items to Fling.",
+        flingFilter,
+      )
+      .attr(FlingPowerAttr)
+      .attr(FlingStatusEffectAttr)
+      .condition(failIfNoItemChosenCondition, 2)
       .makesContact(false)
-      .unimplemented(),
+      .partial(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
       // TODO: Verify status applied if a statused pokemon obtains Comatose (via Transform) and uses Psycho Shift
