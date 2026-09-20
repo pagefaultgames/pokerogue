@@ -396,7 +396,6 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const heldItemId = encounter.misc.chosenHeldItem as HeldItemId;
-        const party = globalScene.getPlayerParty();
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
@@ -407,11 +406,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           tier++;
         }
 
-        generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), party, 0);
+        generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER));
         let item: RewardOption | null = null;
         // TMs excluded from possible rewards
         while (!item || isTmReward(item.type)) {
-          item = generatePlayerRewardOptions(1, party, [], {
+          item = generatePlayerRewardOptions(1, [], {
             guaranteedRarityTiers: [tier],
             allowLuckUpgrades: false,
           })[0];
