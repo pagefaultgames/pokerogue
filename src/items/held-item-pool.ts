@@ -15,10 +15,9 @@ import type {
   HeldItemSpecs,
   HeldItemWeights,
 } from "#types/held-item-data-types";
-import type { Mutable } from "#types/type-helpers";
 import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { isHeldItemCategoryEntry, isHeldItemPool, isHeldItemSpecs } from "#utils/item-utils";
-import type { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple, Writable } from "type-fest";
 
 /**
  * A default pool of held items, organized by tier. \
@@ -38,43 +37,43 @@ export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
  * Initialize the wild held item pool
  */
 function initWildHeldItemPool() {
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
+  (wildHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.COMMON] = [
     { entry: HeldItemCategoryId.BERRY, weight: 1 },
   ];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
+  (wildHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.GREAT] = [
     { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
   ];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
+  (wildHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
     { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
     { entry: HeldItemId.WHITE_HERB, weight: 0 },
   ];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ROGUE] = [{ entry: HeldItemId.LUCKY_EGG, weight: 4 }];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.MASTER] = [{ entry: HeldItemId.GOLDEN_EGG, weight: 1 }];
+  (wildHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.ROGUE] = [{ entry: HeldItemId.LUCKY_EGG, weight: 4 }];
+  (wildHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.MASTER] = [{ entry: HeldItemId.GOLDEN_EGG, weight: 1 }];
 }
 
 /**
  * Initialize the trainer pokemon held item pool
  */
 function initTrainerHeldItemPool() {
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
+  (trainerHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.COMMON] = [
     { entry: HeldItemCategoryId.BERRY, weight: 8 },
     { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 },
   ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
+  (trainerHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.GREAT] = [
     { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 },
   ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
+  (trainerHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
     { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
     { entry: HeldItemId.WHITE_HERB, weight: 0 },
   ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ROGUE] = [
+  (trainerHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.ROGUE] = [
     { entry: HeldItemId.FOCUS_BAND, weight: 2 },
     { entry: HeldItemId.LUCKY_EGG, weight: 4 },
     { entry: HeldItemId.QUICK_CLAW, weight: 1 },
     { entry: HeldItemId.GRIP_CLAW, weight: 1 },
     { entry: HeldItemId.WIDE_LENS, weight: 1 },
   ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.MASTER] = [
+  (trainerHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.MASTER] = [
     { entry: HeldItemId.KINGS_ROCK, weight: 1 },
     { entry: HeldItemId.LEFTOVERS, weight: 1 },
     { entry: HeldItemId.SHELL_BELL, weight: 1 },
@@ -86,27 +85,27 @@ function initTrainerHeldItemPool() {
  * Initialize the daily starter held item pool
  */
 function initDailyStarterRewardPool(): void {
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
+  (dailyStarterHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.COMMON] = [
     { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
     { entry: HeldItemCategoryId.BERRY, weight: 3 },
   ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
+  (dailyStarterHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.GREAT] = [
     { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
   ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
+  (dailyStarterHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
     { entry: HeldItemId.REVIVER_SEED, weight: 4 },
     { entry: HeldItemId.SOOTHE_BELL, weight: 1 },
     { entry: HeldItemId.SOUL_DEW, weight: 1 },
     { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
   ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ROGUE] = [
+  (dailyStarterHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.ROGUE] = [
     { entry: HeldItemId.GRIP_CLAW, weight: 5 },
     { entry: HeldItemId.BATON, weight: 2 },
     { entry: HeldItemId.FOCUS_BAND, weight: 5 },
     { entry: HeldItemId.QUICK_CLAW, weight: 3 },
     { entry: HeldItemId.KINGS_ROCK, weight: 3 },
   ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.MASTER] = [
+  (dailyStarterHeldItemPool as Writable<HeldItemTieredPool>)[RarityTier.MASTER] = [
     { entry: HeldItemId.LEFTOVERS, weight: 1 },
     { entry: HeldItemId.SHELL_BELL, weight: 1 },
   ];
