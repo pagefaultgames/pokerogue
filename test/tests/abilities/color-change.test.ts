@@ -78,7 +78,7 @@ describe("Ability - Color Change", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     checkTypeChange(false);
@@ -87,19 +87,18 @@ describe("Ability - Color Change", () => {
   it.each([
     { moveId: MoveId.NUZZLE, moveName: "Nuzzle", status: StatusEffect.PARALYSIS, type: PokemonType.ELECTRIC },
     { moveId: MoveId.MORTAL_SPIN, moveName: "Mortal Spin", status: StatusEffect.POISON, type: PokemonType.POISON },
-  ])("should change the pokemon's type after status effects would be inflicted ($moveName)", async ({
-    moveId,
-    status,
-    type,
-  }) => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+  ])(
+    "should change the pokemon's type after status effects would be inflicted ($moveName)",
+    async ({ moveId, status, type }) => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.use(moveId);
-    await game.toEndOfTurn();
+      game.move.use(moveId);
+      await game.toEndOfTurn();
 
-    checkTypeChange(true, type);
-    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(status);
-  });
+      checkTypeChange(true, type);
+      expect(game.field.getEnemyPokemon()).toHaveStatusEffect(status);
+    },
+  );
 
   it("should not change the pokemon's type when hit by pain split", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
@@ -123,7 +122,7 @@ describe("Ability - Color Change", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.DOUBLE_KICK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
     checkTypeChange(false);
     await game.phaseInterceptor.to("MoveEndPhase");

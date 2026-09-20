@@ -55,6 +55,7 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.SLEEP_TALK,
   MoveId.SNORE,
   MoveId.STEEL_ROLLER,
+  MoveId.STRENGTH, // Most Pokemon that get access to this move also get access to Body Slam.
   MoveId.TAKE_DOWN,
   MoveId.UPPER_HAND,
   MoveId.VENOM_DRENCH,
@@ -151,6 +152,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SPIT_UP,
   MoveId.SPIKE_CANNON, // No one who has it really cares for it outside of early levels.
   MoveId.SPLASH,
+  MoveId.STEAMROLLER,
   MoveId.STOMP,
   MoveId.STRUGGLE_BUG,
   MoveId.SUBMISSION,
@@ -171,6 +173,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.WAKE_UP_SLAP,
   MoveId.WATER_GUN,
   MoveId.WATER_SPORT,
+  MoveId.WING_ATTACK,
   MoveId.WITHDRAW,
   MoveId.WRAP,
 
@@ -202,6 +205,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will probably never be smart enough to use it correctly.
   MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, high BP causes it to spawn as random coverage often and it ends up being situational / an unused slot.
   MoveId.SOLAR_BEAM, // Temporary deny until move gen can account for weather properly.
+  MoveId.VENOM_DRENCH, // AI will try to go for Venom Drench even if the Pokemon has no way to poison / if the target isn't already poisoned.
 
   // Recharge Moves, recommended by NightKev until improved AI / Move Generation.
   MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general. Some signature moves were omitted.
