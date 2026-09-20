@@ -98,11 +98,12 @@ export abstract class ApiBase {
   }
 
   /**
-   * Helper to transform data to {@linkcode URLSearchParams}
-   * Any key with a value of `undefined` will be ignored.
+   * Helper to transform data to `URLSearchParams`.
+   *
+   * Any key with a value of `undefined` or `""` will be ignored. \
    * Any key with a value of `null` will be included.
-   * @param data the data to transform to {@linkcode URLSearchParams}
-   * @returns a {@linkcode URLSearchParams} representaton of {@linkcode data}
+   * @param data - The data to transform
+   * @returns A {@linkcode URLSearchParams} representaton of the input
    */
   protected toUrlSearchParams(data: Record<string, any>): URLSearchParams {
     const arr = Object.entries(data)
