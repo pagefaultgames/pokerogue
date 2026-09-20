@@ -14,8 +14,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
-import { FusionSpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -1117,16 +1116,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public canTransformInto(target: Pokemon): boolean {
     return !(
-      // Neither pokemon can be already transformed
-      (
-        this.isTransformed()
-        || target.isTransformed() // Neither pokemon can be behind an illusion
-        || target.summonData.illusion
-        || this.summonData.illusion // The target cannot be behind a substitute
-        || target.getTag(BattlerTagType.SUBSTITUTE) // Transforming to/from fusion pokemon causes various problems (crashes, etc.) // TODO: Consider lifting restriction once bug is fixed
-        || this.isFusion()
-        || target.isFusion()
-      )
+      this.isTransformed()
+      || target.isTransformed()
+      || target.summonData.illusion
+      || this.summonData.illusion
+      || target.getTag(BattlerTagType.SUBSTITUTE)
+      // Transforming to/from fusion pokemon causes various problems (crashes, etc.)
+      // TODO: Consider lifting restriction once bug is fixed
+      || this.isFusion()
+      || target.isFusion()
     );
   }
 
@@ -1938,7 +1936,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       includeRelearnerMoves: true,
     });
 
-    if (this.metBiome === -1 && !globalScene.gameMode.isFreshStartChallenge() && !globalScene.gameMode.isDaily) {
+    const allowEggMoves = new ValueHolder(true);
+    applyChallenges(ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY, this, allowEggMoves);
+
+    if (this.metBiome === -1 && allowEggMoves.value && !globalScene.gameMode.isDaily) {
       const eggMoves: LearnableLevelMoves = this.getUnlockedEggMoves().map(em => [null, em, LearnableMoveSource.EGG]);
       learnableMoves.push(...eggMoves);
     }
@@ -2420,7 +2421,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       weightRemoved = 100 * autotomizedTag.autotomizeCount;
     }
     const minWeight = 0.1;
-    const weight = new NumberHolder(this.species.weight - weightRemoved);
+    const formIndex: number = this.formIndex;
+    const formWeight = this.species.forms.length > 0 ? this.species.forms[formIndex].weight : this.species.weight;
+    const weight = new NumberHolder(formWeight - weightRemoved);
 
     // This will trigger the ability overlay so only call this function when necessary
     applyAbAttrs("WeightMultiplierAbAttr", { pokemon: this, weight });
@@ -2535,7 +2538,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
 
-    if (this.isOfType(PokemonType.GHOST)) {
+    if (this.isOfType(PokemonType.GHOST) || this.hasAbility(AbilityId.RUN_AWAY)) {
       return false;
     }
 
@@ -2932,9 +2935,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Fusion evolutions are also considered.
    * @returns The evolution this pokemon can currently evolve into, or `null` if it cannot evolve
    */
-  getEvolution(): SpeciesFormEvolution | null {
+  public getEvolution(): SpeciesFormEvolution | null {
     if (speciesDataRegistry.hasEvolutions(this.species.speciesId)) {
-      const evolutions = speciesDataRegistry.getEvolutions(this.species.speciesId);
+      const evolutions: SpeciesFormEvolution[] = [];
+      for (const evo of speciesDataRegistry.getEvolutions(this.species.speciesId)) {
+        evolutions.push(new SpeciesFormEvolution({ ...evo, item: evo.item!, condition: evo.condition?.data }));
+      }
+      applyChallenges(ChallengeType.MODIFY_EVOLUTIONS, this, evolutions);
       for (const e of evolutions) {
         if (e.validate(this)) {
           return e;
@@ -2946,6 +2953,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const fusionEvolutions = speciesDataRegistry
         .getEvolutions(this.fusionSpecies.speciesId)
         .map(e => new FusionSpeciesFormEvolution(this.species.speciesId, e));
+      applyChallenges(ChallengeType.MODIFY_EVOLUTIONS, this, fusionEvolutions);
       for (const fe of fusionEvolutions) {
         if (fe.validate(this, true)) {
           return fe;
@@ -5918,7 +5926,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 }
 
 export class PlayerPokemon extends Pokemon {
-  protected declare battleInfo: PlayerBattleInfo;
+  declare protected battleInfo: PlayerBattleInfo;
 
   constructor(
     species: PokemonSpecies,
@@ -5958,6 +5966,8 @@ export class PlayerPokemon extends Pokemon {
       } else {
         this.moveset = [];
       }
+
+      applyChallenges(ChallengeType.MOVESET_MODIFY, this);
     }
   }
 
@@ -6000,6 +6010,9 @@ export class PlayerPokemon extends Pokemon {
     if (this.fusionSpecies) {
       this.fusionSpecies.getTms(this.getFusionFormKey() ?? undefined).forEach(tm => tms.add(tm));
     }
+
+    applyChallenges(ChallengeType.PLAYER_TM_COMPATIBILITY, this, tms);
+
     if (excludeKnown) {
       this.moveset.forEach(move => tms.delete(move.moveId));
     }
@@ -6488,7 +6501,7 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
-  protected declare battleInfo: EnemyBattleInfo;
+  declare protected battleInfo: EnemyBattleInfo;
   public trainerSlot: TrainerSlot;
   public aiType: AiType;
   public bossSegments: number;
@@ -6584,6 +6597,8 @@ export class EnemyPokemon extends Pokemon {
           255,
         );
       }
+
+      applyChallenges(ChallengeType.MOVESET_MODIFY, this);
     }
 
     this.aiType = boss || this.hasTrainer() ? AiType.SMART : AiType.SMART_RANDOM;

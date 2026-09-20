@@ -185,6 +185,10 @@ export class OverridesHelper extends GameManagerHelper {
    * Override the player pokemon's forms
    * @param forms - The forms to set
    * @returns `this`
+   * @example
+   * ```ts
+   * game.override.starterForms({ [SpeciesId.MELOETTA]: 1 });
+   * ```
    */
   public starterForms(forms: Partial<Record<SpeciesId, number>>): this {
     vi.spyOn(activeOverrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue(forms);
