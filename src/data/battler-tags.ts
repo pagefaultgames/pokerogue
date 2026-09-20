@@ -718,7 +718,7 @@ export abstract class TrappedTag extends SerializableBattlerTag {
       return false;
     }
 
-    // TODO: This is really weird and probably shouldn't occur here
+    // TODO: Can the substitute check be handled somewhere else (read: during the actual attr application)?
     if (this.sourceMove && allMoves[this.sourceMove]?.hitsSubstitute(source, pokemon)) {
       return false;
     }

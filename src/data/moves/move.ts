@@ -3948,7 +3948,6 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     return false;
   }
 
-  // TODO: This is a shit use of inheritance
   getLevels(_user: Pokemon): number {
     return this.stages;
   }
