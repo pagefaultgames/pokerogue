@@ -432,13 +432,13 @@ export function pickWeightedIndex(weights: NonEmptyTuple<number>): number {
     throw new Error("Weights array must be non-empty!");
   }
   const totalWeight = weights.reduce((sum, w) => {
-    if (w <= 0) {
+    if (w < 0) {
       throw new Error("Weights must be non-negative!");
     }
     return sum + w;
   }, 0);
 
-  // invariant: totalWeight > 0 since all values are positive
+  // can all weights be 0?
 
   let r = randSeedFloat() * totalWeight;
   for (let i = 0; i < weights.length; i++) {

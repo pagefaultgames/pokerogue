@@ -45,13 +45,13 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
   const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;
 
   if (isHeldItemId(id)) {
-    const reward = new HeldItemReward(id);
+    const reward = new HeldItemReward(RewardId.GENERIC_HELD_ITEM, id);
     const tier = tierOverride ?? getHeldItemTier(id);
     return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
   if (isTrainerItemId(id)) {
-    const reward = new TrainerItemReward(id);
+    const reward = new TrainerItemReward(RewardId.GENERIC_TRAINER_ITEM, id);
     const tier = tierOverride ?? trainerItemRarities[id];
     return new RewardOption(reward, upgradeCount, tier, cost);
   }

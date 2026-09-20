@@ -13,17 +13,16 @@ export class AddMoneyReward extends Reward {
   private moneyMultiplierDescriptorKey: string;
 
   constructor(
+    id: RewardId,
     localeKey: string,
     iconImage: string,
     moneyMultiplier: number,
     moneyMultiplierDescriptorKey: string,
-    id: RewardId,
   ) {
-    super(localeKey, iconImage, "money", "se/buy");
+    super(id, localeKey, iconImage, "money", "se/buy");
 
     this.moneyMultiplier = moneyMultiplier;
     this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;
-    this.id = id;
   }
 
   get description(): string {

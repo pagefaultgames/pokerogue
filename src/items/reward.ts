@@ -55,7 +55,6 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-
 import i18next from "i18next";
 
 export abstract class Reward {
-  // TODO: This is set inconsistently across classes and is only really used for category checks
   public id: RewardId;
   private readonly localeKey: string;
   private readonly _iconName: string;
@@ -64,8 +63,14 @@ export abstract class Reward {
   public tier: RarityTier;
 
   // TODO: These bangs are emphatically NOT correct
-  // TODO: Move `id` into the constructor instead of assigning it in subclasses
-  constructor(localeKey: string | null, iconName: string | null, group?: string, soundName = "se/restore") {
+  constructor(
+    id: RewardId,
+    localeKey: string | null,
+    iconName: string | null,
+    group?: string,
+    soundName = "se/restore",
+  ) {
+    this.id = id;
     this.localeKey = localeKey!;
     this._iconName = iconName!;
     this.group = group!;
@@ -124,13 +129,14 @@ export abstract class PokemonReward extends Reward {
   public selectFilter: PokemonSelectFilter | undefined;
 
   constructor(
+    id: RewardId,
     localeKey: string,
     iconName: string,
     selectFilter?: PokemonSelectFilter,
     group?: string,
     soundName?: string,
   ) {
-    super(localeKey, iconName, group, soundName);
+    super(id, localeKey, iconName, group, soundName);
     this.selectFilter = selectFilter;
   }
 
@@ -142,16 +148,15 @@ export abstract class PokemonMoveReward extends PokemonReward {
   public moveSelectFilter: PokemonMoveSelectFilter | undefined;
 
   constructor(
+    id: RewardId,
     localeKey: string,
     iconName: string,
-    id: RewardId,
     selectFilter?: PokemonSelectFilter,
     moveSelectFilter?: PokemonMoveSelectFilter,
     group?: string,
   ) {
-    super(localeKey, iconName, selectFilter, group);
+    super(id, localeKey, iconName, selectFilter, group);
     this.moveSelectFilter = moveSelectFilter;
-    this.id = id;
   }
 
   apply(_params: PokemonMoveRewardParams): boolean {
@@ -196,7 +201,7 @@ export class RewardOption {
 
 export class EmptyReward extends Reward {
   constructor() {
-    super("", "");
+    super(0x0000, "", "");
   }
 
   override apply(): void {}

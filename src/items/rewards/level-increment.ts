@@ -34,8 +34,7 @@ function incrementLevelWithCandy(pokemon: Pokemon): boolean {
 
 export class PokemonLevelIncrementReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, (_pokemon: PlayerPokemon) => null);
-    this.id = RewardId.RARE_CANDY;
+    super(RewardId.RARE_CANDY, localeKey, iconImage, (_pokemon: PlayerPokemon) => null);
   }
 
   get description(): string {
@@ -57,7 +56,9 @@ export class PokemonLevelIncrementReward extends PokemonReward {
 }
 
 export class AllPokemonLevelIncrementReward extends Reward {
-  id = RewardId.RARER_CANDY;
+  constructor(localeKey: string, iconImage: string) {
+    super(RewardId.RARER_CANDY, localeKey, iconImage);
+  }
 
   get description(): string {
     let levels = 1;

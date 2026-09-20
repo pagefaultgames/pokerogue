@@ -8,6 +8,7 @@ import { PartyUiHandler } from "#ui/party-ui-handler";
 export class RememberMoveReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string, group?: string) {
     super(
+      RewardId.MEMORY_MUSHROOM,
       localeKey,
       iconImage,
       (pokemon: PlayerPokemon) => {
@@ -18,7 +19,6 @@ export class RememberMoveReward extends PokemonReward {
       },
       group,
     );
-    this.id = RewardId.MEMORY_MUSHROOM;
   }
 
   /**
