@@ -32,7 +32,6 @@ import {
   tempStatToTrainerItem,
 } from "#items/trainer-items/x-items";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { Mutable } from "#types/type-helpers";
 import type { TrainerItemManager } from "./trainer-item-manager";
 
 // #region Marker items

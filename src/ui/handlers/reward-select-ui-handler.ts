@@ -37,7 +37,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
-  declare protected onActionInput: RewardSelectCallback | null;
+  protected declare onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -590,7 +590,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         if (cost > 0) {
           const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
           const costStyleName = cost <= globalScene.money ? "MONEY" : "PARTY_RED";
-          const costText = i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney });
+          const costText = i18next.t("RewardSelectUiHandler:itemCost", { formattedMoney });
           const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
           messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconName);
         } else {

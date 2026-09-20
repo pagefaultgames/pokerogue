@@ -15,9 +15,9 @@ export class DamageMoneyRewardHeldItemAttr extends HeldItemAttr<typeof HeldItemE
 
   private readonly fractionOfDamage: number;
 
-  constructor(value: number) {
+  constructor(fractionOfDamage: number) {
     super();
-    this.value = fractionOfDamage;
+    this.fractionOfDamage = fractionOfDamage;
   }
 
   public override apply({ pokemon, damage }: DamageMoneyRewardParams): void {

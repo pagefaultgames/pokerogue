@@ -22,7 +22,7 @@ export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[])
  * @returns An array containing all items in the party that are of the given category.
  */
 export function getPartyItemsInCategory(category: HeldItemCategoryId): NonEmptyTuple<PokemonItemMap> | readonly [] {
-  const berries = globalScene
+  const items = globalScene
     .getPlayerParty()
     .values()
     .flatMap(pokemon =>
@@ -31,7 +31,7 @@ export function getPartyItemsInCategory(category: HeldItemCategoryId): NonEmptyT
         .values()
         .filter(item => isItemInCategory(item, category))
         .map(id => {
-          // non-null assertion justified since we only consider berries that are owned by the pokemon
+          // non-null assertion justified since we only consider items that are owned by the pokemon
           const specs = pokemon.heldItemManager.getItemSpecs(id)!;
           return { item: specs, pokemonId: pokemon.id } satisfies PokemonItemMap;
         }),
@@ -39,5 +39,5 @@ export function getPartyItemsInCategory(category: HeldItemCategoryId): NonEmptyT
     .toArray();
 
   // the fact that this requires an `as unknown` cast makes me weep
-  return berries as unknown as NonEmptyTuple<PokemonItemMap> | readonly [];
+  return items as unknown as NonEmptyTuple<PokemonItemMap> | readonly [];
 }

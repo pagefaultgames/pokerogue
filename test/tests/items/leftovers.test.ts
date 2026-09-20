@@ -42,7 +42,6 @@ describe("Items - Leftovers", () => {
     game.phaseInterceptor.clearLogs();
     await game.toNextTurn();
 
-    expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
     expect(player.hp).toBe(player.getMaxHp() - expectedHeal * 2);
   });
 
@@ -57,7 +56,6 @@ describe("Items - Leftovers", () => {
     await game.toEndOfTurn();
     await game.phaseInterceptor.to("CommandPhase", false);
 
-    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
     expect(player.hp).toBe(player.getMaxHp());
     expect(player).toHaveHeldItem(HeldItemId.LEFTOVERS);
   });

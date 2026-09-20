@@ -10,7 +10,7 @@ import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
+describe("UI - RewardSelectUiHandler - shop cursor target", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;

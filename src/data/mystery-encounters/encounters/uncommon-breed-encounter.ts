@@ -12,7 +12,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { getPartyBerries } from "#items/item-utility";
+import { getPartyItemsInCategory } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -210,7 +210,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         // Give it some food
 
         // Remove 4 random berries from player's party
-        const berryMap = getPartyBerries() as unknown as NonEmptyTuple<PokemonItemMap>;
+        const berryMap = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as unknown as NonEmptyTuple<PokemonItemMap>;
 
         for (let i = 0; i < 4; i++) {
           const berryWeights = berryMap.map(b => b.item.stack);
