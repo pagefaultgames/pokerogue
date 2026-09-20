@@ -85,3 +85,5 @@ export type ApplicableHeldItemId = Exclude<keyof AllHeldItems, CosmeticHeldItemI
 /** Utility type to retrieve the effects of a given {@linkcode HeldItem} based on its ID. */
 export type ExtractHeldItemEffect<T extends ApplicableHeldItemId> =
   AllHeldItems[T] extends HeldItem<infer Attr extends HeldItemAttr> ? Attr["effect"] : never;
+
+export type HeldItemSortFunc = (itemA: HeldItemId, itemB: HeldItemId) => number;
