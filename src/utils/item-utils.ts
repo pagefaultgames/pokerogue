@@ -10,7 +10,8 @@ import type { TrainerItemPool, TrainerItemSpecs } from "#types/trainer-item-data
 // TODO: Move to another file
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
   const { pokemon } = params;
-  for (const itemId of pokemon.heldItemManager.getItems()) {
+  // Only items that are active (not disabled) should be applied
+  for (const itemId of pokemon.heldItemManager.getActiveHeldItems()) {
     const heldItem = allHeldItems[itemId] as HeldItem | CosmeticHeldItem;
     if ("effects" in heldItem && heldItem.hasEffect(effect)) {
       (heldItem satisfies HeldItem).apply(effect, params);
