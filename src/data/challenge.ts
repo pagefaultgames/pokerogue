@@ -1591,8 +1591,9 @@ export class AbilityRandomizerChallenge extends Challenge {
   // Challenge values:
   // 1 - Randomize abilities
   // 2 - Randomize abilities and passives
+  // 3 - Randomize abilities and passives, except for innate form-change abilities
   constructor() {
-    super(Challenges.ABILITY_RANDOMIZER, 2);
+    super(Challenges.ABILITY_RANDOMIZER, 3);
   }
 
   public override get category(): ChallengeCategory {
@@ -1647,6 +1648,23 @@ export class AbilityRandomizerChallenge extends Challenge {
       return false;
     }
 
+    if (
+      this.value > 2
+      && [
+        AbilityId.SCHOOLING,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.BATTLE_BOND,
+        AbilityId.DISGUISE,
+        AbilityId.ICE_FACE,
+        AbilityId.ZERO_TO_HERO,
+        AbilityId.TERA_SHIFT,
+        AbilityId.TERA_SHELL,
+        AbilityId.TERAFORM_ZERO,
+      ].includes(abilityId.value)
+    ) {
+      return false;
+    }
+
     const seedOffset = 500 * speciesId + abilityId.value;
 
     globalScene.executeWithSeedOffset(() => {
@@ -1689,29 +1707,8 @@ export class AbilityRandomizerChallenge extends Challenge {
       case SpeciesId.AZURILL:
         cost.value -= 1; // 4 -> 3
         return true;
-      case SpeciesId.WISHIWASHI:
-        cost.value -= 1; // 2 -> 1
-        return true;
-      case SpeciesId.ZYGARDE:
-        cost.value -= 2; // 9 -> 7
-        return true;
-      case SpeciesId.BATTLE_BOND_GRENINJA:
-        cost.value -= 1; // 6 -> 5
-        return true;
       case SpeciesId.DEWPIDER:
         cost.value -= 1; // 3 -> 2
-        return true;
-      case SpeciesId.MIMIKYU:
-        cost.value -= 1; // 4 -> 3
-        return true;
-      case SpeciesId.EISCUE:
-        cost.value -= 1; // 3 -> 2
-        return true;
-      case SpeciesId.FINIZEN:
-        cost.value -= 1; // 3 -> 2
-        return true;
-      case SpeciesId.TERAPAGOS:
-        cost.value -= 5; // 9 -> 4
         return true;
       case SpeciesId.ARCHEN:
         cost.value += 1; // 3 -> 4
