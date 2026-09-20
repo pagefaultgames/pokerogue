@@ -6,13 +6,12 @@ import i18next from "i18next";
 
 export class FusePokemonReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, (pokemon: PlayerPokemon) => {
+    super(RewardId.DNA_SPLICERS, localeKey, iconImage, (pokemon: PlayerPokemon) => {
       if (pokemon.isFusion()) {
         return PartyUiHandler.NoEffectMessage;
       }
       return null;
     });
-    this.id = RewardId.DNA_SPLICERS;
   }
 
   get description(): string {

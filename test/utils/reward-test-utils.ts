@@ -1,5 +1,5 @@
 import type { HeldItemId } from "#enums/held-item-id";
-import type { RewardId } from "#enums/reward-id";
+import { RewardId } from "#enums/reward-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { type AllRewardsType, allRewards } from "#items/all-rewards";
 import { HeldItemReward } from "#items/held-item-reward";
@@ -54,11 +54,11 @@ export function generateRewardForTest(specs: RewardSpecs): Reward | null {
   const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;
 
   if (isHeldItemId(id)) {
-    return new HeldItemReward(id);
+    return new HeldItemReward(RewardId.GENERIC_HELD_ITEM, id);
   }
 
   if (isTrainerItemId(id)) {
-    return new TrainerItemReward(id);
+    return new TrainerItemReward(RewardId.GENERIC_TRAINER_ITEM, id);
   }
 
   const rewardFunc = allRewards[id];

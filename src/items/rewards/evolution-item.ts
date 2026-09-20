@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { EvolutionItem } from "#enums/evolution-item";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
@@ -14,8 +15,8 @@ import i18next from "i18next";
 export class EvolutionItemReward extends PokemonReward {
   public evolutionItem: EvolutionItem;
 
-  constructor(evolutionItem: EvolutionItem) {
-    super("", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
+  constructor(id: RewardId, evolutionItem: EvolutionItem) {
+    super(id, "", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
       if (
         speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
         && speciesDataRegistry
@@ -90,7 +91,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
 
   override generateReward(pregenArgs?: EvolutionItem) {
     if (pregenArgs !== undefined) {
-      return new EvolutionItemReward(pregenArgs);
+      return new EvolutionItemReward(this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM, pregenArgs);
     }
 
     const party = globalScene.getPlayerParty();
@@ -136,6 +137,9 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
       return null;
     }
 
-    return new EvolutionItemReward(randSeedItem(evolutionItemPool));
+    return new EvolutionItemReward(
+      this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM,
+      randSeedItem(evolutionItemPool),
+    );
   }
 }

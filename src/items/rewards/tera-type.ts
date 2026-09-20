@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { PokemonType } from "#enums/pokemon-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
@@ -15,6 +16,7 @@ export class ChangeTeraTypeReward extends PokemonReward {
 
   constructor(teraType: PokemonType) {
     super(
+      RewardId.TERA_SHARD,
       "",
       `${PokemonType[teraType].toLowerCase()}_tera_shard`,
       (pokemon: PlayerPokemon) => {

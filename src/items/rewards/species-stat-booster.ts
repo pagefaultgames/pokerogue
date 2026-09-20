@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
@@ -23,8 +24,10 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
     this.rare = rare;
   }
   override generateReward(pregenArgs?: SpeciesStatBoosterItemId) {
+    const id = this.rare ? RewardId.RARE_SPECIES_STAT_BOOSTER : RewardId.SPECIES_STAT_BOOSTER;
+
     if (pregenArgs !== undefined) {
-      return new HeldItemReward(pregenArgs);
+      return new HeldItemReward(id, pregenArgs);
     }
 
     // Get a pool of items based on the rarity.
@@ -75,7 +78,7 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
         if (weights[i] !== 0) {
           const curWeight = weight + weights[i];
           if (randInt <= weight + weights[i]) {
-            return new HeldItemReward(tierItems[i]);
+            return new HeldItemReward(id, tierItems[i]);
           }
           weight = curWeight;
         }
