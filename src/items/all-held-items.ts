@@ -113,9 +113,6 @@ const typeBoostHeldItems = (
     const id = attackTypeToHeldItem[pokemonType] satisfies TypeBoostItemId;
     ret[id] = new HeldItemBuilder(id, 99) //
       .attr(AttackTypeBoostHeldItemAttr, pokemonType, 0.2)
-      .unstealable()
-      .untransferable()
-      .unsuppressable()
       .build();
     return ret;
   },
