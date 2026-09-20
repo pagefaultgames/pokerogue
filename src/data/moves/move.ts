@@ -3648,7 +3648,8 @@ export class OneHitKOAttr extends MoveAttr {
 
 /**
  * Attribute that allows charge moves to resolve in 1 turn under a given condition.
- * Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
+ * @remarks
+ * Should only be used for {@linkcode ChargingMove}s as a `chargeAttr`.
  */
 export class InstantChargeAttr extends MoveAttr {
   /** The condition in which the move with this attribute instantly charges */
@@ -3659,18 +3660,10 @@ export class InstantChargeAttr extends MoveAttr {
     this.condition = condition;
   }
 
-  /**
-   * Flags the move with this attribute as instantly charged if this attribute's condition is met.
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move the {@linkcode Move} associated with this attribute
-   * @param args
-   *  - `[0]` a {@linkcode BooleanHolder | BooleanHolder} for the "instant charge" flag
-   * @returns `true` if the instant charge condition is met; `false` otherwise.
-   */
-  override apply(user: Pokemon, _target: Pokemon | null, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon | null, move: Move, args: [ValueHolder<boolean>, ...any[]]): boolean {
     const instantCharge = args[0];
-    if (!(instantCharge instanceof BooleanHolder)) {
+    if (!("value" in instantCharge)) {
+      console.warn("Invalid param passed to `InstantChargeAttr#apply`!");
       return false;
     }
 
@@ -5257,9 +5250,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
  * move from an ally.
  */
 export class CombinedPledgePowerAttr extends VariablePowerAttr {
-  override apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<number>, ...any[]]): boolean {
     const power = args[0];
-    if (!(power instanceof NumberHolder)) {
+    if (!("value" in power)) {
+      console.warn("Invalid param passed to `CombinedPledgePowerAttr#apply`");
       return false;
     }
     const combinedPledgeMove = user.turnData.combiningPledge;
@@ -5276,9 +5270,10 @@ export class CombinedPledgePowerAttr extends VariablePowerAttr {
  * Applies STAB to the given Pledge move if the move is part of a combined attack.
  */
 export class CombinedPledgeStabBoostAttr extends MoveAttr {
-  override apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<number>, ...any[]]): boolean {
     const stabMultiplier = args[0];
-    if (!(stabMultiplier instanceof NumberHolder)) {
+    if (!("value" in stabMultiplier)) {
+      console.warn("Invalid param passed to `CombinedPledgeStabBoostAttr#apply`");
       return false;
     }
     const combinedPledgeMove = user.turnData.combiningPledge;
@@ -5684,23 +5679,20 @@ export class VariableMoveTypeAttr extends MoveAttr {
 }
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `FormChangeItemTypeAttr#apply`!");
       return false;
     }
 
-    // TODO: this needs to be cleaned up
-    if (
-      [user.species.speciesId, user.fusionSpecies?.speciesId].includes(SpeciesId.ARCEUS)
-      || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(SpeciesId.SILVALLY)
-    ) {
+    if (user.hasSpecies(SpeciesId.ARCEUS) || user.hasSpecies(SpeciesId.SILVALLY)) {
       const form =
         user.species.speciesId === SpeciesId.ARCEUS || user.species.speciesId === SpeciesId.SILVALLY
           ? user.formIndex
           : user.fusionSpecies!.formIndex;
       if (form >= 0 && form <= MAX_POKEMON_TYPE && form !== PokemonType.STELLAR) {
-        moveType.value = form as PokemonType;
+        moveType.value = form;
         return true;
       }
       return true;
@@ -5728,9 +5720,10 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `TechnoBlastTypeAttr#apply`!");
       return false;
     }
 
@@ -5772,9 +5765,10 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `AuraWheelTypeAttr#apply`!");
       return false;
     }
 
@@ -5806,9 +5800,10 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class RagingBullTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `RagingBullTypeAttr#apply`!");
       return false;
     }
 
@@ -5844,9 +5839,10 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `IvyCudgelTypeAttr#apply`!");
       return false;
     }
 
@@ -5889,9 +5885,10 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof ValueHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `WeatherBallTypeAttr#apply`!");
       return false;
     }
 
@@ -5947,16 +5944,10 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
  * Has no effect if the user is not grounded.
  */
 export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
-  /**
-   * @param user {@linkcode Pokemon} using this move
-   * @param target N/A
-   * @param move N/A
-   * @param args [0] {@linkcode NumberHolder} The move's type to be modified
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `TerrainPulseTypeAttr#apply`!");
       return false;
     }
 
@@ -5994,9 +5985,10 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
  * Changes type based on the user's IVs
  */
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `HiddenPowerTypeAttr#apply`!");
       return false;
     }
 
@@ -6048,16 +6040,10 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
  * Changes the type of Tera Blast to match the user's tera type
  */
 export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
-  /**
-   * @param user {@linkcode Pokemon} the user of the move
-   * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} the move with this attribute
-   * @param args `[0]` the move's type to be modified
-   * @returns `true` if the move's type was modified; `false` otherwise
-   */
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `TeraBlastTypeAttr#apply`!");
       return false;
     }
 
@@ -6162,9 +6148,10 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
  * Changes the type of a Pledge move based on the Pledge move combined with it.
  */
 export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
-  override apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `CombinedPledgeTypeAttr#apply`!");
       return false;
     }
 

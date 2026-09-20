@@ -59,7 +59,7 @@ import type { Move, MoveConditionFunc, StatusEffectAttr } from "#types/move-type
 import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
-import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, type NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
@@ -536,12 +536,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
  */
 export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
   override canApply({ typeMultiplier, move, pokemon }: TypeMultiplierAbAttrParams): boolean {
-    return (
-      typeMultiplier instanceof NumberHolder
-      && !move?.hasAttr("FixedDamageAttr")
-      && pokemon.isFullHp()
-      && typeMultiplier.value > 0.5
-    );
+    return !move?.hasAttr("FixedDamageAttr") && pokemon.isFullHp() && typeMultiplier.value > 0.5;
   }
 
   override apply({ typeMultiplier, pokemon }: TypeMultiplierAbAttrParams): void {

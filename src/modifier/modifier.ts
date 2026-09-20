@@ -1460,7 +1460,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     return (
       super.shouldApply(pokemon, moveType, movePower)
       && typeof moveType === "number"
-      && movePower instanceof NumberHolder
+      && movePower != null
       && this.moveType === moveType
     );
   }
