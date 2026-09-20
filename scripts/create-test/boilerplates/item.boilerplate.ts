@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { allHeldItems } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
