@@ -32,13 +32,13 @@ describe("Move - Heavy Slam", () => {
   it("should do 40 base damage if same weight", async () => {
     await game.classicMode.startBattle(SpeciesId.CORVIKNIGHT);
 
-    const heavy_slam = allMoves[MoveId.HEAVY_SLAM];
-    vi.spyOn(heavy_slam, "calculateBattlePower");
+    const heavySlam = allMoves[MoveId.HEAVY_SLAM];
+    vi.spyOn(heavySlam, "calculateBattlePower");
 
     game.move.use(MoveId.HEAVY_SLAM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(heavy_slam.calculateBattlePower).toHaveLastReturnedWith(40);
+    expect(heavySlam.calculateBattlePower).toHaveLastReturnedWith(40);
   });
 
   it("should do 120 base damage if gigantamax", async () => {
@@ -46,12 +46,12 @@ describe("Move - Heavy Slam", () => {
 
     await game.classicMode.startBattle(SpeciesId.CORVIKNIGHT);
 
-    const heavy_slam = allMoves[MoveId.HEAVY_SLAM];
-    vi.spyOn(heavy_slam, "calculateBattlePower");
+    const heavySlam = allMoves[MoveId.HEAVY_SLAM];
+    vi.spyOn(heavySlam, "calculateBattlePower");
 
     game.move.use(MoveId.HEAVY_SLAM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(heavy_slam.calculateBattlePower).toHaveLastReturnedWith(120);
+    expect(heavySlam.calculateBattlePower).toHaveLastReturnedWith(120);
   });
 });
