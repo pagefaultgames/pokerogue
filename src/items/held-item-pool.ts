@@ -11,12 +11,14 @@ import { berryTypeToHeldItem } from "#items/berry";
 import type {
   HeldItemConfiguration,
   HeldItemPool,
+  HeldItemPoolEntry,
   HeldItemSaveData,
   HeldItemSpecs,
   HeldItemWeights,
 } from "#types/held-item-data-types";
-import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { coerceArray, randSeedInt } from "#utils/common";
 import { isHeldItemCategoryEntry, isHeldItemPool, isHeldItemSpecs } from "#utils/item-utils";
+import { weightedPick } from "#utils/random";
 import type { NonEmptyTuple, Writable } from "type-fest";
 
 /**
@@ -296,13 +298,15 @@ export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, targe
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
 
-  const pickedIndex = pickWeightedIndex(weights);
-  return items[pickedIndex];
+  const itemMap = new Map<HeldItemId, number>();
+  for (const [index, entry] of items.entries()) {
+    itemMap.set(entry, weights[index]);
+  }
+  return weightedPick(itemMap);
 }
 
 export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): BerryItemId {
   const items = Object.values(berryTypeToHeldItem) as unknown as NonEmptyTuple<BerryItemId>;
-
   const weights = items.map(t =>
     target?.heldItemManager.isMaxStack(t)
       ? 0
@@ -312,8 +316,11 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
         : 1,
   );
 
-  const pickedIndex = pickWeightedIndex(weights);
-  return items[pickedIndex];
+  const itemMap = new Map<BerryItemId, number>();
+  for (const [index, entry] of items.entries()) {
+    itemMap.set(entry, weights[index]);
+  }
+  return weightedPick(itemMap);
 }
 
 export function getNewAttackTypeBoosterHeldItem(
@@ -362,8 +369,11 @@ export function getNewAttackTypeBoosterHeldItem(
       : (customWeights[attackTypeToHeldItem[type]] ?? attackMoveTypeWeights.get(type)!),
   );
 
-  const pickedIndex = pickWeightedIndex(weights);
-  return attackTypeToHeldItem[types[pickedIndex]];
+  const typeMap = new Map<RegularPokemonType, number>();
+  for (const [index, entry] of types.entries()) {
+    typeMap.set(entry, weights[index]);
+  }
+  return attackTypeToHeldItem[weightedPick(typeMap)];
 }
 
 function getNewHeldItemFromPool(
@@ -373,8 +383,11 @@ function getNewHeldItemFromPool(
 ): HeldItemId | HeldItemSpecs | null {
   const weights = getPoolWeights(pool, pokemon);
 
-  const pickedIndex = pickWeightedIndex(weights);
-  const { entry } = pool[pickedIndex];
+  const poolMap = new Map<HeldItemPoolEntry, number>();
+  for (const [index, entry] of pool.entries()) {
+    poolMap.set(entry, weights[index]);
+  }
+  const { entry } = weightedPick(poolMap);
 
   if (typeof entry === "number") {
     if (isCategoryId(entry)) {

@@ -35,7 +35,8 @@ import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/myster
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { PokemonItemMap } from "#types/held-item-data-types";
-import { pickWeightedIndex, randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/common";
+import { weightedPick } from "#utils/random";
 import { groupStatChange } from "#utils/stat-change";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -210,12 +211,14 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         // Give it some food
 
         // Remove 4 random berries from player's party
-        const berryMap = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as unknown as NonEmptyTuple<PokemonItemMap>;
+        const berries = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as unknown as NonEmptyTuple<PokemonItemMap>;
 
         for (let i = 0; i < 4; i++) {
-          const berryWeights = berryMap.map(b => b.item.stack);
-          const index = pickWeightedIndex(berryWeights);
-          const randBerry = berryMap[index];
+          const berryMap = new Map<PokemonItemMap, number>();
+          for (const b of berries) {
+            berryMap.set(b, b.item.stack);
+          }
+          const randBerry = weightedPick(berryMap);
           globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
           randBerry.item.stack -= 1;
         }

@@ -46,7 +46,7 @@ export interface HeldItemCategoryEntry extends HeldItemData {
 }
 
 // TODO: This can include itself through held item pool and is a bit overly expressive
-interface HeldItemPoolEntry {
+export interface HeldItemPoolEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   weight: number | HeldItemWeightFunc;
 }
