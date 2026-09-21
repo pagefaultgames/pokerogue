@@ -307,7 +307,7 @@ export class GameChallengesUiHandler extends UiHandler {
       if (challenge.id === Challenges.SINGLE_TYPE) {
         continue;
       }
-      const challengeName = challenge.getName();
+      const challengeName = challenge.name;
       tempText.setText(challengeName);
       let longestOptionNameWidth = 0;
       let longestOptionName = "";
@@ -360,7 +360,7 @@ export class GameChallengesUiHandler extends UiHandler {
       challengeLabel.rightArrow.setVisible(true);
       challengeLabel.leftArrow.setVisible(true);
 
-      challengeLabel.label.setText(challenge.getName());
+      challengeLabel.label.setText(challenge.name);
 
       challengeLabel.rightArrow
         .setPositionRelative(challengeLabel.label, this.optionsBg.width - 20, 4)

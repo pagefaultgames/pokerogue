@@ -41,6 +41,7 @@ import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type { Constructor, Jsonify } from "type-fest";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -58,7 +59,8 @@ export abstract class Challenge {
   /** The current severity of the challenge. Some challenges have multiple severities in addition to strength. */
   public severity = 0;
   /** The maximum severity of the challenge. */
-  public maxSeverity = 0;
+  public readonly maxSeverity = 0;
+
   public conditions: ChallengeCondition[] = [];
 
   /**
@@ -70,10 +72,28 @@ export abstract class Challenge {
     return 0n as RibbonFlag;
   }
 
-  /**
-   * The category of the challenge for grouping in the UI.
-   */
+  /** The category of the challenge for grouping in the UI. */
   public abstract get category(): ChallengeCategory;
+
+  /** The localised name of this challenge. */
+  public get name(): string {
+    return i18next.t(`challenges:${this.i18nKey}.name`);
+  }
+
+  /** The difficulty value of this challenge. */
+  public get difficulty(): number {
+    return this.value;
+  }
+
+  /** The minimum difficulty value of this challenge. */
+  public get minDifficulty(): number {
+    return 0;
+  }
+
+  /** The i18n key for this challenge */
+  private get i18nKey(): string {
+    return toCamelCase(Challenges[this.id]);
+  }
 
   /**
    * @param id - The enum value for the challenge
@@ -85,14 +105,9 @@ export abstract class Challenge {
   }
 
   /** Reset the challenge to a base state. */
-  reset(): void {
+  public reset(): void {
     this.value = 0;
     this.severity = 0;
-  }
-
-  /** @returns The i18n key for this challenge */
-  private geti18nKey(): string {
-    return toCamelCase(Challenges[this.id]);
   }
 
   /**
@@ -100,7 +115,7 @@ export abstract class Challenge {
    * @param data - The save data
    * @returns Whether this challenge is unlocked
    */
-  isUnlocked(data: GameData): boolean {
+  public isUnlocked(data: GameData): boolean {
     return this.conditions.every(f => f(data));
   }
 
@@ -109,15 +124,10 @@ export abstract class Challenge {
    * @param condition - The condition to add
    * @returns This challenge
    */
-  condition(condition: ChallengeCondition): Challenge {
+  public condition(condition: ChallengeCondition): Challenge {
     this.conditions.push(condition);
 
     return this;
-  }
-
-  /** @returns The localised name of this challenge. */
-  getName(): string {
-    return i18next.t(`challenges:${this.geti18nKey()}.name`);
   }
 
   /**
@@ -125,8 +135,8 @@ export abstract class Challenge {
    * @param overrideValue - (Default `this.value`) Overrides the value used
    * @returns The localised text for the current value.
    */
-  getValue(overrideValue: number = this.value): string {
-    return i18next.t(`challenges:${this.geti18nKey()}.value.${overrideValue}`);
+  public getValue(overrideValue: number = this.value): string {
+    return i18next.t(`challenges:${this.i18nKey}.value.${overrideValue}`);
   }
 
   /**
@@ -135,8 +145,8 @@ export abstract class Challenge {
    * @returns The localised description for the current value.
    */
   // TODO: Do we need an override value here? it's currently unused
-  getDescription(overrideValue: number = this.value): string {
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${overrideValue}`, `challenges:${this.geti18nKey()}.desc`])}`;
+  public getDescription(overrideValue: number = this.value): string {
+    return `${i18next.t([`challenges:${this.i18nKey}.desc.${overrideValue}`, `challenges:${this.i18nKey}.desc`])}`;
   }
 
   /**
@@ -144,7 +154,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  increaseValue(): boolean {
+  public increaseValue(): boolean {
     if (this.value < this.maxValue) {
       this.value = Math.min(this.value + 1, this.maxValue);
       return true;
@@ -157,7 +167,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  decreaseValue(): boolean {
+  public decreaseValue(): boolean {
     if (this.value > 0) {
       this.value = Math.max(this.value - 1, 0);
       return true;
@@ -169,7 +179,7 @@ export abstract class Challenge {
    * Whether to allow choosing this challenge's severity.
    * @sealed
    */
-  hasSeverity(): boolean {
+  public hasSeverity(): boolean {
     return this.value !== 0 && this.maxSeverity > 0;
   }
 
@@ -178,7 +188,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  decreaseSeverity(): boolean {
+  public decreaseSeverity(): boolean {
     if (this.severity > 0) {
       this.severity = Math.max(this.severity - 1, 0);
       return true;
@@ -191,7 +201,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  increaseSeverity(): boolean {
+  public increaseSeverity(): boolean {
     if (this.severity < this.maxSeverity) {
       this.severity = Math.min(this.severity + 1, this.maxSeverity);
       return true;
@@ -199,28 +209,22 @@ export abstract class Challenge {
     return false;
   }
 
-  /** @returns The difficulty value of this challenge. */
-  getDifficulty(): number {
-    return this.value;
-  }
-
-  /** @returns The minimum difficulty value of this challenge. */
-  getMinDifficulty(): number {
-    return 0;
-  }
-
-  // TODO: Refactor the class hierarchy to remove the need for having all these methods on every class
-  // biome-ignore-start lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
-
   /**
    * Clones a challenge, either from another challenge or json.
    * @param source - The source challenge or json.
    * @returns This challenge.
    */
   // TODO: remove `| any`
-  static loadChallenge(source: Challenge | any): Challenge {
-    throw new Error("Method not implemented! Use derived class");
+  public static loadChallenge(source: Challenge | any): Challenge {
+    const c = source as Jsonify<Challenge>;
+    const challenge = getChallenge(c.id);
+    challenge.value = c.value;
+    challenge.severity = c.severity;
+    return challenge;
   }
+
+  // TODO: Refactor the class hierarchy to remove the need for having all these methods on every class
+  // biome-ignore-start lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
 
   /**
    * Modifies the availability of starters.
@@ -826,7 +830,7 @@ export class SingleGenerationChallenge extends Challenge {
     return false;
   }
 
-  override getDifficulty(): number {
+  public override get difficulty(): number {
     return this.value > 0 ? 1 : 0;
   }
 
@@ -844,13 +848,6 @@ export class SingleGenerationChallenge extends Challenge {
     return i18next.t("challenges:singleGeneration.desc", {
       gen: i18next.t(`challenges:singleGeneration.gen.${overrideValue}`),
     });
-  }
-
-  static loadChallenge(source: SingleGenerationChallenge | any): SingleGenerationChallenge {
-    const newChallenge = new SingleGenerationChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -877,7 +874,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
-  private static TYPE_OVERRIDES: MonotypeOverride[] = [
+  private static readonly TYPE_OVERRIDES: MonotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
 
@@ -929,7 +926,7 @@ export class SingleTypeChallenge extends Challenge {
     return false;
   }
 
-  override getDifficulty(): number {
+  public override get difficulty(): number {
     return this.value > 0 ? 1 : 0;
   }
 
@@ -945,13 +942,6 @@ export class SingleTypeChallenge extends Challenge {
       type: typeColor,
     });
     return this.value === 0 ? defaultDesc : typeDesc;
-  }
-
-  static loadChallenge(source: SingleTypeChallenge | any): SingleTypeChallenge {
-    const newChallenge = new SingleTypeChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1057,15 +1047,8 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  public override getDifficulty(): number {
+  public override get difficulty(): number {
     return 0;
-  }
-
-  static loadChallenge(source: FreshStartChallenge | any): FreshStartChallenge {
-    const newChallenge = new FreshStartChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1083,14 +1066,7 @@ export class InverseBattleChallenge extends Challenge {
     super(Challenges.INVERSE_BATTLE, 1);
   }
 
-  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
-    const newChallenge = new InverseBattleChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
-
-  override getDifficulty(): number {
+  public override get difficulty(): number {
     return 0;
   }
 
@@ -1132,13 +1108,6 @@ export class FlipStatChallenge extends Challenge {
     baseStats[5] = origStats[0];
     return true;
   }
-
-  static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
-    const newChallenge = new FlipStatChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /** Lowers the amount of starter points available. */
@@ -1162,13 +1131,6 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     }
     return false;
   }
-
-  static loadChallenge(source: LowerStarterMaxCostChallenge | any): LowerStarterMaxCostChallenge {
-    const newChallenge = new LowerStarterMaxCostChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /** Lowers the maximum cost of starters available. */
@@ -1188,13 +1150,6 @@ export class LowerStarterPointsChallenge extends Challenge {
   applyStarterPoints(points: NumberHolder): boolean {
     points.value -= this.value;
     return true;
-  }
-
-  static loadChallenge(source: LowerStarterPointsChallenge | any): LowerStarterPointsChallenge {
-    const newChallenge = new LowerStarterPointsChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1236,13 +1191,6 @@ export class LimitedSupportChallenge extends Challenge {
     }
     return false;
   }
-
-  static override loadChallenge(source: LimitedSupportChallenge | any): LimitedSupportChallenge {
-    const newChallenge = new LimitedSupportChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /** Implements a Limited Catch challenge */
@@ -1270,13 +1218,6 @@ export class LimitedCatchChallenge extends Challenge {
       return true;
     }
     return false;
-  }
-
-  static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
-    const newChallenge = new LimitedCatchChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1326,13 +1267,6 @@ export class HardcoreChallenge extends Challenge {
     }
     return false;
   }
-
-  static override loadChallenge(source: HardcoreChallenge | any): HardcoreChallenge {
-    const newChallenge = new HardcoreChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 export class PassivesChallenge extends Challenge {
@@ -1357,13 +1291,6 @@ export class PassivesChallenge extends Challenge {
     hasPassive.value = true;
     return true;
   }
-
-  static override loadChallenge(source: PassivesChallenge | any): PassivesChallenge {
-    const newChallenge = new PassivesChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 export class MovesetRandomizerChallenge extends Challenge {
@@ -1387,7 +1314,7 @@ export class MovesetRandomizerChallenge extends Challenge {
     return [...MovesetRandomizerChallenge._validMoveIds];
   }
 
-  private static _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
+  private static readonly _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
   private get globalTmList(): MoveId[] {
     // cloned so that the original list doesn't get mutated by `randSeedShuffle`
     return [...MovesetRandomizerChallenge._globalTmList];
@@ -1610,13 +1537,6 @@ export class MovesetRandomizerChallenge extends Challenge {
 
     return true;
   }
-
-  public static override loadChallenge(source: Challenge | any): Challenge {
-    const newChallenge = new MovesetRandomizerChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /**
@@ -1659,17 +1579,38 @@ export function copyChallenge(source: Challenge | any): Challenge {
 
 export const allChallenges: Challenge[] = [];
 
-export function initChallenges() {
+export function initChallenges(): void {
   allChallenges.push(
-    new FreshStartChallenge(),
-    new HardcoreChallenge(),
-    new LimitedCatchChallenge(),
-    new LimitedSupportChallenge(),
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
-    new PassivesChallenge(),
+    // new LowerStarterMaxCostChallenge(),
+    // new LowerStarterPointsChallenge(),
+    new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new LimitedCatchChallenge(),
+    new LimitedSupportChallenge(),
+    new HardcoreChallenge(),
+    new PassivesChallenge(),
     new MovesetRandomizerChallenge(),
   );
+}
+
+const challengeMap: Record<Challenges, Constructor<Challenge>> = {
+  [Challenges.SINGLE_GENERATION]: SingleGenerationChallenge,
+  [Challenges.SINGLE_TYPE]: SingleTypeChallenge,
+  [Challenges.LOWER_MAX_STARTER_COST]: LowerStarterMaxCostChallenge,
+  [Challenges.LOWER_STARTER_POINTS]: LowerStarterPointsChallenge,
+  [Challenges.FRESH_START]: FreshStartChallenge,
+  [Challenges.INVERSE_BATTLE]: InverseBattleChallenge,
+  [Challenges.FLIP_STAT]: FlipStatChallenge,
+  [Challenges.LIMITED_CATCH]: LimitedCatchChallenge,
+  [Challenges.LIMITED_SUPPORT]: LimitedSupportChallenge,
+  [Challenges.HARDCORE]: HardcoreChallenge,
+  [Challenges.PASSIVES]: PassivesChallenge,
+  [Challenges.MOVESET_RANDOMIZER]: MovesetRandomizerChallenge,
+};
+
+function getChallenge(challengeId: Challenges): Challenge {
+  return new challengeMap[challengeId]();
 }
