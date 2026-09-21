@@ -3,7 +3,7 @@ import { LANGUAGE_MAX_OPTIONS } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
 import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supported-languages";
 import type { DisplaySettingsKey, SettingsUiItem } from "#types/settings";
-import type { OptionSelectItem } from "#types/ui-types";
+import type { OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
 import { displaySettingUiItems } from "#ui/settings-ui-items";
 import i18next from "i18next";
@@ -41,6 +41,7 @@ export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
           );
           return true;
         }
+
         return this.changeLanguageHandler(lang, label);
       };
 
@@ -52,7 +53,8 @@ export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
       handler: () => this.cancelLanguageChangeHandler(),
     });
 
-    globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, maxOptions: LANGUAGE_MAX_OPTIONS });
+    const optionSelectConfig: OptionSelectModeConfig = { options, maxOptions: LANGUAGE_MAX_OPTIONS, yOffset: 29 };
+    globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, optionSelectConfig);
   }
 
   private cancelLanguageChangeHandler(): boolean {

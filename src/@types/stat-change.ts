@@ -34,4 +34,13 @@ export interface StatStageChangePhaseOptions {
    * Should not be passed by anything other than this phase.
    */
   processed?: boolean;
+  /**
+   * An optional callback used to produce the message displayed when the stat change is applied.
+   * If not provided, the default message is used.
+   * @remarks
+   * Intended to be used for static messages (hence why the applied changes are omitted).
+   * @privateRemarks
+   * Currently only used by Belly Drum.
+   */
+  message?: ((user: Pokemon) => string) | undefined;
 }

@@ -26,7 +26,7 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { AllStarterPreferences, DexAttrProps, StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
-import type { OptionSelectConfig } from "#types/ui-types";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -41,7 +41,7 @@ import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange } from "#utils/common";
 import { loadStarterPreferences } from "#utils/data";
 import { enumValueToKey } from "#utils/enums";
-import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
+import { getDexNumber, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -231,7 +231,6 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   protected blockInput = false;
 
-  protected manageDataConfig: OptionSelectConfig;
   protected optionSelectText: Phaser.GameObjects.Text;
   protected scale = 0.1666666667;
 
@@ -2127,7 +2126,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       if (this.speciesStarterDexEntry?.caughtAttr || settings.general.dexForDevs) {
         this.startIconAnimation(this.cursor);
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, 0);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, 0);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.setSpeciesDetails(species, {});
@@ -2252,7 +2251,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
 
       if (isFormCaught || isFormSeen || settings.general.dexForDevs) {
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex ?? 0); // TODO: always selecting the first form
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.setTypeIcons(null, null);
@@ -2323,25 +2322,22 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.blockInput = true;
     const ui = this.getUi();
 
-    const cancel = () => {
-      ui.setMode(UiMode.POKEDEX, "refresh");
-      this.clearText();
-      this.blockInput = false;
+    const confirmExitConfig: ConfirmModeConfig = {
+      yesHandler: () => {
+        ui.setMode(UiMode.POKEDEX, "refresh");
+        this.clearText();
+        this.clear();
+        ui.revertMode();
+      },
+      noHandler: () => {
+        ui.setMode(UiMode.POKEDEX, "refresh");
+        this.clearText();
+        this.blockInput = false;
+      },
+      yOffset: 29,
     };
     ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
-          ui.setMode(UiMode.POKEDEX, "refresh");
-          this.clearText();
-          this.clear();
-          ui.revertMode();
-        },
-        cancel,
-        null,
-        null,
-        19,
-      );
+      ui.setModeWithoutClear(UiMode.CONFIRM, confirmExitConfig);
     });
 
     return true;
