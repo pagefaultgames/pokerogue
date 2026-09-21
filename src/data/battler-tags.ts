@@ -857,7 +857,6 @@ export class OctolockTag extends TrappedTag {
   }
 }
 
-
 /**
  * Mixin to implement `BattlerTag`s with damaging effects.
  *
@@ -866,7 +865,7 @@ export class OctolockTag extends TrappedTag {
  */
 function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
   abstract class DoTTag extends Base {
-    public declare abstract readonly tagType: DamagingBattlerTagType;
+    declare public abstract readonly tagType: DamagingBattlerTagType;
 
     /** @returns The {@linkcode CommonAnim} to play upon this Tag dealing damage. */
     protected abstract get animation(): CommonAnim;
@@ -942,7 +941,7 @@ export type DamagingBattlerTag<Tag extends SerializableBattlerTag = Serializable
  * Handles dealing damage and playing the appropriate animation.
  */
 export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
-  public declare readonly tagType: DamagingTrapBattlerTagType;
+  declare public readonly tagType: DamagingTrapBattlerTagType;
 
   /** @sealed */
   protected override get triggerMessageKey() {
