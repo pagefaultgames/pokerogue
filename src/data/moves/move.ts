@@ -6694,7 +6694,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
-      /**
+      /*
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
        */
