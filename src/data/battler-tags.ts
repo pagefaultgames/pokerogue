@@ -857,6 +857,85 @@ export class OctolockTag extends TrappedTag {
   }
 }
 
+
+/**
+ * Mixin to implement `BattlerTag`s with damaging effects.
+ *
+ * Adds abstract functions to damage a Pokemon based on their maximum HP and play a corresponding animation.
+ * @param Base - The base class constructor to mix
+ */
+function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
+  abstract class DoTTag extends Base {
+    public declare abstract readonly tagType: DamagingBattlerTagType;
+
+    /** @returns The {@linkcode CommonAnim} to play upon this Tag dealing damage. */
+    protected abstract get animation(): CommonAnim;
+
+    /**
+     * Return the `i18n` locales key of the text to be displayed when this tag deals damage. \
+     * Within the text, the following variables will be populated:
+     * - `{{pokemonNameWithAffix}}` - the name of the {@linkcode Pokemon} to whom this Tag is attached.
+     * - `{{sourcePokemonName}}` - the name of the {@linkcode Pokemon} having created this Tag, if recorded.
+     * - `{{moveName}}` - The name of the {@linkcode Move} to which this Tag is attached, if recorded.
+     * @returns The locales key for the trigger message to be displayed on-screen.
+     */
+    protected abstract get triggerMessageKey(): string;
+
+    /**
+     * Return the amount of damage this tag should deal to the given Pokemon, relative to its maximum HP.
+     * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
+     * @returns The percentage of max HP to deal upon activation.
+     */
+    // NB: This being an overriddable getter with a `pokemon` parameter
+    // is done explicitly for parameterization/extensibility (Binding Band/etc.)
+    protected abstract getDamageHpRatio(pokemon: Pokemon): number;
+
+    /**
+     * Damage the Pokemon to whom this Tag is attached.
+     *
+     * Handles checking for Magic Guard, queueing animations, and other assorted checks.
+     * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
+     * @sealed
+     */
+    protected damage(pokemon: Pokemon): void {
+      // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
+      // shows an animation and/or message
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        pokemon.getBattlerIndex(),
+        pokemon.getBattlerIndex(),
+        this.animation,
+      );
+
+      const cancelled = new BooleanHolder(false);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
+      if (cancelled.value) {
+        return;
+      }
+
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() * this.getDamageHpRatio(pokemon)), {
+        result: HitResult.INDIRECT,
+      });
+      globalScene.phaseManager.queueMessage(
+        i18next.t(this.triggerMessageKey, {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
+          moveName: this.getMoveName(),
+        }),
+      );
+    }
+  }
+
+  return DoTTag as AbstractConstructor<DoTTag> & TagBase;
+}
+
+/**
+ * Type representing a damaging battler tag mixed with {@linkcode DamagingBattlerTag}.
+ */
+export type DamagingBattlerTag<Tag extends SerializableBattlerTag = SerializableBattlerTag> = InstanceType<
+  ReturnType<typeof DamagingBattlerTag<AbstractConstructor<Tag>>>
+>;
+
 /**
  * Abstract base class for all damaging trapping effects.
  *
@@ -870,8 +949,6 @@ export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
     return "battlerTags:damagingTrapLapse";
   }
 
-  // NB: This being an overriddable getter with a `pokemon` parameter
-  // makes it really easy to parametrize it (such as for adding something like Binding Band)
   /** @sealed */
   protected override getDamageHpRatio() {
     return 0.125;
@@ -2540,82 +2617,6 @@ export class CritBoostTag extends SerializableBattlerTag {
     (this as Writable<CritBoostTag>).critStages = source.critStages ?? 1;
   }
 }
-
-/**
- * Mixin to implement `BattlerTag`s with damaging effects.
- *
- * Adds abstract functions to damage a Pokemon based on their maximum HP and play a corresponding animation.
- * @param Base - The base class constructor to mix
- */
-function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
-  abstract class DoTTag extends Base {
-    public declare abstract readonly tagType: DamagingBattlerTagType;
-
-    /** @returns The {@linkcode CommonAnim} to play upon this Tag dealing damage. */
-    protected abstract get animation(): CommonAnim;
-
-    /**
-     * Return the `i18n` locales key of the text to be displayed when this tag deals damage. \
-     * Within the text, the following variables will be populated:
-     * - `{{pokemonNameWithAffix}}` - the name of the {@linkcode Pokemon} to whom this Tag is attached.
-     * - `{{sourcePokemonName}}` - the name of the {@linkcode Pokemon} having created this Tag, if recorded.
-     * - `{{moveName}}` - The name of the {@linkcode Move} to which this Tag is attached, if recorded.
-     * @returns The locales key for the trigger message to be displayed on-screen.
-     */
-    protected abstract get triggerMessageKey(): string;
-
-    /**
-     * Return the amount of damage this tag should deal to the given Pokemon, relative to its maximum HP.
-     * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
-     * @returns The percentage of max HP to deal upon activation.
-     */
-    protected abstract getDamageHpRatio(pokemon: Pokemon): number;
-
-    /**
-     * Damage the Pokemon to whom this Tag is attached.
-     *
-     * Handles checking for Magic Guard, queueing animations, and other assorted checks.
-     * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
-     * @sealed
-     */
-    protected damage(pokemon: Pokemon): void {
-      // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
-      // shows an animation and/or message
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        pokemon.getBattlerIndex(),
-        pokemon.getBattlerIndex(),
-        this.animation,
-      );
-
-      const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-      if (cancelled.value) {
-        return;
-      }
-
-      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() * this.getDamageHpRatio(pokemon)), {
-        result: HitResult.INDIRECT,
-      });
-      globalScene.phaseManager.queueMessage(
-        i18next.t(this.triggerMessageKey, {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
-          moveName: this.getMoveName(),
-        }),
-      );
-    }
-  }
-
-  return DoTTag as AbstractConstructor<DoTTag> & TagBase;
-}
-
-/**
- * Type representing a damaging battler tag mixed with {@linkcode DamagingBattlerTag}.
- */
-export type DamagingBattlerTag<Tag extends SerializableBattlerTag = SerializableBattlerTag> = InstanceType<
-  ReturnType<typeof DamagingBattlerTag<AbstractConstructor<Tag>>>
->;
 
 /**
  * Abstract class to damage the attached Pokemon at the end of each turn.
