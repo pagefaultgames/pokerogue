@@ -2242,18 +2242,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set this Pokémon's temporary ability, activating it if it normally activates on summon
-   *
-   * Also clears primal weather if it is from the ability being changed
-   * @param ability - The temporary ability to set
-   * @param passive - Whether to set the passive ability instead of the non-passive one; default `false`
+   * Set this Pokémon's temporary ability, activating it if it normally activates on summon.
+   * @remarks
+   * Also clears primal weather if it is from the ability being changed.
+   * @param abilityId - The ID of the temporary ability to set
+   * @param passive - (Default `false`) Whether to set the passive ability instead of the non-passive one
    */
-  public setTempAbility(ability: Ability, passive = false): void {
+  public setTempAbility(abilityId: AbilityId, passive = false): void {
     applyOnLoseAbAttrs({ pokemon: this, passive });
     if (passive) {
-      this.summonData.passiveAbility = ability.id;
+      this.summonData.passiveAbility = abilityId;
     } else {
-      this.summonData.ability = ability.id;
+      this.summonData.ability = abilityId;
     }
     applyOnGainAbAttrs({ pokemon: this, passive });
   }
