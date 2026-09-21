@@ -2188,10 +2188,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the passive ability of the pokemon. This should rarely be called, most of the time
-   * {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used as those check both the passive and
-   * non-passive abilities and account for ability suppression.
-   * @see {@linkcode hasAbility} {@linkcode hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * Gets the passive ability of the pokemon.
+   * @remarks
+   * This should rarely be called, most of the time
+   * {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used \
+   * as those check both the passive and non-passive abilities and account for ability suppression.
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
@@ -2209,6 +2210,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (eventBoss?.passive != null) {
         return allAbilities[eventBoss.passive];
       }
+    }
+    if (this.summonData.passiveAbility) {
+      return allAbilities[this.summonData.passiveAbility];
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];

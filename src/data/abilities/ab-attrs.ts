@@ -2679,7 +2679,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
   private targetAbilityName: string;
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
+  public override canApply({ pokemon, simulated, passive }: AbAttrBaseParams): boolean {
     const targets = pokemon
       .getOpponents()
       .filter(t => t.getAbility().copiable || t.getAbility().id === AbilityId.WONDER_GUARD);
@@ -2696,20 +2696,22 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
     }
 
     this.target = target;
-    this.targetAbilityName = allAbilities[target.getAbility().id].name;
+    const abilityId = passive ? target.getPassiveAbility().id : target.getAbility().id;
+    this.targetAbilityName = allAbilities[abilityId].name;
     return true;
   }
 
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
+  public override apply({ pokemon, simulated, passive }: AbAttrBaseParams): void {
     // Protect against this somehow being called before canApply by ensuring target is defined
     if (!simulated && this.target) {
-      pokemon.setTempAbility(this.target.getAbility());
+      const ability = passive ? this.target.getPassiveAbility() : this.target.getAbility();
+      pokemon.setTempAbility(ability, !!passive);
       this.target.revealAbility();
       pokemon.updateInfo();
     }
   }
 
-  getTriggerMessage({ pokemon }, _abilityName: string): string {
+  public override getTriggerMessage({ pokemon }: AbAttrBaseParams): string {
     return i18next.t("abilityTriggers:trace", {
       pokemonName: getPokemonNameWithAffix(pokemon),
       targetName: getPokemonNameWithAffix(this.target),
