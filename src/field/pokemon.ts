@@ -2196,11 +2196,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
-    if (activeOverrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
-      return allAbilities[activeOverrides.PASSIVE_ABILITY_OVERRIDE];
-    }
-    if (activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
+    if (this.summonData.passiveAbility) {
+      return allAbilities[this.summonData.passiveAbility];
     }
     if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
@@ -2211,8 +2208,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         return allAbilities[eventBoss.passive];
       }
     }
-    if (this.summonData.passiveAbility) {
-      return allAbilities[this.summonData.passiveAbility];
+    if (activeOverrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
+      return allAbilities[activeOverrides.PASSIVE_ABILITY_OVERRIDE];
+    }
+    if (activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];
