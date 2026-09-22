@@ -38,7 +38,7 @@ describe("Ability - Emergency Exit", () => {
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
     const currentPhase = game.scene.phaseManager.getCurrentPhase()?.phaseName;
-    expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
+    expect(currentPhase, "Expected battle to transition to SelectRewardPhase").toBe("SelectRewardPhase");
 
     await game.phaseInterceptor.to("SelectRewardPhase");
     await vi.waitUntil(() => game.scene.ui.mode === UiMode.REWARD_SELECT);

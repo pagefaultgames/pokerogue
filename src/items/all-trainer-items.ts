@@ -32,6 +32,7 @@ import {
   tempStatToTrainerItem,
 } from "#items/trainer-items/x-items";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { Writable } from "type-fest";
 import type { TrainerItemManager } from "./trainer-item-manager";
 
 // #region Marker items
@@ -79,7 +80,7 @@ const xItems = Object.entries(tempStatToTrainerItem)
       }
       return acc;
     },
-    {} as Mutable<XItemsType>,
+    {} as Writable<XItemsType>,
   );
 
 // #endregion X items

@@ -8,11 +8,11 @@ import i18next from "i18next";
 export class PokemonPpUpReward extends PokemonMoveReward {
   protected upPoints: number;
 
-  constructor(localeKey: string, iconImage: string, id: RewardId, upPoints: number) {
+  constructor(id: RewardId, localeKey: string, iconImage: string, upPoints: number) {
     super(
+      id,
       localeKey,
       iconImage,
-      id,
       (_pokemon: PlayerPokemon) => {
         return null;
       },

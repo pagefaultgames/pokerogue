@@ -292,6 +292,7 @@ export class SelectRewardPhase extends BattlePhase {
       return { pokemon: party[slotIndex] } as PokemonRewardParams;
     };
 
+    console.log(reward);
     if (isMoveReward(reward)) {
       partyUiMode = PartyUiMode.MOVE_REWARD;
       moveSelectFilter = (reward as PokemonMoveReward).moveSelectFilter;
@@ -311,6 +312,7 @@ export class SelectRewardPhase extends BattlePhase {
       tmMoveId = reward.moveId;
     }
 
+    console.log(partyUiMode);
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       partyUiMode,

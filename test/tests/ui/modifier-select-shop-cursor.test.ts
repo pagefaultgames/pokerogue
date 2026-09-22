@@ -38,8 +38,8 @@ describe("UI - RewardSelectUiHandler - shop cursor target", () => {
     scene.currentBattle.waveIndex = 10;
     settings.update("display", "shopCursorTarget", ShopCursorTarget.SHOP);
 
-    const selectModifierPhase = new SelectRewardPhase();
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase();
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
     expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);

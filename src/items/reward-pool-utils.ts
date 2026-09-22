@@ -267,6 +267,7 @@ function getNewRewardOption(
   }
 
   const tierWeights = weights[tier];
+  console.log(tierWeights);
   // TODO: `tierWeights` is inferred as a normal array here; tighten construction so this assertion is unnecessary.
   const index = pickWeightedIndex(tierWeights as NonEmptyTuple<number>);
 
