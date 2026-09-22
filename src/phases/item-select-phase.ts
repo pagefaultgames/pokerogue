@@ -34,8 +34,9 @@ export class ItemSelectPhase extends Phase {
       itemOptions.push({
         label: allHeldItems[itemId].name,
         handler: () => {
+          // TODO: Can we use revertMode instead?
+          globalScene.ui.setMode(UiMode.MESSAGE);
           this.callback(itemId);
-          globalScene.ui.revertMode();
           this.end();
           return true;
         },
@@ -44,7 +45,7 @@ export class ItemSelectPhase extends Phase {
     itemOptions.push({
       label: "Cancel", //TODO: use localized key here
       handler: () => {
-        globalScene.ui.revertMode();
+        globalScene.ui.setMode(UiMode.MESSAGE);
         this.onCancel();
         this.end();
         return true;

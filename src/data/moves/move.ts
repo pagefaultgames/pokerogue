@@ -42,7 +42,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { BattlerTagType, type ChooseItemBattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
@@ -1891,11 +1891,13 @@ export class PreMoveMessageAttr extends MoveAttr {
  */
 export class PreMoveChooseItemAttr extends MoveAttr {
   public readonly message: string | MoveMessageFunc;
+  private tagType: ChooseItemBattlerTagType;
   private sortFunc: HeldItemSortFunc;
 
-  constructor(message: string | MoveMessageFunc, sortFunc: HeldItemSortFunc) {
+  constructor(message: string | MoveMessageFunc, tagType: ChooseItemBattlerTagType, sortFunc: HeldItemSortFunc) {
     super();
     this.message = message;
+    this.tagType = tagType;
     this.sortFunc = sortFunc;
   }
 
@@ -1913,8 +1915,8 @@ export class PreMoveChooseItemAttr extends MoveAttr {
         "ItemSelectPhase",
         items,
         (itemId: HeldItemId) => {
-          user.addTag(BattlerTagType.CHOSEN_ITEM, 0, move.id);
-          user.getTag(BattlerTagType.CHOSEN_ITEM)?.chooseItem(itemId);
+          user.addTag(this.tagType, 0, move.id);
+          user.getTag(this.tagType)?.chooseItem(itemId);
         },
         () => {
           const fieldIndex = user.getFieldIndex();
@@ -2263,14 +2265,14 @@ export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    const item = user.getTag(BattlerTagType.FLING)?.item;
     if (!item) {
       // This should never happen at this point
       return false;
     }
 
     user.heldItemManager.disable(item);
-    user.removeTag(BattlerTagType.CHOSEN_ITEM);
+    user.removeTag(BattlerTagType.FLING);
     globalScene.updateItemBar(user.isPlayer());
 
     const message = this.message(user, target, move, item);
@@ -4312,7 +4314,7 @@ export class FlingEffectAttr extends MoveEffectAttr {
     }
     let secondaryEffect: MoveEffectAttr | undefined;
 
-    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    const item = user.getTag(BattlerTagType.FLING)?.item;
 
     if (!item) {
       return false;
@@ -4867,7 +4869,7 @@ export class FlingPowerAttr extends VariablePowerAttr {
     const power = args[0] as NumberHolder;
 
     // TODO: Add check that the chosen item tag was added by Fling and not some other move
-    let item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    let item = user.getTag(BattlerTagType.FLING)?.item;
     // If there is no battle tag, choose a new item based on the priority list
     // This should happen if the move is used by an enemy Pokémon, or if the move is called through other means
     if (!item) {
@@ -4877,8 +4879,8 @@ export class FlingPowerAttr extends VariablePowerAttr {
       }
       items.sort((a, b) => flingSortFunc(a, b));
       item = items[0];
-      user.addTag(BattlerTagType.CHOSEN_ITEM, 0, MoveId.FLING);
-      user.getTag(BattlerTagType.CHOSEN_ITEM)?.chooseItem(item);
+      user.addTag(BattlerTagType.FLING, 0, MoveId.FLING);
+      user.getTag(BattlerTagType.FLING)?.chooseItem(item);
     }
 
     if (!item) {
@@ -10797,7 +10799,12 @@ export function initMoves() {
       .reflectable()
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
-      .attr(PreMoveChooseItemAttr, (_user, _target, _move) => "What item to Fling?", flingSortFunc)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to Fling?",
+        BattlerTagType.FLING,
+        flingSortFunc,
+      )
       .attr(FlingPowerAttr)
       .attr(FlingEffectAttr)
       .attr(

@@ -61,7 +61,7 @@ import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType, type NonCustomBattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { BattlerTagType, type ChooseItemBattlerTagType } from "#enums/battler-tag-type";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
@@ -3741,16 +3741,21 @@ export class PsychoShiftTag extends BattlerTag {
 /**
  * Tag used to select an item that will be used by Fling/Bestow/Trick/Switcheroo
  */
-export class ChosenItemTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.CHOSEN_ITEM;
+abstract class ChosenItemTag extends BattlerTag {
   public item: HeldItemId;
 
-  constructor(sourceMove: MoveId) {
-    super(BattlerTagType.CHOSEN_ITEM, BattlerTagLapseType.AFTER_MOVE, 1, sourceMove);
+  constructor(tagType: ChooseItemBattlerTagType, sourceMove: MoveId) {
+    super(tagType, BattlerTagLapseType.AFTER_MOVE, 1, sourceMove);
   }
 
   public chooseItem(item: HeldItemId) {
     this.item = item;
+  }
+}
+
+export class FlingTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.FLING, sourceMove);
   }
 }
 
@@ -4045,8 +4050,8 @@ export function getBattlerTag(
       return new PowerTrickTag(sourceMove, sourceId);
     case BattlerTagType.GRUDGE:
       return new GrudgeTag();
-    case BattlerTagType.CHOSEN_ITEM:
-      return new ChosenItemTag(sourceMove);
+    case BattlerTagType.FLING:
+      return new FlingTag(sourceMove);
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
@@ -4187,7 +4192,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.POWER_TRICK]: PowerTrickTag;
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
-  [BattlerTagType.CHOSEN_ITEM]: ChosenItemTag;
+  [BattlerTagType.FLING]: FlingTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
