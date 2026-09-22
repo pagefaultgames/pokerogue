@@ -5,7 +5,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { TrainerType } from "#enums/trainer-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
-import type { TerrainPool, WeatherPool } from "#types/biomes";
+import type { BiomeLinks, TerrainPool, WeatherPool } from "#types/biomes";
 
 export interface EventBanner {
   readonly bannerKey?: string;
@@ -62,6 +62,8 @@ export type EventTextReplacement = readonly [string, string];
 export type EventWeatherPools = Readonly<Partial<Record<BiomeId, WeatherPool>>>;
 export type EventTerrainPools = Readonly<Partial<Record<BiomeId, TerrainPool>>>;
 
+export type EventBiomes = Readonly<Partial<Record<BiomeId, BiomeLinks>>>;
+
 export interface TimedEvent extends EventBanner {
   readonly name: string;
   readonly eventType: EventType;
@@ -76,6 +78,7 @@ export interface TimedEvent extends EventBanner {
   readonly delibirdyBuff?: readonly string[];
   readonly weather?: EventWeatherPools;
   readonly terrain?: EventTerrainPools;
+  readonly biomes?: EventBiomes;
   readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
   readonly luckBoostedSpecies?: readonly SpeciesId[];
   readonly boostFusions?: boolean; //MODIFIER REWORK PLEASE
