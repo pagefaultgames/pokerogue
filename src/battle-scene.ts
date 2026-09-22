@@ -1267,6 +1267,15 @@ export class BattleScene extends SceneBase {
       this.handleNonFixedBattle(resolved);
     }
 
+    // Reactivate disabled items
+    for (const p of this.getPlayerParty()) {
+      const items = p.heldItemManager.getSuppressableHeldItems();
+      for (const item of items) {
+        p.heldItemManager.enable(item);
+      }
+    }
+    this.updateItemBar();
+
     if (resolved.battleType == null) {
       throw new Error(
         "BattleScene.newBattle lacked battle type information inside new battle config!\nData:\n"

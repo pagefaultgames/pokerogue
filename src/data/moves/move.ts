@@ -2263,7 +2263,6 @@ export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    console.log("Current tag:", user.getTag(BattlerTagType.CHOSEN_ITEM));
     const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
     if (!item) {
       // This should never happen at this point
@@ -2273,7 +2272,6 @@ export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
     user.heldItemManager.disable(item);
     user.removeTag(BattlerTagType.CHOSEN_ITEM);
     globalScene.updateItemBar(user.isPlayer());
-    console.log("Current tag:", user.getTag(BattlerTagType.CHOSEN_ITEM));
 
     const message = this.message(user, target, move, item);
 
