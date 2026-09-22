@@ -81,7 +81,7 @@ export const flingExtraEffect: HeldItemId[] = [
   HeldItemId.WHITE_HERB,
 ];
 
-export function flingFilter(itemA: HeldItemId, itemB: HeldItemId): number {
+export function flingSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
   const weightA = (flingPower[itemA] ?? 0) + (flingExtraEffect.includes(itemA) ? 100 : 0);
   const weightB = (flingPower[itemB] ?? 0) + (flingExtraEffect.includes(itemB) ? 100 : 0);
   return weightB - weightA;

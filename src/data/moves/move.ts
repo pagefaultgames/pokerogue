@@ -116,6 +116,7 @@ import type {
   MoveAttrMap,
   MoveAttrString,
   MoveClassMap,
+  MoveItemMessageFunc,
   MoveKindString,
   MoveMessageFunc,
 } from "#types/move-types";
@@ -144,7 +145,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
-import { flingFilter, flingPower } from "./fling-data";
+import { flingPower, flingSortFunc } from "./fling-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -2248,6 +2249,43 @@ export class MessageAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Move attribute to display arbitrary text during a move's execution.
+ */
+export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
+  /** The message to display, either as a string or a function returning one. */
+  private readonly message: MoveItemMessageFunc;
+
+  constructor(message: MoveItemMessageFunc, options?: MoveEffectAttrOptions) {
+    // TODO: Do we need to respect `selfTarget` if we're just displaying text?
+    super(false, options);
+    this.message = message;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    console.log("Current tag:", user.getTag(BattlerTagType.CHOSEN_ITEM));
+    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    if (!item) {
+      // This should never happen at this point
+      return false;
+    }
+
+    user.heldItemManager.disable(item);
+    user.removeTag(BattlerTagType.CHOSEN_ITEM);
+    globalScene.updateItemBar(user.isPlayer());
+    console.log("Current tag:", user.getTag(BattlerTagType.CHOSEN_ITEM));
+
+    const message = this.message(user, target, move, item);
+
+    // TODO: Consider changing if/when MoveAttr `apply` return values become significant
+    if (message) {
+      globalScene.phaseManager.queueMessage(message, 500);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class RecoilAttr extends MoveEffectAttr {
   private readonly useHp: boolean;
   private readonly damageRatio: number;
@@ -3176,6 +3214,7 @@ export class FlingStatusEffectAttr extends StatusEffectAttr {
       return false;
     }
 
+    this.effect = StatusEffect.NONE;
     switch (item) {
       case HeldItemId.POISON_BARB:
         this.effect = StatusEffect.POISON;
@@ -3191,6 +3230,9 @@ export class FlingStatusEffectAttr extends StatusEffectAttr {
         break;
     }
 
+    console.log("Item effect:");
+    console.log(user.getTag(BattlerTagType.CHOSEN_ITEM));
+    console.log(this.effect);
     if (this.effect === StatusEffect.NONE) {
       return false;
     }
@@ -4820,10 +4862,19 @@ export class FlingPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const power = args[0] as NumberHolder;
 
-    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    // TODO: Add check that the chosen item tag was added by Fling and not some other move
+    let item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+    // If there is no battle tag, choose a new item based on the priority list
+    // This should happen if the move is used by an enemy Pokémon, or if the move is called through other means
     if (!item) {
-      power.value = -1;
-      return false;
+      const items = user.heldItemManager.getActiveTransferableHeldItems();
+      if (items.length === 0) {
+        return false;
+      }
+      items.sort((a, b) => flingSortFunc(a, b));
+      item = items[0];
+      user.addTag(BattlerTagType.CHOSEN_ITEM, 0, MoveId.FLING);
+      user.getTag(BattlerTagType.CHOSEN_ITEM)?.chooseItem(item);
     }
 
     if (!item) {
@@ -4832,9 +4883,6 @@ export class FlingPowerAttr extends VariablePowerAttr {
     }
 
     power.value = flingPower[item] ?? 10;
-
-    user.heldItemManager.disable(item);
-    globalScene.updateItemBar(user.isPlayer());
 
     return true;
   }
@@ -9078,16 +9126,10 @@ const failIfLastInPartyCondition: MoveConditionFunc = user => {
 const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.isOfType(PokemonType.GHOST);
 
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
-  target.heldItemManager.getTransferableHeldItems().length > 0;
+  target.heldItemManager.getActiveTransferableHeldItems().length > 0;
 
-const failIfNoItemChosenCondition: MoveConditionFunc = (user, _target) => {
-  const chosenItem = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
-  if (!chosenItem) {
-    return false;
-  }
-  const item = user.heldItemManager.getItemSpecs(chosenItem);
-  return !!item && !item.disabled;
-};
+const failIfNoUserHeldItemsCondition: MoveConditionFunc = (user, _target) =>
+  user.heldItemManager.getActiveTransferableHeldItems().length > 0;
 
 // #endregion Condition functions
 
@@ -10755,11 +10797,15 @@ export function initMoves() {
         PreMoveChooseItemAttr,
         (_user, _target, _move) => "What item to Fling?",
         (_user, _target, _move) => "No items to Fling.",
-        flingFilter,
+        flingSortFunc,
       )
       .attr(FlingPowerAttr)
       .attr(FlingStatusEffectAttr)
-      .condition(failIfNoItemChosenCondition, 2)
+      .attr(
+        PostMoveLoseItemMessageAttr,
+        (user, _target, _move, item) => `${user.name} threw its ${allHeldItems[item].name}!`,
+      )
+      .condition(failIfNoUserHeldItemsCondition, 2)
       .makesContact(false)
       .partial(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
