@@ -1891,27 +1891,18 @@ export class PreMoveMessageAttr extends MoveAttr {
  */
 export class PreMoveChooseItemAttr extends MoveAttr {
   public readonly message: string | MoveMessageFunc;
-  public readonly failureMessage: string | MoveMessageFunc;
   private sortFunc: HeldItemSortFunc;
 
-  constructor(message: string | MoveMessageFunc, failureMessage: string | MoveMessageFunc, sortFunc: HeldItemSortFunc) {
+  constructor(message: string | MoveMessageFunc, sortFunc: HeldItemSortFunc) {
     super();
     this.message = message;
-    this.failureMessage = failureMessage;
     this.sortFunc = sortFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
-    const failureMessage =
-      typeof this.failureMessage === "function" ? this.failureMessage(user, target, move) : this.failureMessage;
 
     const items = user.heldItemManager.getActiveTransferableHeldItems();
-
-    if (items.length === 0) {
-      globalScene.phaseManager.queueMessage(failureMessage, 500);
-      return false;
-    }
 
     items.sort((a, b) => this.sortFunc(a, b));
 
@@ -10806,12 +10797,7 @@ export function initMoves() {
       .reflectable()
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
-      .attr(
-        PreMoveChooseItemAttr,
-        (_user, _target, _move) => "What item to Fling?",
-        (_user, _target, _move) => "No items to Fling.",
-        flingSortFunc,
-      )
+      .attr(PreMoveChooseItemAttr, (_user, _target, _move) => "What item to Fling?", flingSortFunc)
       .attr(FlingPowerAttr)
       .attr(FlingEffectAttr)
       .attr(
