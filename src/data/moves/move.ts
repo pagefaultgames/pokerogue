@@ -3198,59 +3198,6 @@ export class MultiStatusEffectAttr extends StatusEffectAttr {
   }
 }
 
-/**
- * Attribute to apply one of several statuses to the target based on the item used.
- * Used for {@linkcode Moves.FLING}.
- */
-export class FlingStatusEffectAttr extends StatusEffectAttr {
-  constructor() {
-    super(StatusEffect.NONE, false);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
-
-    if (!item) {
-      return false;
-    }
-
-    this.effect = StatusEffect.NONE;
-    switch (item) {
-      case HeldItemId.POISON_BARB:
-        this.effect = StatusEffect.POISON;
-        break;
-      case HeldItemId.LIGHT_BALL:
-        this.effect = StatusEffect.PARALYSIS;
-        break;
-      case HeldItemId.FLAME_ORB:
-        this.effect = StatusEffect.BURN;
-        break;
-      case HeldItemId.TOXIC_ORB:
-        this.effect = StatusEffect.TOXIC;
-        break;
-    }
-
-    console.log("Item effect:");
-    console.log(user.getTag(BattlerTagType.CHOSEN_ITEM));
-    console.log(this.effect);
-    if (this.effect === StatusEffect.NONE) {
-      return false;
-    }
-
-    const result = super.apply(user, target, move, args);
-    return result;
-  }
-
-  // TODO: code this correctly
-  //  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-  //    const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
-  //    const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
-  //    const pokemon = this.selfTarget ? user : target;
-
-  //    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
-  //  }
-}
-
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
   constructor() {
     super(false);
@@ -4352,6 +4299,56 @@ export class SecretPowerAttr extends MoveEffectAttr {
   }
 }
 
+export class FlingEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  /**
+   * Used to apply the secondary effect to the target Pokemon
+   * @returns `true` if a secondary effect is successfully applied
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+    let secondaryEffect: MoveEffectAttr | undefined;
+
+    const item = user.getTag(BattlerTagType.CHOSEN_ITEM)?.item;
+
+    if (!item) {
+      return false;
+    }
+
+    switch (item) {
+      case HeldItemId.POISON_BARB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.POISON, false);
+        break;
+      case HeldItemId.LIGHT_BALL:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        break;
+      case HeldItemId.FLAME_ORB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+        break;
+      case HeldItemId.TOXIC_ORB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.TOXIC, false);
+        break;
+      case HeldItemId.KINGS_ROCK:
+        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+        break;
+      case HeldItemId.WHITE_HERB:
+        secondaryEffect = new ResetNegativeStatsAttr(false);
+        break;
+    }
+
+    if (!secondaryEffect) {
+      return false;
+    }
+
+    return secondaryEffect.apply(user, target, move, []);
+  }
+}
+
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private readonly stats: BattleStat[];
   private readonly stages: number;
@@ -4550,6 +4547,15 @@ export class ResetStatsAttr extends MoveEffectAttr {
       pokemon.setStatStage(s, 0);
     }
     pokemon.updateInfo();
+  }
+}
+
+// Currently only used as an effect of Fling when throwing a White Herb
+export class ResetNegativeStatsAttr extends MoveEffectAttr {
+  override apply(_user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    target.summonData.statStages = target.summonData.statStages.map(stage => Math.max(stage, 0));
+    target.updateInfo();
+    return true;
   }
 }
 
@@ -10800,7 +10806,7 @@ export function initMoves() {
         flingSortFunc,
       )
       .attr(FlingPowerAttr)
-      .attr(FlingStatusEffectAttr)
+      .attr(FlingEffectAttr)
       .attr(
         PostMoveLoseItemMessageAttr,
         (user, _target, _move, item) => `${user.name} threw its ${allHeldItems[item].name}!`,
