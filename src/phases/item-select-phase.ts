@@ -12,11 +12,13 @@ export class ItemSelectPhase extends Phase {
   public readonly phaseName = "ItemSelectPhase";
   private items: HeldItemId[];
   private callback: (item: HeldItemId) => void;
+  private onCancel: () => void;
 
-  constructor(items: HeldItemId[], callback: (item: HeldItemId) => void) {
+  constructor(items: HeldItemId[], callback: (item: HeldItemId) => void, onCancel: () => void) {
     super();
     this.items = items;
     this.callback = callback;
+    this.onCancel = onCancel;
   }
 
   public override async start(): Promise<void> {
@@ -39,12 +41,20 @@ export class ItemSelectPhase extends Phase {
         },
       });
     }
+    itemOptions.push({
+      label: "Cancel", //TODO: use localized key here
+      handler: () => {
+        globalScene.ui.revertMode();
+        this.onCancel();
+        this.end();
+        return true;
+      },
+    });
 
     const chooseItemConfig: OptionSelectModeConfig = {
       options: itemOptions,
       yOffset: 48,
       maxOptions: 8,
-      blockCancelButton: true,
     };
 
     globalScene.ui.setMode(UiMode.OPTION_SELECT, chooseItemConfig);

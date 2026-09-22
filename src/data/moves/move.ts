@@ -1918,10 +1918,19 @@ export class PreMoveChooseItemAttr extends MoveAttr {
     if (message) {
       globalScene.phaseManager.queueMessage(message, 500);
 
-      const chooseItemPhase = globalScene.phaseManager.create("ItemSelectPhase", items, (itemId: HeldItemId) => {
-        user.addTag(BattlerTagType.CHOSEN_ITEM, 0, move.id);
-        user.getTag(BattlerTagType.CHOSEN_ITEM)?.chooseItem(itemId);
-      });
+      const chooseItemPhase = globalScene.phaseManager.create(
+        "ItemSelectPhase",
+        items,
+        (itemId: HeldItemId) => {
+          user.addTag(BattlerTagType.CHOSEN_ITEM, 0, move.id);
+          user.getTag(BattlerTagType.CHOSEN_ITEM)?.chooseItem(itemId);
+        },
+        () => {
+          const fieldIndex = user.getFieldIndex();
+          globalScene.currentBattle.turnCommands[fieldIndex] = null;
+          globalScene.phaseManager.unshiftNew("CommandPhase", fieldIndex);
+        },
+      );
       globalScene.phaseManager.unshiftPhase(chooseItemPhase);
 
       return true;
