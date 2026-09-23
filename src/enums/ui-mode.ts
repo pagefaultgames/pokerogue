@@ -5,7 +5,7 @@ export enum UiMode {
   FIGHT,
   BALL,
   TARGET_SELECT,
-  MODIFIER_SELECT,
+  REWARD_SELECT,
   SAVE_SLOT,
   PARTY,
   SUMMARY,

@@ -24,34 +24,21 @@ export interface AbilityTranslationEntries {
   [key: string]: AbilityTranslationEntry;
 }
 
-export interface ModifierTypeTranslationEntry {
+export interface ItemTranslationEntry {
   name?: string;
   description?: string;
   extra?: SimpleTranslationEntries;
 }
 
-export interface ModifierTypeTranslationEntries {
-  ModifierType: { [key: string]: ModifierTypeTranslationEntry };
-  SpeciesBoosterItem: { [key: string]: ModifierTypeTranslationEntry };
-  AttackTypeBoosterItem: SimpleTranslationEntries;
-  TempStatStageBoosterItem: SimpleTranslationEntries;
-  BaseStatBoosterItem: SimpleTranslationEntries;
+export interface RewardTranslationEntries {
+  Reward: { [key: string]: ItemTranslationEntry };
+  Item: { [key: string]: ItemTranslationEntry };
   EvolutionItem: SimpleTranslationEntries;
-  FormChangeItem: SimpleTranslationEntries;
 }
 
 export interface PokemonInfoTranslationEntries {
   Stat: SimpleTranslationEntries;
   Type: SimpleTranslationEntries;
-}
-
-export interface BerryTranslationEntry {
-  name: string;
-  effect: string;
-}
-
-export interface BerryTranslationEntries {
-  [key: string]: BerryTranslationEntry;
 }
 
 export interface StatusEffectTranslationEntries {

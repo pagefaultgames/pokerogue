@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
 
 export class BattleEndPhase extends BattlePhase {
@@ -54,7 +53,6 @@ export class BattleEndPhase extends BattlePhase {
       globalScene.currentBattle.pickUpScatteredMoney();
     }
 
-    globalScene.clearEnemyHeldItemModifiers();
     for (const p of globalScene.getEnemyParty()) {
       try {
         p.destroy();
@@ -63,30 +61,9 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    const lapsingModifiers = globalScene.findModifiers(
-      m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,
-    ) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
-    for (const m of lapsingModifiers) {
-      const args: any[] = [];
-      if (m instanceof LapsingPokemonHeldItemModifier) {
-        args.push(globalScene.getPokemonById(m.pokemonId));
-      }
-      if (!m.lapse(...args)) {
-        globalScene.removeModifier(m);
-      }
-    }
+    globalScene.trainerItems.lapseItems();
 
-    globalScene.updateModifiers();
-    if (!this.isVictory && !globalScene.phaseManager.hasPhaseOfType("SelectModifierPhase")) {
-      if (globalScene.currentBattle.enemyFaints > 0) {
-        globalScene.phaseManager.unshiftNew("SelectModifierPhase");
-      } else if (!globalScene.currentBattle.successfulRun) {
-        globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
-          fillRemaining: false,
-          rerollMultiplier: -1,
-        });
-      }
-    }
+    globalScene.updateItemBar();
     this.end();
   }
 }

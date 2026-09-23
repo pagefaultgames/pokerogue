@@ -2,11 +2,11 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EncounterBattleAnim } from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { EncounterAnim } from "#enums/encounter-anims";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -123,7 +123,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     }
 
     const oricorioData = new PokemonData(enemyPokemon);
-    const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, oricorioData);
+    const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, [], oricorioData);
 
     // Adds a real Pokemon sprite to the field (required for the animation)
     for (const enemy of globalScene.getEnemyParty()) {
@@ -187,7 +187,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         await hideOricorioPokemon();
         setEncounterRewards({
-          guaranteedModifierTypeFuncs: [modifierTypes.BATON],
+          guaranteedRewardSpecs: [HeldItemId.BATON],
           fillRemaining: true,
         });
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);

@@ -1,7 +1,9 @@
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -19,36 +21,42 @@ describe("Items - Leftovers", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .startingLevel(2000)
-      .ability(AbilityId.UNNERVE)
-      .moveset([MoveId.SPLASH])
-      .enemySpecies(SpeciesId.SHUCKLE)
-      .enemyAbility(AbilityId.UNNERVE)
-      .enemyMoveset(MoveId.TACKLE)
-      .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
+      .criticalHits(false)
+      .ability(AbilityId.BALL_FETCH)
+      .startingHeldItems([{ entry: HeldItemId.LEFTOVERS }])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(100);
   });
 
-  it("leftovers works", async () => {
-    await game.classicMode.startBattle(SpeciesId.ARCANINE);
+  it.each([1, 2])("should heal max HP/16 x %d at the end of each turn", async count => {
+    game.override.startingHeldItems([{ entry: HeldItemId.LEFTOVERS, count }]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    // Make sure leftovers are there
-    expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
+    const player = game.field.getPlayerPokemon();
+    const expectedHeal = toDmgValue(player.getMaxHp() / 16) * count;
+    player.hp -= expectedHeal * 3; // leave room to observe healing
 
-    const leadPokemon = game.field.getPlayerPokemon();
+    game.move.use(MoveId.SPLASH);
+    game.phaseInterceptor.clearLogs();
+    await game.toNextTurn();
 
-    // We should have full hp
-    expect(leadPokemon.isFullHp()).toBe(true);
+    expect(player.hp).toBe(player.getMaxHp() - expectedHeal * 2);
+  });
 
-    game.move.select(MoveId.SPLASH);
+  it("should not queue a heal phase when at full HP", async () => {
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    // We should have less hp after the attack
-    await game.phaseInterceptor.to("DamageAnimPhase", false);
-    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    const player = game.field.getPlayerPokemon();
+    expect(player.isFullHp()).toBe(true);
 
-    const leadHpAfterDamage = leadPokemon.hp;
+    game.move.use(MoveId.SPLASH);
+    game.phaseInterceptor.clearLogs();
+    await game.toEndOfTurn();
+    await game.phaseInterceptor.to("CommandPhase", false);
 
-    // Check if leftovers heal us
-    await game.phaseInterceptor.to("PokemonHealPhase");
-    expect(leadPokemon.hp).toBeGreaterThan(leadHpAfterDamage);
+    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveHeldItem(HeldItemId.LEFTOVERS);
   });
 });

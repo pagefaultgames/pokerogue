@@ -1,12 +1,13 @@
 import type { BattleScene } from "#app/battle-scene";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { BerryModifier } from "#modifiers/modifier";
+import { getPartyItemsInCategory } from "#items/item-utility";
 import { BerriesAboundEncounter } from "#mystery-encounters/berries-abound-encounter";
 import * as EncounterDialogueUtils from "#mystery-encounters/encounter-dialogue-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -14,7 +15,7 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/berriesAbound";
@@ -40,7 +41,6 @@ describe("Berries Abound - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .startingModifier([])
       .startingHeldItems([])
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyPassiveAbility(AbilityId.BALL_FETCH);
@@ -119,17 +119,15 @@ describe("Berries Abound - Mystery Encounter", () => {
       const numBerries = game.scene.currentBattle.mysteryEncounter!.misc.numBerries;
 
       // Clear out any pesky mods that slipped through test spin-up
-      scene.modifiers.forEach(mod => {
-        scene.removeModifier(mod);
-      });
+      scene.clearAllItems();
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
 
-      const berriesAfter = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
-      const berriesAfterCount = berriesAfter.reduce((a, b) => a + b.stackCount, 0);
+      const berriesAfter = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
+      const berriesAfterCount = berriesAfter.reduce((a, b) => a + b.item.stack, 0);
 
       expect(numBerries).toBe(berriesAfterCount);
     });
@@ -138,15 +136,15 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      for (const option of rewardSelectHandler.options) {
+        expect(option.rewardOption.type.id).toContain("BERRY");
       }
     });
   });
@@ -221,15 +219,15 @@ describe("Berries Abound - Mystery Encounter", () => {
       });
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      for (const option of rewardSelectHandler.options) {
+        expect(option.rewardOption.type.id).toContain("BERRY");
       }
 
       expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(`${namespace}:option.2.selected`);

@@ -68,7 +68,12 @@
       "#field/*": ["./src/field/*.ts"],
       "#init/*": ["./src/init/*.ts"],
       "#inputs/*": ["./src/configs/inputs/*.ts"],
-      "#modifiers/*": ["./src/modifier/*.ts"],
+      "#items/*": [
+        "./src/items/held-items/*.ts",
+        "./src/items/trainer-items/*.ts",
+        "./src/items/rewards/*.ts",
+        "./src/items/*.ts"
+      ],
       "#moves/*": ["./src/data/moves/*.ts"],
       "#mystery-encounters/*": [
         "./src/data/mystery-encounters/utils/*.ts",

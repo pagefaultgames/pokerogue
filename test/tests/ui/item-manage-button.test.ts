@@ -1,13 +1,13 @@
-import { BerryType } from "#enums/berry-type";
 import { Button } from "#enums/buttons";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
+import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,9 +28,9 @@ describe.todo("UI - Transfer Items", () => {
       .battleStyle("single")
       .startingLevel(100)
       .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
@@ -39,7 +39,7 @@ describe.todo("UI - Transfer Items", () => {
 
     game.move.use(MoveId.DRAGON_CLAW);
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   });
 
   it("manage button exists in the proper screen", async () => {
@@ -47,16 +47,16 @@ describe.todo("UI - Transfer Items", () => {
 
     await new Promise<void>(resolve => {
       //select manage items menu
-      game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, async () => {
         await new Promise(r => setTimeout(r, 100));
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
 
         handler.processInput(Button.DOWN);
         handler.setCursor(1);
         handler.processInput(Button.ACTION);
       });
 
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -77,16 +77,16 @@ describe.todo("UI - Transfer Items", () => {
     let handlerLength: Phaser.GameObjects.GameObject[] | undefined;
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, async () => {
         await new Promise(r => setTimeout(r, 100));
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
 
         handler.processInput(Button.DOWN);
         handler.setCursor(2);
         handler.processInput(Button.ACTION);
       });
 
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -110,15 +110,15 @@ describe.todo("UI - Transfer Items", () => {
     let pokemon: Pokemon | undefined;
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, async () => {
         await new Promise(r => setTimeout(r, 100));
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
 
         handler.processInput(Button.DOWN);
         handler.setCursor(1);
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -136,11 +136,11 @@ describe.todo("UI - Transfer Items", () => {
     expect(pokemon).toBeDefined();
     if (pokemon) {
       expect(pokemon.getHeldItems()).toHaveLength(3);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
+      expect(pokemon.getHeldItems().map(h => pokemon!.heldItemManager.getStack(h))).toEqual([1, 2, 2]);
     }
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         handler.processInput(Button.ACTION);
@@ -149,7 +149,7 @@ describe.todo("UI - Transfer Items", () => {
     });
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         handler.processInput(Button.ACTION);
@@ -165,7 +165,7 @@ describe.todo("UI - Transfer Items", () => {
     if (pokemon) {
       // Sitrus berry was discarded, leaving 2 stacks of 2 berries behind
       expect(pokemon.getHeldItems()).toHaveLength(2);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
+      expect(pokemon.getHeldItems().map(h => pokemon!.heldItemManager.getStack(h))).toEqual([2, 2]);
     }
   });
 
@@ -175,16 +175,16 @@ describe.todo("UI - Transfer Items", () => {
 
     const { resolve, promise } = Promise.withResolvers<void>();
 
-    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, async () => {
       await new Promise(r => setTimeout(r, 100));
-      const modifierHandler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+      const modifierHandler = game.scene.ui.getHandler<RewardSelectUiHandler>();
 
       modifierHandler.processInput(Button.DOWN);
       modifierHandler.setCursor(1);
       modifierHandler.processInput(Button.ACTION);
     });
 
-    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
       await new Promise(r => setTimeout(r, 100));
       handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -201,12 +201,12 @@ describe.todo("UI - Transfer Items", () => {
     expect(handler).toBeDefined();
     if (handler) {
       const partyMode = handler["partyUiMode"];
-      expect(partyMode).toBe(PartyUiMode.MODIFIER_TRANSFER);
+      expect(partyMode).toBe(PartyUiMode.ITEM_TRANSFER);
 
       handler.setCursor(7);
       handler.processInput(Button.ACTION);
       // Should not change mode to discard
-      expect(handler["partyUiMode"]).toBe(PartyUiMode.MODIFIER_TRANSFER);
+      expect(handler["partyUiMode"]).toBe(PartyUiMode.ITEM_TRANSFER);
 
       handler.processInput(Button.CANCEL);
       handler.setCursor(7);

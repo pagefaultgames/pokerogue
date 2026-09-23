@@ -1,11 +1,18 @@
-import { allMoves } from "#data/data-lists";
+import { allHeldItems } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId } from "#enums/held-item-id";
+import { HitResult } from "#enums/hit-result";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { PokemonInstantReviveModifier } from "#modifiers/modifier";
+import { EFFECTIVE_STATS, Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
+import { applySingleHeldItem } from "#test/utils/item-test-utils";
+import { ValueHolder } from "#utils/value-holder";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -22,128 +29,204 @@ describe("Items - Reviver Seed", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.SPLASH, MoveId.TACKLE, MoveId.ENDURE])
-      .ability(AbilityId.BALL_FETCH)
+      .ability(AbilityId.NO_GUARD)
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyLevel(100)
+      .startingLevel(1)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .startingHeldItems([{ name: "REVIVER_SEED" }])
-      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
+      .enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyMoveset(MoveId.SPLASH);
-    vi.spyOn(allMoves[MoveId.SHEER_COLD], "accuracy", "get").mockReturnValue(100);
-    vi.spyOn(allMoves[MoveId.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
-    vi.spyOn(allMoves[MoveId.WHIRLPOOL], "accuracy", "get").mockReturnValue(100);
-    vi.spyOn(allMoves[MoveId.WILL_O_WISP], "accuracy", "get").mockReturnValue(100);
+
+    vi.spyOn(allHeldItems[HeldItemId.REVIVER_SEED], "apply");
   });
 
-  it.each([
-    { moveType: "Special Move", move: MoveId.WATER_GUN },
-    { moveType: "Physical Move", move: MoveId.TACKLE },
-    { moveType: "Fixed Damage Move", move: MoveId.SEISMIC_TOSS },
-    { moveType: "Final Gambit", move: MoveId.FINAL_GAMBIT },
-    { moveType: "Counter", move: MoveId.COUNTER },
-    { moveType: "OHKO", move: MoveId.SHEER_COLD },
-  ])("should activate the holder's reviver seed from a $moveType", async ({ move }) => {
-    game.override.enemyLevel(100).startingLevel(1).enemyMoveset(move);
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
-    const player = game.field.getPlayerPokemon();
-    player.damageAndUpdate(player.hp - 1);
+  describe("Unit Tests", () => {
+    it("should apply when knocked out from direct damage", async () => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
-    const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
-    vi.spyOn(reviverSeed, "apply");
+      const player = game.field.getPlayerPokemon();
+      player.hp = 1;
 
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("BerryPhase");
+      player.damageAndUpdate(1, { result: HitResult.EFFECTIVE });
 
-    expect(player.isFainted()).toBeFalsy();
+      game.move.use(MoveId.SPLASH);
+      await game.toEndOfTurn();
+
+      expect(player).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
+    });
+
+    it("should queue a heal phase to revive the holder when activated", async () => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
+
+      const player = game.field.getPlayerPokemon();
+      player.hp = 0;
+
+      applySingleHeldItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, { pokemon: player });
+
+      const p = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
+      expect(p).toHaveLength(1);
+      expect(p[0].getPokemon()).toBe(player);
+    });
   });
 
-  it("should activate the holder's reviver seed from confusion self-hit", async () => {
-    game.override.enemyLevel(1).startingLevel(100).enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
-    const player = game.field.getPlayerPokemon();
-    player.damageAndUpdate(player.hp - 1);
-    player.addTag(BattlerTagType.CONFUSED, 3);
+  describe("Integration Tests", () => {
+    it.each([
+      { moveType: "Special Moves", move: MoveId.WATER_GUN },
+      { moveType: "Physical Moves", move: MoveId.TACKLE },
+      { moveType: "Fixed Damage Moves", move: MoveId.SEISMIC_TOSS },
+      { moveType: "Final Gambit", move: MoveId.FINAL_GAMBIT },
+      { moveType: "Counter Moves", move: MoveId.COUNTER, playerMove: MoveId.TACKLE },
+      { moveType: "OHKO Moves", move: MoveId.SHEER_COLD },
+    ])("should activate when hit by $moveType", async ({ move, playerMove = MoveId.SPLASH }) => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
-    const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
-    vi.spyOn(reviverSeed, "apply");
+      const player = game.field.getPlayerPokemon();
+      player.hp = 1;
+      game.move.use(playerMove);
+      await game.move.forceEnemyMove(move);
+      await game.toEndOfTurn();
 
-    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0); // Force confusion self-hit
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("BerryPhase");
+      expect(player).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, {
+        reviveApplied: expect.any(ValueHolder),
+      });
+      expect(player).not.toHaveFainted();
+    });
 
-    expect(player.isFainted()).toBeFalsy();
+    it("should activate the holder's reviver seed from confusion self-hit", async () => {
+      game.override.confusionActivation(true);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
+
+      const player = game.field.getPlayerPokemon();
+      player.hp = 1;
+      player.addTag(BattlerTagType.CONFUSED, 3);
+
+      game.move.use(MoveId.SPLASH);
+      await game.toEndOfTurn();
+
+      expect(player).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, {
+        reviveApplied: expect.any(ValueHolder),
+      });
+      expect(player).not.toHaveFainted();
+    });
+
+    it.each([
+      { moveType: "Damaging Move with Chip Damage", move: MoveId.SALT_CURE },
+      { moveType: "Trapping Move with Chip Damage", move: MoveId.WHIRLPOOL },
+    ])("should activate from the direct hit of a $moveType even if residual damage follows", async ({ move }) => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
+
+      const enemy = game.field.getEnemyPokemon();
+      enemy.hp = 1;
+      game.move.use(move);
+      await game.toEndOfTurn();
+
+      expect(enemy).toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE, {
+        reviveApplied: expect.any(ValueHolder),
+      });
+    });
+
+    it.each([
+      { moveType: "Chip Damage", move: MoveId.LEECH_SEED },
+      { moveType: "Status Effect Damage", move: MoveId.WILL_O_WISP },
+      { moveType: "Weather", move: MoveId.SANDSTORM },
+    ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
+
+      const enemy = game.field.getEnemyPokemon();
+      enemy.hp = 1;
+      game.move.use(move);
+      await game.toEndOfTurn();
+
+      expect(enemy).not.toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
+      expect(enemy).toHaveFainted();
+    });
+
+    it.each([
+      { moveType: "Recoil Damage", move: MoveId.DOUBLE_EDGE },
+      { moveType: "Self-KO Moves", move: MoveId.EXPLOSION },
+      { moveType: "Curse Self-Damage", move: MoveId.CURSE },
+      { moveType: "Liquid Ooze", move: MoveId.GIGA_DRAIN },
+    ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
+      game.override.enemyAbility(AbilityId.LIQUID_OOZE);
+      await game.classicMode.startBattle(SpeciesId.GASTLY, SpeciesId.FEEBAS);
+
+      const player = game.field.getPlayerPokemon();
+      player.hp = 1;
+      game.move.use(move);
+      await game.toEndOfTurn();
+
+      expect(player).not.toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
+      expect(player).toHaveFainted();
+    });
+
+    it("should not activate the holder's reviver seed from Destiny Bond fainting", async () => {
+      game.override.startingHeldItems([]);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
+
+      const player = game.field.getPlayerPokemon();
+      const enemy = game.field.getEnemyPokemon();
+      player.hp = 1;
+      game.move.use(MoveId.DESTINY_BOND);
+      await game.move.forceEnemyMove(MoveId.TACKLE);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.toEndOfTurn();
+
+      expect(player).not.toHaveAppliedItem(HeldItemId.REVIVER_SEED, HeldItemEffect.INSTANT_REVIVE);
+      expect(player).toHaveFainted();
+      expect(enemy).toHaveFainted();
+    });
   });
 
-  // Damaging opponents tests
-  it.each([
-    { moveType: "Damaging Move Chip Damage", move: MoveId.SALT_CURE },
-    { moveType: "Chip Damage", move: MoveId.LEECH_SEED },
-    { moveType: "Trapping Chip Damage", move: MoveId.WHIRLPOOL },
-    { moveType: "Status Effect Damage", move: MoveId.WILL_O_WISP },
-    { moveType: "Weather", move: MoveId.SANDSTORM },
-  ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
-    game.override
-      .enemyLevel(1)
-      .startingLevel(100)
-      .enemySpecies(SpeciesId.MAGIKARP)
-      .moveset(move)
-      .enemyMoveset(MoveId.ENDURE);
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
-    const enemy = game.field.getEnemyPokemon();
-    enemy.damageAndUpdate(enemy.hp - 1);
+  describe("Effect Clearing", () => {
+    /**
+     * Faint the holder via a direct enemy attack and verify that the seed activated
+     * @param setup - Optional callback on the holder (add stat stages, tags, etc.)
+     * @returns The holder after the revive has resolved
+     */
+    async function reviveAfflictedHolder(setup?: (player: PlayerPokemon) => void) {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
-    game.move.select(move);
-    await game.phaseInterceptor.to("TurnEndPhase");
+      const player = game.field.getPlayerPokemon();
+      setup?.(player);
+      player.hp = 1;
+      game.move.use(MoveId.SPLASH);
+      await game.move.forceEnemyMove(MoveId.WATER_GUN);
+      await game.toEndOfTurn();
 
-    expect(enemy.isFainted()).toBeTruthy();
-  });
+      return player;
+    }
 
-  // Self-damage tests
-  it.each([
-    { moveType: "Recoil", move: MoveId.DOUBLE_EDGE },
-    { moveType: "Self-KO", move: MoveId.EXPLOSION },
-    { moveType: "Self-Deduction", move: MoveId.CURSE },
-    { moveType: "Liquid Ooze", move: MoveId.GIGA_DRAIN },
-  ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
-    game.override
-      .enemyLevel(100)
-      .startingLevel(1)
-      .enemySpecies(SpeciesId.MAGIKARP)
-      .moveset(move)
-      .enemyAbility(AbilityId.LIQUID_OOZE)
-      .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle(SpeciesId.GASTLY, SpeciesId.FEEBAS);
-    const player = game.field.getPlayerPokemon();
-    player.damageAndUpdate(player.hp - 1);
+    it("should clear the holder's status condition when reviving", async () => {
+      game.override.statusEffect(StatusEffect.POISON);
 
-    const playerSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
-    vi.spyOn(playerSeed, "apply");
+      const player = await reviveAfflictedHolder();
 
-    game.move.select(move);
-    await game.phaseInterceptor.to("TurnEndPhase");
+      expect(player).not.toHaveStatusEffect(StatusEffect.POISON);
+      expect(player).not.toHaveFainted();
+    });
 
-    expect(player.isFainted()).toBeTruthy();
-  });
+    it("should reset the holder's stat stages when reviving", async () => {
+      const player = await reviveAfflictedHolder(p => {
+        p.setStatStage(Stat.ATK, -3);
+        p.setStatStage(Stat.SPDEF, 2);
+      });
 
-  it("should not activate the holder's reviver seed from Destiny Bond fainting", async () => {
-    game.override
-      .enemyLevel(100)
-      .startingLevel(1)
-      .enemySpecies(SpeciesId.MAGIKARP)
-      .moveset(MoveId.DESTINY_BOND)
-      .startingHeldItems([]) // reset held items to nothing so user doesn't revive and not trigger Destiny Bond
-      .enemyMoveset(MoveId.TACKLE);
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
-    const player = game.field.getPlayerPokemon();
-    player.damageAndUpdate(player.hp - 1);
-    const enemy = game.field.getEnemyPokemon();
+      for (const stat of EFFECTIVE_STATS) {
+        expect(player).toHaveStatStage(stat, 0);
+      }
+      expect(player).not.toHaveFainted();
+    });
 
-    game.move.select(MoveId.DESTINY_BOND);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    it("should clear battler tags such as confusion when reviving", async () => {
+      const player = await reviveAfflictedHolder(p => {
+        p.addTag(BattlerTagType.CONFUSED, 3);
+      });
 
-    expect(enemy.isFainted()).toBeTruthy();
+      expect(player).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
+      expect(player).not.toHaveFainted();
+    });
   });
 });

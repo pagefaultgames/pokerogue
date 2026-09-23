@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -70,7 +71,7 @@ describe("Abilities - Corrosion", () => {
   });
 
   it("should affect the user's held Toxic Orb", async () => {
-    game.override.startingHeldItems([{ name: "TOXIC_ORB", count: 1 }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.TOXIC_ORB, count: 1 }]);
     await game.classicMode.startBattle(SpeciesId.SALAZZLE);
 
     const salazzle = game.field.getPlayerPokemon();

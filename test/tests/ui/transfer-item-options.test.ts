@@ -1,5 +1,5 @@
-import { BerryType } from "#enums/berry-type";
 import { Button } from "#enums/buttons";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
@@ -27,9 +27,9 @@ describe("UI - Transfer Item Options", () => {
       .battleStyle("single")
       .startingLevel(100)
       .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
@@ -38,13 +38,13 @@ describe("UI - Transfer Item Options", () => {
 
     game.move.use(MoveId.DRAGON_CLAW);
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
+    await game.phaseInterceptor.to("SelectRewardPhase");
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.ITEM_TRANSFER);
   });
 
   it.todo("should open the summary screen while transfering an item", async () => {
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -57,7 +57,7 @@ describe("UI - Transfer Item Options", () => {
     });
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         // select item to transfer
@@ -83,7 +83,7 @@ describe("UI - Transfer Item Options", () => {
 
   it.todo("should open the pokèdex screen while transfering an item", async () => {
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -96,7 +96,7 @@ describe("UI - Transfer Item Options", () => {
     });
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         // select item to transfer
@@ -122,7 +122,7 @@ describe("UI - Transfer Item Options", () => {
 
   it.todo("should open the rename screen and rename the pokemon while transfering an item", async () => {
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -135,7 +135,7 @@ describe("UI - Transfer Item Options", () => {
     });
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         // select item to transfer
@@ -180,7 +180,7 @@ describe("UI - Transfer Item Options", () => {
 
   it.todo("should pause the evolution while transfering an item", async () => {
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
@@ -193,7 +193,7 @@ describe("UI - Transfer Item Options", () => {
     });
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         // select item to transfer

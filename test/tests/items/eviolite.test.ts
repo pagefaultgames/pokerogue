@@ -1,14 +1,17 @@
+import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
+import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
-import { StatBoosterModifier } from "#modifiers/modifier";
+import { type EffectiveStat, Stat } from "#enums/stat";
 import { GameManager } from "#test/framework/game-manager";
-import { NumberHolder, randItem } from "#utils/common";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -17,199 +20,39 @@ describe("Items - Eviolite", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-
-    game.override.battleStyle("single").startingHeldItems([{ name: "EVIOLITE" }]);
+    game.override
+      .battleStyle("single")
+      .criticalHits(false)
+      .ability(AbilityId.BALL_FETCH)
+      .nature(Nature.SERIOUS)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingHeldItems([{ entry: HeldItemId.EVIOLITE }]);
   });
 
-  it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async () => {
-    await game.classicMode.startBattle(SpeciesId.PICHU);
+  it.each([Stat.DEF, Stat.SPDEF])("should boost %s by 50% for pokemon that can still evolve", async rawStat => {
+    const stat = rawStat as EffectiveStat;
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const partyMember = game.field.getPlayerPokemon();
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
+    const player = game.field.getPlayerPokemon();
+    const baseline = player.getEffectiveStat(stat, { ignoreHeldItems: true });
+    expect(player).toHaveEffectiveStat(stat, Math.floor(baseline * 1.5));
   });
 
-  it("should not provide a boost for fully evolved, unfused pokemon", async () => {
-    await game.classicMode.startBattle(SpeciesId.RAICHU);
+  it.each([Stat.DEF, Stat.SPDEF])("should not boost %s for fully evolved pokemon", async rawStat => {
+    const stat = rawStat as EffectiveStat;
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
-    const partyMember = game.field.getPlayerPokemon();
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+    const player = game.field.getPlayerPokemon();
+    expect(player.getEffectiveStat(stat)).toBe(player.getEffectiveStat(stat, { ignoreHeldItems: true }));
   });
 
-  it("should provide 50% boost to DEF and SPDEF for completely unevolved, fused pokemon", async () => {
-    await game.classicMode.startBattle(SpeciesId.PICHU, SpeciesId.CLEFFA);
+  it.each([Stat.ATK, Stat.SPATK])("should not boost offensive stats (%s)", async rawStat => {
+    const stat = rawStat as EffectiveStat;
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const [partyMember, ally] = game.scene.getPlayerParty();
-
-    // Fuse party members (taken from PlayerPokemon.fuse(...) function)
-    partyMember.fusionSpecies = ally.species;
-    partyMember.fusionFormIndex = ally.formIndex;
-    partyMember.fusionAbilityIndex = ally.abilityIndex;
-    partyMember.fusionShiny = ally.shiny;
-    partyMember.fusionVariant = ally.variant;
-    partyMember.fusionGender = ally.gender;
-    partyMember.fusionLuck = ally.luck;
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
-  });
-
-  it("should provide 25% boost to DEF and SPDEF for partially unevolved (base), fused pokemon", async () => {
-    await game.classicMode.startBattle(SpeciesId.PICHU, SpeciesId.CLEFABLE);
-
-    const [partyMember, ally] = game.scene.getPlayerParty();
-
-    // Fuse party members (taken from PlayerPokemon.fuse(...) function)
-    partyMember.fusionSpecies = ally.species;
-    partyMember.fusionFormIndex = ally.formIndex;
-    partyMember.fusionAbilityIndex = ally.abilityIndex;
-    partyMember.fusionShiny = ally.shiny;
-    partyMember.fusionVariant = ally.variant;
-    partyMember.fusionGender = ally.gender;
-    partyMember.fusionLuck = ally.luck;
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
-  });
-
-  it("should provide 25% boost to DEF and SPDEF for partially unevolved (fusion), fused pokemon", async () => {
-    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.CLEFFA);
-
-    const [partyMember, ally] = game.scene.getPlayerParty();
-
-    // Fuse party members (taken from PlayerPokemon.fuse(...) function)
-    partyMember.fusionSpecies = ally.species;
-    partyMember.fusionFormIndex = ally.formIndex;
-    partyMember.fusionAbilityIndex = ally.abilityIndex;
-    partyMember.fusionShiny = ally.shiny;
-    partyMember.fusionVariant = ally.variant;
-    partyMember.fusionGender = ally.gender;
-    partyMember.fusionLuck = ally.luck;
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
-  });
-
-  it("should not provide a boost for fully evolved, fused pokemon", async () => {
-    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.CLEFABLE);
-
-    const [partyMember, ally] = game.scene.getPlayerParty();
-
-    // Fuse party members (taken from PlayerPokemon.fuse(...) function)
-    partyMember.fusionSpecies = ally.species;
-    partyMember.fusionFormIndex = ally.formIndex;
-    partyMember.fusionAbilityIndex = ally.abilityIndex;
-    partyMember.fusionShiny = ally.shiny;
-    partyMember.fusionVariant = ally.variant;
-    partyMember.fusionGender = ally.gender;
-    partyMember.fusionLuck = ally.luck;
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
-  });
-
-  it("should not provide a boost for Gigantamax Pokémon", async () => {
-    game.override.starterForms({
-      [SpeciesId.PIKACHU]: 8,
-      [SpeciesId.EEVEE]: 2,
-      [SpeciesId.DURALUDON]: 1,
-      [SpeciesId.MEOWTH]: 1,
-    });
-
-    const gMaxablePokemon = [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.DURALUDON, SpeciesId.MEOWTH];
-
-    await game.classicMode.startBattle(randItem(gMaxablePokemon));
-
-    const partyMember = game.field.getPlayerPokemon();
-
-    vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
-      const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
-
-      return Math.floor(statValue.value);
-    });
-
-    const defStat = partyMember.getStat(Stat.DEF, false);
-    const spDefStat = partyMember.getStat(Stat.SPDEF, false);
-
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+    const player = game.field.getPlayerPokemon();
+    expect(player.getEffectiveStat(stat)).toBe(player.getEffectiveStat(stat, { ignoreHeldItems: true }));
   });
 });

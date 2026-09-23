@@ -6,8 +6,9 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { EvoCondKey, EvolutionItem } from "#balance/pokemon-evolutions";
+import { EvoCondKey } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
+import { EvolutionItem } from "#enums/evolution-item";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
