@@ -69,7 +69,7 @@ import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
@@ -88,7 +88,6 @@ import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { isIgnorePP, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { Nature } from "#enums/nature";
-import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -104,9 +103,7 @@ import {
   Stat,
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
-import { UiMode } from "#enums/ui-mode";
 import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
 import {
@@ -131,7 +128,7 @@ import {
   TempStatStageBoosterModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { HitsTagAttr, Move } from "#moves/move";
+import type { HitsTagAttr } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { loadMoveAnimations } from "#sprites/pokemon-asset-loader";
@@ -150,6 +147,7 @@ import type {
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { LevelMovesWithSource } from "#types/level-moves";
+import type { Move } from "#types/move-types";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
@@ -157,8 +155,6 @@ import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -763,7 +759,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): BattlerIndex;
+  abstract getBattlerIndex(): FieldBattlerIndex;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -5996,8 +5992,8 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
-    return this.getFieldIndex();
+  getBattlerIndex(): FieldBattlerIndex {
+    return this.getFieldIndex() as FieldBattlerIndex;
   }
 
   /**
@@ -6036,37 +6032,6 @@ export class PlayerPokemon extends Pokemon {
     return this.getCompatibleTms(excludeKnown).includes(tm);
   }
 
-  /**
-   * Cause this Pokémon to leave the field (via {@linkcode leaveField}) and then
-   * open the party switcher UI to switch in a new Pokémon
-   * @param switchType - The type of this switch-out. If this is
-   * `BATON_PASS` or `SHED_TAIL`, this Pokémon's effects are not cleared upon leaving
-   * the field.
-   */
-  switchOut(switchType: SwitchType = SwitchType.SWITCH): Promise<void> {
-    return new Promise(resolve => {
-      this.leaveField(switchType === SwitchType.SWITCH);
-
-      globalScene.ui.setMode(
-        UiMode.PARTY,
-        PartyUiMode.FAINT_SWITCH,
-        this.getFieldIndex(),
-        (slotIndex: number, _option: PartyOption) => {
-          if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
-            globalScene.phaseManager.queueDeferred(
-              "SwitchSummonPhase",
-              switchType,
-              this.getFieldIndex(),
-              slotIndex,
-              false,
-            );
-          }
-          globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
-        },
-        PartyUiHandler.FilterNonFainted,
-      );
-    });
-  }
   /**
    * Add friendship to this Pokemon
    *
@@ -7178,12 +7143,13 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  public getBattlerIndex(): BattlerIndex {
+  public getBattlerIndex(): FieldBattlerIndex {
     const fieldIndex = this.getFieldIndex();
     if (fieldIndex === -1) {
-      return BattlerIndex.ATTACKER;
+      // TODO: resolve this later
+      return BattlerIndex.ATTACKER as unknown as FieldBattlerIndex;
     }
-    return BattlerIndex.ENEMY + this.getFieldIndex();
+    return (BattlerIndex.ENEMY + this.getFieldIndex()) as FieldBattlerIndex;
   }
 
   /**
