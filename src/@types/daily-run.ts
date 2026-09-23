@@ -1,3 +1,4 @@
+import type { Gender } from "#data/gender";
 import type { AbilityId } from "#enums/ability-id";
 import type { BiomeId } from "#enums/biome-id";
 import type { BiomePoolTier } from "#enums/biome-pool-tier";
@@ -6,8 +7,12 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import type { IntClosedRange, TupleOf } from "type-fest";
 import type { StarterMoveset } from "./save-data";
 import type { TupleRange } from "./type-helpers";
+
+type DailySeedIv = IntClosedRange<0, 32>;
+type DailySeedIvs = TupleOf<6, DailySeedIv>;
 
 /**
  * Configuration for a custom daily run starter Pokémon.
@@ -15,15 +20,30 @@ import type { TupleRange } from "./type-helpers";
  * When updating this interface, also update:
  * - `src/data/daily-seed/schema.json`
  */
-export interface DailySeedStarter {
+interface DailySeedStarterBase {
   speciesId: SpeciesId;
   formIndex?: number | undefined;
   variant?: Variant | undefined;
   moveset?: StarterMoveset | undefined;
   nature?: Nature | undefined;
-  ability?: AbilityId | undefined;
   passive?: AbilityId | undefined;
+  gender?: Gender | undefined;
+  ivs?: DailySeedIvs | undefined;
 }
+
+export type DailySeedStarter = DailySeedStarterBase &
+  (
+    | {
+        /** Any ability, including one the species cannot normally have. */
+        ability?: AbilityId | undefined;
+        abilityIndex?: never;
+      }
+    | {
+        ability?: never;
+        /** The species ability slot to use. */
+        abilityIndex?: number | undefined;
+      }
+  );
 
 export type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
 
@@ -41,6 +61,7 @@ export interface DailySeedBoss {
   nature?: Nature | undefined;
   ability?: AbilityId | undefined;
   passive?: AbilityId | undefined;
+  ivs?: DailySeedIvs | undefined;
   segments?: number | undefined;
   catchable?: boolean | undefined;
 }
@@ -106,6 +127,28 @@ export interface DailyEventMysteryEncounter {
 }
 
 /**
+ * Configuration for a custom daily run forced biome.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.json`
+ */
+export type DailyForcedBiome =
+  | {
+      waveIndex: 10 | 20 | 30 | 40;
+      /** One or more biomes to force at the end of the specified wave index */
+      biomeId: BiomeId[];
+      /** Whether all map options should be available at the end of the specified wave index */
+      allMapOptions?: never;
+    }
+  | {
+      waveIndex: 10 | 20 | 30 | 40;
+      /** One or more biomes to force at the end of the specified wave index */
+      biomeId?: never;
+      /** Whether all map options should be available at the end of the specified wave index */
+      allMapOptions: true;
+    };
+
+/**
  * Configuration for a custom daily run seed.
  * @privateRemarks
  * When updating this interface, also update:
@@ -121,6 +164,7 @@ export interface CustomDailyRunConfig {
   trainerManipulations?: DailyTrainerManipulation[] | undefined;
   challenges?: DailyEventChallenge[] | undefined;
   mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
+  forcedBiomes?: DailyForcedBiome[] | undefined;
   /** The actual seed used for the daily run. */
   seed: string;
 }
@@ -138,5 +182,6 @@ export interface SerializedDailyRunConfig {
   trainerManipulations?: DailyTrainerManipulation[] | undefined;
   challenges?: DailyEventChallenge[] | undefined;
   mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
+  forcedBiomes?: DailyForcedBiome[] | undefined;
   seed: string;
 }
