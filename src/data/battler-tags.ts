@@ -3759,6 +3759,24 @@ export class FlingTag extends ChosenItemTag {
   }
 }
 
+export class BestowTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.BESTOW, sourceMove);
+  }
+}
+
+export class TrickTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.TRICK, sourceMove);
+  }
+}
+
+export class SwitcherooTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.SWITCHEROO, sourceMove);
+  }
+}
+
 /**
  * Tag associated with the move Magic Coat.
  */
@@ -4052,6 +4070,12 @@ export function getBattlerTag(
       return new GrudgeTag();
     case BattlerTagType.FLING:
       return new FlingTag(sourceMove);
+    case BattlerTagType.BESTOW:
+      return new FlingTag(sourceMove);
+    case BattlerTagType.TRICK:
+      return new FlingTag(sourceMove);
+    case BattlerTagType.SWITCHEROO:
+      return new FlingTag(sourceMove);
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
@@ -4193,6 +4217,9 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
   [BattlerTagType.FLING]: FlingTag;
+  [BattlerTagType.BESTOW]: BestowTag;
+  [BattlerTagType.TRICK]: TrickTag;
+  [BattlerTagType.SWITCHEROO]: SwitcherooTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
