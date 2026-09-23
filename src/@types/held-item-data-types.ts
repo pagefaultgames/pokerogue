@@ -15,6 +15,10 @@ export interface HeldItemData {
    */
   stack: number;
   /**
+   * Number of temporary items in the stack, e.g. from flinging or stealing
+   */
+  tempStack?: number;
+  /**
    * Whether this item is currently disabled.
    * @defaultValue `false`
    */

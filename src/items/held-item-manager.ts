@@ -45,6 +45,28 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.getItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
+  // TODO: Consider renaming to `getStackCount`
+  public override getStack(itemType: HeldItemId, includeTemp = true): number {
+    const item = this.items.get(itemType);
+    const stack = item?.stack ?? 0;
+    if (!includeTemp) {
+      return stack;
+    }
+    return stack + (item?.tempStack ?? 0);
+  }
+
+  public isMaxStack(itemType: HeldItemId, includeTemp = true): boolean {
+    const item = this.items.get(itemType);
+    if (!item) {
+      return false;
+    }
+    if (!includeTemp) {
+      return item.stack >= this.getMaxStackCount(itemType);
+    }
+    const tempStack = item?.tempStack ?? 0;
+    return item.stack + tempStack >= this.getMaxStackCount(itemType);
+  }
+
   public override hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
     if (isCategoryId(itemType)) {
       return this.getItems().some(id => isItemInCategory(id, itemType));
