@@ -5,7 +5,6 @@ import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
-import { ribbonFlagToAssetKey } from "#system/ribbon-methods";
 import { TabMenu } from "#ui/tab-menu";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -62,8 +61,6 @@ export class GameChallengesUiHandler extends UiHandler {
     ChallengeCategory.NUZLOCKE,
     ChallengeCategory.MISC,
   ];
-
-  private ribbonIcons: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Image)[] = [];
 
   public override setup(): void {
     const ui = this.getUi();
@@ -478,18 +475,9 @@ export class GameChallengesUiHandler extends UiHandler {
         labels.push(", ");
       }
       labels.push(label);
-
-      const icon = ribbonFlagToAssetKey(ribbon);
-      this.challengesContainer.add(icon);
-      this.ribbonIcons.push(icon);
     }
 
     this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${text.concat(...labels)}`);
-    const baseX = this.descriptionText.x + 8;
-    const baseY = this.descriptionText.y + this.descriptionText.displayHeight + 12;
-    for (const [index, icon] of this.ribbonIcons.entries()) {
-      icon.setPosition(baseX + (index % 7) * 16, baseY + Math.floor(index / 7) * 16);
-    }
   }
 
   private activateStartCursor(): void {
@@ -504,11 +492,6 @@ export class GameChallengesUiHandler extends UiHandler {
     this.startCursor.setVisible(false);
     this.cursorObj?.setVisible(true);
     this.updateChallengeArrowsTint(this.startCursor.visible);
-
-    for (const icon of this.ribbonIcons) {
-      icon.destroy();
-    }
-    this.ribbonIcons = [];
   }
 
   private goToBottomOfChallengeList(): boolean {
