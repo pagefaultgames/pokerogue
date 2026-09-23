@@ -11,8 +11,8 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 import type { StarterMoveset } from "./save-data";
 import type { TupleRange } from "./type-helpers";
 
-type DailySeedIv = IntClosedRange<0, 32>;
-type DailySeedIvs = TupleOf<6, DailySeedIv>;
+export type DailySeedIv = IntClosedRange<0, 32>;
+export type DailySeedIvs = TupleOf<6, DailySeedIv>;
 
 /**
  * Configuration for a custom daily run starter Pokémon.

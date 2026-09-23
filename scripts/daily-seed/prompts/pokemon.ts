@@ -5,15 +5,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import type { Variant } from "#sprites/variant";
+import type { DailySeedIv, DailySeedIvs } from "#types/daily-run";
 import type { StarterMoveset } from "#types/save-data";
 import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
-import { number, search } from "@inquirer/prompts";
+import { number, search, select } from "@inquirer/prompts";
 
 // TODO: Change all these prompts to pass `Choice` objects to inquirer to avoid re-mapping cases back and forth
 // (which would also remove the annoying type assertions)
@@ -134,7 +138,7 @@ export async function promptMoveset(): Promise<StarterMoveset> {
  */
 export async function promptAbility(passive = false): Promise<AbilityId> {
   const abilityName = await search({
-    message: `Please enter the ${passive ? "passive" : "normal"} ability of the final boss.`,
+    message: `Please enter the ${passive ? "passive" : "normal"} ability of the Pokémon.`,
     source: term => {
       const abilities = getEnumKeys(AbilityId).map(toTitleCase);
       if (!term) {
@@ -148,6 +152,23 @@ export async function promptAbility(passive = false): Promise<AbilityId> {
 }
 
 /**
+ * Prompt the user to enter an ability index for a given species.
+ * @param speciesId - The species for which to prompt the ability index
+ * @returns A Promise that resolves with the chosen ability index.
+ */
+export async function promptAbilityIndex(speciesId: SpeciesId): Promise<number> {
+  const species = speciesDataRegistry.getSpecies(speciesId);
+  const abilities = [species.ability1, species.ability2, species.abilityHidden].filter(Boolean);
+  const selectedAbilityName = await select({
+    message: "Please select the ability of the Pokémon.",
+    choices: abilities.map(a => toTitleCase(AbilityId[a])),
+  });
+  const selectedAbilityId = AbilityId[toUpperSnakeCase(selectedAbilityName) as keyof typeof AbilityId];
+  const abilityIndex = abilities.indexOf(selectedAbilityId);
+  return abilityIndex;
+}
+
+/**
  * Prompt the user to enter the number of segments for the boss fight.
  * @returns A Promise that resolves with the chosen number of segments.
  */
@@ -158,4 +179,44 @@ export async function promptSegments(): Promise<number> {
     default: 5,
     required: true,
   });
+}
+
+/**
+ * Prompt the user to enter a gender for the Pokémon.
+ * @returns A Promise that resolves with the chosen gender.
+ */
+export async function promptGender(): Promise<Gender> {
+  const genderName = await select({
+    message: "Please select the gender of the Pokémon.",
+    choices: getEnumKeys(Gender)
+      .filter(g => g !== "GENDERLESS")
+      .map(toTitleCase),
+  });
+  const genderId = Gender[toUpperSnakeCase(genderName) as keyof typeof Gender];
+  return genderId;
+}
+
+/**
+ * Prompt the user to enter the IVs for a Pokémon.
+ * @returns A Promise that resolves with the chosen IVs.
+ */
+export async function promptIvs(): Promise<DailySeedIvs> {
+  const ivs: DailySeedIvs = [0, 0, 0, 0, 0, 0];
+  let lastIv = 0;
+
+  for (let i = 0; i < ivs.length; i++) {
+    const statName = toTitleCase(Stat[i]);
+    const iv = (await number({
+      message: `Please enter the IV for ${statName}.`,
+      min: 0,
+      max: 31,
+      step: 1,
+      required: true,
+      default: lastIv,
+    })) as DailySeedIv;
+    ivs[i] = iv;
+    lastIv = iv;
+  }
+
+  return ivs;
 }
