@@ -132,7 +132,7 @@ export function determineEnemySpecies(
   }
 
   // If this is for a trainer with a specialty type, and there's a possible evo with that type, filter for it
-  if (globalScene.currentBattle.trainer?.config.hasSpecialtyType()) {
+  if (globalScene.currentBattle?.trainer && globalScene.currentBattle.trainer?.config.hasSpecialtyType()) {
     const specialtyType = globalScene.currentBattle.trainer.config.specialtyType;
     const filteredEvos = evolutions.filter(e => {
       return speciesDataRegistry.getPokemonSpeciesForm(e.speciesId, e.evoFormKey ?? 0).isOfType(specialtyType);
