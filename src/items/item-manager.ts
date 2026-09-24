@@ -173,6 +173,12 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     item.tempStack = Phaser.Math.Clamp(tempStack, -permanentStack, maxStack - permanentStack);
   }
 
+  public clearTempStacks(): void {
+    for (const item of this.items.values()) {
+      item.tempStack = 0;
+    }
+  }
+
   // TODO: Merge `removeStack` and `all` into 1 parameter to avoid passing useless values for the former
   public remove(itemType: Id, removeStack = 1, all = false): void {
     const item = this.items.get(itemType);
