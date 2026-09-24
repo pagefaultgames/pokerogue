@@ -181,7 +181,9 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     }
 
     item.stack -= removeStack;
+    this.clampTempStack(itemType);
     if (all || item.stack <= 0) {
+      // TODO: what if tempStack > 0?
       this.items.delete(itemType);
     }
   }

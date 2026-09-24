@@ -5865,22 +5865,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
-   * Does nothing if this Pokemon is somehow not the owner of the held item.
+   * Triggers in-battle effects (such as Unburden) after losing the item.
+   * Out-of-battle item loss (MEs, etc.) should use heldItemManager.remove directly.
    * @param heldItem - The item stack to be reduced.
-   * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
-   * Should be `false` for all item loss occurring outside of battle (MEs, etc.).
    * @returns Whether the item was removed successfully.
    */
-  public loseHeldItem(heldItemId: HeldItemId, forBattle = true): boolean {
+  public loseHeldItem(heldItemId: HeldItemId, tempStack = true): boolean {
     if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }
 
-    this.heldItemManager.remove(heldItemId);
-
-    if (forBattle) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
+    if (tempStack) {
+      this.heldItemManager.addTempStack(heldItemId, -1);
+    } else {
+      this.heldItemManager.remove(heldItemId);
     }
+
+    applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
 
     return true;
   }

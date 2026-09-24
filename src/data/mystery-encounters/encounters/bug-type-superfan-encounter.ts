@@ -423,7 +423,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         const lostItem = encounter.misc.chosenItem;
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
-        chosenPokemon.loseHeldItem(lostItem, false);
+        chosenPokemon.heldItemManager.remove(lostItem);
         globalScene.updateItemBar(true);
 
         const bugNet = generateRewardOptionFromId(TrainerItemId.GOLDEN_BUG_NET)!;
