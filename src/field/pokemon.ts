@@ -2024,29 +2024,27 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Iterate through the moveset and replace the first instance of the target move with the replacement move.
-   * @param moveset - The moveset to modify
+   * Does nothing if the replacement move is already in the moveset
    * @param target - The id of the move that should be replaced
    * @param replacement - The move that replaces `target`
-   * @returns Target move if it was replaced; replacement if it was already in moveset; NONE otherwise
    */
-  public replaceInMoveset(target: MoveId, replacement: MoveId): MoveId {
+  public replaceInMoveset(target: MoveId, replacement: MoveId): void {
     if (globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)) {
-      return MoveId.NONE;
+      return;
     }
     let foundIdx = -1;
-    let ret = MoveId.NONE;
     for (const [idx, move] of this.moveset.entries()) {
       if (move.moveId === target) {
         foundIdx = idx;
-        ret = target;
       } else if (move.moveId === replacement) {
-        return replacement;
+        // Replacement move already in moveset
+        return;
       }
     }
     if (foundIdx > -1) {
       this.setMove(foundIdx, replacement);
     }
-    return ret;
+    return;
   }
 
   /**
@@ -2054,34 +2052,30 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param replacement - The move to insert in moveset
    * @param preferredSlot - The preferred slot to put the move in; numbers outside 0-3 pick a random slot
    * @param altMoveFilter - (Optional) A filtering function mapping a Move to a boolean; if a move in the moveset fulfills it, the replacement is not done
-   * @returns The move that was replaced, or the existing move satisfying altMoveFilter
    */
   public addIfNotInMoveset(
     replacement: MoveId,
     preferredSlot: number,
     altMoveFilter: (move: Move) => boolean = () => true,
-  ): MoveId {
-    if (globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)) {
-      return replacement;
-    }
-    const matchingMove = this.moveset.find(m => altMoveFilter(m.getMove()) || m.moveId === replacement);
-    if (matchingMove) {
-      return matchingMove.moveId;
+  ): void {
+    if (
+      globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)
+      || this.moveset.find(m => altMoveFilter(m.getMove()) || m.moveId === replacement)
+    ) {
+      return;
     }
     if (preferredSlot > -1 && preferredSlot < 4) {
-      const ret = this.moveset[preferredSlot].moveId;
       this.setMove(preferredSlot, replacement);
-      return ret;
+      return;
     }
     const noneIndex = this.moveset.findIndex(m => m.moveId === MoveId.NONE);
     if (noneIndex > -1) {
       this.setMove(noneIndex, replacement);
-      return MoveId.NONE;
+      return;
     }
     const randIndex = randSeedInt(4);
-    const prevMove = this.moveset[randIndex].moveId;
     this.setMove(randIndex, replacement);
-    return prevMove;
+    return;
   }
 
   // #endregion Moves/Moveset
