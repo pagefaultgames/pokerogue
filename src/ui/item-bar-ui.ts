@@ -46,6 +46,9 @@ export class ItemBar extends Phaser.GameObjects.Container {
     if (pokemonA) {
       heldItemsA.forEach(item => {
         const icon = allHeldItems[item].createPokemonIcon(pokemonA);
+        if (pokemonA.heldItemManager.getItemSpecs(item)?.disabled) {
+          icon.alpha = 0.3;
+        }
         iconCount += 1;
         this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
       });
@@ -54,6 +57,9 @@ export class ItemBar extends Phaser.GameObjects.Container {
     if (pokemonB) {
       heldItemsB.forEach(item => {
         const icon = allHeldItems[item].createPokemonIcon(pokemonB);
+        if (pokemonB.heldItemManager.getItemSpecs(item)?.disabled) {
+          icon.alpha = 0.3;
+        }
         iconCount += 1;
         this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
       });

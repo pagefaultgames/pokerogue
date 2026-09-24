@@ -42,7 +42,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { BattlerTagType, type ChooseItemBattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
@@ -109,12 +109,14 @@ import { getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
+import type { HeldItemSortFunc } from "#types/held-item-data-types";
 import type { Localizable } from "#types/locales";
 import type {
   ChargingMove,
   MoveAttrMap,
   MoveAttrString,
   MoveClassMap,
+  MoveItemMessageFunc,
   MoveKindString,
   MoveMessageFunc,
 } from "#types/move-types";
@@ -143,6 +145,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
+import { flingPower, flingSortFunc } from "./fling-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -1884,6 +1887,52 @@ export class PreMoveMessageAttr extends MoveAttr {
 }
 
 /**
+ * Attribute to prompt the user to choose an item before the move is executed.
+ */
+export class PreMoveChooseItemAttr extends MoveAttr {
+  public readonly message: string | MoveMessageFunc;
+  private tagType: ChooseItemBattlerTagType;
+  private sortFunc: HeldItemSortFunc;
+
+  constructor(message: string | MoveMessageFunc, tagType: ChooseItemBattlerTagType, sortFunc: HeldItemSortFunc) {
+    super();
+    this.message = message;
+    this.tagType = tagType;
+    this.sortFunc = sortFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
+
+    const items = user.heldItemManager.getActiveTransferableHeldItems();
+
+    items.sort((a, b) => this.sortFunc(a, b));
+
+    if (message) {
+      globalScene.phaseManager.queueMessage(message, 500);
+
+      const chooseItemPhase = globalScene.phaseManager.create(
+        "ItemSelectPhase",
+        items,
+        (itemId: HeldItemId) => {
+          user.addTag(this.tagType, 0, move.id);
+          user.getTag(this.tagType)?.chooseItem(itemId);
+        },
+        () => {
+          const fieldIndex = user.getFieldIndex();
+          globalScene.currentBattle.turnCommands[fieldIndex] = null;
+          globalScene.phaseManager.unshiftNew("CommandPhase", fieldIndex);
+        },
+      );
+      globalScene.phaseManager.unshiftPhase(chooseItemPhase);
+
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
  * Attribute for moves that can be conditionally interrupted to be considered to
  * have failed before their "useMove" message is displayed. Currently used by
  * Focus Punch.
@@ -2192,6 +2241,41 @@ export class MessageAttr extends MoveEffectAttr {
 
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
+
+    // TODO: Consider changing if/when MoveAttr `apply` return values become significant
+    if (message) {
+      globalScene.phaseManager.queueMessage(message, 500);
+      return true;
+    }
+    return false;
+  }
+}
+
+/**
+ * Move attribute to display arbitrary text during a move's execution.
+ */
+export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
+  /** The message to display, either as a string or a function returning one. */
+  private readonly message: MoveItemMessageFunc;
+
+  constructor(message: MoveItemMessageFunc, options?: MoveEffectAttrOptions) {
+    // TODO: Do we need to respect `selfTarget` if we're just displaying text?
+    super(false, options);
+    this.message = message;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    const item = user.getTag(BattlerTagType.FLING)?.item;
+    if (!item) {
+      // This should never happen at this point
+      return false;
+    }
+
+    user.heldItemManager.disable(item);
+    user.removeTag(BattlerTagType.FLING);
+    globalScene.updateItemBar(user.isPlayer());
+
+    const message = this.message(user, target, move, item);
 
     // TODO: Consider changing if/when MoveAttr `apply` return values become significant
     if (message) {
@@ -4215,6 +4299,56 @@ export class SecretPowerAttr extends MoveEffectAttr {
   }
 }
 
+export class FlingEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  /**
+   * Used to apply the secondary effect to the target Pokemon
+   * @returns `true` if a secondary effect is successfully applied
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+    let secondaryEffect: MoveEffectAttr | undefined;
+
+    const item = user.getTag(BattlerTagType.FLING)?.item;
+
+    if (!item) {
+      return false;
+    }
+
+    switch (item) {
+      case HeldItemId.POISON_BARB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.POISON, false);
+        break;
+      case HeldItemId.LIGHT_BALL:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        break;
+      case HeldItemId.FLAME_ORB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+        break;
+      case HeldItemId.TOXIC_ORB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.TOXIC, false);
+        break;
+      case HeldItemId.KINGS_ROCK:
+        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+        break;
+      case HeldItemId.WHITE_HERB:
+        secondaryEffect = new ResetNegativeStatsAttr(false);
+        break;
+    }
+
+    if (!secondaryEffect) {
+      return false;
+    }
+
+    return secondaryEffect.apply(user, target, move, []);
+  }
+}
+
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private readonly stats: BattleStat[];
   private readonly stages: number;
@@ -4413,6 +4547,15 @@ export class ResetStatsAttr extends MoveEffectAttr {
       pokemon.setStatStage(s, 0);
     }
     pokemon.updateInfo();
+  }
+}
+
+// Currently only used as an effect of Fling when throwing a White Herb
+export class ResetNegativeStatsAttr extends MoveEffectAttr {
+  override apply(_user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    target.summonData.statStages = target.summonData.statStages.map(stage => Math.max(stage, 0));
+    target.updateInfo();
+    return true;
   }
 }
 
@@ -4708,6 +4851,44 @@ export class WeightPowerAttr extends VariablePowerAttr {
     }
 
     power.value = (w + 1) * 20;
+
+    return true;
+  }
+}
+
+export class FlingPowerAttr extends VariablePowerAttr {
+  /**
+   * Move power depends on the item being thrown
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const power = args[0] as NumberHolder;
+
+    // TODO: Add check that the chosen item tag was added by Fling and not some other move
+    let item = user.getTag(BattlerTagType.FLING)?.item;
+    // If there is no battle tag, choose a new item based on the priority list
+    // This should happen if the move is used by an enemy Pokémon, or if the move is called through other means
+    if (!item) {
+      const items = user.heldItemManager.getActiveTransferableHeldItems();
+      if (items.length === 0) {
+        return false;
+      }
+      items.sort((a, b) => flingSortFunc(a, b));
+      item = items[0];
+      user.addTag(BattlerTagType.FLING, 0, MoveId.FLING);
+      user.getTag(BattlerTagType.FLING)?.chooseItem(item);
+    }
+
+    if (!item) {
+      power.value = -1;
+      return true;
+    }
+
+    power.value = flingPower[item] ?? 10;
 
     return true;
   }
@@ -8951,7 +9132,10 @@ const failIfLastInPartyCondition: MoveConditionFunc = user => {
 const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.isOfType(PokemonType.GHOST);
 
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
-  target.heldItemManager.getTransferableHeldItems().length > 0;
+  target.heldItemManager.getActiveTransferableHeldItems().length > 0;
+
+const failIfNoUserHeldItemsCondition: MoveConditionFunc = (user, _target) =>
+  user.heldItemManager.getActiveTransferableHeldItems().length > 0;
 
 // #endregion Condition functions
 
@@ -9153,6 +9337,7 @@ const MoveAttrs = Object.freeze({
   AddBattlerTagHeaderAttr,
   BeakBlastHeaderAttr,
   PreMoveMessageAttr,
+  PreMoveChooseItemAttr,
   PreUseInterruptAttr,
   RespectAttackTypeImmunityAttr,
   IgnoreOpponentStatStagesAttr,
@@ -10614,8 +10799,21 @@ export function initMoves() {
       .reflectable()
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to Fling?",
+        BattlerTagType.FLING,
+        flingSortFunc,
+      )
+      .attr(FlingPowerAttr)
+      .attr(FlingEffectAttr)
+      .attr(
+        PostMoveLoseItemMessageAttr,
+        (user, _target, _move, item) => `${user.name} threw its ${allHeldItems[item].name}!`,
+      )
+      .condition(failIfNoUserHeldItemsCondition, 2)
       .makesContact(false)
-      .unimplemented(),
+      .partial(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
       // TODO: Verify status applied if a statused pokemon obtains Comatose (via Transform) and uses Psycho Shift

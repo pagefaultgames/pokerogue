@@ -45,6 +45,16 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.getItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
+  // Function returning all items that are not currently disabled
+  public getActiveHeldItems(): HeldItemId[] {
+    return this.getItems().filter(k => !this.items.get(k)?.disabled);
+  }
+
+  // Function returning all transferable items that are not currently disabled
+  public getActiveTransferableHeldItems(): HeldItemId[] {
+    return this.getTransferableHeldItems().filter(k => !this.items.get(k)?.disabled);
+  }
+
   public override hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
     if (isCategoryId(itemType)) {
       return this.getItems().some(id => isItemInCategory(id, itemType));
@@ -85,6 +95,24 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     if (item) {
       item.active = !item.active;
     }
+  }
+
+  public disable(itemType: HeldItemId): void {
+    const item = this.items.get(itemType);
+    if (!item || !allHeldItems[itemType].isSuppressable) {
+      return;
+    }
+
+    item.disabled = true;
+  }
+
+  public enable(itemType: HeldItemId): void {
+    const item = this.items.get(itemType);
+    if (!item) {
+      return;
+    }
+
+    item.disabled = false;
   }
 
   // #endregion
