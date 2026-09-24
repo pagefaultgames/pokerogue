@@ -1528,7 +1528,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (stat) {
       case Stat.ATK:
         if (this.getTag(BattlerTagType.SLOW_START)) {
-          ret >>= 1;
+          ret /= 2;
         }
         break;
       case Stat.DEF:
@@ -1549,14 +1549,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           ret *= 2;
         }
         if (globalScene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, side)) {
-          ret >>= 2;
+          ret /= 4;
         }
 
         if (this.getTag(BattlerTagType.SLOW_START)) {
-          ret >>= 1;
+          ret /= 2;
         }
-        if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
-          ret >>= 1;
+        if (this.status?.effect === StatusEffect.PARALYSIS) {
+          ret /= 2;
         }
         if (this.getTag(BattlerTagType.UNBURDEN) && this.hasAbility(AbilityId.UNBURDEN)) {
           ret *= 2;
@@ -2338,10 +2338,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (globalScene.movesetGenInProgress) {
       return true;
     }
+
     if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
       return false;
     }
-    const arena = globalScene?.arena;
+    const { arena } = globalScene;
     if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
     }

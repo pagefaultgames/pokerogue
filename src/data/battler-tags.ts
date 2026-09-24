@@ -479,60 +479,45 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Tag used by Gorilla Tactics to restrict the user to using only one move.
- *
+ * Tag used by {@link https://bulbapedia.bulbagarden.net/wiki/Gorilla_Tactics_(Ability) | Gorilla Tactics} to restrict the user to using only one move.
  * @sealed
  */
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.GORILLA_TACTICS;
-  /** ID of the move that the user is locked into using*/
+
+  /**
+   * The {@linkcode MoveId} that the user is locked into using.
+   * @defaultValue `MoveId.NONE` (until the tag is added to a Pokemon)
+   */
   public readonly moveId: MoveId = MoveId.NONE;
+
   constructor() {
     super(BattlerTagType.GORILLA_TACTICS, BattlerTagLapseType.CUSTOM, 0);
   }
 
-  override isMoveRestricted(move: MoveId): boolean {
+  public override isMoveRestricted(move: MoveId): boolean {
     return move !== this.moveId;
   }
 
-  /**
-   * Ensures that move history exists on {@linkcode Pokemon} and has a valid move to lock into.
-   * @param pokemon - The {@linkcode Pokemon} to add the tag to
-   * @returns `true` if the tag can be added
-   */
-  override canAdd(pokemon: Pokemon): boolean {
+  public override canAdd(pokemon: Pokemon): boolean {
     // Choice items ignore struggle, so Gorilla Tactics should too
     const lastSelectedMove = pokemon.getLastNonVirtualMove();
     return lastSelectedMove != null && lastSelectedMove.move !== MoveId.STRUGGLE;
   }
 
-  /**
-   * Sets this tag's {@linkcode moveId} and increases the user's Attack by 50%.
-   * @param pokemon - The {@linkcode Pokemon} to add the tag to
-   */
-  override onAdd(pokemon: Pokemon): void {
+  public override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
     // Bang is justified as tag is not added if prior move doesn't exist
     (this as Writable<GorillaTacticsTag>).moveId = pokemon.getLastNonVirtualMove()!.move;
-    pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
-  /**
-   * Loads the Gorilla Tactics Battler Tag along with its unique class variable moveId
-   * @param source - Object containing the fields needed to reconstruct this tag.
-   */
   public override loadTag(source: BaseBattlerTag & Pick<GorillaTacticsTag, "tagType" | "moveId">): void {
     super.loadTag(source);
     (this as Writable<GorillaTacticsTag>).moveId = source.moveId;
   }
 
-  /**
-   * Return the text displayed when a move is restricted.
-   * @param pokemon - The {@linkcode Pokemon} with this tag.
-   * @returns A string containing the text to display when the move is denied
-   */
-  override selectionDeniedText(pokemon: Pokemon): string {
+  public override selectionDeniedText(pokemon: Pokemon): string {
     return i18next.t("battle:canOnlyUseMove", {
       moveName: allMoves[this.moveId].name,
       pokemonName: getPokemonNameWithAffix(pokemon),
