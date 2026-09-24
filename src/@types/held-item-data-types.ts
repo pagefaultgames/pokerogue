@@ -19,11 +19,6 @@ export interface HeldItemData {
    */
   tempStack?: number;
   /**
-   * Whether this item is currently disabled.
-   * @defaultValue `false`
-   */
-  disabled?: boolean;
-  /**
    * Whether a form change is active.
    * TODO: This is only temporary to make things work, form change rework should get rid of it.
    * @defaultValue `false`
