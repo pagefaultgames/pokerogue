@@ -8,9 +8,6 @@
  * @typeParam Specs - The serializable item specification type (Data + `id`).
  */
 // NB: To anyone looking at this, please upvote https://github.com/microsoft/TypeScript/issues/7061
-
-import { clampInt } from "@material/material-color-utilities";
-
 // so we can make `Specs` a proper type alias instead of a free type parameter and remove numerous `as Specs` calls
 export abstract class ItemManager<Id extends number, Data extends { stack: number; tempStack?: number }> {
   protected readonly items: Map<Id, Data> = new Map();
@@ -173,7 +170,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     const permanentStack = this.getStack(itemType, true);
     const maxStack = this.getMaxStackCount(itemType);
     const tempStack = item.tempStack ?? 0;
-    item.tempStack = clampInt(-permanentStack, maxStack - permanentStack, tempStack);
+    item.tempStack = Phaser.Math.Clamp(tempStack, -permanentStack, maxStack - permanentStack);
   }
 
   // TODO: Merge `removeStack` and `all` into 1 parameter to avoid passing useless values for the former
