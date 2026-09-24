@@ -62,6 +62,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     return this.items.size;
   }
 
+  // TODO: why not check that getStack > 0?
   public hasItem(itemType: Id): boolean {
     return this.items.has(itemType);
   }

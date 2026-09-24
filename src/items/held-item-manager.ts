@@ -11,6 +11,7 @@ import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { ItemManager } from "#items/item-manager";
 import type { HeldItemData, HeldItemSpecs } from "#types/held-item-data-types";
 import { isHeldItemSpecs } from "#utils/item-utils";
+import { clampInt } from "@material/material-color-utilities";
 
 /**
  * The `HeldItemManager` is a manager for a {@linkcode Pokemon}'s held items. \
@@ -45,33 +46,68 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.getItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
-  // TODO: Consider renaming to `getStackCount`
-  public override getStack(itemType: HeldItemId, includeTemp = true): number {
+  /**
+   * Returns the stack size of the requested {@linkcode HeldItemId}.
+   * This also includes the temporary stack, unless explicitly requested.
+   * @param itemType - The item to get the stack for
+   * @param excludeTempStack - Whether the temporary stack should be excluded.
+   */
+  public override getStack(itemType: HeldItemId, excludeTempStack = false): number {
     const item = this.items.get(itemType);
-    const stack = item?.stack ?? 0;
-    if (!includeTemp) {
-      return stack;
+    if (!item) {
+      return 0;
     }
-    return stack + (item?.tempStack ?? 0);
+    if (excludeTempStack) {
+      return item.stack;
+    }
+    return item.stack + (item.tempStack ?? 0);
   }
 
-  public isMaxStack(itemType: HeldItemId, includeTemp = true): boolean {
+  public override isMaxStack(itemType: HeldItemId, excludeTempStack = false): boolean {
+    const stack = this.getStack(itemType, excludeTempStack);
+    return stack >= this.getMaxStackCount(itemType);
+  }
+
+  public override hasItem(itemType: HeldItemId | HeldItemCategoryId, excludeTempStack = false): boolean {
+    if (isCategoryId(itemType)) {
+      return this.getItems().some(id => isItemInCategory(id, itemType) && this.getStack(id, excludeTempStack) > 0);
+    }
+    return this.getStack(itemType, excludeTempStack) > 0;
+  }
+
+  /**
+   * Returns all {@linkcode HeldItemId} currently held by the Pokémon.
+   * By default, items for which the stack size is temporarily 0 are not included.
+   * @param excludeTempStack - Whether the temporary stack should be excluded.
+   */
+  public override getItems(excludeTempStack = false): HeldItemId[] {
+    if (excludeTempStack) {
+      return super.getItems();
+    }
+    return super.getItems().filter(k => this.getStack(k) > 0);
+  }
+
+  // TODO: ensure that clamping happend correctly when using this.add
+  /**
+   * Adds to the temporary stack for the given {@linkcode HeldItemId}.
+   * If the sum of stack + tempStack would exceed the limits (less than 0
+   * or more than the maximum stack size), the amount added is clamped.
+   * @param itemType - The item to add.
+   * @param qty - How much to increase the stack.
+   */
+  public addTempStack(itemType: HeldItemId, qty: number): boolean {
+    if (!this.hasItem(itemType)) {
+      this.add(itemType, 0);
+    }
+    const stack = this.getStack(itemType);
+    const permanentStack = this.getStack(itemType, false);
+    const newStack = clampInt(0, this.getMaxStackCount(itemType), stack + qty);
     const item = this.items.get(itemType);
     if (!item) {
       return false;
     }
-    if (!includeTemp) {
-      return item.stack >= this.getMaxStackCount(itemType);
-    }
-    const tempStack = item?.tempStack ?? 0;
-    return item.stack + tempStack >= this.getMaxStackCount(itemType);
-  }
-
-  public override hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
-    if (isCategoryId(itemType)) {
-      return this.getItems().some(id => isItemInCategory(id, itemType));
-    }
-    return super.hasItem(itemType);
+    item.tempStack = newStack - permanentStack;
+    return true;
   }
 
   public hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
