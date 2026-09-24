@@ -45,7 +45,7 @@ function migrateSummonData(summonData: Record<string, unknown>): void {
  * Needed to ensure Last Resort and move-calling moves still work OK.
  * @param data - {@linkcode SystemSaveData}
  */
-const fixMoveHistory: SessionSaveMigrator = {
+const fixMoveHistory = {
   name: "fixMoveHistory",
   version: "1.10.0",
   migrate: data => {
@@ -62,6 +62,6 @@ const fixMoveHistory: SessionSaveMigrator = {
       });
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [fixMoveHistory] as const;
+export const sessionMigrators = [fixMoveHistory] as const satisfies readonly SessionSaveMigrator[];
