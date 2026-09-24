@@ -2051,10 +2051,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Places a specified move in a specified slot unless the moveset contains a move fulfilling the filter
-   * @param moveset The moveset to modify
-   * @param replacement The move to insert in moveset
-   * @param preferredSlot The preferred slot to put the move in; numbers outside 0-3 pick a random slot
-   * @param altMoveFilter A filtering function mapping a Move to a boolean; if a move in the moveset fulfills it, the replacement is not done
+   * @param replacement - The move to insert in moveset
+   * @param preferredSlot - The preferred slot to put the move in; numbers outside 0-3 pick a random slot
+   * @param altMoveFilter - (Optional) A filtering function mapping a Move to a boolean; if a move in the moveset fulfills it, the replacement is not done
    * @returns The move that was replaced, or the existing move satisfying altMoveFilter
    */
   public addIfNotInMoveset(
