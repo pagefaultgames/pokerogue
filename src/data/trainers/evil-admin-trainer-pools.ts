@@ -319,8 +319,8 @@ const SKULL: TrainerTierPools = {
     SpeciesId.VENIPEDE,
     SpeciesId.FOMANTIS,
     SpeciesId.TOXEL,
-    SpeciesId.ALOLA_RATTATA,
     SpeciesId.PALDEA_WOOPER,
+    SpeciesId.SHROODLE,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.NIDORAN_F,
