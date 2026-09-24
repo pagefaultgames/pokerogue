@@ -8,8 +8,11 @@
  * @typeParam Specs - The serializable item specification type (Data + `id`).
  */
 // NB: To anyone looking at this, please upvote https://github.com/microsoft/TypeScript/issues/7061
+
+import { clampInt } from "@material/material-color-utilities";
+
 // so we can make `Specs` a proper type alias instead of a free type parameter and remove numerous `as Specs` calls
-export abstract class ItemManager<Id extends number, Data extends { stack: number }> {
+export abstract class ItemManager<Id extends number, Data extends { stack: number; tempStack?: number }> {
   protected readonly items: Map<Id, Data> = new Map();
 
   /** Look up the item definition's max stack count for the given ID. */
@@ -54,28 +57,48 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
 
   // TODO: Return an iterator for efficiency; we already provide an arity function
   // and polyfill all ES2025 iterator methods
-  public getItems(): Id[] {
-    return Array.from(this.items.keys());
+  /**
+   * Returns all items currently in the manager.
+   * By default, items for which the stack size is temporarily 0 are not included.
+   * @param excludeTempStack - Whether the temporary stack should be excluded.
+   */
+  public getItems(excludeTempStack = false): Id[] {
+    const items = Array.from(this.items.keys());
+    if (excludeTempStack) {
+      return items;
+    }
+    return items.filter(k => this.getStack(k) > 0);
   }
 
   public getItemCount(): number {
     return this.items.size;
   }
 
-  // TODO: why not check that getStack > 0?
-  public hasItem(itemType: Id): boolean {
-    return this.items.has(itemType);
-  }
-
   // TODO: Consider renaming to `getStackCount`
-  public getStack(itemType: Id): number {
+  /**
+   * Returns the stack size of the requested item.
+   * This also includes the temporary stack, unless explicitly requested.
+   * @param itemType - The item to get the stack for
+   * @param excludeTempStack - Whether the temporary stack should be excluded.
+   */
+  public getStack(itemType: Id, excludeTempStack = false): number {
     const item = this.items.get(itemType);
-    return item?.stack ?? 0;
+    if (!item) {
+      return 0;
+    }
+    if (excludeTempStack) {
+      return item.stack;
+    }
+    return item.stack + (item.tempStack ?? 0);
   }
 
-  public isMaxStack(itemType: Id): boolean {
-    const item = this.items.get(itemType);
-    return !!item && item.stack >= this.getMaxStackCount(itemType);
+  public hasItem(itemType: Id, excludeTempStack = false): boolean {
+    return this.getStack(itemType, excludeTempStack) > 0;
+  }
+
+  public isMaxStack(itemType: Id, excludeTempStack = false): boolean {
+    const stack = this.getStack(itemType, excludeTempStack);
+    return stack >= this.getMaxStackCount(itemType);
   }
 
   public add(itemType: Data & { id: Id }): boolean;
@@ -95,6 +118,8 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     // TODO: We may want an error message of some kind instead
     if (item.stack < maxStack) {
       item.stack = Math.min(item.stack + qty, maxStack);
+      // Update temp stack in case it now exceeds limits
+      this.clampTempStack(itemType);
       return true;
     }
 
@@ -114,6 +139,41 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     } as unknown as Data);
 
     return true;
+  }
+
+  /**
+   * Adds to the temporary stack for the given item, then clamps the stack size.
+   * @param itemType - The item to add.
+   * @param qty - How much to increase the stack.
+   */
+  public addTempStack(itemType: Id, qty: number): boolean {
+    if (!this.hasItem(itemType)) {
+      this.add(itemType, 0);
+    }
+    const item = this.items.get(itemType);
+    if (!item) {
+      return false;
+    }
+    const tempStack = item.tempStack ?? 0;
+    item.tempStack = tempStack + qty;
+    this.clampTempStack(itemType);
+    return true;
+  }
+
+  /**
+   * Ensure that the size of the temporary stack is within the limits.
+   * stack + tempStack must never be less than 0 or more than the maximum stack size.
+   * @param itemType - The item to clamp.
+   */
+  private clampTempStack(itemType: Id): void {
+    const item = this.items.get(itemType);
+    if (!item) {
+      return;
+    }
+    const permanentStack = this.getStack(itemType, true);
+    const maxStack = this.getMaxStackCount(itemType);
+    const tempStack = item.tempStack ?? 0;
+    item.tempStack = clampInt(-permanentStack, maxStack - permanentStack, tempStack);
   }
 
   // TODO: Merge `removeStack` and `all` into 1 parameter to avoid passing useless values for the former
