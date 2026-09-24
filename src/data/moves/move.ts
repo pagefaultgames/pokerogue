@@ -2204,10 +2204,12 @@ export class MessageAttr extends MoveEffectAttr {
 }
 
 export class RecoilAttr extends MoveEffectAttr {
+  /** Whether the recoil damage should be based on the user's maximum HP instead of the damage dealt. */
   private readonly useHp: boolean;
   private readonly damageRatio: number;
   private readonly unblockable: boolean;
 
+  // TODO: Make the parameter order more sensible - damage ratio required first, then the other 2 booleans
   constructor(useHp = false, damageRatio = 0.25, unblockable = false) {
     super(true, { lastHitOnly: true });
 
@@ -2230,13 +2232,13 @@ export class RecoilAttr extends MoveEffectAttr {
 
     const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
+      const cancelled = new ValueHolder(false);
       const abAttrParams: AbAttrParamsWithCancel = { pokemon: user, cancelled };
       applyAbAttrs("BlockRecoilDamageAttr", abAttrParams);
       applyAbAttrs("BlockNonDirectDamageAbAttr", abAttrParams);
-    }
-
-    if (cancelled.value) {
-      return false;
+      if (cancelled.value) {
+        return false;
+      }
     }
 
     // Chloroblast and Struggle should not deal recoil damage if the move was not successful
@@ -2271,14 +2273,6 @@ export class SacrificialAttr extends MoveEffectAttr {
     super(true, { trigger: MoveEffectTrigger.POST_TARGET });
   }
 
-  /**
-   * Deals damage to the user equal to their current hp
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
   apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
     user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
     user.turnData.damageTaken += user.hp;
@@ -3936,6 +3930,8 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     return false;
   }
 
+  // TODO: This should arguably be a lambda function set on construction (if we need the custom behavior)
+  // instead of requiring 1 subclass per type
   getLevels(_user: Pokemon): number {
     return this.stages;
   }
@@ -4303,7 +4299,17 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
 }
 
 export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
-  private readonly cutRatio: number; // TODO: NOT A RATIO, THIS IS A DIVISOR
+  /**
+   * A divisor for the user's maximum HP to be lost.
+   * The move will fail if less than this amount is available.
+   */
+  // TODO: Change to a % ratio so the name matches the functionality
+  private readonly cutRatio: number;
+  /**
+   * An optional callback function to be called after the HP loss is applied, allowing for custom messages or effects to be triggered.
+   */
+  // TODO: If this is supposed to display a message, the type should encode that information (return string instead of void)
+  private readonly messageCallback: ((user: Pokemon) => void) | undefined;
 
   constructor(stat: BattleStat[], levels: number, cutRatio: number, options: Partial<StatStageChangeAttrOptions> = {}) {
     super(stat, levels, true, options);
@@ -4313,12 +4319,15 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(toDmgValue(user.getMaxHp() / this.cutRatio), { result: HitResult.INDIRECT });
-    user.updateInfo();
-    return super.apply(user, target, move, args);
+    user.updateInfo(); // TODO: Floating promise!!!
+    const ret = super.apply(user, target, move, args);
+    this.messageCallback?.(user);
+    return ret;
   }
 
   getCondition(): MoveConditionFunc {
-    return user => user.getHpRatio() > 1 / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
+    // TODO: This may not be accurate for contrary on some moves (needs confirmation)
+    return user => user.hp > user.getMaxHp() / this.cutRatio && this.stats.some(s => user.getStatStage(s) < 6);
   }
 }
 

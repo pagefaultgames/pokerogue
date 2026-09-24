@@ -1020,6 +1020,7 @@ export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
 export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   private readonly damageRatio: number;
 
+  // TODO: This is a divisor, not a ratio
   constructor(damageRatio: number) {
     super();
 
@@ -4944,6 +4945,7 @@ export class PostFaintFormChangeAbAttr extends PostFaintAbAttr {
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private readonly damageRatio: number;
 
+  // TODO: This is a divisor, not a ratio
   constructor(damageRatio: number) {
     super(true);
 
@@ -5241,6 +5243,11 @@ export interface MoveAbilityBypassAbAttrParams extends AbAttrBaseParams {
 }
 
 export class MoveAbilityBypassAbAttr extends AbAttr {
+  /**
+   * A lambda function to determine whether a given ability should be ignored.
+   * @defaultValue `() => true` (ignores all abilities)
+   */
+  // TODO: Nothing uses the pokemon parameter; remove it?
   private readonly moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
 
   constructor(moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean = () => true) {
