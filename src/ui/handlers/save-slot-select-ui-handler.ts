@@ -14,6 +14,7 @@ import type {
   OptionSelectItem,
   OptionSelectModeConfig,
   SaveSlotSelectCallback,
+  ShowTextOptions,
 } from "#types/ui-types";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
@@ -149,7 +150,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                                 this.setScrollCursor(0);
                                 this.setCursor(0);
                                 ui.revertMode();
-                                ui.showText("", 0);
+                                ui.showText("", { delay: 0 });
                               }
                             });
                           },
@@ -181,12 +182,12 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                       this.setScrollCursor(0);
                       this.setCursor(0);
                       ui.revertMode();
-                      ui.showText("", 0);
+                      ui.showText("", { delay: 0 });
                     });
                 },
                 noHandler: () => {
                   ui.revertMode();
-                  ui.showText("", 0);
+                  ui.showText("", { delay: 0 });
                 },
                 yOffset: 29,
                 inputDelay: isBeta || isDev ? 300 : 2000,
@@ -197,9 +198,10 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                 label: i18next.t("saveSlotSelectUiHandler:deleteRun"),
                 handler: () => {
                   ui.revertMode();
-                  ui.showText(i18next.t("saveSlotSelectUiHandler:deleteData"), null, () => {
-                    ui.setOverlayMode(UiMode.CONFIRM, deleteDataConfig);
-                  });
+                  ui.showText(
+                    i18next.t("saveSlotSelectUiHandler:deleteData"), //
+                    { callback: () => ui.setOverlayMode(UiMode.CONFIRM, deleteDataConfig) },
+                  );
                   return true;
                 },
                 keepOpen: false,
@@ -222,12 +224,12 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
             case SaveSlotUiMode.SAVE: {
               const saveAndCallback = () => {
-                const originalCallback = this.saveSlotSelectCallback;
+                const originalSaveSlotSelectCallback = this.saveSlotSelectCallback;
                 this.saveSlotSelectCallback = null;
                 ui.revertMode();
-                ui.showText("", 0);
+                ui.showText("", { delay: 0 });
                 ui.setMode(UiMode.MESSAGE);
-                originalCallback?.(cursor);
+                originalSaveSlotSelectCallback?.(cursor);
               };
               if (!this.sessionSlots[cursor].hasData) {
                 saveAndCallback();
@@ -246,16 +248,17 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                 },
                 noHandler: () => {
                   ui.revertMode();
-                  ui.showText("", 0);
+                  ui.showText("", { delay: 0 });
                 },
                 canBypassInputDelay: true,
                 yOffset: 29,
                 inputDelay: isBeta || isDev ? 300 : 2000,
               };
 
-              ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
-                ui.setOverlayMode(UiMode.CONFIRM, overwriteDataOptions);
-              });
+              ui.showText(
+                i18next.t("saveSlotSelectUiHandler:overwriteData"), //
+                { callback: () => ui.setOverlayMode(UiMode.CONFIRM, overwriteDataOptions) },
+              );
               break;
             }
           }
@@ -263,7 +266,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         }
       } else {
         this.saveSlotSelectCallback = null;
-        ui.showText("", 0);
+        ui.showText("", { delay: 0 });
         originalCallback?.(-1);
         success = true;
       }
@@ -336,25 +339,21 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  showText(
+  public override showText(
     text: string,
-    delay?: number,
-    callback?: () => void,
-    callbackDelay?: number,
-    prompt?: boolean,
-    promptDelay?: number,
-  ) {
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    { delay, callback, callbackDelay, prompt, promptDelay }: ShowTextOptions = {},
+  ): void {
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
 
-    if (text?.indexOf("\n") === -1) {
-      this.saveSlotSelectMessageBox.setSize(318, 28);
-      this.message.setY(-22);
-    } else {
+    if (text.includes("\n")) {
       this.saveSlotSelectMessageBox.setSize(318, 42);
       this.message.setY(-37);
+    } else {
+      this.saveSlotSelectMessageBox.setSize(318, 28);
+      this.message.setY(-22);
     }
 
-    this.saveSlotSelectMessageBoxContainer.setVisible(text?.length > 0);
+    this.saveSlotSelectMessageBoxContainer.setVisible(text.length > 0);
   }
 
   /**
@@ -605,6 +604,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
+      // biome-ignore lint/performance/noDynamicNamespaceImportAccess: removed in modifier rework
       const modifier = m.toModifier(Modifier[m.className]);
       if (modifier instanceof Modifier.PokemonHeldItemModifier) {
         continue;

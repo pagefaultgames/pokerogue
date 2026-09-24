@@ -16,6 +16,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
   }
 
   public override start(): void {
+    const { phaseManager, ui } = globalScene;
     const weather = globalScene.arena.weather;
 
     if (!weather) {
@@ -49,7 +50,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = toDmgValue(pokemon.getMaxHp() / 16);
 
-          globalScene.phaseManager.queueMessage(getWeatherDamageMessage(weather.weatherType, pokemon));
+          phaseManager.queueMessage(getWeatherDamageMessage(weather.weatherType, pokemon));
           pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT, ignoreSegments: true });
         };
 
@@ -66,14 +67,16 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       }
     }
 
-    globalScene.ui.showText(getWeatherLapseMessage(weather.weatherType), null, () => {
-      this.executeForAll((pokemon: Pokemon) => {
-        if (!pokemon.switchOutStatus) {
-          applyAbAttrs("PostWeatherLapseAbAttr", { pokemon, weather });
-        }
-      });
+    ui.showText(getWeatherLapseMessage(weather.weatherType), {
+      callback: () => {
+        this.executeForAll((pokemon: Pokemon) => {
+          if (!pokemon.switchOutStatus) {
+            applyAbAttrs("PostWeatherLapseAbAttr", { pokemon, weather });
+          }
+        });
 
-      super.start();
+        super.start();
+      },
     });
   }
 }

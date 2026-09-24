@@ -123,25 +123,21 @@ export class MysteryEncounterPhase extends Phase {
       let i = 0;
       const showNextDialogue = () => {
         const nextAction = i === selectedDialogue.length - 1 ? endDialogueAndContinueEncounter : showNextDialogue;
+
         const dialogue = selectedDialogue[i];
-        let title: string | null = null;
-        const text: string | null = getEncounterText(dialogue.text);
+        const text = getEncounterText(dialogue.text);
+        let title: string | undefined;
         if (dialogue.speaker) {
           title = getEncounterText(dialogue.speaker);
         }
 
         i++;
+
+        const delay = i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0;
         if (title) {
-          globalScene.ui.showDialogue(
-            text ?? "",
-            title,
-            null,
-            nextAction,
-            0,
-            i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0,
-          );
+          globalScene.ui.showDialogue(text, title, nextAction, { promptDelay: delay });
         } else {
-          globalScene.ui.showText(text ?? "", null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+          globalScene.ui.showText(text, { callback: nextAction, callbackDelay: delay, prompt: true });
         }
       };
 
@@ -341,7 +337,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
         this.endBattleSetup();
       } else {
-        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
+        globalScene.ui.showText(this.getBattleMessage(), { callback: () => this.endBattleSetup() });
       }
     } else if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       this.showEnemyTrainer();
@@ -362,7 +358,10 @@ export class MysteryEncounterBattlePhase extends Phase {
         if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
           doTrainerSummon();
         } else {
-          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
+          globalScene.ui.showText(
+            this.getBattleMessage(), //
+            { callback: doTrainerSummon, callbackDelay: 1000, prompt: true },
+          );
         }
       };
 
@@ -372,25 +371,26 @@ export class MysteryEncounterBattlePhase extends Phase {
         doSummon();
       } else {
         const trainer = globalScene.currentBattle.trainer;
-        let message: string;
+        let message!: string;
         globalScene.executeWithSeedOffset(
           () => (message = randSeedItem(encounterMessages)),
           globalScene.currentBattle.mysteryEncounter?.getSeedOffset(),
         );
-        message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
-          globalScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
-            globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => doSummon()));
+          globalScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true) ?? "", () => {
+            globalScene.charSprite
+              .hide()
+              .then(() => globalScene.hideFieldOverlay(250))
+              .then(() => doSummon());
           });
         };
-        if (globalScene.currentBattle.trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
+        if (trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
           globalScene
             .showFieldOverlay(500)
             .then(() =>
-              globalScene.charSprite
-                .showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0]))
-                .then(() => showDialogueAndSummon()),
-            ); // TODO: is this bang correct?
+              globalScene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])),
+            )
+            .then(() => showDialogueAndSummon());
         } else {
           showDialogueAndSummon();
         }
@@ -613,25 +613,19 @@ export class PostMysteryEncounterPhase extends Phase {
       const showNextDialogue = () => {
         const nextAction = i === outroDialogue.length - 1 ? endPhase : showNextDialogue;
         const dialogue = outroDialogue[i];
-        let title: string | null = null;
-        const text: string | null = getEncounterText(dialogue.text);
+        let title: string | undefined;
+        const text = getEncounterText(dialogue.text);
         if (dialogue.speaker) {
           title = getEncounterText(dialogue.speaker);
         }
 
         i++;
         globalScene.ui.setMode(UiMode.MESSAGE);
+        const delay = i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0;
         if (title) {
-          globalScene.ui.showDialogue(
-            text ?? "",
-            title,
-            null,
-            nextAction,
-            0,
-            i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0,
-          );
+          globalScene.ui.showDialogue(text, title, nextAction, { promptDelay: delay });
         } else {
-          globalScene.ui.showText(text ?? "", null, nextAction, i === 1 ? this.FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+          globalScene.ui.showText(text, { callback: nextAction, callbackDelay: delay, prompt: true });
         }
       };
 

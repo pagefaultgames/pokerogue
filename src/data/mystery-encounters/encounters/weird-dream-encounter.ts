@@ -327,7 +327,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         onBeforeRewards,
       );
 
-      await showEncounterText(`${namespace}:option.2.selected2`, null, undefined, true);
+      await showEncounterText(`${namespace}:option.2.selected2`);
       await initBattleWithEnemyConfig(enemyPartyConfig);
     },
   )

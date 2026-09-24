@@ -108,7 +108,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       });
 
       globalScene.pbTrayEnemy.hide();
-      globalScene.ui.showText(message, null, () => this.summon());
+      globalScene.ui.showText(message, { callback: () => this.summon() });
     } else if (globalScene.currentBattle.isBattleMysteryEncounter()) {
       globalScene.pbTrayEnemy.hide();
       this.summonWild();
