@@ -232,10 +232,9 @@ export class EncounterPhase extends BattlePhase {
         for (const enemyPokemon of battle.enemyParty) {
           // If the enemy pokemon is a boss and wasn't populated from data source, then update the number of segments
           if (enemyPokemon.isBoss() && !enemyPokemon.isPopulatedFromDataSource) {
-            enemyPokemon.setBoss(
-              true,
-              Math.ceil(enemyPokemon.bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst)),
-            );
+            const bossSegments = enemyPokemon.bossSegments;
+            const adjustedBossSegments = Math.ceil(bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst));
+            enemyPokemon.setBoss(true, bossSegments > 1 ? Math.max(2, adjustedBossSegments) : adjustedBossSegments);
             enemyPokemon.initBattleInfo();
           }
         }
