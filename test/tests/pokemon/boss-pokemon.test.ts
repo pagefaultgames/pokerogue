@@ -5,7 +5,6 @@ import { SpeciesId } from "#enums/species-id";
 import { EFFECTIVE_STATS, Stat } from "#enums/stat";
 import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
-import { toDmgValue } from "#utils/common";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Boss Pokemon / Shields", () => {
@@ -86,7 +85,7 @@ describe("Boss Pokemon / Shields", () => {
 
     // Broke 1st of 2 shields, health at 2/3rd
     expect(enemyPokemon.bossSegmentIndex).toBe(1);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - toDmgValue(segmentHp));
+    expect(enemyPokemon).toHaveTakenDamage(segmentHp);
     // Breaking the shield gives a +1 boost to ATK, DEF, SP ATK, SP DEF or SPD
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
 
@@ -94,7 +93,7 @@ describe("Boss Pokemon / Shields", () => {
     await game.toNextTurn();
 
     expect(enemyPokemon.bossSegmentIndex).toBe(0);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - toDmgValue(2 * segmentHp));
+    expect(enemyPokemon).toHaveTakenDamage(2 * segmentHp);
     // Breaking the last shield gives a +2 boost to ATK, DEF, SP ATK, SP DEF or SPD
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(3);
   });
@@ -117,7 +116,7 @@ describe("Boss Pokemon / Shields", () => {
     // Not enough damage to break through all shields
     boss1.damageAndUpdate(Math.floor(requiredDamageBoss1 - 5));
     expect(boss1.bossSegmentIndex).toBe(1);
-    expect(boss1.hp).toBe(boss1.getMaxHp() - toDmgValue(boss1SegmentHp * 3));
+    expect(boss1).toHaveTakenDamage(boss1SegmentHp * 3);
 
     const boss2 = game.scene.getEnemyParty()[1];
     const boss2SegmentHp = boss2.getMaxHp() / boss2.bossSegments;
@@ -129,7 +128,7 @@ describe("Boss Pokemon / Shields", () => {
     // Enough damage to break through all shields
     boss2.damageAndUpdate(Math.ceil(requiredDamageBoss2));
     expect(boss2.bossSegmentIndex).toBe(0);
-    expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * 4));
+    expect(boss2).toHaveTakenDamage(boss2SegmentHp * 4);
   });
 
   it("the number of stat stage boosts is consistent when several shields are broken at once", async () => {
@@ -156,7 +155,7 @@ describe("Boss Pokemon / Shields", () => {
     for (let i = 1; i <= shieldsToBreak; i++) {
       boss1.damageAndUpdate(singleShieldDamage);
       expect(boss1.bossSegmentIndex).toBe(shieldsToBreak - i);
-      expect(boss1.hp).toBe(boss1.getMaxHp() - toDmgValue(boss1SegmentHp * i));
+      expect(boss1).toHaveTakenDamage(boss1SegmentHp * i);
       // Do nothing and go to next turn so that the StatStageChangePhase gets applied
       game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
@@ -177,7 +176,7 @@ describe("Boss Pokemon / Shields", () => {
     // Enough damage to break all shields at once
     boss2.damageAndUpdate(Math.ceil(requiredDamage));
     expect(boss2.bossSegmentIndex).toBe(0);
-    expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * shieldsToBreak));
+    expect(boss2).toHaveTakenDamage(boss2SegmentHp * shieldsToBreak);
     // Do nothing and go to next turn so that the StatStageChangePhase gets applied
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -199,7 +198,7 @@ describe("Boss Pokemon / Shields", () => {
 
     // Enemy survived with Sturdy
     expect(enemyPokemon.bossSegmentIndex).toBe(0);
-    expect(enemyPokemon.hp).toBe(1);
+    expect(enemyPokemon).toHaveHp(1);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
   });
 

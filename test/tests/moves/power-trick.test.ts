@@ -42,7 +42,7 @@ describe("Moves - Power Trick", () => {
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseDEF);
     expect(player.getStat(Stat.DEF, false)).toBe(baseATK);
-    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
+    expect(player).toHaveBattlerTag(BattlerTagType.POWER_TRICK);
   });
 
   it("resets initial ATK and DEF stat swap when used consecutively", async () => {
@@ -62,7 +62,7 @@ describe("Moves - Power Trick", () => {
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
     expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
-    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeUndefined();
+    expect(player).not.toHaveBattlerTag(BattlerTagType.POWER_TRICK);
   });
 
   it("should pass effect when using BATON_PASS", async () => {
@@ -83,7 +83,7 @@ describe("Moves - Power Trick", () => {
 
     expect(switchedPlayer.getStat(Stat.ATK, false)).toBe(baseDEF);
     expect(switchedPlayer.getStat(Stat.DEF, false)).toBe(baseATK);
-    expect(switchedPlayer.getTag(BattlerTagType.POWER_TRICK)).toBeDefined();
+    expect(switchedPlayer).toHaveBattlerTag(BattlerTagType.POWER_TRICK);
   });
 
   it("should remove effect after using Transform", async () => {
@@ -103,6 +103,6 @@ describe("Moves - Power Trick", () => {
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
     expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
-    expect(player.getTag(BattlerTagType.POWER_TRICK)).toBeUndefined();
+    expect(player).not.toHaveBattlerTag(BattlerTagType.POWER_TRICK);
   });
 });

@@ -33,15 +33,15 @@ describe("Spec - Pokemon Functions", () => {
       await game.classicMode.startBattle(SpeciesId.ACCELGOR);
 
       const player = game.field.getPlayerPokemon();
+      expect(player).toHaveStatusEffect(StatusEffect.NONE);
 
-      expect(player.status?.effect).toBeUndefined();
       player.doSetStatus(StatusEffect.BURN);
       expect(player).toHaveStatusEffect(StatusEffect.BURN);
 
       expect(player.canSetStatus(StatusEffect.SLEEP)).toBe(false);
       player.doSetStatus(StatusEffect.SLEEP, 5);
-      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
-      expect(player.status?.sleepTurnsRemaining).toBe(5);
+
+      expect(player).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 5 });
     });
   });
 });

@@ -56,8 +56,8 @@ describe("Abilities - Unseen Fist", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
+    expect(enemyPokemon).toHaveFullHp();
   });
 });
 
@@ -72,14 +72,13 @@ async function testUnseenFistHitResult(
   await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
   const enemyPokemon = game.field.getEnemyPokemon();
-  const enemyStartingHp = enemyPokemon.hp;
 
   game.move.select(attackMove);
   await game.phaseInterceptor.to("TurnEndPhase", false);
 
   if (shouldSucceed) {
-    expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+    expect(enemyPokemon).not.toHaveFullHp();
   } else {
-    expect(enemyPokemon.hp).toBe(enemyStartingHp);
+    expect(enemyPokemon).toHaveFullHp();
   }
 }

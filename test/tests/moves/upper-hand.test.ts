@@ -40,9 +40,9 @@ describe("Moves - Upper Hand", () => {
     game.move.select(MoveId.UPPER_HAND);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(magikarp.isFullHp()).toBeFalsy();
-    expect(feebas.isFullHp()).toBeTruthy();
+    expect(feebas).toHaveUsedMove({ move: MoveId.UPPER_HAND, result: MoveResult.SUCCESS });
+    expect(magikarp).not.toHaveFullHp();
+    expect(feebas).toHaveFullHp();
   });
 
   it.each([
@@ -58,7 +58,7 @@ describe("Moves - Upper Hand", () => {
     game.move.select(MoveId.UPPER_HAND);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(feebas).toHaveUsedMove({ move: MoveId.UPPER_HAND, result: MoveResult.FAIL });
   });
 
   it("should flinch the opponent before they use an attack boosted by Gale Wings", async () => {
@@ -72,9 +72,9 @@ describe("Moves - Upper Hand", () => {
     game.move.select(MoveId.UPPER_HAND);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(magikarp.isFullHp()).toBeFalsy();
-    expect(feebas.isFullHp()).toBeTruthy();
+    expect(feebas).toHaveUsedMove({ move: MoveId.UPPER_HAND, result: MoveResult.SUCCESS });
+    expect(magikarp).not.toHaveFullHp();
+    expect(feebas).toHaveFullHp();
   });
 
   it("should fail if the target has already moved", async () => {
@@ -89,7 +89,7 @@ describe("Moves - Upper Hand", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(feebas.isFullHp()).toBeFalsy();
+    expect(feebas).toHaveUsedMove({ move: MoveId.UPPER_HAND, result: MoveResult.FAIL });
+    expect(feebas).not.toHaveFullHp();
   });
 });

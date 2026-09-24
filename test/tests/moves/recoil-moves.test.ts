@@ -59,7 +59,7 @@ describe("Moves - Recoil Moves", () => {
     expect(subTag.hp).toBeLessThan(subInitialHp);
 
     const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
   });
 
   it("causes recoil damage when hitting a substitute in a double battle", async () => {
@@ -74,7 +74,7 @@ describe("Moves - Recoil Moves", () => {
 
     await game.toNextTurn();
 
-    expect(playerPokemon1.hp).toBeLessThan(playerPokemon1.getMaxHp());
-    expect(playerPokemon2.hp).toBeLessThan(playerPokemon2.getMaxHp());
+    expect(playerPokemon1).not.toHaveFullHp();
+    expect(playerPokemon2).not.toHaveFullHp();
   });
 });

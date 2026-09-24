@@ -46,9 +46,9 @@ describe("Abilities - Quick Draw", () => {
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("FaintPhase", false);
 
-    expect(pokemon.isFainted()).toBe(false);
-    expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
+    expect(pokemon).not.toHaveFainted();
+    expect(enemy).toHaveFainted();
+    expect(pokemon).toHaveAbilityApplied(AbilityId.QUICK_DRAW);
   });
 
   it("is not triggered by non damaging moves", async () => {
@@ -63,27 +63,25 @@ describe("Abilities - Quick Draw", () => {
     game.move.select(MoveId.TAIL_WHIP);
     await game.phaseInterceptor.to("FaintPhase", false);
 
-    expect(pokemon.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).not.toContain(AbilityId.QUICK_DRAW);
+    expect(pokemon).toHaveFainted();
+    expect(enemy).not.toHaveFainted();
+    expect(pokemon).not.toHaveAbilityApplied(AbilityId.QUICK_DRAW);
   });
 
   it("does not increase priority", async () => {
     game.override.enemyMoveset([MoveId.EXTREME_SPEED]);
-
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
-
     pokemon.hp = 1;
     enemy.hp = 1;
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("FaintPhase", false);
 
-    expect(pokemon.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
+    expect(pokemon).toHaveFainted();
+    expect(enemy).not.toHaveFainted();
+    expect(pokemon).toHaveAbilityApplied(AbilityId.QUICK_DRAW);
   });
 });

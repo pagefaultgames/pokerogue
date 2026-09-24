@@ -51,8 +51,8 @@ describe("Moves - Whirlwind", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(staraptor.findTag(t => t.tagType === BattlerTagType.FLYING)).toBeDefined();
-    expect(game.field.getEnemyPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
+    expect(staraptor).toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move: MoveId.WHIRLWIND, result: MoveResult.MISS });
   });
 
   it("should force switches randomly", async () => {
@@ -114,7 +114,7 @@ describe("Moves - Whirlwind", () => {
     // Turn 1: Eevee faints
     eevee.hp = 0;
     eevee.status = new Status(StatusEffect.FAINT);
-    expect(eevee.isFainted()).toBe(true);
+    expect(eevee).toHaveFainted();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
@@ -141,7 +141,7 @@ describe("Moves - Whirlwind", () => {
     // Turn 1: Eevee faints
     eevee.hp = 0;
     eevee.status = new Status(StatusEffect.FAINT);
-    expect(eevee.isFainted()).toBe(true);
+    expect(eevee).toHaveFainted();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
@@ -239,6 +239,6 @@ describe("Moves - Whirlwind", () => {
     game.move.select(MoveId.WHIRLWIND);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(user.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(user).toHaveUsedMove({ move: MoveId.WHIRLWIND, result: MoveResult.SUCCESS });
   });
 });

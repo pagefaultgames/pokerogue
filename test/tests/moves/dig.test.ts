@@ -22,7 +22,6 @@ describe("Moves - Dig", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.DIG)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -37,40 +36,39 @@ describe("Moves - Dig", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeDefined();
-    expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
+    expect(playerPokemon).toHaveFullHp();
+    expect(enemyPokemon).toHaveFullHp();
     expect(playerPokemon.getMoveQueue()[0].move).toBe(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveQueue()).toHaveLength(0);
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
   });
 
   // TODO: Verify this on cartridge double battles
   it.todo("should deduct PP only on the 2nd turn of the move", async () => {
-    game.override.moveset([]);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.changeMoveset(playerPokemon, MoveId.DIG);
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const playerDig = playerPokemon.getMoveset().find(mv => mv?.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(0);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 0);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerDig?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 1);
   });
 
+  // TODO: This should be in a no guard test file
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
 
@@ -79,11 +77,11 @@ describe("Moves - Dig", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
-    expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).not.toHaveFullHp();
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
   });
 
   it("should expend PP when the attack phase is cancelled by sleep", async () => {
@@ -93,14 +91,13 @@ describe("Moves - Dig", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
-    const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.DIG, 1);
   });
 
   it("should cause the user to take double damage from Earthquake", async () => {
@@ -114,7 +111,7 @@ describe("Moves - Dig", () => {
       move: allMoves[MoveId.EARTHQUAKE],
     }).damage;
 
-    game.move.select(MoveId.DIG);
+    game.move.use(MoveId.DIG);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");

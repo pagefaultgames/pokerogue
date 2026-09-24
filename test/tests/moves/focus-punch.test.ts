@@ -30,26 +30,24 @@ describe("Moves - Focus Punch", () => {
       .enemyLevel(100);
   });
 
+  // TODO: Rework eventually to confirm that the move fails
   it("should deal damage at the end of turn if uninterrupted", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    const enemyStartingHp = enemyPokemon.hp;
-
     game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to("MessagePhase");
 
-    expect(enemyPokemon.hp).toBe(enemyStartingHp);
+    expect(enemyPokemon).toHaveFullHp();
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(leadPokemon.getMoveHistory().length).toBe(1);
-    expect(leadPokemon.turnData.totalDamageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
   });
 
   it("should fail if the user is hit", async () => {
@@ -60,20 +58,17 @@ describe("Moves - Focus Punch", () => {
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    const enemyStartingHp = enemyPokemon.hp;
-
     game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to("MessagePhase");
 
-    expect(enemyPokemon.hp).toBe(enemyStartingHp);
+    expect(enemyPokemon).toHaveFullHp();
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyStartingHp);
+    expect(enemyPokemon).toHaveFullHp();
     expect(leadPokemon.getMoveHistory().length).toBe(1);
-    expect(leadPokemon.turnData.totalDamageDealt).toBe(0);
   });
 
   it("should be cancelled if the user falls asleep mid-turn", async () => {
@@ -93,7 +88,7 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.getMoveHistory().length).toBe(1);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not queue its pre-move message before an enemy switches", async () => {

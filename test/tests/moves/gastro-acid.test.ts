@@ -4,6 +4,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -46,8 +47,8 @@ describe("Moves - Gastro Acid", () => {
 
     expect(enemy1.summonData.abilitySuppressed).toBe(true);
     expect(enemy2.summonData.abilitySuppressed).toBe(false);
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
-    expect(enemy2.hp).toBe(enemy2.getMaxHp());
+    expect(enemy1).not.toHaveFullHp();
+    expect(enemy2).toHaveFullHp();
   });
 
   it("should be removed on switch", async () => {
@@ -83,7 +84,7 @@ describe("Moves - Gastro Acid", () => {
     game.move.use(MoveId.GASTRO_ACID);
     await game.toNextTurn();
 
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.GASTRO_ACID, result: MoveResult.FAIL });
   });
 
   it("should suppress target's passive even if its main ability is unsuppressable", async () => {
@@ -99,12 +100,12 @@ describe("Moves - Gastro Acid", () => {
     game.move.use(MoveId.WATER_GUN);
     await game.toNextTurn();
     // water gun should've dealt damage due to suppressed Water Absorb
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
-    // Comatose should block stauts effect
-    expect(enemyPokemon.status?.effect).toBeUndefined();
+    // Comatose should block status effect
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

@@ -35,7 +35,7 @@ describe("Moves - Chloroblast", () => {
 
     const player = game.field.getPlayerPokemon();
 
-    expect(player.isFullHp()).toBe(true);
-    expect(player.getLastXMoves()[0]).toMatchObject({ result: MoveResult.MISS, move: MoveId.CHLOROBLAST });
+    expect(player).toHaveFullHp();
+    expect(player).toHaveUsedMove({ result: MoveResult.MISS, move: MoveId.CHLOROBLAST });
   });
 });

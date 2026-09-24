@@ -32,7 +32,7 @@ describe("Abilities - Intrepid Sword", () => {
 
     await game.phaseInterceptor.to("CommandPhase", false);
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 1);
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
   });
 });

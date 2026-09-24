@@ -154,7 +154,7 @@ describe.todo("Abilities - Illusion", () => {
     game.move.select(MoveId.GASTRO_ACID);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(zorua.isFullHp()).toBe(true);
+    expect(zorua).toHaveFullHp();
     expect(!!zorua.summonData?.illusion).toBe(false);
   });
 });

@@ -34,7 +34,7 @@ describe("Abilities - Desolate Land", () => {
     game.override.battleStyle("double").enemyMoveset([MoveId.SPLASH, MoveId.ROAR]);
     await game.classicMode.startBattle(SpeciesId.MAGCARGO, SpeciesId.MAGCARGO, SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
       return min;
@@ -48,7 +48,7 @@ describe("Abilities - Desolate Land", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     await game.toNextTurn();
 
@@ -64,7 +64,7 @@ describe("Abilities - Desolate Land", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should lift when enemy faints", async () => {
@@ -79,20 +79,20 @@ describe("Abilities - Desolate Land", () => {
       .enemyHasPassiveAbility(true);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     game.move.select(MoveId.SHEER_COLD);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should lift when pokemon returns upon switching from double to single battle", async () => {
     game.override.battleStyle("even-doubles").enemyMoveset([MoveId.SPLASH, MoveId.MEMENTO]).startingWave(12);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGCARGO);
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     game.move.select(MoveId.SPLASH, 0, 2);
     game.move.select(MoveId.SPLASH, 1, 2);
@@ -101,11 +101,11 @@ describe("Abilities - Desolate Land", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     await game.toNextWave();
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should lift when enemy is captured", async () => {
@@ -116,7 +116,7 @@ describe("Abilities - Desolate Land", () => {
       .enemyHasPassiveAbility(true);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     game.scene.pokeballCounts[PokeballType.MASTER_BALL] = 1;
 
@@ -124,13 +124,13 @@ describe("Abilities - Desolate Land", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should lift after fleeing from a wild pokemon", async () => {
     game.override.enemyAbility(AbilityId.DESOLATE_LAND).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.HARSH_SUN);
 
     vi.spyOn(game.field.getPlayerPokemon(), "randBattleSeedInt").mockReturnValue(0);
     vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
@@ -139,6 +139,8 @@ describe("Abilities - Desolate Land", () => {
     commandPhase.handleCommand(Command.RUN, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.HARSH_SUN);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
+
+  // NB: Ability swap/overwrite logic checked in ability-swap.test.ts
 });

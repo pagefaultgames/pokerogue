@@ -34,8 +34,8 @@ describe("Moves - Haze", () => {
       const user = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
 
-      expect(user.getStatStage(Stat.ATK)).toBe(0);
-      expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+      expect(user).toHaveStatStage(Stat.ATK, 0);
+      expect(enemy).toHaveStatStage(Stat.ATK, 0);
 
       game.move.select(MoveId.SWORDS_DANCE);
       await game.phaseInterceptor.to("TurnInitPhase");
@@ -43,14 +43,14 @@ describe("Moves - Haze", () => {
       game.move.select(MoveId.CHARM);
       await game.phaseInterceptor.to("TurnInitPhase");
 
-      expect(user.getStatStage(Stat.ATK)).toBe(2);
-      expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
+      expect(user).toHaveStatStage(Stat.ATK, 2);
+      expect(enemy).toHaveStatStage(Stat.ATK, -2);
 
       game.move.select(MoveId.HAZE);
       await game.phaseInterceptor.to("TurnInitPhase");
 
-      expect(user.getStatStage(Stat.ATK)).toBe(0);
-      expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+      expect(user).toHaveStatStage(Stat.ATK, 0);
+      expect(enemy).toHaveStatStage(Stat.ATK, 0);
     });
   });
 });

@@ -35,9 +35,9 @@ describe("Abilities - Competitive", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(4);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, -1);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, -1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 4);
   });
 
   it("lowering your own stats should not trigger competitive", async () => {
@@ -48,9 +48,9 @@ describe("Abilities - Competitive", () => {
     game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPDEF, -1);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, -1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 0);
   });
 
   it("white herb should remove only the negative effects", async () => {
@@ -61,8 +61,8 @@ describe("Abilities - Competitive", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(4);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 4);
   });
 });

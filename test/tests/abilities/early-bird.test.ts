@@ -46,13 +46,13 @@ describe("Abilities - Early Bird", () => {
     await game.toNextTurn();
 
     expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(player).toHaveStatusEffect(StatusEffect.NONE);
+    expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
   });
 
   it("reduces 3-turn sleep to 1 turn", async () => {
@@ -65,13 +65,13 @@ describe("Abilities - Early Bird", () => {
     await game.toNextTurn();
 
     expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(player).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL });
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(player).toHaveStatusEffect(StatusEffect.NONE);
+    expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
   });
 
   it("reduces 1-turn sleep to 0 turns", async () => {
@@ -83,7 +83,7 @@ describe("Abilities - Early Bird", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(player.status?.effect).toBeUndefined();
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(player).toHaveStatusEffect(StatusEffect.NONE);
+    expect(player).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
   });
 });

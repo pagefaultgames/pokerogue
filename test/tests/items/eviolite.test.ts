@@ -38,8 +38,8 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, Math.floor(defStat * 1.5));
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, Math.floor(spDefStat * 1.5));
   });
 
   it("should not provide a boost for fully evolved, unfused pokemon", async () => {
@@ -59,8 +59,8 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, defStat);
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, spDefStat);
   });
 
   it("should provide 50% boost to DEF and SPDEF for completely unevolved, fused pokemon", async () => {
@@ -89,8 +89,8 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.5));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.5));
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, Math.floor(defStat * 1.5));
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, Math.floor(spDefStat * 1.5));
   });
 
   it("should provide 25% boost to DEF and SPDEF for partially unevolved (base), fused pokemon", async () => {
@@ -119,8 +119,8 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, Math.floor(defStat * 1.25));
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, Math.floor(spDefStat * 1.25));
   });
 
   it("should provide 25% boost to DEF and SPDEF for partially unevolved (fusion), fused pokemon", async () => {
@@ -149,8 +149,8 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(Math.floor(defStat * 1.25));
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(spDefStat * 1.25));
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, Math.floor(defStat * 1.25));
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, Math.floor(spDefStat * 1.25));
   });
 
   it("should not provide a boost for fully evolved, fused pokemon", async () => {
@@ -179,8 +179,8 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, defStat);
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, spDefStat);
   });
 
   it("should not provide a boost for Gigantamax Pokémon", async () => {
@@ -209,7 +209,7 @@ describe("Items - Eviolite", () => {
     const defStat = partyMember.getStat(Stat.DEF, false);
     const spDefStat = partyMember.getStat(Stat.SPDEF, false);
 
-    expect(partyMember.getEffectiveStat(Stat.DEF)).toBe(defStat);
-    expect(partyMember.getEffectiveStat(Stat.SPDEF)).toBe(spDefStat);
+    expect(partyMember).toHaveEffectiveStat(Stat.DEF, defStat);
+    expect(partyMember).toHaveEffectiveStat(Stat.SPDEF, spDefStat);
   });
 });

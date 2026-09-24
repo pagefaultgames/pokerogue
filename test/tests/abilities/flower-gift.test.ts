@@ -123,10 +123,10 @@ describe("Abilities - Flower Gift", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
-    expect(cherrim.getEffectiveStat(Stat.ATK)).toBe(Math.floor(cherrimAtkStat * 1.5));
-    expect(cherrim.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(cherrimSpDefStat * 1.5));
-    expect(magikarp.getEffectiveStat(Stat.ATK)).toBe(Math.floor(magikarpAtkStat * 1.5));
-    expect(magikarp.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(magikarpSpDefStat * 1.5));
+    expect(cherrim).toHaveEffectiveStat(Stat.ATK, Math.floor(cherrimAtkStat * 1.5));
+    expect(cherrim).toHaveEffectiveStat(Stat.SPDEF, Math.floor(cherrimSpDefStat * 1.5));
+    expect(magikarp).toHaveEffectiveStat(Stat.ATK, Math.floor(magikarpAtkStat * 1.5));
+    expect(magikarp).toHaveEffectiveStat(Stat.SPDEF, Math.floor(magikarpSpDefStat * 1.5));
   });
 
   it("should not increase the damage of an ally using an ability ignoring move", async () => {
