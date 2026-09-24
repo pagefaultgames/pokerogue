@@ -17,8 +17,8 @@ export enum ChallengeType {
    */
   STARTER_POINTS,
   /**
-   * Challenges which modify how many starter points you have
-   * @see {@linkcode Challenge.applyStarterPoints}
+   * Challenges which modify the point cost of starters
+   * @see {@linkcode Challenge.applyStarterCost}
    */
   STARTER_COST,
   /**
@@ -159,4 +159,14 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyEggMoveRelearnAvailability}
    */
   EGG_MOVE_RELEARN_AVAILABILITY,
+  /**
+   * Challenges which modify the innate abilities of a species
+   * @see {@linkcode Challenge.applySpeciesAbilityModify}
+   */
+  SPECIES_ABILITY_MODIFY,
+  /**
+   * Challenges which modify the passive ability of a species
+   * @see {@linkcode Challenge.applyPassiveAbilityModify}
+   */
+  PASSIVE_ABILITY_MODIFY,
 }
