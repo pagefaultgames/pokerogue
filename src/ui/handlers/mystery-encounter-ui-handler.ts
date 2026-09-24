@@ -10,6 +10,7 @@ import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { ScrollingText } from "#ui/scrolling-text";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
@@ -27,11 +28,9 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
-  private tooltipScrollTween?: Phaser.Tweens.Tween | undefined;
 
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
-  private descriptionScrollTween?: Phaser.Tweens.Tween | undefined;
   private rarityBall: Phaser.GameObjects.Sprite;
 
   private dexProgressWindow: Phaser.GameObjects.NineSlice;
@@ -46,6 +45,8 @@ export class MysteryEncounterUiHandler extends UiHandler {
   protected viewPartyXPosition = 0;
 
   protected blockInput = true;
+  desc: ScrollingText;
+  tooltipDesc: ScrollingText;
 
   override setup() {
     const ui = this.getUi();
@@ -495,41 +496,19 @@ export class MysteryEncounterUiHandler extends UiHandler {
     const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addBBCodeTextObject(6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, {
-      wordWrap: { width: 830 },
+    // prepare the description box
+    this.desc = new ScrollingText({
+      x: 6,
+      y: 22,
+      width: 830 / 6,
+      maxLineCount: 6,
+      content: descriptionText ?? "",
+      style: TextStyle.TOOLTIP_CONTENT,
+      showBackground: false,
     });
-
-    // Sets up the mask that hides the description text to give an illusion of scrolling
-    const descriptionTextMaskRect = globalScene.make.graphics({});
-    descriptionTextMaskRect.setScale(6);
-    descriptionTextMaskRect.fillStyle(0xffffff);
-    descriptionTextMaskRect.beginPath();
-    descriptionTextMaskRect.fillRect(6, 53, 206, 57);
-
-    const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
-
-    descriptionTextObject.setMask(abilityDescriptionTextMask);
-
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
-
-    if (this.descriptionScrollTween) {
-      this.descriptionScrollTween.remove();
-      this.descriptionScrollTween = undefined;
-    }
-
-    // Animates the description text moving upwards
-    if (descriptionLineCount > 6) {
-      this.descriptionScrollTween = globalScene.tweens.add({
-        targets: descriptionTextObject,
-        delay: fixedInt(2000),
-        loop: -1,
-        hold: fixedInt(2000),
-        duration: fixedInt((descriptionLineCount - 6) * 2000),
-        y: `-=${10 * (descriptionLineCount - 6)}`,
-      });
-    }
-
-    this.descriptionContainer.add(descriptionTextObject);
+    this.desc.createMask(6, 50);
+    this.descriptionContainer.add(this.desc);
+    this.desc.activate();
 
     const queryTextObject = addBBCodeTextObject(0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, {
       wordWrap: { width: 830 },
@@ -604,42 +583,22 @@ export class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (text) {
-      const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, {
-        wordWrap: { width: 600 },
-        fontSize: "72px",
-        padding: { top: 8 },
-        lineSpacing: 1.25,
+      this.tooltipDesc = new ScrollingText({
+        x: 6,
+        y: 5 + 8 / 6,
+        width: 96,
+        maxLineCount: 3,
+        content: text ?? "",
+        style: TextStyle.TOOLTIP_CONTENT,
+        showBackground: false,
+        extraStyleOptions: {
+          fontSize: "72px",
+          lineSpacing: 1.25,
+        },
       });
-      this.tooltipContainer.add(tooltipTextObject);
-
-      // Sets up the mask that hides the description text to give an illusion of scrolling
-      const tooltipTextMaskRect = globalScene.make.graphics({});
-      tooltipTextMaskRect.setScale(6);
-      tooltipTextMaskRect.fillStyle(0xffffff);
-      tooltipTextMaskRect.beginPath();
-      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
-
-      const textMask = tooltipTextMaskRect.createGeometryMask();
-      tooltipTextObject.setMask(textMask);
-
-      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
-
-      if (this.tooltipScrollTween) {
-        this.tooltipScrollTween.remove();
-        this.tooltipScrollTween = undefined;
-      }
-
-      // Animates the tooltip text moving upwards
-      if (tooltipLineCount > 3) {
-        this.tooltipScrollTween = globalScene.tweens.add({
-          targets: tooltipTextObject,
-          delay: fixedInt(1200),
-          loop: -1,
-          hold: fixedInt(1200),
-          duration: fixedInt((tooltipLineCount - 3) * 1200),
-          y: `-=${11.2 * (tooltipLineCount - 3)}`,
-        });
-      }
+      this.tooltipDesc.createMask(this.tooltipContainer.x + 6, this.tooltipContainer.y + 188.5);
+      this.tooltipContainer.add(this.tooltipDesc);
+      this.tooltipDesc.activate();
     }
 
     // Dex progress indicator
