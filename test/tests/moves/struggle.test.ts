@@ -27,6 +27,7 @@ describe("Moves - Struggle", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
+  // todo; clean up tests
   it("should not have its power boosted by adaptability or stab", async () => {
     game.override.moveset([MoveId.STRUGGLE]).ability(AbilityId.ADAPTABILITY);
     await game.classicMode.startBattle(SpeciesId.RATTATA);
