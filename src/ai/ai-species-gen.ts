@@ -119,7 +119,7 @@ export function determineEnemySpecies(
   if (requiredPrevo) {
     return requiredPrevo;
   }
-  const evolutions = speciesDataRegistry.getEvolutions(species.speciesId);
+  let evolutions = speciesDataRegistry.getEvolutions(species.speciesId);
   if (
     // If evolutions shouldn't happen, add more cases here :)
     !allowEvolving
@@ -129,6 +129,17 @@ export function determineEnemySpecies(
       && globalScene.currentBattle.trainer)
   ) {
     return species.speciesId;
+  }
+
+  // If this is for a trainer with a specialty type, and there's a possible evo with that type, filter for it
+  if (globalScene.currentBattle.trainer?.config.hasSpecialtyType()) {
+    const specialtyType = globalScene.currentBattle.trainer.config.specialtyType;
+    const filteredEvos = evolutions.filter(e => {
+      return speciesDataRegistry.getPokemonSpeciesForm(e.speciesId, e.evoFormKey ?? 0).isOfType(specialtyType);
+    });
+    if (filteredEvos.length > 0 && filteredEvos.length < evolutions.length) {
+      evolutions = filteredEvos;
+    }
   }
 
   const evoPool: [number, SpeciesId][] = [];
