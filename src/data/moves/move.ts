@@ -7160,6 +7160,13 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const slotIndex = globalScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
       pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+      const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+      // Reclaim held items that were banked as post-battle loot when this Pokemon fainted earlier
+      for (let i = postBattleLoot.length - 1; i >= 0; i--) {
+        if (postBattleLoot[i].pokemonId === pokemon.id) {
+          postBattleLoot.splice(i, 1);
+        }
+      }
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
         0,
