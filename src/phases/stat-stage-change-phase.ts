@@ -4,9 +4,9 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
 import { StatChangeSource } from "#enums/stat-change-source";
 import type { Pokemon } from "#field/pokemon";
@@ -15,7 +15,6 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change";
 import { playTween } from "#utils/anim-utils";
-import { deepCopy } from "#utils/data";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
@@ -30,19 +29,23 @@ import type { Writable } from "type-fest";
 export class StatStageChangePhase extends PokemonPhase {
   public override readonly phaseName = "StatStageChangePhase";
 
-  private readonly options: StatStageChangePhaseOptions;
-  /** Whether the target caused its own stat changes for this phase */
+  /**
+   * The options passed in the constructor.
+   * Shallow-cloned to allow mutating the `changes` array without affecting the caller's reference.
+   */
+  private readonly options: Writable<StatStageChangePhaseOptions, "changes">;
+  /** Whether the target caused its own stat changes for this phase. */
   private readonly selfTarget: boolean;
-  /** Whether this phase represents a stat stage increase, set after splitting changes by sign */
+  /** Whether this phase represents a stat stage increase; set after splitting changes by sign. */
   private isIncrease = false;
 
   constructor(options: StatStageChangePhaseOptions) {
     super(options.battlerIndex);
 
-    this.options = { ...options };
+    // Allow changes with 0 stages to be passed as no-ops
+    this.options = { ...options, changes: options.changes.filter(c => c.stages !== 0) };
     // TODO: Change this once `getPokemon`'s return type is fixed
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
-    this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
   }
 
   // @ts-expect-error: TODO: the return type of `PokemonPhase#getPokemon` is wrong
@@ -68,6 +71,7 @@ export class StatStageChangePhase extends PokemonPhase {
       this.end();
       return;
     }
+
     this.isIncrease = this.options.changes.some(c => c.stages > 0);
 
     const applied = this.getAppliedChanges(pokemon);
@@ -93,9 +97,10 @@ export class StatStageChangePhase extends PokemonPhase {
     const multiplier = new ValueHolder(1);
     applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: multiplier });
 
-    for (const change of this.options.changes) {
-      (change as Writable<StatChange>).stages *= multiplier.value;
-    }
+    this.options.changes = this.options.changes.map(({ stat, stages }) => ({
+      stat,
+      stages: stages * multiplier.value,
+    }));
   }
 
   /**
@@ -105,12 +110,14 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param pokemon - The Pokemon receiving the stat changes
    */
   private removeCancelledChanges(pokemon: Pokemon): void {
+    const { changes } = this.options;
     if (this.selfTarget) {
       return;
     }
+
     // NB: This currently hardcodes the fact that abilities and field effects can _only_ respond to stat decreases and not increases.
     // If any effects that can cancel stat stage increases are added, this check should be removed.
-    const negative = this.options.changes.filter(c => c.stages < 0);
+    const negative = changes.filter(c => c.stages < 0);
     if (negative.length === 0) {
       return;
     }
@@ -123,16 +130,16 @@ export class StatStageChangePhase extends PokemonPhase {
       pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
       false,
       pokemon,
-      this.options.changes,
+      changes,
       cancelledStats,
       opponent,
     );
 
-    if (cancelledStats.size < this.options.changes.length) {
+    if (cancelledStats.size < changes.length) {
       this.checkAbilityProtection(pokemon, opponent, negative, cancelledStats);
     }
 
-    this.options.changes = this.options.changes.filter(c => !cancelledStats.has(c.stat));
+    this.options.changes = changes.filter(c => !cancelledStats.has(c.stat));
   }
 
   /**
@@ -172,7 +179,7 @@ export class StatStageChangePhase extends PokemonPhase {
     if (
       opponentPokemon == null
       || this.options.sourceEffectType === StatChangeSource.MIRROR_ARMOR
-      || pokemon.findTag(t => t instanceof OctolockTag)
+      || pokemon.getTag(BattlerTagType.OCTOLOCK)
     ) {
       return;
     }
@@ -215,8 +222,9 @@ export class StatStageChangePhase extends PokemonPhase {
   private getAppliedChanges(pokemon: Pokemon): StatChange[] {
     return this.options.changes.map(({ stat, stages }) => {
       const current = pokemon.getStatStage(stat);
-      const clamped = Phaser.Math.Clamp(current + stages, -6, 6);
-      return { stat, stages: clamped - current };
+      // this is always inside [-6, 6]
+      const delta = Phaser.Math.Clamp(current + stages, -6, 6) - current;
+      return { stat, stages: delta };
     });
   }
 
@@ -234,7 +242,7 @@ export class StatStageChangePhase extends PokemonPhase {
     this.checkWhiteHerb(pokemon);
 
     pokemon.updateInfo();
-    handleTutorial(Tutorial.STAT_CHANGE).then(() => super.end());
+    handleTutorial(Tutorial.STAT_CHANGE).then(() => this.end());
   }
 
   /**
@@ -322,19 +330,17 @@ export class StatStageChangePhase extends PokemonPhase {
    * mainline.  For example, Defiant will proc as a single +4 when two stats
    * are dropped instead of twice +2, which would be a real difference for
    * something like Mirror Herb (copying +4 instead of a single +2) but is
-   * otherwise not significant beyond faster animation.
+   * otherwise not significant beyond faster animations.
    */
   private triggerReactionAbilities(pokemon: Pokemon): void {
-    if (
-      this.options.sourceEffectType !== StatChangeSource.OPPORTUNIST
-      && this.options.changes.some(c => c.stages > 0)
-    ) {
+    const { changes, sourceEffectType } = this.options;
+    if (sourceEffectType !== StatChangeSource.OPPORTUNIST && changes.some(c => c.stages > 0)) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
-        applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, changes: this.options.changes });
+        applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, changes });
       }
     }
 
-    applyAbAttrs("PostStatStageChangeAbAttr", { pokemon, changes: this.options.changes, selfTarget: this.selfTarget });
+    applyAbAttrs("PostStatStageChangeAbAttr", { pokemon, changes, selfTarget: this.selfTarget });
   }
 
   /**
@@ -382,8 +388,8 @@ export class StatStageChangePhase extends PokemonPhase {
 
     // On increase, show the red sprite located at ATK; on decrease, the blue sprite at SPD
     const spriteColor = this.isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
-    const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
-    statSprite
+    const statSprite = globalScene.add
+      .tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor)
       .setPipeline(globalScene.fieldSpritePipeline)
       .setAlpha(0)
       .setScale(6)
