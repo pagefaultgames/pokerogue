@@ -31,8 +31,9 @@ export class ItemBar extends Phaser.GameObjects.Container {
 
     const sortedTrainerItems = trainerItems.getItems().sort((a, b) => a - b);
 
-    const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort((a, b) => a - b) : [];
-    const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort((a, b) => a - b) : [];
+    // Display all items, including those that are temporarily disabled
+    const heldItemsA = pokemonA ? pokemonA.heldItemManager.getItems(true).sort((a, b) => a - b) : [];
+    const heldItemsB = pokemonB ? pokemonB.heldItemManager.getItems(true).sort((a, b) => a - b) : [];
 
     this.totalVisibleLength = sortedTrainerItems.length + heldItemsA.length + heldItemsB.length;
 
@@ -46,6 +47,10 @@ export class ItemBar extends Phaser.GameObjects.Container {
     if (pokemonA) {
       heldItemsA.forEach(item => {
         const icon = allHeldItems[item].createPokemonIcon(pokemonA);
+        // If stack is currently 0, apply transparency
+        if (pokemonA.heldItemManager.getStack(item) === 0) {
+          icon.alpha = 0.3;
+        }
         iconCount += 1;
         this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
       });
@@ -54,6 +59,9 @@ export class ItemBar extends Phaser.GameObjects.Container {
     if (pokemonB) {
       heldItemsB.forEach(item => {
         const icon = allHeldItems[item].createPokemonIcon(pokemonB);
+        if (pokemonB.heldItemManager.getStack(item) === 0) {
+          icon.alpha = 0.3;
+        }
         iconCount += 1;
         this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
       });

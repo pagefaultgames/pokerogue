@@ -45,11 +45,11 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.getItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
-  public override hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
+  public override hasItem(itemType: HeldItemId | HeldItemCategoryId, excludeTempStack = false): boolean {
     if (isCategoryId(itemType)) {
-      return this.getItems().some(id => isItemInCategory(id, itemType));
+      return this.getItems().some(id => isItemInCategory(id, itemType) && this.getStack(id, excludeTempStack) > 0);
     }
-    return super.hasItem(itemType);
+    return super.hasItem(itemType, excludeTempStack);
   }
 
   public hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
