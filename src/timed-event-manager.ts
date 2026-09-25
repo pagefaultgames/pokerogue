@@ -76,6 +76,10 @@ export class TimedEventManager {
     return this.activeEvent()?.bannerKey ?? "";
   }
 
+  public getLogoKey(): string {
+    return this.activeEvent()?.logo ?? "logo";
+  }
+
   getEventBannerLangs(): string[] {
     return [...(this.activeEvent()?.availableLangs ?? [])];
   }

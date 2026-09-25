@@ -67,6 +67,7 @@ export type EventBiomes = Readonly<Partial<Record<BiomeId, BiomeLinks>>>;
 export interface TimedEvent extends EventBanner {
   readonly name: string;
   readonly eventType: EventType;
+  readonly logo?: string;
   readonly shinyEncounterMultiplier?: number;
   readonly shinyCatchMultiplier?: number;
   readonly classicFriendshipMultiplier?: number;
