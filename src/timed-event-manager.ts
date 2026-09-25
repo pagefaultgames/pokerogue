@@ -118,6 +118,14 @@ export class TimedEventManager {
   }
 
   /**
+   * Get the amount of extra candy to add when catching a Pokemon.
+   * @returns The amount of extra candy to add when catching a Pokemon
+   */
+  public getExtraCatchCandy(): number {
+    return this.activeEvent()?.extraCatchCandy ?? 0;
+  }
+
+  /**
    * For events where Delibirdy gives extra items
    * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
    */

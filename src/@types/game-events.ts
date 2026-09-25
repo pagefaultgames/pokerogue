@@ -72,6 +72,7 @@ export interface TimedEvent extends EventBanner {
   readonly classicFriendshipMultiplier?: number;
   readonly luckBoost?: number;
   readonly upgradeUnlockedVouchers?: boolean;
+  readonly extraCatchCandy?: number;
   readonly startDate: Date;
   readonly endDate: Date;
   readonly eventEncounters?: readonly EventEncounter[];
