@@ -22,5 +22,5 @@ export async function generateTmTiersData(): Promise<void> {
     entries.push(data);
   }
 
-  writeData("tm-tiers", entries);
+  writeData("tms", entries);
 }
