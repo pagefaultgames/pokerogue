@@ -1,32 +1,43 @@
 import { globalScene } from "#app/global-scene";
+import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { coerceArray } from "#utils/array";
 import { fixedInt } from "#utils/common";
 
-export enum PokemonIconAnimMode {
-  NONE,
-  PASSIVE,
-  ACTIVE,
-}
-
 type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
 
+interface IconState {
+  mode: PokemonIconAnimMode;
+  restY: number;
+}
+
+/**
+ * A helper class to handle icon animations in different menus (party, starter select, etc).
+ * @remarks
+ * How to use: \
+ * `icons` is a list of {@linkcode PokemonIcon}s, to each of which we associate a mode, and register the Y coordinate at rest. \
+ * The handler contains two global tweens: one for idle animation (oscillation up and down) and one for a jumping animation. \
+ * Calling `addOrUpdate` on a `PokemonIcon` (or list of icons) assigns an {@linkcode PokemonIconAnimMode | animation mode}:
+ * - `NONE`: no animation, icon does not move.
+ * - `PASSIVE`: idle animation, with a small oscillation amplitude.
+ * - `ACTIVE`: idle animation, with a larger oscillation amplitude.
+ * - `JUMP`: jumping animation (the icons will move up quickly, with a long interval in between).
+ */
 export class PokemonIconAnimHelper {
-  private icons: Map<PokemonIcon, PokemonIconAnimMode>;
-  private toggled: boolean;
+  private readonly icons: Map<PokemonIcon, IconState> = new Map();
 
-  setup(): void {
-    this.icons = new Map();
-    this.toggled = false;
+  private toggled = false;
 
+  constructor() {
+    // Existing passive/active animation.
     const onAlternate = (tween: Phaser.Tweens.Tween) => {
-      const value = tween.getValue();
-      this.toggled = !!value;
-      for (const i of this.icons.keys()) {
-        const icon = this.icons.get(i);
-        const delta = icon ? this.getModeYDelta(icon) : 0;
-        i.y += delta * (this.toggled ? 1 : -1);
+      this.toggled = !!tween.getValue();
+
+      for (const [icon, state] of this.icons) {
+        icon.y = state.restY + this.getCurrentOffset(state.mode);
       }
     };
+
+    // Idle up and down animation.
     globalScene.tweens.addCounter({
       duration: fixedInt(200),
       from: 0,
@@ -36,54 +47,82 @@ export class PokemonIconAnimHelper {
       onRepeat: onAlternate,
       onYoyo: onAlternate,
     });
+
+    // Jumping animation.
+    globalScene.tweens.chain({
+      targets: this,
+      loop: -1,
+      loopDelay: fixedInt(1000),
+      tweens: [
+        {
+          targets: this,
+          jumpOffset: -5,
+          duration: fixedInt(125),
+          ease: "Cubic.easeOut",
+          yoyo: true,
+          onUpdate: () => {
+            this.updateJumpIcons();
+          },
+        },
+        {
+          targets: this,
+          jumpOffset: -3,
+          duration: fixedInt(150),
+          ease: "Cubic.easeOut",
+          yoyo: true,
+          onUpdate: () => {
+            this.updateJumpIcons();
+          },
+        },
+      ],
+    });
   }
 
-  getModeYDelta(mode: PokemonIconAnimMode): number {
+  private getCurrentOffset(mode: PokemonIconAnimMode): number {
     switch (mode) {
+      case PokemonIconAnimMode.PASSIVE:
+        return this.toggled ? -1 : 0;
+
+      case PokemonIconAnimMode.ACTIVE:
+        return this.toggled ? -2 : 0;
+
+      case PokemonIconAnimMode.JUMP:
       case PokemonIconAnimMode.NONE:
         return 0;
-      case PokemonIconAnimMode.PASSIVE:
-        return -1;
-      case PokemonIconAnimMode.ACTIVE:
-        return -2;
     }
   }
 
-  addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
+  private updateJumpIcons(): void {
+    for (const [icon, state] of this.icons) {
+      icon.y = state.restY + this.getCurrentOffset(state.mode);
+    }
+  }
+
+  public addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
     icons = coerceArray(icons);
-    for (const i of icons) {
-      if (this.icons.has(i) && this.icons.get(i) === mode) {
+
+    for (const icon of icons) {
+      const existing = this.icons.get(icon);
+
+      if (existing?.mode === mode) {
         continue;
       }
-      if (this.toggled) {
-        const lastYDelta = this.icons.has(i) ? this.icons.get(i)! : 0;
-        const yDelta = this.getModeYDelta(mode);
-        i.y += yDelta + lastYDelta;
-      }
-      this.icons.set(i, mode);
+
+      const restY = existing?.restY ?? icon.y;
+
+      const state: IconState = { mode, restY };
+
+      this.icons.set(icon, state);
+
+      icon.y = restY + this.getCurrentOffset(mode);
     }
   }
 
-  remove(icons: PokemonIcon | PokemonIcon[]): void {
-    icons = coerceArray(icons);
-    for (const i of icons) {
-      if (this.toggled) {
-        const icon = this.icons.get(i);
-        const delta = icon ? this.getModeYDelta(icon) : 0;
-        i.y -= delta;
-      }
-      this.icons.delete(i);
+  public removeAll(): void {
+    for (const [icon, state] of this.icons) {
+      icon.y = state.restY;
     }
-  }
 
-  removeAll(): void {
-    for (const i of this.icons.keys()) {
-      if (this.toggled) {
-        const icon = this.icons.get(i);
-        const delta = icon ? this.getModeYDelta(icon) : 0;
-        i.y -= delta;
-      }
-      this.icons.delete(i);
-    }
+    this.icons.clear();
   }
 }

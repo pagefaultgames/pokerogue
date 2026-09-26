@@ -80,7 +80,7 @@ function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<Poke
   // due to all 3 of their abilities providing an immunity.
   // At this point we do not have an ability to know which ability the Pokémon generated with,
   // so we can only work with guaranteed immunities.
-  const groundImmunityAbilities: readonly AbilityId[] = [AbilityId.LEVITATE, AbilityId.EARTH_EATER];
+  const groundImmunityAbilities: readonly AbilityId[] = [AbilityId.LEVITATE, AbilityId.EELEVATE, AbilityId.EARTH_EATER];
   const isAlwaysGroundImmune =
     groundImmunityAbilities.includes(species.ability1)
     && (species.ability2 == null || groundImmunityAbilities.includes(species.ability2))

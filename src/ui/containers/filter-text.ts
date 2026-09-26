@@ -3,6 +3,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { UiTheme } from "#enums/ui-theme";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import type { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import type { StarterContainer } from "#ui/starter-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
@@ -214,7 +215,7 @@ export class FilterText extends Phaser.GameObjects.Container {
    * @param container the StarterContainer to compare position against
    * @returns the index of the closest filter
    */
-  getNearestFilter(container: StarterContainer): number {
+  getNearestFilter(container: StarterContainer | PokedexMonContainer): number {
     const midy = container.y + container.icon.displayHeight / 2;
     let nearest = 0;
     let nearestDist = 1000;

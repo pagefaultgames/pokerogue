@@ -1,11 +1,11 @@
-import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
-import type { MovePhase } from "#app/phases/move-phase";
-import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
-import { DynamicPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
-import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
-import type { PriorityQueue } from "#app/queues/priority-queue";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import type { Pokemon } from "#field/pokemon";
+import type { MovePhase } from "#phases/move-phase";
+import { MovePhasePriorityQueue } from "#queues/move-phase-priority-queue";
+import { DynamicPhasePriorityQueue } from "#queues/pokemon-phase-priority-queue";
+import { PostSummonPhasePriorityQueue } from "#queues/post-summon-phase-priority-queue";
+import type { PriorityQueue } from "#queues/priority-queue";
 import type { DynamicPhase, PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
 
 // TODO: might be easier to define which phases should be dynamic instead

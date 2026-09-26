@@ -11,9 +11,8 @@ import {
   settingKeyboardDefaults,
   settingKeyboardOptions,
 } from "#system/settings-keyboard";
-import type { InterfaceConfig } from "#types/configs/inputs";
+import type { InterfaceConfig } from "#types/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
-import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import { toUpperSnakeCase } from "#utils/strings";
@@ -21,8 +20,9 @@ import i18next from "i18next";
 
 /** Class representing the settings UI handler for keyboards */
 export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
+
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
@@ -30,7 +30,6 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
     this.configs = [CFG_KEYBOARD_QWERTY];
     this.commonSettingsCount = 0;
     this.textureOverride = "keyboard";
-    this.localStoragePropertyName = "settingsKeyboard";
     this.settingBlacklisted = settingKeyboardBlackList;
     this.device = Device.KEYBOARD;
 
@@ -55,7 +54,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
 
     const iconDelete = globalScene.add.sprite(0, 0, "keyboard");
     iconDelete.setOrigin(0, -0.1);
-    iconDelete.setPositionRelative(this.actionsBg, this.navigationContainer.width - 260, 4);
+    iconDelete.setPositionRelative(this.actionsBg, this.tabMenu.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
     const deleteText = addTextObject(0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
@@ -74,18 +73,19 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
    * Handle the home key press event.
    */
   onHomeDown(): void {
-    if (![UiMode.SETTINGS_KEYBOARD, UiMode.SETTINGS_GAMEPAD].includes(globalScene.ui.getMode())) {
+    if (![UiMode.SETTINGS_KEYBOARD, UiMode.SETTINGS_GAMEPAD].includes(globalScene.ui.mode)) {
       return;
     }
-    globalScene.gameData.resetMappingToFactory();
-    NavigationManager.getInstance().updateIcons();
+    const isKeyboard = globalScene.ui.mode === UiMode.SETTINGS_KEYBOARD;
+    globalScene.gameData.resetMappingToDefault(isKeyboard ? Device.KEYBOARD : Device.GAMEPAD);
+    this.tabMenu?.updateIcons();
   }
 
   /**
    * Handle the delete key press event.
    */
   onDeleteDown(): void {
-    if (globalScene.ui.getMode() !== UiMode.SETTINGS_KEYBOARD) {
+    if (globalScene.ui.mode !== UiMode.SETTINGS_KEYBOARD) {
       return;
     }
     const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
@@ -95,9 +95,12 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
     const activeConfig = this.getActiveConfig();
     const success = activeConfig != null && deleteBind(activeConfig, settingName);
     if (success) {
-      this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
+      globalScene.gameData.saveMappingConfigs(
+        globalScene.inputController?.selectedDevice[Device.KEYBOARD],
+        activeConfig,
+      );
       this.updateBindings();
-      NavigationManager.getInstance().updateIcons();
+      this.tabMenu?.updateIcons();
     }
   }
 
@@ -146,33 +149,6 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
           );
         }
       }
-    }
-  }
-
-  /**
-   * Save the custom keyboard mapping to local storage.
-   *
-   * @param config - The configuration to save.
-   */
-  saveCustomKeyboardMappingToLocalStorage(config): void {
-    globalScene.gameData.saveMappingConfigs(globalScene.inputController?.selectedDevice[Device.KEYBOARD], config);
-  }
-
-  /**
-   * Save the setting to local storage.
-   *
-   * @param settingName - The name of the setting to save.
-   * @param cursor - The cursor position to save.
-   */
-  saveSettingToLocalStorage(settingName, cursor): void {
-    if (this.setting[settingName] !== this.setting.Default_Layout) {
-      globalScene.gameData.saveControlSetting(
-        this.device,
-        this.localStoragePropertyName,
-        settingName,
-        this.settingDeviceDefaults,
-        cursor,
-      );
     }
   }
 }

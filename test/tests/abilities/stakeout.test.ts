@@ -72,7 +72,7 @@ describe("Abilities - Stakeout", () => {
 
     game.move.select(MoveId.SURF);
     await game.move.selectEnemyMove(MoveId.FLIP_TURN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemy1.isFainted()).toBe(false);

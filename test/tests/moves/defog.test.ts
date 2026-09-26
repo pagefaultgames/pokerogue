@@ -36,7 +36,7 @@ describe("Moves - Defog", () => {
 
     game.move.use(MoveId.DEFOG);
     await game.move.forceEnemyMove(MoveId.ELECTRIC_TERRAIN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(game).toHaveTerrain(TerrainType.ELECTRIC);

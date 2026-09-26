@@ -2978,6 +2978,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.SANDSLASH] = {
@@ -3760,7 +3761,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       1: AbilityId.UNAWARE,
     },
     levelMoves: [
-      [EVOLVE_MOVE, MoveId.DISARMING_VOICE],
+      [1, MoveId.DISARMING_VOICE],
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
       [1, MoveId.SPOTLIGHT],
@@ -4917,8 +4918,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [14, MoveId.MAGNITUDE],
       [18, MoveId.BULLDOZE],
       [20, MoveId.SUCKER_PUNCH],
-      [23, MoveId.SLASH],
-      [25, MoveId.MUD_BOMB],
+      [23, MoveId.MUD_BOMB],
+      [25, MoveId.SLASH],
       [28, MoveId.SANDSTORM],
       [31, MoveId.DIG],
       [35, MoveId.EARTH_POWER],
@@ -5032,15 +5033,22 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [14, MoveId.MAGNITUDE],
       [18, MoveId.BULLDOZE],
       [20, MoveId.SUCKER_PUNCH],
-      [23, MoveId.SLASH],
-      [25, MoveId.MUD_BOMB],
+      [23, MoveId.MUD_BOMB],
+      [25, MoveId.SLASH],
       [30, MoveId.SANDSTORM],
       [35, MoveId.DIG],
       [41, MoveId.EARTH_POWER],
       [47, MoveId.EARTHQUAKE],
       [53, MoveId.FISSURE],
     ],
-    tms: [MoveId.HYPER_BEAM, MoveId.TRI_ATTACK, MoveId.GIGA_IMPACT, MoveId.SLUDGE_WAVE, MoveId.HIGH_HORSEPOWER],
+    tms: [
+      MoveId.HYPER_BEAM,
+      MoveId.TRI_ATTACK,
+      MoveId.GIGA_IMPACT,
+      MoveId.SLUDGE_WAVE,
+      MoveId.HIGH_HORSEPOWER,
+      MoveId.NIGHT_SLASH,
+    ],
   };
   generationOneSpeciesData[SpeciesId.MEOWTH] = {
     species: new PokemonSpecies({
@@ -5238,6 +5246,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.PERSIAN] = {
@@ -5635,12 +5644,14 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.THROAT_CHOP,
       MoveId.STOMPING_TANTRUM,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.PRIMEAPE] = {
@@ -6154,6 +6165,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.ROCK_CLIMB,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.DARKEST_LARIAT,
       MoveId.HIGH_HORSEPOWER,
       MoveId.THROAT_CHOP,
@@ -6584,6 +6596,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.COACHING,
@@ -8207,6 +8220,9 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationOneSpeciesData[SpeciesId.DODUO] = {
@@ -9722,6 +9738,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.KINGLER] = {
@@ -11548,6 +11565,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.TERRAIN_PULSE,
@@ -12343,6 +12361,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.ACROBATICS,
       MoveId.STRUGGLE_BUG,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.LUNGE,
       MoveId.BRUTAL_SWING,
@@ -12351,6 +12370,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.JYNX] = {
@@ -12672,9 +12692,10 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [36, MoveId.STRENGTH],
       [40, MoveId.SWORDS_DANCE],
       [43, MoveId.STORM_THROW],
-      [47, MoveId.THRASH],
-      [50, MoveId.SUPERPOWER],
-      [54, MoveId.GUILLOTINE],
+      [46, MoveId.SLASH],
+      [49, MoveId.THRASH],
+      [52, MoveId.SUPERPOWER],
+      [55, MoveId.GUILLOTINE],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
@@ -14363,6 +14384,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.KABUTOPS] = {
@@ -16068,6 +16090,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.DRILL_RUN,
+      MoveId.DUAL_CHOP,
       MoveId.RAZOR_SHELL,
       MoveId.HEAT_CRASH,
       MoveId.TAIL_SLAP,

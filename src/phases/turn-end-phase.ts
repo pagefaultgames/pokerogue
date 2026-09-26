@@ -14,6 +14,7 @@ import {
   TurnStatusEffectModifier,
 } from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
+import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
@@ -39,11 +40,12 @@ export class TurnEndPhase extends FieldPhase {
           globalScene.phaseManager.unshiftNew(
             "PokemonHealPhase",
             pokemon.getBattlerIndex(),
-            Math.max(pokemon.getMaxHp() >> 4, 1),
-            i18next.t("battle:turnEndHpRestore", {
-              pokemonName: getPokemonNameWithAffix(pokemon),
-            }),
-            true,
+            toDmgValue(pokemon.getMaxHp() / 16),
+            {
+              message: i18next.t("battle:turnEndHpRestore", {
+                pokemonName: getPokemonNameWithAffix(pokemon),
+              }),
+            },
           );
         }
 

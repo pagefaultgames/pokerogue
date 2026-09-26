@@ -175,7 +175,7 @@ describe("Abilities - Gulp Missile", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.damageAndUpdate).toHaveReturnedWith(getEffectDamage(enemy));
-    expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemy).toHaveStatusEffect(StatusEffect.PARALYSIS);
     expect(cramorant.getTag(BattlerTagType.GULP_MISSILE_PIKACHU)).toBeUndefined();
     expect(cramorant.formIndex).toBe(NORMAL_FORM);
   });
@@ -244,7 +244,7 @@ describe("Abilities - Gulp Missile", () => {
 
     game.move.select(MoveId.SUBSTITUTE);
     await game.move.selectEnemyMove(MoveId.POWER_TRIP);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     expect(game.field.getPlayerPokemon().formIndex).toBe(GULPING_FORM);

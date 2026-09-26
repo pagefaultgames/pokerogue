@@ -39,7 +39,7 @@ describe("Moves - Grudge", () => {
 
     game.move.use(MoveId.GUILLOTINE);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("FaintPhase");
 
     // Ratatta should have fainted and consumed all of Guillotine's PP
@@ -66,7 +66,7 @@ describe("Moves - Grudge", () => {
 
     game.move.select(MoveId.METRONOME);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("FaintPhase");
 
     expect(ratatta).toHaveFainted();
@@ -82,14 +82,14 @@ describe("Moves - Grudge", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(ratatta).toHaveBattlerTag(BattlerTagType.GRUDGE);
 
     game.move.use(MoveId.GUILLOTINE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(ratatta).toHaveFainted();
@@ -106,7 +106,7 @@ describe("Moves - Grudge", () => {
 
     game.move.use(MoveId.FALSE_SWIPE);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(ratatta).toHaveFainted();

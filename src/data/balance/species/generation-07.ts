@@ -431,7 +431,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       [46, MoveId.FLARE_BLITZ],
       [51, MoveId.OUTRAGE],
     ],
-    tms: [],
+    tms: [MoveId.DUAL_CHOP],
   };
   generationSevenSpeciesData[SpeciesId.INCINEROAR] = {
     species: new PokemonSpecies({
@@ -1136,6 +1136,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.IRON_HEAD,
       MoveId.LOW_SWEEP,
+      MoveId.DUAL_CHOP,
     ],
   };
   generationSevenSpeciesData[SpeciesId.GRUBBIN] = {
@@ -1463,6 +1464,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.BULLDOZE,
       MoveId.FROST_BREATH,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.BRUTAL_SWING,
@@ -2351,6 +2353,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         MoveId.SHADOW_CLAW,
         MoveId.LOW_SWEEP,
         MoveId.FOUL_PLAY,
+        MoveId.DUAL_CHOP,
         MoveId.THROAT_CHOP,
         MoveId.LASH_OUT,
         MoveId.UPPER_HAND,
@@ -3104,6 +3107,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.GRASS_KNOT,
       MoveId.BUG_BITE,
       MoveId.ROUND,
+      MoveId.DUAL_CHOP,
       MoveId.PETAL_BLIZZARD,
       MoveId.GRASSY_TERRAIN,
       MoveId.CONFIDE,
@@ -3173,6 +3177,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.CROSS_POISON,
       MoveId.LOW_SWEEP,
       MoveId.SOLAR_BLADE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.MORELULL] = {
@@ -3607,6 +3612,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.BRUTAL_SWING,
       MoveId.STOMPING_TANTRUM,
@@ -4394,9 +4400,9 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
           type2: PokemonType.STEEL,
           height: 2.3,
           weight: 148,
-          ability1: AbilityId.SHELL_ARMOR,
+          ability1: AbilityId.TOUGH_CLAWS,
           ability2: AbilityId.NONE,
-          abilityHidden: AbilityId.SHELL_ARMOR,
+          abilityHidden: AbilityId.TOUGH_CLAWS,
           baseTotal: 630,
           baseHp: 75,
           baseAtk: 150,
@@ -4484,10 +4490,18 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SLUDGE_WAVE,
       MoveId.FROST_BREATH,
       MoveId.DRILL_RUN,
+      MoveId.DUAL_CHOP,
       MoveId.RAZOR_SHELL,
       MoveId.SNARL,
       MoveId.THROAT_CHOP,
       MoveId.LIQUIDATION,
+      MoveId.AGILITY,
+      MoveId.CHILLING_WATER,
+      MoveId.GUNK_SHOT,
+      MoveId.POUNCE,
+      MoveId.U_TURN,
+      MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationSevenSpeciesData[SpeciesId.SANDYGAST] = {
@@ -6576,6 +6590,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.BRUXISH] = {
@@ -7109,6 +7124,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.BULLDOZE,
       MoveId.DRAGON_TAIL,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.BREAKING_SWIPE,
       MoveId.SCALE_SHOT,
@@ -7601,6 +7617,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ECHOED_VOICE,
       MoveId.STORED_POWER,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.SNARL,
       MoveId.GRASSY_TERRAIN,
       MoveId.CONFIDE,
@@ -8309,6 +8326,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.DARKEST_LARIAT,
@@ -8850,6 +8868,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.BULLDOZE,
       MoveId.DRAGON_TAIL,
+      MoveId.DUAL_CHOP,
       MoveId.HEAT_CRASH,
       MoveId.SNARL,
       MoveId.HIGH_HORSEPOWER,
@@ -9128,6 +9147,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.MAGEARNA] = {
@@ -9565,6 +9585,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.HEX,
       MoveId.ACROBATICS,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.PHANTOM_FORCE,
       MoveId.CONFIDE,
       MoveId.THROAT_CHOP,
@@ -10150,6 +10171,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ACROBATICS,
       MoveId.VOLT_SWITCH,
       MoveId.WORK_UP,
+      MoveId.DUAL_CHOP,
       MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.SNARL,
@@ -10748,6 +10770,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_SANDSLASH] = {
@@ -11191,6 +11214,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SLUDGE_WAVE,
       MoveId.HIGH_HORSEPOWER,
       MoveId.THROAT_CHOP,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_MEOWTH] = {
@@ -11329,6 +11353,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_PERSIAN] = {
