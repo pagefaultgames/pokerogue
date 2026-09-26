@@ -10,6 +10,7 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
@@ -584,4 +585,42 @@ export function isNuzlockeChallenge(): boolean {
     }
   }
   return isFreshStart && isLimitedCatch && isHardcore;
+}
+
+export function getRibbonsToAward(): RibbonFlag {
+  const { gameMode } = globalScene;
+  const { challenges, isClassic } = gameMode;
+
+  let ribbonFlags = 0n;
+
+  if (challenges.some(c => [Challenges.MOVESET_RANDOMIZER].includes(c.id) && c.value > 0)) {
+    return ribbonFlags as RibbonFlag;
+  }
+
+  for (const challenge of challenges) {
+    const ribbon = challenge.ribbonAwarded;
+    if (challenge.value && ribbon) {
+      ribbonFlags |= ribbon;
+    }
+  }
+
+  // TODO: find a better way to handle blocking ribbons and achievements
+  // Block other ribbons if flip stats or inverse is active
+  const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+  // Block other ribbons if passives on `all` is active
+  const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
+  if (flip_or_inverse) {
+    ribbonFlags = flip_or_inverse;
+  } else if (challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+    ribbonFlags = passives;
+  } else {
+    if (isClassic) {
+      ribbonFlags |= RibbonData.CLASSIC;
+    }
+    if (isNuzlockeChallenge()) {
+      ribbonFlags |= RibbonData.NUZLOCKE;
+    }
+  }
+
+  return ribbonFlags as RibbonFlag;
 }

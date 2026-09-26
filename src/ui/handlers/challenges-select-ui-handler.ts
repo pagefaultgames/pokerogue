@@ -9,7 +9,9 @@ import { TabMenu } from "#ui/tab-menu";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
+import { getRibbonsToAward } from "#utils/challenge-utils";
 import { getLocalizedSpriteKey } from "#utils/common";
+import { getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -458,6 +460,60 @@ export class GameChallengesUiHandler extends UiHandler {
     }
   }
 
+  private setAwardedRibbons(): void {
+    const awardedRibbonFlags = getRibbonsToAward();
+
+    const text = i18next.t("ribbons:runAward");
+    const labels: string[] = [];
+
+    for (const ribbon of orderedRibbons) {
+      if (!(ribbon & awardedRibbonFlags)) {
+        continue;
+      }
+      const label = i18next.t(`ribbons:name.${getRibbonKey(ribbon)}`);
+      if (labels.length > 0) {
+        labels.push(", ");
+      }
+      labels.push(label);
+    }
+
+    this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${text.concat(...labels)}`);
+  }
+
+  private activateStartCursor(): void {
+    this.startCursor.setVisible(true);
+    this.cursorObj?.setVisible(false);
+    this.updateChallengeArrowsTint(this.startCursor.visible);
+
+    this.setAwardedRibbons();
+  }
+
+  private deactivateStartCursor(): void {
+    this.startCursor.setVisible(false);
+    this.cursorObj?.setVisible(true);
+    this.updateChallengeArrowsTint(this.startCursor.visible);
+  }
+
+  private goToBottomOfChallengeList(): boolean {
+    let success = false;
+    const challenges = this.getFilteredChallenges();
+
+    // When at the top of the menu and pressing UP, move to the bottommost item.
+    if (challenges.length > MAX_ROWS_TO_DISPLAY) {
+      // If there are more than `MAX_ROWS_TO_DISPLAY` challenges, scroll to the bottom
+      // First, set the cursor to the last visible element, preparing for the scroll to the end.
+      const successA = this.setCursor(MAX_ROWS_TO_DISPLAY - 1);
+      // Then, adjust the scroll to display the bottommost elements of the menu.
+      const successB = this.setScrollCursor(challenges.length - MAX_ROWS_TO_DISPLAY);
+      success = successA && successB; // success is just there to play the little validation sound effect
+    } else if (challenges.length > 0) {
+      // If there are `MAX_ROWS_TO_DISPLAY` or less challenges, just move to the bottom one
+      success = this.setCursor(challenges.length - 1);
+    }
+
+    return success;
+  }
+
   /**
    * Processes input from a specified button.
    *
@@ -478,9 +534,7 @@ export class GameChallengesUiHandler extends UiHandler {
       if (this.startCursor.visible) {
         // If the user presses cancel when the start cursor has been activated,
         // the game deactivates the start cursor and allows typical challenge selection behavior
-        this.startCursor.setVisible(false);
-        this.cursorObj?.setVisible(true);
-        this.updateChallengeArrowsTint(this.startCursor.visible);
+        this.deactivateStartCursor();
       } else {
         phaseManager.toTitleScreen();
         phaseManager.getCurrentPhase().end();
@@ -494,9 +548,7 @@ export class GameChallengesUiHandler extends UiHandler {
           phaseManager.unshiftNew("SelectStarterPhase");
           phaseManager.getCurrentPhase().end();
         } else {
-          this.startCursor.setVisible(true);
-          this.cursorObj?.setVisible(false);
-          this.updateChallengeArrowsTint(this.startCursor.visible);
+          this.activateStartCursor();
         }
         success = true;
       } else {
@@ -509,18 +561,7 @@ export class GameChallengesUiHandler extends UiHandler {
         case Button.UP:
           if (this.cursor === 0) {
             if (this.scrollCursor === 0) {
-              // When at the top of the menu and pressing UP, move to the bottommost item.
-              if (challenges.length > MAX_ROWS_TO_DISPLAY) {
-                // If there are more than `MAX_ROWS_TO_DISPLAY` challenges, scroll to the bottom
-                // First, set the cursor to the last visible element, preparing for the scroll to the end.
-                const successA = this.setCursor(MAX_ROWS_TO_DISPLAY - 1);
-                // Then, adjust the scroll to display the bottommost elements of the menu.
-                const successB = this.setScrollCursor(challenges.length - MAX_ROWS_TO_DISPLAY);
-                success = successA && successB; // success is just there to play the little validation sound effect
-              } else if (challenges.length > 0) {
-                // If there are `MAX_ROWS_TO_DISPLAY` or less challenges, just move to the bottom one
-                success = this.setCursor(challenges.length - 1);
-              }
+              success = this.goToBottomOfChallengeList();
             } else {
               success = this.setScrollCursor(this.scrollCursor - 1);
             }
@@ -536,6 +577,9 @@ export class GameChallengesUiHandler extends UiHandler {
             if (this.scrollCursor < challenges.length - MAX_ROWS_TO_DISPLAY) {
               // When at the bottom and pressing DOWN, scroll if possible.
               success = this.setScrollCursor(this.scrollCursor + 1);
+            } else if (this.hasSelectedChallenge) {
+              this.activateStartCursor();
+              success = true;
             } else {
               // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
               // First, set the cursor to the first visible element, preparing for the scroll to the top.
@@ -546,7 +590,12 @@ export class GameChallengesUiHandler extends UiHandler {
             }
           } else if (challenges.length < MAX_ROWS_TO_DISPLAY && this.cursor >= challenges.length - 1) {
             // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
-            success = this.setCursor(0);
+            if (this.hasSelectedChallenge) {
+              this.activateStartCursor();
+              success = true;
+            } else {
+              success = this.setCursor(0);
+            }
           } else {
             success = this.setCursor(this.cursor + 1);
           }
@@ -571,6 +620,10 @@ export class GameChallengesUiHandler extends UiHandler {
           }
           break;
       }
+    } else if (button === Button.UP && this.startCursor.visible) {
+      this.deactivateStartCursor();
+      this.goToBottomOfChallengeList();
+      success = true;
     }
 
     if (success) {
