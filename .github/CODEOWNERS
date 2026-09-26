@@ -7,8 +7,10 @@
 /src/data/balance @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
 /src/data/trainers @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
 
-# GitHub actions/templates etc. - Senior Devs
+# GitHub actions/templates etc., important project files - Senior Devs
 # Should be defined last in the file to make sure these always override all other definitions
 /.github @pagefaultgames/senior-dev-team
+lefthook.yml @pagefaultgames/senior-dev-team
 package.json @pagefaultgames/senior-dev-team
 pnpm-lock.yaml @pagefaultgames/senior-dev-team
+pnpm-workspace.yaml @pagefaultgames/senior-dev-team
