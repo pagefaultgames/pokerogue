@@ -6,6 +6,7 @@ import { BattleType } from "#enums/battle-type";
 import { FieldPosition } from "#enums/field-position";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
+import { playTween } from "#utils/anim-utils";
 import i18next from "i18next";
 
 const REPOSITION_SLIDE_DURATION = 500;
@@ -67,9 +68,9 @@ export class PartyReorderSwitchPhase extends BattlePhase {
   /**
    * Utility function to check whether the biome has changed with the current wave.
    */
-  //TODO: It should not be necessary to have this function here. There is already globalScene.isNewBiome(),
+  // TODO: It should not be necessary to have this function here. There is already globalScene.isNewBiome(),
   // but it returns `true` if the _next_ wave will be in a new biome.
-  hasBiomeChanged() {
+  private hasBiomeChanged(): boolean {
     const isEndlessOrDaily = globalScene.gameMode.hasShortBiomes || globalScene.gameMode.isDaily;
     const isEndlessSixthWave = globalScene.gameMode.hasShortBiomes && globalScene.currentBattle.waveIndex % 10 === 6;
     const isWaveIndexMultipleOfFifty = globalScene.currentBattle.waveIndex % 50 === 0;
@@ -112,37 +113,22 @@ export class PartyReorderSwitchPhase extends BattlePhase {
   }
 
   /**
-   * Play the "come back" recall animation for the given pokemon, removing them
-   * from the field once the animation completes.
+   * Play the "come back" recall animation for the given pokemon,
+   * removing them from the field once the animation completes.
    * @param leavingPokemon - The pokemon to recall
    */
   private async recallPokemon(leavingPokemon: Pokemon[]): Promise<void> {
     for (const pokemon of leavingPokemon) {
-      globalScene.ui.showText(
-        i18next.t("battle:playerComeBack", {
-          pokemonName: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      globalScene.ui.showText(i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) }));
       audioManager.playSound("se/pb_rel");
 
       pokemon.hideInfo();
       pokemon.tint(getPokeballTintColor(pokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
 
-      await new Promise<void>(resolve => {
-        globalScene.tweens.add({
-          targets: pokemon,
-          duration: 250,
-          ease: "Sine.easeIn",
-          scale: 0.1,
-          onComplete: () => {
-            pokemon.leaveField(true, false);
-
-            globalScene.time.delayedCall(750, () => {
-              resolve();
-            });
-          },
-        });
-      });
+      await playTween({ targets: pokemon, duration: 250, ease: "Sine.easeIn", scale: 0.1 });
+      pokemon.leaveField(true, false);
+      // TODO: replace with generic wait utility function
+      await new Promise<void>(resolve => globalScene.time.delayedCall(750, () => resolve()));
     }
   }
 }
