@@ -1,8 +1,10 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import type { ModifierOverride } from "#modifiers/modifier-type";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
@@ -129,5 +131,34 @@ describe("Moves - Revival Blessing", () => {
     // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
     // Make sure it's still in slot 1
     expect(game.field.getEnemyPokemon()).toBe(enemyFainting);
+  });
+
+  it("should reclaim held items from post-battle loot when reviving a fainted enemy", async () => {
+    const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.LUM, count: 1 }];
+    game.override.enemyHeldItems(initBerries).enemyMoveset(MoveId.REVIVAL_BLESSING).startingWave(8);
+
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+
+    const firstEnemy = game.scene.getEnemyParty()[0];
+
+    game.move.select(MoveId.SPLASH);
+    await game.doKillOpponents();
+
+    const postBattleLootBefore = game.scene.currentBattle.postBattleLoot;
+    expect(postBattleLootBefore.some(loot => loot.pokemonId === firstEnemy.id)).toBe(true);
+
+    await game.toNextTurn();
+    game.move.select(MoveId.SPLASH);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+
+    await game.phaseInterceptor.to("MoveEndPhase", false);
+
+    expect(firstEnemy.isFainted()).toBe(false);
+
+    const postBattleLootAfter = game.scene.currentBattle.postBattleLoot;
+    expect(postBattleLootAfter.some(loot => loot.pokemonId === firstEnemy.id)).toBe(false);
+
+    const heldItemNames = firstEnemy.getHeldItems().map(m => m.type.name);
+    expect(heldItemNames).toContain("Lum Berry");
   });
 });
