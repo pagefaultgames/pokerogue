@@ -119,10 +119,12 @@ export class QuietFormChangePhase extends BattlePhase {
 
     pokemonTintSprite // formatting
       .setAlpha(0)
-      .setTintFill(0xffffff);
+      .setTint(0xffffff)
+      .setTintMode(Phaser.TintModes.FILL);
     pokemonFormTintSprite // formatting
       .setVisible(false)
-      .setTintFill(0xffffff);
+      .setTint(0xffffff)
+      .setTintMode(Phaser.TintModes.FILL);
 
     audioManager.playSound("battle_anims/PRSFX- Transform");
 
