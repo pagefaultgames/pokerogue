@@ -410,7 +410,7 @@ export class StatStageChangePhase extends PokemonPhase {
         alpha: 0,
       });
     } finally {
-      // Clean up the sprite and disable the mask
+      // clean up the sprite
       statSprite.destroy();
     }
   }
