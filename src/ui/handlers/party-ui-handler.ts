@@ -44,11 +44,6 @@ const DISCARD_BUTTON_X_DOUBLES = 64;
 const DISCARD_BUTTON_Y = -73;
 const DISCARD_BUTTON_Y_DOUBLES = -58;
 
-const isManageLayoutMode = (partyUiMode: PartyUiMode) =>
-  partyUiMode === PartyUiMode.MODIFIER_TRANSFER
-  || partyUiMode === PartyUiMode.DISCARD
-  || partyUiMode === PartyUiMode.CHECK;
-
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
 export enum PartyOption {
@@ -289,11 +284,6 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyUiMode = args[0] as PartyUiMode;
 
-    const touchControls = document?.getElementById("touchControls");
-    if (touchControls) {
-      touchControls.dataset.partyMode = PartyUiMode[this.partyUiMode];
-    }
-
     this.fieldIndex = args.length > 1 ? (args[1] as number) : -1;
 
     this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : undefined;
@@ -307,7 +297,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
-    if (isManageLayoutMode(this.partyUiMode)) {
+    if (this.isItemManageMode()) {
       this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double_manage" : ""}`);
     } else {
       this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double" : ""}`);
@@ -1975,11 +1965,6 @@ export class PartyUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear();
     this.partyContainer.setVisible(false);
     this.clearPartySlots();
-
-    const touchControls = document?.getElementById("touchControls");
-    if (touchControls) {
-      delete touchControls.dataset.partyMode;
-    }
   }
 
   clearPartySlots() {
@@ -2017,7 +2002,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   ) {
     const isBenched = slotIndex >= globalScene.currentBattle.getBattlerCount();
     const isDoubleBattle = globalScene.currentBattle.double;
-    const isItemManageMode = isManageLayoutMode(partyUiMode);
+    const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
     /*
      * Here we determine the position of the slot.
@@ -2054,7 +2039,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
-    const isItemManageMode = isManageLayoutMode(partyUiMode);
+    const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
     this.slotBgKey = this.isBenched
       ? "party_slot"
