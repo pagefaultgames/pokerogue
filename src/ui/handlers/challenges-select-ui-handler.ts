@@ -137,7 +137,7 @@ export class GameChallengesUiHandler extends UiHandler {
       .fillStyle(0xffffff)
       .beginPath()
       .fillRect(descriptionBg.x + 6, descriptionBg.y + 4, descriptionBg.width - 12, this.descriptionTextMaxHeight);
-    this.descriptionText.setMask(this.descriptionTextMaskRect.createGeometryMask());
+    this.descriptionText.enableFilters().filters?.internal.addMask(this.descriptionTextMaskRect);
 
     this.startBg = addWindow(0, 0, this.optionsWidth, startBgHeight)
       .setName("window-start-bg")

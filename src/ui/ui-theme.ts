@@ -65,8 +65,8 @@ export function addWindow(
     )
       .setOrigin(0)
       .setScale(6);
-    const mask = maskRect.createGeometryMask();
-    window.setMask(mask);
+
+    window.enableFilters().filters?.internal.addMask(maskRect);
   }
 
   return window;

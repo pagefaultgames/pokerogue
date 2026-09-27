@@ -1051,15 +1051,14 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(abilityInfo.descriptionText);
 
           // Sets up the mask that hides the description text to give an illusion of scrolling
-          const descriptionTextMaskRect = globalScene.make.graphics({});
-          descriptionTextMaskRect.setScale(6);
-          descriptionTextMaskRect.fillStyle(0xffffff);
-          descriptionTextMaskRect.beginPath();
-          descriptionTextMaskRect.fillRect(110, 90, 206, 31);
+          const descriptionTextMaskRect = globalScene.make
+            .graphics({})
+            .setScale(6)
+            .fillStyle(0xffffff)
+            .beginPath()
+            .fillRect(110, 90, 206, 31);
 
-          const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
-
-          abilityInfo.descriptionText.setMask(abilityDescriptionTextMask);
+          abilityInfo.descriptionText.enableFilters().filters?.internal.addMask(descriptionTextMaskRect);
 
           const abilityDescriptionLineCount = Math.floor(abilityInfo.descriptionText.displayHeight / 14.83);
 
@@ -1235,15 +1234,15 @@ export class SummaryUiHandler extends UiHandler {
         expOverlay.setOrigin(0, 0);
         this.statsContainer.add(expOverlay);
 
-        const expMaskRect = globalScene.make.graphics({});
-        expMaskRect.setScale(6);
-        expMaskRect.fillStyle(0xffffff);
-        expMaskRect.beginPath();
-        expMaskRect.fillRect(140 + pageContainer.x, 152 + pageContainer.y + 22, Math.floor(expRatio * 64), 3);
+        const expMaskRect = globalScene.make
+          .graphics({})
+          .setScale(6)
+          .fillStyle(0xffffff)
+          .beginPath()
+          .fillRect(140 + pageContainer.x, 152 + pageContainer.y + 22, Math.floor(expRatio * 64), 3);
 
-        const expMask = expMaskRect.createGeometryMask();
+        expOverlay.enableFilters().filters?.internal.addMask(expMaskRect);
 
-        expOverlay.setMask(expMask);
         this.abilityPrompt = globalScene.add.image(
           0,
           0,
@@ -1354,15 +1353,13 @@ export class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1252 } });
         this.movesContainer.add(this.moveDescriptionText);
 
-        const moveDescriptionTextMaskRect = globalScene.make.graphics({});
-        moveDescriptionTextMaskRect.setScale(6);
-        moveDescriptionTextMaskRect.fillStyle(0xffffff);
-        moveDescriptionTextMaskRect.beginPath();
-        moveDescriptionTextMaskRect.fillRect(112, 121, 205, 59);
-
-        const moveDescriptionTextMask = moveDescriptionTextMaskRect.createGeometryMask();
-
-        this.moveDescriptionText.setMask(moveDescriptionTextMask);
+        const moveDescriptionTextMaskRect = globalScene.make
+          .graphics({})
+          .setScale(6)
+          .fillStyle(0xffffff)
+          .beginPath()
+          .fillRect(112, 121, 205, 59);
+        this.moveDescriptionText.enableFilters().filters?.internal.addMask(moveDescriptionTextMaskRect);
         break;
       }
     }
