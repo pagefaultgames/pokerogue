@@ -27,7 +27,7 @@ import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
+import RoundRectangle from "phaser4-rex-plugins/plugins/roundrectangle";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
