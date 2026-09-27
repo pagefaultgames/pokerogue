@@ -4,6 +4,7 @@ import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { BerryModifier } from "#modifiers/modifier";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
