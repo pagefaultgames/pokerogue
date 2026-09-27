@@ -466,6 +466,12 @@ export class GameChallengesUiHandler extends UiHandler {
     const text = i18next.t("ribbons:runAward");
     const labels: string[] = [];
 
+    if (awardedRibbonFlags === 0n) {
+      const label = i18next.t("ribbons:noRibbons");
+      this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${label}`);
+      return;
+    }
+
     for (const ribbon of orderedRibbons) {
       if (!(ribbon & awardedRibbonFlags)) {
         continue;
