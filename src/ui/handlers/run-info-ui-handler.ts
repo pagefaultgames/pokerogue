@@ -1027,10 +1027,10 @@ export class RunInfoUiHandler extends UiHandler {
       const variant = pkmn.variant;
       const species = pkmn.getSpeciesForm();
       const pokemonSprite: Phaser.GameObjects.Sprite = globalScene.add.sprite(60 + 40 * i, 40 + row * 80, "pkmn__sub");
-      pokemonSprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        ignoreTimeTint: true,
-      });
+      // pokemonSprite.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   ignoreTimeTint: true,
+      // });
       this.hallofFameContainer.add(pokemonSprite);
       const speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
       speciesLoaded.set(id, false);
@@ -1039,9 +1039,9 @@ export class RunInfoUiHandler extends UiHandler {
       species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
         pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-        pokemonSprite.setPipelineData("shiny", shiny);
-        pokemonSprite.setPipelineData("variant", variant);
-        pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+        // pokemonSprite.setPipelineData("shiny", shiny);
+        // pokemonSprite.setPipelineData("variant", variant);
+        // pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
         pokemonSprite.setVisible(true);
       });
       if (pkmn.isFusion()) {

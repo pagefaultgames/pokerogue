@@ -101,7 +101,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.pokemonSprite = globalScene.add //
       .sprite(53, 63, "pkmn__sub")
-      .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
+      // .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
 
     this.shinyOverlay = globalScene.add
       .image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny"))
@@ -806,9 +806,9 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
       this.pokemonSprite
         .play(species.getSpriteKey(female, formIndex, shiny, variant))
-        .setPipelineData("shiny", shiny)
-        .setPipelineData("variant", variant)
-        .setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant))
+        // .setPipelineData("shiny", shiny)
+        // .setPipelineData("variant", variant)
+        // .setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant))
         .setVisible(!this.statsMode);
     });
   }

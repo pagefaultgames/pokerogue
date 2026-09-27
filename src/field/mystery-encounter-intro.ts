@@ -112,22 +112,22 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
     const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const ret = globalScene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        yShadowOffset: yShadow ?? 0,
-      });
+      // ret.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   hasShadow: !!hasShadow,
+      //   yShadowOffset: yShadow ?? 0,
+      // });
       return ret;
     };
 
     const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const icon = globalScene.add.sprite(-19, 2, "items", spriteKey);
       icon.setOrigin(0.5, 1);
-      icon.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        yShadowOffset: yShadow ?? 0,
-      });
+      // icon.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   hasShadow: !!hasShadow,
+      //   yShadowOffset: yShadow ?? 0,
+      // });
       return icon;
     };
 
@@ -156,12 +156,12 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         tintSprite = getSprite(spriteKey);
         if (isPokemon && isShiny) {
           // Set Pipeline for shiny variant
-          sprite.setPipelineData("spriteKey", spriteKey);
-          tintSprite.setPipelineData("spriteKey", spriteKey);
-          sprite.setPipelineData("shiny", true);
-          sprite.setPipelineData("variant", variant);
-          tintSprite.setPipelineData("shiny", true);
-          tintSprite.setPipelineData("variant", variant);
+          // sprite.setPipelineData("spriteKey", spriteKey);
+          // tintSprite.setPipelineData("spriteKey", spriteKey);
+          // sprite.setPipelineData("shiny", true);
+          // sprite.setPipelineData("variant", variant);
+          // tintSprite.setPipelineData("shiny", true);
+          // tintSprite.setPipelineData("variant", variant);
           // Create Sprite for shiny Sparkle
           pokemonShinySparkle = globalScene.add.sprite(sprite.x, sprite.y, "shiny");
           pokemonShinySparkle.setOrigin(0.5, 1);

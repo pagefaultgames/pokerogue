@@ -85,7 +85,7 @@ export class GameWrapper {
       deleteTexture: () => null!,
       canvasToTexture: () => ({}) as any,
       createCanvasTexture: () => ({}) as any,
-      pipelines: { add: () => null! } as any,
+      // pipelines: { add: () => null! } as any,
     } as any;
     this.scene.renderer = this.game.renderer as any;
     this.scene.children = { removeAll: () => null! } as any;
@@ -110,8 +110,8 @@ export class GameWrapper {
 
     this.scene.cameras = {
       main: {
-        setPostPipeline: () => null!,
-        removePostPipeline: () => null!,
+        // setPostPipeline: () => null!,
+        // removePostPipeline: () => null!,
       },
     } as any;
 
@@ -157,8 +157,8 @@ export class GameWrapper {
     this.game.domContainer = {} as HTMLDivElement;
     // TODO: scenes don't have dom containers
     this.scene["domContainer"] = {} as HTMLDivElement;
-    this.scene.spritePipeline = {} as any;
-    this.scene.fieldSpritePipeline = {} as any;
+    // this.scene.spritePipeline = {} as any;
+    // this.scene.fieldSpritePipeline = {} as any;
     this.scene.load = new MockLoader(this.scene) as any;
     this.scene.sys = {
       queueDepthSort: () => null,
