@@ -435,7 +435,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
         .fillStyle(0xffffff)
         .beginPath()
         .fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
-      optionText.enableFilters().filters?.internal.addMask(optionTextMaskRect);
+      optionText.enableFilters().filters?.external.addMask(optionTextMaskRect);
 
       const optionTextWidth = optionText.displayWidth;
 
@@ -505,7 +505,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
       .fillStyle(0xffffff)
       .beginPath()
       .fillRect(6, 53, 206, 57);
-    descriptionTextObject.enableFilters().filters?.internal.addMask(descriptionTextMaskRect);
+    descriptionTextObject.enableFilters().filters?.external.addMask(descriptionTextMaskRect);
 
     const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
@@ -617,7 +617,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
         .beginPath()
         .fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
 
-      tooltipTextObject.enableFilters().filters?.internal.addMask(tooltipTextMaskRect);
+      tooltipTextObject.enableFilters().filters?.external.addMask(tooltipTextMaskRect);
 
       const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
 

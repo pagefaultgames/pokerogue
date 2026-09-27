@@ -66,7 +66,7 @@ export function addWindow(
       .setOrigin(0)
       .setScale(6);
 
-    window.enableFilters().filters?.internal.addMask(maskRect);
+    window.enableFilters().filters?.external.addMask(maskRect);
   }
 
   return window;

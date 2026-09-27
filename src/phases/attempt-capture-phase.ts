@@ -174,7 +174,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                     pbTint
                       .setOrigin(this.pokeball.originX, this.pokeball.originY)
                       .setTint(0)
-                      .setTintMode(Phaser.TintModes.FILL);
+                      .setTintMode(Phaser.TintModes.FILL)
+                      .setAlpha(0);
                     globalScene.field.add(pbTint);
                     globalScene.tweens.add({
                       targets: pbTint,
