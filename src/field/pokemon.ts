@@ -2421,7 +2421,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       weightRemoved = 100 * autotomizedTag.autotomizeCount;
     }
     const minWeight = 0.1;
-    const weight = new NumberHolder(this.species.weight - weightRemoved);
+    const formIndex: number = this.formIndex;
+    const formWeight = this.species.forms.length > 0 ? this.species.forms[formIndex].weight : this.species.weight;
+    const weight = new NumberHolder(formWeight - weightRemoved);
 
     // This will trigger the ability overlay so only call this function when necessary
     applyAbAttrs("WeightMultiplierAbAttr", { pokemon: this, weight });
