@@ -62,7 +62,7 @@ describe("Moves - Tera Starstorm", () => {
 
     // Terapagos in Stellar Form should hit both targets
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemyField.every(pokemon => pokemon.isFullHp())).toBe(false);
+    enemyField.forEach(pokemon => expect(pokemon).not.toHaveFullHp());
   });
 
   it("targets both opponents in a double battle when used by Terapagos immediately after terastallizing", async () => {
@@ -79,7 +79,7 @@ describe("Moves - Tera Starstorm", () => {
 
     // Terapagos in Stellar Form should hit both targets
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemyField.some(pokemon => pokemon.isFullHp())).toBe(false);
+    enemyField.forEach(pokemon => expect(pokemon).not.toHaveFullHp());
   });
 
   it("targets only one opponent in a double battle when used by Terapagos without terastallizing", async () => {
@@ -89,13 +89,10 @@ describe("Moves - Tera Starstorm", () => {
     terapagos.isTerastallized = false;
 
     game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
-
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const enemyField = game.scene.getEnemyField();
-
-    // Terapagos in Stellar Form should hit both targets
-    await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyField.some(pokemon => pokemon.isFullHp())).toBe(true);
   });
 
@@ -125,6 +122,6 @@ describe("Moves - Tera Starstorm", () => {
     expect(fusionedMon.isFusion()).toBe(true);
     // Move effects should be applied
     expect(fusionedMon.getMoveType).toHaveReturnedWith(PokemonType.STELLAR);
-    expect(game.scene.getEnemyField().every(pokemon => pokemon.isFullHp())).toBe(false);
+    expect(game.scene.getEnemyField().some(pokemon => !pokemon.isFullHp())).toBe(true);
   });
 });

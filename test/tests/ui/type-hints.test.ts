@@ -100,7 +100,7 @@ describe("UI - Type Hints", () => {
         .getAll<Phaser.GameObjects.Text>()
         .find(text => text.text === i18next.t("move:growl.name"))! as unknown as MockText;
 
-      expect.soft(growlText.color).toBe(undefined);
+      expect.soft(growlText.color).toBeUndefined();
       ui.getHandler().processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to("CommandPhase");
@@ -136,7 +136,7 @@ describe("UI - Type Hints", () => {
         .find(text => text.text === i18next.t("move:shadowBall.name"))! as unknown as MockText;
       expect.soft(shadowBallText).toBeDefined();
 
-      expect.soft(shadowBallText.color).toBe(undefined);
+      expect.soft(shadowBallText.color).toBeUndefined();
       ui.getHandler().processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to("CommandPhase");

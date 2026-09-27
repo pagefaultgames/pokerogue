@@ -42,18 +42,18 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
-    expect(enemyPokemon.moveset[0].ppUsed).toBe(1);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 1);
 
     await game.toNextTurn();
 
     game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
-    expect(enemyPokemon.moveset[0].ppUsed).toBe(2);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedPP(MoveId.EMBER, 2);
   });
 
   it("should have no effect against Grass-type Pokemon", async () => {
@@ -66,8 +66,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should have no effect against Pokemon with Overcoat", async () => {
@@ -80,8 +80,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.SUCCESS });
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not damage the target if the target has Magic Guard", async () => {
@@ -94,8 +94,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not damage the target if Primordial Sea is active", async () => {
@@ -108,8 +108,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should not prevent the target from thawing out with Flame Wheel", async () => {
@@ -123,8 +123,8 @@ describe("Moves - Powder", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.FREEZE);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FLAME_WHEEL, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should not allow a target with Protean to change to Fire type", async () => {
@@ -137,8 +137,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(enemyPokemon.summonData.types).not.toBe(PokemonType.FIRE);
   });
 
@@ -166,10 +166,10 @@ describe("Moves - Powder", () => {
     await game.toEndOfTurn();
 
     // player should not take damage
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.EMBER, result: MoveResult.FAIL });
+    expect(playerPokemon).toHaveFullHp();
     // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
-    expect(enemyPokemon.hp).toBe(
+    expect(enemyPokemon).toHaveHp(
       enemyStartingHp - playerPokemon.turnData.totalDamageDealt - 2 * Math.floor(enemyPokemon.getMaxHp() / 4),
     );
   });
@@ -185,9 +185,9 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
-    expect(playerPokemon.getLastXMoves()[0].move).toBe(MoveId.POWDER);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIERY_DANCE, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(playerPokemon).toHaveUsedMove(MoveId.POWDER);
   });
 
   it("should cancel Revelation Dance if it becomes a Fire-type move", async () => {
@@ -200,8 +200,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.REVELATION_DANCE, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should cancel Shell Trap and damage the target, even if the move would fail", async () => {
@@ -214,8 +214,8 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.SHELL_TRAP, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should cancel Grass Pledge if used after ally's Fire Pledge", async () => {
@@ -231,8 +231,8 @@ describe("Moves - Powder", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.GRASS_PLEDGE, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should cancel Fire Pledge if used before ally's Water Pledge", async () => {
@@ -248,8 +248,8 @@ describe("Moves - Powder", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIRE_PLEDGE, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveHp(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
 
   it("should NOT cancel Fire Pledge if used after ally's Water Pledge", async () => {
@@ -265,7 +265,7 @@ describe("Moves - Powder", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.FIRE_PLEDGE, result: MoveResult.SUCCESS });
+    expect(enemyPokemon).toHaveFullHp();
   });
 });

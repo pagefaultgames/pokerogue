@@ -41,7 +41,7 @@ describe("Abilities - ZERO TO HERO", () => {
     expect(palafin2.formIndex).toBe(heroForm);
     palafin2.hp = 0;
     palafin2.status = new Status(StatusEffect.FAINT);
-    expect(palafin2.isFainted()).toBe(true);
+    expect(palafin2).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();

@@ -50,8 +50,8 @@ describe("Moves - Destiny Bond", () => {
     game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).toHaveFainted();
   });
 
   it("should KO the opponent on the next turn", async () => {
@@ -68,15 +68,15 @@ describe("Moves - Destiny Bond", () => {
     game.setTurnOrder(playerFirst);
     await game.toNextTurn();
 
-    expect(enemyPokemon.isFainted()).toBe(false);
-    expect(enemyPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon).not.toHaveFainted();
+    expect(enemyPokemon).not.toHaveFainted();
 
     // Turn 2: Player KO's the enemy before the enemy's turn
     game.move.select(moveToUse);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).toHaveFainted();
   });
 
   it("should fail if used twice in a row", async () => {
@@ -93,15 +93,15 @@ describe("Moves - Destiny Bond", () => {
     game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
-    expect(enemyPokemon.isFainted()).toBe(false);
-    expect(enemyPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon).not.toHaveFainted();
+    expect(enemyPokemon).not.toHaveFainted();
 
     // Turn 2: Enemy should fail Destiny Bond then get KO'd
     game.move.select(moveToUse);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).not.toHaveFainted();
   });
 
   it("should not KO the opponent if the user dies to weather", async () => {
@@ -118,8 +118,8 @@ describe("Moves - Destiny Bond", () => {
     game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).not.toHaveFainted();
   });
 
   it("should not KO the opponent if the user had another turn", async () => {
@@ -136,8 +136,8 @@ describe("Moves - Destiny Bond", () => {
     game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
-    expect(enemyPokemon.isFainted()).toBe(false);
-    expect(playerPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon).not.toHaveFainted();
+    expect(playerPokemon).not.toHaveFainted();
     expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     // Turn 2: Enemy should skip a turn due to sleep, then get KO'd
@@ -224,8 +224,8 @@ describe("Moves - Destiny Bond", () => {
     game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).toHaveFainted();
 
     // Check that the Tackle user's Reviver Seed did not activate
     const revSeeds = game.scene

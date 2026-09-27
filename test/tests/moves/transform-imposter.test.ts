@@ -116,8 +116,8 @@ describe("Transforming Effects", () => {
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.getTag(BattlerTagType.SEEDED)).toBeDefined();
-      expect(ditto.getTag(BattlerTagType.CONFUSED)).toBeDefined();
+      expect(ditto).toHaveBattlerTag(BattlerTagType.SEEDED);
+      expect(ditto).toHaveBattlerTag(BattlerTagType.CONFUSED);
     });
 
     // TODO: This is not implemented
@@ -137,7 +137,7 @@ describe("Transforming Effects", () => {
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.status?.effect).toBeUndefined();
+      expect(ditto).toHaveStatusEffect(StatusEffect.NONE);
       expect(ditto.getNameToRender()).not.toBe(mew.getNameToRender());
       expect(ditto.level).not.toBe(mew.level);
       expect(ditto.friendship).not.toBe(mew.friendship);
@@ -193,7 +193,7 @@ describe("Transforming Effects", () => {
       game.phaseInterceptor.clearLogs();
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+      expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
       expect(game.phaseInterceptor.phaseLog).toContain("StatStageChangePhase");
     });
 
@@ -296,7 +296,7 @@ describe("Transforming Effects", () => {
       await game.toEndOfTurn();
 
       const ditto = game.field.getPlayerPokemon();
-      expect(ditto.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(ditto).toHaveUsedMove({ move: MoveId.TRANSFORM, result: MoveResult.FAIL });
       expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonTransformPhase");
     });
   });

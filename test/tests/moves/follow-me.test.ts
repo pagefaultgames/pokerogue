@@ -43,8 +43,8 @@ describe("Moves - Follow Me", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(playerPokemon[0].hp).toBeLessThan(playerPokemon[0].getMaxHp());
-    expect(playerPokemon[1].hp).toBe(playerPokemon[1].getMaxHp());
+    expect(playerPokemon[0]).not.toHaveFullHp();
+    expect(playerPokemon[1]).toHaveFullHp();
   });
 
   test("move should redirect enemy attacks to the first ally that uses it", async () => {
@@ -63,8 +63,8 @@ describe("Moves - Follow Me", () => {
 
     playerPokemon.sort((a, b) => a.getEffectiveStat(Stat.SPD) - b.getEffectiveStat(Stat.SPD));
 
-    expect(playerPokemon[1].hp).toBeLessThan(playerPokemon[1].getMaxHp());
-    expect(playerPokemon[0].hp).toBe(playerPokemon[0].getMaxHp());
+    expect(playerPokemon[1]).not.toHaveFullHp();
+    expect(playerPokemon[0]).toHaveFullHp();
   });
 
   test("move effect should be bypassed by Stalwart", async () => {
@@ -84,8 +84,8 @@ describe("Moves - Follow Me", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // If redirection was bypassed, both enemies should be damaged
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).not.toHaveFullHp();
+    expect(enemyPokemon[1]).not.toHaveFullHp();
   });
 
   test("move effect should be bypassed by Snipe Shot", async () => {
@@ -104,7 +104,7 @@ describe("Moves - Follow Me", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // If redirection was bypassed, both enemies should be damaged
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).not.toHaveFullHp();
+    expect(enemyPokemon[1]).not.toHaveFullHp();
   });
 });

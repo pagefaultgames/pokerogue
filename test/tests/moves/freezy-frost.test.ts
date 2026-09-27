@@ -39,14 +39,14 @@ describe("Moves - Freezy Frost", () => {
     game.move.select(MoveId.HOWL);
     await game.toNextTurn();
 
-    expect(user.getStatStage(Stat.ATK)).toBe(1);
-    expect(enemy.getStatStage(Stat.ATK)).toBe(1);
+    expect(user).toHaveStatStage(Stat.ATK, 1);
+    expect(enemy).toHaveStatStage(Stat.ATK, 1);
 
     game.move.select(MoveId.FREEZY_FROST);
     await game.toNextTurn();
 
-    expect(user.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+    expect(user).toHaveStatStage(Stat.ATK, 0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should clear all stat changes even when enemy uses the move", async () => {
@@ -57,12 +57,11 @@ describe("Moves - Freezy Frost", () => {
     game.move.select(MoveId.HOWL);
     await game.toNextTurn();
 
-    const userAtkBefore = user.getStatStage(Stat.ATK);
-    expect(userAtkBefore).toBe(1);
+    expect(user).toHaveStatStage(Stat.ATK, 1);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(user.getStatStage(Stat.ATK)).toBe(0);
+    expect(user).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should clear all stat changes in double battle", async () => {
@@ -75,18 +74,18 @@ describe("Moves - Freezy Frost", () => {
     game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
-    expect(leftPlayer.getStatStage(Stat.ATK)).toBe(1);
-    expect(rightPlayer.getStatStage(Stat.ATK)).toBe(1);
-    expect(leftOpp.getStatStage(Stat.ATK)).toBe(2); // Both enemies use Howl
-    expect(rightOpp.getStatStage(Stat.ATK)).toBe(2);
+    expect(leftPlayer).toHaveStatStage(Stat.ATK, 1);
+    expect(rightPlayer).toHaveStatStage(Stat.ATK, 1);
+    expect(leftOpp).toHaveStatStage(Stat.ATK, 2); // Both enemies use Howl
+    expect(rightOpp).toHaveStatStage(Stat.ATK, 2);
 
     game.move.select(MoveId.FREEZY_FROST, 0, leftOpp.getBattlerIndex());
     game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
-    expect(leftPlayer.getStatStage(Stat.ATK)).toBe(0);
-    expect(rightPlayer.getStatStage(Stat.ATK)).toBe(0);
-    expect(leftOpp.getStatStage(Stat.ATK)).toBe(0);
-    expect(rightOpp.getStatStage(Stat.ATK)).toBe(0);
+    expect(leftPlayer).toHaveStatStage(Stat.ATK, 0);
+    expect(rightPlayer).toHaveStatStage(Stat.ATK, 0);
+    expect(leftOpp).toHaveStatStage(Stat.ATK, 0);
+    expect(rightOpp).toHaveStatStage(Stat.ATK, 0);
   });
 });

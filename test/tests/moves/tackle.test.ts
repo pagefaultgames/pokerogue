@@ -5,6 +5,8 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+// TODO: Do we even need this test file? Tackle is a basic move and doesn't have any special interactions whatsoever, so this boils down to a
+// "does damage"/"type matchup" test (which should arguably be their own "thing")
 describe("Moves - Tackle", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;

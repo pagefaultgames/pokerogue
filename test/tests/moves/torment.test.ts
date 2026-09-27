@@ -40,7 +40,7 @@ describe("Moves - Torment", () => {
     const move1 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(MoveId.TACKLE);
     expect(move1.result).toBe(MoveResult.SUCCESS);
-    expect(playerPokemon.getTag(BattlerTagType.TORMENT)).toBeDefined();
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.TORMENT);
 
     // Second turn, Torment forces Struggle to occur
     game.move.select(MoveId.TACKLE);

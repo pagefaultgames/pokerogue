@@ -108,7 +108,7 @@ describe("Phase - Battle Phase", () => {
     game.move.select(moveToUse);
     await game.phaseInterceptor.to("DamageAnimPhase", false);
     await game.killPokemon(game.scene.currentBattle.enemyParty[0]);
-    expect(game.scene.currentBattle.enemyParty[0].isFainted()).toBe(true);
+    expect(game.scene.currentBattle.enemyParty[0]).toHaveFainted();
     await game.phaseInterceptor.to("VictoryPhase");
   });
 

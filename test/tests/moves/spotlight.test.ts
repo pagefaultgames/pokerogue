@@ -39,8 +39,8 @@ describe("Moves - Spotlight", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).not.toHaveFullHp();
+    expect(enemyPokemon[1]).toHaveFullHp();
   });
 
   test("move should cause other redirection moves to fail", async () => {
@@ -56,7 +56,7 @@ describe("Moves - Spotlight", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).not.toHaveFullHp();
+    expect(enemyPokemon[1]).toHaveFullHp();
   });
 });

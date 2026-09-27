@@ -35,17 +35,17 @@ describe("Moves - Tailwind", () => {
     const magikarpSpd = magikarp.getStat(Stat.SPD);
     const meowthSpd = meowth.getStat(Stat.SPD);
 
-    expect(magikarp.getEffectiveStat(Stat.SPD)).toBe(magikarpSpd);
-    expect(meowth.getEffectiveStat(Stat.SPD)).toBe(meowthSpd);
+    expect(magikarp).toHaveEffectiveStat(Stat.SPD, magikarpSpd);
+    expect(meowth).toHaveEffectiveStat(Stat.SPD, meowthSpd);
 
     game.move.select(MoveId.TAILWIND);
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(magikarp.getEffectiveStat(Stat.SPD)).toBe(magikarpSpd * 2);
-    expect(meowth.getEffectiveStat(Stat.SPD)).toBe(meowthSpd * 2);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(magikarp).toHaveEffectiveStat(Stat.SPD, magikarpSpd * 2);
+    expect(meowth).toHaveEffectiveStat(Stat.SPD, meowthSpd * 2);
+    expect(game).toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
   });
 
   it("lasts for 4 turns", async () => {
@@ -55,20 +55,20 @@ describe("Moves - Tailwind", () => {
 
     game.move.select(MoveId.TAILWIND);
     await game.toNextTurn();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
   });
 
   it("does not affect the opposing side", async () => {
@@ -82,18 +82,18 @@ describe("Moves - Tailwind", () => {
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);
 
-    expect(ally.getEffectiveStat(Stat.SPD)).toBe(allySpd);
-    expect(enemy.getEffectiveStat(Stat.SPD)).toBe(enemySpd);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(ally).toHaveEffectiveStat(Stat.SPD, allySpd);
+    expect(enemy).toHaveEffectiveStat(Stat.SPD, enemySpd);
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY);
 
     game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(ally.getEffectiveStat(Stat.SPD)).toBe(allySpd * 2);
-    expect(enemy.getEffectiveStat(Stat.SPD)).toBe(enemySpd);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(ally).toHaveEffectiveStat(Stat.SPD, allySpd * 2);
+    expect(enemy).toHaveEffectiveStat(Stat.SPD, enemySpd);
+    expect(game).toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY);
   });
 });

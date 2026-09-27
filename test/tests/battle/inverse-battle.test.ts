@@ -112,7 +112,7 @@ describe("Inverse Battle", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
   });
 
   it("Fire type does not get burned - Will-O-Wisp against Charmander", async () => {
@@ -164,7 +164,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
-    expect(game.field.getEnemyPokemon().waveData.abilitiesApplied).toContain(AbilityId.ANTICIPATION);
+    expect(game.field.getEnemyPokemon()).toHaveAbilityApplied(AbilityId.ANTICIPATION);
   });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
@@ -179,7 +179,7 @@ describe("Inverse Battle", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player.getTypes()[0]).toBe(PokemonType.DRAGON);
+    expect(player).toHaveTypes([PokemonType.DRAGON]);
   });
 
   it("Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {

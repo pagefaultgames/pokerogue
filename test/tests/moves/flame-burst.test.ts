@@ -49,8 +49,8 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
+    expect(leftEnemy).not.toHaveFullHp();
+    expect(rightEnemy).toHaveTakenDamage(getEffectDamage(rightEnemy));
   });
 
   it("does not inflict damage to the target's ally if the target was not affected by Flame Burst", async () => {
@@ -63,8 +63,8 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());
+    expect(leftEnemy).toHaveFullHp();
+    expect(rightEnemy).toHaveFullHp();
   });
 
   it("does not interact with the target ally's abilities", async () => {
@@ -77,8 +77,8 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
+    expect(leftEnemy).not.toHaveFullHp();
+    expect(rightEnemy).toHaveTakenDamage(getEffectDamage(rightEnemy));
   });
 
   it("effect damage is prevented by Magic Guard", async () => {
@@ -91,8 +91,8 @@ describe("Moves - Flame Burst", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
 
-    expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
-    expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());
+    expect(leftEnemy).not.toHaveFullHp();
+    expect(rightEnemy).toHaveFullHp();
   });
 
   it("ignores protection moves and Endure from the non-target pokemon", async () => {

@@ -172,9 +172,6 @@ describe("Moves - Parting Shot", () => {
     game.move.use(MoveId.FIRST_IMPRESSION);
     await game.toNextTurn();
 
-    expect(golisopod).toHaveUsedMove({
-      move: MoveId.FIRST_IMPRESSION,
-      result: MoveResult.SUCCESS,
-    });
+    expect(golisopod).toHaveUsedMove({ move: MoveId.FIRST_IMPRESSION, result: MoveResult.SUCCESS });
   });
 });

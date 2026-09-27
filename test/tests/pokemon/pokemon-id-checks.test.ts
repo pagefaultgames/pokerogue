@@ -54,7 +54,7 @@ describe("Field - Pokemon ID Checks", () => {
     const enemy = game.field.getEnemyPokemon();
     // Override player pokemon PID to be 0
     player.id = 0;
-    expect(player.getTag(BattlerTagType.DESTINY_BOND)).toBeUndefined();
+    expect(player).not.toHaveBattlerTag(BattlerTagType.DESTINY_BOND);
 
     game.move.use(MoveId.DESTINY_BOND);
     game.doSelectPartyPokemon(1);
@@ -69,7 +69,7 @@ describe("Field - Pokemon ID Checks", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(player.isFainted()).toBe(true);
-    expect(enemy.isFainted()).toBe(true);
+    expect(player).toHaveFainted();
+    expect(enemy).toHaveFainted();
   });
 });

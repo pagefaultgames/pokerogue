@@ -164,7 +164,7 @@ describe("UI - Transfer Item Options", () => {
     }
     const nickname = pokemon.nickname;
 
-    expect(nickname).toBe(undefined);
+    expect(nickname).toBeUndefined();
 
     await new Promise(r => setTimeout(r, 100));
     expect(game.scene.ui.mode).toBe(UiMode.RENAME_POKEMON);
