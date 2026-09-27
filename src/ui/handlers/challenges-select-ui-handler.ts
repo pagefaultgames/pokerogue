@@ -463,7 +463,7 @@ export class GameChallengesUiHandler extends UiHandler {
   private setAwardedRibbons(): void {
     const awardedRibbonFlags = getRibbonsToAward();
 
-    const text = i18next.t("ribbons:runAward");
+    const text = i18next.t("ribbons:runAward").concat(" ");
     const labels: string[] = [];
 
     if (awardedRibbonFlags === 0n) {
