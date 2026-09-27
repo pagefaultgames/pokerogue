@@ -17,7 +17,8 @@ import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
-import { NumberHolder } from "#utils/common";
+import type { NumberHolder } from "#utils/common";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
 
@@ -136,7 +137,7 @@ export class DamageAchv extends Achv {
   constructor(localizationKey: string, damageAmount: number, iconImage: string, score: number) {
     super(localizationKey, iconImage, score);
     this.conditionFunc = (args: [NumberHolder | number]) =>
-      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount;
+      (typeof args[0] === "number" ? args[0] : args[0].value) >= this.damageAmount;
     this.damageAmount = damageAmount;
   }
 
@@ -155,7 +156,7 @@ export class HealAchv extends Achv {
   constructor(localizationKey: string, healAmount: number, iconImage: string, score: number) {
     super(localizationKey, iconImage, score);
     this.conditionFunc = (args: [number | NumberHolder]) =>
-      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount;
+      (typeof args[0] === "number" ? args[0] : args[0].value) >= this.healAmount;
     this.healAmount = healAmount;
   }
 
@@ -176,7 +177,8 @@ export class LevelAchv extends Achv {
       localizationKey,
       iconImage,
       score,
-      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.level,
+      (args: [ValueHolder<number> | number, ...any[]]) =>
+        (typeof args[0] === "number" ? args[0] : args[0].value) >= this.level,
     );
     this.level = level;
   }
