@@ -478,7 +478,7 @@ export class GameChallengesUiHandler extends UiHandler {
       }
       const label = i18next.t(`ribbons:name.${getRibbonKey(ribbon)}`);
       if (labels.length > 0) {
-        labels.push(", ");
+        labels.push(`${i18next.t("ribbons:connector")} `);
       }
       labels.push(label);
     }
