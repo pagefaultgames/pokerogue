@@ -429,14 +429,13 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
       // Sets up the mask that hides the option text to give an illusion of scrolling
       const nonScrollWidth = 90;
-      const optionTextMaskRect = globalScene.make.graphics({});
-      optionTextMaskRect.setScale(6);
-      optionTextMaskRect.fillStyle(0xffffff);
-      optionTextMaskRect.beginPath();
-      optionTextMaskRect.fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
-
-      const optionTextMask = optionTextMaskRect.createGeometryMask();
-      optionText.setMask(optionTextMask);
+      const optionTextMaskRect = globalScene.make
+        .graphics({})
+        .setScale(6)
+        .fillStyle(0xffffff)
+        .beginPath()
+        .fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
+      optionText.enableFilters().filters?.internal.addMask(optionTextMaskRect);
 
       const optionTextWidth = optionText.displayWidth;
 
@@ -500,15 +499,13 @@ export class MysteryEncounterUiHandler extends UiHandler {
     });
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
-    const descriptionTextMaskRect = globalScene.make.graphics({});
-    descriptionTextMaskRect.setScale(6);
-    descriptionTextMaskRect.fillStyle(0xffffff);
-    descriptionTextMaskRect.beginPath();
-    descriptionTextMaskRect.fillRect(6, 53, 206, 57);
-
-    const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
-
-    descriptionTextObject.setMask(abilityDescriptionTextMask);
+    const descriptionTextMaskRect = globalScene.make
+      .graphics({})
+      .setScale(6)
+      .fillStyle(0xffffff)
+      .beginPath()
+      .fillRect(6, 53, 206, 57);
+    descriptionTextObject.enableFilters().filters?.internal.addMask(descriptionTextMaskRect);
 
     const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
@@ -613,14 +610,14 @@ export class MysteryEncounterUiHandler extends UiHandler {
       this.tooltipContainer.add(tooltipTextObject);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
-      const tooltipTextMaskRect = globalScene.make.graphics({});
-      tooltipTextMaskRect.setScale(6);
-      tooltipTextMaskRect.fillStyle(0xffffff);
-      tooltipTextMaskRect.beginPath();
-      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
+      const tooltipTextMaskRect = globalScene.make
+        .graphics({})
+        .setScale(6)
+        .fillStyle(0xffffff)
+        .beginPath()
+        .fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
 
-      const textMask = tooltipTextMaskRect.createGeometryMask();
-      tooltipTextObject.setMask(textMask);
+      tooltipTextObject.enableFilters().filters?.internal.addMask(tooltipTextMaskRect);
 
       const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
 
