@@ -123,26 +123,26 @@ export class EvolutionPhase extends Phase {
     sprite.play(spriteKey);
 
     if (setPipeline) {
-      sprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: false,
-        teraColor: getTypeRgb(pokemon.getTeraType()),
-        isTerastallized: pokemon.isTerastallized,
-      });
+      // sprite.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   hasShadow: false,
+      //   teraColor: getTypeRgb(pokemon.getTeraType()),
+      //   isTerastallized: pokemon.isTerastallized,
+      // });
     }
 
-    sprite
-      .setPipelineData("ignoreTimeTint", true)
-      .setPipelineData("spriteKey", spriteKey)
-      .setPipelineData("shiny", pokemon.shiny)
-      .setPipelineData("variant", pokemon.variant);
+    // sprite
+    //   .setPipelineData("ignoreTimeTint", true)
+    //   .setPipelineData("spriteKey", spriteKey)
+    //   .setPipelineData("shiny", pokemon.shiny)
+    //   .setPipelineData("variant", pokemon.variant);
 
-    for (let k of ["spriteColors", "fusionSpriteColors"]) {
-      if (pokemon.summonData.speciesForm) {
-        k += "Base";
-      }
-      sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
-    }
+    // for (let k of ["spriteColors", "fusionSpriteColors"]) {
+    //   if (pokemon.summonData.speciesForm) {
+    //     k += "Base";
+    //   }
+    //   sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+    // }
 
     return sprite;
   }
@@ -154,10 +154,10 @@ export class EvolutionPhase extends Phase {
       this.evolutionBaseBg.displayHeight / 2,
       "pkmn__sub",
     );
-    sprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-    });
+    // sprite.setPipeline(globalScene.spritePipeline, {
+    //   tone: [0.0, 0.0, 0.0, 0.0],
+    //   ignoreTimeTint: true,
+    // });
     return sprite;
   }
 
