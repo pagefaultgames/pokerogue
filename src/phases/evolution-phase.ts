@@ -169,12 +169,12 @@ export class EvolutionPhase extends Phase {
     this.pokemonSprite = this.configureSprite(this.pokemon, this.getPokemonSprite());
     this.pokemonTintSprite = this.configureSprite(
       this.pokemon,
-      this.getPokemonSprite().setAlpha(0).setTintFill(0xffffff),
+      this.getPokemonSprite().setAlpha(0).setTint(0xffffff).setTintMode(Phaser.TintModes.FILL),
     );
     this.pokemonEvoSprite = this.configureSprite(this.pokemon, this.getPokemonSprite().setVisible(false));
     this.pokemonEvoTintSprite = this.configureSprite(
       this.pokemon,
-      this.getPokemonSprite().setVisible(false).setTintFill(0xffffff),
+      this.getPokemonSprite().setVisible(false).setTint(0xffffff).setTintMode(Phaser.TintModes.FILL),
     );
 
     this.evolutionContainer.add([

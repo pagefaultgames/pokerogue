@@ -636,10 +636,12 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
 
     tradedPokemonSprite.setAlpha(0);
     tradedPokemonTintSprite.setAlpha(0);
-    tradedPokemonTintSprite.setTintFill(getPokeballTintColor(tradedPokemon.pokeball));
+    tradedPokemonTintSprite.setTint(getPokeballTintColor(tradedPokemon.pokeball)).setTintMode(Phaser.TintModes.FILL);
     receivedPokemonSprite.setVisible(false);
     receivedPokemonTintSprite.setVisible(false);
-    receivedPokemonTintSprite.setTintFill(getPokeballTintColor(receivedPokemon.pokeball));
+    receivedPokemonTintSprite
+      .setTint(getPokeballTintColor(receivedPokemon.pokeball))
+      .setTintMode(Phaser.TintModes.FILL);
 
     [tradedPokemonSprite, tradedPokemonTintSprite].forEach(sprite => {
       const spriteKey = tradedPokemon.getSpriteKey(true);

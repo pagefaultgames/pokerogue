@@ -171,9 +171,10 @@ export class AttemptCapturePhase extends PokemonPhase {
                     globalScene.animations.addPokeballCaptureStars(this.pokeball);
 
                     const pbTint = globalScene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
-                    pbTint.setOrigin(this.pokeball.originX, this.pokeball.originY);
-                    pbTint.setTintFill(0);
-                    pbTint.setAlpha(0);
+                    pbTint
+                      .setOrigin(this.pokeball.originX, this.pokeball.originY)
+                      .setTint(0)
+                      .setTintMode(Phaser.TintModes.FILL);
                     globalScene.field.add(pbTint);
                     globalScene.tweens.add({
                       targets: pbTint,

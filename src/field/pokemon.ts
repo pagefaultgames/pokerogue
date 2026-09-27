@@ -5426,8 +5426,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string) {
     const tintSprite = this.getTintSprite();
-    tintSprite?.setTintFill(color);
-    tintSprite?.setVisible(true);
+    tintSprite?.setTint(color).setTintMode(Phaser.TintModes.FILL).setVisible(true);
 
     if (duration) {
       tintSprite?.setAlpha(0);

@@ -726,8 +726,8 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
-    tintSprites.map(tintSprite => {
-      tintSprite.setTintFill(color);
+    tintSprites.forEach(tintSprite => {
+      tintSprite.setTint(color).setTintMode(Phaser.TintModes.FILL);
       tintSprite.setVisible(true);
 
       if (duration) {
