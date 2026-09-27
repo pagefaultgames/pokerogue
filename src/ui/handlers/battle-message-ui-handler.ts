@@ -7,7 +7,7 @@ import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 export class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;

@@ -15,7 +15,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;

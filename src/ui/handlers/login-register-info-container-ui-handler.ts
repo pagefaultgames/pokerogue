@@ -7,7 +7,7 @@ import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import JSZip from "jszip";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
+import type InputText from "phaser4-rex-plugins/plugins/inputtext";
 
 interface BuildInteractableImageOpts {
   scale?: number;

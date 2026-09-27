@@ -13,7 +13,7 @@ import { getRibbonsToAward } from "#utils/challenge-utils";
 import { getLocalizedSpriteKey } from "#utils/common";
 import { getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 type ChallengeLabel = {
   label: Phaser.GameObjects.Text;
