@@ -465,7 +465,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.teraIcon
       .setVisible(ty !== PokemonType.UNKNOWN)
-      .setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(ty)))
+      .setTint(Phaser.Display.Color.GetColor(...getTypeRgb(ty)))
+      .setTintMode(Phaser.TintModes.FILL)
       .setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
     this.lastTeraType = ty;
 

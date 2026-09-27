@@ -445,7 +445,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
    */
   private tint(sprite, color: number, alpha?: number, duration?: number, ease?: string): void {
     // const tintSprites = this.getTintSprites();
-    sprite.setTintFill(color);
+    sprite.setTint(color).setTintMode(Phaser.TintModes.FILL);
     sprite.setVisible(true);
 
     if (duration) {

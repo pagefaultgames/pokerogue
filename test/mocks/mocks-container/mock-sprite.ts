@@ -59,9 +59,13 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  setTintFill(color): this {
-    // Sets the tint fill color.
-    this.phaserSprite.setTintFill(color);
+  setTint(color): this {
+    this.phaserSprite.setTint(color);
+    return this;
+  }
+
+  setTintMode(mode): this {
+    this.phaserSprite.setTintMode(mode);
     return this;
   }
 
@@ -128,12 +132,6 @@ export class MockSprite implements MockGameObject {
 
   setAlpha(alpha): this {
     this.phaserSprite.setAlpha(alpha);
-    return this;
-  }
-
-  setTint(color): this {
-    // Sets the tint of this Game Object.
-    this.phaserSprite.setTint(color);
     return this;
   }
 
