@@ -99,7 +99,7 @@ export class EvolutionPhase extends Phase {
       .video(0, 0, "evo_bg")
       .stop()
       .setOrigin(0)
-      .setScale(0.4359673025) // this is apparently 320/734 ?????
+      .setScale(0.4359673025) // TODO: explain this magic number that's around 320/734???
       .setVisible(false);
 
     this.evolutionBgOverlay = globalScene.add
