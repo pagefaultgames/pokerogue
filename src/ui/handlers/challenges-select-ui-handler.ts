@@ -498,6 +498,8 @@ export class GameChallengesUiHandler extends UiHandler {
     this.startCursor.setVisible(false);
     this.cursorObj?.setVisible(true);
     this.updateChallengeArrowsTint(this.startCursor.visible);
+
+    this.updateText();
   }
 
   private goToBottomOfChallengeList(): boolean {
@@ -585,7 +587,8 @@ export class GameChallengesUiHandler extends UiHandler {
               success = this.setScrollCursor(this.scrollCursor + 1);
             } else if (this.hasSelectedChallenge) {
               this.activateStartCursor();
-              success = true;
+              ui.playSelect();
+              return true;
             } else {
               // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
               // First, set the cursor to the first visible element, preparing for the scroll to the top.
@@ -598,10 +601,10 @@ export class GameChallengesUiHandler extends UiHandler {
             // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
             if (this.hasSelectedChallenge) {
               this.activateStartCursor();
-              success = true;
-            } else {
-              success = this.setCursor(0);
+              ui.playSelect();
+              return true;
             }
+            success = this.setCursor(0);
           } else {
             success = this.setCursor(this.cursor + 1);
           }
