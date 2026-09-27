@@ -299,9 +299,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** The position of this Pokémon on the field */
   public fieldPosition: FieldPosition;
 
-  public maskEnabled: boolean;
-  public maskSprite: Phaser.GameObjects.Sprite | null;
-
   /**
    * The set of all TMs that have been used on this Pokémon
    *
@@ -5459,29 +5456,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       tintSprite?.setVisible(false);
       tintSprite?.setAlpha(1);
-    }
-  }
-
-  enableMask() {
-    if (!this.maskEnabled) {
-      this.maskSprite = this.getTintSprite();
-      this.maskSprite?.setVisible(true);
-      this.maskSprite?.setPosition(
-        this.x * this.parentContainer.scale + this.parentContainer.x,
-        this.y * this.parentContainer.scale + this.parentContainer.y,
-      );
-      this.maskSprite?.setScale(this.getSpriteScale() * this.parentContainer.scale);
-      this.maskEnabled = true;
-    }
-  }
-
-  disableMask() {
-    if (this.maskEnabled) {
-      this.maskSprite?.setVisible(false);
-      this.maskSprite?.setPosition(0, 0);
-      this.maskSprite?.setScale(this.getSpriteScale());
-      this.maskSprite = null;
-      this.maskEnabled = false;
     }
   }
 

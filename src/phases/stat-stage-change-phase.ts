@@ -371,8 +371,6 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param onComplete - Callback for after the animation completes
    */
   private async playStatChangeAnimation(pokemon: Pokemon): Promise<void> {
-    pokemon.enableMask();
-
     const scale = pokemon.getSpriteScale() * globalScene.field.scale;
 
     const tileX = (this.player ? 106 : 236) * scale;
@@ -389,10 +387,7 @@ export class StatStageChangePhase extends PokemonPhase {
       .setAlpha(0)
       .setScale(6)
       .setOrigin(0.5, 1);
-    if (pokemon.maskSprite != null) {
-      // bang is safe here since it must be non-null after enabling filters.
-      statSprite.enableFilters().filters!.external.addMask(pokemon.maskSprite, false, undefined, "local");
-    }
+    statSprite.enableFilters().filters?.external.addMask(pokemon.getSprite());
 
     audioManager.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
@@ -417,7 +412,6 @@ export class StatStageChangePhase extends PokemonPhase {
     } finally {
       // Clean up the sprite and disable the mask
       statSprite.destroy();
-      pokemon.disableMask();
     }
   }
 }
