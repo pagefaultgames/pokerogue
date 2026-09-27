@@ -112,10 +112,10 @@ export class Trainer extends Phaser.GameObjects.Container {
         this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
       );
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-      });
+      // ret.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   hasShadow: !!hasShadow,
+      // });
       return ret;
     };
 

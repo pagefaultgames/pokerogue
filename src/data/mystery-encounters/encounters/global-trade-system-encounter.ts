@@ -615,10 +615,10 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
         tradeBaseBg.displayHeight / 2,
         "pkmn__sub",
       );
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        ignoreTimeTint: true,
-      });
+      // ret.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   ignoreTimeTint: true,
+      // });
       return ret;
     };
 
@@ -647,44 +647,44 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       const spriteKey = tradedPokemon.getSpriteKey(true);
       sprite.play(spriteKey);
 
-      sprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: false,
-        teraColor: getTypeRgb(tradedPokemon.getTeraType()),
-        isTerastallized: tradedPokemon.isTerastallized,
-      });
-      sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", tradedPokemon.shiny);
-      sprite.setPipelineData("variant", tradedPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].forEach(k => {
-        if (tradedPokemon.summonData.speciesForm) {
-          k += "Base";
-        }
-        sprite.pipelineData[k] = tradedPokemon.getSprite().pipelineData[k];
-      });
+      // sprite.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   hasShadow: false,
+      //   teraColor: getTypeRgb(tradedPokemon.getTeraType()),
+      //   isTerastallized: tradedPokemon.isTerastallized,
+      // });
+      // sprite.setPipelineData("ignoreTimeTint", true);
+      // sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
+      // sprite.setPipelineData("shiny", tradedPokemon.shiny);
+      // sprite.setPipelineData("variant", tradedPokemon.variant);
+      // ["spriteColors", "fusionSpriteColors"].forEach(k => {
+      //   if (tradedPokemon.summonData.speciesForm) {
+      //     k += "Base";
+      //   }
+      //   // sprite.pipelineData[k] = tradedPokemon.getSprite().pipelineData[k];
+      // });
     });
 
     [receivedPokemonSprite, receivedPokemonTintSprite].forEach(sprite => {
       const spriteKey = receivedPokemon.getSpriteKey(true);
       sprite.play(spriteKey);
 
-      sprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: false,
-        teraColor: getTypeRgb(tradedPokemon.getTeraType()),
-        isTerastallized: tradedPokemon.isTerastallized,
-      });
-      sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", receivedPokemon.shiny);
-      sprite.setPipelineData("variant", receivedPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].forEach(k => {
-        if (receivedPokemon.summonData.speciesForm) {
-          k += "Base";
-        }
-        sprite.pipelineData[k] = receivedPokemon.getSprite().pipelineData[k];
-      });
+      // sprite.setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   hasShadow: false,
+      //   teraColor: getTypeRgb(tradedPokemon.getTeraType()),
+      //   isTerastallized: tradedPokemon.isTerastallized,
+      // });
+      // sprite.setPipelineData("ignoreTimeTint", true);
+      // sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());
+      // sprite.setPipelineData("shiny", receivedPokemon.shiny);
+      // sprite.setPipelineData("variant", receivedPokemon.variant);
+      // ["spriteColors", "fusionSpriteColors"].forEach(k => {
+      //   if (receivedPokemon.summonData.speciesForm) {
+      //     k += "Base";
+      //   }
+      //   sprite.pipelineData[k] = receivedPokemon.getSprite().pipelineData[k];
+      // });
     });
 
     // Traded pokemon pokeball
