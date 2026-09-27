@@ -7,10 +7,10 @@ import { isMobile, preventDoubleTapZoom } from "#app/touch-controls";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
-import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
-import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
-import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
-import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+import BBCodeTextPlugin from "phaser4-rex-plugins/plugins/bbcodetext-plugin";
+import InputTextPlugin from "phaser4-rex-plugins/plugins/inputtext-plugin";
+import TransitionImagePackPlugin from "phaser4-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
+import UIPlugin from "phaser4-rex-plugins/templates/ui/ui-plugin";
 
 if (isBeta || isDev) {
   document.title += " (Beta)";
