@@ -44,10 +44,10 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.currentPokemonSprite = globalScene.add
       .sprite(54, 80, "pkmn__sub")
       .setScale(0.8)
-      .setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        ignoreTimeTint: true,
-      });
+      // .setPipeline(globalScene.spritePipeline, {
+      //   tone: [0.0, 0.0, 0.0, 0.0],
+      //   ignoreTimeTint: true,
+      // });
 
     // setup name and number
     this.pokemonNumberText = addTextObject(84, 107, "0000", TextStyle.EGG_SUMMARY_DEX, { fontSize: 78 }) //
@@ -138,9 +138,9 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
       speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry();
       this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-      this.currentPokemonSprite.setPipelineData("shiny", shiny);
-      this.currentPokemonSprite.setPipelineData("variant", variant);
-      this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
+      // this.currentPokemonSprite.setPipelineData("shiny", shiny);
+      // this.currentPokemonSprite.setPipelineData("variant", variant);
+      // this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
       this.currentPokemonSprite.setVisible(true);
     });
   }

@@ -384,20 +384,20 @@ export class SummaryUiHandler extends UiHandler {
     const spriteKey = this.pokemon.getSpriteKey(true);
     this.pokemonSprite.play(spriteKey);
 
-    this.pokemonSprite
-      .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
-      .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
-      .setPipelineData("ignoreTimeTint", true)
-      .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
-      .setPipelineData("shiny", this.pokemon.shiny)
-      .setPipelineData("variant", this.pokemon.variant);
-    ["spriteColors", "fusionSpriteColors"].forEach(k => {
-      delete this.pokemonSprite.pipelineData[`${k}Base`];
-      if (this.pokemon?.summonData.speciesForm) {
-        k += "Base";
-      }
-      this.pokemonSprite.pipelineData[k] = this.pokemon?.getSprite().pipelineData[k];
-    });
+    // this.pokemonSprite
+    //   .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
+    //   .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
+    //   .setPipelineData("ignoreTimeTint", true)
+    //   .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
+    //   .setPipelineData("shiny", this.pokemon.shiny)
+    //   .setPipelineData("variant", this.pokemon.variant);
+    // ["spriteColors", "fusionSpriteColors"].forEach(k => {
+    //   delete this.pokemonSprite.pipelineData[`${k}Base`];
+    //   if (this.pokemon?.summonData.speciesForm) {
+    //     k += "Base";
+    //   }
+    //   this.pokemonSprite.pipelineData[k] = this.pokemon?.getSprite().pipelineData[k];
+    // });
     this.pokemon.cry();
 
     this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));

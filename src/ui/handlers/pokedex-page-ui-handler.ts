@@ -362,7 +362,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.pokemonSprite = globalScene.add //
       .sprite(53, 63, "pkmn__sub")
-      .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
+      // .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
     this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
@@ -2508,12 +2508,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
           this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant, back)); // TODO: is this bang correct?
-          this.pokemonSprite.setPipelineData("shiny", shiny);
-          this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData(
-            "spriteKey",
-            species.getSpriteKey(female!, formIndex, shiny, variant, back), // TODO: is this bang correct?
-          );
+          // this.pokemonSprite.setPipelineData("shiny", shiny);
+          // this.pokemonSprite.setPipelineData("variant", variant);
+          // this.pokemonSprite.setPipelineData(
+          //   "spriteKey",
+          //   species.getSpriteKey(female!, formIndex, shiny, variant, back), // TODO: is this bang correct?
+          // );
           this.pokemonSprite.setVisible(!this.statsMode);
         });
       } else {

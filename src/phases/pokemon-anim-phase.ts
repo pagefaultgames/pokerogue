@@ -269,13 +269,13 @@ export class PokemonAnimPhase extends BattlePhase {
         this.pokemon.getSprite()!.frame.name,
         true,
       );
-      ["spriteColors", "fusionSpriteColors"].map(
-        k => (sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]),
-      );
-      sprite.setPipelineData("spriteKey", this.pokemon.getBattleSpriteKey());
-      sprite.setPipelineData("shiny", this.pokemon.shiny);
-      sprite.setPipelineData("variant", this.pokemon.variant);
-      sprite.setPipelineData("ignoreFieldPos", true);
+      // ["spriteColors", "fusionSpriteColors"].map(
+      //   k => (sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]),
+      // );
+      // sprite.setPipelineData("spriteKey", this.pokemon.getBattleSpriteKey());
+      // sprite.setPipelineData("shiny", this.pokemon.shiny);
+      // sprite.setPipelineData("variant", this.pokemon.variant);
+      // sprite.setPipelineData("ignoreFieldPos", true);
       sprite.setOrigin(0.5, 1);
       this.pokemon.getSprite().on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
       globalScene.field.add(sprite);
@@ -346,13 +346,13 @@ export class PokemonAnimPhase extends BattlePhase {
       tatsugiri.getSprite()!.frame.name,
       true,
     );
-    ["spriteColors", "fusionSpriteColors"].map(
-      k => (tatsuSprite.pipelineData[k] = tatsugiri.getSprite().pipelineData[k]),
-    );
-    tatsuSprite.setPipelineData("spriteKey", tatsugiri.getBattleSpriteKey());
-    tatsuSprite.setPipelineData("shiny", tatsugiri.shiny);
-    tatsuSprite.setPipelineData("variant", tatsugiri.variant);
-    tatsuSprite.setPipelineData("ignoreFieldPos", true);
+    // ["spriteColors", "fusionSpriteColors"].map(
+    //   k => (tatsuSprite.pipelineData[k] = tatsugiri.getSprite().pipelineData[k]),
+    // );
+    // tatsuSprite.setPipelineData("spriteKey", tatsugiri.getBattleSpriteKey());
+    // tatsuSprite.setPipelineData("shiny", tatsugiri.shiny);
+    // tatsuSprite.setPipelineData("variant", tatsugiri.variant);
+    // tatsuSprite.setPipelineData("ignoreFieldPos", true);
     this.pokemon.getSprite().on("animationupdate", (_anim, frame) => tatsuSprite.setFrame(frame.textureFrame));
 
     tatsuSprite.setOrigin(0.5, 1);
