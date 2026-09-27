@@ -63,10 +63,10 @@ export function doPokemonTransformationSequence(
 
     pokemonSprite.setAlpha(0);
     pokemonTintSprite.setAlpha(0);
-    pokemonTintSprite.setTintFill(0xffffff);
+    pokemonTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     pokemonEvoSprite.setVisible(false);
     pokemonEvoTintSprite.setVisible(false);
-    pokemonEvoTintSprite.setTintFill(0xffffff);
+    pokemonEvoTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
 
     [pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite].forEach(sprite => {
       const spriteKey = previousPokemon.getSpriteKey(true);

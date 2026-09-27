@@ -71,10 +71,8 @@ export class PokemonAnimPhase extends BattlePhase {
     const [subSprite, subTintSprite] = [getSprite(), getSprite()];
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
 
-    subSprite.setVisible(false);
-    subSprite.setScale(subScale);
-    subTintSprite.setTintFill(0xffffff);
-    subTintSprite.setScale(0.01);
+    subSprite.setVisible(false).setScale(subScale);
+    subTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setScale(0.01);
 
     if (this.pokemon.isPlayer()) {
       globalScene.field.bringToTop(this.pokemon);
@@ -202,9 +200,7 @@ export class PokemonAnimPhase extends BattlePhase {
 
     const subTintSprite = getSprite();
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
-    subTintSprite.setAlpha(0);
-    subTintSprite.setTintFill(0xffffff);
-    subTintSprite.setScale(subScale);
+    subTintSprite.setAlpha(0).setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setScale(subScale);
 
     globalScene.tweens.add({
       targets: subTintSprite,
