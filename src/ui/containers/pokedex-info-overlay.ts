@@ -76,7 +76,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     this.textMaskRect.setScale(6);
 
     this.add(this.desc);
-    this.desc.enableFilters().filters?.internal.addMask(this.textMaskRect);
+    this.desc.enableFilters().filters?.external.addMask(this.textMaskRect);
 
     if (options?.hideBg) {
       this.descBg.setVisible(false);

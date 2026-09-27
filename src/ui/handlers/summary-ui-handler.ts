@@ -1058,7 +1058,7 @@ export class SummaryUiHandler extends UiHandler {
             .beginPath()
             .fillRect(110, 90, 206, 31);
 
-          abilityInfo.descriptionText.enableFilters().filters?.internal.addMask(descriptionTextMaskRect);
+          abilityInfo.descriptionText.enableFilters().filters?.external.addMask(descriptionTextMaskRect);
 
           const abilityDescriptionLineCount = Math.floor(abilityInfo.descriptionText.displayHeight / 14.83);
 
@@ -1241,7 +1241,7 @@ export class SummaryUiHandler extends UiHandler {
           .beginPath()
           .fillRect(140 + pageContainer.x, 152 + pageContainer.y + 22, Math.floor(expRatio * 64), 3);
 
-        expOverlay.enableFilters().filters?.internal.addMask(expMaskRect);
+        expOverlay.enableFilters().filters?.external.addMask(expMaskRect);
 
         this.abilityPrompt = globalScene.add.image(
           0,
@@ -1359,7 +1359,7 @@ export class SummaryUiHandler extends UiHandler {
           .fillStyle(0xffffff)
           .beginPath()
           .fillRect(112, 121, 205, 59);
-        this.moveDescriptionText.enableFilters().filters?.internal.addMask(moveDescriptionTextMaskRect);
+        this.moveDescriptionText.enableFilters().filters?.external.addMask(moveDescriptionTextMaskRect);
         break;
       }
     }

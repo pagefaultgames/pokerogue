@@ -110,7 +110,7 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     moveDescriptionTextMaskRect.setScale(6);
 
     this.add(this.desc);
-    this.desc.enableFilters().filters?.internal.addMask(moveDescriptionTextMaskRect);
+    this.desc.enableFilters().filters?.external.addMask(moveDescriptionTextMaskRect);
 
     // prepare the effect box
     this.val = new Phaser.GameObjects.Container(
