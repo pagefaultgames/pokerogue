@@ -158,7 +158,7 @@ describe("Moves - Revival Blessing", () => {
     const postBattleLootAfter = game.scene.currentBattle.postBattleLoot;
     expect(postBattleLootAfter.some(loot => loot.pokemonId === firstEnemy.id)).toBe(false);
 
-    const heldItemNames = firstEnemy.getHeldItems().map(m => m.type.name);
-    expect(heldItemNames).toContain("Lum Berry");
+    const heldItems = firstEnemy.getHeldItems();
+    expect(heldItems.some(m => m instanceof BerryModifier && m.berryType === BerryType.LUM)).toBe(true);
   });
 });
