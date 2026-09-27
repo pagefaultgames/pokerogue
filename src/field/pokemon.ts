@@ -1597,7 +1597,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // clamp HP to new max or restore current HP if max HP increased
 
       // optional chain defaults HP to max HP if not set yet
-      // TODO: this is extremely stupid
+      // TODO: This defaulting should ostensibly go inside the constructor 
+      // instead of inside the stat calc function
       this.hp = Math.min(this.hp ?? value, value);
 
       const lastMaxHp = this.getMaxHp();
