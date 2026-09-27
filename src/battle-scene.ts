@@ -12,7 +12,7 @@ import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
-import { initGlobalScene } from "#app/global-scene";
+import { globalScene, initGlobalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { InputsController } from "#app/inputs-controller";
@@ -20,9 +20,8 @@ import { LoadingScene } from "#app/loading-scene";
 import { activeOverrides } from "#app/overrides";
 import type { Phase } from "#app/phase";
 import { PhaseManager } from "#app/phase-manager";
-// import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
-// import { InvertPostFX } from "#app/pipelines/invert";
-// import { SpritePipeline } from "#app/pipelines/sprite";
+import { FieldSpriteBatchHandler, FieldSpriteSubmitter } from "#app/render-nodes/field-sprite";
+import { SpriteBatchHandler, SpriteSubmitter } from "#app/render-nodes/sprite";
 import { SceneBase } from "#app/scene-base";
 import { TurnCommandManager } from "#app/turn-command-manager";
 import { UiInputs } from "#app/ui-inputs";
@@ -37,6 +36,7 @@ import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } fro
 import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import { getTypeRgb } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
@@ -157,6 +157,7 @@ import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
+// import { SpriteSubmitter } from "./render-nodes/sprite";
 
 export type PokeballCounts = Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number>;
 
@@ -269,8 +270,10 @@ export class BattleScene extends SceneBase {
   public damageNumberHandler: DamageNumberHandler;
   private spriteTeraSparkleHandler: PokemonSpriteTeraSparkleHandler;
 
-  // public fieldSpritePipeline: FieldSpritePipeline;
-  // public spritePipeline: SpritePipeline;
+  public fieldSpriteSubmitter: FieldSpriteSubmitter;
+  public fieldSpriteBatchHandler: FieldSpriteBatchHandler;
+  public spriteSubmitter: SpriteSubmitter;
+  public spriteBatchHandler: SpriteBatchHandler;
 
   private playTimeTimer: Phaser.Time.TimerEvent;
 
@@ -405,11 +408,14 @@ export class BattleScene extends SceneBase {
 
     this.invertFilter = this.cameras.main.filters.external.addColorMatrix().setActive(false);
     this.invertFilter.colorMatrix.negative();
-
-    // this.spritePipeline = new SpritePipeline(this.game);
-    // this.renderer.pipelines.add("Sprite", this.spritePipeline);
-    // this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
-    // this.renderer.pipelines.add("FieldSprite", this.fieldSpritePipeline);
+    this.spriteSubmitter = new SpriteSubmitter(this.renderer.renderNodes);
+    this.renderer.renderNodes.addNode(SpriteSubmitter.NAME, this.spriteSubmitter);
+    this.spriteBatchHandler = new SpriteBatchHandler(this.renderer.renderNodes);
+    this.renderer.renderNodes.addNode(SpriteBatchHandler.NAME, this.spriteBatchHandler);
+    this.fieldSpriteSubmitter = new FieldSpriteSubmitter(this.renderer.renderNodes);
+    this.renderer.renderNodes.addNode(FieldSpriteSubmitter.NAME, this.fieldSpriteSubmitter);
+    this.fieldSpriteBatchHandler = new FieldSpriteBatchHandler(this.renderer.renderNodes);
+    this.renderer.renderNodes.addNode(FieldSpriteBatchHandler.NAME, this.fieldSpriteBatchHandler);
 
     this.launchBattle();
   }
@@ -426,14 +432,16 @@ export class BattleScene extends SceneBase {
     this.arenaBg = this.add
       .sprite(0, 0, `${biomeKey}_bg`)
       .setName("sprite-arena-bg")
-      // .setPipeline(this.fieldSpritePipeline)
+      .setRenderNodeRole("Submitter", this.fieldSpriteSubmitter)
+      .setRenderNodeRole("BatchHandler", this.fieldSpriteBatchHandler)
       .setScale(6)
       .setOrigin(0)
       .setSize(320, 240);
     this.arenaBgTransition = this.add
       .sprite(0, 0, `${biomeKey}_bg`)
       .setName("sprite-arena-bg-transition")
-      // .setPipeline(this.fieldSpritePipeline)
+      .setRenderNodeRole("Submitter", this.fieldSpriteSubmitter)
+      .setRenderNodeRole("BatchHandler", this.fieldSpriteBatchHandler)
       .setScale(6)
       .setOrigin(0)
       .setSize(320, 240)
@@ -1600,9 +1608,9 @@ export class BattleScene extends SceneBase {
     this.arena = new Arena(biome, playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
-    // this.arenaBg.pipelineData = {
-    //   terrainColorRatio: this.arena.bgTerrainColorRatioForBiome,
-    // };
+    this.arenaBg.renderNodeData[globalScene.fieldSpriteSubmitter.name] = {
+      terrainColorRatio: this.arena.bgTerrainColorRatioForBiome,
+    };
 
     return this.arena;
   }
@@ -2041,14 +2049,10 @@ export class BattleScene extends SceneBase {
     frame?: string | number,
     terrainColorRatio = 0,
   ): Phaser.GameObjects.Sprite {
-    const ret = this.add //
-      .sprite(x, y, texture, frame);
-    // .setPipeline(this.fieldSpritePipeline);
-    if (terrainColorRatio) {
-      // ret.pipelineData["terrainColorRatio"] = terrainColorRatio;
-    }
-
-    return ret;
+    return this.add
+      .sprite(x, y, texture, frame)
+      .setRenderNodeRole("Submitter", this.fieldSpriteSubmitter, terrainColorRatio ? { terrainColorRatio } : undefined)
+      .setRenderNodeRole("BatchHandler", this.fieldSpriteBatchHandler);
   }
 
   addPokemonSprite(
@@ -2071,13 +2075,15 @@ export class BattleScene extends SceneBase {
     hasShadow = false,
     ignoreOverride = false,
   ): Phaser.GameObjects.Sprite {
-    // sprite.setPipeline(this.spritePipeline, {
-    //   tone: [0.0, 0.0, 0.0, 0.0],
-    //   hasShadow,
-    //   ignoreOverride,
-    //   teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined,
-    //   isTerastallized: pokemon ? pokemon.isTerastallized : false,
-    // });
+    sprite
+      .setRenderNodeRole("Submitter", this.spriteSubmitter, {
+        hasShadow,
+        ignoreOverride,
+        teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined,
+        isTerastallized: pokemon ? pokemon.isTerastallized : false,
+      })
+      .setRenderNodeRole("BatchHandler", this.spriteBatchHandler);
+
     this.spriteTeraSparkleHandler.add(sprite);
     return sprite;
   }

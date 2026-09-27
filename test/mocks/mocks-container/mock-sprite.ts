@@ -6,7 +6,7 @@ type Frame = Phaser.Textures.Frame;
 
 export class MockSprite implements MockGameObject {
   private phaserSprite;
-  // public pipelineData;
+  public renderNodeData: Record<string, Record<string, any>>;
   public texture;
   public key;
   public frame;
@@ -31,7 +31,7 @@ export class MockSprite implements MockGameObject {
 
     // Phaser.GameObjects.Sprite.prototype.texture = { frameTotal: 1, get: () => null };
     this.phaserSprite = new Phaser.GameObjects.Sprite(textureManager.scene, x, y, texture);
-    // this.pipelineData = {};
+    this.renderNodeData = {};
     this.texture = {
       key: texture || "",
     };
@@ -49,11 +49,10 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  // setPipeline(obj): this {
-  //   // Sets the pipeline of this Game Object.
-  //   this.phaserSprite.setPipeline(obj);
-  //   return this;
-  // }
+  setRenderNodeRole(...args: Parameters<Phaser.GameObjects.Sprite["setRenderNodeRole"]>): this {
+    this.phaserSprite.setRenderNodeRole(...args);
+    return this;
+  }
 
   off(_event, _callback, _source): this {
     return this;
@@ -190,10 +189,11 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  // setPipelineData(key: string, value: any): this {
-  //   this.pipelineData[key] = value;
-  //   return this;
-  // }
+  setRenderNodeData(renderNode: string | Phaser.Renderer.WebGL.RenderNodes.RenderNode, key: string, value: any): this {
+    this.renderNodeData[typeof renderNode === "string" ? renderNode : renderNode.name] ??= {};
+    this.renderNodeData[typeof renderNode === "string" ? renderNode : renderNode.name][key] = value;
+    return this;
+  }
 
   destroy() {
     return this.phaserSprite.destroy();

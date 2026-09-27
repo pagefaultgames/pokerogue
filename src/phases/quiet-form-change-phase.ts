@@ -184,18 +184,21 @@ export class QuietFormChangePhase extends BattlePhase {
     sprite.setOrigin(0.5, 1);
     const spriteKey = this.pokemon.getBattleSpriteKey();
     sprite.play(spriteKey).stop();
-    // sprite.setPipeline(globalScene.spritePipeline, {
-    //   tone: [0.0, 0.0, 0.0, 0.0],
-    //   hasShadow: false,
-    //   teraColor: getTypeRgb(this.pokemon.getTeraType()),
-    //   isTerastallized: this.pokemon.isTerastallized,
-    // });
-    // ["spriteColors", "fusionSpriteColors"].forEach(k => {
-    //   if (this.pokemon.summonData.speciesForm) {
-    //     k += "Base";
-    //   }
-    //   sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
-    // });
+    sprite
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        hasShadow: false,
+        teraColor: getTypeRgb(this.pokemon.getTeraType()),
+        isTerastallized: this.pokemon.isTerastallized,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
+    ["spriteColors", "fusionSpriteColors"].forEach(k => {
+      if (this.pokemon.summonData.speciesForm) {
+        k += "Base";
+      }
+      sprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+        this.pokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k];
+    });
     globalScene.field.add(sprite);
     return sprite;
   }
