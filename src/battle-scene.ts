@@ -37,7 +37,6 @@ import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } fro
 import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
-import { getTypeRgb } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
@@ -221,6 +220,8 @@ export class BattleScene extends SceneBase {
   public arenaEnemy: ArenaBase;
   public arenaNextEnemy: ArenaBase;
 
+  private invertFilter: Phaser.Filters.ColorMatrix | null = null;
+
   public arena: Arena;
   public gameMode: GameMode;
   public score: number;
@@ -401,6 +402,9 @@ export class BattleScene extends SceneBase {
     addUiThemeOverrides();
 
     this.load.setBaseURL();
+
+    this.invertFilter = this.cameras.main.filters.external.addColorMatrix().setActive(false);
+    this.invertFilter.colorMatrix.negative();
 
     // this.spritePipeline = new SpritePipeline(this.game);
     // this.renderer.pipelines.add("Sprite", this.spritePipeline);
@@ -2038,8 +2042,8 @@ export class BattleScene extends SceneBase {
     terrainColorRatio = 0,
   ): Phaser.GameObjects.Sprite {
     const ret = this.add //
-      .sprite(x, y, texture, frame)
-      // .setPipeline(this.fieldSpritePipeline);
+      .sprite(x, y, texture, frame);
+    // .setPipeline(this.fieldSpritePipeline);
     if (terrainColorRatio) {
       // ret.pipelineData["terrainColorRatio"] = terrainColorRatio;
     }
@@ -2349,11 +2353,7 @@ export class BattleScene extends SceneBase {
   }
 
   toggleInvert(invert: boolean): void {
-    // if (invert) {
-    //   this.cameras.main.setPostPipeline(InvertPostFX);
-    // } else {
-    //   this.cameras.main.removePostPipeline("InvertPostFX");
-    // }
+    this.invertFilter?.setActive(invert);
   }
 
   addMoney(amount: number): void {
