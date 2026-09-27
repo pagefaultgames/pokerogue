@@ -3121,6 +3121,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.partyStarterIds.length === 0) {
       return false;
     }
+    this.blockInput = true;
 
     if (this.isPartyValid()) {
       const ui = this.getUi();
@@ -3149,9 +3150,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       };
 
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+        this.blockInput = false;
         ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions);
       });
     } else {
+      this.blockInput = false;
       this.tutorialActive = true;
       this.showText(
         i18next.t("starterSelectUiHandler:invalidParty"),
