@@ -1,5 +1,7 @@
 import { BattleScene } from "#app/battle-scene";
 import { timedEventManager } from "#app/global-event-manager";
+import { FieldSpriteBatchHandler, FieldSpriteSubmitter } from "#app/render-nodes/field-sprite";
+import { SpriteBatchHandler, SpriteSubmitter } from "#app/render-nodes/sprite";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as appConstants from "#constants/app-constants";
 import { MoveAnim } from "#data/battle-anims";
@@ -84,7 +86,7 @@ export class GameWrapper {
       deleteTexture: () => null!,
       canvasToTexture: () => ({}) as any,
       createCanvasTexture: () => ({}) as any,
-      // pipelines: { add: () => null! } as any,
+      customRenderNodes: { add: () => null! } as any,
     } as any;
     this.scene.renderer = this.game.renderer as any;
     this.scene.children = { removeAll: () => null! } as any;
@@ -109,8 +111,15 @@ export class GameWrapper {
 
     this.scene.cameras = {
       main: {
-        // setPostPipeline: () => null!,
-        // removePostPipeline: () => null!,
+        filters: {
+          external: {
+            addColorMatrix: () => {
+              return {
+                setActive: () => null,
+              };
+            },
+          },
+        },
       },
     } as any;
 
@@ -156,8 +165,10 @@ export class GameWrapper {
     this.game.domContainer = {} as HTMLDivElement;
     // TODO: scenes don't have dom containers
     this.scene["domContainer"] = {} as HTMLDivElement;
-    // this.scene.spritePipeline = {} as any;
-    // this.scene.fieldSpritePipeline = {} as any;
+    this.scene.spriteBatchHandler = { name: SpriteBatchHandler.NAME } as any;
+    this.scene.spriteSubmitter = { name: SpriteSubmitter.NAME } as any;
+    this.scene.fieldSpriteSubmitter = { name: FieldSpriteSubmitter.NAME } as any;
+    this.scene.fieldSpriteBatchHandler = { name: FieldSpriteBatchHandler.NAME } as any;
     this.scene.load = new MockLoader(this.scene) as any;
     this.scene.sys = {
       queueDepthSort: () => null,

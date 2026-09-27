@@ -382,8 +382,9 @@ export class StatStageChangePhase extends PokemonPhase {
     const spriteColor = this.isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
     const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
     statSprite
-      // TODO: RENDER NODES
-      // .setPipeline(globalScene.fieldSpritePipeline)
+      // TODO: Make a tileSpriteBatchHandler for tile sprites; reusing fieldSpriteSubmitter will not work
+      // .setRenderNodeRole("Submitter", globalScene.fieldSpriteSubmitter)
+      // .setRenderNodeRole("BatchHandler", globalScene.fieldSpriteBatchHandler)
       .setAlpha(0)
       .setScale(6)
       .setOrigin(0.5, 1);
