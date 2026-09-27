@@ -384,32 +384,40 @@ export class StatStageChangePhase extends PokemonPhase {
     const spriteColor = this.isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
     const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
     statSprite
-      .setPipeline(globalScene.fieldSpritePipeline)
+      // TODO: RENDER NODES
+      // .setPipeline(globalScene.fieldSpritePipeline)
       .setAlpha(0)
       .setScale(6)
-      .setOrigin(0.5, 1)
-      .setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
+      .setOrigin(0.5, 1);
+    if (pokemon.maskSprite != null) {
+      // bang is safe here since it must be non-null after enabling filters.
+      statSprite.enableFilters().filters!.external.addMask(pokemon.maskSprite, false, undefined, "local");
+    }
 
     audioManager.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
-    await playTween({
-      targets: statSprite,
-      duration: 250,
-      alpha: 0.8375,
-    });
+    try {
+      await playTween({
+        targets: statSprite,
+        duration: 250,
+        alpha: 0.8375,
+      });
 
-    await playTween({
-      targets: statSprite,
-      duration: 1500,
-      y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
-    });
+      await playTween({
+        targets: statSprite,
+        duration: 1500,
+        y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
+      });
 
-    await playTween({
-      targets: statSprite,
-      duration: 250,
-      alpha: 0,
-    });
-
-    pokemon.disableMask();
+      await playTween({
+        targets: statSprite,
+        duration: 250,
+        alpha: 0,
+      });
+    } finally {
+      // Clean up the sprite and disable the mask
+      statSprite.destroy();
+      pokemon.disableMask();
+    }
   }
 }
