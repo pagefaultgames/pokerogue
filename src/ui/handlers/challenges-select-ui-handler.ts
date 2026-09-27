@@ -569,6 +569,11 @@ export class GameChallengesUiHandler extends UiHandler {
         case Button.UP:
           if (this.cursor === 0) {
             if (this.scrollCursor === 0) {
+              if (this.hasSelectedChallenge) {
+                this.activateStartCursor();
+                ui.playSelect();
+                return true;
+              }
               success = this.goToBottomOfChallengeList();
             } else {
               success = this.setScrollCursor(this.scrollCursor - 1);
@@ -632,6 +637,11 @@ export class GameChallengesUiHandler extends UiHandler {
     } else if (button === Button.UP && this.startCursor.visible) {
       this.deactivateStartCursor();
       this.goToBottomOfChallengeList();
+      success = true;
+    } else if (button === Button.DOWN && this.startCursor.visible) {
+      this.setScrollCursor(0);
+      this.setCursor(0);
+      this.deactivateStartCursor();
       success = true;
     }
 
