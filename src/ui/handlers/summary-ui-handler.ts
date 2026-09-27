@@ -384,20 +384,21 @@ export class SummaryUiHandler extends UiHandler {
     const spriteKey = this.pokemon.getSpriteKey(true);
     this.pokemonSprite.play(spriteKey);
 
-    // this.pokemonSprite
-    //   .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
-    //   .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
-    //   .setPipelineData("ignoreTimeTint", true)
-    //   .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
-    //   .setPipelineData("shiny", this.pokemon.shiny)
-    //   .setPipelineData("variant", this.pokemon.variant);
-    // ["spriteColors", "fusionSpriteColors"].forEach(k => {
-    //   delete this.pokemonSprite.pipelineData[`${k}Base`];
-    //   if (this.pokemon?.summonData.speciesForm) {
-    //     k += "Base";
-    //   }
-    //   this.pokemonSprite.pipelineData[k] = this.pokemon?.getSprite().pipelineData[k];
-    // });
+    this.pokemonSprite
+      .setRenderNodeData(globalScene.spriteSubmitter, "teraColor", getTypeRgb(this.pokemon.getTeraType()))
+      .setRenderNodeData(globalScene.spriteSubmitter, "isTerastallized", this.pokemon.isTerastallized)
+      .setRenderNodeData(globalScene.spriteSubmitter, "ignoreTimeTint", true)
+      .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", this.pokemon.getSpriteKey())
+      .setRenderNodeData(globalScene.spriteSubmitter, "shiny", this.pokemon.shiny)
+      .setRenderNodeData(globalScene.spriteSubmitter, "variant", this.pokemon.variant);
+    ["spriteColors", "fusionSpriteColors"].forEach(k => {
+      delete this.pokemonSprite.renderNodeData[globalScene.spriteSubmitter.name][`${k}Base`];
+      if (this.pokemon?.summonData.speciesForm) {
+        k += "Base";
+      }
+      this.pokemonSprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+        this.pokemon?.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k];
+    });
     this.pokemon.cry();
 
     this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));

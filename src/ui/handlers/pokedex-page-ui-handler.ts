@@ -361,8 +361,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.shinyOverlay);
 
     this.pokemonSprite = globalScene.add //
-      .sprite(53, 63, "pkmn__sub")
-      // .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
+      .sprite(53, 63, "pkmn__sub");
+    this.pokemonSprite
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        ignoreTimeTint: true,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
     this.starterSelectContainer.add(this.pokemonSprite);
 
     this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
@@ -2507,14 +2512,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant, back)); // TODO: is this bang correct?
-          // this.pokemonSprite.setPipelineData("shiny", shiny);
-          // this.pokemonSprite.setPipelineData("variant", variant);
-          // this.pokemonSprite.setPipelineData(
-          //   "spriteKey",
-          //   species.getSpriteKey(female!, formIndex, shiny, variant, back), // TODO: is this bang correct?
-          // );
-          this.pokemonSprite.setVisible(!this.statsMode);
+          const spriteKey = species.getSpriteKey(female!, formIndex, shiny, variant, back); // TODO: is this bang correct?
+          this.pokemonSprite
+            .play(spriteKey)
+            .setVisible(!this.statsMode)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey);
         });
       } else {
         this.pokemonSprite.setVisible(!this.statsMode);

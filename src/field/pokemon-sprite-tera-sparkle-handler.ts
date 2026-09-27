@@ -30,10 +30,10 @@ export class PokemonSpriteTeraSparkleHandler {
     }
 
     for (const s of this.sprites.values()) {
-      // const teraColorData: number[] | undefined = s.pipelineData["teraColor"];
-      // if (!teraColorData?.some(c => c)) {
-      //   continue;
-      // }
+      const teraColorData: number[] | undefined = s.renderNodeData[globalScene.spriteSubmitter.name]?.["teraColor"];
+      if (!teraColorData?.some(c => c)) {
+        continue;
+      }
       if (!s.visible || (s.parentContainer instanceof Pokemon && !s.parentContainer.parentContainer)) {
         continue;
       }
@@ -59,8 +59,11 @@ export class PokemonSpriteTeraSparkleHandler {
           (pokemon?.y ?? 0) + s.y + pixelY * ratioY + yOffset,
           "tera_sparkle",
         );
-
-        // sparkle.pipelineData["ignoreTimeTint"] = s.pipelineData["ignoreTimeTint"];
+        sparkle.setRenderNodeRole(
+          "Submitter",
+          globalScene.spriteSubmitter,
+          s.renderNodeData[globalScene.spriteSubmitter.name]?.["ignoreTimeTint"],
+        );
         sparkle.setName("sprite-tera-sparkle");
         sparkle.play("tera_sparkle");
         parent.add(sparkle);

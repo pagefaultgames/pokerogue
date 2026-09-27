@@ -522,12 +522,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         true,
       );
       ret.setOrigin(0.5, 1);
-      // ret.setPipeline(globalScene.spritePipeline, {
-      //   tone: [0.0, 0.0, 0.0, 0.0],
-      //   hasShadow: !!hasShadow,
-      //   teraColor: getTypeRgb(this.getTeraType()),
-      //   isTerastallized: this.isTerastallized,
-      // });
+      ret
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          teraColor: getTypeRgb(this.getTeraType()),
+          isTerastallized: this.isTerastallized,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
@@ -1148,7 +1150,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite | null {
-    return this.maskEnabled ? this.maskSprite : (this.getAt(1) as Phaser.GameObjects.Sprite);
+    return this.getAt(1) as Phaser.GameObjects.Sprite;
   }
 
   getSpriteScale(): number {
@@ -1202,13 +1204,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  async updateSpritePipelineData(): Promise<void> {
-    [this.getSprite(), this.getTintSprite()]
-      .filter(s => !!s)
-      .forEach(s => {
-        // s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
-        // s.pipelineData["isTerastallized"] = this.isTerastallized;
-      });
+  async updateRenderNodeData(): Promise<void> {
+    [this.getSprite(), this.getTintSprite()].forEach(s => {
+      s?.setRenderNodeData(globalScene.spriteSubmitter, "teraColor", getTypeRgb(this.getTeraType()));
+      s?.setRenderNodeData(globalScene.spriteSubmitter, "isTerastallized", this.isTerastallized);
+    });
     await this.updateInfo(true);
   }
 
@@ -5364,14 +5364,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * terastallized to no longer terastallized:
    * - Resetting stellar type boosts
    * - Updating the Pokémon's terastallization-dependent form
-   * - Adjusting the sprite pipeline to remove the Tera effect
+   * - Adjusting the sprite render node data to remove the Tera effect
    */
   resetTera(): void {
     const wasTerastallized = this.isTerastallized;
     this.isTerastallized = false;
     this.stellarTypesBoosted = [];
     if (wasTerastallized) {
-      this.updateSpritePipelineData();
+      this.updateRenderNodeData();
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
     }
   }
@@ -5471,8 +5471,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       [this.getSprite(), this.getTintSprite()]
         .filter(s => !!s)
         .forEach(s => {
-          // s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
-          // s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
+          s.renderNodeData[globalScene.spriteSubmitter.name][
+            `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`
+          ] = [];
+          s.renderNodeData[globalScene.spriteSubmitter.name][
+            `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`
+          ] = [];
         });
       return;
     }
@@ -5782,9 +5786,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
       .forEach(s => {
-        // s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = spriteColors;
-        // s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] =
-        //   fusionSpriteColors;
+        s.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+          spriteColors,
+        );
+        s.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+          fusionSpriteColors,
+        );
       });
 
     canvas.remove();
