@@ -222,7 +222,7 @@ export class StatStageChangePhase extends PokemonPhase {
   private getAppliedChanges(pokemon: Pokemon): StatChange[] {
     return this.options.changes.map(({ stat, stages }) => {
       const current = pokemon.getStatStage(stat);
-      // this is always inside [-6, 6]
+      // NB: this is always inside [-6, 6]
       const delta = Phaser.Math.Clamp(current + stages, -6, 6) - current;
       return { stat, stages: delta };
     });
@@ -330,7 +330,10 @@ export class StatStageChangePhase extends PokemonPhase {
    * mainline.  For example, Defiant will proc as a single +4 when two stats
    * are dropped instead of twice +2, which would be a real difference for
    * something like Mirror Herb (copying +4 instead of a single +2) but is
-   * otherwise not significant beyond faster animations.
+  * Triggering once with all changes means certain interactions will diverge from mainline.
+  * For example, Defiant will proc as a single +4 when two stats are dropped instead of +2 twice. \
+  * This would be a real difference were something like Mirror Herb implemented,
+  * but is currently not significant beyond faster animations.
    */
   private triggerReactionAbilities(pokemon: Pokemon): void {
     const { changes, sourceEffectType } = this.options;

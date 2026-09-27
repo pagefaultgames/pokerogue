@@ -11,7 +11,6 @@ export interface StatChange {
   /** The stat to change. */
   readonly stat: BattleStat;
   /** The number of stages to change the stat by. */
-  // TODO: The only reason we cannot make this `StatStage` is belly drum
   readonly stages: number;
 }
 
@@ -30,7 +29,6 @@ export interface StatStageChangePhaseOptions {
    */
   readonly battlerIndex: BattlerIndex | number;
   /** The stat changes to be applied. */
-  // TODO: Enforce nonemptiness
   readonly changes: readonly StatChange[];
   /**
    * The `Pokemon` who caused the stat changes, or `undefined` if the changes were caused by a non-Pokemon effect.
