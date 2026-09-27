@@ -186,7 +186,6 @@ export class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    // Put the defeated enemy's items into the gift basket (postBattleLoot).
     this.postBattleLoot.push(
       ...(globalScene.findModifiers(
         m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
