@@ -13,17 +13,17 @@
 <h1>Class NoRetreatTag</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>BattlerTag implementing No Retreat's trapping effect.
-This is treated separately from other trapping effects to prevent
-Ghost-type Pokemon from being able to reuse the move.</p>
+This is treated separately from other generic trapping effects to allow
+Ghost-type Pokemon to use the move once.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="295991">
+<section class="tsd-panel tsd-hierarchy" data-refl="296143">
 <h4>Hierarchy (<a href="../hierarchy.html#src/data/battler-tags.NoRetreatTag">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_data_battler-tags.TrappedTag.html" class="tsd-signature-type tsd-kind-class">TrappedTag</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">NoRetreatTag</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L739">src/data/battler-tags.ts:739</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L791">src/data/battler-tags.ts:791</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -43,14 +43,14 @@ Ghost-type Pokemon from being able to reuse the move.</p>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-index-list"><a href="#lapsetypes" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>lapse<wbr/>Types</span></a>
+<a href="#onaddmessagekey" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>on<wbr/>Add<wbr/>Message<wbr/>Key</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-index-list"><a href="#canadd" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Add</span></a>
+<div class="tsd-index-list"><a href="#canadd" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Add</span></a>
 <a href="#getdescriptor" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Descriptor</span></a>
 <a href="#getmovename" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Move<wbr/>Name</span></a>
 <a href="#getsourcepokemon" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Source<wbr/>Pokemon</span></a>
-<a href="#gettrapmessage" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Trap<wbr/>Message</span></a>
 <a href="#isbatonpassable" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Baton<wbr/>Passable</span></a>
 <a href="#issourcelinked" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Source<wbr/>Linked</span></a>
 <a href="#lapse" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>lapse</span></a>
@@ -75,7 +75,7 @@ Ghost-type Pokemon from being able to reuse the move.</p>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">NoRetreatTag</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L741">src/data/battler-tags.ts:741</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L798">src/data/battler-tags.ts:798</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -86,7 +86,7 @@ Ghost-type Pokemon from being able to reuse the move.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#sourceid">sourceId</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L135">src/data/battler-tags.ts:135</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L138">src/data/battler-tags.ts:138</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="sourcemove"><code class="tsd-tag">Optional</code><span>source<wbr/>Move</span><a href="#sourcemove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sourceMove</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_enums_move-id.MoveId.html" class="tsd-signature-type tsd-kind-enum">MoveId</a></div>
@@ -94,13 +94,13 @@ Ghost-type Pokemon from being able to reuse the move.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#sourcemove">sourceMove</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L134">src/data/battler-tags.ts:134</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L137">src/data/battler-tags.ts:137</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="tagtype"><code class="tsd-tag">Readonly</code><span>tag<wbr/>Type</span><a href="#tagtype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">tagType</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_enums_battler-tag-type.BattlerTagType.html#no_retreat" class="tsd-signature-type tsd-kind-enum-member">NO_RETREAT</a><span class="tsd-signature-symbol"> = BattlerTagType.NO_RETREAT</span></div><aside class="tsd-sources">
 <p>Overrides <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#tagtype">tagType</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L740">src/data/battler-tags.ts:740</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L792">src/data/battler-tags.ts:792</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="turncount"><span>turn<wbr/>Count</span><a href="#turncount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">turnCount</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -108,7 +108,7 @@ Ghost-type Pokemon from being able to reuse the move.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#turncount">turnCount</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L133">src/data/battler-tags.ts:133</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L136">src/data/battler-tags.ts:136</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -125,26 +125,43 @@ manually via <a href="src_field_pokemon.Pokemon.html#lapsetag" class="tsd-kind-m
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-keyword">readonly</span> <a href="../enums/src_enums_battler-tag-lapse-type.BattlerTagLapseType.html" class="tsd-signature-type tsd-kind-enum">BattlerTagLapseType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from TrappedTag.lapseTypes</p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L166">src/data/battler-tags.ts:166</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L169">src/data/battler-tags.ts:169</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected">
+<h3 class="tsd-anchor-link" id="onaddmessagekey"><code class="tsd-tag">Protected</code><span>on<wbr/>Add<wbr/>Message<wbr/>Key</span><a href="#onaddmessagekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected">
+<li>
+<div class="tsd-signature" id="onaddmessagekeyonaddmessagekey"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">onAddMessageKey</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Return the i18n locales key that will be shown when this tag is added. <br>
+Within the text, <code>{{pokemonNameWithAffix}}</code> and <code>{{sourcePokemonName}}</code> will be populated with
+the name of the <a href="src_field_pokemon.Pokemon.html" class="tsd-kind-class"><code>Pokemon</code></a> to whom this Tag is attached
+and the source Pokemon's name, respectively.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If this evaluates to an empty string, no message will be displayed.</p>
+</div></div><aside class="tsd-sources">
+<p>Overrides TrappedTag.onAddMessageKey</p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L794">src/data/battler-tags.ts:794</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
-<section class="tsd-panel tsd-member">
+<section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="canadd"><span>can<wbr/>Add</span><a href="#canadd" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="canadd-1"><span class="tsd-kind-call-signature">canAdd</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pokemon</span><span class="tsd-signature-symbol">:</span> <a href="src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#canadd-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>overrides TrappedTag.apply, removing the Ghost-type condition</p>
-</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">pokemon</span>: <a href="src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#canadd">canAdd</a></p>
+<p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#canadd">canAdd</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L746">src/data/battler-tags.ts:746</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L709">src/data/battler-tags.ts:709</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getdescriptor"><span>get<wbr/>Descriptor</span><a href="#getdescriptor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -154,7 +171,7 @@ manually via <a href="src_field_pokemon.Pokemon.html#lapsetag" class="tsd-kind-m
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#getdescriptor">getDescriptor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L719">src/data/battler-tags.ts:719</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L755">src/data/battler-tags.ts:755</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getmovename"><span>get<wbr/>Move<wbr/>Name</span><a href="#getmovename" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -164,7 +181,7 @@ manually via <a href="src_field_pokemon.Pokemon.html#lapsetag" class="tsd-kind-m
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#getmovename">getMoveName</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L234">src/data/battler-tags.ts:234</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L237">src/data/battler-tags.ts:237</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="getsourcepokemon"><span>get<wbr/>Source<wbr/>Pokemon</span><a href="#getsourcepokemon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -177,21 +194,7 @@ manually via <a href="src_field_pokemon.Pokemon.html#lapsetag" class="tsd-kind-m
 <aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#getsourcepokemon">getSourcePokemon</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L258">src/data/battler-tags.ts:258</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-inherited">
-<h3 class="tsd-anchor-link" id="gettrapmessage"><span>get<wbr/>Trap<wbr/>Message</span><a href="#gettrapmessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-is-inherited">
-<div class="tsd-signature tsd-anchor-link" id="gettrapmessage-1"><span class="tsd-kind-call-signature">getTrapMessage</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pokemon</span><span class="tsd-signature-symbol">:</span> <a href="src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#gettrapmessage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
-<div class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">pokemon</span>: <a href="src_field_pokemon.Pokemon.html" class="tsd-signature-type tsd-kind-class">Pokemon</a></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
-<p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#gettrapmessage">getTrapMessage</a></p>
-<ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L727">src/data/battler-tags.ts:727</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L261">src/data/battler-tags.ts:261</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="isbatonpassable"><span>is<wbr/>Baton<wbr/>Passable</span><a href="#isbatonpassable" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -212,7 +215,7 @@ Defaults to returning the value set in the class constructor.</p>
 <aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#isbatonpassable">isBatonPassable</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L156">src/data/battler-tags.ts:156</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L159">src/data/battler-tags.ts:159</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="issourcelinked"><span>is<wbr/>Source<wbr/>Linked</span><a href="#issourcelinked" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -222,7 +225,7 @@ Defaults to returning the value set in the class constructor.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#issourcelinked">isSourceLinked</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L723">src/data/battler-tags.ts:723</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L759">src/data/battler-tags.ts:759</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="lapse"><span>lapse</span><a href="#lapse" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -246,11 +249,11 @@ Unused by default but can be used by subclasses.</p>
 
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-remarks">
-<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Generally, this involves ticking down the tag's duration. The tag also initiates the effects it is responsbile for</p>
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Generally, this involves ticking down the tag's duration. The tag also initiates the effects it is responsbile for</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#lapse">lapse</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L221">src/data/battler-tags.ts:221</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L224">src/data/battler-tags.ts:224</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="loadtag"><span>load<wbr/>Tag</span><a href="#loadtag" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -273,7 +276,7 @@ Should be inherited from by any battler tag with custom attributes.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#loadtag">loadTag</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L243">src/data/battler-tags.ts:243</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L246">src/data/battler-tags.ts:246</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="onadd"><span>on<wbr/>Add</span><a href="#onadd" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -289,7 +292,7 @@ Should be inherited from by any battler tag with custom attributes.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#onadd">onAdd</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L702">src/data/battler-tags.ts:702</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L729">src/data/battler-tags.ts:729</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="onoverlap"><span>on<wbr/>Overlap</span><a href="#onoverlap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -303,7 +306,7 @@ Should be inherited from by any battler tag with custom attributes.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#onoverlap">onOverlap</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L207">src/data/battler-tags.ts:207</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L210">src/data/battler-tags.ts:210</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="onremove"><span>on<wbr/>Remove</span><a href="#onremove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -317,7 +320,7 @@ Should be inherited from by any battler tag with custom attributes.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_data_battler-tags.TrappedTag.html">TrappedTag</a>.<a href="src_data_battler-tags.TrappedTag.html#onremove">onRemove</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/398e2c634c5f57dcb4b76407e03367bb857134d7/src/data/battler-tags.ts#L708">src/data/battler-tags.ts:708</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/8f267c227435512309e12e9398aca33d9442e3d6/src/data/battler-tags.ts#L744">src/data/battler-tags.ts:744</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -339,9 +342,9 @@ Should be inherited from by any battler tag with custom attributes.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#sourceid" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>source<wbr/>Id</span></a><a href="#sourcemove" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>source<wbr/>Move</span></a><a href="#tagtype"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tag<wbr/>Type</span></a><a href="#turncount" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>turn<wbr/>Count</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
-<div><a href="#lapsetypes" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>lapse<wbr/>Types</span></a></div></details>
+<div><a href="#lapsetypes" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>lapse<wbr/>Types</span></a><a href="#onaddmessagekey" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>on<wbr/>Add<wbr/>Message<wbr/>Key</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#canadd"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Add</span></a><a href="#getdescriptor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Descriptor</span></a><a href="#getmovename" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Move<wbr/>Name</span></a><a href="#getsourcepokemon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Source<wbr/>Pokemon</span></a><a href="#gettrapmessage" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Trap<wbr/>Message</span></a><a href="#isbatonpassable" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Baton<wbr/>Passable</span></a><a href="#issourcelinked" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Source<wbr/>Linked</span></a><a href="#lapse" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>lapse</span></a><a href="#loadtag" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Tag</span></a><a href="#onadd" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Add</span></a><a href="#onoverlap" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Overlap</span></a><a href="#onremove" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Remove</span></a></div></details></div></details></div>
+<div><a href="#canadd" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Add</span></a><a href="#getdescriptor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Descriptor</span></a><a href="#getmovename" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Move<wbr/>Name</span></a><a href="#getsourcepokemon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Source<wbr/>Pokemon</span></a><a href="#isbatonpassable" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Baton<wbr/>Passable</span></a><a href="#issourcelinked" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Source<wbr/>Linked</span></a><a href="#lapse" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>lapse</span></a><a href="#loadtag" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Tag</span></a><a href="#onadd" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Add</span></a><a href="#onoverlap" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Overlap</span></a><a href="#onremove" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Remove</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
 <nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
