@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
+import { BattleType } from "#enums/battle-type";
 import { type HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonItemMap } from "#types/held-item-data-types";
@@ -88,17 +89,26 @@ export function canSteal(heldItemId: HeldItemId, victim: Pokemon, perpetrator: P
  * @param holder - The {@linkcode Pokemon} holding the item to transfer.
  * @param receiver - The {@linkcode Pokemon} receiving the item.
  * @param transferQuantity - How many of the chosen item to transfer.
+ * @param temporary - Whether the transfer should affect the tempStack (default false).
  * @returns true if at least one item was transfered.
  */
+// TODO: allow for transfering tempStack instead of stack
 export function tryTransferHeldItem(
   heldItemId: HeldItemId,
   holder: Pokemon,
   receiver: Pokemon,
   transferQuantity = 1,
+  temporary = false,
 ): boolean {
   const countTaken = Math.min(transferQuantity, getTransferableAmount(heldItemId, holder, receiver));
   if (countTaken <= 0) {
     return false;
+  }
+
+  if (temporary) {
+    holder.heldItemManager.addTempStack(heldItemId, -1 * countTaken);
+    receiver.heldItemManager.addTempStack(heldItemId, countTaken);
+    return true;
   }
 
   holder.heldItemManager.remove(heldItemId, countTaken);
@@ -129,7 +139,10 @@ export function tryStealHeldItem(
     return false;
   }
 
-  const successfulTheft = tryTransferHeldItem(heldItemId, victim, perpetrator, stolenQuantity);
+  // Stealing items is permanent (both ways) when fighting wild Pokémon.
+  // It is temporary (both ways) otherwise.
+  const temporary = globalScene.currentBattle.battleType !== BattleType.WILD;
+  const successfulTheft = tryTransferHeldItem(heldItemId, victim, perpetrator, stolenQuantity, temporary);
 
   if (!successfulTheft) {
     return false;
