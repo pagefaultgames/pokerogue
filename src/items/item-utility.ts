@@ -67,20 +67,20 @@ export function getTransferableAmount(heldItemId: HeldItemId, holder: Pokemon, r
 /**
  * Determine if an item can be stolen from a pokemon by another.
  * @param heldItemId - The {@linkcode HeldItemId} to steal.
- * @param victim - The {@linkcode Pokemon} holding the item to steal.
- * @param perpetrator - The {@linkcode Pokemon} stealing the item.
+ * @param holder - The {@linkcode Pokemon} holding the item to steal.
+ * @param thief - The {@linkcode Pokemon} stealing the item.
  * @returns true if the item can be stolen.
  */
-export function canSteal(heldItemId: HeldItemId, victim: Pokemon, perpetrator: Pokemon): boolean {
+export function canSteal(heldItemId: HeldItemId, holder: Pokemon, thief: Pokemon): boolean {
   const blockTheft = new ValueHolder(false);
 
-  applyAbAttrs("BlockItemTheftAbAttr", { pokemon: victim, cancelled: blockTheft });
+  applyAbAttrs("BlockItemTheftAbAttr", { pokemon: holder, cancelled: blockTheft });
 
   if (blockTheft.value) {
     return false;
   }
 
-  return getTransferableAmount(heldItemId, victim, perpetrator) > 0;
+  return getTransferableAmount(heldItemId, holder, thief) > 0;
 }
 
 /**
@@ -125,15 +125,10 @@ export function tryTransferHeldItem(
  * @param transferQuantity - How many of the chosen item to transfer.
  * @returns true if at least one item was transfered.
  */
-export function tryStealHeldItem(
-  heldItemId: HeldItemId,
-  victim: Pokemon,
-  perpetrator: Pokemon,
-  stolenQuantity = 1,
-): boolean {
+export function tryStealHeldItem(heldItemId: HeldItemId, holder: Pokemon, thief: Pokemon, stolenQuantity = 1): boolean {
   const blockTheft = new ValueHolder(false);
 
-  applyAbAttrs("BlockItemTheftAbAttr", { pokemon: victim, cancelled: blockTheft });
+  applyAbAttrs("BlockItemTheftAbAttr", { pokemon: holder, cancelled: blockTheft });
 
   if (blockTheft.value) {
     return false;
@@ -142,7 +137,7 @@ export function tryStealHeldItem(
   // Stealing items is permanent (both ways) when fighting wild Pokémon.
   // It is temporary (both ways) otherwise.
   const temporary = globalScene.currentBattle.battleType !== BattleType.WILD;
-  const successfulTheft = tryTransferHeldItem(heldItemId, victim, perpetrator, stolenQuantity, temporary);
+  const successfulTheft = tryTransferHeldItem(heldItemId, holder, thief, stolenQuantity, temporary);
 
   if (!successfulTheft) {
     return false;
@@ -151,8 +146,8 @@ export function tryStealHeldItem(
   globalScene.updateItemBar();
   globalScene.updateItemBar(false);
 
-  if (victim.heldItemManager.getStack(heldItemId) === 0) {
-    applyAbAttrs("PostItemLostAbAttr", { pokemon: victim });
+  if (holder.heldItemManager.getStack(heldItemId) === 0) {
+    applyAbAttrs("PostItemLostAbAttr", { pokemon: holder });
   }
 
   return true;
