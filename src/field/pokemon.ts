@@ -1191,8 +1191,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
-  getHeldItems(): HeldItemId[] {
-    return this.heldItemManager.getItems();
+  getHeldItems(excludeTempStack = false): HeldItemId[] {
+    return this.heldItemManager.getItems(excludeTempStack);
   }
 
   /**

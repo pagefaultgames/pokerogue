@@ -1101,13 +1101,16 @@ export class SummaryUiHandler extends UiHandler {
         });
         this.ivContainer.setVisible(false);
 
-        const heldItems = this.pokemon?.getHeldItems().sort((a, b) => a - b);
+        const heldItems = this.pokemon?.getHeldItems(true).sort((a, b) => a - b);
 
         heldItems?.forEach((itemKey, i) => {
           const heldItem = allHeldItems[itemKey];
 
           if (this.pokemon) {
             const icon = heldItem.createSummaryIcon(this.pokemon);
+            if (this.pokemon.heldItemManager.getStack(itemKey) === 0) {
+              icon.alpha = 0.3;
+            }
 
             console.log(icon); // TODO: don't log a container to the console pretty please
             icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
