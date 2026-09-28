@@ -74,6 +74,7 @@ import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
 import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import { tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -3191,7 +3192,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
 
     const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
 
-    if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
+    if (!tryStealHeldItem(stolenItem, target, user)) {
       return false;
     }
 

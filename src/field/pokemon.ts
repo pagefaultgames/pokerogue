@@ -114,6 +114,7 @@ import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { tryTransferHeldItem } from "#items/item-utility";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { HitsTagAttr, Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
@@ -6421,7 +6422,8 @@ export class PlayerPokemon extends Pokemon {
     // combine the two mons' held items
     const fusedPartyMemberHeldItems = pokemon.getHeldItems();
     for (const item of fusedPartyMemberHeldItems) {
-      globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getStack(item), true, false);
+      // TODO: is this the best way of doing this?
+      tryTransferHeldItem(item, pokemon, this, pokemon.heldItemManager.getStack(item));
     }
     globalScene.updateItemBar(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
