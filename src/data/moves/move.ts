@@ -74,7 +74,7 @@ import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
 import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
-import { tryStealHeldItem } from "#items/item-utility";
+import { canSteal, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -3185,7 +3185,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = target.heldItemManager.getTransferableHeldItems();
+    const heldItems = target.heldItemManager.getTransferableHeldItems().filter(id => canSteal(id, target, user));
     if (heldItems.length === 0) {
       return false;
     }
@@ -3244,17 +3244,12 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    * @returns `true` if an item was able to be removed
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    if (!this.berriesOnly && target.isPlayer()) {
-      // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-      return false;
-    }
-
     // Check for abilities that block item theft
     // TODO: This should not trigger if the target would faint beforehand
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled });
+    const blockRemoval = new ValueHolder(false);
+    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled: blockRemoval });
 
-    if (cancelled.value) {
+    if (blockRemoval.value) {
       return false;
     }
 
