@@ -26,7 +26,6 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   validate(): boolean {
-    // TODO: This is really dumb
     return !!this.formChange;
   }
 
