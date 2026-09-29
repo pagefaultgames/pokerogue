@@ -160,7 +160,7 @@ export type HeldItemPoolEntry = AnyHeldItemRoll & {
 export type HeldItemPool = NonEmptyTuple<HeldItemPoolEntry>;
 
 /** A list of entries, all of which are granted. */
-export type HeldItemConfiguration = NonEmptyTuple<HeldItemConfigurationEntry>;
+export type HeldItemConfiguration = HeldItemConfigurationEntry[];
 
 // #endregion Entries, pools and configurations
 

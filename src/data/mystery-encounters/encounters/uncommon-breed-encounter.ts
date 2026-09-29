@@ -14,7 +14,6 @@ import type { BattleStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { getPartyItemsInCategory } from "#items/item-utility";
-import { getPartyItemsInCategory } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -218,7 +217,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
             berryMap.set(b, b.item.stack);
           }
           const randBerry = weightedPick(berryMap);
-          globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
+          randBerry.pokemon?.heldItemManager.remove(randBerry.item.id as HeldItemId);
           randBerry.item.stack -= 1;
         }
         globalScene.updateItemBar(true);
