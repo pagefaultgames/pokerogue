@@ -48,7 +48,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { getHeldItemCategory, HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
@@ -73,7 +73,7 @@ import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
-import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import type { BerryHeldItemAttr } from "#items/berry";
 import { canSteal, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
@@ -3258,7 +3258,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     let heldItems = target.heldItemManager.getTransferableHeldItems();
 
     if (this.berriesOnly) {
-      heldItems = heldItems.filter(m => m in Object.values(berryTypeToHeldItem));
+      heldItems = heldItems.filter(m => getHeldItemCategory(m) === HeldItemCategoryId.BERRY);
     }
 
     if (heldItems.length === 0) {
