@@ -20,6 +20,7 @@ export function getWindowVariantSuffix(windowVariant: WindowVariant): string {
   }
 }
 
+// TODO: use object param for optional params
 export function addWindow(
   x: number,
   y: number,

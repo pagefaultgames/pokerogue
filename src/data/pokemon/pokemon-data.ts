@@ -19,7 +19,6 @@ import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
@@ -63,7 +62,7 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
     return null;
   }
 
-  return getPokemonSpeciesForm(id, formIdx);
+  return speciesDataRegistry.getPokemonSpeciesForm(id, formIdx);
 }
 
 interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {

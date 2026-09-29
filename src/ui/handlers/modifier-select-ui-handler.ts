@@ -36,7 +36,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
-  protected declare onActionInput: ModifierSelectCallback | null;
+  declare protected onActionInput: ModifierSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -718,6 +718,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();
+    this.getUi().getMessageHandler().hideNameText();
     this.eraseCursor();
 
     // Reset cursor positions
