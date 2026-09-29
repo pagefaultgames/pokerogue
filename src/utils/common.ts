@@ -433,7 +433,7 @@ export function pickWeightedIndex(weights: NonEmptyTuple<number>): number {
     throw new Error("Weights array must be non-empty!");
   }
   const totalWeight = weights.reduce((sum, w) => {
-    if (w <= 0) {
+    if (w < 0) {
       throw new Error("Weights must be non-negative!");
     }
     return sum + w;

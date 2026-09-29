@@ -14,7 +14,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
-import type { HeldItemSaveData } from "#types/held-item-data-types";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export class PokemonData {
@@ -36,7 +36,7 @@ export class PokemonData {
   public stats: number[];
   public ivs: number[];
   public nature: Nature;
-  public heldItems: HeldItemSaveData;
+  public heldItems: HeldItemSpecs[];
   public moveset: PokemonMove[];
   public status: Status | null;
   public friendship: number;

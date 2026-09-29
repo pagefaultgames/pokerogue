@@ -1,4 +1,13 @@
-import { type GeneratableHeldItemCategoryId, HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
+import {
+  type GeneratableHeldItemCategoryId,
+  generatableCategoryItems,
+  HeldItemCategoryId,
+  HeldItemId,
+  isCategoryId,
+  isHeldItemPool,
+  isItemInCategory,
+  isItemInRequested,
+} from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
@@ -8,16 +17,27 @@ import type { BerryItemId } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
-import type { HeldItemConfiguration, HeldItemPool, HeldItemWeights } from "#types/held-item-data-types";
-import type { Mutable } from "#types/type-helpers";
+import type {
+  AnyHeldItemRoll,
+  HeldItemConfiguration,
+  HeldItemCustomWeights,
+  HeldItemExclusionList,
+  HeldItemPool,
+  HeldItemPoolEntry,
+  HeldItemResolvedWeights,
+  HeldItemWeight,
+} from "#types/held-item-data-types";
 import { pickWeightedIndex, randSeedInt } from "#utils/common";
 import type { NonEmptyTuple } from "type-fest";
 
+/** `LUXURY` is never rolled for held item pools. */
+type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
+
 /**
- * A default pool of held items, organized by tier. \
+ * A default pool of held items, organized by tier.
  * Used to generate items for enemy trainers, wild Pokemon and daily run starters.
  */
-type HeldItemTieredPool = Readonly<Record<RarityTier, HeldItemPool>>;
+type HeldItemTieredPool = Readonly<Record<PoolRarityTier, HeldItemPool>>;
 
 export const wildHeldItemPool = {} as HeldItemTieredPool;
 
@@ -31,78 +51,76 @@ export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
  * Initialize the wild held item pool
  */
 function initWildHeldItemPool() {
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
-    { entry: HeldItemCategoryId.BERRY, weight: 1 },
-  ];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
-    { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
-  ];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
-    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
-    { entry: HeldItemId.WHITE_HERB, weight: 0 },
-  ];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ROGUE] = [{ entry: HeldItemId.LUCKY_EGG, weight: 4 }];
-  (wildHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.MASTER] = [{ entry: HeldItemId.GOLDEN_EGG, weight: 1 }];
+  Object.assign(wildHeldItemPool, {
+    [RarityTier.COMMON]: [{ entry: HeldItemCategoryId.BERRY, weight: 1 }],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 1 }],
+    [RarityTier.ULTRA]: [
+      { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
+      { entry: HeldItemId.WHITE_HERB, weight: 0 },
+    ],
+    [RarityTier.ROGUE]: [{ entry: HeldItemId.LUCKY_EGG, weight: 4 }],
+    [RarityTier.MASTER]: [{ entry: HeldItemId.GOLDEN_EGG, weight: 1 }],
+  } satisfies HeldItemTieredPool);
 }
 
 /**
  * Initialize the trainer pokemon held item pool
  */
 function initTrainerHeldItemPool() {
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
-    { entry: HeldItemCategoryId.BERRY, weight: 8 },
-    { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
-  ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
-    { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
-  ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
-    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
-    { entry: HeldItemId.WHITE_HERB, weight: 0 },
-  ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ROGUE] = [
-    { entry: HeldItemId.FOCUS_BAND, weight: 2 },
-    { entry: HeldItemId.LUCKY_EGG, weight: 4 },
-    { entry: HeldItemId.QUICK_CLAW, weight: 1 },
-    { entry: HeldItemId.GRIP_CLAW, weight: 1 },
-    { entry: HeldItemId.WIDE_LENS, weight: 1 },
-  ];
-  (trainerHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.MASTER] = [
-    { entry: HeldItemId.KINGS_ROCK, weight: 1 },
-    { entry: HeldItemId.LEFTOVERS, weight: 1 },
-    { entry: HeldItemId.SHELL_BELL, weight: 1 },
-    { entry: HeldItemId.SCOPE_LENS, weight: 1 },
-  ];
+  Object.assign(trainerHeldItemPool, {
+    [RarityTier.COMMON]: [
+      { entry: HeldItemCategoryId.BERRY, weight: 8 },
+      { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
+    ],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 3 }],
+    [RarityTier.ULTRA]: [
+      { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
+      { entry: HeldItemId.WHITE_HERB, weight: 0 },
+    ],
+    [RarityTier.ROGUE]: [
+      { entry: HeldItemId.FOCUS_BAND, weight: 2 },
+      { entry: HeldItemId.LUCKY_EGG, weight: 4 },
+      { entry: HeldItemId.QUICK_CLAW, weight: 1 },
+      { entry: HeldItemId.GRIP_CLAW, weight: 1 },
+      { entry: HeldItemId.WIDE_LENS, weight: 1 },
+    ],
+    [RarityTier.MASTER]: [
+      { entry: HeldItemId.KINGS_ROCK, weight: 1 },
+      { entry: HeldItemId.LEFTOVERS, weight: 1 },
+      { entry: HeldItemId.SHELL_BELL, weight: 1 },
+      { entry: HeldItemId.SCOPE_LENS, weight: 1 },
+    ],
+  } satisfies HeldItemTieredPool);
 }
 
 /**
  * Initialize the daily starter held item pool
  */
 function initDailyStarterRewardPool(): void {
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.COMMON] = [
-    { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
-    { entry: HeldItemCategoryId.BERRY, weight: 3 },
-  ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.GREAT] = [
-    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
-  ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ULTRA] = [
-    { entry: HeldItemId.REVIVER_SEED, weight: 4 },
-    { entry: HeldItemId.SOOTHE_BELL, weight: 1 },
-    { entry: HeldItemId.SOUL_DEW, weight: 1 },
-    { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
-  ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.ROGUE] = [
-    { entry: HeldItemId.GRIP_CLAW, weight: 5 },
-    { entry: HeldItemId.BATON, weight: 2 },
-    { entry: HeldItemId.FOCUS_BAND, weight: 5 },
-    { entry: HeldItemId.QUICK_CLAW, weight: 3 },
-    { entry: HeldItemId.KINGS_ROCK, weight: 3 },
-  ];
-  (dailyStarterHeldItemPool as Mutable<HeldItemTieredPool>)[RarityTier.MASTER] = [
-    { entry: HeldItemId.LEFTOVERS, weight: 1 },
-    { entry: HeldItemId.SHELL_BELL, weight: 1 },
-  ];
+  Object.assign(dailyStarterHeldItemPool, {
+    [RarityTier.COMMON]: [
+      { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
+      { entry: HeldItemCategoryId.BERRY, weight: 3 },
+    ],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 }],
+    [RarityTier.ULTRA]: [
+      { entry: HeldItemId.REVIVER_SEED, weight: 4 },
+      { entry: HeldItemId.SOOTHE_BELL, weight: 1 },
+      { entry: HeldItemId.SOUL_DEW, weight: 1 },
+      { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
+    ],
+    [RarityTier.ROGUE]: [
+      { entry: HeldItemId.GRIP_CLAW, weight: 5 },
+      { entry: HeldItemId.BATON, weight: 2 },
+      { entry: HeldItemId.FOCUS_BAND, weight: 5 },
+      { entry: HeldItemId.QUICK_CLAW, weight: 3 },
+      { entry: HeldItemId.KINGS_ROCK, weight: 3 },
+    ],
+    [RarityTier.MASTER]: [
+      { entry: HeldItemId.LEFTOVERS, weight: 1 },
+      { entry: HeldItemId.SHELL_BELL, weight: 1 },
+    ],
+  } satisfies HeldItemTieredPool);
 }
 
 export function initHeldItemPools(): void {
@@ -113,17 +131,13 @@ export function initHeldItemPools(): void {
 
 // #endregion Initialization
 
-export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
+export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]): void {
   const DAILY_RUN_ITEMS_PER_POKEMON = 3;
   const pool = getHeldItemPool(HeldItemPoolType.DAILY_STARTER);
   for (const p of party) {
     for (let m = 0; m < DAILY_RUN_ITEMS_PER_POKEMON; m++) {
       const tier = getDailyRarityTier();
-
-      const item = getNewHeldItemFromPool(pool[tier], p, party);
-      if (item) {
-        p.heldItemManager.add(item);
-      }
+      assignItemsFromPool(pool[tier], p, party);
     }
   }
 }
@@ -132,7 +146,7 @@ export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
  * Generate a random item rarity for a daily run starter held item.
  * @returns The corresponding rarity tier to be used.
  */
-function getDailyRarityTier(): RarityTier {
+function getDailyRarityTier(): PoolRarityTier {
   const roll = randSeedInt(64);
   if (roll > 25) {
     return RarityTier.COMMON;
@@ -186,12 +200,10 @@ export function assignEnemyHeldItemsForWave(
     return;
   }
 
+  const tieredPool = getHeldItemPool(poolType);
   for (let i = 0; i < count; i++) {
     const upgraded = upgradeChanceDivisor > 0 && randSeedInt(upgradeChanceDivisor) === 0 ? 1 : 0;
-    const item = getNewHeldItemFromTieredPool(getHeldItemPool(poolType), enemy, upgraded);
-    if (item) {
-      enemy.heldItemManager.add(item);
-    }
+    assignItemsFromPool(determineItemPool(tieredPool, upgraded), enemy);
   }
 
   if (!(waveIndex % 1000)) {
@@ -199,17 +211,16 @@ export function assignEnemyHeldItemsForWave(
   }
 }
 
-function getNewHeldItemFromTieredPool(pool: HeldItemTieredPool, pokemon: Pokemon, upgradeCount: number): HeldItemId {
-  const tierPool = determineItemPool(pool, upgradeCount);
-  return getNewHeldItemFromPool(tierPool, pokemon);
-}
-
 function determineItemPool(pool: HeldItemTieredPool, upgradeCount: number): HeldItemPool {
-  const tier = Phaser.Math.Clamp(getRandomTier() + upgradeCount, RarityTier.COMMON, RarityTier.MASTER) as RarityTier;
+  const tier = Phaser.Math.Clamp(
+    getRandomTier() + upgradeCount,
+    RarityTier.COMMON,
+    RarityTier.MASTER,
+  ) as PoolRarityTier;
   return pool[tier];
 }
 
-function getRandomTier(): RarityTier {
+function getRandomTier(): PoolRarityTier {
   const tierValue = randSeedInt(1024);
 
   if (tierValue > 255) {
@@ -227,36 +238,139 @@ function getRandomTier(): RarityTier {
   return RarityTier.MASTER;
 }
 
-export function assignItemsFromConfiguration(config: HeldItemConfiguration, pokemon: Pokemon) {
-  for (const { entry, count } of config) {
-    const actualCount = count ?? 1;
+export function assignItemsFromConfiguration(config: HeldItemConfiguration, pokemon: Pokemon, party?: Pokemon[]): void {
+  for (const entry of config) {
+    assignItemsFromEntry(entry, pokemon, party);
+  }
+}
 
-    if (typeof entry === "number") {
-      if (isCategoryId(entry)) {
-        assignItemsFromCategory(entry, pokemon, actualCount);
-      } else {
-        pokemon.heldItemManager.add(entry, actualCount);
+/**
+ * Pick one weighted entry from a {@linkcode HeldItemPool} and grant it to a Pokemon.
+ * @param pool - The pool to pick from
+ * @param pokemon - The Pokemon receiving the item(s)
+ * @param party - The party of the side receiving the items (influences rolls like type boosters)
+ */
+export function assignItemsFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Pokemon[]): void {
+  assignItemsFromEntry(pickPoolEntry(pool, pokemon), pokemon, party);
+}
+
+function assignItemsFromEntry(roll: AnyHeldItemRoll, pokemon: Pokemon, party?: Pokemon[]): void {
+  const { entry, count = 1, customWeights, exclude = [] } = roll;
+
+  if (typeof entry === "number" && !isCategoryId(entry)) {
+    pokemon.heldItemManager.add(entry, count);
+    return;
+  }
+
+  if (typeof entry === "number") {
+    for (let i = 0; i < count; i++) {
+      const resolved = resolveCategoryWeights(entry, pokemon, customWeights, exclude);
+      pokemon.heldItemManager.add(getNewHeldItemFromCategory(entry, pokemon, party, resolved));
+    }
+    return;
+  }
+
+  const pool = excludeFromPool(entry, exclude);
+  if (pool == null) {
+    // Exclusions should never leave a completely empty pool, so reaching this
+    // means there's a misconfiguration. If we want we could have this return
+    // a generic fallback instead, but that would mask the error more.
+    throw new Error("Empty held item pool");
+  }
+  for (let i = 0; i < count; i++) {
+    assignItemsFromEntry(pickPoolEntry(pool, pokemon), pokemon, party);
+  }
+}
+
+/**
+ * Evaluate a {@linkcode HeldItemWeight} for a given Pokemon.
+ * @param weight - The weight to evaluate
+ * @param pokemon - The Pokemon passed to weight functions
+ * @returns The numeric weight
+ */
+function resolveWeight(weight: HeldItemWeight, pokemon: Pokemon): number {
+  return typeof weight === "function" ? weight(pokemon) : weight;
+}
+
+/**
+ * Merge a category entry's `weights` and `exclude` into plain numeric weights
+ * for {@linkcode getNewHeldItemFromCategory}.
+ * @param category - The category being rolled
+ * @param pokemon - The Pokemon passed to weight functions
+ * @param weights - The entry's custom weights
+ * @param exclusions - The entry's exclusions (overrides weights to 0)
+ * @returns The resolved {@linkcode HeldItemResolvedWeights}
+ */
+function resolveCategoryWeights(
+  category: GeneratableHeldItemCategoryId,
+  pokemon: Pokemon,
+  weights: HeldItemCustomWeights = {},
+  exclusions: HeldItemExclusionList = [],
+): HeldItemResolvedWeights {
+  const resolved: HeldItemResolvedWeights = {};
+  for (const id of generatableCategoryItems[category]) {
+    if (exclusions.includes(id)) {
+      resolved[id] = 0;
+      continue;
+    }
+    const weight = weights[id];
+    if (weight != null) {
+      resolved[id] = resolveWeight(weight, pokemon);
+    }
+  }
+  return resolved;
+}
+
+// TODO I would put this in a util file, but it's an awkward function.
+// It asserts its result to be compatible with NonEmptyTuple, but can't predicate directly to that type because of readonlyness
+function isNonEmpty<T>(arr: readonly T[]): arr is [T, ...T[]] {
+  return arr.length > 0;
+}
+
+/**
+ * Apply an exclusion list to a pool.
+ * - Entries for an excluded item or category, or for an item whose category is excluded, are removed.
+ * - Excluded items are forwarded to the `exclude` list of category entries they belong to.
+ * @param pool - The pool to filter
+ * @param exclusions - The items and/or categories to exclude
+ * @returns The filtered pool, or `undefined` if no entries remain
+ */
+export function excludeFromPool(pool: HeldItemPool, exclusions: HeldItemExclusionList): HeldItemPool | undefined {
+  if (exclusions.length === 0) {
+    return pool;
+  }
+
+  const filtered: HeldItemPoolEntry[] = [];
+  for (const poolEntry of pool) {
+    const { entry } = poolEntry;
+
+    if (isHeldItemPool(entry)) {
+      const filteredNestedPool = excludeFromPool(entry, exclusions);
+      if (filteredNestedPool) {
+        // TS loses context with the spread, but the assertion is clearly correct here
+        filtered.push({ ...poolEntry, entry: filteredNestedPool } as HeldItemPoolEntry);
       }
       continue;
     }
 
-    entry satisfies HeldItemPool;
-    for (let i = 0; i < actualCount; i++) {
-      const newItem = getNewHeldItemFromPool(entry, pokemon);
-      if (newItem) {
-        pokemon.heldItemManager.add(newItem);
-      }
+    if (isItemInRequested(entry, exclusions)) {
+      continue;
     }
-  }
-}
+    if (!isCategoryId(entry)) {
+      filtered.push(poolEntry);
+      continue;
+    }
 
-function assignItemsFromCategory(id: GeneratableHeldItemCategoryId, pokemon: Pokemon, count: number) {
-  for (let i = 0; i < count; i++) {
-    const newItem = getNewHeldItemFromCategory(id, pokemon);
-    if (newItem) {
-      pokemon.heldItemManager.add(newItem);
+    const forwarded = exclusions.filter(id => !isCategoryId(id) && isItemInCategory(id, entry));
+    if (forwarded.length === 0) {
+      filtered.push(poolEntry);
+      continue;
     }
+    // forwarded contains only items belonging to `entry`'s category (checked by isItemInCategory)
+    filtered.push({ ...poolEntry, exclude: [...(poolEntry.exclude ?? []), ...forwarded] } as HeldItemPoolEntry);
   }
+
+  return isNonEmpty(filtered) ? filtered : undefined;
 }
 
 /**
@@ -276,7 +390,7 @@ export function getNewHeldItemFromCategory(
   id: GeneratableHeldItemCategoryId,
   target: Pokemon,
   party: Pokemon[] = [],
-  customWeights: HeldItemWeights = {},
+  customWeights: HeldItemResolvedWeights = {},
 ): HeldItemId {
   const unifiedParty = party.includes(target) ? [...party] : [target, ...party];
 
@@ -290,7 +404,7 @@ export function getNewHeldItemFromCategory(
   }
 }
 
-export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
+export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): HeldItemId {
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
 
@@ -298,17 +412,21 @@ export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, targe
   return items[pickedIndex];
 }
 
-export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): BerryItemId {
-  const items = Object.values(berryTypeToHeldItem) as unknown as NonEmptyTuple<BerryItemId>;
+export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): BerryItemId {
+  const items = Object.values(berryTypeToHeldItem);
+  if (!isNonEmpty(items)) {
+    // This is done to predicate `items` to nonempty, but something truly catastrophic would need to happen to reach the error
+    throw new Error("No berry held items are defined");
+  }
 
-  const weights = items.map(t =>
-    target?.heldItemManager.isMaxStack(t)
-      ? 0
-      : (customWeights[t]
-          ?? (t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY))
-        ? 2
-        : 1,
-  );
+  const weights = items.map(t => {
+    if (target?.heldItemManager.isMaxStack(t)) {
+      return 0;
+    }
+    const isPreferredBerry =
+      t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY;
+    return customWeights[t] ?? (isPreferredBerry ? 2 : 1);
+  });
 
   const pickedIndex = pickWeightedIndex(weights);
   return items[pickedIndex];
@@ -317,7 +435,7 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
 export function getNewAttackTypeBoosterHeldItem(
   target?: Pokemon,
   party: Pokemon[] = [],
-  customWeights: HeldItemWeights = {},
+  customWeights: HeldItemResolvedWeights = {},
 ): HeldItemId {
   const attackMoveTypes = party
     .values()
@@ -326,57 +444,58 @@ export function getNewAttackTypeBoosterHeldItem(
         .getMoveset()
         .filter(pm => pm.getMove().is("AttackMove"))
         .map(pm => p.getMoveType(pm.getMove()))
-        .filter(type => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
+        .filter((type): type is RegularPokemonType => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
     )
     .toArray();
 
-  if (attackMoveTypes.length === 0) {
+  const attackMoveTypeWeights = new Map<RegularPokemonType, number>();
+  for (const type of attackMoveTypes) {
+    attackMoveTypeWeights.set(type, Math.min((attackMoveTypeWeights.get(type) ?? 0) + 1, 3));
+  }
+
+  const candidates = [...attackMoveTypeWeights];
+  if (!isNonEmpty(candidates)) {
     // Fallback to avoid bubbling `null` through the entire item generation chain
     return attackTypeToHeldItem[PokemonType.NORMAL];
   }
 
-  const attackMoveTypeWeights = attackMoveTypes.reduce((map, type) => {
-    const current = map.get(type) ?? 0;
-    if (current < 3) {
-      map.set(type, current + 1);
-    }
-    return map;
-  }, new Map<PokemonType, number>());
-
-  // guaranteed to be safe, since above map is nonempty
-  const types = attackMoveTypeWeights.keys().toArray() as unknown as NonEmptyTuple<RegularPokemonType>;
-
-  const weights = types.map(type =>
-    target?.heldItemManager.isMaxStack(attackTypeToHeldItem[type])
-      ? 0
-      : (customWeights[attackTypeToHeldItem[type]] ?? attackMoveTypeWeights.get(type)!),
-  );
-
-  const pickedIndex = pickWeightedIndex(weights);
-  return attackTypeToHeldItem[types[pickedIndex]];
-}
-
-function getNewHeldItemFromPool(pool: HeldItemPool, target: Pokemon, party?: Pokemon[]): HeldItemId {
-  const weights = getPoolWeights(pool, target);
-
-  const pickedIndex = pickWeightedIndex(weights);
-  const { entry } = pool[pickedIndex];
-
-  if (isCategoryId(entry)) {
-    return getNewHeldItemFromCategory(entry, target, party);
-  }
-  return entry;
-}
-
-function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): NonEmptyTuple<number> {
-  return pool.map(p => {
-    const weight = typeof p.weight === "function" ? p.weight(pokemon) : p.weight;
-
-    // filter out items at max stack count
-    if (typeof p.entry === "number" && !isCategoryId(p.entry) && pokemon.heldItemManager.isMaxStack(p.entry)) {
+  const weights = candidates.map(([type, count]) => {
+    const item = attackTypeToHeldItem[type];
+    if (target?.heldItemManager.isMaxStack(item)) {
       return 0;
     }
+    return customWeights[item] ?? count;
+  });
 
-    return weight;
+  const [pickedType] = candidates[pickWeightedIndex(weights)];
+  return attackTypeToHeldItem[pickedType];
+}
+
+/**
+ * Pick one weighted entry from a pool, without resolving it.
+ * @param pool - The pool to pick from
+ * @param pokemon - The Pokemon the pick is for (used for weight functions and max stack filtering)
+ * @returns The picked {@linkcode HeldItemPoolEntry}
+ */
+function pickPoolEntry(pool: HeldItemPool, pokemon: Pokemon): HeldItemPoolEntry {
+  const weights = getPoolWeights(pool, pokemon);
+  return pool[pickWeightedIndex(weights)];
+}
+
+/**
+ * Compute the effective weights of a pool's entries for a given Pokemon.
+ *
+ * @remarks
+ * Entries for specific items already at max stack are weighted `0`.
+ * Categories are not filtered here (they handle max stacks internally),
+ * and `count > 1` entries may still overflow the stack limit.
+ */
+function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): NonEmptyTuple<number> {
+  return pool.map(({ entry, weight }) => {
+    // filter out items at max stack count
+    if (!isHeldItemPool(entry) && !isCategoryId(entry) && pokemon.heldItemManager.isMaxStack(entry)) {
+      return 0;
+    }
+    return resolveWeight(weight, pokemon);
   });
 }

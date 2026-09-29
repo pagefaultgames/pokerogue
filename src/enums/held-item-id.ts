@@ -1,9 +1,11 @@
 import type { TrainerItemId } from "#enums/trainer-item-id";
+import type { HeldItemPool } from "#types/held-item-data-types";
 import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 
-export const HeldItemId = {
-  // Berries
+// #region Category-grouped IDs
+
+const BERRY_IDS = {
   SITRUS_BERRY: 0x0101,
   LUM_BERRY: 0x0102,
   ENIGMA_BERRY: 0x0103,
@@ -15,12 +17,9 @@ export const HeldItemId = {
   LANSAT_BERRY: 0x0109,
   STARF_BERRY: 0x010a,
   LEPPA_BERRY: 0x010b,
+} as const;
 
-  // Other items that are consumed
-  REVIVER_SEED: 0x0201,
-  WHITE_HERB: 0x0202,
-
-  // Type Boosters
+const TYPE_ATTACK_BOOSTER_IDS = {
   SILK_SCARF: 0x0301,
   BLACK_BELT: 0x0302,
   SHARP_BEAK: 0x0303,
@@ -39,6 +38,29 @@ export const HeldItemId = {
   DRAGON_FANG: 0x0310,
   BLACK_GLASSES: 0x0311,
   FAIRY_FEATHER: 0x0312,
+} as const;
+
+const VITAMIN_IDS = {
+  HP_UP: 0x0801,
+  PROTEIN: 0x0802,
+  IRON: 0x0803,
+  CALCIUM: 0x0804,
+  ZINC: 0x0805,
+  CARBOS: 0x0806,
+} as const;
+
+// #endregion Category-grouped IDs
+
+export const HeldItemId = {
+  // Berries
+  ...BERRY_IDS,
+
+  // Other items that are consumed
+  REVIVER_SEED: 0x0201,
+  WHITE_HERB: 0x0202,
+
+  // Type Boosters
+  ...TYPE_ATTACK_BOOSTER_IDS,
 
   // Species Stat Boosters
   LIGHT_BALL: 0x0401,
@@ -76,12 +98,7 @@ export const HeldItemId = {
   EVIOLITE: 0x0710,
 
   // Vitamins
-  HP_UP: 0x0801,
-  PROTEIN: 0x0802,
-  IRON: 0x0803,
-  CALCIUM: 0x0804,
-  ZINC: 0x0805,
-  CARBOS: 0x0806,
+  ...VITAMIN_IDS,
 
   // Other stat boosting items
   SHUCKLE_JUICE_GOOD: 0x0901,
@@ -135,11 +152,21 @@ export const HeldItemCategoryId = {
 
 export type HeldItemCategoryId = ValueOf<typeof HeldItemCategoryId>;
 
+/**
+ * Runtime list of every item in each generatable category.
+ */
+export const generatableCategoryItems = {
+  [HeldItemCategoryId.BERRY]: Object.freeze(Object.values(BERRY_IDS)),
+  [HeldItemCategoryId.VITAMIN]: Object.freeze(Object.values(VITAMIN_IDS)),
+  [HeldItemCategoryId.TYPE_ATTACK_BOOSTER]: Object.freeze(Object.values(TYPE_ATTACK_BOOSTER_IDS)),
+} satisfies Partial<Record<HeldItemCategoryId, readonly HeldItemId[]>>;
+
 /** The subset of {@linkcode HeldItemCategoryId}s that {@linkcode getNewHeldItemFromCategory} can roll. */
-export type GeneratableHeldItemCategoryId =
-  | typeof HeldItemCategoryId.BERRY
-  | typeof HeldItemCategoryId.VITAMIN
-  | typeof HeldItemCategoryId.TYPE_ATTACK_BOOSTER;
+export type GeneratableHeldItemCategoryId = keyof typeof generatableCategoryItems;
+
+/** Union of all {@linkcode HeldItemId}s belonging to the given generatable category. */
+export type HeldItemIdInCategory<C extends GeneratableHeldItemCategoryId> =
+  (typeof generatableCategoryItems)[C][HeldItemId];
 
 const ITEM_CATEGORY_MASK = 0xff00;
 
@@ -151,12 +178,24 @@ export function isCategoryId(id: number): id is HeldItemCategoryId {
   return Object.values<number>(HeldItemCategoryId).includes(id);
 }
 
-// TODO: Can we make this a type predicate?
 export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
   return getHeldItemCategory(itemId) === category;
 }
 
-export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemCategoryId | HeldItemId)[]): boolean {
+/** Type guard to check if an entry is a HeldItemPool. */
+export function isHeldItemPool(entry: unknown): entry is HeldItemPool {
+  return Array.isArray(entry);
+}
+
+/**
+ * Check whether an item or category is covered by a list of requested items/categories.
+ * An item ID matches if it appears in the list directly or if its category does.
+ * Passing a category ID matches only if that category itself is requested.
+ */
+export function isItemInRequested(
+  itemId: HeldItemId | HeldItemCategoryId,
+  requestedItems: readonly (HeldItemCategoryId | HeldItemId)[],
+): boolean {
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
 
