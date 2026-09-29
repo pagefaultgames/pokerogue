@@ -72,6 +72,15 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     return item?.stack ?? 0;
   }
 
+  // Only to be used in tests, can bypass maxstack
+  public setStack(itemType: Id, count: number): void {
+    const item = this.items.get(itemType);
+    if (!item) {
+      return;
+    }
+    item.stack = count;
+  }
+
   public isMaxStack(itemType: Id): boolean {
     const item = this.items.get(itemType);
     return !!item && item.stack >= this.getMaxStackCount(itemType);
