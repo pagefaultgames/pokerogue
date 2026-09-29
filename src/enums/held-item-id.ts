@@ -51,6 +51,12 @@ const VITAMIN_IDS = {
 
 // #endregion Category-grouped IDs
 
+/**
+ * Map of all held item names to their IDs.
+ *
+ * @remarks
+ * Entries are formatted 0xXXYY, where XX is the category and YY is the item offset within the category.
+ */
 export const HeldItemId = {
   // Berries
   ...BERRY_IDS,
@@ -113,6 +119,7 @@ export const HeldItemId = {
   ...FormChangeItemId,
 } as const;
 
+/** Union type of all held item IDs. */
 export type HeldItemId = ValueOf<typeof HeldItemId>;
 
 type HeldItemNameMap = {
@@ -133,6 +140,7 @@ export const HeldItemNames = Object.freeze(
   ),
 ) as HeldItemNameMap;
 
+/** Union type of all held item category IDs. */
 export const HeldItemCategoryId = {
   NONE: 0x0000,
   BERRY: 0x0100,
@@ -168,8 +176,14 @@ export type GeneratableHeldItemCategoryId = keyof typeof generatableCategoryItem
 export type HeldItemIdInCategory<C extends GeneratableHeldItemCategoryId> =
   (typeof generatableCategoryItems)[C][HeldItemId];
 
+/** Bitmask extracting the category (high byte) from a held item ID. */
 const ITEM_CATEGORY_MASK = 0xff00;
 
+/**
+ * Get the category a held item belongs to.
+ * @param itemId - The {@linkcode HeldItemId} to check
+ * @returns The {@linkcode HeldItemCategoryId} of the item
+ */
 export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
   return (itemId & ITEM_CATEGORY_MASK) as HeldItemCategoryId;
 }
@@ -178,6 +192,12 @@ export function isCategoryId(id: number): id is HeldItemCategoryId {
   return Object.values<number>(HeldItemCategoryId).includes(id);
 }
 
+/**
+ * Check whether a held item belongs to a category.
+ * @param itemId - The {@linkcode HeldItemId} to check
+ * @param category - The {@linkcode HeldItemCategoryId} to check against
+ * @returns Whether `itemId` belongs to `category`
+ */
 export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
   return getHeldItemCategory(itemId) === category;
 }

@@ -123,6 +123,10 @@ function initDailyStarterRewardPool(): void {
   } satisfies HeldItemTieredPool);
 }
 
+/**
+ * Initialize all default held item pools ({@linkcode wildHeldItemPool}, {@linkcode trainerHeldItemPool}
+ * and {@linkcode dailyStarterHeldItemPool}).
+ */
 export function initHeldItemPools(): void {
   initWildHeldItemPool();
   initTrainerHeldItemPool();
@@ -131,6 +135,10 @@ export function initHeldItemPools(): void {
 
 // #endregion Initialization
 
+/**
+ * Assign 3 randomly generated held items to each Pokemon in a daily run starter party.
+ * @param party - The party of {@linkcode PlayerPokemon} to receive the items
+ */
 export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]): void {
   const DAILY_RUN_ITEMS_PER_POKEMON = 3;
   const pool = getHeldItemPool(HeldItemPoolType.DAILY_STARTER);
@@ -163,6 +171,11 @@ function getDailyRarityTier(): PoolRarityTier {
   return RarityTier.MASTER;
 }
 
+/**
+ * Get the default tiered pool for a given pool type.
+ * @param poolType - The {@linkcode HeldItemPoolType} to retrieve
+ * @returns The corresponding {@linkcode HeldItemTieredPool}
+ */
 function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
   switch (poolType) {
     case HeldItemPoolType.WILD:
@@ -211,6 +224,12 @@ export function assignEnemyHeldItemsForWave(
   }
 }
 
+/**
+ * Roll a random rarity tier, apply any upgrades, and return that tier's {@linkcode HeldItemPool}.
+ * @param pool - The {@linkcode HeldItemTieredPool} to draw from
+ * @param upgradeCount - The number of rarity tiers to bump the rolled tier up by
+ * @returns The {@linkcode HeldItemPool} for the resulting tier
+ */
 function determineItemPool(pool: HeldItemTieredPool, upgradeCount: number): HeldItemPool {
   const tier = Phaser.Math.Clamp(
     getRandomTier() + upgradeCount,
@@ -220,6 +239,18 @@ function determineItemPool(pool: HeldItemTieredPool, upgradeCount: number): Held
   return pool[tier];
 }
 
+/**
+ * Generate a random item rarity for a wild or trainer held item.
+ *
+ * Probability distribution (out of 1024):
+ * - Common: 768/1024 (~75.00%)
+ * - Great:  195/1024 (~19.04%)
+ * - Ultra:   48/1024 (~4.69%)
+ * - Rogue:   12/1024 (~1.17%)
+ * - Master:   1/1024 (~0.098%)
+ *
+ * @returns The rarity tier
+ */
 function getRandomTier(): PoolRarityTier {
   const tierValue = randSeedInt(1024);
 
@@ -238,6 +269,12 @@ function getRandomTier(): PoolRarityTier {
   return RarityTier.MASTER;
 }
 
+/**
+ * Grant every entry of a {@linkcode HeldItemConfiguration} to a Pokemon.
+ * @param config - The configuration to grant
+ * @param pokemon - The Pokemon receiving the item(s)
+ * @param party - The party of the side receiving the items (influences rolls like type boosters)
+ */
 export function assignItemsFromConfiguration(config: HeldItemConfiguration, pokemon: Pokemon, party?: Pokemon[]): void {
   for (const entry of config) {
     assignItemsFromEntry(entry, pokemon, party);
@@ -254,6 +291,19 @@ export function assignItemsFromPool(pool: HeldItemPool, pokemon: Pokemon, party?
   assignItemsFromEntry(pickPoolEntry(pool, pokemon), pokemon, party);
 }
 
+/**
+ * Resolve a single roll and grant the result to a Pokemon.
+ * @param roll - The {@linkcode AnyHeldItemRoll} to resolve
+ * @param pokemon - The Pokemon receiving the item(s)
+ * @param party - The party of the side receiving the items (influences rolls like type boosters)
+ * @throws Error - If the roll's `exclude` list removes every entry from a pool
+ *
+ * @remarks
+ * Resolution depends on the kind of `entry`:
+ * - A specific item is added `count` times.
+ * - A category is rolled `count` times independently, using its resolved weights and exclusions.
+ * - A pool is filtered by its exclusions, then has an entry picked and resolved `count` times.
+ */
 function assignItemsFromEntry(roll: AnyHeldItemRoll, pokemon: Pokemon, party?: Pokemon[]): void {
   const { entry, count = 1, customWeights, exclude = [] } = roll;
 
@@ -404,6 +454,12 @@ export function getNewHeldItemFromCategory(
   }
 }
 
+/**
+ * Generate a new vitamin held item.
+ * @param customWeights - Custom weights to use when generating the item (unlisted vitamins have weight 1)
+ * @param target - The pokemon receiving the item (vitamins already at max stack have weight 0)
+ * @returns The {@linkcode HeldItemId} of the chosen vitamin
+ */
 export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): HeldItemId {
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
@@ -412,6 +468,15 @@ export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {
   return items[pickedIndex];
 }
 
+/**
+ * Generate a new berry held item.
+ * @param customWeights - Custom weights to use when generating the item
+ * @param target - The pokemon receiving the item (berries already at max stack have weight 0)
+ * @returns The {@linkcode BerryItemId} of the chosen berry
+ *
+ * @remarks
+ * Unlisted berries have a weight of `2` for Sitrus, Lum and Leppa berries and `1` otherwise.
+ */
 export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): BerryItemId {
   const items = Object.values(berryTypeToHeldItem);
   if (!isNonEmpty(items)) {
@@ -432,6 +497,17 @@ export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {},
   return items[pickedIndex];
 }
 
+/**
+ * Generate a new type-boosting held item based on the attack types in a party's movesets.
+ * @param target - The pokemon receiving the item (boosters already at max stack have weight 0)
+ * @param party - The party of the side receiving the item, whose attack move types are considered
+ * @param customWeights - Custom weights to use when generating the item
+ * @returns The {@linkcode HeldItemId} of the chosen type booster
+ *
+ * @remarks
+ * Each type's default weight is the number of matching attack moves in the party, capped at `3`.
+ * If the party has no eligible attack moves, the {@linkcode PokemonType.NORMAL | NORMAL} booster is returned.
+ */
 export function getNewAttackTypeBoosterHeldItem(
   target?: Pokemon,
   party: Pokemon[] = [],
