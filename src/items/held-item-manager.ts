@@ -47,7 +47,7 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
 
   public override hasItem(itemType: HeldItemId | HeldItemCategoryId, excludeTempStack = false): boolean {
     if (isCategoryId(itemType)) {
-      return this.getItems().some(id => isItemInCategory(id, itemType) && this.getStack(id, excludeTempStack) > 0);
+      return this.getItems(excludeTempStack).some(id => isItemInCategory(id, itemType));
     }
     return super.hasItem(itemType, excludeTempStack);
   }
