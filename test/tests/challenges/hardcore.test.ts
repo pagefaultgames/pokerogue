@@ -4,7 +4,7 @@ import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
-import { RewardId } from "#enums/reward-id";
+import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -82,15 +82,12 @@ describe("Challenges - Hardcore", () => {
     const modifierSelectHandler = game.scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler)!;
     expect(
       modifierSelectHandler.options.find(
-        reward =>
-          reward.rewardOption.type.id === RewardId.REVIVE || reward.rewardOption.type.id === RewardId.MAX_REVIVE,
+        reward => getRewardCategory(reward.rewardOption.type.id) === RewardCategoryId.REVIVE,
       ),
     ).toBeUndefined();
     expect(
       modifierSelectHandler.shopOptionsRows.find(row =>
-        row.find(
-          item => item.rewardOption.type.id === RewardId.REVIVE || item.rewardOption.type.id === RewardId.MAX_REVIVE,
-        ),
+        row.find(item => getRewardCategory(item.rewardOption.type.id) === RewardCategoryId.REVIVE),
       ),
     ).toBeUndefined();
   });

@@ -42,6 +42,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -79,6 +80,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
@@ -1192,6 +1194,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
   getHeldItems(): HeldItemId[] {
     return this.heldItemManager.getItems();
+  }
+
+  public toggleFormChangeItem(id: FormChangeItemId): void {
+    const toggled = this.heldItemManager.toggleActive(id);
+
+    if (toggled) {
+      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeItemTrigger);
+    }
   }
 
   /**

@@ -3,7 +3,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardId } from "#enums/reward-id";
+import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { DepartmentStoreSaleEncounter } from "#mystery-encounters/department-store-sale-encounter";
@@ -98,7 +98,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
-        expect(option.rewardOption.type.id).toContain("TM_");
+        expect(getRewardCategory(option.rewardOption.type.id)).toBe(RewardCategoryId.TM);
       }
     });
 
@@ -214,7 +214,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(4);
       for (const option of rewardSelectHandler.options) {
-        expect(option.rewardOption.type.id).toContain("BALL");
+        expect(getRewardCategory(option.rewardOption.type.id)).toBe(RewardCategoryId.POKEBALL);
       }
     });
 

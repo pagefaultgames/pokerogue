@@ -42,6 +42,7 @@ describe("Form Change Phase", () => {
 
     // Give Zacian a Rusted Sword
     zacian.heldItemManager.add(HeldItemId.RUSTED_SWORD);
+    zacian.toggleFormChangeItem(HeldItemId.RUSTED_SWORD);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -64,6 +65,7 @@ describe("Form Change Phase", () => {
 
     // Give Kyogre a Blue Orb to trigger Primal Reversion
     kyogre.heldItemManager.add(HeldItemId.BLUE_ORB);
+    kyogre.toggleFormChangeItem(HeldItemId.BLUE_ORB);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -84,6 +86,7 @@ describe("Form Change Phase", () => {
 
     // Give Gengar a Gengarite to trigger Mega Evolution
     gengar.heldItemManager.add(HeldItemId.GENGARITE);
+    gengar.toggleFormChangeItem(HeldItemId.GENGARITE);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -116,6 +119,7 @@ describe("Form Change Phase", () => {
 
     // Give Gengar a Gengarite to trigger Mega Evolution
     gengar.heldItemManager.add(HeldItemId.GENGARITE);
+    gengar.toggleFormChangeItem(HeldItemId.GENGARITE);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
