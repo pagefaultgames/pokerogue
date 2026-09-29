@@ -80,11 +80,13 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     ) as FormChangeItemId[];
   }
 
-  public toggleActive(id: FormChangeItemId): void {
+  public toggleActive(id: FormChangeItemId): boolean {
     const item = this.items.get(id);
     if (item) {
       item.active = !item.active;
+      return true;
     }
+    return false;
   }
 
   // #endregion

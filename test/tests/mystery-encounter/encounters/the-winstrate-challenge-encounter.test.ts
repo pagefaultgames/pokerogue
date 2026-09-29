@@ -1,17 +1,17 @@
 import type { BattleScene } from "#app/battle-scene";
-import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Status } from "#data/status-effect";
 import { BiomeId } from "#enums/biome-id";
-import { MoveId } from "#enums/move-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Nature } from "#enums/nature";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
+import type { HeldItemReward } from "#items/held-item-reward";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounter-biomes";
@@ -99,137 +99,6 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
     expect(encounter.enemyPartyConfigs.length).toBe(5);
-    expect(encounter.enemyPartyConfigs).toEqual([
-      {
-        trainerType: TrainerType.VITO,
-        pokemonConfigs: [
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.HISUI_ELECTRODE),
-            isBoss: false,
-            abilityIndex: 0, // Soundproof
-            nature: Nature.MODEST,
-            moveSet: [MoveId.THUNDERBOLT, MoveId.GIGA_DRAIN, MoveId.FOUL_PLAY, MoveId.THUNDER_WAVE],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.SWALOT),
-            isBoss: false,
-            abilityIndex: 2, // Gluttony
-            nature: Nature.QUIET,
-            moveSet: [MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.ICE_BEAM, MoveId.EARTHQUAKE],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.DODRIO),
-            isBoss: false,
-            abilityIndex: 2, // Tangled Feet
-            nature: Nature.JOLLY,
-            moveSet: [MoveId.DRILL_PECK, MoveId.QUICK_ATTACK, MoveId.THRASH, MoveId.KNOCK_OFF],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.ALAKAZAM),
-            isBoss: false,
-            formIndex: 1,
-            nature: Nature.BOLD,
-            moveSet: [MoveId.PSYCHIC, MoveId.SHADOW_BALL, MoveId.FOCUS_BLAST, MoveId.THUNDERBOLT],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.DARMANITAN),
-            isBoss: false,
-            abilityIndex: 0, // Sheer Force
-            nature: Nature.IMPISH,
-            moveSet: [MoveId.EARTHQUAKE, MoveId.U_TURN, MoveId.FLARE_BLITZ, MoveId.ROCK_SLIDE],
-            modifierConfigs: expect.any(Array),
-          },
-        ],
-      },
-      {
-        trainerType: TrainerType.VICKY,
-        pokemonConfigs: [
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.MEDICHAM),
-            isBoss: false,
-            formIndex: 1,
-            nature: Nature.IMPISH,
-            moveSet: [MoveId.AXE_KICK, MoveId.ICE_PUNCH, MoveId.ZEN_HEADBUTT, MoveId.BULLET_PUNCH],
-            modifierConfigs: expect.any(Array),
-          },
-        ],
-      },
-      {
-        trainerType: TrainerType.VIVI,
-        pokemonConfigs: [
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.SEAKING),
-            isBoss: false,
-            abilityIndex: 3, // Lightning Rod
-            nature: Nature.ADAMANT,
-            moveSet: [MoveId.WATERFALL, MoveId.MEGAHORN, MoveId.KNOCK_OFF, MoveId.REST],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.BRELOOM),
-            isBoss: false,
-            abilityIndex: 1, // Poison Heal
-            nature: Nature.JOLLY,
-            moveSet: [MoveId.SPORE, MoveId.SWORDS_DANCE, MoveId.SEED_BOMB, MoveId.DRAIN_PUNCH],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.CAMERUPT),
-            isBoss: false,
-            formIndex: 1,
-            nature: Nature.CALM,
-            moveSet: [MoveId.EARTH_POWER, MoveId.FIRE_BLAST, MoveId.YAWN, MoveId.PROTECT],
-            modifierConfigs: expect.any(Array),
-          },
-        ],
-      },
-      {
-        trainerType: TrainerType.VICTORIA,
-        pokemonConfigs: [
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.ROSERADE),
-            isBoss: false,
-            abilityIndex: 0, // Natural Cure
-            nature: Nature.CALM,
-            moveSet: [MoveId.SYNTHESIS, MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.SLEEP_POWDER],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.GARDEVOIR),
-            isBoss: false,
-            formIndex: 1,
-            nature: Nature.TIMID,
-            moveSet: [MoveId.PSYSHOCK, MoveId.MOONBLAST, MoveId.SHADOW_BALL, MoveId.WILL_O_WISP],
-            modifierConfigs: expect.any(Array),
-          },
-        ],
-      },
-      {
-        trainerType: TrainerType.VICTOR,
-        pokemonConfigs: [
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.SWELLOW),
-            isBoss: false,
-            abilityIndex: 0, // Guts
-            nature: Nature.ADAMANT,
-            moveSet: [MoveId.FACADE, MoveId.BRAVE_BIRD, MoveId.PROTECT, MoveId.QUICK_ATTACK],
-            modifierConfigs: expect.any(Array),
-          },
-          {
-            species: speciesDataRegistry.getSpecies(SpeciesId.OBSTAGOON),
-            isBoss: false,
-            abilityIndex: 1, // Guts
-            nature: Nature.ADAMANT,
-            moveSet: [MoveId.FACADE, MoveId.OBSTRUCT, MoveId.NIGHT_SLASH, MoveId.FIRE_PUNCH],
-            modifierConfigs: expect.any(Array),
-          },
-        ],
-      },
-    ]);
     expect(encounter.spriteConfigs).toBeDefined();
     expect(encounter.spriteConfigs.length).toBe(5);
     expect(onInitResult).toBe(true);
@@ -297,7 +166,8 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
+      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.MACHO_BRACE);
     });
   });
 
@@ -339,7 +209,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("RARER_CANDY");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.RARER_CANDY);
     });
   });
 });

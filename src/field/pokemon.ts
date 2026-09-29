@@ -42,6 +42,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -79,6 +80,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
@@ -1195,6 +1197,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.heldItemManager.getItems(excludeTempStack);
   }
 
+  public toggleFormChangeItem(id: FormChangeItemId): void {
+    const toggled = this.heldItemManager.toggleActive(id);
+
+    if (toggled) {
+      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeItemTrigger);
+    }
+  }
+
   /**
    * @returns Whether the mon's status was intentionally inflicted by its held item
    */
@@ -2113,7 +2123,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized
    * @param returnOriginalTypesIfStellar - (Default `false`)
-   *   Whether to treat this Pokemon as its original types if it is currently Tera Stellar
+   * Whether to treat this Pokemon as its original types if it is currently Tera Stellar
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
    * @returns Whether this Pokemon is of the specified type.
@@ -2661,11 +2671,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const moveType = source.getMoveType(move);
 
-    const typeMultiplier = new NumberHolder(
-      move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
-        ? this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion })
-        : 1,
-    );
+    const typeMultiplier = new ValueHolder(1);
+    if (move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")) {
+      typeMultiplier.value = this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion });
+    }
+
+    if (move.hasAttr("FixedDamageAttr") && typeMultiplier.value > 0) {
+      typeMultiplier.value = 1;
+    }
 
     if (move.isTypeImmune(source, this)) {
       typeMultiplier.value = 0;
@@ -2676,7 +2689,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value *= 2;
     }
 
-    const cancelledHolder = cancelled ?? new BooleanHolder(false);
+    const cancelledHolder = cancelled ?? new ValueHolder(false);
     // TypeMultiplierAbAttrParams is shared amongst the type of AbAttrs we will be invoking
     const commonAbAttrParams: TypeMultiplierAbAttrParams = {
       pokemon: this,

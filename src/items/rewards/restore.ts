@@ -147,7 +147,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
 
 export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.SACRED_ASH, localeKey, iconImage, "reward:allPokemonFullRevive");
+    super(RewardId.SACRED_ASH, localeKey, iconImage, "reward:allPokemonFullRevive", "reward");
   }
 
   apply(): boolean {

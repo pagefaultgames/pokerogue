@@ -6,6 +6,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
@@ -163,9 +164,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(3);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toContain("TM_COMMON");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toContain("TM_GREAT");
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toContain("MEMORY_MUSHROOM");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.TM_COMMON);
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.TM_GREAT);
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe(RewardId.MEMORY_MUSHROOM);
     });
   });
 
@@ -208,20 +209,16 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        rewardSelectHandler.options[0].rewardOption.type.tier
-          - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+        rewardSelectHandler.options[0].rewardOption.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
       ).toBe(RarityTier.ULTRA);
       expect(
-        rewardSelectHandler.options[1].rewardOption.type.tier
-          - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+        rewardSelectHandler.options[1].rewardOption.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
       ).toBe(RarityTier.ULTRA);
       expect(
-        rewardSelectHandler.options[2].rewardOption.type.tier
-          - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+        rewardSelectHandler.options[2].rewardOption.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
       ).toBe(RarityTier.GREAT);
       expect(
-        rewardSelectHandler.options[3].rewardOption.type.tier
-          - rewardSelectHandler.options[3].rewardOption.upgradeCount,
+        rewardSelectHandler.options[3].rewardOption.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
       ).toBe(RarityTier.GREAT);
     });
   });
@@ -264,20 +261,16 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        rewardSelectHandler.options[0].rewardOption.type.tier
-          - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+        rewardSelectHandler.options[0].rewardOption.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
       ).toBe(RarityTier.ROGUE);
       expect(
-        rewardSelectHandler.options[1].rewardOption.type.tier
-          - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+        rewardSelectHandler.options[1].rewardOption.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
       ).toBe(RarityTier.ROGUE);
       expect(
-        rewardSelectHandler.options[2].rewardOption.type.tier
-          - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+        rewardSelectHandler.options[2].rewardOption.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
       ).toBe(RarityTier.ULTRA);
       expect(
-        rewardSelectHandler.options[3].rewardOption.type.tier
-          - rewardSelectHandler.options[3].rewardOption.upgradeCount,
+        rewardSelectHandler.options[3].rewardOption.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
       ).toBe(RarityTier.GREAT);
     });
   });

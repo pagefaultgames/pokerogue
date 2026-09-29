@@ -20,6 +20,7 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
+import { getRewardCategory, RewardCategoryId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
@@ -1303,7 +1304,10 @@ export class HardcoreChallenge extends Challenge {
   }
 
   override applyShopItem(shopItem: RewardOption | null, isValid: BooleanHolder): boolean {
-    isValid.value = shopItem?.type.group !== "revive";
+    if (!shopItem) {
+      return true;
+    }
+    isValid.value = getRewardCategory(shopItem.type.id) !== RewardCategoryId.REVIVE;
     return true;
   }
 
