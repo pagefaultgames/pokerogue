@@ -5879,17 +5879,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
+   *
    * Triggers in-battle effects (such as Unburden) after losing the item.
-   * Out-of-battle item loss (MEs, etc.) should use heldItemManager.remove directly.
+   * @remarks
+   * Out-of-battle item loss (MEs, etc.) should use `heldItemManager.remove` directly.
    * @param heldItem - The item stack to be reduced.
+   * @param temporary (Default `true`) Whether to remove the item temporarily or permanently
    * @returns Whether the item was removed successfully.
    */
-  public loseHeldItem(heldItemId: HeldItemId, tempStack = true): boolean {
+  public loseHeldItem(heldItemId: HeldItemId, temporary = true): boolean {
     if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }
 
-    if (tempStack) {
+    if (temporary) {
       this.heldItemManager.addTempStack(heldItemId, -1);
     } else {
       this.heldItemManager.remove(heldItemId);
@@ -6436,6 +6439,8 @@ export class PlayerPokemon extends Pokemon {
     const fusedPartyMemberHeldItems = pokemon.getHeldItems();
     for (const item of fusedPartyMemberHeldItems) {
       // TODO: is this the best way of doing this?
+      // TODO: this used to pass `ignoreUpdate = true` to skip updating the item bar
+      // but that param was removed from the function; investigate if that matters
       tryTransferHeldItem(item, pokemon, this, pokemon.heldItemManager.getStack(item));
     }
     globalScene.updateItemBar(true);

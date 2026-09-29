@@ -221,7 +221,7 @@ export class SelectRewardPhase extends BattlePhase {
         ) {
           const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
           const item = items[itemIndex];
-          // Should this play a sound? Should this update the item bar?
+          // TODO: Should this play a sound? Should this update the item bar?
           tryTransferHeldItem(item, party[fromSlotIndex], party[toSlotIndex], itemQuantity);
         } else {
           this.resetRewardSelect(rewardSelectCallback);

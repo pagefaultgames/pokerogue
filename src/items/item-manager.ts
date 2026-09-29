@@ -57,7 +57,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
   /**
    * Returns all items currently in the manager.
    * By default, items for which the stack size is temporarily 0 are not included.
-   * @param excludeTempStack - Whether the temporary stack should be excluded.
+   * @param excludeTempStack - (Default `false`) Whether the temporary stack should be excluded.
    */
   public getItems(excludeTempStack = false): Id[] {
     const items = Array.from(this.items.keys());
@@ -76,7 +76,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
    * Returns the stack size of the requested item.
    * This also includes the temporary stack, unless explicitly requested.
    * @param itemType - The item to get the stack for
-   * @param excludeTempStack - Whether the temporary stack should be excluded.
+   * @param excludeTempStack - (Default `false`) Whether the temporary stack should be excluded.
    */
   public getStack(itemType: Id, excludeTempStack = false): number {
     const item = this.items.get(itemType);
