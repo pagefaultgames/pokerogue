@@ -8,7 +8,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { Challenges } from "#enums/challenges";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId, HeldItemNames, isItemInCategory } from "#enums/held-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -336,9 +336,11 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
           const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
           if (tier === RarityTier.ROGUE) {
             numRogue += stack;
-          } else if (tier === RarityTier.ULTRA) {
+            // TODO: Doing this to preserve previous behavior (treating soothe bell as ultra tier), but check with balance if intended
+          } else if (tier === RarityTier.ULTRA || m === HeldItemId.SOOTHE_BELL) {
             numUltra += stack;
           }
+          console.log(HeldItemNames[m], numRogue, numUltra);
           mostHeldItemsPokemon.heldItemManager.remove(m, stack);
         }
 

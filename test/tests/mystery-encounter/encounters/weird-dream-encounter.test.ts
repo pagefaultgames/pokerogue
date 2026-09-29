@@ -3,6 +3,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
@@ -137,12 +138,12 @@ describe("Weird Dream - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(6);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("ROGUE_BALL");
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual("MINT");
-      expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual("MINT");
-      expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual("MINT");
-      expect(rewardSelectHandler.options[5].rewardOption.type.id).toEqual("MINT");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual(RewardId.MEMORY_MUSHROOM);
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual(RewardId.ROGUE_BALL);
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[5].rewardOption.type.id).toEqual(RewardId.MINT);
     });
 
     it("should leave encounter without battle", async () => {
@@ -195,28 +196,22 @@ describe("Weird Dream - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(6);
       expect(
-        rewardSelectHandler.options[0].rewardOption.type.tier
-          - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+        rewardSelectHandler.options[0].rewardOption.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ROGUE);
       expect(
-        rewardSelectHandler.options[1].rewardOption.type.tier
-          - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+        rewardSelectHandler.options[1].rewardOption.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ROGUE);
       expect(
-        rewardSelectHandler.options[2].rewardOption.type.tier
-          - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+        rewardSelectHandler.options[2].rewardOption.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ULTRA);
       expect(
-        rewardSelectHandler.options[3].rewardOption.type.tier
-          - rewardSelectHandler.options[3].rewardOption.upgradeCount,
+        rewardSelectHandler.options[3].rewardOption.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ULTRA);
       expect(
-        rewardSelectHandler.options[4].rewardOption.type.tier
-          - rewardSelectHandler.options[4].rewardOption.upgradeCount,
+        rewardSelectHandler.options[4].rewardOption.tier - rewardSelectHandler.options[4].rewardOption.upgradeCount,
       ).toEqual(RarityTier.GREAT);
       expect(
-        rewardSelectHandler.options[5].rewardOption.type.tier
-          - rewardSelectHandler.options[5].rewardOption.upgradeCount,
+        rewardSelectHandler.options[5].rewardOption.tier - rewardSelectHandler.options[5].rewardOption.upgradeCount,
       ).toEqual(RarityTier.GREAT);
     });
   });
