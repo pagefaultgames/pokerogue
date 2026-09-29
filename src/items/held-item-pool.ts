@@ -37,25 +37,10 @@ type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
  */
 type HeldItemTieredPool = Readonly<Record<PoolRarityTier, HeldItemPool>>;
 
-/**
- * The default {@linkcode HeldItemTieredPool} for wild Pokemon.
- * @remarks
- * Empty until {@linkcode initHeldItemPools} is called; must not be read before then.
- */
 export const wildHeldItemPool = {} as HeldItemTieredPool;
 
-/**
- * The default {@linkcode HeldItemTieredPool} for enemy trainers' Pokemon.
- * @remarks
- * Empty until {@linkcode initHeldItemPools} is called; must not be read before then.
- */
 export const trainerHeldItemPool = {} as HeldItemTieredPool;
 
-/**
- * The default {@linkcode HeldItemTieredPool} for daily run starters.
- * @remarks
- * Empty until {@linkcode initHeldItemPools} is called; must not be read before then.
- */
 export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
 
 // #region Initialization
@@ -206,7 +191,7 @@ function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
  * @param enemy - The {@linkcode EnemyPokemon} to receive the items
  * @param poolType - Which {@linkcode HeldItemPoolType | tiered pool} to draw from (Wild or Trainer)
  * @param upgradeChanceDivisor - (Default `0`) If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
- * to be bumped up one rarity tier. `0` disables tier upgrades.
+ * to be bumped up one rarity tier.
  */
 export function generateEnemyPokemonHeldItems(
   count: number,
