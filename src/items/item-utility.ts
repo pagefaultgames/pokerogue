@@ -88,8 +88,8 @@ export function canSteal(heldItemId: HeldItemId, holder: Pokemon, receiver: Poke
  * @param heldItemId - The {@linkcode HeldItemId} to transfer.
  * @param holder - The {@linkcode Pokemon} holding the item to transfer.
  * @param receiver - The {@linkcode Pokemon} receiving the item.
- * @param transferQuantity - How many of the chosen item to transfer.
- * @param temporary - Whether the transfer should affect the tempStack (default false).
+ * @param transferQuantity - (Default `1`) How many of the chosen item to transfer.
+ * @param temporary - (Default `false`) Whether the transfer should affect the `tempStack`.
  * @returns true if at least one item was transfered.
  */
 // TODO: allow for transfering tempStack instead of stack
@@ -122,7 +122,7 @@ export function tryTransferHeldItem(
  * @param heldItemId - The {@linkcode HeldItemId} to transfer.
  * @param holder - The {@linkcode Pokemon} holding the item to transfer.
  * @param receiver - The {@linkcode Pokemon} receiving the item.
- * @param transferQuantity - How many of the chosen item to transfer.
+ * @param transferQuantity - (Default `1`) How many of the chosen item to transfer.
  * @returns true if at least one item was transfered.
  */
 export function tryStealHeldItem(
