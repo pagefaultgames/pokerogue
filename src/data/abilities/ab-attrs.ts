@@ -3081,7 +3081,8 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
 /**
  * Ability attribute used to remove battler tags when the user's ability is suppressed.
  */
-// TODO: Should this be handled by the attributes that add the tags in the first place?
+// TODO: Use this for Truant, Slow Start, etc (almost all of the AbilityBattlerTags)
+// so that they get culled the moment the ability is lost (instead of whenever they next trigger)
 export class PreLeaveFieldRemoveBattlerTagAbAttr extends PreLeaveFieldAbAttr {
   /** The {@linkcode AbilityBattlerTagType} to remove. */
   private readonly tagType: AbilityBattlerTagType;
