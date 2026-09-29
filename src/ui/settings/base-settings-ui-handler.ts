@@ -79,9 +79,16 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
 
     const menuWidth = globalScene.scaledCanvas.width;
 
-    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, newIndex => {
-      globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
-    });
+    this.tabMenu = new TabMenu(
+      0,
+      0,
+      menuWidth,
+      tabLabels,
+      newIndex => {
+        globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
+      },
+      true,
+    );
 
     const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === ui.mode);
     if (activeIndex !== -1) {

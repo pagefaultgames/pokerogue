@@ -87,9 +87,16 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
     const tabLabels = this.settingsTabs.map(tab => i18next.t(tab.labelKey));
     const menuWidth = globalScene.scaledCanvas.width;
 
-    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, newIndex => {
-      globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
-    });
+    this.tabMenu = new TabMenu(
+      0,
+      0,
+      menuWidth,
+      tabLabels,
+      newIndex => {
+        globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
+      },
+      true,
+    );
 
     const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === ui.mode);
     if (activeIndex !== -1) {
