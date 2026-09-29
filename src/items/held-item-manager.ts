@@ -1,16 +1,10 @@
 import { allHeldItems } from "#data/data-lists";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
-import {
-  HeldItemCategoryId,
-  type HeldItemId,
-  isCategoryId,
-  isItemInCategory,
-  isItemInRequested,
-} from "#enums/held-item-id";
+import { HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { ItemManager } from "#items/item-manager";
 import type { HeldItemData, HeldItemSpecs } from "#types/held-item-data-types";
-import { isHeldItemSpecs } from "#utils/item-utils";
+import { isCategoryId, isHeldItemSpecs, isItemInCategory, isItemInRequested } from "#utils/item-utils";
 
 /**
  * The `HeldItemManager` is a manager for a {@linkcode Pokemon}'s held items. \

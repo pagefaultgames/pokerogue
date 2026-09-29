@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { type HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonItemMap } from "#types/held-item-data-types";
+import { isItemInCategory } from "#utils/item-utils";
 import type { NonEmptyTuple } from "type-fest";
 
 export const MAX_STACK_COUNT_TINT = 0xf89890;

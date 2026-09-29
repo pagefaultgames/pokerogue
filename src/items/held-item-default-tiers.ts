@@ -1,5 +1,6 @@
-import { getHeldItemCategory, HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { RarityTier } from "#enums/reward-tier";
+import { getHeldItemCategory } from "#utils/item-utils";
 
 const heldItemRarities = {
   [HeldItemCategoryId.BERRY]: RarityTier.COMMON,

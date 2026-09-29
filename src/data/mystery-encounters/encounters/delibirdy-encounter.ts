@@ -4,7 +4,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems } from "#data/data-lists";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -28,6 +28,7 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import type { OptionSelectItem } from "#types/ui-types";
 import { randSeedItem } from "#utils/common";
+import { isItemInCategory } from "#utils/item-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */

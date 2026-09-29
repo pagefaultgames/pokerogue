@@ -1,11 +1,8 @@
 import {
-  generatableCategoryItems,
   type GeneratableHeldItemCategoryId,
+  generatableCategoryItems,
   HeldItemCategoryId,
   HeldItemId,
-  isCategoryId,
-  isItemInCategory,
-  isItemInRequested,
 } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
@@ -27,7 +24,7 @@ import type {
   HeldItemWeight,
 } from "#types/held-item-data-types";
 import { randSeedInt } from "#utils/common";
-import { isHeldItemPool } from "#utils/item-utils";
+import { isCategoryId, isHeldItemPool, isItemInCategory, isItemInRequested } from "#utils/item-utils";
 import { weightedPick } from "#utils/random";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -69,7 +66,7 @@ export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
 function initWildHeldItemPool() {
   Object.assign(wildHeldItemPool, {
     [RarityTier.COMMON]: [{ entry: HeldItemCategoryId.BERRY, weight: 1 }],
-    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 }],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 1 }],
     [RarityTier.ULTRA]: [
       { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
       { entry: HeldItemId.WHITE_HERB, weight: 0 },
@@ -86,9 +83,9 @@ function initTrainerHeldItemPool() {
   Object.assign(trainerHeldItemPool, {
     [RarityTier.COMMON]: [
       { entry: HeldItemCategoryId.BERRY, weight: 8 },
-      { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 },
+      { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
     ],
-    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 }],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 3 }],
     [RarityTier.ULTRA]: [
       { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
       { entry: HeldItemId.WHITE_HERB, weight: 0 },
@@ -115,7 +112,7 @@ function initTrainerHeldItemPool() {
 function initDailyStarterRewardPool(): void {
   Object.assign(dailyStarterHeldItemPool, {
     [RarityTier.COMMON]: [
-      { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
+      { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
       { entry: HeldItemCategoryId.BERRY, weight: 3 },
     ],
     [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 }],

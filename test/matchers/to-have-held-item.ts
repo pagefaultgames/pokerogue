@@ -1,10 +1,11 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { HeldItemCategoryId, HeldItemId, isCategoryId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { OneOther } from "#test/@types/test-helpers";
 import { getEnumStr, getOnelineDiffStr, stringifyEnumArray } from "#test/utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
 import type { HeldItemSpecs } from "#types/held-item-data-types";
+import { isCategoryId, isItemInCategory } from "#utils/item-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

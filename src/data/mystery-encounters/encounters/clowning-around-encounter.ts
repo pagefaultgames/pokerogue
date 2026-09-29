@@ -8,7 +8,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { Challenges } from "#enums/challenges";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -44,6 +44,7 @@ import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/tr
 import type { HeldItemPool } from "#types/held-item-data-types";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
+import { isItemInCategory } from "#utils/item-utils";
 import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
 
 /** the i18n namespace for the encounter */

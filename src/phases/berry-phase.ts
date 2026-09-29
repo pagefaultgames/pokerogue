@@ -3,13 +3,13 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
 import type { BerryHeldItemAttr } from "#items/berry";
 import { FieldPhase } from "#phases/field-phase";
-import { applyHeldItems } from "#utils/item-utils";
+import { applyHeldItems, isItemInCategory } from "#utils/item-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 

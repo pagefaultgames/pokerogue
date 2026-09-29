@@ -48,7 +48,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
@@ -135,7 +135,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { applyHeldItems } from "#utils/item-utils";
+import { applyHeldItems, isItemInCategory } from "#utils/item-utils";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
@@ -1384,7 +1384,7 @@ export class AttackMove extends Move {
    * This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
 
   // biome-ignore lint/complexity/useMaxParams: moves have a lot of independent params
   constructor(
@@ -1450,7 +1450,7 @@ export class StatusMove extends Move {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -1472,7 +1472,7 @@ export class SelfStatusMove extends Move {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -2102,7 +2102,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
  * Attribute for counter-like moves to redirect the move to a different target
  */
 export class CounterRedirectAttr extends MoveAttr {
-  declare private moveFilter?: MoveDamageCategory;
+  private declare moveFilter?: MoveDamageCategory;
   constructor(moveFilter?: MoveDamageCategory) {
     super();
     if (moveFilter !== undefined) {
@@ -3674,7 +3674,7 @@ abstract class OverrideMoveEffectAttr extends MoveAttr {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
   /**
    * Apply the move attribute to override other effects of this move.
    * @param user - The {@linkcode Pokemon} using the move

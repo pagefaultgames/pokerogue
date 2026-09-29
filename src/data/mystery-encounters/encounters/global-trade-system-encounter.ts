@@ -9,7 +9,7 @@ import { getNatureName } from "#data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
-import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -43,6 +43,7 @@ import type { OptionSelectItem } from "#types/ui-types";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
+import { isItemInCategory } from "#utils/item-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 

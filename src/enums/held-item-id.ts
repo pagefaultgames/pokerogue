@@ -1,5 +1,4 @@
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { HeldItemPool } from "#types/held-item-data-types";
 import type { ValueOf } from "type-fest";
 import { FormChangeItemId } from "./form-change-item-id";
 
@@ -177,47 +176,7 @@ export type HeldItemIdInCategory<C extends GeneratableHeldItemCategoryId> =
   (typeof generatableCategoryItems)[C][HeldItemId];
 
 /** Bitmask extracting the category (high byte) from a held item ID. */
-const ITEM_CATEGORY_MASK = 0xff00;
-
-/**
- * Get the category a held item belongs to.
- * @param itemId - The {@linkcode HeldItemId} to check
- * @returns The {@linkcode HeldItemCategoryId} of the item
- */
-export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
-  return (itemId & ITEM_CATEGORY_MASK) as HeldItemCategoryId;
-}
-
-export function isCategoryId(id: number): id is HeldItemCategoryId {
-  return Object.values<number>(HeldItemCategoryId).includes(id);
-}
-
-/**
- * Check whether a held item belongs to a category.
- * @param itemId - The {@linkcode HeldItemId} to check
- * @param category - The {@linkcode HeldItemCategoryId} to check against
- * @returns Whether `itemId` belongs to `category`
- */
-export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
-  return getHeldItemCategory(itemId) === category;
-}
-
-/** Type guard to check if an entry is a HeldItemPool. */
-export function isHeldItemPool(entry: unknown): entry is HeldItemPool {
-  return Array.isArray(entry);
-}
-
-/**
- * Check whether an item or category is covered by a list of requested items/categories.
- * An item ID matches if it appears in the list directly or if its category does.
- * Passing a category ID matches only if that category itself is requested.
- */
-export function isItemInRequested(
-  itemId: HeldItemId | HeldItemCategoryId,
-  requestedItems: readonly (HeldItemCategoryId | HeldItemId)[],
-): boolean {
-  return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
-}
+export const ITEM_CATEGORY_MASK = 0xff00;
 
 type Assert<T extends true> = T;
 
