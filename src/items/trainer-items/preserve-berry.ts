@@ -7,8 +7,18 @@ import type { PreserveBerryParams } from "#types/trainer-item-parameter";
 export class PreserveBerryTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.PRESERVE_BERRY> {
   public override readonly effect = TrainerItemEffect.PRESERVE_BERRY;
 
+  private readonly chance: number;
+
+  /**
+   * @param chance The chance one Berry Pouch has to preserve a berry. This is multiplicative.
+   */
+  constructor(chance: number) {
+    super();
+    this.chance = chance;
+  }
+
   public override apply({ pokemon, doPreserve }: PreserveBerryParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    doPreserve.value ||= pokemon.randBattleSeedInt(10) < stack * 3;
+    doPreserve.value ||= pokemon.randBattleSeedInt(this.chance) < stack * 3;
   }
 }

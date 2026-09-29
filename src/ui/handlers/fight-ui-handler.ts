@@ -40,10 +40,6 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
   protected fromCommand: Command = Command.FIGHT;
   protected cursor2 = 0;
 
-  constructor() {
-    super(UiMode.FIGHT);
-  }
-
   /**
    * Set the visibility of the objects in the move info container.
    */

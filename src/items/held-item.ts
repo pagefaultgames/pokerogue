@@ -50,8 +50,8 @@ export abstract class HeldItemBase {
    * @defaultValue `"se/restore"`
    *
    * @privateRemarks
-   * The default value is arbitrary from before the modifier rework. We may want to
-   * revisit it at some point.
+   * The default value is arbitrary from before the modifier rework.
+   * We may want to revisit it at some point.
    */
   public get soundName(): string {
     return "se/restore";
@@ -244,7 +244,7 @@ export abstract class CosmeticHeldItem extends HeldItemBase {
    * This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly differentiate cosmetic items from normal ones.
    */
-  private declare _: never;
+  declare private _: never;
 
   public override readonly isStealable = false;
   public override readonly isSuppressable = false;

@@ -11,11 +11,18 @@ import type { FieldEffectParams } from "#types/held-item-parameter";
 export class FieldEffectHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.FIELD_EFFECT> {
   public override readonly effect = HeldItemEffect.FIELD_EFFECT;
 
+  private readonly turns: number;
+
+  constructor(turns: number) {
+    super();
+    this.turns = turns;
+  }
+
   /**
    * Provides two more turns per stack to any weather or terrain effect caused
    * by the holder.
    */
   public override apply({ pokemon, fieldDuration }: FieldEffectParams): void {
-    fieldDuration.value += 2 * pokemon.heldItemManager.getStack(this.type);
+    fieldDuration.value += this.turns * pokemon.heldItemManager.getStack(this.type);
   }
 }

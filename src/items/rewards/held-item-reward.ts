@@ -4,6 +4,7 @@ import { allHeldItems } from "#data/data-lists";
 import type { BerryType } from "#enums/berry-type";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
+import { RewardId } from "#enums/reward-id";
 import type { PermanentStat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
@@ -15,8 +16,9 @@ import i18next from "i18next";
 
 export class HeldItemReward extends PokemonReward {
   public itemId: HeldItemId;
-  constructor(itemId: HeldItemId, group?: string, soundName?: string) {
+  constructor(id: RewardId, itemId: HeldItemId, group?: string, soundName?: string) {
     super(
+      id,
       "",
       "",
       (pokemon: PlayerPokemon) => {
@@ -61,10 +63,10 @@ export class BerryRewardGenerator extends RewardGenerator {
   override generateReward(pregenArgs?: BerryType): HeldItemReward | null {
     if (pregenArgs !== undefined) {
       const item = berryTypeToHeldItem[pregenArgs];
-      return new HeldItemReward(item);
+      return new HeldItemReward(RewardId.BERRY, item);
     }
     const item = getNewBerryHeldItem();
-    return item == null ? null : new HeldItemReward(item);
+    return item == null ? null : new HeldItemReward(RewardId.BERRY, item);
   }
 }
 
@@ -72,12 +74,12 @@ export class AttackTypeBoosterRewardGenerator extends RewardGenerator {
   override generateReward(pregenArgs?: PokemonType) {
     if (pregenArgs !== undefined) {
       const item = attackTypeToHeldItem[pregenArgs];
-      return new HeldItemReward(item);
+      return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
     }
 
     const item = getNewAttackTypeBoosterHeldItem(globalScene.getPlayerParty());
 
-    return item ? new HeldItemReward(item) : null;
+    return item ? new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item) : null;
   }
 }
 
@@ -85,9 +87,9 @@ export class BaseStatBoosterRewardGenerator extends RewardGenerator {
   override generateReward(pregenArgs?: PermanentStat) {
     if (pregenArgs !== undefined) {
       const item = permanentStatToHeldItem[pregenArgs];
-      return new HeldItemReward(item);
+      return new HeldItemReward(RewardId.VITAMIN, item);
     }
     const item = getNewVitaminHeldItem();
-    return item == null ? null : new HeldItemReward(item);
+    return item == null ? null : new HeldItemReward(RewardId.VITAMIN, item);
   }
 }

@@ -54,7 +54,7 @@ describe("SelectRewardPhase", () => {
     scene.phaseManager.unshiftPhase(selectRewardPhase);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
   });
 
   it("should generate random modifiers", async () => {
@@ -62,7 +62,7 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -96,7 +96,7 @@ describe("SelectRewardPhase", () => {
 
     // TODO: nagivate the ui to reroll somehow
     //const smphase = scene.phaseManager.getCurrentPhase() as SelectRewardPhase;
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -105,7 +105,7 @@ describe("SelectRewardPhase", () => {
     rewardSelectHandler.processInput(Button.ACTION);
 
     expect(scene.money).toBe(1000000 - 250);
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     expect(rewardSelectHandler.options.length).toEqual(3);
   });
 
@@ -124,7 +124,7 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -133,7 +133,7 @@ describe("SelectRewardPhase", () => {
 
     // TODO: nagivate ui to reroll with lock capsule enabled
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     expect(rewardSelectHandler.options.length).toEqual(3);
     // Reroll with lock can still upgrade
     expect(
@@ -164,7 +164,7 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -213,7 +213,7 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -247,7 +247,7 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
@@ -271,7 +271,7 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;

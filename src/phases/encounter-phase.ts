@@ -264,7 +264,6 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
-        // generate modifiers for MEs, overriding prior ones as applicable
         globalScene.generateEnemyItems();
         overrideTrainerItems(false);
 

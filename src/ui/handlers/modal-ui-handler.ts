@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#types/ui-types";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -11,17 +10,9 @@ export abstract class ModalUiHandler extends UiHandler {
   protected modalContainer: Phaser.GameObjects.Container;
   protected modalBg: Phaser.GameObjects.NineSlice;
   protected titleText: Phaser.GameObjects.Text;
-  protected buttonContainers: Phaser.GameObjects.Container[];
-  protected buttonBgs: Phaser.GameObjects.NineSlice[];
-  protected buttonLabels: Phaser.GameObjects.Text[];
-
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-
-    this.buttonContainers = [];
-    this.buttonBgs = [];
-    this.buttonLabels = [];
-  }
+  protected buttonContainers: Phaser.GameObjects.Container[] = [];
+  protected buttonBgs: Phaser.GameObjects.NineSlice[] = [];
+  protected buttonLabels: Phaser.GameObjects.Text[] = [];
 
   abstract getModalTitle(config?: ModalConfig): string;
 

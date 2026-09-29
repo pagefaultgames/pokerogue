@@ -11,7 +11,7 @@ import { describe, expectTypeOf, it } from "vitest";
 // Dummy classes
 
 class NonConsumableAttr extends HeldItemAttr<typeof HeldItemEffect.FIELD_EFFECT> {
-  private declare readonly _: never;
+  declare private readonly _: never;
   public override readonly effect = HeldItemEffect.FIELD_EFFECT;
   public override apply(): void {}
 }

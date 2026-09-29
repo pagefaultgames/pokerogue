@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
-import type { PokeballType } from "#enums/pokeball";
-import type { RewardId } from "#enums/reward-id";
+import { PokeballType } from "#enums/pokeball";
+import { RewardId } from "#enums/reward-id";
 import { Reward } from "#items/reward";
 import i18next from "i18next";
 
@@ -9,11 +9,24 @@ export class AddPokeballReward extends Reward {
   private pokeballType: PokeballType;
   private count: number;
 
-  constructor(iconImage: string, pokeballType: PokeballType, count: number, id: RewardId) {
-    super("", iconImage, "pb", "se/pb_bounce_1");
-    this.pokeballType = pokeballType;
+  constructor(id: RewardId, iconImage: string, count: number) {
+    super(id, "", iconImage, "pb", "se/pb_bounce_1");
+    this.pokeballType = PokeballType.POKEBALL;
+    switch (id) {
+      case RewardId.GREAT_BALL:
+        this.pokeballType = PokeballType.GREAT_BALL;
+        break;
+      case RewardId.ULTRA_BALL:
+        this.pokeballType = PokeballType.ULTRA_BALL;
+        break;
+      case RewardId.ROGUE_BALL:
+        this.pokeballType = PokeballType.ROGUE_BALL;
+        break;
+      case RewardId.MASTER_BALL:
+        this.pokeballType = PokeballType.MASTER_BALL;
+        break;
+    }
     this.count = count;
-    this.id = id;
   }
 
   get name(): string {

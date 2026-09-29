@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#data/data-lists";
+import { RewardId } from "#enums/reward-id";
 import { Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { Reward, RewardGenerator } from "#items/reward";
@@ -9,8 +10,8 @@ import { randSeedItem } from "#utils/common";
 export class TrainerItemReward extends Reward {
   // TODO: This should not be public
   public itemId: TrainerItemId;
-  constructor(itemId: TrainerItemId, group?: string) {
-    super("", "", group, "se/restore");
+  constructor(id: RewardId, itemId: TrainerItemId, group?: string) {
+    super(id, "", "", group, "se/restore");
     this.itemId = itemId;
   }
 
@@ -49,6 +50,9 @@ export class TempStatStageBoosterRewardGenerator extends RewardGenerator {
   };
 
   override generateReward(pregenArgs?: TempBattleStat) {
-    return new LapsingTrainerItemReward(tempStatToTrainerItem[pregenArgs ?? randSeedItem(TEMP_BATTLE_STATS)]);
+    return new LapsingTrainerItemReward(
+      RewardId.TEMP_STAT_STAGE_BOOSTER,
+      tempStatToTrainerItem[pregenArgs ?? randSeedItem(TEMP_BATTLE_STATS)],
+    );
   }
 }

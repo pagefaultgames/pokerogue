@@ -6,8 +6,8 @@
  */
 
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
+import { RarityTier } from "#enums/reward-tier";
 import { writeData } from "../helpers";
 import type { TmTierEntry } from "../types";
 
@@ -17,10 +17,10 @@ export async function generateTmTiersData(): Promise<void> {
   for (const [move, tier] of Object.entries(tmPoolTiers)) {
     const data: TmTierEntry = {
       move: MoveId[move],
-      tier: ModifierTier[tier],
+      tier: RarityTier[tier],
     };
     entries.push(data);
   }
 
-  writeData("tm-tiers", entries);
+  writeData("tms", entries);
 }

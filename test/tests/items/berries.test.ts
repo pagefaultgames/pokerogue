@@ -154,15 +154,15 @@ describe("Items - Held Berries", () => {
       expect(player).not.toHaveHeldItem(item);
     });
 
-    it.each([
-      HeldItemId.LIECHI_BERRY,
-      HeldItemId.GANLON_BERRY,
-    ])("%s should not activate when above 1/4 HP", async item => {
-      game.override.startingHeldItems([{ entry: item }]);
-      const player = await runBerryTurn(0.9);
+    it.each([HeldItemId.LIECHI_BERRY, HeldItemId.GANLON_BERRY])(
+      "%s should not activate when above 1/4 HP",
+      async item => {
+        game.override.startingHeldItems([{ entry: item }]);
+        const player = await runBerryTurn(0.9);
 
-      expect(player).toHaveHeldItem(item);
-    });
+        expect(player).toHaveHeldItem(item);
+      },
+    );
   });
 
   describe("Lansat Berry", () => {

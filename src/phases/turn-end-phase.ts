@@ -9,6 +9,7 @@ import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { FieldPhase } from "#phases/field-phase";
+import { toDmgValue } from "#utils/common";
 import { applyHeldItems } from "#utils/item-utils";
 import i18next from "i18next";
 
@@ -35,11 +36,12 @@ export class TurnEndPhase extends FieldPhase {
           globalScene.phaseManager.unshiftNew(
             "PokemonHealPhase",
             pokemon.getBattlerIndex(),
-            Math.max(pokemon.getMaxHp() >> 4, 1),
-            i18next.t("battle:turnEndHpRestore", {
-              pokemonName: getPokemonNameWithAffix(pokemon),
-            }),
-            true,
+            toDmgValue(pokemon.getMaxHp() / 16),
+            {
+              message: i18next.t("battle:turnEndHpRestore", {
+                pokemonName: getPokemonNameWithAffix(pokemon),
+              }),
+            },
           );
         }
 

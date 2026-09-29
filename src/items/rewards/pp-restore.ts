@@ -13,11 +13,11 @@ import i18next from "i18next";
 export class PokemonPpRestoreReward extends PokemonMoveReward {
   protected restorePoints: number;
 
-  constructor(localeKey: string, iconImage: string, id: RewardId, restorePoints: number) {
+  constructor(id: RewardId, localeKey: string, iconImage: string, restorePoints: number) {
     super(
+      id,
       localeKey,
       iconImage,
-      id,
       (_pokemon: PlayerPokemon) => {
         return null;
       },
@@ -60,8 +60,9 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
 export class PokemonAllMovePpRestoreReward extends PokemonReward {
   protected restorePoints: number;
 
-  constructor(localeKey: string, iconImage: string, id: RewardId, restorePoints: number) {
+  constructor(id: RewardId, localeKey: string, iconImage: string, restorePoints: number) {
     super(
+      id,
       localeKey,
       iconImage,
       (pokemon: PlayerPokemon) => {
@@ -74,7 +75,6 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
     );
 
     this.restorePoints = restorePoints;
-    this.id = id;
   }
 
   get description(): string {

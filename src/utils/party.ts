@@ -1,7 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { RarityTier } from "#enums/reward-tier";
-import type { Pokemon } from "#field/pokemon";
 import { getRarityTierTextTint } from "#ui/text";
 import { NumberHolder, randSeedInt } from "./common";
 
@@ -10,7 +9,7 @@ import { NumberHolder, randSeedInt } from "./common";
  * @param party The player's party.
  * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
  */
-export function getPartyLuckValue(party: Pokemon[]): number {
+export function getPartyLuckValue(): number {
   if (globalScene.gameMode.isDaily) {
     const DailyLuck = new NumberHolder(0);
     globalScene.executeWithSeedOffset(
@@ -24,7 +23,8 @@ export function getPartyLuckValue(party: Pokemon[]): number {
   }
   const eventSpecies = timedEventManager.getEventLuckBoostedSpecies();
   const luck = Phaser.Math.Clamp(
-    party
+    globalScene
+      .getPlayerParty()
       .map(p => (p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 1 : 0) : 0))
       .reduce((total: number, value: number) => (total += value), 0),
     0,

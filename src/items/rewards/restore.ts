@@ -57,9 +57,9 @@ export class PokemonHpRestoreReward extends PokemonReward {
   protected healStatus: boolean;
 
   constructor(
+    id: RewardId,
     localeKey: string,
     iconImage: string,
-    id: RewardId,
     restorePoints: number,
     restorePercent: number,
     healStatus = false,
@@ -67,6 +67,7 @@ export class PokemonHpRestoreReward extends PokemonReward {
     group?: string,
   ) {
     super(
+      id,
       localeKey,
       iconImage,
       selectFilter
@@ -86,7 +87,6 @@ export class PokemonHpRestoreReward extends PokemonReward {
     this.restorePoints = restorePoints;
     this.restorePercent = restorePercent;
     this.healStatus = healStatus;
-    this.id = id;
   }
 
   get description(): string {
@@ -109,11 +109,11 @@ export class PokemonHpRestoreReward extends PokemonReward {
 }
 
 export class PokemonReviveReward extends PokemonHpRestoreReward {
-  constructor(localeKey: string, iconImage: string, id: RewardId, restorePercent: number) {
+  constructor(id: RewardId, localeKey: string, iconImage: string, restorePercent: number) {
     super(
+      id,
       localeKey,
       iconImage,
-      id,
       0,
       restorePercent,
       false,
@@ -147,8 +147,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
 
 export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, "reward:allPokemonFullRevive");
-    this.id = RewardId.SACRED_ASH;
+    super(RewardId.SACRED_ASH, localeKey, iconImage, "reward:allPokemonFullRevive");
   }
 
   apply(): boolean {

@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -12,7 +12,7 @@ import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const typeBoosterCases = Object.entries(attackTypeToHeldItem).map(([typeKey, itemId]) => ({
-  itemName: HeldItemId[itemId],
+  itemName: HeldItemNames[itemId],
   item: itemId,
   moveType: Number(typeKey) as PokemonType,
 }));
@@ -38,20 +38,20 @@ describe("Items - Type Boosters", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it.each(typeBoosterCases)("$itemName should boost the power of matching-type moves by 20%", async ({
-    item,
-    moveType,
-  }) => {
-    game.override.startingHeldItems([{ entry: item }]);
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it.each(typeBoosterCases)(
+    "$itemName should boost the power of matching-type moves by 20%",
+    async ({ item, moveType }) => {
+      game.override.startingHeldItems([{ entry: item }]);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const player = game.field.getPlayerPokemon();
-    const movePower = new ValueHolder(100);
+      const player = game.field.getPlayerPokemon();
+      const movePower = new ValueHolder(100);
 
-    applySingleHeldItem(item, HeldItemEffect.ATTACK_TYPE_BOOST, { pokemon: player, moveType, movePower });
+      applySingleHeldItem(item, HeldItemEffect.ATTACK_TYPE_BOOST, { pokemon: player, moveType, movePower });
 
-    expect(movePower.value).toBe(120);
-  });
+      expect(movePower.value).toBe(120);
+    },
+  );
 
   it.each([
     { scenario: "moves of a different type", moveType: PokemonType.WATER, movePower: 100 },

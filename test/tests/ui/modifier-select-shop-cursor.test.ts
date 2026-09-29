@@ -10,7 +10,7 @@ import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
+describe("UI - RewardSelectUiHandler - shop cursor target", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;
@@ -38,11 +38,11 @@ describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
     scene.currentBattle.waveIndex = 10;
     settings.update("display", "shopCursorTarget", ShopCursorTarget.SHOP);
 
-    const selectModifierPhase = new SelectRewardPhase();
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase();
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
 
     const handler = scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler) as RewardSelectUiHandler;
 

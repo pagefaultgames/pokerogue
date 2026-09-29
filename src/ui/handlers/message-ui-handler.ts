@@ -1,22 +1,15 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import type { UiMode } from "#enums/ui-mode";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { getFrameMs } from "#utils/common";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
   protected textCallbackTimer: Phaser.Time.TimerEvent | null;
-  public pendingPrompt: boolean;
+  public pendingPrompt = false;
 
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
-
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-
-    this.pendingPrompt = false;
-  }
 
   /**
    * Add the sprite to be displayed at the end of messages with prompts

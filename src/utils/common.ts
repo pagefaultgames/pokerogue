@@ -7,7 +7,6 @@ import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supp
 import { enumValueToKey } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import type { NonEmptyTuple } from "type-fest";
 
 // Re-export the value holder classes for compatibility with existing imports looking over here
 // TODO: Remove these re-exports and update associated imports
@@ -364,12 +363,11 @@ export function truncateString(str: string, maxLength = 10) {
  * The actual damage applied to a Pokémon's HP must be an integer.
  * This function helps in ensuring that by flooring the float value and enforcing a minimum damage value.
  *
- * @param value - The float value to convert.
- * @param minValue - The minimum integer value to return. Defaults to 1.
+ * @param value - The value to round
  * @returns The converted value as an integer.
  */
-export function toDmgValue(value: number, minValue = 1) {
-  return Math.max(Math.floor(value), minValue);
+export function toDmgValue(value: number): number {
+  return Math.max(Math.floor(value), 1);
 }
 
 /**
@@ -415,41 +413,6 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends readonly unknown[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
-}
-
-/**
- * Pick a random index from an array of weights.
- * @param weights - An array of weights corresponding to the indices of the items to pick from.
- * @returns A random index picked based on the weights provided, such that each index `i` will have a `weights[i]/totalWeight` chance of being picked.
- * @remarks
- * The weights do not need to sum to 1; they will be normalized internally.
- * @example
- *
- * @throws {Error}
- * Thrown if any weight is non-positive or the array is empty.
- */
-export function pickWeightedIndex(weights: NonEmptyTuple<number>): number {
-  if (weights.length === 0) {
-    throw new Error("Weights array must be non-empty!");
-  }
-  const totalWeight = weights.reduce((sum, w) => {
-    if (w < 0) {
-      throw new Error("Weights must be non-negative!");
-    }
-    return sum + w;
-  }, 0);
-
-  // invariant: totalWeight > 0 since all values are positive
-
-  let r = randSeedFloat() * totalWeight;
-  for (let i = 0; i < weights.length; i++) {
-    if (r < weights[i]) {
-      return i;
-    }
-    r -= weights[i];
-  }
-  // unreachable code
-  throw new Error("Unreachable code in pickWeightedIndex");
 }
 
 export function getBiomeName(biome: BiomeId | -1) {

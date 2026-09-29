@@ -98,7 +98,7 @@ describe("Abilities - Commander", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("FaintPhase", false);
     expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeUndefined();

@@ -3,8 +3,8 @@ import { allTrainerItems } from "#data/data-lists";
 import { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
-import type { TrainerItemPool, TrainerItemTieredPool } from "#types/trainer-item-data-types";
-import { pickWeightedIndex } from "#utils/common";
+import type { TrainerItemPool, TrainerItemPoolEntry, TrainerItemTieredPool } from "#types/trainer-item-data-types";
+import { weightedPick } from "#utils/random";
 import type { NonEmptyTuple } from "type-fest";
 
 export const enemyBuffTokenPool: TrainerItemTieredPool = {};
@@ -12,8 +12,12 @@ export const enemyBuffTokenPool: TrainerItemTieredPool = {};
 export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: TrainerItemManager): TrainerItemId | null {
   const weights = getPoolWeights(pool, manager);
 
-  const pickedIndex = pickWeightedIndex(weights);
-  return pool[pickedIndex].entry;
+  const poolMap = new Map<TrainerItemPoolEntry, number>();
+  for (const [index, entry] of pool.entries()) {
+    poolMap.set(entry, weights[index]);
+  }
+  const pickedPoolEntry = weightedPick(poolMap);
+  return pickedPoolEntry.entry;
 }
 function getPoolWeights(pool: TrainerItemPool, manager: TrainerItemManager): NonEmptyTuple<number> {
   return pool.map(({ entry, weight }) => (manager.isMaxStack(entry) ? 0 : weight));

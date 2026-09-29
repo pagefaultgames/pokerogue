@@ -19,7 +19,7 @@ export interface TrainerItemSpecs extends TrainerItemData {
   id: TrainerItemId;
 }
 
-interface TrainerItemPoolEntry {
+export interface TrainerItemPoolEntry {
   entry: TrainerItemId;
   weight: number;
 }

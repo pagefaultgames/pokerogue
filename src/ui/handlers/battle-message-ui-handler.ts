@@ -3,7 +3,6 @@ import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -24,10 +23,6 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   public nameBoxContainer: Phaser.GameObjects.Container;
 
   public readonly wordWrapWidth: number = 1780;
-
-  constructor() {
-    super(UiMode.MESSAGE);
-  }
 
   setup(): void {
     const ui = this.getUi();

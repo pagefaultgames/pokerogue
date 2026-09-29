@@ -36,7 +36,7 @@ describe("Moves - Alluring Voice", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.ALLURING_VOICE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");

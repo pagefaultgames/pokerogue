@@ -32,7 +32,7 @@ import {
   tempStatToTrainerItem,
 } from "#items/trainer-items/x-items";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { Mutable } from "#types/type-helpers";
+import type { Writable } from "type-fest";
 import type { TrainerItemManager } from "./trainer-item-manager";
 
 // #region Marker items
@@ -80,7 +80,7 @@ const xItems = Object.entries(tempStatToTrainerItem)
       }
       return acc;
     },
-    {} as Mutable<XItemsType>,
+    {} as Writable<XItemsType>,
   );
 
 // #endregion X items
@@ -100,7 +100,7 @@ const trainerItems = {
     .attr(LevelIncrementBoosterTrainerItemAttr)
     .build(),
   [TrainerItemId.BERRY_POUCH]: new TrainerItemBuilder(TrainerItemId.BERRY_POUCH, 3) //
-    .attr(PreserveBerryTrainerItemAttr)
+    .attr(PreserveBerryTrainerItemAttr, 10)
     .build(),
 
   [TrainerItemId.HEALING_CHARM]: new TrainerItemBuilder(TrainerItemId.HEALING_CHARM, 5) //

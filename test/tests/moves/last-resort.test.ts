@@ -42,8 +42,6 @@ describe("Moves - Last Resort", () => {
     await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     const blissey = game.field.getPlayerPokemon();
-    expect(blissey).toBeDefined();
-
     // Last resort by itself
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -88,7 +86,7 @@ describe("Moves - Last Resort", () => {
 
     game.move.select(MoveId.LAST_RESORT);
     await game.move.selectEnemyMove(MoveId.SWORDS_DANCE); // goes first to proc dancer ahead of time
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
     expectLastResortFail();
   });
@@ -156,7 +154,7 @@ describe("Moves - Last Resort", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     game.move.select(MoveId.MIRROR_MOVE);
     await game.move.selectEnemyMove(MoveId.LAST_RESORT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expectLastResortFail();

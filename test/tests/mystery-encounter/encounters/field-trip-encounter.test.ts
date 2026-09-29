@@ -82,7 +82,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 2 });
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
@@ -94,7 +94,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
@@ -133,7 +133,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
@@ -145,7 +145,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 2 });
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
@@ -184,7 +184,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
@@ -197,7 +197,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 3 });
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;

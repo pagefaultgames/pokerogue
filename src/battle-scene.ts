@@ -66,6 +66,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { UiWindowStyle } from "#enums/ui-window-style";
+import type { Unlockables } from "#enums/unlockables";
 import { VolumeSetting } from "#enums/volume-setting";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
@@ -77,7 +78,7 @@ import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-spar
 import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
-import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
 import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
@@ -366,6 +367,7 @@ export class BattleScene extends SceneBase {
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     await Promise.all([
+      this.initExpSprites(),
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
@@ -2190,7 +2192,7 @@ export class BattleScene extends SceneBase {
     for (const label of labels) {
       label.setAlpha(0);
     }
-    const luckValue = getPartyLuckValue(this.getPlayerParty());
+    const luckValue = getPartyLuckValue();
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
@@ -2291,7 +2293,7 @@ export class BattleScene extends SceneBase {
     filterAllEvolutions = false,
   ): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue());
     }
 
     // TODO: simplify this?
@@ -2508,7 +2510,7 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
+  public generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
     if (this.currentBattle.isClassicFinalBoss) {
       return;
     }
@@ -2529,7 +2531,7 @@ export class BattleScene extends SceneBase {
     }
 
     for (const [i, enemyPokemon] of party.entries()) {
-      if (heldItemConfigs && heldItemConfigs[i]) {
+      if (heldItemConfigs?.[i]) {
         assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
         continue;
       }
@@ -2555,13 +2557,16 @@ export class BattleScene extends SceneBase {
       if (isBoss) {
         count = Math.max(count, Math.floor(chances / 2));
       }
-      assignEnemyHeldItemsForWave(
-        difficultyWaveIndex,
+      generateEnemyPokemonHeldItems(
         count,
         enemyPokemon,
         this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
         upgradeChance,
       );
+    }
+    // gives Eternatus the MBH item on Endless X000 waves
+    if (!(difficultyWaveIndex % 1000)) {
+      party[0].heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
     }
     this.updateItemBar(false);
   }
@@ -2597,10 +2602,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Update the item bar for the given side.
-   * @param player - Whether to use the player (`true`) or enemy side
-   * @param showHeldItems - Whether to include the held items of the first Pokemon in the party
+   * @param player - (Default `true`) Whether to use the player (`true`) or enemy side
+   * @param showHeldItems - (Default `true`) Whether to include the held items of the first Pokemon in the party
    */
-  updateItemBar(player = true, showHeldItems = true): void {
+  public updateItemBar(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
@@ -2865,7 +2870,7 @@ export class BattleScene extends SceneBase {
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
-      luck: this.currentBattle ? getPartyLuckValue(this.party) : -1,
+      luck: this.currentBattle ? getPartyLuckValue() : -1,
       party:
         this.party?.map(
           p =>
@@ -3237,7 +3242,6 @@ export class BattleScene extends SceneBase {
     ];
 
     // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
-    // biome-ignore format: biome sucks at formatting this line
     for (const seenEncounterData of this.mysteryEncounterSaveData.encounteredEvents) {
       if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] -= 6;
@@ -3331,5 +3335,18 @@ export class BattleScene extends SceneBase {
     encounter = new MysteryEncounter(encounter);
     encounter.populateDialogueTokensFromRequirements();
     return encounter;
+  }
+
+  /**
+   * Determines whether an item is unlocked based on game mode
+   * @param unlockable - The {@linkcode Unlockables | unlock} to check
+   * @param ignoreDaily - (Default `true`) Whether Daily Mode runs should treat it as unlocked
+   * @returns Whether it's considered unlocked according to current game mode and challenges
+   */
+  public getUnlockStatus(unlockable: Unlockables, ignoreDaily = true): boolean {
+    return (
+      (this.gameMode.isDaily && ignoreDaily)
+      || (!this.gameMode.isFreshStartChallenge() && this.gameData.isUnlocked(unlockable))
+    );
   }
 }

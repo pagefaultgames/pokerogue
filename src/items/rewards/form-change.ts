@@ -20,8 +20,8 @@ import { randSeedItem } from "#utils/common";
 export class FormChangeItemReward extends PokemonReward {
   public formChangeItem: FormChangeItemId;
 
-  constructor(formChangeItem: FormChangeItemId) {
-    super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
+  constructor(id: RewardId, formChangeItem: FormChangeItemId) {
+    super(id, "", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
       // Make sure the Pokemon has alternate forms
       if (
         speciesDataRegistry.hasFormChanges(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
@@ -80,7 +80,10 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
 
   override generateReward(pregenArgs?: FormChangeItemId) {
     if (pregenArgs !== undefined) {
-      return new FormChangeItemReward(pregenArgs);
+      return new FormChangeItemReward(
+        this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM,
+        pregenArgs,
+      );
     }
     const party = globalScene.getPlayerParty();
 
@@ -150,6 +153,9 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
       return null;
     }
 
-    return new FormChangeItemReward(randSeedItem(formChangeItemPool));
+    return new FormChangeItemReward(
+      this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM,
+      randSeedItem(formChangeItemPool),
+    );
   }
 }

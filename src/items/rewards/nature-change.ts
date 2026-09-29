@@ -15,6 +15,7 @@ export class PokemonNatureChangeReward extends PokemonReward {
 
   constructor(nature: Nature) {
     super(
+      RewardId.MINT,
       "",
       `mint_${
         getEnumKeys(Stat)
@@ -31,7 +32,6 @@ export class PokemonNatureChangeReward extends PokemonReward {
     );
 
     this.nature = nature;
-    this.id = RewardId.MINT;
   }
 
   get name(): string {

@@ -5,7 +5,8 @@ import { allMoves } from "#data/data-lists";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
-import type { RarityTier } from "#enums/reward-tier";
+import { RewardId } from "#enums/reward-id";
+import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -15,8 +16,9 @@ import i18next from "i18next";
 export class TmReward extends PokemonReward {
   public moveId: MoveId;
 
-  constructor(moveId: MoveId) {
+  constructor(id: RewardId, moveId: MoveId) {
     super(
+      id,
       "",
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
       (pokemon: PlayerPokemon) => {
@@ -69,8 +71,15 @@ export class TmRewardGenerator extends RewardGenerator {
   }
 
   override generateReward(pregenArgs?: MoveId) {
+    let id: RewardId = RewardId.TM_COMMON;
+    if (this.tier === RarityTier.GREAT) {
+      id = RewardId.TM_GREAT;
+    } else if (this.tier === RarityTier.ULTRA) {
+      id = RewardId.TM_ULTRA;
+    }
+
     if (pregenArgs !== undefined) {
-      return new TmReward(pregenArgs);
+      return new TmReward(id, pregenArgs);
     }
 
     const party = globalScene.getPlayerParty();
@@ -85,6 +94,6 @@ export class TmRewardGenerator extends RewardGenerator {
     }
 
     const randTmIndex = randSeedItem(tierUniqueCompatibleTms);
-    return new TmReward(randTmIndex);
+    return new TmReward(id, randTmIndex);
   }
 }

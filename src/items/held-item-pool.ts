@@ -1,10 +1,9 @@
 import {
-  type GeneratableHeldItemCategoryId,
   generatableCategoryItems,
+  type GeneratableHeldItemCategoryId,
   HeldItemCategoryId,
   HeldItemId,
   isCategoryId,
-  isHeldItemPool,
   isItemInCategory,
   isItemInRequested,
 } from "#enums/held-item-id";
@@ -27,7 +26,9 @@ import type {
   HeldItemResolvedWeights,
   HeldItemWeight,
 } from "#types/held-item-data-types";
-import { pickWeightedIndex, randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/common";
+import { isHeldItemPool } from "#utils/item-utils";
+import { weightedPick } from "#utils/random";
 import type { NonEmptyTuple } from "type-fest";
 
 /** `LUXURY` is never rolled for held item pools. */
@@ -39,10 +40,25 @@ type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
  */
 type HeldItemTieredPool = Readonly<Record<PoolRarityTier, HeldItemPool>>;
 
+/**
+ * The default {@linkcode HeldItemTieredPool} for wild Pokemon.
+ * @remarks
+ * Empty until {@linkcode initHeldItemPools} is called; must not be read before then.
+ */
 export const wildHeldItemPool = {} as HeldItemTieredPool;
 
+/**
+ * The default {@linkcode HeldItemTieredPool} for enemy trainers' Pokemon.
+ * @remarks
+ * Empty until {@linkcode initHeldItemPools} is called; must not be read before then.
+ */
 export const trainerHeldItemPool = {} as HeldItemTieredPool;
 
+/**
+ * The default {@linkcode HeldItemTieredPool} for daily run starters.
+ * @remarks
+ * Empty until {@linkcode initHeldItemPools} is called; must not be read before then.
+ */
 export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
 
 // #region Initialization
@@ -53,7 +69,7 @@ export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
 function initWildHeldItemPool() {
   Object.assign(wildHeldItemPool, {
     [RarityTier.COMMON]: [{ entry: HeldItemCategoryId.BERRY, weight: 1 }],
-    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 1 }],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 }],
     [RarityTier.ULTRA]: [
       { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
       { entry: HeldItemId.WHITE_HERB, weight: 0 },
@@ -70,9 +86,9 @@ function initTrainerHeldItemPool() {
   Object.assign(trainerHeldItemPool, {
     [RarityTier.COMMON]: [
       { entry: HeldItemCategoryId.BERRY, weight: 8 },
-      { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
+      { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 },
     ],
-    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 3 }],
+    [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 3 }],
     [RarityTier.ULTRA]: [
       { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
       { entry: HeldItemId.WHITE_HERB, weight: 0 },
@@ -99,7 +115,7 @@ function initTrainerHeldItemPool() {
 function initDailyStarterRewardPool(): void {
   Object.assign(dailyStarterHeldItemPool, {
     [RarityTier.COMMON]: [
-      { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
+      { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
       { entry: HeldItemCategoryId.BERRY, weight: 3 },
     ],
     [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 }],
@@ -188,20 +204,14 @@ function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
 }
 
 /**
- * Assign randomly generated held items to an enemy Pokemon.
- * @param waveIndex - Index of the current wave
+ * Randomly generate held items from a pool and assign them to an enemy Pokemon.
  * @param count - Max number of held items the enemy should end up holding (including existing items)
  * @param enemy - The {@linkcode EnemyPokemon} to receive the items
- * @param poolType - Which tiered pool to draw from ({@linkcode HeldItemPoolType.WILD | WILD} or {@linkcode HeldItemPoolType.TRAINER | TRAINER})
- * @param upgradeChanceDivisor - If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
- * to be bumped up one rarity tier. `0` (default) disables tier upgrades.
- *
- * @privateRemarks
- * The `waveIndex` parameter currently only exists to assign black hole on X000 waves,
- * but can be used for any other wave-specific items if needed.
+ * @param poolType - Which {@linkcode HeldItemPoolType | tiered pool} to draw from (Wild or Trainer)
+ * @param upgradeChanceDivisor - (Default `0`) If `> 0`, each generated item has a `1 / upgradeChanceDivisor` chance
+ * to be bumped up one rarity tier. `0` disables tier upgrades.
  */
-export function assignEnemyHeldItemsForWave(
-  waveIndex: number,
+export function generateEnemyPokemonHeldItems(
   count: number,
   enemy: EnemyPokemon,
   poolType: HeldItemPoolType.WILD | HeldItemPoolType.TRAINER,
@@ -217,10 +227,6 @@ export function assignEnemyHeldItemsForWave(
   for (let i = 0; i < count; i++) {
     const upgraded = upgradeChanceDivisor > 0 && randSeedInt(upgradeChanceDivisor) === 0 ? 1 : 0;
     assignItemsFromPool(determineItemPool(tieredPool, upgraded), enemy);
-  }
-
-  if (!(waveIndex % 1000)) {
-    enemy.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
   }
 }
 
@@ -464,8 +470,11 @@ export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
 
-  const pickedIndex = pickWeightedIndex(weights);
-  return items[pickedIndex];
+  const itemMap = new Map<HeldItemId, number>();
+  for (const [index, entry] of items.entries()) {
+    itemMap.set(entry, weights[index]);
+  }
+  return weightedPick(itemMap);
 }
 
 /**
@@ -478,23 +487,17 @@ export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {
  * Unlisted berries have a weight of `2` for Sitrus, Lum and Leppa berries and `1` otherwise.
  */
 export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): BerryItemId {
-  const items = Object.values(berryTypeToHeldItem);
-  if (!isNonEmpty(items)) {
-    // This is done to predicate `items` to nonempty, but something truly catastrophic would need to happen to reach the error
-    throw new Error("No berry held items are defined");
-  }
-
-  const weights = items.map(t => {
-    if (target?.heldItemManager.isMaxStack(t)) {
-      return 0;
+  const itemMap = new Map<BerryItemId, number>();
+  for (const item of Object.values(berryTypeToHeldItem)) {
+    if (target?.heldItemManager.isMaxStack(item)) {
+      itemMap.set(item, 0);
+      continue;
     }
     const isPreferredBerry =
-      t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY;
-    return customWeights[t] ?? (isPreferredBerry ? 2 : 1);
-  });
-
-  const pickedIndex = pickWeightedIndex(weights);
-  return items[pickedIndex];
+      item === HeldItemId.SITRUS_BERRY || item === HeldItemId.LUM_BERRY || item === HeldItemId.LEPPA_BERRY;
+    itemMap.set(item, customWeights[item] ?? (isPreferredBerry ? 2 : 1));
+  }
+  return weightedPick(itemMap);
 }
 
 /**
@@ -506,6 +509,7 @@ export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {},
  *
  * @remarks
  * Each type's default weight is the number of matching attack moves in the party, capped at `3`.
+ * {@linkcode PokemonType.UNKNOWN | UNKNOWN} and {@linkcode PokemonType.STELLAR | STELLAR} moves are ignored.
  * If the party has no eligible attack moves, the {@linkcode PokemonType.NORMAL | NORMAL} booster is returned.
  */
 export function getNewAttackTypeBoosterHeldItem(
@@ -529,22 +533,17 @@ export function getNewAttackTypeBoosterHeldItem(
     attackMoveTypeWeights.set(type, Math.min((attackMoveTypeWeights.get(type) ?? 0) + 1, 3));
   }
 
-  const candidates = [...attackMoveTypeWeights];
-  if (!isNonEmpty(candidates)) {
+  if (attackMoveTypeWeights.size === 0) {
     // Fallback to avoid bubbling `null` through the entire item generation chain
     return attackTypeToHeldItem[PokemonType.NORMAL];
   }
 
-  const weights = candidates.map(([type, count]) => {
+  const typeMap = new Map<RegularPokemonType, number>();
+  for (const [type, count] of attackMoveTypeWeights) {
     const item = attackTypeToHeldItem[type];
-    if (target?.heldItemManager.isMaxStack(item)) {
-      return 0;
-    }
-    return customWeights[item] ?? count;
-  });
-
-  const [pickedType] = candidates[pickWeightedIndex(weights)];
-  return attackTypeToHeldItem[pickedType];
+    typeMap.set(type, target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? count));
+  }
+  return attackTypeToHeldItem[weightedPick(typeMap)];
 }
 
 /**
@@ -555,7 +554,12 @@ export function getNewAttackTypeBoosterHeldItem(
  */
 function pickPoolEntry(pool: HeldItemPool, pokemon: Pokemon): HeldItemPoolEntry {
   const weights = getPoolWeights(pool, pokemon);
-  return pool[pickWeightedIndex(weights)];
+
+  const poolMap = new Map<HeldItemPoolEntry, number>();
+  for (const [index, entry] of pool.entries()) {
+    poolMap.set(entry, weights[index]);
+  }
+  return weightedPick(poolMap);
 }
 
 /**

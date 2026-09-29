@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemNames } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { PERMANENT_STATS, type Stat } from "#enums/stat";
@@ -11,7 +11,7 @@ import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const vitaminCases = Object.entries(permanentStatToHeldItem).map(([statKey, itemId]) => ({
-  itemName: HeldItemId[itemId],
+  itemName: HeldItemNames[itemId],
   item: itemId,
   stat: Number(statKey) as Stat,
 }));

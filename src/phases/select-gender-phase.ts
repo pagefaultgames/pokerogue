@@ -3,39 +3,47 @@ import { settings } from "#app/global-settings-manager";
 import { Phase } from "#app/phase";
 import { PlayerGender } from "#enums/player-gender";
 import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectModeConfig } from "#types/ui-types";
 import i18next from "i18next";
 
 export class SelectGenderPhase extends Phase {
   public readonly phaseName = "SelectGenderPhase";
 
-  start(): void {
+  public override start(): void {
     super.start();
 
-    globalScene.ui.showText(i18next.t("menu:boyOrGirl"), null, () => {
-      globalScene.ui.setMode(UiMode.OPTION_SELECT, {
-        options: [
-          {
-            label: i18next.t("settings:boy"),
-            handler: () => {
-              settings.update("general", "playerGender", PlayerGender.MALE);
-              globalScene.gameData.saveSystem().then(() => this.end());
-              return true;
-            },
+    const { gameData, ui } = globalScene;
+
+    const genderSelectConfig: OptionSelectModeConfig = {
+      options: [
+        {
+          label: i18next.t("settings:boy"),
+          handler: () => {
+            settings.update("general", "playerGender", PlayerGender.MALE);
+            gameData.saveSystem().then(() => this.end());
+            return true;
           },
-          {
-            label: i18next.t("settings:girl"),
-            handler: () => {
-              settings.update("general", "playerGender", PlayerGender.FEMALE);
-              globalScene.gameData.saveSystem().then(() => this.end());
-              return true;
-            },
+        },
+        {
+          label: i18next.t("settings:girl"),
+          handler: () => {
+            settings.update("general", "playerGender", PlayerGender.FEMALE);
+            gameData.saveSystem().then(() => this.end());
+            return true;
           },
-        ],
-      });
+        },
+      ],
+      inputDelay: 1000,
+      blockCancelButton: true,
+      yOffset: 48,
+    };
+
+    ui.showText(i18next.t("menu:boyOrGirl"), null, () => {
+      ui.setMode(UiMode.OPTION_SELECT, genderSelectConfig);
     });
   }
 
-  end(): void {
+  public override end(): void {
     globalScene.ui.setMode(UiMode.MESSAGE);
     super.end();
   }

@@ -30,25 +30,25 @@ describe("Items - Focus Band", () => {
   it.each([
     { roll: 0, survives: true },
     { roll: 9, survives: false },
-  ])("should let the holder survive otherwise-fatal damage only when the roll succeeds ($survives)", async ({
-    roll,
-    survives,
-  }) => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  ])(
+    "should let the holder survive otherwise-fatal damage only when the roll succeeds ($survives)",
+    async ({ roll, survives }) => {
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const player = game.field.getPlayerPokemon();
-    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(roll);
+      const player = game.field.getPlayerPokemon();
+      vi.spyOn(player, "randBattleSeedInt").mockReturnValue(roll);
 
-    player.damageAndUpdate(player.getMaxHp() * 5, { result: HitResult.EFFECTIVE });
+      player.damageAndUpdate(player.getMaxHp() * 5, { result: HitResult.EFFECTIVE });
 
-    if (survives) {
-      expect(player).not.toHaveFainted();
-      expect(player.hp).toBe(1);
-      expect(player).toHaveHeldItem(HeldItemId.FOCUS_BAND);
-    } else {
-      expect(player).toHaveFainted();
-    }
-  });
+      if (survives) {
+        expect(player).not.toHaveFainted();
+        expect(player.hp).toBe(1);
+        expect(player).toHaveHeldItem(HeldItemId.FOCUS_BAND);
+      } else {
+        expect(player).toHaveFainted();
+      }
+    },
+  );
 
   it("should not trigger when the damage is not fatal", async () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
