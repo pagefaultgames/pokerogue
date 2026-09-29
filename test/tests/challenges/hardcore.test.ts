@@ -80,9 +80,18 @@ describe("Challenges - Hardcore", () => {
     await game.phaseInterceptor.to("SelectRewardPhase");
     expect(game.scene.ui.mode).toBe(UiMode.REWARD_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler)!;
-    expect(modifierSelectHandler.options.find(reward => reward.rewardOption.type.group === "revive")).toBeUndefined();
     expect(
-      modifierSelectHandler.shopOptionsRows.find(row => row.find(item => item.rewardOption.type.group === "revive")),
+      modifierSelectHandler.options.find(
+        reward =>
+          reward.rewardOption.type.id === RewardId.REVIVE || reward.rewardOption.type.id === RewardId.MAX_REVIVE,
+      ),
+    ).toBeUndefined();
+    expect(
+      modifierSelectHandler.shopOptionsRows.find(row =>
+        row.find(
+          item => item.rewardOption.type.id === RewardId.REVIVE || item.rewardOption.type.id === RewardId.MAX_REVIVE,
+        ),
+      ),
     ).toBeUndefined();
   });
 

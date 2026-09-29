@@ -1,3 +1,4 @@
+import { ChallengeType } from "#enums/challenge-type";
 import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
@@ -7,6 +8,8 @@ import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { rewardRarities } from "#items/reward-defaults-tiers";
 import { trainerItemRarities } from "#items/trainer-item-default-tiers";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
+import { applyChallenges } from "#utils/challenge-utils";
+import { ValueHolder } from "#utils/value-holder";
 import { EmptyReward, type PokemonMoveReward, type Reward, RewardGenerator, RewardOption } from "./reward";
 import { HeldItemReward } from "./rewards/held-item-reward";
 import type { RememberMoveReward } from "./rewards/remember-move";
@@ -94,7 +97,14 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
     [generateRewardOptionFromId(RewardId.FULL_RESTORE, baseCost * 2.25)],
     [generateRewardOptionFromId(RewardId.SACRED_ASH, baseCost * 10)],
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  return options
+    .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
+    .flat()
+    .filter(shopItem => {
+      const status = new ValueHolder(true);
+      applyChallenges(ChallengeType.SHOP_ITEM, shopItem, status);
+      return status.value;
+    });
 }
 
 export function isRewardId(id: RewardPoolId): id is RewardId {
