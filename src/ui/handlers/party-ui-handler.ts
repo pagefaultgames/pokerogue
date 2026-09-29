@@ -26,7 +26,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
-import type { ConfirmModeConfig } from "#types/ui-types";
+import type { ConfirmModeConfig, ShowTextOptions } from "#types/ui-types";
 import { getLearnableMoveSourceIconFrame } from "#ui/learnable-move-utils";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
@@ -155,10 +155,10 @@ export class PartyUiHandler extends MessageUiHandler {
 
   /**
    * For consistency reasons, this looks like the above filters. However this is used only internally and is always enforced for switching.
-   * @param pokemon The pokemon to check.
+   * @param pokemon - The pokemon to check.
    * @returns
    */
-  private FilterChallengeLegal = (pokemon: PlayerPokemon) => {
+  private readonly FilterChallengeLegal = (pokemon: PlayerPokemon): string | null => {
     const challengeAllowed = new BooleanHolder(true);
     applyChallenges(ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
@@ -341,52 +341,47 @@ export class PartyUiHandler extends MessageUiHandler {
       i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedEvolutions" : "partyUiHandler:unpausedEvolutions", {
         pokemonName: getPokemonNameWithAffix(pokemon, false),
       }),
-      undefined,
-      () => this.showText("", 0),
-      null,
-      true,
+      { callback: () => this.showText("", { delay: 0 }), prompt: true },
     );
     return true;
   }
 
   private processUnspliceOption(pokemon: PlayerPokemon): boolean {
     const ui = this.getUi();
+
     this.clearOptions();
     ui.playSelect();
+
+    const options: ConfirmModeConfig = {
+      yesHandler: () => {
+        const fusionName = pokemon.getName();
+        pokemon.unfuse().then(() => {
+          this.clearPartySlots();
+          this.populatePartySlots();
+          ui.setMode(UiMode.PARTY);
+          this.showText(i18next.t("partyUiHandler:wasReverted", { fusionName, pokemonName: pokemon.getName(false) }), {
+            callback: () => {
+              ui.setMode(UiMode.PARTY);
+              this.showText("", { delay: 0 });
+            },
+            prompt: true,
+          });
+        });
+      },
+      noHandler: () => {
+        ui.setMode(UiMode.PARTY);
+        this.showText("", { delay: 0 });
+      },
+    };
+    const unspliceConfirmationCallback = () => ui.setModeWithoutClear(UiMode.CONFIRM, options);
     this.showText(
       i18next.t("partyUiHandler:unspliceConfirmation", {
         fusionName: pokemon.fusionSpecies?.name,
         pokemonName: pokemon.getName(),
       }),
-      null,
-      () => {
-        const options: ConfirmModeConfig = {
-          yesHandler: () => {
-            const fusionName = pokemon.getName();
-            pokemon.unfuse().then(() => {
-              this.clearPartySlots();
-              this.populatePartySlots();
-              ui.setMode(UiMode.PARTY);
-              this.showText(
-                i18next.t("partyUiHandler:wasReverted", { fusionName, pokemonName: pokemon.getName(false) }),
-                undefined,
-                () => {
-                  ui.setMode(UiMode.PARTY);
-                  this.showText("", 0);
-                },
-                null,
-                true,
-              );
-            });
-          },
-          noHandler: () => {
-            ui.setMode(UiMode.PARTY);
-            this.showText("", 0);
-          },
-        };
-        ui.setModeWithoutClear(UiMode.CONFIRM, options);
-      },
+      { callback: unspliceConfirmationCallback },
     );
+
     return true;
   }
 
@@ -408,19 +403,22 @@ export class PartyUiHandler extends MessageUiHandler {
         },
         noHandler: () => {
           ui.setMode(UiMode.PARTY);
-          this.showText("", 0);
+          this.showText("", { delay: 0 });
         },
+      };
+      const releaseConfirmationCallback = () => {
+        this.blockInput = false;
+        ui.setModeWithoutClear(UiMode.CONFIRM, options);
       };
       this.showText(
         i18next.t("partyUiHandler:releaseConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon, false) }),
-        null,
-        () => {
-          this.blockInput = false;
-          ui.setModeWithoutClear(UiMode.CONFIRM, options);
-        },
+        { callback: releaseConfirmationCallback },
       );
     } else {
-      this.showText(i18next.t("partyUiHandler:releaseInBattle"), null, () => this.showText("", 0), null, true);
+      this.showText(
+        i18next.t("partyUiHandler:releaseInBattle"), //
+        { callback: () => this.showText("", { delay: 0 }), prompt: true },
+      );
     }
     return true;
   }
@@ -633,7 +631,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.clearOptions();
 
     this.blockInput = true;
-    this.showText(i18next.t("partyUiHandler:discardConfirmation"), null, () => {
+    const callback = () => {
       this.blockInput = false;
       const discardConfirmConfig: ConfirmModeConfig = {
         yesHandler: () => {
@@ -646,7 +644,8 @@ export class PartyUiHandler extends MessageUiHandler {
         },
       };
       ui.setModeWithoutClear(UiMode.CONFIRM, discardConfirmConfig);
-    });
+    };
+    this.showText(i18next.t("partyUiHandler:discardConfirmation"), { callback });
 
     return true;
   }
@@ -685,7 +684,7 @@ export class PartyUiHandler extends MessageUiHandler {
       this.clearOptions();
     } else {
       this.clearOptions();
-      this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
+      this.showText(filterResult, { callback: () => this.showText("", { delay: 0 }), prompt: true });
     }
     ui.playSelect();
     return true;
@@ -801,7 +800,7 @@ export class PartyUiHandler extends MessageUiHandler {
     const filterResult = this.getFilterResult(option, pokemon);
     if (filterResult) {
       this.clearOptions();
-      this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
+      this.showText(filterResult, { callback: () => this.showText("", { delay: 0 }), prompt: true });
       return true;
     }
 
@@ -1128,6 +1127,7 @@ export class PartyUiHandler extends MessageUiHandler {
       this.lastCursor = party.length - 1;
     }
 
+    // biome-ignore lint/suspicious/useGuardForIn: TODO - don't use a `for...in` here?
     for (const p in party) {
       const slotIndex = Number.parseInt(p);
       const partySlot = new PartySlot(slotIndex, party[p], this.iconAnimHandler, this.partyUiMode, this.tmMoveId);
@@ -1207,27 +1207,23 @@ export class PartyUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  showText(
+  public override showText(
     text: string,
-    delay?: number | null,
-    callback?: (() => void) | null,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-  ) {
+    { delay, callback, callbackDelay, prompt, promptDelay }: ShowTextOptions = {},
+  ): void {
     if (text.length === 0) {
       text = defaultMessage;
     }
 
-    if (text?.indexOf("\n") === -1) {
-      this.partyMessageBox.setSize(262, 30);
-      this.message.setY(10);
-    } else {
+    if (text.includes("\n")) {
       this.partyMessageBox.setSize(262, 42);
       this.message.setY(-5);
+    } else {
+      this.partyMessageBox.setSize(262, 30);
+      this.message.setY(10);
     }
 
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
   }
 
   showOptions() {
@@ -1257,7 +1253,7 @@ export class PartyUiHandler extends MessageUiHandler {
         optionsMessage = i18next.t("partyUiHandler:changeQuantityDiscard");
     }
 
-    this.showText(optionsMessage, 0);
+    this.showText(optionsMessage, { delay: 0 });
 
     this.updateOptions();
 
@@ -1273,7 +1269,7 @@ export class PartyUiHandler extends MessageUiHandler {
         this.showText(i18next.t("partyUiHandler:partyDiscard"));
         break;
       default:
-        this.showText("", 0);
+        this.showText("", { delay: 0 });
         break;
     }
   }
@@ -1724,10 +1720,8 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   doRelease(slotIndex: number): void {
-    this.showText(
-      this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getPlayerParty()[slotIndex], false)),
-      null,
-      () => {
+    this.showText(this.getReleaseMessage(getPokemonNameWithAffix(globalScene.getPlayerParty()[slotIndex], false)), {
+      callback: () => {
         this.clearPartySlots();
         globalScene.removePartyMemberModifiers(slotIndex);
         const releasedPokemon = globalScene.getPlayerParty().splice(slotIndex, 1)[0];
@@ -1741,11 +1735,10 @@ export class PartyUiHandler extends MessageUiHandler {
           this.selectCallback = null;
           selectCallback?.(this.cursor, PartyOption.RELEASE);
         }
-        this.showText("", 0);
+        this.showText("", { delay: 0 });
       },
-      null,
-      true,
-    );
+      prompt: true,
+    });
   }
 
   getReleaseMessage(pokemonName: string): string {
@@ -1867,9 +1860,8 @@ export class PartyUiHandler extends MessageUiHandler {
 class PartySlot extends Phaser.GameObjects.Container {
   private selected: boolean;
   private transfer: boolean;
-  private slotIndex: number;
-  private isBenched: boolean;
-  private pokemon: PlayerPokemon;
+  private readonly isBenched: boolean;
+  private readonly pokemon: PlayerPokemon;
 
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
@@ -1882,7 +1874,7 @@ class PartySlot extends Phaser.GameObjects.Container {
 
   private slotBgKey: string;
   private pokemonIcon: Phaser.GameObjects.Container;
-  private iconAnimHandler: PokemonIconAnimHelper;
+  private readonly iconAnimHandler: PokemonIconAnimHelper;
 
   constructor(
     slotIndex: number,
@@ -1917,7 +1909,6 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     super(globalScene, slotPositionX, slotPositionY);
 
-    this.slotIndex = slotIndex;
     this.isBenched = isBenched;
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;

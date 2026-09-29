@@ -59,24 +59,12 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   private async showLevelUpMessages(prevStats: number[]): Promise<void> {
     audioManager.playSound("se/level_up_fanfare");
 
-    const { promise, resolve } = Promise.withResolvers<void>();
-
-    globalScene.ui.showText(
-      i18next.t("battle:levelUp", {
-        pokemonName: getPokemonNameWithAffix(this.pokemon),
-        level: this.level,
-      }),
-      null,
-      () =>
-        globalScene.ui
-          .getMessageHandler()
-          .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
-          .then(() => resolve()),
-      null,
-      true,
+    await globalScene.ui.showTextPromise(
+      i18next.t("battle:levelUp", { pokemonName: getPokemonNameWithAffix(this.pokemon), level: this.level }),
     );
-
-    return promise;
+    await globalScene.ui //
+      .getMessageHandler()
+      .promptLevelUpStats(this.partyMemberIndex, prevStats, false);
   }
 
   public override end(): void {
@@ -102,8 +90,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
             pokemonName: getPokemonNameWithAffix(this.pokemon),
             moveName: allMoves[moveId].name,
           }),
-          null,
-          true,
+          { prompt: true },
         );
       }
     }

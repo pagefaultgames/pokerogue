@@ -21,7 +21,7 @@ export class QuietFormChangePhase extends BattlePhase {
   public readonly pokemon: Pokemon;
   protected readonly formChange: SpeciesFormChange;
   /** The Pokemon's prior name before changing forms. */
-  // TODO: remove? it's unused
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: lint rule bug (destructured objects aren't recognized)
   private preName: string;
 
   constructor(pokemon: Pokemon, formChange: SpeciesFormChange) {
@@ -31,7 +31,7 @@ export class QuietFormChangePhase extends BattlePhase {
     this.formChange = formChange;
   }
 
-  async start(): Promise<void> {
+  public override async start(): Promise<void> {
     super.start();
 
     this.preName = getPokemonNameWithAffix(this.pokemon);
@@ -57,7 +57,7 @@ export class QuietFormChangePhase extends BattlePhase {
         return;
       }
       await this.doChangeForm();
-      this.showFormChangeTextAndEnd();
+      await this.showFormChangeTextAndEnd();
     }
   }
 
@@ -66,10 +66,12 @@ export class QuietFormChangePhase extends BattlePhase {
    * @remarks
    * Does not actually change the user's form.
    */
-  private showFormChangeTextAndEnd(): void {
+  private async showFormChangeTextAndEnd(): Promise<void> {
     const { pokemon, formChange, preName } = this;
     const { ui } = globalScene;
-    ui.showText(getSpeciesFormChangeMessage(pokemon, formChange, preName), null, () => this.end(), 1500);
+
+    await ui.showTextPromise(getSpeciesFormChangeMessage(pokemon, formChange, preName), { callbackDelay: 1500 });
+    this.end();
   }
 
   /**
@@ -84,7 +86,7 @@ export class QuietFormChangePhase extends BattlePhase {
     }
 
     await this.doChangeForm();
-    this.showFormChangeTextAndEnd();
+    await this.showFormChangeTextAndEnd();
   }
 
   /**
@@ -169,7 +171,7 @@ export class QuietFormChangePhase extends BattlePhase {
     });
     pokemonTintSprite.setVisible(false);
 
-    this.showFormChangeTextAndEnd();
+    await this.showFormChangeTextAndEnd();
   }
 
   private getPokemonSprite(): Phaser.GameObjects.Sprite {

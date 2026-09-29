@@ -93,7 +93,7 @@ export class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
-    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), { delay: 0 });
 
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);

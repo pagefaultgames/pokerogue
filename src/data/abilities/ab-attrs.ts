@@ -5793,9 +5793,7 @@ class ForceSwitchOutHelper {
         switchOutTarget.leaveField(false);
         globalScene.phaseManager.queueMessage(
           i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }),
-          null,
-          true,
-          500,
+          { prompt: true, promptDelay: 500 },
         );
         if (globalScene.currentBattle.double && allyPokemon != null) {
           globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);

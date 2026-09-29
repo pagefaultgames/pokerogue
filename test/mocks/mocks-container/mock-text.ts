@@ -1,13 +1,15 @@
 import type { TextInterceptor } from "#test/framework/text-interceptor";
 import type { MockGameObject } from "#test/mocks/mock-game-object";
+import type { MockTextureManager } from "#test/mocks/mock-texture-manager";
+import type { ShowTextOptions } from "#types/ui-types";
 import { UI } from "#ui/ui";
 
 export class MockText implements MockGameObject {
-  private phaserText;
+  private readonly phaserText;
   private wordWrapWidth;
   private splitRegExp;
-  private scene;
-  private textureManager;
+  private readonly scene;
+  private readonly textureManager: MockTextureManager;
   public list: MockGameObject[] = [];
   public style;
   public text = "";
@@ -15,8 +17,8 @@ export class MockText implements MockGameObject {
   public color?: string;
   public active = true;
 
-  constructor(textureManager, _x, _y, _content, _styleOptions) {
-    this.scene = textureManager.scene;
+  constructor(textureManager: MockTextureManager, _x, _y, _content, _styleOptions) {
+    this.scene = textureManager["scene"];
     this.textureManager = textureManager;
     this.style = {};
     // Phaser.GameObjects.TextStyle.prototype.setStyle = () => this;
@@ -79,14 +81,7 @@ export class MockText implements MockGameObject {
     return result;
   }
 
-  showText(
-    text: string,
-    _delay?: number | null,
-    callback?: (() => void) | null,
-    _callbackDelay?: number | null,
-    _prompt?: boolean | null,
-    _promptDelay?: number | null,
-  ) {
+  showText(text: string, { callback }: ShowTextOptions = {}) {
     // TODO: this is a very bad way to pass calls around
     (this.scene.messageWrapper as TextInterceptor).showText(text);
     if (callback) {
@@ -94,14 +89,7 @@ export class MockText implements MockGameObject {
     }
   }
 
-  showDialogue(
-    keyOrText: string,
-    name: string,
-    _delay: number | null,
-    callback: () => void,
-    _callbackDelay?: number,
-    _promptDelay?: number,
-  ) {
+  showDialogue(keyOrText: string, name: string, callback: () => void) {
     (this.scene.messageWrapper as TextInterceptor).showDialogue(keyOrText, name);
     if (callback) {
       callback();

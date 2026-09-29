@@ -113,6 +113,7 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
+import type { MessagePhaseOptions } from "#types/ui-types";
 import type { NonEmptyTuple } from "type-fest";
 
 /**
@@ -222,9 +223,17 @@ const PHASES = Object.freeze({
   WeatherEffectPhase,
 });
 
-// This type export cannot be moved to `@types`, as `Phases` is intentionally private to this file
+// This type export cannot be moved to `@types`, as `PHASES` is intentionally private to this file
 /** Maps Phase strings to their constructors */
 export type PhaseConstructorMap = typeof PHASES;
+
+interface QueueMessageOptions extends MessagePhaseOptions {
+  /**
+   * If `true`, push the phase instead of unshifting
+   * @defaultValue `false`
+   */
+  readonly defer?: boolean;
+}
 
 /** Phases pushed at the end of each {@linkcode TurnStartPhase} */
 const turnEndPhases: readonly PhaseString[] = [
@@ -427,23 +436,15 @@ export class PhaseManager {
   }
 
   /**
-   * Add a `MessagePhase` to the queue.
-   * @param message - string for MessagePhase
-   * @param callbackDelay - optional param for MessagePhase constructor
-   * @param prompt - optional param for MessagePhase constructor
-   * @param promptDelay - optional param for MessagePhase constructor
-   * @param defer - If `true`, push the phase instead of unshifting; default `false`
-   *
-   * @see {@linkcode MessagePhase} for more details on the parameters
+   * Add a {@linkcode MessagePhase} to the queue.
+   * @param message - The text to display
+   * @see {@linkcode QueueMessageOptions} for param info
    */
-  queueMessage(
+  public queueMessage(
     message: string,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-    defer?: boolean | null,
-  ) {
-    const phase = new MessagePhase(message, callbackDelay, prompt, promptDelay);
+    { callbackDelay, prompt, promptDelay, defer, speaker }: QueueMessageOptions = {},
+  ): void {
+    const phase = new MessagePhase(message, { callbackDelay, prompt, promptDelay, speaker });
     if (defer) {
       this.pushPhase(phase);
     } else {

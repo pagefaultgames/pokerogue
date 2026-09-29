@@ -50,26 +50,24 @@ export class ScanIvsPhase extends PokemonPhase {
       return;
     }
 
-    ui.showText(
-      i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }),
-      null,
-      () => {
-        const options: ConfirmModeConfig = {
-          yesHandler: () => {
-            ui.setMode(UiMode.MESSAGE);
-            ui.clearText();
-            ui.getMessageHandler()
-              .promptIvs(pokemon.id, pokemon.ivs)
-              .then(() => this.end());
-          },
-          noHandler: () => {
-            ui.setMode(UiMode.MESSAGE);
-            ui.clearText();
-            this.end();
-          },
-        };
-        ui.setMode(UiMode.CONFIRM, options);
+    const options: ConfirmModeConfig = {
+      yesHandler: () => {
+        ui.setMode(UiMode.MESSAGE);
+        ui.clearText();
+        ui.getMessageHandler()
+          .promptIvs(pokemon.id, pokemon.ivs)
+          .then(() => this.end());
       },
+      noHandler: () => {
+        ui.setMode(UiMode.MESSAGE);
+        ui.clearText();
+        this.end();
+      },
+    };
+
+    ui.showText(
+      i18next.t("battle:ivScannerUseQuestion", { pokemonName: getPokemonNameWithAffix(pokemon) }), //
+      { callback: () => ui.setMode(UiMode.CONFIRM, options) },
     );
   }
 }

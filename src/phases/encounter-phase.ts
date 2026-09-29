@@ -50,7 +50,7 @@ export class EncounterPhase extends BattlePhase {
     this.loaded = loaded;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     globalScene.updateGameInfo();
@@ -108,7 +108,7 @@ export class EncounterPhase extends BattlePhase {
       }
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
-          battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
+          battle.enemyParty[e] = battle.trainer!.genPartyMember(e);
         } else {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
@@ -201,7 +201,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (battle.battleType === BattleType.TRAINER) {
-      loadEnemyAssets.push(battle.trainer?.loadAssets().then(() => battle.trainer?.initSprite())!); // TODO: is this bang correct?
+      loadEnemyAssets.push(battle.trainer!.loadAssets().then(() => battle.trainer?.initSprite()));
     } else if (battle.isBattleMysteryEncounter()) {
       if (battle.mysteryEncounter?.introVisuals) {
         loadEnemyAssets.push(
@@ -427,7 +427,7 @@ export class EncounterPhase extends BattlePhase {
       }
       globalScene.updateFieldScale();
       if (showEncounterMessage) {
-        globalScene.ui.showText(this.getEncounterMessage(), null, () => this.end(), 1500);
+        globalScene.ui.showText(this.getEncounterMessage(), { callback: () => this.end(), callbackDelay: 1500 });
       } else {
         this.end();
       }
@@ -451,7 +451,10 @@ export class EncounterPhase extends BattlePhase {
           this.end();
         };
         if (showEncounterMessage) {
-          globalScene.ui.showText(this.getEncounterMessage(), null, doTrainerSummon, 1500, true);
+          globalScene.ui.showText(
+            this.getEncounterMessage(), //
+            { callback: doTrainerSummon, callbackDelay: 1500, prompt: true },
+          );
         } else {
           doTrainerSummon();
         }
@@ -468,18 +471,20 @@ export class EncounterPhase extends BattlePhase {
           globalScene.currentBattle.waveIndex,
         );
         const showDialogueAndSummon = () => {
-          globalScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
-            globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => doSummon()));
+          globalScene.ui.showDialogue(message, trainer!.getName(TrainerSlot.NONE, true), () => {
+            globalScene.charSprite
+              .hide()
+              .then(() => globalScene.hideFieldOverlay(250))
+              .then(() => doSummon());
           });
         };
         if (trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
           globalScene
             .showFieldOverlay(500)
             .then(() =>
-              globalScene.charSprite
-                .showCharacter(trainer.getKey()!, getCharVariantFromDialogue(encounterMessages[0]))
-                .then(() => showDialogueAndSummon()),
-            ); // TODO: is this bang correct?
+              globalScene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])),
+            )
+            .then(() => showDialogueAndSummon());
         } else {
           showDialogueAndSummon();
         }
@@ -512,13 +517,14 @@ export class EncounterPhase extends BattlePhase {
           const showNextDialogue = () => {
             const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
             const dialogue = introDialogue[i];
-            const title = getEncounterText(dialogue?.speaker);
-            const text = getEncounterText(dialogue.text)!;
+            const title = getEncounterText(dialogue.speaker);
+            const text = getEncounterText(dialogue.text);
             i++;
+            const delayValue = i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0;
             if (title) {
-              globalScene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+              globalScene.ui.showDialogue(text, title, nextAction, { callbackDelay: 0, promptDelay: delayValue });
             } else {
-              globalScene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
+              globalScene.ui.showText(text, { callback: nextAction, callbackDelay: delayValue, prompt: true });
             }
           };
 
@@ -534,8 +540,11 @@ export class EncounterPhase extends BattlePhase {
 
       if (encounterMessage) {
         doTrainerExclamation();
-        globalScene.ui.showDialogue(encounterMessage, "???", null, () => {
-          globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => doEncounter()));
+        globalScene.ui.showDialogue(encounterMessage, "???", () => {
+          globalScene.charSprite
+            .hide()
+            .then(() => globalScene.hideFieldOverlay(250))
+            .then(() => doEncounter());
         });
       } else {
         doEncounter();
@@ -543,7 +552,7 @@ export class EncounterPhase extends BattlePhase {
     }
   }
 
-  end() {
+  public override end(): void {
     const enemyField = globalScene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
@@ -616,12 +625,11 @@ export class EncounterPhase extends BattlePhase {
 
   protected displayFinalBossDialogue(): void {
     const { gameData, ui } = globalScene;
-    const enemy = globalScene.getEnemyPokemon();
 
-    ui.showText(
-      this.getEncounterMessage(),
-      null,
-      () => {
+    const enemy = globalScene.getEnemyPokemon()!;
+
+    ui.showText(this.getEncounterMessage(), {
+      callback: () => {
         const localizationKey = "battleSpecDialogue:encounter";
         if (ui.shouldSkipDialogue(localizationKey)) {
           // Logging mirrors logging found in dialogue-ui-handler
@@ -632,10 +640,7 @@ export class EncounterPhase extends BattlePhase {
           // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
           const ordinalUsed =
             !i18next.exists(localizationKey, { fallbackLng: [] }) || i18next.resolvedLanguage === "en"
-              ? i18next.t("battleSpecDialogue:key", {
-                  count,
-                  ordinal: true,
-                })
+              ? i18next.t("battleSpecDialogue:key", { count, ordinal: true })
               : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const cycleCountNoOrdinal = count.toLocaleString();
@@ -649,14 +654,12 @@ export class EncounterPhase extends BattlePhase {
           if (!gameData.getSeenDialogues()[localizationKey]) {
             gameData.saveSeenDialogue(localizationKey);
           }
-          ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
-            this.doEncounterCommon(false);
-          });
+          ui.showDialogue(encounterDialogue, enemy.species.name, () => this.doEncounterCommon(false));
         }
       },
-      1500,
-      true,
-    );
+      callbackDelay: 1500,
+      prompt: true,
+    });
   }
 
   /**

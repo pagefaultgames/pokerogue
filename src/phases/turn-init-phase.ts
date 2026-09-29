@@ -11,16 +11,16 @@ import i18next from "i18next";
 
 export class TurnInitPhase extends FieldPhase {
   public readonly phaseName = "TurnInitPhase";
-  start() {
+
+  public override start(): void {
     super.start();
 
     globalScene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
       if (p.isOnField() && !p.isAllowedInBattle()) {
         globalScene.phaseManager.queueMessage(
-          i18next.t("challenges:illegalEvolution", { pokemon: p.name }),
-          null,
-          true,
+          i18next.t("challenges:illegalEvolution", { pokemon: p.name }), //
+          { prompt: true },
         );
 
         const allowedPokemon = globalScene.getPokemonAllowedInBattle();

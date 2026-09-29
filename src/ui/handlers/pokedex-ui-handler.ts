@@ -26,7 +26,7 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { AllStarterPreferences, DexAttrProps, StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
-import type { ConfirmModeConfig } from "#types/ui-types";
+import type { ConfirmModeConfig, PokedexShowTextOptions } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -809,16 +809,12 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.filterText.setValsToDefault();
   }
 
-  showText(
+  // TODO: this seems unused
+  public override showText(
     text: string,
-    delay?: number,
-    callback?: () => void,
-    callbackDelay?: number,
-    prompt?: boolean,
-    promptDelay?: number,
-    moveToTop?: boolean,
-  ) {
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    { delay, callback, callbackDelay, prompt, promptDelay, moveToTop }: PokedexShowTextOptions = {},
+  ): void {
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
 
     const singleLine = text?.indexOf("\n") === -1;
 
@@ -2336,9 +2332,10 @@ export class PokedexUiHandler extends MessageUiHandler {
       },
       yOffset: 29,
     };
-    ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(UiMode.CONFIRM, confirmExitConfig);
-    });
+    ui.showText(
+      i18next.t("pokedexUiHandler:confirmExit"), //
+      { callback: () => ui.setModeWithoutClear(UiMode.CONFIRM, confirmExitConfig) },
+    );
 
     return true;
   }

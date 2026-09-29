@@ -209,7 +209,7 @@ export class Battle {
     const message = i18next.t("battle:moneyPickedUp", {
       moneyAmount: formattedMoneyAmount,
     });
-    globalScene.phaseManager.queueMessage(message, undefined, true);
+    globalScene.phaseManager.queueMessage(message, { prompt: true });
 
     globalScene.currentBattle.moneyScattered = 0;
   }

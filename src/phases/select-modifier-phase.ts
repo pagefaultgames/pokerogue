@@ -81,17 +81,18 @@ export class SelectModifierPhase extends BattlePhase {
 
     const modifierSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
-        globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
-          const skipRewardConfirmOptions: ConfirmModeConfig = {
-            yesHandler: () => {
-              globalScene.ui.revertMode();
-              globalScene.ui.setMode(UiMode.MESSAGE);
-              super.end();
-            },
-            noHandler: () => this.resetModifierSelect(modifierSelectCallback),
-          };
-          globalScene.ui.setOverlayMode(UiMode.CONFIRM, skipRewardConfirmOptions);
-        });
+        const skipRewardConfirmOptions: ConfirmModeConfig = {
+          yesHandler: () => {
+            globalScene.ui.revertMode();
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            super.end();
+          },
+          noHandler: () => this.resetModifierSelect(modifierSelectCallback),
+        };
+        globalScene.ui.showText(
+          i18next.t("battle:skipItemQuestion"), //
+          { callback: () => globalScene.ui.setOverlayMode(UiMode.CONFIRM, skipRewardConfirmOptions) },
+        );
         return false;
       }
 

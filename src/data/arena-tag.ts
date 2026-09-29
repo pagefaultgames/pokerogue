@@ -231,7 +231,7 @@ export abstract class ArenaTag implements BaseArenaTag {
     return this.turnCount < 1 || --this.turnCount > 0;
   }
 
-  protected getMoveName(): string | null {
+  public getMoveName(): string | null {
     return this.sourceMove ? allMoves[this.sourceMove].name : null;
   }
 

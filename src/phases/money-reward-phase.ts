@@ -7,7 +7,8 @@ import i18next from "i18next";
 
 export class MoneyRewardPhase extends BattlePhase {
   public readonly phaseName = "MoneyRewardPhase";
-  private moneyMultiplier: number;
+
+  private readonly moneyMultiplier: number;
 
   constructor(moneyMultiplier: number) {
     super();
@@ -15,7 +16,7 @@ export class MoneyRewardPhase extends BattlePhase {
     this.moneyMultiplier = moneyMultiplier;
   }
 
-  start() {
+  public override start(): void {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
 
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
@@ -28,10 +29,8 @@ export class MoneyRewardPhase extends BattlePhase {
 
     const userLocale = navigator.language || "en-US";
     const formattedMoneyAmount = moneyAmount.value.toLocaleString(userLocale);
-    const message = i18next.t("battle:moneyWon", {
-      moneyAmount: formattedMoneyAmount,
-    });
+    const message = i18next.t("battle:moneyWon", { moneyAmount: formattedMoneyAmount });
 
-    globalScene.ui.showText(message, null, () => this.end(), null, true);
+    globalScene.ui.showText(message, { callback: () => this.end(), prompt: true });
   }
 }

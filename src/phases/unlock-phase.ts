@@ -8,7 +8,8 @@ import i18next from "i18next";
 
 export class UnlockPhase extends Phase {
   public readonly phaseName = "UnlockPhase";
-  private unlockable: Unlockables;
+
+  private readonly unlockable: Unlockables;
 
   constructor(unlockable: Unlockables) {
     super();
@@ -16,24 +17,25 @@ export class UnlockPhase extends Phase {
     this.unlockable = unlockable;
   }
 
-  start(): void {
+  public override start(): void {
     globalScene.time.delayedCall(2000, () => {
       globalScene.gameData.unlocks[this.unlockable] = true;
-      // Sound loaded into game as is
+
       audioManager.playSound("se/level_up_fanfare");
+
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.showText(
         i18next.t("battle:unlockedSomething", {
           unlockedThing: getUnlockableName(this.unlockable),
         }),
-        null,
-        () => {
-          globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
-          this.end();
+        {
+          callback: () => {
+            globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
+            this.end();
+          },
+          prompt: true,
+          promptDelay: 1500,
         },
-        null,
-        true,
-        1500,
       );
     });
   }

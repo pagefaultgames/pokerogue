@@ -10,8 +10,8 @@ export class TextInterceptor {
   public readonly logs: string[] = [];
 
   constructor(scene: BattleScene) {
-    // @ts-expect-error: Find another more sanitary way of doing this
-    scene.messageWrapper = this;
+    // TODO: Find another more sanitary way of doing this
+    scene["messageWrapper"] = this;
   }
 
   /** Clear the current content of the TextInterceptor. */

@@ -29,11 +29,12 @@ const NO_SAVE_SLOT = -1;
 
 export class TitlePhase extends Phase {
   public readonly phaseName = "TitlePhase";
+
   private loaded = false;
   // TODO: Make `end` take a `GameModes` as a parameter rather than storing it on the class itself
-  public gameMode: GameModes;
+  private gameMode: GameModes;
 
-  async start(): Promise<void> {
+  public override async start(): Promise<void> {
     super.start();
 
     globalScene.ui.clearText();
@@ -151,9 +152,11 @@ export class TitlePhase extends Phase {
               return true;
             },
           });
-          ui.showText(i18next.t("menu:selectGameMode"), null, () => {
-            const config: OptionSelectModeConfig = { options: newGameOptions, yOffset: 48 };
-            ui.setOverlayMode(UiMode.OPTION_SELECT, config);
+          ui.showText(i18next.t("menu:selectGameMode"), {
+            callback: () => {
+              const config: OptionSelectModeConfig = { options: newGameOptions, yOffset: 48 };
+              ui.setOverlayMode(UiMode.OPTION_SELECT, config);
+            },
           });
           return true;
         },
@@ -202,13 +205,13 @@ export class TitlePhase extends Phase {
       const success = await globalScene.gameData.loadSession(slotId);
       if (success) {
         this.loaded = true;
-        globalScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
+        globalScene.ui.showText(i18next.t("menu:sessionSuccess"), { callback: () => this.end() });
       } else {
         this.end();
       }
     } catch (err) {
       console.error(err);
-      globalScene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
+      globalScene.ui.showText(i18next.t("menu:failedToLoadSession"));
     }
   }
 
@@ -350,7 +353,7 @@ export class TitlePhase extends Phase {
   }
 
   // TODO: Refactor this
-  end(): void {
+  public override end(): void {
     if (!this.loaded && !globalScene.gameMode.isDaily) {
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {

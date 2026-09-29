@@ -54,6 +54,7 @@ import type {
   OptionSelectIconConfig,
   OptionSelectItem,
   OptionSelectModeConfig,
+  ShowTextOptions,
   StarterSelectCallback,
 } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
@@ -90,6 +91,10 @@ import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils
 import { getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+
+interface StarterSelectShowTextOptions extends ShowTextOptions {
+  moveToTop?: boolean;
+}
 
 const COLUMNS = 9;
 const ROWS = 9;
@@ -759,14 +764,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   public override showText(
     text: string,
-    delay?: number,
-    callback?: () => void,
-    callbackDelay?: number,
-    prompt?: boolean,
-    promptDelay?: number,
-    moveToTop?: boolean,
+    { delay, callback, callbackDelay, prompt, promptDelay, moveToTop }: StarterSelectShowTextOptions = {},
   ): void {
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    super.showText(text, { delay, callback, callbackDelay, prompt, promptDelay });
 
     const singleLine = text?.indexOf("\n") === -1;
 
@@ -1660,91 +1660,91 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const showSwapOptions = (moveset: StarterMoveset) => {
         this.blockInput = true;
 
-        ui.setMode(UiMode.STARTER_SELECT).then(() => {
-          ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
-            this.moveInfoOverlay.show(allMoves[moveset[0]]);
+        const selectMoveSwapOutCallback = () => {
+          this.moveInfoOverlay.show(allMoves[moveset[0]]);
 
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-              options: moveset
-                .map((m: MoveId, i: number) => {
-                  const option: OptionSelectItem = {
-                    label: allMoves[m].name,
-                    handler: () => {
-                      this.blockInput = true;
-                      ui.setMode(UiMode.STARTER_SELECT).then(() => {
-                        ui.showText(
-                          `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`,
-                          null,
-                          () => {
-                            const possibleMoves = starterMoves.filter((sm: MoveId) => sm !== m);
-                            this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+          ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+            options: moveset
+              .map((m: MoveId, i: number) => {
+                const selectMoveSwapWithCallback = () => {
+                  const possibleMoves = starterMoves.filter((sm: MoveId) => sm !== m);
+                  this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
 
-                            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                              options: possibleMoves
-                                .map(sm => {
-                                  // make an option for each available starter move
-                                  return {
-                                    label: allMoves[sm].name,
-                                    handler: () => {
-                                      this.switchMoveHandler(i, sm, m);
-                                      showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                                      return true;
-                                    },
-                                    onHover: () => {
-                                      this.moveInfoOverlay.show(allMoves[sm]);
-                                    },
-                                  } satisfies OptionSelectItem as OptionSelectItem;
-                                })
-                                .concat({
-                                  label: i18next.t("menu:cancel"),
-                                  handler: () => {
-                                    showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                                    return true;
-                                  },
-                                  onHover: () => {
-                                    this.moveInfoOverlay.clear();
-                                  },
-                                }),
-                              maxOptions: 8,
-                              yOffset: 29,
-                            } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
-                            this.blockInput = false;
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+                    options: possibleMoves
+                      .map(sm => {
+                        // make an option for each available starter move
+                        return {
+                          label: allMoves[sm].name,
+                          handler: () => {
+                            this.switchMoveHandler(i, sm, m);
+                            showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
+                            return true;
                           },
-                        );
-                      });
-                      return true;
-                    },
-                    onHover: () => {
-                      this.moveInfoOverlay.show(allMoves[m]);
-                    },
-                  };
-                  return option;
-                })
-                .concat({
-                  label: i18next.t("menu:cancel"),
+                          onHover: () => {
+                            this.moveInfoOverlay.show(allMoves[sm]);
+                          },
+                        } satisfies OptionSelectItem as OptionSelectItem;
+                      })
+                      .concat({
+                        label: i18next.t("menu:cancel"),
+                        handler: () => {
+                          showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
+                          return true;
+                        },
+                        onHover: () => {
+                          this.moveInfoOverlay.clear();
+                        },
+                      }),
+                    maxOptions: 8,
+                    yOffset: 29,
+                  } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
+                  this.blockInput = false;
+                };
+                const option: OptionSelectItem = {
+                  label: allMoves[m].name,
                   handler: () => {
-                    this.moveInfoOverlay.clear();
-                    this.clearText();
-                    // Only saved if moves were actually swapped
-                    if (this.hasSwappedMoves) {
-                      globalScene.gameData.saveSystem().then(success => {
-                        if (!success) {
-                          return globalScene.reset(true);
-                        }
-                      });
-                    }
-                    ui.setMode(UiMode.STARTER_SELECT);
+                    this.blockInput = true;
+                    ui.setMode(UiMode.STARTER_SELECT).then(() => {
+                      const text = `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`;
+                      ui.showText(text, { callback: selectMoveSwapWithCallback });
+                    });
                     return true;
                   },
                   onHover: () => {
-                    this.moveInfoOverlay.clear();
+                    this.moveInfoOverlay.show(allMoves[m]);
                   },
-                }),
-              maxOptions: 8,
-              yOffset: 29,
-            } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
-            this.blockInput = false;
-          });
+                };
+                return option;
+              })
+              .concat({
+                label: i18next.t("menu:cancel"),
+                handler: () => {
+                  this.moveInfoOverlay.clear();
+                  this.clearText();
+                  // Only saved if moves were actually swapped
+                  if (this.hasSwappedMoves) {
+                    globalScene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return globalScene.reset(true);
+                      }
+                    });
+                  }
+                  ui.setMode(UiMode.STARTER_SELECT);
+                  return true;
+                },
+                onHover: () => {
+                  this.moveInfoOverlay.clear();
+                },
+              }),
+            maxOptions: 8,
+            yOffset: 29,
+          } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
+          this.blockInput = false;
+        };
+
+        ui.setMode(UiMode.STARTER_SELECT).then(() => {
+          ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), { callback: selectMoveSwapOutCallback });
         });
       };
       options.push({
@@ -1761,40 +1761,41 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const showNatureOptions = () => {
         this.blockInput = true;
 
-        ui.setMode(UiMode.STARTER_SELECT).then(() => {
-          ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-            const { dexEntry } = getStarterData(this.lastStarterId);
-            const natures = globalScene.gameData.getNaturesForAttr(dexEntry?.natureAttr);
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-              options: natures
-                .map((n: Nature, _i: number) => {
-                  const option: OptionSelectItem = {
-                    label: getNatureName(n, true, true, true),
-                    handler: () => {
-                      this.setNewNature(this.lastStarterId, n);
-                      this.clearText();
-                      ui.setMode(UiMode.STARTER_SELECT);
-                      // set nature for starter
-                      this.setStarterDetails(this.lastStarterId);
-                      this.blockInput = false;
-                      return true;
-                    },
-                  };
-                  return option;
-                })
-                .concat({
-                  label: i18next.t("menu:cancel"),
+        const selectNatureCallback = () => {
+          const { dexEntry } = getStarterData(this.lastStarterId);
+          const natures = globalScene.gameData.getNaturesForAttr(dexEntry?.natureAttr);
+          ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+            options: natures
+              .map((n: Nature) => {
+                return {
+                  label: getNatureName(n, true, true, true),
                   handler: () => {
+                    this.setNewNature(this.lastStarterId, n);
                     this.clearText();
                     ui.setMode(UiMode.STARTER_SELECT);
+                    // set nature for starter
+                    this.setStarterDetails(this.lastStarterId);
                     this.blockInput = false;
                     return true;
                   },
-                }),
-              maxOptions: 8,
-              yOffset: 29,
-            } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
-          });
+                } satisfies OptionSelectItem as OptionSelectItem;
+              })
+              .concat({
+                label: i18next.t("menu:cancel"),
+                handler: () => {
+                  this.clearText();
+                  ui.setMode(UiMode.STARTER_SELECT);
+                  this.blockInput = false;
+                  return true;
+                },
+              }),
+            maxOptions: 8,
+            yOffset: 29,
+          } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
+        };
+
+        ui.setMode(UiMode.STARTER_SELECT).then(() => {
+          ui.showText(i18next.t("starterSelectUiHandler:selectNature"), { callback: selectNatureCallback });
         });
       };
       options.push({
@@ -1987,15 +1988,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
             if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
               // Egg list full, show error message at the top of the screen and abort
-              this.showText(
-                i18next.t("egg:tooManyEggs"),
-                undefined,
-                () => this.showText("", 0, () => (this.tutorialActive = false)),
-                2000,
-                false,
-                undefined,
-                true,
-              );
+              this.showText(i18next.t("egg:tooManyEggs"), {
+                callback: () => this.showText("", { delay: 0, callback: () => (this.tutorialActive = false) }),
+                callbackDelay: 2000,
+                prompt: false,
+                moveToTop: true,
+              });
               return false;
             }
             if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
@@ -2004,10 +2002,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
             this.starterSummary.updateCandyCount(starterData.candyCount);
 
-            const egg = new Egg({
-              species: this.lastStarterId,
-              sourceType: EggSourceType.SAME_SPECIES_EGG,
-            });
+            const egg = new Egg({ species: this.lastStarterId, sourceType: EggSourceType.SAME_SPECIES_EGG });
             egg.addEggToGameData();
 
             globalScene.gameData.saveSystem().then(success => {
@@ -3148,18 +3143,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         yOffset: 29,
       };
 
-      ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
-        ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions);
-      });
+      ui.showText(
+        i18next.t("starterSelectUiHandler:confirmStartTeam"), //
+        { callback: () => ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions) },
+      );
     } else {
       this.tutorialActive = true;
-      this.showText(
-        i18next.t("starterSelectUiHandler:invalidParty"),
-        undefined,
-        () => this.showText("", 0, () => (this.tutorialActive = false)),
-        undefined,
-        true,
-      );
+      this.showText(i18next.t("starterSelectUiHandler:invalidParty"), {
+        callback: () => this.showText("", { delay: 0, callback: () => (this.tutorialActive = false) }),
+        prompt: true,
+      });
     }
     return true;
   }
@@ -3244,9 +3237,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       noHandler: cancelExit,
       yOffset: 29,
     };
-    ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(UiMode.CONFIRM, options);
-    });
+    ui.showText(
+      i18next.t("starterSelectUiHandler:confirmExit"), //
+      { callback: () => ui.setModeWithoutClear(UiMode.CONFIRM, options) },
+    );
   }
 
   public override clear(): void {
