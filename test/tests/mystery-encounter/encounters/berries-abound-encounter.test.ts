@@ -5,6 +5,7 @@ import { HeldItemCategoryId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { getPartyItemsInCategory } from "#items/item-utility";
@@ -144,7 +145,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
-        expect(option.rewardOption.type.id).toContain("BERRY");
+        expect(option.rewardOption.type.id).toBe(RewardId.BERRY);
       }
     });
   });
@@ -227,7 +228,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
-        expect(option.rewardOption.type.id).toContain("BERRY");
+        expect(option.rewardOption.type.id).toBe(RewardId.BERRY);
       }
 
       expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(`${namespace}:option.2.selected`);

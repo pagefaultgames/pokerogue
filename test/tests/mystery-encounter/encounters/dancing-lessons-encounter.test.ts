@@ -1,11 +1,14 @@
 import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import type { HeldItemReward } from "#items/held-item-reward";
 import { DancingLessonsEncounter } from "#mystery-encounters/dancing-lessons-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -128,7 +131,8 @@ describe("Dancing Lessons - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(3); // Should fill remaining
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toContain("BATON");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
+      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.BATON);
     });
   });
 

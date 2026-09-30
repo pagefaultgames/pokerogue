@@ -66,7 +66,7 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   ) {
     const currentItems = transferableOnly ? this.getTransferableHeldItems() : this.getItems();
 
-    return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
+    return currentItems.filter(it => exclude !== isItemInRequested(it, requestedItems));
   }
 
   public hasActiveFormChangeItem(id: FormChangeItemId): boolean {
