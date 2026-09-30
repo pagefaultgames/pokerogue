@@ -1915,8 +1915,11 @@ export class PreMoveChooseItemAttr extends MoveAttr {
         "ItemSelectPhase",
         items,
         (itemId: HeldItemId) => {
+          console.log(this.tagType);
           user.addTag(this.tagType, 0, move.id);
+          console.log("Added tag with item: ", user.getTag(this.tagType));
           user.getTag(this.tagType)?.chooseItem(itemId);
+          console.log("Added tag with item: ", user.getTag(this.tagType));
         },
         () => {
           const fieldIndex = user.getFieldIndex();
@@ -7747,6 +7750,7 @@ export class BestowHeldItemAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target) => {
       const givenItem = user.getTag(BattlerTagType.BESTOW)?.item;
+      console.log("Bestow condition", givenItem, !!givenItem, getTransferableAmount(givenItem!, user, target) > 0);
       return !!givenItem && getTransferableAmount(givenItem, user, target) > 0;
     };
   }

@@ -4143,11 +4143,11 @@ export function getBattlerTag(
     case BattlerTagType.FLING:
       return new FlingTag(sourceMove);
     case BattlerTagType.BESTOW:
-      return new FlingTag(sourceMove);
+      return new BestowTag(sourceMove);
     case BattlerTagType.TRICK:
-      return new FlingTag(sourceMove);
+      return new TrickTag(sourceMove);
     case BattlerTagType.SWITCHEROO:
-      return new FlingTag(sourceMove);
+      return new SwitcherooTag(sourceMove);
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:

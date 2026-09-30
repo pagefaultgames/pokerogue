@@ -63,7 +63,10 @@ export class PokemonMove {
       return [false, i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") })];
     }
 
-    if (this.moveId === MoveId.FLING && pokemon.heldItemManager.getTransferableHeldItems().length === 0) {
+    if (
+      [MoveId.FLING, MoveId.BESTOW, MoveId.TRICK, MoveId.SWITCHEROO].includes(this.moveId)
+      && pokemon.heldItemManager.getTransferableHeldItems().length === 0
+    ) {
       return [false, "This Pokémon is not holding any items."];
     }
 

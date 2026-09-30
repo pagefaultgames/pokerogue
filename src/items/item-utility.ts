@@ -105,7 +105,8 @@ export function tryTransferHeldItem(
     return false;
   }
 
-  if (temporary) {
+  // If an item that was given temporarily is stolen back, we must use the temporary stack
+  if (temporary || holder.heldItemManager.getStack(heldItemId, true) === 0) {
     holder.heldItemManager.addTempStack(heldItemId, -1 * countTaken);
     receiver.heldItemManager.addTempStack(heldItemId, countTaken);
     return true;
@@ -139,8 +140,7 @@ export function tryStealHeldItem(
     return false;
   }
 
-  // Bestowing items is permanent (both ways) when fighting wild Pokémon.
-  // It is temporary (both ways) otherwise.
+  // Stealing items is permanent (both ways) when fighting wild Pokémon.
   const sameTeam = holder.isPlayer() === receiver.isPlayer();
   const wildBattle = globalScene.currentBattle.battleType === BattleType.WILD;
   const temporary = !wildBattle && !sameTeam;
@@ -175,6 +175,7 @@ export function tryGiveHeldItem(
   // Giving items is not blocked by sticky hold
 
   const sameTeam = holder.isPlayer() === receiver.isPlayer();
+  //  const wildBattle = globalScene.currentBattle.battleType === BattleType.WILD;
   const temporary = !sameTeam;
   const successfulGift = tryTransferHeldItem(heldItemId, holder, receiver, stolenQuantity, temporary);
 
