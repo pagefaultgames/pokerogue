@@ -14,7 +14,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
 
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
-  public nameBoxContainer: Phaser.GameObjects.Container;
+  /**
+   * The container for the name box
+   * @remarks This will be undefined unless `this.initNameBox()` was called
+   */
+  public nameBoxContainer?: Phaser.GameObjects.Container;
   private nameBox: Phaser.GameObjects.NineSlice;
   private nameIcon: Phaser.GameObjects.Sprite;
   private nameText: BBCodeText;

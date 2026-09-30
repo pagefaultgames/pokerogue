@@ -685,12 +685,12 @@ export class EggGachaUiHandler extends MessageUiHandler {
       this.eggGachaMessageBox.setSize(320, 32);
       this.eggGachaMessageBox.setY(0);
       this.message.setY(8);
-      this.nameBoxContainer.setY(-7);
+      this.nameBoxContainer?.setY(-7);
     } else {
       this.eggGachaMessageBox.setSize(320, 46);
       this.eggGachaMessageBox.setY(-14);
       this.message.setY(-6);
-      this.nameBoxContainer.setY(-21);
+      this.nameBoxContainer?.setY(-21);
     }
   }
 

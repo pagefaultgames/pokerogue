@@ -784,7 +784,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.nameBoxContainer.setY(this.message.y - 16);
+    this.nameBoxContainer?.setY(this.message.y - 16);
 
     this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
