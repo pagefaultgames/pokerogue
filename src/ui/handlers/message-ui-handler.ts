@@ -1,7 +1,11 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
+import { TextStyle } from "#enums/text-style";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { addBBCodeTextObject } from "#ui/text";
 import { getFrameMs } from "#utils/common";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -10,12 +14,45 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
 
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
+  public nameBoxContainer: Phaser.GameObjects.Container;
+  private nameBox: Phaser.GameObjects.NineSlice;
+  private nameIcon: Phaser.GameObjects.Sprite;
+  private nameText: BBCodeText;
+
+  public readonly wordWrapWidth: number = 1780;
+
+  /**
+   * Add the name box shown by {@linkcode showDialogue} to the given message container..
+   * @param container - The container holding the message text
+   * @param x - The x position of the name box
+   * @param y - The y position of the name box
+   * @remarks
+   * When this method was not called, the name box will not be displayed.
+   */
+  public initNameBox(container: Phaser.GameObjects.Container, x = 0, y = -16): void {
+    this.nameBoxContainer = globalScene.add.container(x, y);
+    this.nameBoxContainer.setVisible(false);
+
+    this.nameBox = globalScene.add.nineslice(0, 0, "namebox", settings.display.uiWindowStyle, 72, 16, 8, 8, 5, 5);
+    this.nameBox.setOrigin(0, 0);
+
+    this.nameIcon = globalScene.add.sprite(8, 0, "items", "");
+    this.nameIcon.setOrigin(0, 0);
+    this.nameIcon.setVisible(false);
+
+    this.nameText = addBBCodeTextObject(8, 0, "Rival", TextStyle.MESSAGE, { maxLines: 1 });
+
+    this.nameBoxContainer.add(this.nameBox);
+    this.nameBoxContainer.add(this.nameIcon);
+    this.nameBoxContainer.add(this.nameText);
+    container.add(this.nameBoxContainer);
+  }
 
   /**
    * Add the sprite to be displayed at the end of messages with prompts
    * @param container the container to add the sprite to
    */
-  initPromptSprite(container: Phaser.GameObjects.Container) {
+  public initPromptSprite(container: Phaser.GameObjects.Container) {
     if (!this.prompt) {
       const promptSprite = globalScene.add.sprite(0, 0, "prompt");
       promptSprite.setVisible(false);
@@ -36,19 +73,23 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     prompt?: boolean | null,
     promptDelay?: number | null,
   ) {
+    this.hideNameText();
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   showDialogue(
     text: string,
-    _name?: string,
+    name?: string,
     delay?: number | null,
     callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
   ) {
-    this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
+    this.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    if (name) {
+      this.showNameText(name);
+    }
   }
 
   private showTextInternal(
@@ -248,6 +289,37 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
         }
       }
     };
+  }
+
+  /**
+   * Show a name above the text.
+   * @param name - The name to show
+   * @param iconFrame - The frame of the icon to display next to the name
+   * @remarks
+   * the icon must be from the `items` atlas
+   */
+  public showNameText(name: string, iconFrame?: string): void {
+    if (!this.nameBoxContainer) {
+      return;
+    }
+    this.nameBoxContainer.setVisible(true);
+    this.nameText.setText(name);
+
+    if (iconFrame) {
+      this.nameIcon.setTexture("items", iconFrame);
+      this.nameIcon.setVisible(true);
+      this.nameIcon.setScale(0.5);
+      this.nameText.x = this.nameIcon.x + this.nameIcon.displayWidth + 4;
+    } else {
+      this.nameIcon.setVisible(false);
+      this.nameText.x = 8;
+    }
+
+    this.nameBox.width = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth + 4 : 0) + 16;
+  }
+
+  public hideNameText(): void {
+    this.nameBoxContainer?.setVisible(false);
   }
 
   isTextAnimationInProgress() {
