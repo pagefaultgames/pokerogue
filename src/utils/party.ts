@@ -1,8 +1,10 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { getDailyEventSeedLuck } from "#data/daily-run";
 import { RarityTier } from "#enums/reward-tier";
 import { getRarityTierTextTint } from "#ui/text";
-import { NumberHolder, randSeedInt } from "./common";
+import { randSeedInt } from "./common";
+import { ValueHolder } from "./value-holder";
 
 /**
  * Calculates the team's luck value.
@@ -11,9 +13,15 @@ import { NumberHolder, randSeedInt } from "./common";
  */
 export function getPartyLuckValue(): number {
   if (globalScene.gameMode.isDaily) {
-    const DailyLuck = new NumberHolder(0);
+    const DailyLuck = new ValueHolder(0);
     globalScene.executeWithSeedOffset(
       () => {
+        const eventLuck = getDailyEventSeedLuck();
+        if (eventLuck != null) {
+          DailyLuck.value = eventLuck;
+          return;
+        }
+
         DailyLuck.value = randSeedInt(15); // Random number between 0 and 14
       },
       0,
