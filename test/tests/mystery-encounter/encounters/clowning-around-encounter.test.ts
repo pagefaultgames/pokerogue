@@ -273,7 +273,7 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       const secondItemsAfter = scene.getPlayerParty()[1].getHeldItems();
       expect(secondItemsAfter.length).toBe(1);
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(5);
+      expect(scene.getPlayerParty()[1].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(5);
     });
 
     it("should leave encounter without battle", async () => {

@@ -30,6 +30,7 @@ const heldItemRarities = {
   [HeldItemId.SHELL_BELL]: RarityTier.ROGUE,
   [HeldItemId.GRIP_CLAW]: RarityTier.ROGUE,
   [HeldItemId.SOUL_DEW]: RarityTier.ROGUE,
+  [HeldItemId.SCOPE_LENS]: RarityTier.ROGUE,
   [HeldItemId.BATON]: RarityTier.ROGUE,
   [HeldItemId.GOLDEN_EGG]: RarityTier.ROGUE,
 
