@@ -3345,7 +3345,8 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   protected reduceBerryItem(target: Pokemon) {
-    target.loseHeldItem(this.chosenBerry);
+    // Berries eaten in this way are lost permanently
+    target.loseHeldItem(this.chosenBerry, false);
     globalScene.updateItemBar(target.isPlayer());
   }
 

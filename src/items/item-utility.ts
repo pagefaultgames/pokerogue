@@ -151,9 +151,7 @@ export function tryStealHeldItem(
   globalScene.updateItemBar();
   globalScene.updateItemBar(false);
 
-  if (holder.heldItemManager.getStack(heldItemId) === 0) {
-    applyAbAttrs("PostItemLostAbAttr", { pokemon: holder });
-  }
+  applyAbAttrs("PostItemLostAbAttr", { pokemon: holder });
 
   return true;
 }
