@@ -2022,6 +2022,52 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Iterate through the moveset and replace the first instance of the target move with the replacement move.
+   * Does nothing if the replacement move is already in the moveset
+   * @param target - The id of the move that should be replaced
+   * @param replacement - The move that replaces `target`
+   */
+  public replaceInMoveset(target: MoveId, replacement: MoveId): void {
+    if (globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)) {
+      return;
+    }
+    let foundIdx = -1;
+    for (const [idx, move] of this.moveset.entries()) {
+      if (move.moveId === target) {
+        foundIdx = idx;
+      } else if (move.moveId === replacement) {
+        // Replacement move already in moveset
+        return;
+      }
+    }
+    if (foundIdx > -1) {
+      this.setMove(foundIdx, replacement);
+    }
+    return;
+  }
+
+  /**
+   * Places a specified move in a specified slot unless the moveset contains an acceptable alternative move fulfilling the filter
+   * @param replacement - The move to insert in moveset
+   * @param preferredSlot - The preferred slot to put the move in
+   * @param altMoveFilter - (Optional) A filtering function mapping a Move to a boolean; if a move in the moveset fulfills it, the replacement is not done
+   */
+  public addIfNotInMoveset(
+    replacement: MoveId,
+    preferredSlot: 0 | 1 | 2 | 3,
+    altMoveFilter: (move: Move) => boolean = () => false,
+  ): void {
+    if (
+      globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)
+      || this.moveset.find(m => altMoveFilter(m.getMove()) || m.moveId === replacement)
+    ) {
+      return;
+    }
+    this.setMove(preferredSlot, replacement);
+    return;
+  }
+
   // #endregion Moves/Moveset
 
   /**
