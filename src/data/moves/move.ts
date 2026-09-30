@@ -1905,7 +1905,7 @@ export class PreMoveChooseItemAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
 
-    const items = user.heldItemManager.getActiveTransferableHeldItems();
+    const items = user.heldItemManager.getTransferableHeldItems();
 
     items.sort((a, b) => this.sortFunc(a, b));
 
@@ -2272,7 +2272,8 @@ export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
       return false;
     }
 
-    user.heldItemManager.disable(item);
+    // TODO: decide whether to fling a single item or the whole stack
+    user.heldItemManager.addTempStack(item, -1);
     user.removeTag(BattlerTagType.FLING);
     globalScene.updateItemBar(user.isPlayer());
 
@@ -4870,7 +4871,7 @@ export class FlingPowerAttr extends VariablePowerAttr {
     // If there is no battle tag, choose a new item based on the priority list
     // This should happen if the move is used by an enemy Pokémon, or if the move is called through other means
     if (!item) {
-      const items = user.heldItemManager.getActiveTransferableHeldItems();
+      const items = user.heldItemManager.getTransferableHeldItems();
       if (items.length === 0) {
         return false;
       }
@@ -9131,10 +9132,10 @@ const failIfLastInPartyCondition: MoveConditionFunc = user => {
 const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.isOfType(PokemonType.GHOST);
 
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
-  target.heldItemManager.getActiveTransferableHeldItems().length > 0;
+  target.heldItemManager.getTransferableHeldItems().length > 0;
 
 const failIfNoUserHeldItemsCondition: MoveConditionFunc = (user, _target) =>
-  user.heldItemManager.getActiveTransferableHeldItems().length > 0;
+  user.heldItemManager.getTransferableHeldItems().length > 0;
 
 // #endregion Condition functions
 
