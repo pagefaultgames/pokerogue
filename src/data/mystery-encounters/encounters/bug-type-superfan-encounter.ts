@@ -319,19 +319,19 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
             rewardOptions.push(generateRewardOptionFromId(TrainerItemId.DYNAMAX_BAND)!);
           }
           const nonRareEvolutionReward = generateRewardOptionFromId(RewardId.EVOLUTION_ITEM);
-          if (nonRareEvolutionReward) {
+          if (nonRareEvolutionReward.type.id) {
             specialOptions.push(nonRareEvolutionReward);
           }
           const rareEvolutionReward = generateRewardOptionFromId(RewardId.RARE_EVOLUTION_ITEM);
-          if (rareEvolutionReward) {
+          if (rareEvolutionReward.type.id) {
             specialOptions.push(rareEvolutionReward);
           }
           const formChangeReward = generateRewardOptionFromId(RewardId.FORM_CHANGE_ITEM);
-          if (formChangeReward) {
+          if (formChangeReward.type.id) {
             specialOptions.push(formChangeReward);
           }
           const rareFormChangeReward = generateRewardOptionFromId(RewardId.RARE_FORM_CHANGE_ITEM);
-          if (rareFormChangeReward) {
+          if (rareFormChangeReward.type.id) {
             specialOptions.push(rareFormChangeReward);
           }
           if (specialOptions.length > 0) {
