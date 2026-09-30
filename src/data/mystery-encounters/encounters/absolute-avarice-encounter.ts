@@ -33,7 +33,8 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { HeldItemRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import type { HeldItemConfiguration, PokemonItemMap } from "#types/held-item-data-types";
-import { pickWeightedIndex, randInt } from "#utils/common";
+import { randInt } from "#utils/common";
+import { weightedPick } from "#utils/random";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
@@ -168,7 +169,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Session has been safely saved at this point, so data won't be lost
     const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     berryItems.forEach(map => {
-      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id);
+      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id, 0, true);
     });
 
     globalScene.updateItemBar(true);
@@ -240,10 +241,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
           for (let i = 0; i < returnedBerryCount; i++) {
             // pick a random berry to recover
-
-            // type assertion justified because returnedBerryCount <= stolenBerries.length
-            const berryWeights = stolenBerries.map(b => b.item.stack) as unknown as NonEmptyTuple<number>;
-            const randBerry = stolenBerries[pickWeightedIndex(berryWeights)];
+            const stolenBerryMap = new Map<PokemonItemMap, number>();
+            for (const b of stolenBerries) {
+              stolenBerryMap.set(b, b.item.stack);
+            }
+            const randBerry = weightedPick(stolenBerryMap);
             pokemon.heldItemManager.add(randBerry.item.id);
             randBerry.item.stack--;
           }

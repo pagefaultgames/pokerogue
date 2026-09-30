@@ -15,10 +15,9 @@ export interface HeldItemData {
    */
   stack: number;
   /**
-   * Whether this item is currently disabled.
-   * @defaultValue `false`
+   * Number of temporary items in the stack, e.g. from flinging or stealing
    */
-  disabled?: boolean;
+  tempStack?: number;
   /**
    * Whether a form change is active.
    * TODO: This is only temporary to make things work, form change rework should get rid of it.
@@ -46,7 +45,7 @@ export interface HeldItemCategoryEntry extends HeldItemData {
 }
 
 // TODO: This can include itself through held item pool and is a bit overly expressive
-interface HeldItemPoolEntry {
+export interface HeldItemPoolEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   weight: number | HeldItemWeightFunc;
 }

@@ -5,6 +5,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
 import { HeldItemAttr } from "#items/held-item-attr";
+import { tryStealHeldItem } from "#items/item-utility";
 import type { ItemStealParams } from "#types/held-item-parameter";
 import { coerceArray } from "#utils/common";
 import i18next from "i18next";
@@ -44,7 +45,7 @@ abstract class ItemTransferHeldItemAttr<T extends HeldItemEffect> extends HeldIt
       const randItemIndex = pokemon.randBattleSeedInt(heldItems.length);
       const randItem = heldItems[randItemIndex];
       // TODO: Fix this after updating the various methods in battle-scene.ts
-      if (globalScene.tryTransferHeldItem(randItem, targetPokemon, pokemon, false)) {
+      if (tryStealHeldItem(randItem, targetPokemon, pokemon)) {
         transferredItems.push(randItem);
         heldItems.splice(randItemIndex, 1);
       }

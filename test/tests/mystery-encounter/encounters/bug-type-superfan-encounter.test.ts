@@ -5,9 +5,13 @@ import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
+import type { HeldItemReward } from "#items/held-item-reward";
+import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import { BugTypeSuperfanEncounter } from "#mystery-encounters/bug-type-superfan-encounter";
 import * as encounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -418,8 +422,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(2);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("SUPER_LURE");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe("GREAT_BALL");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.SUPER_LURE);
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.GREAT_BALL);
     });
 
     it("should proceed to allRewards screen with 2-3 Bug Types reward options", async () => {
@@ -437,9 +441,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(3);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("QUICK_CLAW");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe("MAX_LURE");
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe("ULTRA_BALL");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
+      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.QUICK_CLAW);
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.MAX_LURE);
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe(RewardId.ULTRA_BALL);
     });
 
     it("should proceed to allRewards screen with 4-5 Bug Types reward options", async () => {
@@ -459,9 +464,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(3);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("GRIP_CLAW");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe("MAX_LURE");
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe("ROGUE_BALL");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
+      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.GRIP_CLAW);
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.MAX_LURE);
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe(RewardId.ROGUE_BALL);
     });
 
     it("should proceed to allRewards screen with 6 Bug Types reward options (including form change item)", async () => {
@@ -483,10 +489,16 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(4);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("MASTER_BALL");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe("MEGA_BRACELET");
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe("DYNAMAX_BAND");
-      expect(rewardSelectHandler.options[3].rewardOption.type.id).toBe("FORM_CHANGE_ITEM");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.MASTER_BALL);
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.GENERIC_TRAINER_ITEM);
+      expect((rewardSelectHandler.options[1].rewardOption.type as TrainerItemReward).itemId).toBe(
+        TrainerItemId.MEGA_BRACELET,
+      );
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe(RewardId.GENERIC_TRAINER_ITEM);
+      expect((rewardSelectHandler.options[2].rewardOption.type as TrainerItemReward).itemId).toBe(
+        TrainerItemId.DYNAMAX_BAND,
+      );
+      expect(rewardSelectHandler.options[3].rewardOption.type.id).toBe(RewardId.FORM_CHANGE_ITEM);
     });
 
     it("should leave encounter without battle", async () => {
@@ -558,8 +570,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(2);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("MYSTERY_ENCOUNTER_GOLDEN_BUG_NET");
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe("REVIVER_SEED");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_TRAINER_ITEM);
+      expect((rewardSelectHandler.options[0].rewardOption.type as TrainerItemReward).itemId).toBe(
+        TrainerItemId.GOLDEN_BUG_NET,
+      );
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
+      expect((rewardSelectHandler.options[1].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.REVIVER_SEED);
 
       const gripClawCountAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.GRIP_CLAW);
       expect(gripClawCountBefore - 1).toBe(gripClawCountAfter);

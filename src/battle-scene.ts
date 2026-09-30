@@ -126,7 +126,6 @@ import { UI } from "#ui/ui";
 import { addUiThemeOverrides, updateWindowType } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
 import {
-  BooleanHolder,
   fixedInt,
   formatMoney,
   getBiomeName,
@@ -145,7 +144,6 @@ import { applyHeldItems, isTrainerItemPool, isTrainerItemSpecs } from "#utils/it
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
-import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -1118,17 +1116,13 @@ export class BattleScene extends SceneBase {
 
     this.lockRarityTiers = false;
 
-    if (activeOverrides.POKEBALL_OVERRIDE.active) {
-      this.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
-    } else {
-      // TODO: Remove unused luxury balls and remove the `filter`
-      this.pokeballCounts = Object.fromEntries(
-        getEnumValues(PokeballType)
-          .filter(pt => pt !== PokeballType.LUXURY_BALL)
-          .map(t => [t, 0]),
-      );
-      this.pokeballCounts[PokeballType.POKEBALL] = 5;
-    }
+    // TODO: Remove unused luxury balls and remove the `filter`
+    this.pokeballCounts = Object.fromEntries(
+      getEnumValues(PokeballType)
+        .filter(pt => pt !== PokeballType.LUXURY_BALL)
+        .map(t => [t, 0]),
+    );
+    this.pokeballCounts[PokeballType.POKEBALL] = 5;
 
     this.trainerItems.clearItems();
     this.enemyTrainerItems.clearItems();
@@ -1267,13 +1261,11 @@ export class BattleScene extends SceneBase {
       this.handleNonFixedBattle(resolved);
     }
 
-    // Reactivate disabled items
+    // Reset all temporary stacks, if they have not already been reset in reward selection
     for (const p of this.getPlayerParty()) {
-      const items = p.heldItemManager.getSuppressableHeldItems();
-      for (const item of items) {
-        p.heldItemManager.enable(item);
-      }
+      p.heldItemManager.clearTempStacks();
     }
+    this.trainerItems.clearTempStacks();
     this.updateItemBar();
 
     if (resolved.battleType == null) {
@@ -2395,98 +2387,6 @@ export class BattleScene extends SceneBase {
     return true;
   }
 
-  /**
-   * Try to transfer a held item from source to target.
-   * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
-   * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
-   * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
-   * @param heldItemId {@linkcode HeldItemId} item to transfer
-   * @param source {@linkcode Pokemon} giver in this transfer
-   * @param target {@linkcode Pokemon} recepient in this transfer
-   * @param playSound `true` to play a sound when transferring the item
-   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
-   * @param ignoreUpdate If `true`, doesn't update the item bars as part of this transfer. Optional, defaults to `false`
-   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
-   * @returns `true` if the transfer was successful
-   */
-  tryTransferHeldItem(
-    heldItemId: HeldItemId,
-    source: Pokemon,
-    target: Pokemon,
-    playSound: boolean,
-    transferQuantity = 1,
-    ignoreUpdate?: boolean,
-    itemLost = true,
-  ): boolean {
-    const cancelled = new ValueHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
-    }
-
-    if (cancelled.value) {
-      return false;
-    }
-
-    const itemStack = source.heldItemManager.getStack(heldItemId);
-    const matchingItemStack = target.heldItemManager.getStack(heldItemId);
-
-    const maxStackCount = allHeldItems[heldItemId].maxStackCount;
-    if (matchingItemStack >= maxStackCount) {
-      return false;
-    }
-    const countTaken = Math.min(transferQuantity, itemStack, maxStackCount - matchingItemStack);
-    if (countTaken <= 0) {
-      return false;
-    }
-
-    if (source.heldItemManager.getItemSpecs(heldItemId) == null) {
-      return false;
-    }
-
-    source.heldItemManager.remove(heldItemId, countTaken);
-    target.heldItemManager.add(heldItemId, countTaken);
-
-    if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
-    }
-
-    if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-      this.updateItemBar(source.isPlayer());
-    }
-
-    // TODO: held items don't have sounds
-    const soundName = allHeldItems[heldItemId].soundName;
-    if (playSound) {
-      audioManager.playSound(soundName);
-    }
-
-    return true;
-  }
-
-  canTransferHeldItem(heldItemId: HeldItemId, source: Pokemon, target: Pokemon, transferQuantity = 1): boolean {
-    const cancelled = new BooleanHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
-    }
-
-    if (cancelled.value) {
-      return false;
-    }
-
-    const itemStack = source.heldItemManager.getStack(heldItemId);
-    const matchingItemStack = target.heldItemManager.getStack(heldItemId);
-
-    const maxStackCount = allHeldItems[heldItemId].maxStackCount;
-    if (matchingItemStack >= maxStackCount) {
-      return false;
-    }
-    const countTaken = Math.min(transferQuantity, itemStack, maxStackCount - matchingItemStack);
-
-    return countTaken > 0;
-  }
-
   assignTrainerItemsFromConfiguration(config: TrainerItemConfiguration, isPlayer: boolean) {
     const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
     config.forEach(item => {
@@ -2610,19 +2510,22 @@ export class BattleScene extends SceneBase {
 
   /**
    * Update the item bar for the given side.
-   * @param player - (Default `true`) Whether to use the player (`true`) or enemy side
+   * @param player - (Default `true`) Whether to use the player or enemy side
    * @param showHeldItems - (Default `true`) Whether to include the held items of the first Pokemon in the party
    */
   public updateItemBar(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
-    this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
-    const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
-    const bar = player ? this.itemBar : this.enemyItemBar;
+
+    const party = player ? this.getPlayerParty() : this.getEnemyParty();
+    this.updateParty(party, true);
+    const pokemonA = party[0];
+
+    const itemBar = player ? this.itemBar : this.enemyItemBar;
 
     if (showHeldItems) {
-      bar.updateItems(trainerItems, pokemonA);
+      itemBar.updateItems(trainerItems, pokemonA);
     } else {
-      bar.updateItems(trainerItems);
+      itemBar.updateItems(trainerItems);
     }
 
     if (!player) {

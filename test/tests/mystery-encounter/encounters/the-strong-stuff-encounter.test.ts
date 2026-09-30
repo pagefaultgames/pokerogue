@@ -12,8 +12,10 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import type { HeldItemReward } from "#items/held-item-reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -222,7 +224,8 @@ describe("The Strong Stuff - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(3);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("SOUL_DEW");
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
+      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.SOUL_DEW);
     });
   });
 });

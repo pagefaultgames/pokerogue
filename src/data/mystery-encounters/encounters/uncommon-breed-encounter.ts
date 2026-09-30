@@ -10,6 +10,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
+import type { BattleStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { getPartyItemsInCategory } from "#items/item-utility";
@@ -35,7 +36,8 @@ import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/myster
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { PokemonItemMap } from "#types/held-item-data-types";
-import { pickWeightedIndex, randSeedInt } from "#utils/common";
+import { randSeedInt, randSeedItem } from "#utils/common";
+import { weightedPick } from "#utils/random";
 import { groupStatChange } from "#utils/stat-change";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -74,11 +76,10 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       eventHiddenRerolls: 1,
     });
 
-    // Pokemon will always have one of its egg moves in its moveset
+    // Pokemon will always have one of its egg moves as the last move in its moveset
     const eggMoves = pokemon.getEggMoves();
     if (eggMoves) {
-      const eggMoveIndex = randSeedInt(4);
-      const randomEggMove: MoveId = eggMoves[eggMoveIndex];
+      const randomEggMove: MoveId = randSeedItem(eggMoves);
       encounter.misc = {
         eggMove: randomEggMove,
         pokemon,
@@ -86,17 +87,15 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       if (pokemon.moveset.length < 4) {
         pokemon.moveset.push(new PokemonMove(randomEggMove));
       } else {
-        pokemon.moveset[0] = new PokemonMove(randomEggMove);
+        pokemon.moveset[3] = new PokemonMove(randomEggMove);
       }
     } else {
       encounter.misc.pokemon = pokemon;
     }
 
-    // Defense/Spd buffs below wave 50, +1 to all stats otherwise
-    const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] =
-      globalScene.currentBattle.waveIndex < 50
-        ? [Stat.DEF, Stat.SPDEF, Stat.SPD]
-        : [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+    // Defense buffs below wave 150, speed afterwards
+    const statChangesForBattle: BattleStat[] =
+      globalScene.currentBattle.waveIndex < 150 ? [Stat.DEF, Stat.SPDEF] : [Stat.DEF, Stat.SPDEF, Stat.SPD];
 
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
@@ -210,12 +209,14 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         // Give it some food
 
         // Remove 4 random berries from player's party
-        const berryMap = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as unknown as NonEmptyTuple<PokemonItemMap>;
+        const berries = getPartyItemsInCategory(HeldItemCategoryId.BERRY) as unknown as NonEmptyTuple<PokemonItemMap>;
 
         for (let i = 0; i < 4; i++) {
-          const berryWeights = berryMap.map(b => b.item.stack);
-          const index = pickWeightedIndex(berryWeights);
-          const randBerry = berryMap[index];
+          const berryMap = new Map<PokemonItemMap, number>();
+          for (const b of berries) {
+            berryMap.set(b, b.item.stack);
+          }
+          const randBerry = weightedPick(berryMap);
           globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
           randBerry.item.stack -= 1;
         }
@@ -258,8 +259,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
 
         // Roll IVs a second time
         pokemon.ivs = pokemon.ivs.map(iv => {
-          const newValue = randSeedInt(31);
-          return newValue > iv ? newValue : iv;
+          return Math.max(randSeedInt(31), iv);
         });
 
         await catchPokemon(pokemon, null, PokeballType.POKEBALL, false);
@@ -276,14 +276,13 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
 function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: MoveId) {
   const eggMoves = pokemon.getEggMoves();
   if (eggMoves) {
-    let randomEggMove: MoveId = eggMoves[randSeedInt(4)];
-    while (randomEggMove === previousEggMove) {
-      randomEggMove = eggMoves[randSeedInt(4)];
-    }
+    // Choose a random egg move that isn't the previously chosen one
+    eggMoves.splice(previousEggMove, 1);
+    const randomEggMove = randSeedItem(eggMoves);
     if (pokemon.moveset.length < 4) {
       pokemon.moveset.push(new PokemonMove(randomEggMove));
     } else {
-      pokemon.moveset[1] = new PokemonMove(randomEggMove);
+      pokemon.moveset[2] = new PokemonMove(randomEggMove);
     }
   }
 }

@@ -45,21 +45,11 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.getItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
-  // Function returning all items that are not currently disabled
-  public getActiveHeldItems(): HeldItemId[] {
-    return this.getItems().filter(k => !this.items.get(k)?.disabled);
-  }
-
-  // Function returning all transferable items that are not currently disabled
-  public getActiveTransferableHeldItems(): HeldItemId[] {
-    return this.getTransferableHeldItems().filter(k => !this.items.get(k)?.disabled);
-  }
-
-  public override hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
+  public override hasItem(itemType: HeldItemId | HeldItemCategoryId, excludeTempStack = false): boolean {
     if (isCategoryId(itemType)) {
-      return this.getItems().some(id => isItemInCategory(id, itemType));
+      return this.getItems(excludeTempStack).some(id => isItemInCategory(id, itemType));
     }
-    return super.hasItem(itemType);
+    return super.hasItem(itemType, excludeTempStack);
   }
 
   public hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
@@ -76,7 +66,7 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   ) {
     const currentItems = transferableOnly ? this.getTransferableHeldItems() : this.getItems();
 
-    return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
+    return currentItems.filter(it => exclude !== isItemInRequested(it, requestedItems));
   }
 
   public hasActiveFormChangeItem(id: FormChangeItemId): boolean {
@@ -90,29 +80,13 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     ) as FormChangeItemId[];
   }
 
-  public toggleActive(id: FormChangeItemId): void {
+  public toggleActive(id: FormChangeItemId): boolean {
     const item = this.items.get(id);
     if (item) {
       item.active = !item.active;
+      return true;
     }
-  }
-
-  public disable(itemType: HeldItemId): void {
-    const item = this.items.get(itemType);
-    if (!item || !allHeldItems[itemType].isSuppressable) {
-      return;
-    }
-
-    item.disabled = true;
-  }
-
-  public enable(itemType: HeldItemId): void {
-    const item = this.items.get(itemType);
-    if (!item) {
-      return;
-    }
-
-    item.disabled = false;
+    return false;
   }
 
   // #endregion

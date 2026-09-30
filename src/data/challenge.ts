@@ -20,6 +20,7 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
+import { getRewardCategory, RewardCategoryId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
@@ -1303,7 +1304,10 @@ export class HardcoreChallenge extends Challenge {
   }
 
   override applyShopItem(shopItem: RewardOption | null, isValid: BooleanHolder): boolean {
-    isValid.value = shopItem?.type.group !== "revive";
+    if (!shopItem) {
+      return true;
+    }
+    isValid.value = getRewardCategory(shopItem.type.id) !== RewardCategoryId.REVIVE;
     return true;
   }
 
@@ -1367,8 +1371,11 @@ export class PassivesChallenge extends Challenge {
 }
 
 export class MovesetRandomizerChallenge extends Challenge {
+  // Challenge values
+  // 1: Randomize movesets, no compensation for move-based evos
+  // 2: Remove move requirement from move evos
   constructor() {
-    super(Challenges.MOVESET_RANDOMIZER, 1);
+    super(Challenges.MOVESET_RANDOMIZER, 2);
   }
 
   public override get category(): ChallengeCategory {
@@ -1387,7 +1394,7 @@ export class MovesetRandomizerChallenge extends Challenge {
     return [...MovesetRandomizerChallenge._validMoveIds];
   }
 
-  private static _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
+  private static readonly _globalTmList: MoveId[] = Object.keys(tmPoolTiers).map(m => Number(m));
   private get globalTmList(): MoveId[] {
     // cloned so that the original list doesn't get mutated by `randSeedShuffle`
     return [...MovesetRandomizerChallenge._globalTmList];
@@ -1553,7 +1560,31 @@ export class MovesetRandomizerChallenge extends Challenge {
     return true;
   }
 
-  public override applyModifyEvolutions(_pokemon: Pokemon, evos: SpeciesFormEvolution[]): boolean {
+  public override applyModifyEvolutions(pokemon: Pokemon, evos: SpeciesFormEvolution[]): boolean {
+    if (this.value <= 1) {
+      return false;
+    }
+
+    if (pokemon.species.speciesId === SpeciesId.TYROGUE) {
+      if (pokemon.moveset.some(pm => [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN].includes(pm.moveId))) {
+        return false;
+      }
+
+      let tyrogueEvo!: SpeciesId;
+      globalScene.executeWithSeedOffset(
+        () => (tyrogueEvo = randSeedItem([SpeciesId.HITMONCHAN, SpeciesId.HITMONLEE, SpeciesId.HITMONTOP])),
+        pokemon.id,
+      );
+
+      for (const evo of evos) {
+        if (evo.speciesId === tyrogueEvo) {
+          evo.condition = null;
+        }
+      }
+
+      return true;
+    }
+
     if (!evos.some(e => e.condition?.data.some(c => c.key === EvoCondKey.MOVE))) {
       return false;
     }

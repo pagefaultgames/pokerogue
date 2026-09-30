@@ -11,7 +11,6 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
-import { PlayerPokemon } from "#field/pokemon";
 import type { HeldItemReward } from "#items/held-item-reward";
 import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import type { TrainerItemReward } from "#items/trainer-item-reward";
@@ -192,7 +191,7 @@ describe("SelectRewardPhase", () => {
         RarityTier.MASTER,
       ],
     };
-    const pokemon = new PlayerPokemon(
+    const pokemon = scene.addPlayerPokemon(
       speciesDataRegistry.getSpecies(SpeciesId.BULBASAUR),
       10,
       undefined,

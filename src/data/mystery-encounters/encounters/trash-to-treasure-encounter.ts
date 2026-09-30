@@ -197,10 +197,6 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
 async function tryApplyDigRewardItems() {
   const party = globalScene.getPlayerParty();
 
-  // First leftovers
-  assignItemToFirstFreePokemon(HeldItemId.LEFTOVERS, party);
-
-  // Second leftovers
   assignItemToFirstFreePokemon(HeldItemId.LEFTOVERS, party);
 
   audioManager.playSound("se/item_fanfare");
@@ -214,7 +210,6 @@ async function tryApplyDigRewardItems() {
     true,
   );
 
-  // Only Shell bell
   assignItemToFirstFreePokemon(HeldItemId.SHELL_BELL, party);
 
   audioManager.playSound("se/item_fanfare");

@@ -4,10 +4,10 @@ import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import type { PokeballType } from "#enums/pokeball";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
-import type { RewardPool, RewardPoolWeights, RewardSpecs } from "#types/rewards";
-import { pickWeightedIndex, randSeedInt } from "#utils/common";
+import type { RewardPool, RewardPoolEntry, RewardPoolWeights, RewardSpecs } from "#types/rewards";
+import { randSeedInt } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
-import type { NonEmptyTuple } from "type-fest";
+import { weightedPick } from "#utils/random";
 import type { RewardOption } from "./reward";
 import { rewardPool, rewardPoolWeights } from "./reward-pools";
 import { generateRewardOptionFromId, isTrainerItemId } from "./reward-utils";
@@ -266,12 +266,13 @@ function getNewRewardOption(
     tier = baseTier;
   }
 
-  const tierWeights = weights[tier];
-  console.log(tierWeights);
-  // TODO: `tierWeights` is inferred as a normal array here; tighten construction so this assertion is unnecessary.
-  const index = pickWeightedIndex(tierWeights as NonEmptyTuple<number>);
+  const rewardMap = new Map<RewardPoolEntry, number>();
+  for (const [index, entry] of pool[tier].entries()) {
+    rewardMap.set(entry, weights[tier][index]);
+  }
+  const pickedPoolEntry = weightedPick(rewardMap);
 
-  const rewardOption = generateRewardOptionFromId(pool[tier][index].id, 0, tier, upgradeCount);
+  const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, tier, upgradeCount);
   if (rewardOption === null) {
     console.log(RarityTier[tier], upgradeCount);
     return getNewRewardOption(pool, weights, tier, upgradeCount, ++retryCount);

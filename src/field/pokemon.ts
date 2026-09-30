@@ -42,6 +42,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -79,6 +80,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
@@ -114,6 +116,7 @@ import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { tryTransferHeldItem } from "#items/item-utility";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { HitsTagAttr, Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
@@ -1190,8 +1193,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
-  getHeldItems(): HeldItemId[] {
-    return this.heldItemManager.getItems();
+  getHeldItems(excludeTempStack = false): HeldItemId[] {
+    return this.heldItemManager.getItems(excludeTempStack);
+  }
+
+  public toggleFormChangeItem(id: FormChangeItemId): void {
+    const toggled = this.heldItemManager.toggleActive(id);
+
+    if (toggled) {
+      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeItemTrigger);
+    }
   }
 
   /**
@@ -2112,7 +2123,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized
    * @param returnOriginalTypesIfStellar - (Default `false`)
-   *   Whether to treat this Pokemon as its original types if it is currently Tera Stellar
+   * Whether to treat this Pokemon as its original types if it is currently Tera Stellar
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
    * @returns Whether this Pokemon is of the specified type.
@@ -2660,11 +2671,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const moveType = source.getMoveType(move);
 
-    const typeMultiplier = new NumberHolder(
-      move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
-        ? this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion })
-        : 1,
-    );
+    const typeMultiplier = new ValueHolder(1);
+    if (move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")) {
+      typeMultiplier.value = this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion });
+    }
+
+    if (move.hasAttr("FixedDamageAttr") && typeMultiplier.value > 0) {
+      typeMultiplier.value = 1;
+    }
 
     if (move.isTypeImmune(source, this)) {
       typeMultiplier.value = 0;
@@ -2675,7 +2689,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value *= 2;
     }
 
-    const cancelledHolder = cancelled ?? new BooleanHolder(false);
+    const cancelledHolder = cancelled ?? new ValueHolder(false);
     // TypeMultiplierAbAttrParams is shared amongst the type of AbAttrs we will be invoking
     const commonAbAttrParams: TypeMultiplierAbAttrParams = {
       pokemon: this,
@@ -5865,22 +5879,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
-   * Does nothing if this Pokemon is somehow not the owner of the held item.
+   *
+   * Triggers in-battle effects (such as Unburden) after losing the item.
+   * @remarks
+   * Out-of-battle item loss (MEs, etc.) should use `heldItemManager.remove` directly.
    * @param heldItem - The item stack to be reduced.
-   * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
-   * Should be `false` for all item loss occurring outside of battle (MEs, etc.).
+   * @param temporary (Default `true`) Whether to remove the item temporarily or permanently
    * @returns Whether the item was removed successfully.
    */
-  public loseHeldItem(heldItemId: HeldItemId, forBattle = true): boolean {
+  public loseHeldItem(heldItemId: HeldItemId, temporary = true): boolean {
     if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }
 
-    this.heldItemManager.remove(heldItemId);
-
-    if (forBattle) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
+    if (temporary) {
+      this.heldItemManager.addTempStack(heldItemId, -1);
+    } else {
+      this.heldItemManager.remove(heldItemId);
     }
+
+    applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
 
     return true;
   }
@@ -6420,7 +6438,10 @@ export class PlayerPokemon extends Pokemon {
     // combine the two mons' held items
     const fusedPartyMemberHeldItems = pokemon.getHeldItems();
     for (const item of fusedPartyMemberHeldItems) {
-      globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getStack(item), true, false);
+      // TODO: is this the best way of doing this?
+      // TODO: this used to pass `ignoreUpdate = true` to skip updating the item bar
+      // but that param was removed from the function; investigate if that matters
+      tryTransferHeldItem(item, pokemon, this, pokemon.heldItemManager.getStack(item));
     }
     globalScene.updateItemBar(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];

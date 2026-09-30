@@ -9,7 +9,7 @@ import type { NonEmptyTuple } from "type-fest";
 export interface TrainerItemData {
   /** The stack count of the item, or its duration for duration-based trainer items. */
   stack: number;
-  disabled?: boolean;
+  tempStack?: number;
   cooldown?: number;
 }
 
@@ -19,7 +19,7 @@ export interface TrainerItemSpecs extends TrainerItemData {
   id: TrainerItemId;
 }
 
-interface TrainerItemPoolEntry {
+export interface TrainerItemPoolEntry {
   entry: TrainerItemId;
   weight: number;
 }

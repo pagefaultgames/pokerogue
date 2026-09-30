@@ -107,6 +107,10 @@ export class SelectStarterPhase extends Phase {
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
     overrideTrainerItems();
+    // Need to override here, because calling this override in BattleScene.reset() does nothing
+    if (activeOverrides.POKEBALL_OVERRIDE.active) {
+      globalScene.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
+    }
     overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
       audioManager.playBgm(undefined, true);

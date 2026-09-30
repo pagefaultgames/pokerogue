@@ -48,7 +48,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { getHeldItemCategory, HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
@@ -73,7 +73,8 @@ import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
-import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import type { BerryHeldItemAttr } from "#items/berry";
+import { canSteal, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -3268,14 +3269,14 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = target.heldItemManager.getTransferableHeldItems();
+    const heldItems = target.heldItemManager.getTransferableHeldItems().filter(id => canSteal(id, target, user));
     if (heldItems.length === 0) {
       return false;
     }
 
     const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
 
-    if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
+    if (!tryStealHeldItem(stolenItem, target, user)) {
       return false;
     }
 
@@ -3327,17 +3328,12 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    * @returns `true` if an item was able to be removed
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    if (!this.berriesOnly && target.isPlayer()) {
-      // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-      return false;
-    }
-
     // Check for abilities that block item theft
     // TODO: This should not trigger if the target would faint beforehand
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled });
+    const blockRemoval = new ValueHolder(false);
+    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled: blockRemoval });
 
-    if (cancelled.value) {
+    if (blockRemoval.value) {
       return false;
     }
 
@@ -3346,7 +3342,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     let heldItems = target.heldItemManager.getTransferableHeldItems();
 
     if (this.berriesOnly) {
-      heldItems = heldItems.filter(m => m in Object.values(berryTypeToHeldItem));
+      heldItems = heldItems.filter(m => getHeldItemCategory(m) === HeldItemCategoryId.BERRY);
     }
 
     if (heldItems.length === 0) {
@@ -3433,7 +3429,8 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   protected reduceBerryItem(target: Pokemon) {
-    target.loseHeldItem(this.chosenBerry);
+    // Berries eaten in this way are lost permanently
+    target.loseHeldItem(this.chosenBerry, false);
     globalScene.updateItemBar(target.isPlayer());
   }
 
@@ -6848,7 +6845,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
-      /**
+      /*
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
        */
@@ -6862,15 +6859,17 @@ export class JawLockAttr extends AddBattlerTagAttr {
   }
 }
 
+// TODO: Use composition once `StatStageChangeAttr` is refactored to accept a grouped stats object
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes().includes(PokemonType.GHOST)) {
+    if (user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
       }
-      const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
+      const curseRecoilDamage = toDmgValue(user.getMaxHp() / 2);
       user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),

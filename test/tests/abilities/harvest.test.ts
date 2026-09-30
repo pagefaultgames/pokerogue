@@ -21,6 +21,12 @@ describe("Abilities - Harvest", () => {
   /** Check whether the player's Modifiers contains the specified berries and nothing else. */
   function expectBerriesContaining(berries: PokemonItemMap[]): void {
     const actualBerries = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
+    for (const berry of berries) {
+      berry.item.tempStack ??= 0;
+    }
+    for (const berry of actualBerries) {
+      berry.item.tempStack ??= 0;
+    }
     expect(actualBerries).toEqual(berries);
   }
 
