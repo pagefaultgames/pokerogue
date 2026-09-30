@@ -118,12 +118,12 @@ export function tryTransferHeldItem(
 }
 
 /**
- * Transfer a held item from a pokemon to another, and update the item bars.
- * @param heldItemId - The {@linkcode HeldItemId} to transfer.
- * @param holder - The {@linkcode Pokemon} holding the item to transfer.
- * @param receiver - The {@linkcode Pokemon} receiving the item.
- * @param transferQuantity - (Default `1`) How many of the chosen item to transfer.
- * @returns true if at least one item was transfered.
+ * Steal a held item from a pokemon to another in battle, and update the item bars.
+ * @param heldItemId - The {@linkcode HeldItemId} to steal.
+ * @param holder - The {@linkcode Pokemon} holding the item to steal.
+ * @param receiver - The {@linkcode Pokemon} stealing the item.
+ * @param stolenQuantity - (Default `1`) How many of the chosen item to steal.
+ * @returns true if at least one item was stolen.
  */
 export function tryStealHeldItem(
   heldItemId: HeldItemId,
@@ -139,12 +139,46 @@ export function tryStealHeldItem(
     return false;
   }
 
-  // Stealing items is permanent (both ways) when fighting wild Pokémon.
+  // Bestowing items is permanent (both ways) when fighting wild Pokémon.
   // It is temporary (both ways) otherwise.
-  const temporary = globalScene.currentBattle.battleType !== BattleType.WILD;
+  const sameTeam = holder.isPlayer() === receiver.isPlayer();
+  const wildBattle = globalScene.currentBattle.battleType === BattleType.WILD;
+  const temporary = !wildBattle && !sameTeam;
   const successfulTheft = tryTransferHeldItem(heldItemId, holder, receiver, stolenQuantity, temporary);
 
   if (!successfulTheft) {
+    return false;
+  }
+
+  globalScene.updateItemBar();
+  globalScene.updateItemBar(false);
+
+  applyAbAttrs("PostItemLostAbAttr", { pokemon: holder });
+
+  return true;
+}
+
+/**
+ * Give a held item from a pokemon to another in battle, and update the item bars.
+ * @param heldItemId - The {@linkcode HeldItemId} to give.
+ * @param holder - The {@linkcode Pokemon} holding the item to give.
+ * @param receiver - The {@linkcode Pokemon} receiving the item.
+ * @param transferQuantity - (Default `1`) How many of the chosen item to give.
+ * @returns true if at least one item was given.
+ */
+export function tryGiveHeldItem(
+  heldItemId: HeldItemId,
+  holder: Pokemon,
+  receiver: Pokemon,
+  stolenQuantity = 1,
+): boolean {
+  // Giving items is not blocked by sticky hold
+
+  const sameTeam = holder.isPlayer() === receiver.isPlayer();
+  const temporary = !sameTeam;
+  const successfulGift = tryTransferHeldItem(heldItemId, holder, receiver, stolenQuantity, temporary);
+
+  if (!successfulGift) {
     return false;
   }
 

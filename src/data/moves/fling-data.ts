@@ -86,3 +86,9 @@ export function flingSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
   const weightB = (flingPower[itemB] ?? 0) + (flingExtraEffect.includes(itemB) ? 100 : 0);
   return weightB - weightA;
 }
+
+export function bestowSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
+  const weightA = itemA === HeldItemId.TOXIC_ORB || itemA === HeldItemId.FLAME_ORB ? 100 : 0;
+  const weightB = itemB === HeldItemId.TOXIC_ORB || itemB === HeldItemId.FLAME_ORB ? 100 : 0;
+  return weightB - weightA;
+}

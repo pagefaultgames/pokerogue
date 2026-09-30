@@ -74,7 +74,7 @@ import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
 import type { BerryHeldItemAttr } from "#items/berry";
-import { canSteal, tryStealHeldItem } from "#items/item-utility";
+import { canSteal, getTransferableAmount, tryGiveHeldItem, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -117,7 +117,6 @@ import type {
   MoveAttrMap,
   MoveAttrString,
   MoveClassMap,
-  MoveItemMessageFunc,
   MoveKindString,
   MoveMessageFunc,
 } from "#types/move-types";
@@ -146,7 +145,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
-import { flingPower, flingSortFunc } from "./fling-data";
+import { bestowSortFunc, flingPower, flingSortFunc } from "./fling-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -2253,19 +2252,10 @@ export class MessageAttr extends MoveEffectAttr {
 }
 
 /**
- * Move attribute to display arbitrary text during a move's execution.
+ * Move attribute to remove the item after fling and display a message.
  */
-export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
-  /** The message to display, either as a string or a function returning one. */
-  private readonly message: MoveItemMessageFunc;
-
-  constructor(message: MoveItemMessageFunc, options?: MoveEffectAttrOptions) {
-    // TODO: Do we need to respect `selfTarget` if we're just displaying text?
-    super(false, options);
-    this.message = message;
-  }
-
-  override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+export class PostFlungItemAttr extends MoveEffectAttr {
+  override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
     const item = user.getTag(BattlerTagType.FLING)?.item;
     if (!item) {
       // This should never happen at this point
@@ -2277,14 +2267,8 @@ export class PostMoveLoseItemMessageAttr extends MoveEffectAttr {
     user.removeTag(BattlerTagType.FLING);
     globalScene.updateItemBar(user.isPlayer());
 
-    const message = this.message(user, target, move, item);
-
-    // TODO: Consider changing if/when MoveAttr `apply` return values become significant
-    if (message) {
-      globalScene.phaseManager.queueMessage(message, 500);
-      return true;
-    }
-    return false;
+    globalScene.phaseManager.queueMessage(`${user.name} threw its ${allHeldItems[item].name}!`, 500);
+    return true;
   }
 }
 
@@ -7734,6 +7718,91 @@ export class CopyTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Bestow_(move)} */
+export class BestowHeldItemAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const item = user.getTag(BattlerTagType.BESTOW)?.item;
+    if (!item || getTransferableAmount(item, user, target) < 1) {
+      return false;
+    }
+
+    tryGiveHeldItem(item, user, target, 1);
+    user.removeTag(BattlerTagType.BESTOW);
+    globalScene.updateItemBar();
+    globalScene.updateItemBar(false);
+
+    globalScene.phaseManager.queueMessage(`${user.name} bestowed its ${allHeldItems[item].name} to ${target.name}!`);
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => {
+      const givenItem = user.getTag(BattlerTagType.BESTOW)?.item;
+      return !!givenItem && getTransferableAmount(givenItem, user, target) > 0;
+    };
+  }
+}
+
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick_(move)} */
+export class SwapHeldItemAttr extends MoveEffectAttr {
+  private readonly tagType: BattlerTagType.TRICK | BattlerTagType.SWITCHEROO;
+
+  constructor(tagType: BattlerTagType.TRICK | BattlerTagType.SWITCHEROO) {
+    super(false);
+    this.tagType = tagType;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const stealableHeldItems = target.heldItemManager
+      .getTransferableHeldItems()
+      .filter(id => canSteal(id, target, user));
+    if (stealableHeldItems.length === 0) {
+      return false;
+    }
+    const stolenItem = stealableHeldItems[user.randBattleSeedInt(stealableHeldItems.length)];
+
+    const givenItem = user.getTag(this.tagType)?.item;
+    if (!givenItem || getTransferableAmount(givenItem, user, target) < 1) {
+      return false;
+    }
+
+    tryGiveHeldItem(givenItem, user, target, 1);
+    tryStealHeldItem(stolenItem, target, user, 1);
+    user.removeTag(this.tagType);
+    globalScene.updateItemBar();
+    globalScene.updateItemBar(false);
+
+    globalScene.phaseManager.queueMessage(
+      `${user.name} gave its ${allHeldItems[givenItem].name} to ${target.name} and took ${allHeldItems[stolenItem].name}!`,
+    );
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => {
+      const stealableHeldItems = target.heldItemManager
+        .getTransferableHeldItems()
+        .filter(id => canSteal(id, target, user));
+      const givenItem = user.getTag(this.tagType)?.item;
+      return !!givenItem && getTransferableAmount(givenItem, user, target) > 0 && stealableHeldItems.length > 0;
+    };
+  }
+}
+
 export class CopyBiomeTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -10443,8 +10512,16 @@ export function initMoves() {
       .condition(failIfSingleBattle)
       // should stack multiplicatively if used multiple times in 1 turn
       .edgeCase(),
-    new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3) //
-      .unimplemented(),
+    new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to swap?",
+        BattlerTagType.TRICK,
+        bestowSortFunc,
+      )
+      .attr(SwapHeldItemAttr, BattlerTagType.TRICK)
+      .condition(failIfNoUserHeldItemsCondition, 2)
+      .partial(),
     new StatusMove(MoveId.ROLE_PLAY, PokemonType.PSYCHIC, -1, 10, -1, 0, 3)
       .ignoresSubstitute()
       // TODO: Enable / remove once balance reaches a consensus on ability overrides during boss fights
@@ -10807,10 +10884,7 @@ export function initMoves() {
       )
       .attr(FlingPowerAttr)
       .attr(FlingEffectAttr)
-      .attr(
-        PostMoveLoseItemMessageAttr,
-        (user, _target, _move, item) => `${user.name} threw its ${allHeldItems[item].name}!`,
-      )
+      .attr(PostFlungItemAttr)
       .condition(failIfNoUserHeldItemsCondition, 2)
       .makesContact(false)
       .partial(),
@@ -10929,8 +11003,16 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(MoveId.EARTH_POWER, PokemonType.GROUND, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 4) //
       .attr(StatStageChangeAttr, [Stat.SPDEF], -1),
-    new StatusMove(MoveId.SWITCHEROO, PokemonType.DARK, 100, 10, -1, 0, 4) //
-      .unimplemented(),
+    new StatusMove(MoveId.SWITCHEROO, PokemonType.DARK, 100, 10, -1, 0, 4)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to swap?",
+        BattlerTagType.SWITCHEROO,
+        bestowSortFunc,
+      )
+      .attr(SwapHeldItemAttr, BattlerTagType.SWITCHEROO)
+      .condition(failIfNoUserHeldItemsCondition, 2)
+      .partial(),
     new AttackMove(MoveId.GIGA_IMPACT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 150, 90, 5, -1, 0, 4) //
       .attr(RechargeAttr),
     new SelfStatusMove(MoveId.NASTY_PLOT, PokemonType.DARK, -1, 20, -1, 0, 4) //
@@ -11281,9 +11363,18 @@ export function initMoves() {
       .attr(UserHpDamageAttr)
       .attr(SacrificialAttrOnHit),
     new StatusMove(MoveId.BESTOW, PokemonType.NORMAL, -1, 15, -1, 0, 5)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to Bestow?",
+        BattlerTagType.BESTOW,
+        // TODO: Have a different sort function for Bestow
+        bestowSortFunc,
+      )
+      .attr(BestowHeldItemAttr)
+      .condition(failIfNoUserHeldItemsCondition, 2)
       .ignoresProtect()
       .ignoresSubstitute()
-      .unimplemented(),
+      .partial(),
     new AttackMove(MoveId.INFERNO, PokemonType.FIRE, MoveCategory.SPECIAL, 100, 50, 5, 100, 0, 5) //
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(MoveId.WATER_PLEDGE, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)
