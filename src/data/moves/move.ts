@@ -6694,7 +6694,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
-      /**
+      /*
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
        */
@@ -6708,15 +6708,17 @@ export class JawLockAttr extends AddBattlerTagAttr {
   }
 }
 
+// TODO: Use composition once `StatStageChangeAttr` is refactored to accept a grouped stats object
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes().includes(PokemonType.GHOST)) {
+    if (user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
       }
-      const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
+      const curseRecoilDamage = toDmgValue(user.getMaxHp() / 2);
       user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -7160,6 +7162,13 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const slotIndex = globalScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
       pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+      const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+      // Reclaim held items that were banked as post-battle loot when this Pokemon fainted earlier
+      for (let i = postBattleLoot.length - 1; i >= 0; i--) {
+        if (postBattleLoot[i].pokemonId === pokemon.id) {
+          postBattleLoot.splice(i, 1);
+        }
+      }
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
         0,
@@ -8448,42 +8457,38 @@ export class SketchAttr extends MoveEffectAttr {
 }
 
 export class AbilityChangeAttr extends MoveEffectAttr {
-  public ability: AbilityId;
+  public abilityId: AbilityId;
 
   constructor(ability: AbilityId, selfTarget?: boolean) {
     super(selfTarget);
 
-    this.ability = ability;
+    this.abilityId = ability;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
     const moveTarget = this.selfTarget ? user : target;
+    const pokemonName = getPokemonNameWithAffix(moveTarget);
 
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     if (moveTarget.breakIllusion()) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(moveTarget) }),
-      );
+      globalScene.phaseManager.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName }));
     }
     globalScene.phaseManager.queueMessage(
-      i18next.t("moveTriggers:acquiredAbility", {
-        pokemonName: getPokemonNameWithAffix(moveTarget),
-        abilityName: allAbilities[this.ability].name,
-      }),
+      i18next.t("moveTriggers:acquiredAbility", { pokemonName, abilityName: allAbilities[this.abilityId].name }),
     );
-    moveTarget.setTempAbility(allAbilities[this.ability]);
+    moveTarget.setTempAbility(this.abilityId);
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       (this.selfTarget ? user : target).getAbility().replaceable
-      && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+      && (this.selfTarget ? user : target).getAbility().id !== this.abilityId;
   }
 }
 
@@ -8496,38 +8501,41 @@ export class AbilityCopyAttr extends MoveEffectAttr {
     this.copyToPartner = copyToPartner;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
+
+    const abilityId = target.getAbility().id;
+    const abilityName = allAbilities[abilityId].name;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:copiedTargetAbility", {
         pokemonName: getPokemonNameWithAffix(user),
         targetName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[target.getAbility().id].name,
+        abilityName,
       }),
     );
 
-    user.setTempAbility(target.getAbility());
+    user.setTempAbility(abilityId);
     const ally = user.getAlly();
 
-    if (this.copyToPartner && globalScene.currentBattle?.double && ally != null && ally.hp) {
-      // TODO is this the best way to check that the ally is active?
+    // TODO: is this the best way to check that the ally is active?
+    if (this.copyToPartner && globalScene.currentBattle?.double && ally?.hp) {
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:copiedTargetAbility", {
           pokemonName: getPokemonNameWithAffix(ally),
           targetName: getPokemonNameWithAffix(target),
-          abilityName: allAbilities[target.getAbility().id].name,
+          abilityName,
         }),
       );
-      ally.setTempAbility(target.getAbility());
+      ally.setTempAbility(abilityId);
     }
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => {
       const ally = user.getAlly();
       let ret = target.getAbility().copiable && user.getAbility().replaceable;
@@ -8548,50 +8556,54 @@ export class AbilityGiveAttr extends MoveEffectAttr {
     super(false);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
+    const abilityId = user.getAbility().id;
+
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:acquiredAbility", {
         pokemonName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[user.getAbility().id].name,
+        abilityName: allAbilities[abilityId].name,
       }),
     );
 
-    target.setTempAbility(user.getAbility());
+    target.setTempAbility(abilityId);
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
 export class SwitchAbilitiesAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
-
-    const tempAbility = user.getAbility();
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }),
     );
 
-    user.setTempAbility(target.getAbility());
-    target.setTempAbility(tempAbility);
+    // abilities intentionally buffered before swapping
+    const userAbilityId = user.getAbility().id;
+    const targetAbilityId = target.getAbility().id;
+
+    user.setTempAbility(targetAbilityId);
+    target.setTempAbility(userAbilityId);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }

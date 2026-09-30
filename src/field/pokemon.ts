@@ -2160,7 +2160,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized
    * @param returnOriginalTypesIfStellar - (Default `false`)
-   *   Whether to treat this Pokemon as its original types if it is currently Tera Stellar
+   * Whether to treat this Pokemon as its original types if it is currently Tera Stellar
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
    * @returns Whether this Pokemon is of the specified type.
@@ -2234,18 +2234,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the passive ability of the pokemon. This should rarely be called, most of the time
-   * {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used as those check both the passive and
-   * non-passive abilities and account for ability suppression.
-   * @see {@linkcode hasAbility} {@linkcode hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * Gets the passive ability of the pokemon.
+   * @remarks
+   * This should rarely be called, most of the time
+   * {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used \
+   * as those check both the passive and non-passive abilities and account for ability suppression.
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
-    if (activeOverrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
-      return allAbilities[activeOverrides.PASSIVE_ABILITY_OVERRIDE];
-    }
-    if (activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
+    if (this.summonData.passiveAbility) {
+      return allAbilities[this.summonData.passiveAbility];
     }
     if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
@@ -2255,6 +2253,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (eventBoss?.passive != null) {
         return allAbilities[eventBoss.passive];
       }
+    }
+    if (activeOverrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
+      return allAbilities[activeOverrides.PASSIVE_ABILITY_OVERRIDE];
+    }
+    if (activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];
@@ -2284,18 +2288,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set this Pokémon's temporary ability, activating it if it normally activates on summon
-   *
-   * Also clears primal weather if it is from the ability being changed
-   * @param ability - The temporary ability to set
-   * @param passive - Whether to set the passive ability instead of the non-passive one; default `false`
+   * Set this Pokémon's temporary ability, activating it if it normally activates on summon.
+   * @remarks
+   * Also clears primal weather if it is from the ability being changed.
+   * @param abilityId - The ID of the temporary ability to set
+   * @param passive - (Default `false`) Whether to set the passive ability instead of the non-passive one
    */
-  public setTempAbility(ability: Ability, passive = false): void {
+  public setTempAbility(abilityId: AbilityId, passive = false): void {
     applyOnLoseAbAttrs({ pokemon: this, passive });
     if (passive) {
-      this.summonData.passiveAbility = ability.id;
+      this.summonData.passiveAbility = abilityId;
     } else {
-      this.summonData.ability = ability.id;
+      this.summonData.ability = abilityId;
     }
     applyOnGainAbAttrs({ pokemon: this, passive });
   }
@@ -2708,11 +2712,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const moveType = source.getMoveType(move);
 
-    const typeMultiplier = new NumberHolder(
-      move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
-        ? this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion })
-        : 1,
-    );
+    const typeMultiplier = new ValueHolder(1);
+    if (move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")) {
+      typeMultiplier.value = this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion });
+    }
+
+    if (move.hasAttr("FixedDamageAttr") && typeMultiplier.value > 0) {
+      typeMultiplier.value = 1;
+    }
 
     if (move.isTypeImmune(source, this)) {
       typeMultiplier.value = 0;
@@ -2723,7 +2730,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value *= 2;
     }
 
-    const cancelledHolder = cancelled ?? new BooleanHolder(false);
+    const cancelledHolder = cancelled ?? new ValueHolder(false);
     // TypeMultiplierAbAttrParams is shared amongst the type of AbAttrs we will be invoking
     const commonAbAttrParams: TypeMultiplierAbAttrParams = {
       pokemon: this,
