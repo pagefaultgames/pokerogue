@@ -45,12 +45,12 @@ describe("Items - Shell Bell", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
-    const healPerStack = toDmgValue(player.getMaxHp() / 8);
+    const expectedHeal = toDmgValue((player.getMaxHp() * stacks) / 8);
     player.turnData.totalDamageDealt = player.getMaxHp();
     player.hp -= 10; // leave room to observe healing
 
     applySingleHeldItem(HeldItemId.SHELL_BELL, HeldItemEffect.HIT_HEAL, { pokemon: player });
-    return { player, hpBeforeHeal: player.hp, expectedHeal: healPerStack * stacks };
+    return { player, hpBeforeHeal: player.hp, expectedHeal };
   }
 
   it.each([1, 2, 4])("should heal by %d stack(s) worth of 1/8 the damage dealt", async stacks => {
