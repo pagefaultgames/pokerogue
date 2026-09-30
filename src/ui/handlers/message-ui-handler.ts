@@ -22,7 +22,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   public readonly wordWrapWidth: number = 1780;
 
   /**
-   * Add the name box shown by {@linkcode showDialogue} to the given message container..
+   * Add the name box shown by {@linkcode showDialogue} to the given message container.
    * @param container - The container holding the message text
    * @param x - The x position of the name box
    * @param y - The y position of the name box
@@ -300,6 +300,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
    */
   public showNameText(name: string, iconFrame?: string): void {
     if (!this.nameBoxContainer) {
+      console.warn("Called `showNameText` without initializing the name box");
       return;
     }
     this.nameBoxContainer.setVisible(true);
