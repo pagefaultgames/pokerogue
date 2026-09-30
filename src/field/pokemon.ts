@@ -2048,15 +2048,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Places a specified move in a specified slot unless the moveset contains a move fulfilling the filter
+   * Places a specified move in a specified slot unless the moveset contains an acceptable alternative move fulfilling the filter
    * @param replacement - The move to insert in moveset
-   * @param preferredSlot - The preferred slot to put the move in; numbers outside 0-3 pick a random slot
+   * @param preferredSlot - The preferred slot to put the move in
    * @param altMoveFilter - (Optional) A filtering function mapping a Move to a boolean; if a move in the moveset fulfills it, the replacement is not done
    */
   public addIfNotInMoveset(
     replacement: MoveId,
-    preferredSlot: number,
-    altMoveFilter: (move: Move) => boolean = () => true,
+    preferredSlot: 0 | 1 | 2 | 3,
+    altMoveFilter: (move: Move) => boolean = () => false,
   ): void {
     if (
       globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)
@@ -2064,17 +2064,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     ) {
       return;
     }
-    if (preferredSlot > -1 && preferredSlot < 4) {
-      this.setMove(preferredSlot, replacement);
-      return;
-    }
-    const noneIndex = this.moveset.findIndex(m => m.moveId === MoveId.NONE);
-    if (noneIndex > -1) {
-      this.setMove(noneIndex, replacement);
-      return;
-    }
-    const randIndex = randSeedInt(4);
-    this.setMove(randIndex, replacement);
+    this.setMove(preferredSlot, replacement);
     return;
   }
 
