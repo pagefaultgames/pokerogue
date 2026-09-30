@@ -66,6 +66,13 @@ export class SelectRewardPhase extends BattlePhase {
       return false;
     }
 
+    // Reset all temporary stacks
+    for (const p of globalScene.getPlayerParty()) {
+      p.heldItemManager.clearTempStacks();
+    }
+    globalScene.trainerItems.clearTempStacks();
+    globalScene.updateItemBar();
+
     if (!this.rerollCount && !this.isCopy) {
       this.updateSeed();
     } else if (this.rerollCount) {

@@ -1265,7 +1265,7 @@ export class BattleScene extends SceneBase {
       this.handleNonFixedBattle(resolved);
     }
 
-    // Reset all temporary stacks
+    // Reset all temporary stacks, if they have not already been reset in reward selection
     for (const p of this.getPlayerParty()) {
       p.heldItemManager.clearTempStacks();
     }
