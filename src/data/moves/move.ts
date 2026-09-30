@@ -48,7 +48,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { getHeldItemCategory, HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
@@ -73,7 +73,8 @@ import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
-import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import type { BerryHeldItemAttr } from "#items/berry";
+import { canSteal, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -3184,14 +3185,14 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = target.heldItemManager.getTransferableHeldItems();
+    const heldItems = target.heldItemManager.getTransferableHeldItems().filter(id => canSteal(id, target, user));
     if (heldItems.length === 0) {
       return false;
     }
 
     const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
 
-    if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
+    if (!tryStealHeldItem(stolenItem, target, user)) {
       return false;
     }
 
@@ -3243,17 +3244,12 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    * @returns `true` if an item was able to be removed
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    if (!this.berriesOnly && target.isPlayer()) {
-      // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-      return false;
-    }
-
     // Check for abilities that block item theft
     // TODO: This should not trigger if the target would faint beforehand
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled });
+    const blockRemoval = new ValueHolder(false);
+    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled: blockRemoval });
 
-    if (cancelled.value) {
+    if (blockRemoval.value) {
       return false;
     }
 
@@ -3262,7 +3258,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     let heldItems = target.heldItemManager.getTransferableHeldItems();
 
     if (this.berriesOnly) {
-      heldItems = heldItems.filter(m => m in Object.values(berryTypeToHeldItem));
+      heldItems = heldItems.filter(m => getHeldItemCategory(m) === HeldItemCategoryId.BERRY);
     }
 
     if (heldItems.length === 0) {

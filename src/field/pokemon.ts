@@ -116,6 +116,7 @@ import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { tryTransferHeldItem } from "#items/item-utility";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { HitsTagAttr, Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
@@ -1192,8 +1193,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
-  getHeldItems(): HeldItemId[] {
-    return this.heldItemManager.getItems();
+  getHeldItems(excludeTempStack = false): HeldItemId[] {
+    return this.heldItemManager.getItems(excludeTempStack);
   }
 
   public toggleFormChangeItem(id: FormChangeItemId): void {
@@ -5878,22 +5879,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
-   * Does nothing if this Pokemon is somehow not the owner of the held item.
+   *
+   * Triggers in-battle effects (such as Unburden) after losing the item.
+   * @remarks
+   * Out-of-battle item loss (MEs, etc.) should use `heldItemManager.remove` directly.
    * @param heldItem - The item stack to be reduced.
-   * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
-   * Should be `false` for all item loss occurring outside of battle (MEs, etc.).
+   * @param temporary (Default `true`) Whether to remove the item temporarily or permanently
    * @returns Whether the item was removed successfully.
    */
-  public loseHeldItem(heldItemId: HeldItemId, forBattle = true): boolean {
+  public loseHeldItem(heldItemId: HeldItemId, temporary = true): boolean {
     if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }
 
-    this.heldItemManager.remove(heldItemId);
-
-    if (forBattle) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
+    if (temporary) {
+      this.heldItemManager.addTempStack(heldItemId, -1);
+    } else {
+      this.heldItemManager.remove(heldItemId);
     }
+
+    applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
 
     return true;
   }
@@ -6433,7 +6438,10 @@ export class PlayerPokemon extends Pokemon {
     // combine the two mons' held items
     const fusedPartyMemberHeldItems = pokemon.getHeldItems();
     for (const item of fusedPartyMemberHeldItems) {
-      globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getStack(item), true, false);
+      // TODO: is this the best way of doing this?
+      // TODO: this used to pass `ignoreUpdate = true` to skip updating the item bar
+      // but that param was removed from the function; investigate if that matters
+      tryTransferHeldItem(item, pokemon, this, pokemon.heldItemManager.getStack(item));
     }
     globalScene.updateItemBar(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];

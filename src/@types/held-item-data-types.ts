@@ -15,10 +15,9 @@ export interface HeldItemData {
    */
   stack: number;
   /**
-   * Whether this item is currently disabled.
-   * @defaultValue `false`
+   * Number of temporary items in the stack, e.g. from flinging or stealing
    */
-  disabled?: boolean;
+  tempStack?: number;
   /**
    * Whether a form change is active.
    * TODO: This is only temporary to make things work, form change rework should get rid of it.
