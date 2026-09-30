@@ -1118,17 +1118,13 @@ export class BattleScene extends SceneBase {
 
     this.lockRarityTiers = false;
 
-    if (activeOverrides.POKEBALL_OVERRIDE.active) {
-      this.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
-    } else {
-      // TODO: Remove unused luxury balls and remove the `filter`
-      this.pokeballCounts = Object.fromEntries(
-        getEnumValues(PokeballType)
-          .filter(pt => pt !== PokeballType.LUXURY_BALL)
-          .map(t => [t, 0]),
-      );
-      this.pokeballCounts[PokeballType.POKEBALL] = 5;
-    }
+    // TODO: Remove unused luxury balls and remove the `filter`
+    this.pokeballCounts = Object.fromEntries(
+      getEnumValues(PokeballType)
+        .filter(pt => pt !== PokeballType.LUXURY_BALL)
+        .map(t => [t, 0]),
+    );
+    this.pokeballCounts[PokeballType.POKEBALL] = 5;
 
     this.trainerItems.clearItems();
     this.enemyTrainerItems.clearItems();
