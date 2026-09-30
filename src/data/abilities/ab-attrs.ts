@@ -4169,7 +4169,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
           .filter(
             bm =>
               isItemInCategory(bm, HeldItemCategoryId.BERRY)
-              && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+              && !(pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount),
           ) as BerryItemId[]
       ).map(bm => (allHeldItems[bm].getAttrs(HeldItemEffect.BERRY)[0] as BerryHeldItemAttr).berryType),
     );
