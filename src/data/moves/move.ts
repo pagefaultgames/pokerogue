@@ -3648,7 +3648,8 @@ export class OneHitKOAttr extends MoveAttr {
 
 /**
  * Attribute that allows charge moves to resolve in 1 turn under a given condition.
- * Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
+ * @remarks
+ * Should only be used for {@linkcode ChargingMove}s as a `chargeAttr`.
  */
 export class InstantChargeAttr extends MoveAttr {
   /** The condition in which the move with this attribute instantly charges */
@@ -3659,18 +3660,10 @@ export class InstantChargeAttr extends MoveAttr {
     this.condition = condition;
   }
 
-  /**
-   * Flags the move with this attribute as instantly charged if this attribute's condition is met.
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move the {@linkcode Move} associated with this attribute
-   * @param args
-   *  - `[0]` a {@linkcode BooleanHolder | BooleanHolder} for the "instant charge" flag
-   * @returns `true` if the instant charge condition is met; `false` otherwise.
-   */
-  override apply(user: Pokemon, _target: Pokemon | null, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon | null, move: Move, args: [ValueHolder<boolean>, ...any[]]): boolean {
     const instantCharge = args[0];
-    if (!(instantCharge instanceof BooleanHolder)) {
+    if (!("value" in instantCharge)) {
+      console.warn("Invalid param passed to `InstantChargeAttr#apply`!");
       return false;
     }
 
@@ -5257,9 +5250,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
  * move from an ally.
  */
 export class CombinedPledgePowerAttr extends VariablePowerAttr {
-  override apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<number>, ...any[]]): boolean {
     const power = args[0];
-    if (!(power instanceof NumberHolder)) {
+    if (!("value" in power)) {
+      console.warn("Invalid param passed to `CombinedPledgePowerAttr#apply`");
       return false;
     }
     const combinedPledgeMove = user.turnData.combiningPledge;
@@ -5276,9 +5270,10 @@ export class CombinedPledgePowerAttr extends VariablePowerAttr {
  * Applies STAB to the given Pledge move if the move is part of a combined attack.
  */
 export class CombinedPledgeStabBoostAttr extends MoveAttr {
-  override apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<number>, ...any[]]): boolean {
     const stabMultiplier = args[0];
-    if (!(stabMultiplier instanceof NumberHolder)) {
+    if (!("value" in stabMultiplier)) {
+      console.warn("Invalid param passed to `CombinedPledgeStabBoostAttr#apply`");
       return false;
     }
     const combinedPledgeMove = user.turnData.combiningPledge;
@@ -5684,23 +5679,20 @@ export class VariableMoveTypeAttr extends MoveAttr {
 }
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `FormChangeItemTypeAttr#apply`!");
       return false;
     }
 
-    // TODO: this needs to be cleaned up
-    if (
-      [user.species.speciesId, user.fusionSpecies?.speciesId].includes(SpeciesId.ARCEUS)
-      || [user.species.speciesId, user.fusionSpecies?.speciesId].includes(SpeciesId.SILVALLY)
-    ) {
+    if (user.hasSpecies(SpeciesId.ARCEUS) || user.hasSpecies(SpeciesId.SILVALLY)) {
       const form =
         user.species.speciesId === SpeciesId.ARCEUS || user.species.speciesId === SpeciesId.SILVALLY
           ? user.formIndex
           : user.fusionSpecies!.formIndex;
       if (form >= 0 && form <= MAX_POKEMON_TYPE && form !== PokemonType.STELLAR) {
-        moveType.value = form as PokemonType;
+        moveType.value = form;
         return true;
       }
       return true;
@@ -5728,9 +5720,10 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `TechnoBlastTypeAttr#apply`!");
       return false;
     }
 
@@ -5772,9 +5765,10 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `AuraWheelTypeAttr#apply`!");
       return false;
     }
 
@@ -5806,9 +5800,10 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class RagingBullTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `RagingBullTypeAttr#apply`!");
       return false;
     }
 
@@ -5844,9 +5839,10 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `IvyCudgelTypeAttr#apply`!");
       return false;
     }
 
@@ -5889,9 +5885,10 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof ValueHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `WeatherBallTypeAttr#apply`!");
       return false;
     }
 
@@ -5947,16 +5944,10 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
  * Has no effect if the user is not grounded.
  */
 export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
-  /**
-   * @param user {@linkcode Pokemon} using this move
-   * @param target N/A
-   * @param move N/A
-   * @param args [0] {@linkcode NumberHolder} The move's type to be modified
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `TerrainPulseTypeAttr#apply`!");
       return false;
     }
 
@@ -5994,9 +5985,10 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
  * Changes type based on the user's IVs
  */
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `HiddenPowerTypeAttr#apply`!");
       return false;
     }
 
@@ -6048,16 +6040,10 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
  * Changes the type of Tera Blast to match the user's tera type
  */
 export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
-  /**
-   * @param user {@linkcode Pokemon} the user of the move
-   * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} the move with this attribute
-   * @param args `[0]` the move's type to be modified
-   * @returns `true` if the move's type was modified; `false` otherwise
-   */
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `TeraBlastTypeAttr#apply`!");
       return false;
     }
 
@@ -6162,9 +6148,10 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
  * Changes the type of a Pledge move based on the Pledge move combined with it.
  */
 export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
-  override apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, _target: Pokemon, move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!("value" in moveType)) {
+      console.warn("Invalid param passed to `CombinedPledgeTypeAttr#apply`!");
       return false;
     }
 
@@ -6707,7 +6694,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
-      /**
+      /*
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
        */
@@ -6721,15 +6708,17 @@ export class JawLockAttr extends AddBattlerTagAttr {
   }
 }
 
+// TODO: Use composition once `StatStageChangeAttr` is refactored to accept a grouped stats object
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes().includes(PokemonType.GHOST)) {
+    if (user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
       }
-      const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
+      const curseRecoilDamage = toDmgValue(user.getMaxHp() / 2);
       user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:cursedOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -7173,6 +7162,13 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const slotIndex = globalScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
       pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+      const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+      // Reclaim held items that were banked as post-battle loot when this Pokemon fainted earlier
+      for (let i = postBattleLoot.length - 1; i >= 0; i--) {
+        if (postBattleLoot[i].pokemonId === pokemon.id) {
+          postBattleLoot.splice(i, 1);
+        }
+      }
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
         0,
@@ -8461,42 +8457,38 @@ export class SketchAttr extends MoveEffectAttr {
 }
 
 export class AbilityChangeAttr extends MoveEffectAttr {
-  public ability: AbilityId;
+  public abilityId: AbilityId;
 
   constructor(ability: AbilityId, selfTarget?: boolean) {
     super(selfTarget);
 
-    this.ability = ability;
+    this.abilityId = ability;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
     const moveTarget = this.selfTarget ? user : target;
+    const pokemonName = getPokemonNameWithAffix(moveTarget);
 
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     if (moveTarget.breakIllusion()) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(moveTarget) }),
-      );
+      globalScene.phaseManager.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName }));
     }
     globalScene.phaseManager.queueMessage(
-      i18next.t("moveTriggers:acquiredAbility", {
-        pokemonName: getPokemonNameWithAffix(moveTarget),
-        abilityName: allAbilities[this.ability].name,
-      }),
+      i18next.t("moveTriggers:acquiredAbility", { pokemonName, abilityName: allAbilities[this.abilityId].name }),
     );
-    moveTarget.setTempAbility(allAbilities[this.ability]);
+    moveTarget.setTempAbility(this.abilityId);
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       (this.selfTarget ? user : target).getAbility().replaceable
-      && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+      && (this.selfTarget ? user : target).getAbility().id !== this.abilityId;
   }
 }
 
@@ -8509,38 +8501,41 @@ export class AbilityCopyAttr extends MoveEffectAttr {
     this.copyToPartner = copyToPartner;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
+
+    const abilityId = target.getAbility().id;
+    const abilityName = allAbilities[abilityId].name;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:copiedTargetAbility", {
         pokemonName: getPokemonNameWithAffix(user),
         targetName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[target.getAbility().id].name,
+        abilityName,
       }),
     );
 
-    user.setTempAbility(target.getAbility());
+    user.setTempAbility(abilityId);
     const ally = user.getAlly();
 
-    if (this.copyToPartner && globalScene.currentBattle?.double && ally != null && ally.hp) {
-      // TODO is this the best way to check that the ally is active?
+    // TODO: is this the best way to check that the ally is active?
+    if (this.copyToPartner && globalScene.currentBattle?.double && ally?.hp) {
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:copiedTargetAbility", {
           pokemonName: getPokemonNameWithAffix(ally),
           targetName: getPokemonNameWithAffix(target),
-          abilityName: allAbilities[target.getAbility().id].name,
+          abilityName,
         }),
       );
-      ally.setTempAbility(target.getAbility());
+      ally.setTempAbility(abilityId);
     }
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => {
       const ally = user.getAlly();
       let ret = target.getAbility().copiable && user.getAbility().replaceable;
@@ -8561,50 +8556,54 @@ export class AbilityGiveAttr extends MoveEffectAttr {
     super(false);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
+    const abilityId = user.getAbility().id;
+
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:acquiredAbility", {
         pokemonName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[user.getAbility().id].name,
+        abilityName: allAbilities[abilityId].name,
       }),
     );
 
-    target.setTempAbility(user.getAbility());
+    target.setTempAbility(abilityId);
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
 export class SwitchAbilitiesAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
-
-    const tempAbility = user.getAbility();
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }),
     );
 
-    user.setTempAbility(target.getAbility());
-    target.setTempAbility(tempAbility);
+    // abilities intentionally buffered before swapping
+    const userAbilityId = user.getAbility().id;
+    const targetAbilityId = target.getAbility().id;
+
+    user.setTempAbility(targetAbilityId);
+    target.setTempAbility(userAbilityId);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }
@@ -11934,8 +11933,10 @@ export function initMoves() {
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, true /* NOT ADDED if already trapped */)
-      // fails if the user is currently trapped specifically from no retreat
-      .condition(user => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT, 2),
+      .condition(
+        user => !user.getLastXMoves(-1).some(m => m.move === MoveId.NO_RETREAT && m.result === MoveResult.SUCCESS),
+        2,
+      ),
     new StatusMove(MoveId.TAR_SHOT, PokemonType.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false)
