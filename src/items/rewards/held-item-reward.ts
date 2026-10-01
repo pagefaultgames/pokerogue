@@ -1,15 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
-import type { BerryType } from "#enums/berry-type";
-import type { HeldItemId } from "#enums/held-item-id";
+import type { BerryItemId, HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
 import type { PermanentStat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
-import { berryTypeToHeldItem } from "#items/berry";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import i18next from "i18next";
@@ -60,9 +58,9 @@ export class HeldItemReward extends PokemonReward {
 }
 
 export class BerryRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: BerryType): HeldItemReward | null {
+  override generateReward(pregenArgs?: BerryItemId): HeldItemReward | null {
     if (pregenArgs !== undefined) {
-      const item = berryTypeToHeldItem[pregenArgs];
+      const item = pregenArgs;
       return new HeldItemReward(RewardId.BERRY, item);
     }
     return new HeldItemReward(RewardId.BERRY, getNewBerryHeldItem());

@@ -1,4 +1,3 @@
-import { BerryType } from "#enums/berry-type";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
@@ -23,6 +22,21 @@ interface LegacyModifierEntry {
 export interface PokemonInItemMap {
   item: HeldItemSpecs;
   pokemonId: number;
+}
+
+// Legacy enum to read berry data
+enum BerryType {
+  SITRUS,
+  LUM,
+  ENIGMA,
+  LIECHI,
+  GANLON,
+  PETAYA,
+  APICOT,
+  SALAC,
+  LANSAT,
+  STARF,
+  LEPPA,
 }
 
 /**
