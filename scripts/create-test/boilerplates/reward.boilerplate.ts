@@ -6,13 +6,14 @@
  */
 
 import { AbilityId } from "#enums/ability-id";
-import { getHeldItemCategory, HeldItemCategoryId } from "#enums/held-item-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { HeldItemReward } from "#items/held-item-reward";
 import { GameManager } from "#test/framework/game-manager";
 import { generateRewardForTest } from "#test/utils/reward-test-utils";
+import { getHeldItemCategory } from "#utils/item-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 

@@ -14,7 +14,7 @@ import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#mystery-
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { randSeedInt } from "#utils/common";
 
 /** i18n namespace for encounter */
@@ -153,7 +153,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const removedPokemon = getRandomPlayerPokemon(true, false, true);
 
         // Get all the pokemon's held items
-        const itemConfig = removedPokemon.heldItemManager.generateItemConfiguration();
+        const itemConfig = removedPokemon.heldItemManager.getAllItemSpecs();
         globalScene.removePokemonFromPlayerParty(removedPokemon);
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -180,7 +180,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
           bossTypes = singleTypeChallenges.map(c => (c.value - 1) as PokemonType);
         }
 
-        const bossItemConfig: HeldItemConfiguration = encounter.misc.itemConfig;
+        const bossItemConfig: HeldItemSpecs[] = encounter.misc.itemConfig;
         // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];

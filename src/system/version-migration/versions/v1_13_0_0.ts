@@ -1,4 +1,4 @@
-import { convertModifierSaveData } from "#items/modifier-to-item-migrator-utils";
+import { convertModifierSaveData, type PokemonInItemMap } from "#items/modifier-to-item-migrator-utils";
 import type { PokemonItemMap } from "#types/held-item-data-types";
 import type { SessionSaveMigrator, SessionSaveMigratorIn } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
@@ -8,7 +8,7 @@ import { validateIsArrayOfObjects } from "#utils/migrator-utils";
  * @param party - The (player or enemy) party from the save data
  * @param heldItems - The converted {@linkcode PokemonItemMap}s to distribute
  */
-function assignHeldItemsToParty(party: SessionSaveMigratorIn["party"], heldItems: PokemonItemMap[]): void {
+function assignHeldItemsToParty(party: SessionSaveMigratorIn["party"], heldItems: PokemonInItemMap[]): void {
   for (const pokemon of party) {
     const itemSaveData: Record<string, unknown>[] = validateIsArrayOfObjects(pokemon.heldItems)
       ? pokemon.heldItems

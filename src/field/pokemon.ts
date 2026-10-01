@@ -136,7 +136,7 @@ import type {
   GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#types/held-item-data-types";
 import type { LevelMovesWithSource } from "#types/level-moves";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -166,7 +166,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { applyHeldItems } from "#utils/item-utils";
+import { applyHeldItems, isHeldItemSpecsArray } from "#utils/item-utils";
 import { decodeNickname, getFusedSpeciesName } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -323,7 +323,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
-    heldItemConfig?: HeldItemConfiguration,
+    // TODO split into separate params once this uses a config object
+    /** Passing a configuration generates items, passing specs assigns them directly */
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: Pokemon | PokemonData,
   ) {
     super(globalScene, x, y);
@@ -350,7 +352,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.heldItemManager = new HeldItemManager();
     if (heldItemConfig) {
-      assignItemsFromConfiguration(heldItemConfig, this);
+      if (isHeldItemSpecsArray(heldItemConfig)) {
+        for (const specs of heldItemConfig) {
+          this.heldItemManager.add(specs);
+        }
+      } else {
+        assignItemsFromConfiguration(heldItemConfig, this);
+      }
     }
 
     if (dataSource) {
@@ -5932,7 +5940,8 @@ export class PlayerPokemon extends Pokemon {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
-    heldItemConfig?: HeldItemConfiguration,
+    // TODO split into separate params once this uses a config object
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: Pokemon | PokemonData,
   ) {
     super(
@@ -6171,7 +6180,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
-          this.heldItemManager.generateItemConfiguration(),
+          this.heldItemManager.getAllItemSpecs(),
           this,
         );
         this.fusionSpecies = originalFusionSpecies;
@@ -6194,7 +6203,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
-          this.heldItemManager.generateItemConfiguration(),
+          this.heldItemManager.getAllItemSpecs(),
           this,
         );
       }
@@ -6347,7 +6356,7 @@ export class PlayerPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
-        this.heldItemManager.generateItemConfiguration(),
+        this.heldItemManager.getAllItemSpecs(),
         this,
       );
       ret.loadAssets().then(() => resolve(ret));
@@ -6523,7 +6532,7 @@ export class EnemyPokemon extends Pokemon {
     trainerSlot: TrainerSlot,
     boss: boolean,
     shinyLock = false,
-    heldItemConfig?: HeldItemConfiguration,
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: PokemonData,
     forRival = false,
   ) {
@@ -7222,7 +7231,7 @@ export class EnemyPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
-        this.heldItemManager.generateItemConfiguration(),
+        this.heldItemManager.getAllItemSpecs(),
         this,
       );
 

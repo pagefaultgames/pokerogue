@@ -39,7 +39,7 @@ import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
 import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -269,8 +269,8 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
         if (shouldGetOldGateau(newPokemon)) {
           newPokemonHeldItemConfig.push({
-            entry: HeldItemId.OLD_GATEAU,
-            count: 1,
+            id: HeldItemId.OLD_GATEAU,
+            stack: 1,
           });
         }
 
@@ -354,7 +354,7 @@ interface PokemonTransformation {
   previousPokemon: PlayerPokemon;
   newSpecies: PokemonSpecies;
   newPokemon: PlayerPokemon;
-  heldItems: HeldItemConfiguration;
+  heldItems: HeldItemSpecs[];
 }
 
 function getTeamTransformations(): PokemonTransformation[] {
@@ -379,7 +379,7 @@ function getTeamTransformations(): PokemonTransformation[] {
   for (let i = 0; i < numPokemon; i++) {
     const removed = removedPokemon[i];
     const index = pokemonTransformations.findIndex(p => p.previousPokemon.id === removed.id);
-    pokemonTransformations[index].heldItems = removed.heldItemManager.generateItemConfiguration();
+    pokemonTransformations[index].heldItems = removed.heldItemManager.getAllItemSpecs();
 
     const bst = removed.getSpeciesForm().getBaseStatTotal();
     let newBstRange: [number, number];
@@ -439,14 +439,13 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     }
 
     // Copy old items to new pokemon
-    const heldItemConfiguration = transformation.heldItems;
+    for (const specs of transformation.heldItems) {
+      newPokemon.heldItemManager.add(specs);
+    }
 
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
-      heldItemConfiguration.push({
-        entry: HeldItemId.OLD_GATEAU,
-        count: 1,
-      });
+      newPokemon.heldItemManager.add(HeldItemId.OLD_GATEAU, 1);
     }
 
     newPokemon.calculateStats();

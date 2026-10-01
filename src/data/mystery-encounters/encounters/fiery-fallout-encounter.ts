@@ -8,7 +8,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -294,8 +294,7 @@ function giveLeadPokemonAttackTypeBoostItem() {
   // Give first party pokemon attack type boost item for free at end of battle
   const leadPokemon = globalScene.getPlayerParty()[0];
   if (leadPokemon) {
-    // Generate type booster held item, default to Charcoal if item fails to generate
-    const item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon) ?? HeldItemId.CHARCOAL;
+    const item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon);
     leadPokemon.heldItemManager.add(item);
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;

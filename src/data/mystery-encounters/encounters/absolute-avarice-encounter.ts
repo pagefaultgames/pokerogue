@@ -125,7 +125,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Adds stolen berries to the Greedent item configuration
     const bossHeldItemConfig: HeldItemConfiguration = [];
     berryItems.forEach(map => {
-      bossHeldItemConfig.push({ entry: map.item, count: 1 });
+      bossHeldItemConfig.push({ entry: map.item.id, count: map.item.stack });
     });
 
     // +1 SpDef below wave 50, SpDef and Speed otherwise
@@ -169,7 +169,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Session has been safely saved at this point, so data won't be lost
     const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     berryItems.forEach(map => {
-      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id, 0, true);
+      map.pokemon?.heldItemManager.remove(map.item.id, 0, true);
     });
 
     globalScene.updateItemBar(true);
@@ -235,7 +235,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Returns 2/5 of the berries stolen to each Pokemon
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
-          const stolenBerries = berryMap.filter(map => map.pokemonId === pokemon.id);
+          const stolenBerries = berryMap.filter(map => map.pokemon === pokemon);
           const stolenBerryCount = stolenBerries.reduce((a, b) => a + b.item.stack, 0);
           const returnedBerryCount = Math.floor((stolenBerryCount * 2) / 5);
 

@@ -29,23 +29,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     };
   }
 
-  /**
-   * Build an item configuration array from all currently held items.
-   * @param restrictedIds - If provided, only include items whose ID is in this array.
-   */
-  // TODO: This is never called with a restricted ID array ever
-  // TODO: Would an array/iterator of `Specs` make more sense as a return value?
-  // We're literally just bundling these into objects with counts of 1 apiece
-  public generateItemConfiguration(restrictedIds: Id[] = []): { entry: Data & { id: Id }; count: number }[] {
-    return this.items
-      .entries()
-      .filter(([iid]) => !restrictedIds.includes(iid))
-      .map(([id, item]) => ({ entry: { ...item, id }, count: 1 }))
-      .toArray();
-  }
-
-  // TODO: Rename to `getAllItemSpecs` or something more illustrative of its functionality
-  public generateSaveData(): (Data & { id: Id })[] {
+  public getAllItemSpecs(): (Data & { id: Id })[] {
     return this.items
       .entries()
       .map(([id, item]) => ({ ...item, id }))
