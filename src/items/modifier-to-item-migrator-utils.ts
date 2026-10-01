@@ -7,7 +7,7 @@ import { type PermanentStat, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { SpeciesStatBoosterItemId } from "#items/stat-boost";
-import type { PokemonItemMap } from "#types/held-item-data-types";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import type { TrainerItemSpecs } from "#types/trainer-item-data-types";
 
 // #region Legacy modifier data types
@@ -18,6 +18,11 @@ interface LegacyModifierEntry {
   typeId: string;
   stackCount: number;
   args: readonly unknown[];
+}
+
+export interface PokemonInItemMap {
+  item: HeldItemSpecs;
+  pokemonId: number;
 }
 
 /**
@@ -363,7 +368,7 @@ function mapArgsModifierToTrainerItem(
 // #region Main conversion
 
 interface ConvertedModifierData {
-  heldItems: PokemonItemMap[];
+  heldItems: PokemonInItemMap[];
   trainerItems: TrainerItemSpecs[];
 }
 
@@ -374,7 +379,7 @@ interface ConvertedModifierData {
  * @returns An object containing the converted held items (per-pokemon) and trainer items
  */
 export function convertModifierSaveData(data: readonly Record<string, unknown>[]): ConvertedModifierData {
-  const heldItems: PokemonItemMap[] = [];
+  const heldItems: PokemonInItemMap[] = [];
   const trainerItems: TrainerItemSpecs[] = [];
   for (const entry of data) {
     if (!isLegacyModifierEntry(entry)) {

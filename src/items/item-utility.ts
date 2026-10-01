@@ -2,10 +2,11 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
-import { type HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonItemMap } from "#types/held-item-data-types";
 import { ValueHolder } from "#utils/value-holder";
+import { isItemInCategory } from "#utils/item-utils";
 import type { NonEmptyTuple } from "type-fest";
 
 export const MAX_STACK_COUNT_TINT = 0xf89890;
@@ -37,7 +38,7 @@ export function getPartyItemsInCategory(category: HeldItemCategoryId): NonEmptyT
         .map(id => {
           // non-null assertion justified since we only consider items that are owned by the pokemon
           const specs = pokemon.heldItemManager.getItemSpecs(id)!;
-          return { item: specs, pokemonId: pokemon.id } satisfies PokemonItemMap;
+          return { item: specs, pokemon } satisfies PokemonItemMap;
         }),
     )
     .toArray();

@@ -347,10 +347,10 @@ export class GameOverPhase extends BattlePhase {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      trainerItems: preWaveSessionData ? preWaveSessionData.trainerItems : globalScene.trainerItems.generateSaveData(),
+      trainerItems: preWaveSessionData ? preWaveSessionData.trainerItems : globalScene.trainerItems.getAllItemSpecs(),
       enemyTrainerItems: preWaveSessionData
         ? preWaveSessionData.enemyTrainerItems
-        : globalScene.enemyTrainerItems.generateSaveData(),
+        : globalScene.enemyTrainerItems.getAllItemSpecs(),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),

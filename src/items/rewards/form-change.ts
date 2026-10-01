@@ -4,7 +4,7 @@ import { allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { FormChangeItemId } from "#enums/form-change-item-id";
-import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
@@ -13,6 +13,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";
+import { isItemInCategory } from "#utils/item-utils";
 
 /**
  * Class that represents form changing items

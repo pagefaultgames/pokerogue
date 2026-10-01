@@ -48,7 +48,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { getHeldItemCategory, HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
@@ -137,7 +137,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { applyHeldItems } from "#utils/item-utils";
+import { applyHeldItems, getHeldItemCategory, isItemInCategory } from "#utils/item-utils";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
@@ -1394,7 +1394,7 @@ export class AttackMove extends Move {
    * This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
 
   // biome-ignore lint/complexity/useMaxParams: moves have a lot of independent params
   constructor(
@@ -1460,7 +1460,7 @@ export class StatusMove extends Move {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -1482,7 +1482,7 @@ export class SelfStatusMove extends Move {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -2171,7 +2171,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
  * Attribute for counter-like moves to redirect the move to a different target
  */
 export class CounterRedirectAttr extends MoveAttr {
-  declare private moveFilter?: MoveDamageCategory;
+  private declare moveFilter?: MoveDamageCategory;
   constructor(moveFilter?: MoveDamageCategory) {
     super();
     if (moveFilter !== undefined) {
@@ -3782,7 +3782,7 @@ abstract class OverrideMoveEffectAttr extends MoveAttr {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
-  declare private _: never;
+  private declare _: never;
   /**
    * Apply the move attribute to override other effects of this move.
    * @param user - The {@linkcode Pokemon} using the move
@@ -8779,42 +8779,38 @@ export class SketchAttr extends MoveEffectAttr {
 }
 
 export class AbilityChangeAttr extends MoveEffectAttr {
-  public ability: AbilityId;
+  public abilityId: AbilityId;
 
   constructor(ability: AbilityId, selfTarget?: boolean) {
     super(selfTarget);
 
-    this.ability = ability;
+    this.abilityId = ability;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
     const moveTarget = this.selfTarget ? user : target;
+    const pokemonName = getPokemonNameWithAffix(moveTarget);
 
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     if (moveTarget.breakIllusion()) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(moveTarget) }),
-      );
+      globalScene.phaseManager.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName }));
     }
     globalScene.phaseManager.queueMessage(
-      i18next.t("moveTriggers:acquiredAbility", {
-        pokemonName: getPokemonNameWithAffix(moveTarget),
-        abilityName: allAbilities[this.ability].name,
-      }),
+      i18next.t("moveTriggers:acquiredAbility", { pokemonName, abilityName: allAbilities[this.abilityId].name }),
     );
-    moveTarget.setTempAbility(allAbilities[this.ability]);
+    moveTarget.setTempAbility(this.abilityId);
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       (this.selfTarget ? user : target).getAbility().replaceable
-      && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+      && (this.selfTarget ? user : target).getAbility().id !== this.abilityId;
   }
 }
 
@@ -8827,38 +8823,41 @@ export class AbilityCopyAttr extends MoveEffectAttr {
     this.copyToPartner = copyToPartner;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
+
+    const abilityId = target.getAbility().id;
+    const abilityName = allAbilities[abilityId].name;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:copiedTargetAbility", {
         pokemonName: getPokemonNameWithAffix(user),
         targetName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[target.getAbility().id].name,
+        abilityName,
       }),
     );
 
-    user.setTempAbility(target.getAbility());
+    user.setTempAbility(abilityId);
     const ally = user.getAlly();
 
-    if (this.copyToPartner && globalScene.currentBattle?.double && ally != null && ally.hp) {
-      // TODO is this the best way to check that the ally is active?
+    // TODO: is this the best way to check that the ally is active?
+    if (this.copyToPartner && globalScene.currentBattle?.double && ally?.hp) {
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:copiedTargetAbility", {
           pokemonName: getPokemonNameWithAffix(ally),
           targetName: getPokemonNameWithAffix(target),
-          abilityName: allAbilities[target.getAbility().id].name,
+          abilityName,
         }),
       );
-      ally.setTempAbility(target.getAbility());
+      ally.setTempAbility(abilityId);
     }
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => {
       const ally = user.getAlly();
       let ret = target.getAbility().copiable && user.getAbility().replaceable;
@@ -8879,50 +8878,54 @@ export class AbilityGiveAttr extends MoveEffectAttr {
     super(false);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
+    const abilityId = user.getAbility().id;
+
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:acquiredAbility", {
         pokemonName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[user.getAbility().id].name,
+        abilityName: allAbilities[abilityId].name,
       }),
     );
 
-    target.setTempAbility(user.getAbility());
+    target.setTempAbility(abilityId);
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
 export class SwitchAbilitiesAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
-
-    const tempAbility = user.getAbility();
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }),
     );
 
-    user.setTempAbility(target.getAbility());
-    target.setTempAbility(tempAbility);
+    // abilities intentionally buffered before swapping
+    const userAbilityId = user.getAbility().id;
+    const targetAbilityId = target.getAbility().id;
+
+    user.setTempAbility(targetAbilityId);
+    target.setTempAbility(userAbilityId);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }
@@ -12298,8 +12301,10 @@ export function initMoves() {
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, true /* NOT ADDED if already trapped */)
-      // fails if the user is currently trapped specifically from no retreat
-      .condition(user => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT, 2),
+      .condition(
+        user => !user.getLastXMoves(-1).some(m => m.move === MoveId.NO_RETREAT && m.result === MoveResult.SUCCESS),
+        2,
+      ),
     new StatusMove(MoveId.TAR_SHOT, PokemonType.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false)

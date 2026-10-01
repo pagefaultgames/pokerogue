@@ -65,8 +65,7 @@ export class BerryRewardGenerator extends RewardGenerator {
       const item = berryTypeToHeldItem[pregenArgs];
       return new HeldItemReward(RewardId.BERRY, item);
     }
-    const item = getNewBerryHeldItem();
-    return item == null ? null : new HeldItemReward(RewardId.BERRY, item);
+    return new HeldItemReward(RewardId.BERRY, getNewBerryHeldItem());
   }
 }
 
@@ -76,10 +75,10 @@ export class AttackTypeBoosterRewardGenerator extends RewardGenerator {
       const item = attackTypeToHeldItem[pregenArgs];
       return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
     }
-
-    const item = getNewAttackTypeBoosterHeldItem(globalScene.getPlayerParty());
-
-    return item ? new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item) : null;
+    return new HeldItemReward(
+      RewardId.ATTACK_TYPE_BOOSTER,
+      getNewAttackTypeBoosterHeldItem(undefined, globalScene.getPlayerParty()),
+    );
   }
 }
 
@@ -89,7 +88,6 @@ export class BaseStatBoosterRewardGenerator extends RewardGenerator {
       const item = permanentStatToHeldItem[pregenArgs];
       return new HeldItemReward(RewardId.VITAMIN, item);
     }
-    const item = getNewVitaminHeldItem();
-    return item == null ? null : new HeldItemReward(RewardId.VITAMIN, item);
+    return new HeldItemReward(RewardId.VITAMIN, getNewVitaminHeldItem());
   }
 }

@@ -4,7 +4,7 @@ import { allAbilities, allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import type { AbilityId } from "#enums/ability-id";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
-import { getHeldItemCategory, type HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
@@ -15,6 +15,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#field/pokemon";
 import { coerceArray } from "#utils/array";
+import { getHeldItemCategory } from "#utils/item-utils";
 
 export interface EncounterRequirement {
   meetsRequirement(): boolean; // Boolean to see if a requirement is met
