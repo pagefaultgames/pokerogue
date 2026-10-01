@@ -4,9 +4,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { allHeldItems } from "#data/data-lists";
-import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
-import { HeldItemId } from "#enums/held-item-id";
+import {
+  type BaseStatItemId,
+  type BerryItemId,
+  berryItemIds,
+  HeldItemId,
+  HeldItemNames,
+  type TypeBoostItemId,
+} from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
@@ -16,7 +22,7 @@ import { AttackTypeBoostHeldItemAttr, attackTypeToHeldItem } from "#items/attack
 import { OldGateauHeldItemAttr, ShuckleJuiceHeldItemAttr } from "#items/base-stat-add";
 import { BaseStatMultiplyHeldItemAttr, permanentStatToHeldItem, statBoostItems } from "#items/base-stat-multiply";
 import { BatonHeldItemAttr } from "#items/baton";
-import { BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import { BerryHeldItemAttr } from "#items/berry";
 import { BypassSpeedChanceHeldItemAttr } from "#items/bypass-speed-chance";
 import { CritBoostHeldItemAttr, SpeciesCritBoostHeldItemAttr } from "#items/crit-booster";
 import { DamageMoneyRewardHeldItemAttr } from "#items/damage-money-reward";
@@ -41,63 +47,19 @@ import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
 
-// #region Types
-// TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
-// and convert the existing objects to functions for reduced memory footprint.
-// TODO: Export these as "subsets" of `HeldItemId` for use inside type declarations
-type BaseStatItemId =
-  | typeof HeldItemId.HP_UP
-  | typeof HeldItemId.PROTEIN
-  | typeof HeldItemId.IRON
-  | typeof HeldItemId.CALCIUM
-  | typeof HeldItemId.ZINC
-  | typeof HeldItemId.CARBOS;
-
-type TypeBoostItemId =
-  | typeof HeldItemId.SILK_SCARF
-  | typeof HeldItemId.BLACK_BELT
-  | typeof HeldItemId.SHARP_BEAK
-  | typeof HeldItemId.POISON_BARB
-  | typeof HeldItemId.SOFT_SAND
-  | typeof HeldItemId.HARD_STONE
-  | typeof HeldItemId.SILVER_POWDER
-  | typeof HeldItemId.SPELL_TAG
-  | typeof HeldItemId.METAL_COAT
-  | typeof HeldItemId.CHARCOAL
-  | typeof HeldItemId.MYSTIC_WATER
-  | typeof HeldItemId.MIRACLE_SEED
-  | typeof HeldItemId.MAGNET
-  | typeof HeldItemId.TWISTED_SPOON
-  | typeof HeldItemId.NEVER_MELT_ICE
-  | typeof HeldItemId.DRAGON_FANG
-  | typeof HeldItemId.BLACK_GLASSES
-  | typeof HeldItemId.FAIRY_FEATHER;
-
-export type BerryItemId =
-  | typeof HeldItemId.SITRUS_BERRY
-  | typeof HeldItemId.LUM_BERRY
-  | typeof HeldItemId.ENIGMA_BERRY
-  | typeof HeldItemId.LIECHI_BERRY
-  | typeof HeldItemId.GANLON_BERRY
-  | typeof HeldItemId.PETAYA_BERRY
-  | typeof HeldItemId.APICOT_BERRY
-  | typeof HeldItemId.SALAC_BERRY
-  | typeof HeldItemId.LANSAT_BERRY
-  | typeof HeldItemId.STARF_BERRY
-  | typeof HeldItemId.LEPPA_BERRY;
-
-//#endregion Types
-
 // #region Berries
-const twoStackBerryTypes: readonly BerryType[] = [BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA];
-const berryItems = getEnumValues(BerryType).reduce(
+const twoStackBerryIds: readonly BerryItemId[] = [
+  HeldItemId.LUM_BERRY,
+  HeldItemId.LEPPA_BERRY,
+  HeldItemId.SITRUS_BERRY,
+  HeldItemId.ENIGMA_BERRY,
+];
+const berryItems = berryItemIds.reduce(
   (ret, berry) => {
-    const maxStackCount = twoStackBerryTypes.includes(berry) ? 2 : 3;
-    const berryId = berryTypeToHeldItem[berry];
-    berryId satisfies BerryItemId;
-    ret[berryId] = new HeldItemBuilder(berryId, maxStackCount) //
+    const maxStackCount = twoStackBerryIds.includes(berry) ? 2 : 3;
+    ret[berry] = new HeldItemBuilder(berry, maxStackCount) //
       .attr(BerryHeldItemAttr, berry)
-      .iconName(`${BerryType[berry].toLowerCase()}_berry`)
+      .iconName(HeldItemNames[berry].toLowerCase())
       .build();
     return ret;
   },

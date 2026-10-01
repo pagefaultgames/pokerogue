@@ -5,7 +5,7 @@ import type { Gender } from "#data/gender";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import type { TypeDamageMultiplier } from "#data/type";
 import type { AbilityId } from "#enums/ability-id";
-import type { BerryType } from "#enums/berry-type";
+import type { BerryItemId } from "#enums/held-item-id";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokemonType, RegularPokemonType } from "#enums/pokemon-type";
@@ -87,7 +87,7 @@ interface SerializedPokemonSummonData {
   types: PokemonType[];
   addedType?: PokemonType | undefined;
   illusion?: SerializedIllusionData | undefined;
-  berriesEatenLast: BerryType[];
+  berriesEatenLast: BerryItemId[];
   moveHistory: TurnMove[];
 }
 
@@ -142,7 +142,7 @@ export class PokemonSummonData {
   /** Data pertaining to this pokemon's Illusion, if it has one. */
   public illusion: IllusionData | null = null;
   /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
-  public berriesEatenLast: BerryType[] = [];
+  public berriesEatenLast: BerryItemId[] = [];
 
   /**
    * An array of all moves this pokemon has used since entering the battle.
@@ -289,7 +289,7 @@ export class PokemonBattleData {
    * Array containing all berries eaten and not yet recovered during this current battle
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Harvest_(Ability)}
    */
-  public berriesEaten: BerryType[] = [];
+  public berriesEaten: BerryItemId[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
     if (source != null) {
@@ -380,5 +380,5 @@ export class PokemonTurnData {
    * Saved into {@linkcode PokemonSummonData} by Cud Chew on turn end.
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
    */
-  public berriesEaten: BerryType[] = [];
+  public berriesEaten: BerryItemId[] = [];
 }

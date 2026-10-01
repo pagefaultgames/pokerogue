@@ -3,7 +3,7 @@ import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -11,7 +11,7 @@ import { RewardId } from "#enums/reward-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { berryTypeToHeldItem } from "#items/berry";
+import { getNewBerryHeldItem } from "#items/held-item-pool";
 import type { RewardOption } from "#items/reward";
 import { generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
 import { generateRewardOptionFromId } from "#items/reward-utils";
@@ -34,8 +34,6 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedItem } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
@@ -310,8 +308,11 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
   .build();
 
 function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
-  const berryType = randSeedItem(getEnumValues(BerryType));
-  const berry = berryTypeToHeldItem[berryType];
+  const berry = getNewBerryHeldItem({
+    [HeldItemId.SITRUS_BERRY]: 1,
+    [HeldItemId.LUM_BERRY]: 1,
+    [HeldItemId.LEPPA_BERRY]: 1,
+  });
 
   const party = globalScene.getPlayerParty();
 
