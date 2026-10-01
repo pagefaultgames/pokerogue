@@ -169,7 +169,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Session has been safely saved at this point, so data won't be lost
     const berryItems = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     berryItems.forEach(map => {
-      map.pokemon?.heldItemManager.remove(map.item.id);
+      map.pokemon?.heldItemManager.remove(map.item.id, 0, true);
     });
 
     globalScene.updateItemBar(true);

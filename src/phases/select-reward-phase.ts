@@ -8,6 +8,7 @@ import type { RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { FusePokemonReward } from "#items/fuse";
+import { tryTransferHeldItem } from "#items/item-utility";
 import { RememberMoveReward } from "#items/remember-move";
 import {
   type PokemonMoveRecallRewardParams,
@@ -64,6 +65,13 @@ export class SelectRewardPhase extends BattlePhase {
     if (!this.isPlayer()) {
       return false;
     }
+
+    // Reset all temporary stacks
+    for (const p of globalScene.getPlayerParty()) {
+      p.heldItemManager.clearTempStacks();
+    }
+    globalScene.trainerItems.clearTempStacks();
+    globalScene.updateItemBar();
 
     if (!this.rerollCount && !this.isCopy) {
       this.updateSeed();
@@ -220,15 +228,8 @@ export class SelectRewardPhase extends BattlePhase {
         ) {
           const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
           const item = items[itemIndex];
-          globalScene.tryTransferHeldItem(
-            item,
-            party[fromSlotIndex],
-            party[toSlotIndex],
-            true,
-            itemQuantity,
-            undefined,
-            false,
-          );
+          // TODO: Should this play a sound? Should this update the item bar?
+          tryTransferHeldItem(item, party[fromSlotIndex], party[toSlotIndex], itemQuantity);
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }

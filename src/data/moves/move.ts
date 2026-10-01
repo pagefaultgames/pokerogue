@@ -73,7 +73,8 @@ import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
-import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import type { BerryHeldItemAttr } from "#items/berry";
+import { canSteal, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -135,7 +136,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { applyHeldItems, isItemInCategory } from "#utils/item-utils";
+import { applyHeldItems, getHeldItemCategory, isItemInCategory } from "#utils/item-utils";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
@@ -3184,14 +3185,14 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = target.heldItemManager.getTransferableHeldItems();
+    const heldItems = target.heldItemManager.getTransferableHeldItems().filter(id => canSteal(id, target, user));
     if (heldItems.length === 0) {
       return false;
     }
 
     const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
 
-    if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
+    if (!tryStealHeldItem(stolenItem, target, user)) {
       return false;
     }
 
@@ -3243,17 +3244,12 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
    * @returns `true` if an item was able to be removed
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    if (!this.berriesOnly && target.isPlayer()) {
-      // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
-      return false;
-    }
-
     // Check for abilities that block item theft
     // TODO: This should not trigger if the target would faint beforehand
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled });
+    const blockRemoval = new ValueHolder(false);
+    applyAbAttrs("BlockItemTheftAbAttr", { pokemon: target, cancelled: blockRemoval });
 
-    if (cancelled.value) {
+    if (blockRemoval.value) {
       return false;
     }
 
@@ -3262,7 +3258,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     let heldItems = target.heldItemManager.getTransferableHeldItems();
 
     if (this.berriesOnly) {
-      heldItems = heldItems.filter(m => m in Object.values(berryTypeToHeldItem));
+      heldItems = heldItems.filter(m => getHeldItemCategory(m) === HeldItemCategoryId.BERRY);
     }
 
     if (heldItems.length === 0) {
@@ -3349,7 +3345,8 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   protected reduceBerryItem(target: Pokemon) {
-    target.loseHeldItem(this.chosenBerry);
+    // Berries eaten in this way are lost permanently
+    target.loseHeldItem(this.chosenBerry, false);
     globalScene.updateItemBar(target.isPlayer());
   }
 
@@ -7135,13 +7132,6 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const slotIndex = globalScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
       pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-      const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-      // Reclaim held items that were banked as post-battle loot when this Pokemon fainted earlier
-      for (let i = postBattleLoot.length - 1; i >= 0; i--) {
-        if (postBattleLoot[i].pokemonId === pokemon.id) {
-          postBattleLoot.splice(i, 1);
-        }
-      }
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
         0,

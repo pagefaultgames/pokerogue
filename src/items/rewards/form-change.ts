@@ -60,10 +60,7 @@ export class FormChangeItemReward extends PokemonReward {
     }
 
     pokemon.heldItemManager.add(this.formChangeItem);
-    pokemon.heldItemManager.toggleActive(this.formChangeItem);
-
-    // TODO: revise logic of this trigger based on active/inactive item
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
+    pokemon.toggleFormChangeItem(this.formChangeItem);
 
     globalScene.updateItemBar(true);
 

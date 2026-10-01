@@ -254,7 +254,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           }
         }
 
-        chosenPokemon.loseHeldItem(chosenItem, false);
+        chosenPokemon.heldItemManager.remove(chosenItem);
 
         leaveEncounterWithoutBattle(true);
       })
@@ -325,7 +325,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           doEventReward();
         }
 
-        chosenPokemon.loseHeldItem(chosenItem, false);
+        chosenPokemon.heldItemManager.remove(chosenItem);
 
         leaveEncounterWithoutBattle(true);
       })

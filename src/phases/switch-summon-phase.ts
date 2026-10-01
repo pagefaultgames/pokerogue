@@ -12,6 +12,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
+import { tryTransferHeldItem } from "#items/item-utility";
 import { SummonPhase } from "#phases/summon-phase";
 import type { MoveAttrString } from "#types/move-types";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -164,7 +165,7 @@ export class SwitchSummonPhase extends SummonPhase {
         const batonPassModifier = this.lastPokemon.heldItemManager.hasItem(HeldItemId.BATON);
 
         if (batonPassModifier) {
-          globalScene.tryTransferHeldItem(HeldItemId.BATON, this.lastPokemon, switchedInPokemon, false);
+          tryTransferHeldItem(HeldItemId.BATON, this.lastPokemon, switchedInPokemon);
         }
       }
     }

@@ -45,6 +45,7 @@ import { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryItemId } from "#items/all-held-items";
 import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import { canSteal, tryStealHeldItem } from "#items/item-utility";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { HitCheckEntry, MoveEffectPhase } from "#phases/move-effect-phase";
@@ -1827,7 +1828,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
       if (heldItems.length > 0) {
         // Ensure that the stolen item in testing is the same as when the effect is applied
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItem(this.stolenItem, opponent, pokemon)) {
+        if (canSteal(this.stolenItem, opponent, pokemon)) {
           return true;
         }
       }
@@ -1841,7 +1842,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     if (!this.stolenItem) {
       this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-    if (globalScene.tryTransferHeldItem(this.stolenItem, opponent, pokemon, false)) {
+    if (tryStealHeldItem(this.stolenItem, opponent, pokemon)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postAttackStealHeldItem", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -1956,7 +1957,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
       const heldItems = opponent.heldItemManager.getTransferableHeldItems();
       if (heldItems.length > 0) {
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItem(this.stolenItem, opponent, pokemon)) {
+        if (canSteal(this.stolenItem, opponent, pokemon)) {
           return true;
         }
       }
@@ -1969,7 +1970,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     if (!this.stolenItem) {
       this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-    if (globalScene.tryTransferHeldItem(this.stolenItem, opponent, pokemon, false)) {
+    if (tryStealHeldItem(this.stolenItem, opponent, pokemon)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postDefendStealHeldItem", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -4162,7 +4163,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
           .filter(
             bm =>
               isItemInCategory(bm, HeldItemCategoryId.BERRY)
-              && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+              && !(pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount),
           ) as BerryItemId[]
       ).map(bm => (allHeldItems[bm].getAttrs(HeldItemEffect.BERRY)[0] as BerryHeldItemAttr).berryType),
     );

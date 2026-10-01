@@ -39,11 +39,11 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     return this.getItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
-  public override hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
+  public override hasItem(itemType: HeldItemId | HeldItemCategoryId, excludeTempStack = false): boolean {
     if (isCategoryId(itemType)) {
-      return this.getItems().some(id => isItemInCategory(id, itemType));
+      return this.getItems(excludeTempStack).some(id => isItemInCategory(id, itemType));
     }
-    return super.hasItem(itemType);
+    return super.hasItem(itemType, excludeTempStack);
   }
 
   public hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
@@ -60,7 +60,7 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   ) {
     const currentItems = transferableOnly ? this.getTransferableHeldItems() : this.getItems();
 
-    return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
+    return currentItems.filter(it => exclude !== isItemInRequested(it, requestedItems));
   }
 
   public hasActiveFormChangeItem(id: FormChangeItemId): boolean {
@@ -74,11 +74,13 @@ export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
     ) as FormChangeItemId[];
   }
 
-  public toggleActive(id: FormChangeItemId): void {
+  public toggleActive(id: FormChangeItemId): boolean {
     const item = this.items.get(id);
     if (item) {
       item.active = !item.active;
+      return true;
     }
+    return false;
   }
 
   // #endregion

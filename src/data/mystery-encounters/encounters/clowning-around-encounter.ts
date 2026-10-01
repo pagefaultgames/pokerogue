@@ -337,7 +337,8 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
           const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
           if (tier === RarityTier.ROGUE) {
             numRogue += stack;
-          } else if (tier === RarityTier.ULTRA) {
+            // TODO: Doing this to preserve previous behavior (treating soothe bell as ultra tier), but check with balance if intended
+          } else if (tier === RarityTier.ULTRA || m === HeldItemId.SOOTHE_BELL) {
             numUltra += stack;
           }
           mostHeldItemsPokemon.heldItemManager.remove(m, stack);
