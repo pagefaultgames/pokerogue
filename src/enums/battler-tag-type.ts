@@ -96,6 +96,7 @@ export enum BattlerTagType {
   BYPASS_SPEED = "BYPASS_SPEED",
   RAGE = "RAGE",
   FLING = "FLING",
+  NATURAL_GIFT = "NATURAL_GIFT",
   BESTOW = "BESTOW",
   TRICK = "TRICK",
   SWITCHEROO = "SWITCHEROO",
@@ -103,6 +104,7 @@ export enum BattlerTagType {
 
 export type ChooseItemBattlerTagType =
   | BattlerTagType.FLING
+  | BattlerTagType.NATURAL_GIFT
   | BattlerTagType.BESTOW
   | BattlerTagType.TRICK
   | BattlerTagType.SWITCHEROO;

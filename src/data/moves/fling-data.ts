@@ -1,4 +1,5 @@
 import { HeldItemId } from "#enums/held-item-id";
+import { PokemonType } from "#enums/pokemon-type";
 
 export const flingPower = {
   [HeldItemId.SITRUS_BERRY]: 10,
@@ -90,5 +91,39 @@ export function flingSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
 export function bestowSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
   const weightA = itemA === HeldItemId.TOXIC_ORB || itemA === HeldItemId.FLAME_ORB ? 100 : 0;
   const weightB = itemB === HeldItemId.TOXIC_ORB || itemB === HeldItemId.FLAME_ORB ? 100 : 0;
+  return weightB - weightA;
+}
+
+export const naturalGiftPower = {
+  [HeldItemId.SITRUS_BERRY]: 80,
+  [HeldItemId.LUM_BERRY]: 80,
+  [HeldItemId.ENIGMA_BERRY]: 100,
+  [HeldItemId.LIECHI_BERRY]: 100,
+  [HeldItemId.GANLON_BERRY]: 100,
+  [HeldItemId.PETAYA_BERRY]: 100,
+  [HeldItemId.APICOT_BERRY]: 100,
+  [HeldItemId.SALAC_BERRY]: 100,
+  [HeldItemId.LANSAT_BERRY]: 100,
+  [HeldItemId.STARF_BERRY]: 100,
+  [HeldItemId.LEPPA_BERRY]: 80,
+};
+
+export const naturalGiftType = {
+  [HeldItemId.SITRUS_BERRY]: PokemonType.PSYCHIC,
+  [HeldItemId.LUM_BERRY]: PokemonType.FLYING,
+  [HeldItemId.ENIGMA_BERRY]: PokemonType.BUG,
+  [HeldItemId.LIECHI_BERRY]: PokemonType.GRASS,
+  [HeldItemId.GANLON_BERRY]: PokemonType.ICE,
+  [HeldItemId.PETAYA_BERRY]: PokemonType.POISON,
+  [HeldItemId.APICOT_BERRY]: PokemonType.GROUND,
+  [HeldItemId.SALAC_BERRY]: PokemonType.FIGHTING,
+  [HeldItemId.LANSAT_BERRY]: PokemonType.FLYING,
+  [HeldItemId.STARF_BERRY]: PokemonType.PSYCHIC,
+  [HeldItemId.LEPPA_BERRY]: PokemonType.FIGHTING,
+};
+
+export function naturalGiftSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
+  const weightA = naturalGiftPower[itemA] ?? 0;
+  const weightB = naturalGiftPower[itemB] ?? 0;
   return weightB - weightA;
 }

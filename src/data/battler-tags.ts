@@ -3831,6 +3831,12 @@ export class FlingTag extends ChosenItemTag {
   }
 }
 
+export class NaturalGiftTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.FLING, sourceMove);
+  }
+}
+
 export class BestowTag extends ChosenItemTag {
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.BESTOW, sourceMove);
@@ -4142,6 +4148,8 @@ export function getBattlerTag(
       return new GrudgeTag();
     case BattlerTagType.FLING:
       return new FlingTag(sourceMove);
+    case BattlerTagType.NATURAL_GIFT:
+      return new NaturalGiftTag(sourceMove);
     case BattlerTagType.BESTOW:
       return new BestowTag(sourceMove);
     case BattlerTagType.TRICK:
@@ -4289,6 +4297,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
   [BattlerTagType.FLING]: FlingTag;
+  [BattlerTagType.NATURAL_GIFT]: NaturalGiftTag;
   [BattlerTagType.BESTOW]: BestowTag;
   [BattlerTagType.TRICK]: TrickTag;
   [BattlerTagType.SWITCHEROO]: SwitcherooTag;

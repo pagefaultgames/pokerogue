@@ -145,7 +145,14 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
-import { bestowSortFunc, flingPower, flingSortFunc } from "./fling-data";
+import {
+  bestowSortFunc,
+  flingPower,
+  flingSortFunc,
+  naturalGiftPower,
+  naturalGiftSortFunc,
+  naturalGiftType,
+} from "./fling-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -1893,19 +1900,29 @@ export class PreMoveChooseItemAttr extends MoveAttr {
   public readonly message: string | MoveMessageFunc;
   private tagType: ChooseItemBattlerTagType;
   private sortFunc: HeldItemSortFunc;
+  private filterFunc: ((item: HeldItemId) => boolean) | undefined;
 
-  constructor(message: string | MoveMessageFunc, tagType: ChooseItemBattlerTagType, sortFunc: HeldItemSortFunc) {
+  constructor(
+    message: string | MoveMessageFunc,
+    tagType: ChooseItemBattlerTagType,
+    sortFunc: HeldItemSortFunc,
+    filterFunc?: (item: HeldItemId) => boolean,
+  ) {
     super();
     this.message = message;
     this.tagType = tagType;
     this.sortFunc = sortFunc;
+    this.filterFunc = filterFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
 
-    const items = user.heldItemManager.getTransferableHeldItems();
+    let items = user.heldItemManager.getTransferableHeldItems();
 
+    if (this.filterFunc) {
+      items = items.filter(item => this.filterFunc && this.filterFunc(item));
+    }
     items.sort((a, b) => this.sortFunc(a, b));
 
     if (message) {
@@ -2257,7 +2274,7 @@ export class MessageAttr extends MoveEffectAttr {
 /**
  * Move attribute to remove the item after fling and display a message.
  */
-export class PostFlungItemAttr extends MoveEffectAttr {
+export class PostFlingAttr extends MoveEffectAttr {
   override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
     const item = user.getTag(BattlerTagType.FLING)?.item;
     if (!item) {
@@ -2271,6 +2288,28 @@ export class PostFlungItemAttr extends MoveEffectAttr {
     globalScene.updateItemBar(user.isPlayer());
 
     globalScene.phaseManager.queueMessage(`${user.name} threw its ${allHeldItems[item].name}!`, 500);
+    return true;
+  }
+}
+
+/**
+ * Move attribute to remove the item after fling and display a message.
+ */
+export class PostNaturalGiftAttr extends MoveEffectAttr {
+  override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
+    const item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+    if (!item) {
+      return false;
+    }
+
+    user.heldItemManager.addTempStack(item, -1);
+    user.removeTag(BattlerTagType.NATURAL_GIFT);
+    globalScene.updateItemBar(user.isPlayer());
+
+    // TODO: Do we want this?
+    // user.battleData.berriesEaten.push(item);
+
+    globalScene.phaseManager.queueMessage(`${user.name} consumed its ${allHeldItems[item].name}!`, 500);
     return true;
   }
 }
@@ -4879,6 +4918,42 @@ export class FlingPowerAttr extends VariablePowerAttr {
   }
 }
 
+export class NaturalGiftPowerAttr extends VariablePowerAttr {
+  /**
+   * Move power depends on the item being thrown
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const power = args[0] as NumberHolder;
+
+    let item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+
+    if (!item) {
+      const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]);
+      if (items.length === 0) {
+        return false;
+      }
+      items.sort((a, b) => flingSortFunc(a, b));
+      item = items[0];
+      user.addTag(BattlerTagType.NATURAL_GIFT, 0, MoveId.NATURAL_GIFT);
+      user.getTag(BattlerTagType.NATURAL_GIFT)?.chooseItem(item);
+    }
+
+    if (!item) {
+      power.value = -1;
+      return true;
+    }
+
+    power.value = naturalGiftPower[item] ?? 10;
+
+    return true;
+  }
+}
+
 /**
  * Attribute used for Electro Ball move.
  */
@@ -6280,6 +6355,38 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     }
 
     return defaultType;
+  }
+}
+
+export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
+    const moveType = args[0];
+
+    let item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+
+    if (!item) {
+      const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]);
+      if (items.length === 0) {
+        return false;
+      }
+      items.sort((a, b) => flingSortFunc(a, b));
+      item = items[0];
+      user.addTag(BattlerTagType.NATURAL_GIFT, 0, MoveId.NATURAL_GIFT);
+      user.getTag(BattlerTagType.NATURAL_GIFT)?.chooseItem(item);
+    }
+
+    if (!item) {
+      return false;
+    }
+
+    moveType.value = naturalGiftType[item] ?? PokemonType.NORMAL;
+
+    return true;
+  }
+
+  override getTypeForMovegen(_user: Pokemon, _move: Move): PokemonType {
+    // TODO: what should we do here?
+    return PokemonType.NORMAL;
   }
 }
 
@@ -10831,6 +10938,15 @@ export function initMoves() {
     new AttackMove(MoveId.BRINE, PokemonType.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.getHpRatio() < 0.5 ? 2 : 1)),
     new AttackMove(MoveId.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
+      .attr(
+        PreMoveChooseItemAttr,
+        (_user, _target, _move) => "What item to consume for Natural Gift?",
+        BattlerTagType.NATURAL_GIFT,
+        naturalGiftSortFunc,
+        (item: HeldItemId) => getHeldItemCategory(item) === HeldItemCategoryId.BERRY,
+      )
+      .attr(NaturalGiftPowerAttr)
+      .attr(NaturalGiftTypeAttr)
       .makesContact(false)
       /*
       NOTE: To whoever tries to implement this, reminder to push to battleData.berriesEaten
@@ -10888,7 +11004,7 @@ export function initMoves() {
       )
       .attr(FlingPowerAttr)
       .attr(FlingEffectAttr)
-      .attr(PostFlungItemAttr)
+      .attr(PostFlingAttr)
       .condition(failIfNoUserHeldItemsCondition, 2)
       .makesContact(false)
       .partial(),

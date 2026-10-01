@@ -64,7 +64,7 @@ export class PokemonMove {
     }
 
     if (
-      [MoveId.FLING, MoveId.BESTOW, MoveId.TRICK, MoveId.SWITCHEROO].includes(this.moveId)
+      [MoveId.FLING, MoveId.NATURAL_GIFT, MoveId.BESTOW, MoveId.TRICK, MoveId.SWITCHEROO].includes(this.moveId)
       && pokemon.heldItemManager.getTransferableHeldItems().length === 0
     ) {
       return [false, "This Pokémon is not holding any items."];
