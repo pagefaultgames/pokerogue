@@ -93,6 +93,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
     return this.getStack(itemType, excludeTempStack) > 0;
   }
 
+  // TODO: update callsites
   public isMaxStack(itemType: Id, excludeTempStack = false): boolean {
     const stack = this.getStack(itemType, excludeTempStack);
     return stack >= this.getMaxStackCount(itemType);
