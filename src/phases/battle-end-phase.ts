@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { findHiddenItems } from "#items/hidden-items";
 import { BattlePhase } from "#phases/battle-phase";
 
 export class BattleEndPhase extends BattlePhase {
@@ -44,6 +45,8 @@ export class BattleEndPhase extends BattlePhase {
       globalScene.phaseManager.clearPhaseQueue();
       globalScene.phaseManager.unshiftNew("GameOverPhase", true);
     }
+
+    findHiddenItems();
 
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
       applyAbAttrs("PostBattleAbAttr", { pokemon, victory: this.isVictory });
