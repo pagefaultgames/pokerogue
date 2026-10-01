@@ -19,7 +19,6 @@ describe("Abilities - Trace", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.SPLASH])
       .ability(AbilityId.TRACE)
       .battleStyle("single")
       .criticalHits(false)
@@ -31,9 +30,6 @@ describe("Abilities - Trace", () => {
   it("should copy the opponent's ability", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to("BerryPhase");
-
     expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 
@@ -41,9 +37,28 @@ describe("Abilities - Trace", () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to("BerryPhase");
-
     expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+  });
+
+  describe("As Passive", () => {
+    beforeEach(() => {
+      game.override //
+        .ability(AbilityId.BALL_FETCH)
+        .passiveAbility(AbilityId.TRACE);
+    });
+
+    it("should copy the opponent's passive if Trace is a passive and the opponent's passive is enabled", async () => {
+      game.override.enemyPassiveAbility(AbilityId.INSOMNIA);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+      expect(game.field.getPlayerPokemon().getPassiveAbility().id).toBe(AbilityId.INSOMNIA);
+    });
+
+    it("should copy the opponent's regular ability if Trace is a passive and the opponent's passive is disabled", async () => {
+      game.override.enemyAbility(AbilityId.INSOMNIA);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+      expect(game.field.getPlayerPokemon().getPassiveAbility().id).toBe(AbilityId.INSOMNIA);
+    });
   });
 });

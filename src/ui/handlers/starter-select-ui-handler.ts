@@ -1457,7 +1457,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.DOWN:
-        if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
+        if (currentRow < numOfRows - 1 && this.scrollCursor * 9 + this.cursor + 9 < this.filteredStarterIds.length) {
           // This is not the last row of starters
           if (currentRow - this.scrollCursor === 8) {
             // This is the last visible row, but there are more rows underneath, so we need to scroll
@@ -3121,6 +3121,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.partyStarterIds.length === 0) {
       return false;
     }
+    this.blockInput = true;
 
     if (this.isPartyValid()) {
       const ui = this.getUi();
@@ -3149,9 +3150,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       };
 
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+        this.blockInput = false;
         ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions);
       });
     } else {
+      this.blockInput = false;
       this.tutorialActive = true;
       this.showText(
         i18next.t("starterSelectUiHandler:invalidParty"),
