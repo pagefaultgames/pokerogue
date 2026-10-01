@@ -189,3 +189,49 @@ type EnsureNoIdCollision = [
   // No trainer item ID equals a held item category ID
   Assert<TrainerItemId & HeldItemCategoryId>,
 ];
+
+// TODO: convert the existing objects to functions for reduced memory footprint.
+// TODO: Export these as "subsets" of `HeldItemId` for use inside type declarations
+export type BaseStatItemId =
+  | typeof HeldItemId.HP_UP
+  | typeof HeldItemId.PROTEIN
+  | typeof HeldItemId.IRON
+  | typeof HeldItemId.CALCIUM
+  | typeof HeldItemId.ZINC
+  | typeof HeldItemId.CARBOS;
+
+export type TypeBoostItemId =
+  | typeof HeldItemId.SILK_SCARF
+  | typeof HeldItemId.BLACK_BELT
+  | typeof HeldItemId.SHARP_BEAK
+  | typeof HeldItemId.POISON_BARB
+  | typeof HeldItemId.SOFT_SAND
+  | typeof HeldItemId.HARD_STONE
+  | typeof HeldItemId.SILVER_POWDER
+  | typeof HeldItemId.SPELL_TAG
+  | typeof HeldItemId.METAL_COAT
+  | typeof HeldItemId.CHARCOAL
+  | typeof HeldItemId.MYSTIC_WATER
+  | typeof HeldItemId.MIRACLE_SEED
+  | typeof HeldItemId.MAGNET
+  | typeof HeldItemId.TWISTED_SPOON
+  | typeof HeldItemId.NEVER_MELT_ICE
+  | typeof HeldItemId.DRAGON_FANG
+  | typeof HeldItemId.BLACK_GLASSES
+  | typeof HeldItemId.FAIRY_FEATHER;
+
+export const berryItemIds = [
+  HeldItemId.SITRUS_BERRY,
+  HeldItemId.LUM_BERRY,
+  HeldItemId.ENIGMA_BERRY,
+  HeldItemId.LIECHI_BERRY,
+  HeldItemId.GANLON_BERRY,
+  HeldItemId.PETAYA_BERRY,
+  HeldItemId.APICOT_BERRY,
+  HeldItemId.SALAC_BERRY,
+  HeldItemId.LANSAT_BERRY,
+  HeldItemId.STARF_BERRY,
+  HeldItemId.LEPPA_BERRY,
+] as const;
+
+export type BerryItemId = (typeof berryItemIds)[number];

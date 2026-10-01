@@ -1,4 +1,6 @@
 import {
+  type BerryItemId,
+  berryItemIds,
   type GeneratableHeldItemCategoryId,
   generatableCategoryItems,
   HeldItemCategoryId,
@@ -9,10 +11,8 @@ import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { BerryItemId } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
-import { berryTypeToHeldItem } from "#items/berry";
 import type {
   AnyHeldItemRoll,
   HeldItemConfiguration,
@@ -470,7 +470,7 @@ export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {
  */
 export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): BerryItemId {
   const itemMap = new Map<BerryItemId, number>();
-  for (const item of Object.values(berryTypeToHeldItem)) {
+  for (const item of berryItemIds) {
     if (target?.heldItemManager.isMaxStack(item)) {
       itemMap.set(item, 0);
       continue;

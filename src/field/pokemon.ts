@@ -73,7 +73,6 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import type { BerryType } from "#enums/berry-type";
 import type { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
@@ -82,7 +81,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { type BerryItemId, HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
@@ -5967,7 +5966,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param berryType - The type of berry being eaten.
    * @param updateHarvest - Whether to track the berry for harvest; default `true`.
    */
-  public recordEatenBerry(berryType: BerryType, updateHarvest = true) {
+  public recordEatenBerry(berryType: BerryItemId, updateHarvest = true) {
     this.battleData.hasEatenBerry = true;
     if (updateHarvest) {
       // Only track for harvest if we actually consumed the berry
