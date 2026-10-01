@@ -2039,6 +2039,52 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /**
+   * Iterate through the moveset and replace the first instance of the target move with the replacement move.
+   * Does nothing if the replacement move is already in the moveset
+   * @param target - The id of the move that should be replaced
+   * @param replacement - The move that replaces `target`
+   */
+  public replaceInMoveset(target: MoveId, replacement: MoveId): void {
+    if (globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)) {
+      return;
+    }
+    let foundIdx = -1;
+    for (const [idx, move] of this.moveset.entries()) {
+      if (move.moveId === target) {
+        foundIdx = idx;
+      } else if (move.moveId === replacement) {
+        // Replacement move already in moveset
+        return;
+      }
+    }
+    if (foundIdx > -1) {
+      this.setMove(foundIdx, replacement);
+    }
+    return;
+  }
+
+  /**
+   * Places a specified move in a specified slot unless the moveset contains an acceptable alternative move fulfilling the filter
+   * @param replacement - The move to insert in moveset
+   * @param preferredSlot - The preferred slot to put the move in
+   * @param altMoveFilter - (Optional) A filtering function mapping a Move to a boolean; if a move in the moveset fulfills it, the replacement is not done
+   */
+  public addIfNotInMoveset(
+    replacement: MoveId,
+    preferredSlot: 0 | 1 | 2 | 3,
+    altMoveFilter: (move: Move) => boolean = () => false,
+  ): void {
+    if (
+      globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER)
+      || this.moveset.find(m => altMoveFilter(m.getMove()) || m.moveId === replacement)
+    ) {
+      return;
+    }
+    this.setMove(preferredSlot, replacement);
+    return;
+  }
+
   // #endregion Moves/Moveset
 
   /**
@@ -2205,18 +2251,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the passive ability of the pokemon. This should rarely be called, most of the time
-   * {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used as those check both the passive and
-   * non-passive abilities and account for ability suppression.
-   * @see {@linkcode hasAbility} {@linkcode hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * Gets the passive ability of the pokemon.
+   * @remarks
+   * This should rarely be called, most of the time
+   * {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used \
+   * as those check both the passive and non-passive abilities and account for ability suppression.
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
-    if (activeOverrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
-      return allAbilities[activeOverrides.PASSIVE_ABILITY_OVERRIDE];
-    }
-    if (activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
+    if (this.summonData.passiveAbility) {
+      return allAbilities[this.summonData.passiveAbility];
     }
     if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
@@ -2226,6 +2270,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (eventBoss?.passive != null) {
         return allAbilities[eventBoss.passive];
       }
+    }
+    if (activeOverrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
+      return allAbilities[activeOverrides.PASSIVE_ABILITY_OVERRIDE];
+    }
+    if (activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[activeOverrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];
@@ -2255,18 +2305,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set this Pokémon's temporary ability, activating it if it normally activates on summon
-   *
-   * Also clears primal weather if it is from the ability being changed
-   * @param ability - The temporary ability to set
-   * @param passive - Whether to set the passive ability instead of the non-passive one; default `false`
+   * Set this Pokémon's temporary ability, activating it if it normally activates on summon.
+   * @remarks
+   * Also clears primal weather if it is from the ability being changed.
+   * @param abilityId - The ID of the temporary ability to set
+   * @param passive - (Default `false`) Whether to set the passive ability instead of the non-passive one
    */
-  public setTempAbility(ability: Ability, passive = false): void {
+  public setTempAbility(abilityId: AbilityId, passive = false): void {
     applyOnLoseAbAttrs({ pokemon: this, passive });
     if (passive) {
-      this.summonData.passiveAbility = ability.id;
+      this.summonData.passiveAbility = abilityId;
     } else {
-      this.summonData.ability = ability.id;
+      this.summonData.ability = abilityId;
     }
     applyOnGainAbAttrs({ pokemon: this, passive });
   }
