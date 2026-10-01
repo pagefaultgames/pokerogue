@@ -62,7 +62,7 @@ import { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType, type NonCustomBattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType, type ChooseItemBattlerTagType } from "#enums/battler-tag-type";
-import type { HeldItemId } from "#enums/held-item-id";
+import type { BerryItemId, HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
@@ -3831,9 +3831,15 @@ export class FlingTag extends ChosenItemTag {
   }
 }
 
-export class NaturalGiftTag extends ChosenItemTag {
+class NaturalGiftTag extends BattlerTag {
+  public item: BerryItemId;
+
   constructor(sourceMove: MoveId) {
-    super(BattlerTagType.FLING, sourceMove);
+    super(BattlerTagType.NATURAL_GIFT, BattlerTagLapseType.AFTER_MOVE, 1, sourceMove);
+  }
+
+  public chooseItem(item: BerryItemId) {
+    this.item = item;
   }
 }
 

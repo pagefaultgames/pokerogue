@@ -8,6 +8,7 @@ import type { OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 /**
  * Lets the user select one of the Pokémon's held items from a list
  */
+// TODO: Let this take a subset of HeldItemId (e.g. BerryItemId for Natural Gift)
 export class ItemSelectPhase extends Phase {
   public readonly phaseName = "ItemSelectPhase";
   private items: HeldItemId[];

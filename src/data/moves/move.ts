@@ -1892,36 +1892,28 @@ export class PreMoveMessageAttr extends MoveAttr {
   }
 }
 
+export abstract class PreMoveChooseItemAttr extends MoveAttr {}
+
 /**
  * Attribute to prompt the user to choose an item before the move is executed.
  */
-export class PreMoveChooseItemAttr extends MoveAttr {
+export class PreMoveChooseAnyItemAttr extends PreMoveChooseItemAttr {
   public readonly message: string | MoveMessageFunc;
   private tagType: ChooseItemBattlerTagType;
   private sortFunc: HeldItemSortFunc;
-  private filterFunc: ((item: HeldItemId) => boolean) | undefined;
 
-  constructor(
-    message: string | MoveMessageFunc,
-    tagType: ChooseItemBattlerTagType,
-    sortFunc: HeldItemSortFunc,
-    filterFunc?: (item: HeldItemId) => boolean,
-  ) {
+  constructor(message: string | MoveMessageFunc, tagType: ChooseItemBattlerTagType, sortFunc: HeldItemSortFunc) {
     super();
     this.message = message;
     this.tagType = tagType;
     this.sortFunc = sortFunc;
-    this.filterFunc = filterFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
 
-    let items = user.heldItemManager.getTransferableHeldItems();
+    const items = user.heldItemManager.getTransferableHeldItems();
 
-    if (this.filterFunc) {
-      items = items.filter(item => this.filterFunc && this.filterFunc(item));
-    }
     items.sort((a, b) => this.sortFunc(a, b));
 
     if (message) {
@@ -1931,11 +1923,8 @@ export class PreMoveChooseItemAttr extends MoveAttr {
         "ItemSelectPhase",
         items,
         (itemId: HeldItemId) => {
-          console.log(this.tagType);
           user.addTag(this.tagType, 0, move.id);
-          console.log("Added tag with item: ", user.getTag(this.tagType));
           user.getTag(this.tagType)?.chooseItem(itemId);
-          console.log("Added tag with item: ", user.getTag(this.tagType));
         },
         () => {
           const fieldIndex = user.getFieldIndex();
@@ -1948,6 +1937,33 @@ export class PreMoveChooseItemAttr extends MoveAttr {
       return true;
     }
     return false;
+  }
+}
+
+export class PreMoveChooseBerryAttr extends PreMoveChooseItemAttr {
+  apply(user: Pokemon, _target: Pokemon, move: Move): boolean {
+    const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]) as BerryItemId[];
+
+    items.sort((a, b) => naturalGiftSortFunc(a, b));
+
+    globalScene.phaseManager.queueMessage("What berry to choose for Natural Gift?", 500);
+
+    const chooseItemPhase = globalScene.phaseManager.create(
+      "ItemSelectPhase",
+      items,
+      (itemId: HeldItemId) => {
+        user.addTag(BattlerTagType.NATURAL_GIFT, 0, move.id);
+        user.getTag(BattlerTagType.NATURAL_GIFT)?.chooseItem(itemId as BerryItemId);
+      },
+      () => {
+        const fieldIndex = user.getFieldIndex();
+        globalScene.currentBattle.turnCommands[fieldIndex] = null;
+        globalScene.phaseManager.unshiftNew("CommandPhase", fieldIndex);
+      },
+    );
+    globalScene.phaseManager.unshiftPhase(chooseItemPhase);
+
+    return true;
   }
 }
 
@@ -2305,8 +2321,7 @@ export class PostNaturalGiftAttr extends MoveEffectAttr {
     user.removeTag(BattlerTagType.NATURAL_GIFT);
     globalScene.updateItemBar(user.isPlayer());
 
-    // TODO: Do we want this?
-    // user.battleData.berriesEaten.push(item);
+    user.battleData.berriesEaten.push(item);
 
     globalScene.phaseManager.queueMessage(`${user.name} consumed its ${allHeldItems[item].name}!`, 500);
     return true;
@@ -4932,7 +4947,7 @@ export class NaturalGiftPowerAttr extends VariablePowerAttr {
     let item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
 
     if (!item) {
-      const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]);
+      const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]) as BerryItemId[];
       if (items.length === 0) {
         return false;
       }
@@ -6361,19 +6376,10 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
 
-    let item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+    const item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
 
-    if (!item) {
-      const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]);
-      if (items.length === 0) {
-        return false;
-      }
-      items.sort((a, b) => flingSortFunc(a, b));
-      item = items[0];
-      user.addTag(BattlerTagType.NATURAL_GIFT, 0, MoveId.NATURAL_GIFT);
-      user.getTag(BattlerTagType.NATURAL_GIFT)?.chooseItem(item);
-    }
-
+    // TODO: ensure that the type is set correctly if the move is called without an item
+    // Cannot pick a random item here, or type will be determined already in the command phase
     if (!item) {
       return false;
     }
@@ -10627,7 +10633,7 @@ export function initMoves() {
       .edgeCase(),
     new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
       .attr(
-        PreMoveChooseItemAttr,
+        PreMoveChooseAnyItemAttr,
         (_user, _target, _move) => "What item to swap?",
         BattlerTagType.TRICK,
         bestowSortFunc,
@@ -10940,22 +10946,17 @@ export function initMoves() {
     new AttackMove(MoveId.BRINE, PokemonType.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.getHpRatio() < 0.5 ? 2 : 1)),
     new AttackMove(MoveId.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
-      .attr(
-        PreMoveChooseItemAttr,
-        (_user, _target, _move) => "What item to consume for Natural Gift?",
-        BattlerTagType.NATURAL_GIFT,
-        naturalGiftSortFunc,
-        (item: HeldItemId) => getHeldItemCategory(item) === HeldItemCategoryId.BERRY,
-      )
+      .attr(PreMoveChooseBerryAttr)
       .attr(NaturalGiftPowerAttr)
       .attr(NaturalGiftTypeAttr)
+      .attr(PostNaturalGiftAttr)
       .makesContact(false)
       /*
       NOTE: To whoever tries to implement this, reminder to push to battleData.berriesEaten
       and enable the harvest test..
       Do NOT push to berriesEatenLast or else cud chew will puke the berry.
       */
-      .unimplemented(),
+      .partial(),
     new AttackMove(MoveId.FEINT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.PROTECTED])
       .attr(
@@ -10999,7 +11000,7 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(
-        PreMoveChooseItemAttr,
+        PreMoveChooseAnyItemAttr,
         (_user, _target, _move) => "What item to Fling?",
         BattlerTagType.FLING,
         flingSortFunc,
@@ -11127,7 +11128,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPDEF], -1),
     new StatusMove(MoveId.SWITCHEROO, PokemonType.DARK, 100, 10, -1, 0, 4)
       .attr(
-        PreMoveChooseItemAttr,
+        PreMoveChooseAnyItemAttr,
         (_user, _target, _move) => "What item to swap?",
         BattlerTagType.SWITCHEROO,
         bestowSortFunc,
@@ -11486,7 +11487,7 @@ export function initMoves() {
       .attr(SacrificialAttrOnHit),
     new StatusMove(MoveId.BESTOW, PokemonType.NORMAL, -1, 15, -1, 0, 5)
       .attr(
-        PreMoveChooseItemAttr,
+        PreMoveChooseAnyItemAttr,
         (_user, _target, _move) => "What item to Bestow?",
         BattlerTagType.BESTOW,
         // TODO: Have a different sort function for Bestow

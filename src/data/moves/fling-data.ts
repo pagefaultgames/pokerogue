@@ -1,4 +1,4 @@
-import { HeldItemId } from "#enums/held-item-id";
+import { type BerryItemId, HeldItemId } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 
 export const flingPower = {
@@ -122,7 +122,7 @@ export const naturalGiftType = {
   [HeldItemId.LEPPA_BERRY]: PokemonType.FIGHTING,
 };
 
-export function naturalGiftSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
+export function naturalGiftSortFunc(itemA: BerryItemId, itemB: BerryItemId): number {
   const weightA = naturalGiftPower[itemA] ?? 0;
   const weightB = naturalGiftPower[itemB] ?? 0;
   return weightB - weightA;

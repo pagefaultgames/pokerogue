@@ -104,7 +104,6 @@ export enum BattlerTagType {
 
 export type ChooseItemBattlerTagType =
   | BattlerTagType.FLING
-  | BattlerTagType.NATURAL_GIFT
   | BattlerTagType.BESTOW
   | BattlerTagType.TRICK
   | BattlerTagType.SWITCHEROO;
