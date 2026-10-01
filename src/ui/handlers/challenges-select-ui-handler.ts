@@ -22,7 +22,7 @@ type ChallengeLabel = {
   rightArrow: Phaser.GameObjects.Image;
 };
 
-const MAX_ROWS_TO_DISPLAY = 9;
+const MAX_ROWS_TO_DISPLAY = 6;
 
 /** Handles all the UI for choosing optional challenges. */
 export class GameChallengesUiHandler extends UiHandler {
