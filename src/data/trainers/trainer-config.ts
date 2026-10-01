@@ -1688,7 +1688,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
-    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === MoveId.SMOG) || s.isOfType(PokemonType.FIRE)),
+    .setSpeciesFilter(s => [SpeciesId.KOFFING, SpeciesId.WEEZING].includes(s.speciesId) || s.isOfType(PokemonType.FIRE))
+    .setSpecialtyType(PokemonType.FIRE),
   [TrainerType.FISHERMAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.25)
     .setEncounterBgm(TrainerType.BACKPACKER)
