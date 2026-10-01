@@ -31,7 +31,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
    * @param x - The x position of the name box
    * @param y - The y position of the name box
    * @remarks
-   * When this method was not called, the name box will not be displayed.
+   * If this method is not called, the name box will not be displayed.
    */
   public initNameBox(container: Phaser.GameObjects.Container, x = 0, y = -16): void {
     this.nameBoxContainer = globalScene.add.container(x, y);
