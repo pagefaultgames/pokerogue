@@ -217,7 +217,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
             berryMap.set(b, b.item.stack);
           }
           const randBerry = weightedPick(berryMap);
-          globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
+          randBerry.pokemon?.heldItemManager.remove(randBerry.item.id as HeldItemId);
           randBerry.item.stack -= 1;
         }
         globalScene.updateItemBar(true);

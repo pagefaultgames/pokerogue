@@ -100,7 +100,7 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { Constructor } from "#types/common";
 import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#types/held-item-data-types";
 import type { Localizable } from "#types/locales";
 import type {
   NewBattleConstructedProps,
@@ -827,7 +827,8 @@ export class BattleScene extends SceneBase {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
-    heldItemConfig?: HeldItemConfiguration,
+    // TODO make separate params once this uses a config object
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
   ): PlayerPokemon {
@@ -881,7 +882,7 @@ export class BattleScene extends SceneBase {
     trainerSlot: TrainerSlot,
     boss = false,
     shinyLock = false,
-    heldItemConfig?: HeldItemConfiguration,
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: PokemonData,
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
     forRival = false,

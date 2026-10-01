@@ -279,7 +279,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       }),
       null,
       () => {
-        const heldItemConfig = pokemon.heldItemManager.generateItemConfiguration();
+        const heldItemConfig = pokemon.heldItemManager.getAllItemSpecs();
         const end = () => {
           phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
           pokemonInfoContainer.hide();

@@ -668,7 +668,7 @@ export async function catchPokemon(
                     pokemon.variant,
                     pokemon.ivs,
                     pokemon.nature,
-                    pokemon.heldItemManager.generateItemConfiguration(),
+                    pokemon.heldItemManager.getAllItemSpecs(),
                     pokemon,
                   );
                   ui.setMode(

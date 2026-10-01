@@ -86,7 +86,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
       heldItemConfig: [
         { entry: HeldItemCategoryId.BERRY, count: 4 },
-        { entry: HeldItemCategoryId.BASE_STAT_BOOST, count: 2 },
+        { entry: HeldItemCategoryId.VITAMIN, count: 2 },
         { entry: HeldItemId.TOXIC_ORB, count: randSeedInt(2, 0) },
         { entry: HeldItemId.SOOTHE_BELL, count: randSeedInt(2, 1) },
         { entry: HeldItemId.LUCKY_EGG, count: randSeedInt(3, 1) },
