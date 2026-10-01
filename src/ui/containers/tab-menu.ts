@@ -14,14 +14,12 @@ import { addWindow } from "#ui/ui-theme";
 export class TabMenu extends Phaser.GameObjects.Container {
   private static readonly CENTERED_LABEL_LEFT_BOUNDARY = 24;
   private static readonly CENTERED_LABEL_RIGHT_BOUNDARY = 24;
-  private static readonly LABEL_SPACING = 16;
 
   public selectedIndex = 0;
 
   private readonly labels: string[];
   private readonly headerTitles: Phaser.GameObjects.Text[] = [];
   private readonly navigationIcons: Partial<Record<MappingSettingName, Phaser.GameObjects.Sprite>> = {};
-  private readonly centerLabels: boolean;
 
   /**
    * Callback executed whenever the user navigates to a new tab.
@@ -29,19 +27,11 @@ export class TabMenu extends Phaser.GameObjects.Container {
    */
   private readonly onChangeCallback: (tabIndex: number) => void;
 
-  constructor(
-    x: number,
-    y: number,
-    width: number,
-    labels: string[],
-    onChange: (tabIndex: number) => void,
-    centerLabels = false,
-  ) {
+  constructor(x: number, y: number, width: number, labels: string[], onChange: (tabIndex: number) => void) {
     super(globalScene, x, y);
 
     this.labels = labels;
     this.onChangeCallback = onChange;
-    this.centerLabels = centerLabels;
 
     const headerBg = addWindow(0, 0, width, 24) //
       .setOrigin(0);
@@ -106,10 +96,9 @@ export class TabMenu extends Phaser.GameObjects.Container {
     const gapCount = Math.max(this.headerTitles.length - 1, 0);
     const leftBoundary = TabMenu.CENTERED_LABEL_LEFT_BOUNDARY;
     const availableWidth = this.width - leftBoundary - TabMenu.CENTERED_LABEL_RIGHT_BOUNDARY;
-    const labelSpacing =
-      this.centerLabels && gapCount > 0 ? Math.max(0, (availableWidth - textWidth) / gapCount) : TabMenu.LABEL_SPACING;
+    const labelSpacing = gapCount > 0 ? Math.max(0, (availableWidth - textWidth) / gapCount) : 0;
     const groupWidth = textWidth + gapCount * labelSpacing;
-    const startX = this.centerLabels ? leftBoundary + (availableWidth - groupWidth) / 2 : 24;
+    const startX = leftBoundary + (availableWidth - groupWidth) / 2;
 
     let currentX = startX;
     for (const title of this.headerTitles) {
