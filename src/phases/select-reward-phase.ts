@@ -42,6 +42,7 @@ export class SelectRewardPhase extends BattlePhase {
   private readonly rarityTiers?: RarityTier[] | undefined;
   private readonly customRewardSettings?: CustomRewardSettings | undefined;
   private readonly isCopy: boolean;
+  private readonly hideShop: boolean;
 
   private typeOptions: RewardOption[];
 
@@ -50,6 +51,7 @@ export class SelectRewardPhase extends BattlePhase {
     rarityTiers?: RarityTier[],
     customRewardSettings?: CustomRewardSettings,
     isCopy = false,
+    hideShop = false,
   ) {
     super();
 
@@ -57,6 +59,7 @@ export class SelectRewardPhase extends BattlePhase {
     this.rarityTiers = rarityTiers;
     this.customRewardSettings = customRewardSettings;
     this.isCopy = isCopy;
+    this.hideShop = hideShop;
   }
 
   start() {
@@ -269,9 +272,11 @@ export class SelectRewardPhase extends BattlePhase {
           && spliceSlotIndex < 6
           && fromSlotIndex !== spliceSlotIndex
         ) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
-          });
+          globalScene.ui
+            .setMode(UiMode.REWARD_SELECT, { isPlayer: this.isPlayer(), hideShop: this.hideShop })
+            .then(() => {
+              reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
+            });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
@@ -320,11 +325,13 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            const params = getParams(slotIndex, option);
-            const result = globalScene.applyReward(reward, params, true);
-            this.postApplyPokemonReward(reward, result, cost);
-          });
+          globalScene.ui
+            .setMode(UiMode.REWARD_SELECT, { isPlayer: this.isPlayer(), hideShop: this.hideShop })
+            .then(() => {
+              const params = getParams(slotIndex, option);
+              const result = globalScene.applyReward(reward, params, true);
+              this.postApplyPokemonReward(reward, result, cost);
+            });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
@@ -395,13 +402,13 @@ export class SelectRewardPhase extends BattlePhase {
   // Function that resets the reward selection screen,
   // e.g. after pressing cancel in the party ui or while learning a move
   private resetRewardSelect(rewardSelectCallback: RewardSelectCallback) {
-    globalScene.ui.setMode(
-      UiMode.REWARD_SELECT,
-      this.isPlayer(),
-      this.typeOptions,
-      rewardSelectCallback,
-      this.getRerollCost(globalScene.lockRarityTiers),
-    );
+    globalScene.ui.setMode(UiMode.REWARD_SELECT, {
+      isPlayer: this.isPlayer(),
+      typeOptions: this.typeOptions,
+      onActionInput: rewardSelectCallback,
+      rerollCost: this.getRerollCost(globalScene.lockRarityTiers),
+      hideShop: this.hideShop,
+    });
   }
 
   updateSeed(): void {

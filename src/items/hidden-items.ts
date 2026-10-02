@@ -20,6 +20,11 @@ export function findHiddenItems() {
     const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, RarityTier.COMMON, 0);
 
     map[pokemon.name] = rewardOption;
+
+    globalScene.ui.showText(`${pokemon.name} found a hidden item: ${rewardOption.type.name}!`);
+
+    const customShopRewards = { guaranteedRewardOptions: [rewardOption] };
+    globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, customShopRewards, false, true);
   }
 }
 

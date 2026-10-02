@@ -26,6 +26,14 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
+export interface ModifierSelectUiHandlerParams {
+  player?: boolean;
+  typeOptions?: RewardOption[];
+  onActionInput?: RewardSelectCallback;
+  rerollCost?: number;
+  hideShop?: boolean;
+}
+
 export class RewardSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
@@ -53,6 +61,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   public shopOptionsRows: ModifierOption[][] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
+
+  private hideShop: boolean;
 
   setup() {
     const ui = this.getUi();
@@ -153,16 +163,18 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   show(args: any[]): boolean {
     globalScene.disableMenu = false;
 
+    const params = args[0] as ModifierSelectUiHandlerParams;
+
     if (this.active) {
-      if (args.length >= 3) {
+      if (params.onActionInput) {
         this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        this.onActionInput = params.onActionInput;
       }
       this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
-    if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
+    if (params.rerollCost == null || params.onActionInput == null) {
       return false;
     }
 
@@ -170,7 +182,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.getUi().clearText();
 
-    this.player = args[0];
+    this.player = !!params.player;
+    this.hideShop = !!params.hideShop;
 
     const partyHasHeldItem =
       globalScene
@@ -196,12 +209,12 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
-    this.rerollCost = args[3] as number;
+    this.rerollCost = params.rerollCost as number;
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1] as RewardOption[];
-    const hasShop = globalScene.gameMode.getShopStatus();
+    const typeOptions = params.typeOptions as RewardOption[];
+    const hasShop = globalScene.gameMode.getShopStatus() && !this.hideShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: baseShopCost });
     const shopTypeOptions = hasShop
@@ -335,13 +348,15 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         }
 
         this.rerollButtonContainer.setAlpha(0);
-        this.checkButtonContainer.setAlpha(0);
         this.lockRarityButtonContainer.setAlpha(0);
+        this.checkButtonContainer.setAlpha(0);
         this.continueButtonContainer.setAlpha(0);
-        this.rerollButtonContainer.setVisible(true);
+        if (!this.hideShop) {
+          this.rerollButtonContainer.setVisible(true);
+          this.lockRarityButtonContainer.setVisible(canLockRarities);
+        }
         this.checkButtonContainer.setVisible(true);
         this.continueButtonContainer.setVisible(this.rerollCost < 0);
-        this.lockRarityButtonContainer.setVisible(canLockRarities);
 
         globalScene.tweens.add({
           targets: [this.checkButtonContainer, this.continueButtonContainer],
@@ -349,11 +364,13 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
           duration: 250,
         });
 
-        globalScene.tweens.add({
-          targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
-          alpha: this.rerollCost < 0 ? 0.5 : 1,
-          duration: 250,
-        });
+        if (!this.hideShop) {
+          globalScene.tweens.add({
+            targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+            alpha: this.rerollCost < 0 ? 0.5 : 1,
+            duration: 250,
+          });
+        }
 
         // Ensure that the reward animations have completed before allowing input to proceed.
         // Required to ensure that the user cannot interact with the UI before the animations
@@ -385,8 +402,10 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
             if (res) {
               updateCursorTarget();
             }
-            this.awaitingActionInput = true;
-            this.onActionInput = args[2];
+            if (params.onActionInput) {
+              this.awaitingActionInput = true;
+              this.onActionInput = params.onActionInput;
+            }
           });
         });
       });
