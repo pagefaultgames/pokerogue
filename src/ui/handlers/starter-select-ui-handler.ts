@@ -307,6 +307,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .setOrigin(0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
+    this.initNameBox(this.starterSelectMessageBoxContainer, 8);
+
     // arrow icon for the message box
     this.initPromptSprite(this.starterSelectMessageBoxContainer);
 
@@ -781,6 +783,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }
+
+    this.nameBoxContainer?.setY(this.message.y - 16);
 
     this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
