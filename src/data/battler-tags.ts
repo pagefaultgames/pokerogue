@@ -61,7 +61,8 @@ import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType, type NonCustomBattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { BattlerTagType, type ChooseItemBattlerTagType } from "#enums/battler-tag-type";
+import type { BerryItemId, HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
@@ -3810,6 +3811,57 @@ export class PsychoShiftTag extends BattlerTag {
 }
 
 /**
+ * Tag used to select an item that will be used by Fling/Bestow/Trick/Switcheroo
+ */
+abstract class ChosenItemTag extends BattlerTag {
+  public item: HeldItemId;
+
+  constructor(tagType: ChooseItemBattlerTagType, sourceMove: MoveId) {
+    super(tagType, BattlerTagLapseType.AFTER_MOVE, 1, sourceMove);
+  }
+
+  public chooseItem(item: HeldItemId) {
+    this.item = item;
+  }
+}
+
+export class FlingTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.FLING, sourceMove);
+  }
+}
+
+class NaturalGiftTag extends BattlerTag {
+  public item: BerryItemId;
+
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.NATURAL_GIFT, BattlerTagLapseType.AFTER_MOVE, 1, sourceMove);
+  }
+
+  public chooseItem(item: BerryItemId) {
+    this.item = item;
+  }
+}
+
+export class BestowTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.BESTOW, sourceMove);
+  }
+}
+
+export class TrickTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.TRICK, sourceMove);
+  }
+}
+
+export class SwitcherooTag extends ChosenItemTag {
+  constructor(sourceMove: MoveId) {
+    super(BattlerTagType.SWITCHEROO, sourceMove);
+  }
+}
+
+/**
  * Tag associated with the move Magic Coat.
  */
 export class MagicCoatTag extends BattlerTag {
@@ -4100,6 +4152,16 @@ export function getBattlerTag(
       return new PowerTrickTag(sourceMove, sourceId);
     case BattlerTagType.GRUDGE:
       return new GrudgeTag();
+    case BattlerTagType.FLING:
+      return new FlingTag(sourceMove);
+    case BattlerTagType.NATURAL_GIFT:
+      return new NaturalGiftTag(sourceMove);
+    case BattlerTagType.BESTOW:
+      return new BestowTag(sourceMove);
+    case BattlerTagType.TRICK:
+      return new TrickTag(sourceMove);
+    case BattlerTagType.SWITCHEROO:
+      return new SwitcherooTag(sourceMove);
     case BattlerTagType.PSYCHO_SHIFT:
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
@@ -4240,6 +4302,11 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.POWER_TRICK]: PowerTrickTag;
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
+  [BattlerTagType.FLING]: FlingTag;
+  [BattlerTagType.NATURAL_GIFT]: NaturalGiftTag;
+  [BattlerTagType.BESTOW]: BestowTag;
+  [BattlerTagType.TRICK]: TrickTag;
+  [BattlerTagType.SWITCHEROO]: SwitcherooTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
