@@ -9,7 +9,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -33,17 +33,17 @@ describe("Ability - Emergency Exit", () => {
       .enemyAbility(AbilityId.EMERGENCY_EXIT);
   });
 
-  async function getModifierShopHandler(): Promise<ModifierSelectUiHandler> {
+  async function getModifierShopHandler(): Promise<RewardSelectUiHandler> {
     await game.phaseInterceptor.to("BattleEndPhase");
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
     const currentPhase = game.scene.phaseManager.getCurrentPhase()?.phaseName;
-    expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
+    expect(currentPhase, "Expected battle to transition to SelectRewardPhase").toBe("SelectRewardPhase");
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
-    await vi.waitUntil(() => game.scene.ui.mode === UiMode.MODIFIER_SELECT);
+    await game.phaseInterceptor.to("SelectRewardPhase");
+    await vi.waitUntil(() => game.scene.ui.mode === UiMode.REWARD_SELECT);
 
-    return game.scene.ui.getHandler() as ModifierSelectUiHandler;
+    return game.scene.ui.getHandler() as RewardSelectUiHandler;
   }
 
   it("should offer no rewards when triggered in a single battle", async () => {

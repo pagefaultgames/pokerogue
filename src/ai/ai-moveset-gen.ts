@@ -46,12 +46,12 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { ChallengeType } from "#enums/challenge-type";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -181,13 +181,13 @@ function getTmPoolForSpecies(
       continue;
     }
     switch (tmPoolTiers[tm]) {
-      case ModifierTier.COMMON:
+      case RarityTier.COMMON:
         allowCommon && tmPool.set(tm, COMMON_TM_MOVESET_WEIGHT);
         break;
-      case ModifierTier.GREAT:
+      case RarityTier.GREAT:
         allowGreat && tmPool.set(tm, GREAT_TM_MOVESET_WEIGHT);
         break;
-      case ModifierTier.ULTRA:
+      case RarityTier.ULTRA:
         allowUltra && tmPool.set(tm, ULTRA_TM_MOVESET_WEIGHT);
         break;
     }
@@ -1288,6 +1288,7 @@ function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: str
  * @param forceRivalSignatures - (default `false`) Whether to use {@linkcode FORCED_RIVAL_SIGNATURE_MOVES} when attempting to force a signature move.
  * @returns A reference to the Pokémon's moveset array
  */
+// TODO: Review and/or fix if needed
 export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false): void {
   globalScene.movesetGenInProgress = true;
   pokemon.moveset = [];

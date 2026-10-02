@@ -3,14 +3,14 @@ import { settings } from "#app/global-settings-manager";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
+describe("UI - RewardSelectUiHandler - shop cursor target", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;
@@ -38,13 +38,13 @@ describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
     scene.currentBattle.waveIndex = 10;
     settings.update("display", "shopCursorTarget", ShopCursorTarget.SHOP);
 
-    const selectModifierPhase = new SelectModifierPhase();
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    const selectRewardPhase = new SelectRewardPhase();
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
+    await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
 
-    const handler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+    const handler = scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler) as RewardSelectUiHandler;
 
     // Precondition: this wave genuinely has no shop rows.
     expect(handler.shopOptionsRows).toHaveLength(0);

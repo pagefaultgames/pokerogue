@@ -3,8 +3,8 @@ import type { EventType } from "#enums/event-type";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
+import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerType } from "#enums/trainer-type";
-import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { TerrainPool, WeatherPool } from "#types/biomes";
 
 export interface EventBanner {
@@ -32,7 +32,7 @@ export interface EventWaveReward {
    * The wave at which the reward should be given.
    */
   readonly wave: number;
-  readonly type: ModifierTypeKeys;
+  readonly type: TrainerItemId;
 }
 
 export type EventMusicReplacement = readonly [string, string];
@@ -73,7 +73,7 @@ export interface TimedEvent extends EventBanner {
   readonly startDate: Date;
   readonly endDate: Date;
   readonly eventEncounters?: readonly EventEncounter[];
-  readonly delibirdyBuff?: readonly string[];
+  readonly delibirdyBuff?: readonly TrainerItemId[];
   readonly weather?: EventWeatherPools;
   readonly terrain?: EventTerrainPools;
   readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
@@ -84,5 +84,5 @@ export interface TimedEvent extends EventBanner {
   readonly music?: readonly EventMusicReplacement[];
   readonly sprites?: EventSpriteOptions;
   readonly textReplacements?: readonly EventTextReplacement[];
-  readonly dailyRunStartingItems?: readonly ModifierTypeKeys[];
+  readonly dailyRunStartingItems?: readonly TrainerItemId[];
 }
