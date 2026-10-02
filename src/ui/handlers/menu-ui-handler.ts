@@ -133,6 +133,7 @@ export class MenuUiHandler extends OptionSelectUiHandler {
     this.menuMessageBoxContainer.add([this.menuMessageBox, this.dialogueMessageBox, this.message]);
 
     this.initTutorialOverlay(this.menuContainer);
+    this.initNameBox(this.menuMessageBoxContainer, this.textPadding, -7);
     this.initPromptSprite(this.menuMessageBoxContainer);
     this.menuContainer.add(this.menuMessageBoxContainer);
 

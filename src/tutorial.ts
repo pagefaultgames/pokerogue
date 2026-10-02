@@ -18,6 +18,15 @@ export enum Tutorial {
   EGG_GACHA = "EGG_GACHA",
 }
 
+/**
+ * Show a tutorial text with a speaker box.
+ * @param key - The i18next key for the tutorial text
+ * @param callback - Callback for when the tutorial dialogue is dismissed
+ */
+function showTutorialDialogue(key: string, callback: () => void): void {
+  globalScene.ui.showDialogue(i18next.t(key), i18next.t("tutorial:name"), null, callback);
+}
+
 const tutorialHandlers = {
   [Tutorial.INTRO]: () => {
     return new Promise<void>(resolve => {
@@ -32,48 +41,24 @@ const tutorialHandlers = {
       globalScene
         .showFieldOverlay(1000)
         .then(() =>
-          globalScene.ui.showText(
-            i18next.t("tutorial:accessMenu"),
-            null,
-            () => globalScene.hideFieldOverlay(1000).then(() => resolve()),
-            null,
-            true,
-          ),
+          showTutorialDialogue("tutorial:accessMenu", () => globalScene.hideFieldOverlay(1000).then(() => resolve())),
         );
     });
   },
   [Tutorial.MENU]: () => {
     return new Promise<void>(resolve => {
       globalScene.gameData.saveTutorialFlag(Tutorial.ACCESS_MENU, true);
-      globalScene.ui.showText(
-        i18next.t("tutorial:menu"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:menu", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
   [Tutorial.STARTER_SELECT]: () => {
     return new Promise<void>(resolve => {
-      globalScene.ui.showText(
-        i18next.t("tutorial:starterSelect"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:starterSelect", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
   [Tutorial.POKERUS]: () => {
     return new Promise<void>(resolve => {
-      globalScene.ui.showText(
-        i18next.t("tutorial:pokerus"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:pokerus", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
   [Tutorial.STAT_CHANGE]: () => {
@@ -81,12 +66,8 @@ const tutorialHandlers = {
       globalScene
         .showFieldOverlay(1000)
         .then(() =>
-          globalScene.ui.showText(
-            i18next.t("tutorial:statChange"),
-            null,
-            () => globalScene.ui.showText("", null, () => globalScene.hideFieldOverlay(1000).then(() => resolve())),
-            null,
-            true,
+          showTutorialDialogue("tutorial:statChange", () =>
+            globalScene.ui.showText("", null, () => globalScene.hideFieldOverlay(1000).then(() => resolve())),
           ),
         );
     });
@@ -94,28 +75,17 @@ const tutorialHandlers = {
   [Tutorial.SELECT_ITEM]: () => {
     return new Promise<void>(resolve => {
       globalScene.ui.setModeWithoutClear(UiMode.MESSAGE).then(() => {
-        globalScene.ui.showText(
-          i18next.t("tutorial:selectItem"),
-          null,
-          () =>
-            globalScene.ui.showText("", null, () =>
-              globalScene.ui.setModeWithoutClear(UiMode.REWARD_SELECT).then(() => resolve()),
-            ),
-          null,
-          true,
+        showTutorialDialogue("tutorial:selectItem", () =>
+          globalScene.ui.showText("", null, () =>
+            globalScene.ui.setModeWithoutClear(UiMode.REWARD_SELECT).then(() => resolve()),
+          ),
         );
       });
     });
   },
   [Tutorial.EGG_GACHA]: () => {
     return new Promise<void>(resolve => {
-      globalScene.ui.showText(
-        i18next.t("tutorial:eggGacha"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:eggGacha", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
 };
