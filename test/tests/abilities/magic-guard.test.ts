@@ -44,14 +44,13 @@ describe("AbilityId - Magic Guard", () => {
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
   });
 
-  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ abName: string; move?: MoveId; enemyMove?: MoveId; passive?: AbilityId; enemyAbility?: AbilityId }>([
     { abName: "Bad Dreams", enemyMove: MoveId.SPORE, enemyAbility: AbilityId.BAD_DREAMS },
     { abName: "Aftermath", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.AFTERMATH },
@@ -89,7 +88,7 @@ describe("AbilityId - Magic Guard", () => {
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // Ensure confuse ray goes first
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // Ensure confuse ray goes first
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
@@ -132,12 +131,12 @@ describe("AbilityId - Magic Guard", () => {
     // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.WILL_O_WISP);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
-    expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
+    expect(magikarp).toHaveStatusEffect(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
     // Heal blissey to full & use tackle again
@@ -160,6 +159,6 @@ describe("AbilityId - Magic Guard", () => {
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();
     expect(player.hp).toBe(player.getMaxHp());
-    expect(player.status?.effect).toBe(StatusEffect.POISON);
+    expect(player).toHaveStatusEffect(StatusEffect.POISON);
   });
 });

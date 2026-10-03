@@ -3,7 +3,7 @@ import "#init/init-manifest"; // initializes the manifest, must be done *before*
 import "#app/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
-import { preventDoubleTapZoom } from "#app/touch-controls";
+import { isMobile, preventDoubleTapZoom } from "#app/touch-controls";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
@@ -72,7 +72,7 @@ async function startGame(): Promise<void> {
     scene: [LoadingScene, BattleScene],
     version,
   });
-  game.sound.pauseOnBlur = false;
+  game.sound.pauseOnBlur = isMobile();
 }
 
 try {

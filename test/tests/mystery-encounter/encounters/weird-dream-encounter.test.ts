@@ -132,7 +132,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectModifierPhase");
       await game.phaseInterceptor.to("SelectModifierPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
@@ -189,7 +189,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectModifierPhase");
       await game.phaseInterceptor.to("SelectModifierPhase");
 
-      expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+      expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;

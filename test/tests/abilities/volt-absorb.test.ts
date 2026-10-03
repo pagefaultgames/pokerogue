@@ -45,7 +45,7 @@ describe("Abilities - Volt Absorb", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
     expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("should activate regardless of accuracy checks", async () => {
@@ -61,7 +61,7 @@ describe("Abilities - Volt Absorb", () => {
 
     game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp -= 1;
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     await game.move.forceMiss();
@@ -82,7 +82,7 @@ describe("Abilities - Volt Absorb", () => {
 
     game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp -= 1;
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());

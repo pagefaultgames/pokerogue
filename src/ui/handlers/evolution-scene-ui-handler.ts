@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject } from "#ui/text";
 
@@ -12,10 +12,6 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
   public canCancel: boolean;
   public cancelled: boolean;
 
-  constructor() {
-    super(UiMode.EVOLUTION_SCENE);
-  }
-
   setup() {
     this.canCancel = false;
     this.cancelled = false;
@@ -24,7 +20,10 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
 
     this.evolutionContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
 
-    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType).setOrigin(0, 1).setVisible(false);
+    const messageBg = globalScene.add
+      .sprite(0, 0, "bg", settings.display.uiWindowStyle)
+      .setOrigin(0, 1)
+      .setVisible(false);
 
     this.messageBg = messageBg;
 

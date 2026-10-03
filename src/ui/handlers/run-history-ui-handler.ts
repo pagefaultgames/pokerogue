@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
@@ -35,10 +36,6 @@ export class RunHistoryUiHandler extends MessageUiHandler {
   private cursorObj: Phaser.GameObjects.NineSlice | null;
 
   private runContainerInitialY: number;
-
-  constructor() {
-    super(UiMode.RUN_HISTORY);
-  }
 
   override setup() {
     const ui = this.getUi();
@@ -286,7 +283,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
       this.add(gameOutcomeLabel);
     } else {
       // Run Result: Defeats
-      const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+      const genderIndex = settings.general.playerGender;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       // Defeats from wild Pokemon battles will show the Pokemon responsible by the text of the run result.
       if (data.battleType === BattleType.WILD || (data.battleType === BattleType.MYSTERY_ENCOUNTER && !data.trainer)) {

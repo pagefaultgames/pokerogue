@@ -205,7 +205,7 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
           [1, MoveId.TACKLE, LearnableMoveSource.OTHER],
           [5, MoveId.GROWL, LearnableMoveSource.OTHER],
         ]);
-        vi.spyOn(allMoves[MoveId.TACKLE], "name", "get").mockReturnValue("Tackle (N)");
+        vi.spyOn(allMoves[MoveId.TACKLE], "isUnimplemented", "get").mockReturnValue(true);
         const result = getAndWeightLevelMoves(pokemon);
         expect(result).not.toHaveKey(MoveId.TACKLE);
         expect(result).toHaveKey(MoveId.GROWL);

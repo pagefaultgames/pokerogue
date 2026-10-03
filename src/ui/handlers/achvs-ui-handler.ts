@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import type { Achv } from "#system/achv";
 import { achvs } from "#system/achv";
 import type { Voucher } from "#system/voucher";
@@ -50,23 +50,15 @@ export class AchvsUiHandler extends MessageUiHandler {
   private unlockText: Phaser.GameObjects.Text;
 
   private achvsName: string;
-  private readonly achvsTotal: number;
+  private readonly achvsTotal: number = Object.keys(achvs).length;
   private vouchersName: string;
-  private readonly vouchersTotal: number;
+  private readonly vouchersTotal: number = Object.keys(vouchers).length;
   private currentTotal: number;
 
   private scrollBar: ScrollBar;
-  private scrollCursor: number;
+  private scrollCursor = 0;
   private cursorObj: Phaser.GameObjects.NineSlice | null;
   private currentPage: Page;
-
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-
-    this.achvsTotal = Object.keys(achvs).length;
-    this.vouchersTotal = Object.keys(vouchers).length;
-    this.scrollCursor = 0;
-  }
 
   setup() {
     const ui = this.getUi();
@@ -93,7 +85,7 @@ export class AchvsUiHandler extends MessageUiHandler {
       .setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });

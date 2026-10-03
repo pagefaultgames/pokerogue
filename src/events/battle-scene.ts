@@ -4,12 +4,6 @@ import type { Move } from "#moves/move";
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {
   /**
-   * Triggers when the corresponding setting is changed
-   * @see {@linkcode CandyUpgradeNotificationChangedEvent}
-   */
-  CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
-
-  /**
    * Triggers when a move is successfully used
    * @see {@linkcode MoveUsedEvent}
    */
@@ -41,17 +35,6 @@ export enum BattleSceneEventType {
    * @see {@linkcode NewArenaEvent}
    */
   NEW_ARENA = "onNewArena",
-}
-
-/** Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events */
-export class CandyUpgradeNotificationChangedEvent extends Event {
-  /** The new value the setting was changed to */
-  public newValue: number;
-  constructor(newValue: number) {
-    super(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED);
-
-    this.newValue = newValue;
-  }
 }
 
 /** Container class for {@linkcode BattleSceneEventType.MOVE_USED} events */

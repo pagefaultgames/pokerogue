@@ -1,7 +1,7 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 
 export function getRibbonForType(type: PokemonType): RibbonFlag {
   // Valid types: 0–17, excluding UNKNOWN (-1) and STELLAR (19)

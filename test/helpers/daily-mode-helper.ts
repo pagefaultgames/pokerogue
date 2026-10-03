@@ -1,3 +1,4 @@
+import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
@@ -46,7 +47,7 @@ export class DailyModeHelper extends GameManagerHelper {
   async startBattle(): Promise<void> {
     await this.runToSummon();
 
-    if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
+    if (settings.general.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,

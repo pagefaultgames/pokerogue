@@ -1,6 +1,6 @@
-import { PriorityQueue } from "#app/queues/priority-queue";
-import { sortInSpeedOrder } from "#app/utils/speed-order";
+import { PriorityQueue } from "#queues/priority-queue";
 import type { DynamicPhase } from "#types/phase-types";
+import { sortInSpeedOrder } from "#utils/speed-order";
 
 /** A generic speed-based priority queue of {@linkcode DynamicPhase}s. */
 export class DynamicPhasePriorityQueue<T extends DynamicPhase> extends PriorityQueue<T> {

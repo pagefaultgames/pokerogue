@@ -1,5 +1,6 @@
 /**
  * Custom function that can be used in the dev environment to help testing without having to use the debugger or make temporary code changes.
+ *
  * Default Button mapping is `Q`, but can be changed in the keyboard settings.
  * @example
  * ```ts

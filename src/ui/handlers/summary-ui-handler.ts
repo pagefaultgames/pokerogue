@@ -1,8 +1,8 @@
 import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { getStarterColors } from "#app/global-vars/starter-colors";
 import { getStarterValueFriendshipCap } from "#balance/starters";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { getGenderColor, getGenderSymbol } from "#data/gender";
@@ -12,7 +12,6 @@ import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
-import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -25,12 +24,13 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
+import type { ConfirmModeConfig, OptionSelectItem } from "#types/ui-types";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getDexNumber } from "#utils/pokemon-utils";
+import { getDexNumber, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -129,10 +129,6 @@ export class SummaryUiHandler extends UiHandler {
   private moveCursor: number;
   private selectedMoveIndex: number;
   private selectCallback: ((cursor: number) => void) | null;
-
-  constructor() {
-    super(UiMode.SUMMARY);
-  }
 
   setup() {
     const ui = this.getUi();
@@ -550,8 +546,94 @@ export class SummaryUiHandler extends UiHandler {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             this.moveSelectFunction?.(this.moveCursor);
           } else if (this.selectedMoveIndex === -1) {
-            this.selectedMoveIndex = this.moveCursor;
-            this.setCursor(this.moveCursor);
+            const movesetLength = this.pokemon.moveset.length;
+            const moveSelectOptions: OptionSelectItem[] = [];
+            if (movesetLength <= 1) {
+              ui.playError();
+              return false;
+            }
+            // Option to swap move around
+            moveSelectOptions.push({
+              label: i18next.t("pokemonSummary:swapMove"),
+              handler: () => {
+                this.selectedMoveIndex = this.moveCursor;
+                this.setCursor(this.moveCursor);
+                ui.revertMode();
+                return true;
+              },
+            });
+            // Option to delete move
+            if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+              moveSelectOptions.push({
+                label: i18next.t("pokemonSummary:deleteMove"),
+                handler: () => {
+                  const moveDeleteConfirmOptions: ConfirmModeConfig = {
+                    yesHandler: () => {
+                      if (!this.pokemon || !globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+                        ui.revertMode();
+                        return;
+                      }
+
+                      for (let i = this.moveCursor + 1; i < movesetLength; i++) {
+                        const nextMoveRow = this.moveRowsContainer.getAt(i) as Phaser.GameObjects.Container;
+                        this.moveRowsContainer.moveTo(nextMoveRow, i - 1);
+                        nextMoveRow.setY((i - 1) * 16);
+                      }
+                      // Remove move container (which has been pushed to the end)
+                      const currentMoveRow = this.moveRowsContainer.getAt(
+                        movesetLength - 1,
+                      ) as Phaser.GameObjects.Container;
+                      this.moveRowsContainer.remove(currentMoveRow, true);
+
+                      // Add a new, empty move container
+                      // TODO: create a custom container class for moves and modify the container in place
+                      // instead of destroying it and recreating it.
+                      const moveRowContainer = globalScene.add.container(0, 16 * (movesetLength - 1));
+                      this.moveRowsContainer.add(moveRowContainer);
+
+                      const moveText = addTextObject(35, 0, "-", TextStyle.SUMMARY);
+                      moveText.setOrigin(0, 1);
+                      moveRowContainer.add(moveText);
+
+                      const ppOverlay = globalScene.add.image(
+                        177,
+                        -5,
+                        getLocalizedSpriteKey("summary_moves_overlay_pp"),
+                      ); // Pixel text 'PP'
+                      ppOverlay.setOrigin(1, 0.5);
+                      moveRowContainer.add(ppOverlay);
+
+                      const ppText = addTextObject(178, 1, "--/--", TextStyle.WINDOW);
+                      ppText.setOrigin(0, 1);
+                      moveRowContainer.add(ppText);
+
+                      // Remove the move from the moveset
+                      this.pokemon.moveset.splice(this.moveCursor, 1);
+
+                      ui.revertMode();
+                    },
+                    noHandler: () => {
+                      ui.revertMode();
+                    },
+                    inputDelay: 1000,
+                  };
+
+                  ui.revertMode();
+                  ui.setOverlayMode(UiMode.CONFIRM, moveDeleteConfirmOptions);
+                  return true;
+                },
+              });
+            }
+            moveSelectOptions.push({
+              label: i18next.t("pokemonSummary:cancel"),
+              handler: () => {
+                ui.revertMode();
+                return true;
+              },
+            });
+
+            ui.setOverlayMode(UiMode.OPTION_SELECT, { options: moveSelectOptions, yOffset: 48 });
+            success = true;
           } else {
             if (this.selectedMoveIndex !== this.moveCursor) {
               const tempMove = this.pokemon?.moveset[this.selectedMoveIndex];
@@ -834,12 +916,10 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
-        const otColor =
-          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
-        const usernameReplacement =
-          globalScene.gameData.gender === PlayerGender.FEMALE
-            ? i18next.t("trainerNames:playerF")
-            : i18next.t("trainerNames:playerM");
+        const otColor = settings.isPlayerFemale ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement = settings.isPlayerFemale
+          ? i18next.t("trainerNames:playerF")
+          : i18next.t("trainerNames:playerM");
 
         const profileContainerProfileTitle = globalScene.add //
           .image(7, 4, getLocalizedSpriteKey("summary_profile_profile_title")) // Pixel text 'PROFILE'
@@ -851,16 +931,16 @@ export class SummaryUiHandler extends UiHandler {
           7,
           10,
           `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
-            globalScene.hideUsername
+            settings.display.hideUsername
               ? usernameReplacement
-              : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
+              : loggedInUser?.username || i18next.t("pokemonSummary:unknownTrainer"),
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerText);
 
-        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
+        const idToDisplay = settings.display.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           10,

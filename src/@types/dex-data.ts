@@ -1,4 +1,4 @@
-import type { RibbonData } from "#system/ribbons/ribbon-data";
+import type { RibbonData } from "#system/ribbon-data";
 
 export interface DexData {
   [key: number]: DexEntry;

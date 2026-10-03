@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { Challenge } from "#data/challenge";
 import {
@@ -16,7 +17,8 @@ import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
-import { NumberHolder } from "#utils/common";
+import type { NumberHolder } from "#utils/common";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
 
@@ -29,7 +31,7 @@ export enum AchvTier {
 }
 
 function getGenderStr(): string {
-  const genderIndex = globalScene?.gameData?.gender ?? PlayerGender.MALE;
+  const genderIndex = settings.general.playerGender;
   const genderStr = PlayerGender[genderIndex].toLowerCase();
   return genderStr;
 }
@@ -130,12 +132,12 @@ export class RibbonAchv extends Achv {
 export class DamageAchv extends Achv {
   private readonly damageAmount: number;
   // intentionally overwriting base property
-  protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
+  declare protected readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, damageAmount: number, iconImage: string, score: number) {
     super(localizationKey, iconImage, score);
     this.conditionFunc = (args: [NumberHolder | number]) =>
-      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount;
+      (typeof args[0] === "number" ? args[0] : args[0].value) >= this.damageAmount;
     this.damageAmount = damageAmount;
   }
 
@@ -149,12 +151,12 @@ export class DamageAchv extends Achv {
 
 export class HealAchv extends Achv {
   private readonly healAmount: number;
-  protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
+  declare protected readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, healAmount: number, iconImage: string, score: number) {
     super(localizationKey, iconImage, score);
     this.conditionFunc = (args: [number | NumberHolder]) =>
-      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount;
+      (typeof args[0] === "number" ? args[0] : args[0].value) >= this.healAmount;
     this.healAmount = healAmount;
   }
 
@@ -175,7 +177,8 @@ export class LevelAchv extends Achv {
       localizationKey,
       iconImage,
       score,
-      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.level,
+      (args: [ValueHolder<number> | number, ...any[]]) =>
+        (typeof args[0] === "number" ? args[0] : args[0].value) >= this.level,
     );
     this.level = level;
   }
@@ -244,6 +247,9 @@ const inverseAndFlipStatAchievementsBlock = () =>
 const passivesChallengeAchievementsBlock = () =>
   globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2);
 
+const movesetRandomizerChallengeAchvBlock = () =>
+  globalScene.gameMode.challenges.some(c => c.id === Challenges.MOVESET_RANDOMIZER && c.value > 0);
+
 export const achvs = {
   CLASSIC_VICTORY: new Achv(
     "classicVictory",
@@ -304,7 +310,8 @@ export const achvs = {
       c instanceof FreshStartChallenge
       && c.value === 1
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   NUZLOCKE: new ChallengeAchv(
     "nuzlocke",
@@ -316,9 +323,14 @@ export const achvs = {
     "inverseBattle",
     "inverse",
     100,
-    c => c instanceof InverseBattleChallenge && c.value > 0,
+    c => c instanceof InverseBattleChallenge && c.value > 0 && !movesetRandomizerChallengeAchvBlock(),
   ),
-  FLIP_STATS: new ChallengeAchv("flipStats", "dubious_disc", 100, c => c instanceof FlipStatChallenge && c.value > 0),
+  FLIP_STATS: new ChallengeAchv(
+    "flipStats",
+    "dubious_disc",
+    100,
+    c => c instanceof FlipStatChallenge && c.value > 0 && !movesetRandomizerChallengeAchvBlock(),
+  ),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv(
     "monoGenOne",
     "ribbon_gen1",
@@ -327,7 +339,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 1
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv(
     "monoGenTwo",
@@ -337,7 +350,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 2
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv(
     "monoGenThree",
@@ -347,7 +361,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 3
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_FOUR_VICTORY: new ChallengeAchv(
     "monoGenFour",
@@ -357,7 +372,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 4
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_FIVE_VICTORY: new ChallengeAchv(
     "monoGenFive",
@@ -367,7 +383,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 5
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_SIX_VICTORY: new ChallengeAchv(
     "monoGenSix",
@@ -377,7 +394,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 6
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_SEVEN_VICTORY: new ChallengeAchv(
     "monoGenSeven",
@@ -387,7 +405,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 7
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_EIGHT_VICTORY: new ChallengeAchv(
     "monoGenEight",
@@ -397,7 +416,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 8
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GEN_NINE_VICTORY: new ChallengeAchv(
     "monoGenNine",
@@ -407,7 +427,8 @@ export const achvs = {
       c instanceof SingleGenerationChallenge
       && c.value === 9
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_NORMAL: new MonoTypeChallengeAchv(
     "monoNormal",
@@ -418,7 +439,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 1
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_FIGHTING: new MonoTypeChallengeAchv(
     "monoFighting",
@@ -429,7 +451,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 2
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_FLYING: new MonoTypeChallengeAchv(
     "monoFlying",
@@ -440,7 +463,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 3
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_POISON: new MonoTypeChallengeAchv(
     "monoPoison",
@@ -451,7 +475,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 4
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GROUND: new MonoTypeChallengeAchv(
     "monoGround",
@@ -462,7 +487,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 5
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_ROCK: new MonoTypeChallengeAchv(
     "monoRock",
@@ -473,7 +499,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 6
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_BUG: new MonoTypeChallengeAchv(
     "monoBug",
@@ -484,7 +511,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 7
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GHOST: new MonoTypeChallengeAchv(
     "monoGhost",
@@ -495,7 +523,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 8
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_STEEL: new MonoTypeChallengeAchv(
     "monoSteel",
@@ -506,7 +535,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 9
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_FIRE: new MonoTypeChallengeAchv(
     "monoFire",
@@ -517,7 +547,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 10
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_WATER: new MonoTypeChallengeAchv(
     "monoWater",
@@ -528,7 +559,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 11
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_GRASS: new MonoTypeChallengeAchv(
     "monoGrass",
@@ -539,7 +571,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 12
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_ELECTRIC: new MonoTypeChallengeAchv(
     "monoElectric",
@@ -550,7 +583,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 13
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_PSYCHIC: new MonoTypeChallengeAchv(
     "monoPsychic",
@@ -561,7 +595,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 14
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_ICE: new MonoTypeChallengeAchv(
     "monoIce",
@@ -572,7 +607,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 15
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_DRAGON: new MonoTypeChallengeAchv(
     "monoDragon",
@@ -583,7 +619,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 16
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_DARK: new MonoTypeChallengeAchv(
     "monoDark",
@@ -594,7 +631,8 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 17
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   MONO_FAIRY: new MonoTypeChallengeAchv(
     "monoFairy",
@@ -605,13 +643,18 @@ export const achvs = {
       c instanceof SingleTypeChallenge
       && c.value === 18
       && !inverseAndFlipStatAchievementsBlock()
-      && !passivesChallengeAchievementsBlock(),
+      && !passivesChallengeAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   PASSIVES_CHALLENGE: new ChallengeAchv(
     "passives",
     "ability_capsule",
     100,
-    c => c instanceof PassivesChallenge && c.value > 0 && !inverseAndFlipStatAchievementsBlock(),
+    c =>
+      c instanceof PassivesChallenge
+      && c.value > 0
+      && !inverseAndFlipStatAchievementsBlock()
+      && !movesetRandomizerChallengeAchvBlock(),
   ),
   UNEVOLVED_CLASSIC_VICTORY: new Achv("unevolvedClassicVictory", "eviolite", 50, () =>
     globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)),
@@ -623,7 +666,8 @@ export const achvs = {
     ch =>
       ch instanceof FlipStatChallenge
       && ch.value > 0
-      && globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
+      && globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0)
+      && !movesetRandomizerChallengeAchvBlock(),
   ).setSecret(),
   BREEDERS_IN_SPACE: new Achv("breedersInSpace", "moon_stone", 50).setSecret(),
 };

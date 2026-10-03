@@ -17,6 +17,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
       sourcemap: mode !== "production",
       chunkSizeWarningLimit: 10000,
       minify: "oxc",
+      manifest: true,
       rolldownOptions: {
         // TODO: Review if we even need this anymore in v8.0
         onwarn(warning, defaultHandler) {
@@ -45,14 +46,13 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
           keepNames: true,
           // Needed to prevent import timing issues with the phaser3 rex plugins
           strictExecutionOrder: true,
-          minify: {
-            mangle: {
-              keepNames: true,
-            },
-            compress: {
-              keepNames: { class: true, function: true },
-            },
-          },
+          minify:
+            mode === "development"
+              ? "dce-only"
+              : {
+                  mangle: { keepNames: true },
+                  compress: { keepNames: { class: true, function: true } },
+                },
         },
       },
     },
@@ -64,9 +64,10 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
 
   if (!process.env.MERGE_REPORTS) {
     opts.plugins = [
-      (await import("./plugins/vite/vite-minify-json-plugin")).minifyPublicJsonFiles(),
-      (await import("./plugins/vite/namespaces-i18n-plugin")).LocaleNamespace(),
+      (await import("./plugins/vite/vite-minify-json-plugin.ts")).minifyPublicJsonFiles(),
+      (await import("./plugins/vite/namespaces-i18n-plugin.ts")).LocaleNamespace(),
       (await import("unplugin-inline-enum/vite")).default({ scanDir: "src" }),
+      (await import("./plugins/vite/static-shell-plugin.ts")).staticShellPlugin(),
     ];
   }
   return opts;

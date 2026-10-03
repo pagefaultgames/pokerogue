@@ -1,8 +1,11 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { BerryModifier } from "#modifiers/modifier";
+import type { ModifierOverride } from "#modifiers/modifier-type";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
@@ -42,7 +45,7 @@ describe("Moves - Revival Blessing", () => {
     expect(player.species.speciesId).toBe(SpeciesId.MAGIKARP);
     game.move.select(MoveId.REVIVAL_BLESSING);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1, "RevivalBlessingPhase");
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -62,7 +65,7 @@ describe("Moves - Revival Blessing", () => {
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -75,7 +78,7 @@ describe("Moves - Revival Blessing", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const player = game.field.getPlayerPokemon();
@@ -96,7 +99,7 @@ describe("Moves - Revival Blessing", () => {
     game.move.select(MoveId.REVIVAL_BLESSING, 1);
     await game.move.selectEnemyMove(MoveId.FISSURE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -129,5 +132,34 @@ describe("Moves - Revival Blessing", () => {
     // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
     // Make sure it's still in slot 1
     expect(game.field.getEnemyPokemon()).toBe(enemyFainting);
+  });
+
+  it("should reclaim held items from post-battle loot when reviving a fainted enemy", async () => {
+    const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.LUM, count: 1 }];
+    game.override.enemyHeldItems(initBerries).enemyMoveset(MoveId.REVIVAL_BLESSING).startingWave(8);
+
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+
+    const firstEnemy = game.scene.getEnemyParty()[0];
+
+    game.move.select(MoveId.SPLASH);
+    await game.doKillOpponents();
+
+    const postBattleLootBefore = game.scene.currentBattle.postBattleLoot;
+    expect(postBattleLootBefore.some(loot => loot.pokemonId === firstEnemy.id)).toBe(true);
+
+    await game.toNextTurn();
+    game.move.select(MoveId.SPLASH);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+
+    await game.phaseInterceptor.to("MoveEndPhase", false);
+
+    expect(firstEnemy.isFainted()).toBe(false);
+
+    const postBattleLootAfter = game.scene.currentBattle.postBattleLoot;
+    expect(postBattleLootAfter.some(loot => loot.pokemonId === firstEnemy.id)).toBe(false);
+
+    const heldItems = firstEnemy.getHeldItems();
+    expect(heldItems.some(m => m instanceof BerryModifier && m.berryType === BerryType.LUM)).toBe(true);
   });
 });
