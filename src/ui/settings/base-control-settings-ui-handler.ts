@@ -23,12 +23,12 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected settingsContainer: Phaser.GameObjects.Container;
   protected optionsContainer: Phaser.GameObjects.Container;
   protected tabMenu: TabMenu;
-  protected readonly settingsTabs = [
-    { mode: UiMode.SETTINGS_GENERAL, labelKey: "settings:general" },
-    { mode: UiMode.SETTINGS_DISPLAY, labelKey: "settings:display" },
-    { mode: UiMode.SETTINGS_AUDIO, labelKey: "settings:audio" },
-    { mode: UiMode.SETTINGS_GAMEPAD, labelKey: "settings:gamepad" },
-    { mode: UiMode.SETTINGS_KEYBOARD, labelKey: "settings:keyboard" },
+  protected readonly settingsModes: UiMode[] = [
+    UiMode.SETTINGS_GENERAL,
+    UiMode.SETTINGS_DISPLAY,
+    UiMode.SETTINGS_AUDIO,
+    UiMode.SETTINGS_GAMEPAD,
+    UiMode.SETTINGS_KEYBOARD,
   ];
 
   protected scrollBar: ScrollBar;
@@ -72,6 +72,13 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
     this.rowsToDisplay = 8;
   }
 
+  private getSettingsName(mode: UiMode): string {
+    const entry = Object.entries(UiMode).find(([, value]) => value === mode);
+    const key = entry ? entry[0].replace("SETTINGS_", "").toLowerCase() : "";
+
+    return i18next.t(`settings:${key}`);
+  }
+
   public override setup(): void {
     const ui = this.getUi();
     this.navigationIcons = {};
@@ -84,14 +91,14 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       Phaser.Geom.Rectangle.Contains,
     );
 
-    const tabLabels = this.settingsTabs.map(tab => i18next.t(tab.labelKey));
+    const tabLabels = this.settingsModes.map(mode => this.getSettingsName(mode));
     const menuWidth = globalScene.scaledCanvas.width;
 
     this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, newIndex => {
-      globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
+      globalScene.ui.setMode(this.settingsModes[newIndex]);
     });
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === ui.mode);
+    const activeIndex = this.settingsModes.indexOf(ui.mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
@@ -348,7 +355,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
 
     const { ui } = globalScene;
 
-    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === ui.mode);
+    const activeIndex = this.settingsModes.indexOf(ui.mode);
     if (activeIndex !== -1) {
       this.tabMenu.setIndex(activeIndex);
     }
