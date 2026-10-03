@@ -163,11 +163,6 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
 	vec4 texture = texture2D(uMainSampler[0], outTexCoord);
 
-	// if (baseVariantColors[0].a > 0.0) {
-	// 	gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
-	// 	return;
-	// }
-
 	/* Shiny variant palette swap */
 	for (int i = 0; i < 32; i++) {
 		if (baseVariantColors[i].a == 0.0)
