@@ -8,4 +8,8 @@ export class MockImage extends MockContainer {
     super(textureManager, x, y);
     this.texture = texture;
   }
+
+  setCrop(_x: number, _y: number, _width: number, _height: number): this {
+    return this;
+  }
 }
