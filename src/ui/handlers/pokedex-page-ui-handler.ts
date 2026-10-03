@@ -2060,7 +2060,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 return true;
               },
             });
-            const optionSelectConfig: OptionSelectModeConfig = { options, yOffset: 47 };
+            const optionSelectConfig: OptionSelectModeConfig = { options };
             ui.setModeWithoutClear(UiMode.OPTION_SELECT, optionSelectConfig);
             success = true;
             break;
