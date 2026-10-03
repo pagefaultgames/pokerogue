@@ -5,6 +5,7 @@ import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
+import { addMask } from "#utils/mask-utils";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
@@ -76,7 +77,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     this.textMaskRect.setScale(6);
 
     this.add(this.desc);
-    this.desc.enableFilters().filters?.external.addMask(this.textMaskRect);
+    addMask(this.desc, this.textMaskRect);
 
     if (options?.hideBg) {
       this.descBg.setVisible(false);

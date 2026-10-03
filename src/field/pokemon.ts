@@ -3323,12 +3323,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
       this.battleInfo.setVisible(true);
-      if (this.isPlayer()) {
-        // TODO: How do you get this to not require a private property access?
-        this["battleInfo"].expMaskRect.x += 150;
-      }
       globalScene.tweens.add({
-        targets: [this.battleInfo, this.battleInfo.expMaskRect],
+        targets: this.battleInfo,
         x: this.isPlayer() ? "-=150" : `+=${this.isBoss() ? 246 : 150}`,
         duration: 1000,
         ease: "Cubic.easeOut",
@@ -3341,15 +3337,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return new Promise(resolve => {
       if (this.battleInfo?.visible) {
         globalScene.tweens.add({
-          targets: [this.battleInfo, this.battleInfo.expMaskRect],
+          targets: this.battleInfo,
           x: this.isPlayer() ? "+=150" : `-=${this.isBoss() ? 246 : 150}`,
           duration: 500,
           ease: "Cubic.easeIn",
           onComplete: () => {
-            if (this.isPlayer()) {
-              // TODO: How do you get this to not require a private property access?
-              this["battleInfo"].expMaskRect.x -= 150;
-            }
             this.battleInfo.setVisible(false);
             this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
             resolve();

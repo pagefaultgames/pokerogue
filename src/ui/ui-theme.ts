@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { legacyCompatibleImages } from "#app/scene-base";
 import type { UiWindowStyle } from "#enums/ui-window-style";
+import { addMask } from "#utils/mask-utils";
 
 export enum WindowVariant {
   NORMAL,
@@ -66,7 +67,7 @@ export function addWindow(
       .setOrigin(0)
       .setScale(6);
 
-    window.enableFilters().filters?.external.addMask(maskRect);
+    addMask(window, maskRect);
   }
 
   return window;

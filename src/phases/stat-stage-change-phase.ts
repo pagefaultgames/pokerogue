@@ -16,6 +16,7 @@ import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbA
 import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change";
 import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
+import { addMask } from "#utils/mask-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
@@ -388,7 +389,7 @@ export class StatStageChangePhase extends PokemonPhase {
       .setAlpha(0)
       .setScale(6)
       .setOrigin(0.5, 1);
-    statSprite.enableFilters().filters?.external.addMask(pokemon.getSprite());
+    addMask(statSprite, pokemon.getSprite(), true);
 
     audioManager.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 

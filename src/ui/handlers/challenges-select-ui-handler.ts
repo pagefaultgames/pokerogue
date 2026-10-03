@@ -11,6 +11,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getRibbonsToAward } from "#utils/challenge-utils";
 import { getLocalizedSpriteKey } from "#utils/common";
+import { addMask } from "#utils/mask-utils";
 import { getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
 import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
@@ -138,7 +139,7 @@ export class GameChallengesUiHandler extends UiHandler {
       .fillStyle(0xffffff)
       .beginPath()
       .fillRect(descriptionBg.x + 6, descriptionBg.y + 4, descriptionBg.width - 12, this.descriptionTextMaxHeight);
-    this.descriptionText.enableFilters().filters?.external.addMask(this.descriptionTextMaskRect);
+    addMask(this.descriptionText, this.descriptionTextMaskRect);
 
     this.startBg = addWindow(0, 0, this.optionsWidth, startBgHeight)
       .setName("window-start-bg")
