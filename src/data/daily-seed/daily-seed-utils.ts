@@ -67,7 +67,7 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     return;
   }
 
-  const { seed, boss, luck, forcedWaves, trainerManipulations, challenges, mysteryEncounters } =
+  const { seed, boss, luck, forcedWaves, trainerManipulations, challenges, mysteryEncounters, forcedBiomes } =
     globalScene.gameMode.dailyConfig;
   return {
     seed,
@@ -77,6 +77,7 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     trainerManipulations,
     challenges,
     mysteryEncounters,
+    forcedBiomes,
   } satisfies SerializedDailyRunConfig;
 }
 
@@ -132,6 +133,19 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
   if (config.passive != null && !abilityIds.includes(config.passive)) {
     console.warn("Invalid passive used for custom daily run seed starter:", config.passive);
     config.passive = undefined;
+  }
+
+  if (config.gender != null && !getEnumValues(Gender).includes(config.gender)) {
+    console.warn("Invalid gender used for custom daily run seed starter:", config.gender);
+    config.gender = undefined;
+  }
+
+  if (
+    config.ivs != null
+    && (!Array.isArray(config.ivs) || config.ivs.length !== 6 || !config.ivs.every(iv => isBetween(iv, 0, 31)))
+  ) {
+    console.warn("Invalid IVs used for custom daily run seed starter:", config.ivs);
+    config.ivs = undefined;
   }
 
   return config;
@@ -198,6 +212,14 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
     config.segments = undefined;
   }
 
+  if (
+    config.ivs != null
+    && (!Array.isArray(config.ivs) || config.ivs.length !== 6 || !config.ivs.every(iv => isBetween(iv, 0, 31)))
+  ) {
+    console.warn("Invalid IVs used for custom daily run seed boss:", config.ivs);
+    config.ivs = undefined;
+  }
+
   return config;
 }
 
@@ -213,12 +235,12 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,
-    undefined,
+    config?.abilityIndex,
     config?.formIndex,
-    undefined,
+    config?.gender,
     isShiny,
     config?.variant,
-    undefined,
+    config?.ivs,
     config?.nature,
   );
 
