@@ -1,0 +1,13 @@
+name: "Setup pnpm and Node.js"
+description: "Sets up pnpm and Node.js environment for workflows. Does not install dependencies."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install pnpm and Node.js
+      uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # 2.1.0
+      with:
+        version: 11
+        runtime: node@24.9
+        install: false
+        cache: true
