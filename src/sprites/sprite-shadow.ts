@@ -45,7 +45,10 @@ export function setSpriteShadow(sprite: Phaser.GameObjects.Sprite, enabled: bool
     return;
   }
 
-  const shadow = globalScene.make.image({ key: getShadowTextureKey(1, 1) }, false).setOrigin(0, 0);
+  const shadow = globalScene.make
+    // See <https://github.com/phaserjs/phaser/issues/7390> for why we need the cast
+    .image({ key: getShadowTextureKey(1, 1) } as Phaser.Types.GameObjects.GameObjectConfig, false)
+    .setOrigin(0, 0);
   shadows.set(sprite, { shadow, offsetY, sizedFor: null });
   sprite.once(Phaser.GameObjects.Events.DESTROY, () => {
     const s = shadows.get(sprite);
