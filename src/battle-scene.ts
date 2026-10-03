@@ -408,14 +408,18 @@ export class BattleScene extends SceneBase {
 
     this.invertFilter = this.cameras.main.filters.external.addColorMatrix().setActive(false);
     this.invertFilter.colorMatrix.negative();
-    this.spriteSubmitter = new SpriteSubmitter(this.renderer.renderNodes);
-    this.renderer.renderNodes.addNode(SpriteSubmitter.NAME, this.spriteSubmitter);
-    this.spriteBatchHandler = new SpriteBatchHandler(this.renderer.renderNodes);
-    this.renderer.renderNodes.addNode(SpriteBatchHandler.NAME, this.spriteBatchHandler);
-    this.fieldSpriteSubmitter = new FieldSpriteSubmitter(this.renderer.renderNodes);
-    this.renderer.renderNodes.addNode(FieldSpriteSubmitter.NAME, this.fieldSpriteSubmitter);
-    this.fieldSpriteBatchHandler = new FieldSpriteBatchHandler(this.renderer.renderNodes);
-    this.renderer.renderNodes.addNode(FieldSpriteBatchHandler.NAME, this.fieldSpriteBatchHandler);
+
+    // Condition check needed for when running headless mode during tests
+    if (this.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
+      this.spriteSubmitter = new SpriteSubmitter(this.renderer.renderNodes);
+      this.renderer.renderNodes.addNode(SpriteSubmitter.NAME, this.spriteSubmitter);
+      this.spriteBatchHandler = new SpriteBatchHandler(this.renderer.renderNodes);
+      this.renderer.renderNodes.addNode(SpriteBatchHandler.NAME, this.spriteBatchHandler);
+      this.fieldSpriteSubmitter = new FieldSpriteSubmitter(this.renderer.renderNodes);
+      this.renderer.renderNodes.addNode(FieldSpriteSubmitter.NAME, this.fieldSpriteSubmitter);
+      this.fieldSpriteBatchHandler = new FieldSpriteBatchHandler(this.renderer.renderNodes);
+      this.renderer.renderNodes.addNode(FieldSpriteBatchHandler.NAME, this.fieldSpriteBatchHandler);
+    }
 
     this.launchBattle();
   }
