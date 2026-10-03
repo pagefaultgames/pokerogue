@@ -17,7 +17,7 @@ import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 type RenderNodeManager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
 type WebGLTextureWrapper = Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper;
 
-/** What game code writes into `renderNodeData[SpriteSubmitter.NAME]` (the old pipelineData keys). */
+/** Fields that sprites can set in their renderNodeData */
 export interface SpriteRenderData extends FieldSpriteRenderData {
   tone?: number[];
   isTerastallized?: boolean;
@@ -35,7 +35,7 @@ export interface SpriteRenderData extends FieldSpriteRenderData {
   spriteKey?: string;
 }
 
-/** What the Submitter computes per sprite and hands to the handler. */
+/** Per-Sprite data used for rendering; written by the Submitter and read by the BatchHandler. */
 interface SpriteDrawData extends FieldSpriteDrawData {
   tone: number[];
   teraColor: number[];
@@ -52,7 +52,7 @@ interface SpriteDrawData extends FieldSpriteDrawData {
   spriteColors: Float32Array;
   fusionSpriteColors: Int32Array;
 
-  // Inputs for the shadow quad stretch (v3 batchQuad)
+  // Inputs for the shadow quad stretch
   shadowBaseY: number;
   shadowPadding: number;
   frameHeightScaled: number;
@@ -72,7 +72,7 @@ const scaledPaletteCache = new WeakMap<number[][], Float32Array>();
 const intPaletteCache = new WeakMap<number[][], Int32Array>();
 const variantPaletteCache = new Map<string, { base: Float32Array; variant: Float32Array }>();
 
-/** v3: `spriteColors[c].map(x => x / 255)`, flattened to 32 vec4s */
+/** Convert a list of color values to a 32-element Float32Array */
 function toScaledPalette(colors: number[][] | undefined): Float32Array {
   if (!colors?.length) {
     return EMPTY_PALETTE_F;
@@ -90,7 +90,7 @@ function toScaledPalette(colors: number[][] | undefined): Float32Array {
   return palette;
 }
 
-/** v3: `fusionSpriteColors[c]` as-is (ints 0–255), flattened to 32 ivec4s */
+/** Convert a list of color values to a 32-element Int32Array */
 function toIntPalette(colors: number[][] | undefined): Int32Array {
   if (!colors?.length) {
     return EMPTY_PALETTE_I;
@@ -108,7 +108,7 @@ function toIntPalette(colors: number[][] | undefined): Int32Array {
   return palette;
 }
 
-/** v3 onBatch: base → variant color tables from `variantColorCache` */
+/** Get the base and variant color palettes for a given key and variant */
 function getVariantPalettes(key: string | undefined, variant: number) {
   if (!key) {
     return null;
@@ -140,7 +140,6 @@ function getVariantPalettes(key: string | undefined, variant: number) {
 
 // #endregion
 
-/** v3 onBind's relPosition calculation, unchanged apart from null-safety */
 function computeRelPosition(
   sprite: Phaser.GameObjects.Sprite,
   isEntityObj: boolean,
@@ -196,7 +195,13 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
     super(manager, { name: SpriteSubmitter.NAME, ...config });
   }
 
-  // biome-ignore lint/complexity/useMaxParams: mirrors Phaser's signature
+  // This method sets the `spriteData` field in render options. See phaser's docs, which says
+  // "Resolves and stores render options for the current GameObject into
+  // _renderOptions before it is submitted to the batch handler"
+  // Unlike the submitter, the batch handler does not have access to the game object,
+  // but the batch handler does need to set uniforms.
+  // Since our shaders include per-uniform data for the sprite,
+  // we need to pass data from the submitter to the batch handler.
   override setRenderOptions(
     gameObject: Phaser.GameObjects.GameObject,
     normalMap?: any,
@@ -215,7 +220,6 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
     const field = (isEntityObj ? parent.parentContainer : parent) ?? null;
     const entityScale = isEntityObj ? parent.scale : sprite.scale;
 
-    // --- v3 onBind ---
     out.tone = data.tone ?? ZERO4;
     const tera = data.isTerastallized ? (data.teraColor ?? ZERO3) : ZERO3;
     out.teraColor = [tera[0] / 255, tera[1] / 255, tera[2] / 255];
@@ -237,7 +241,7 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
       out.fusionSpriteColors = EMPTY_PALETTE_I;
     }
 
-    // --- v3 onBatch (variant palette) ---
+    // Handle variant palette swaps
     const pokemon = parent instanceof Pokemon ? parent : null;
     const variant = Object.hasOwn(data, "variant") ? (data.variant ?? 0) : (pokemon?.variant ?? 0);
     const shiny = pokemon ? pokemon.shiny : !!data.shiny;
@@ -247,7 +251,6 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
     out.baseVariantColors = variantPalettes?.base ?? EMPTY_PALETTE_F;
     out.variantColors = variantPalettes?.variant ?? EMPTY_PALETTE_F;
 
-    // --- v3 batchQuad (the parts that need the sprite) ---
     if (out.hasShadow && field) {
       const fieldScaleRatio = field.scale / 6;
       out.shadowBaseY = ((isEntityObj ? parent.y : sprite.y + sprite.height) * 6) / fieldScaleRatio;
@@ -260,8 +263,8 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
 }
 
 // Argument positions in batch(), matching SubmitterQuad's call. This _must_ be kept in sync with Phaser's code.
-const ARG_Y_BL = 5; // bottom-left y (v3 y1)
-const ARG_Y_BR = 9; // bottom-right y (v3 y2)
+const ARG_Y_BL = 5; // bottom-left y
+const ARG_Y_BR = 9; // bottom-right y
 const ARG_TEX_X = 10;
 const ARG_TEX_Y = 11;
 const ARG_TEX_H = 13;
@@ -298,10 +301,11 @@ export class SpriteBatchHandler extends FieldSpriteBatchHandler {
     this.sprite = s;
 
     const texH = args[ARG_TEX_H];
-    this.texFrameUv = [args[ARG_TEX_X], args[ARG_TEX_Y]]; // top-left UV (v3: frame.u0, frame.v0)
-    this.vCutoff = args[ARG_TEX_Y] + texH; // bottom edge (v3: vCutoff = v1)
-    this.vSign = texH < 0 ? -1 : 1; // v4 texture Y can run either way
+    this.texFrameUv = [args[ARG_TEX_X], args[ARG_TEX_Y]]; // top-left UV
+    this.vCutoff = args[ARG_TEX_Y] + texH; // bottom edge
+    this.vSign = texH < 0 ? -1 : 1; // In v4 texture Y can run either way
 
+    // This updates the y delta to stretch the quad to handle the shadow.
     if (s.hasShadow) {
       const yDelta = (s.shadowBaseY - args[ARG_Y_BL]) / s.fieldScale;
       const bottom = s.shadowBaseY + s.shadowPadding;
@@ -313,8 +317,8 @@ export class SpriteBatchHandler extends FieldSpriteBatchHandler {
     super.batch(...args); // field data, then Phaser's batch, which draws immediately
   }
 
-  /** v3: bindTexture(tera, 1). Put the tera pattern in texture unit 1 of every batch entry. */
   override batchTextures(glTexture: WebGLTextureWrapper, renderOptions: any): number {
+    // Put the tera pattern in texture unit 1 of every batch entry.
     const datum = super.batchTextures(glTexture, renderOptions);
     const tera = this.getTeraTexture();
     const entry = this.currentBatchEntry;
