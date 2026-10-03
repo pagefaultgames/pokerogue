@@ -112,12 +112,12 @@ export class Trainer extends Phaser.GameObjects.Container {
           0,
           this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
         )
-        .setOrigin(0.5, 1);
-      // .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
-      //   tone: [0.0, 0.0, 0.0, 0.0],
-      //   hasShadow: !!hasShadow,
-      // })
-      // .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
