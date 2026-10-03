@@ -68,7 +68,7 @@ export class PlayerBattleInfo extends BattleInfo {
       .beginPath()
       .fillRect(127, 126, 85, 2);
 
-    expBar.enableFilters().filters!.internal.addMask(expMaskRect);
+    expBar.enableFilters().filters!.external.addMask(expMaskRect);
 
     this.expBarLabel = expBarLabel;
     this.expBar = expBar;
