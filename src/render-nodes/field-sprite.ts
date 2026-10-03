@@ -16,7 +16,13 @@ export interface FieldSpriteRenderData {
 
 export type FieldSpriteDrawData = Required<FieldSpriteRenderData>;
 
+/** The index of the render option in Phaser's batch function */
+const ARG_RENDER_OPTIONS = 19;
+
 export class FieldSpriteSubmitter extends Phaser.Renderer.WebGL.RenderNodes.SubmitterQuad {
+  // This field exists because the same string needs to be used by both the name
+  // field in the constructor and the first parameter to `addNode` (battle-scene.ts).
+  // This way, there is one source of truth instead of two.
   static readonly NAME: string = "FieldSpriteSubmitter";
 
   protected readonly out: FieldSpriteDrawData = { ignoreTimeTint: false, terrainColorRatio: 0 };
@@ -39,6 +45,9 @@ export class FieldSpriteSubmitter extends Phaser.Renderer.WebGL.RenderNodes.Subm
       | undefined;
     this.out.ignoreTimeTint = !!data?.ignoreTimeTint;
     this.out.terrainColorRatio = data?.terrainColorRatio ?? 0;
+    // _renderOptions exists but is "hidden", so we have the cast to any to avoid a TS error.
+    // Setting fieldSprite in _renderOptions prevents us having to override the call to `batch` simply
+    // to pass the data to the batch handler.
     (this as any)._renderOptions.fieldSprite = this.out;
   }
 }
@@ -63,29 +72,33 @@ export class FieldSpriteBatchHandler extends Phaser.Renderer.WebGL.RenderNodes.B
       this.programManager.addAddition({
         name: "FieldSpriteEffects",
         additions: {
-          fragmentHeader: fieldSpriteHeader, // uniforms + helper functions
-          fragmentProcess: fieldSpriteProcess, // day/night + terrain, applied to fragColor
+          fragmentHeader: fieldSpriteHeader,
+          fragmentProcess: fieldSpriteProcess,
         },
       });
     }
   }
 
-  // biome-ignore lint/complexity/useMaxParams: mirrors Phaser's signature
   override batch(...args: Parameters<Phaser.Renderer.WebGL.RenderNodes.BatchHandlerQuadSingle["batch"]>): void {
-    this.current = args[19].fieldSprite! ?? this.current; // renderOptions is argument 19
+    // Using type statement for better formatting
+    type RenderOptions = Phaser.Types.Renderer.WebGL.RenderNodes.BatchHandlerQuadRenderOptions & {
+      fieldSprite?: FieldSpriteDrawData;
+    };
+    // Cast is safe as we set fieldSprite in the submitter's setRenderOptions, which is always called before this batch call.
+    this.current = (args[ARG_RENDER_OPTIONS] as RenderOptions).fieldSprite! ?? this.current; // renderOptions is argument 19
     super.batch(...args); // draws immediately, since instancesPerBatch is 1
   }
 
   override setupUniforms(drawingContext: Phaser.Renderer.WebGL.DrawingContext): void {
-    super.setupUniforms(drawingContext); // projection matrix and resolution
+    super.setupUniforms(drawingContext);
     const pm = this.programManager;
     const arena = globalScene.arena;
 
-    // Per object (v3 onBind, the pipelineData part)
+    // Per object
     pm.setUniform("ignoreTimeTint", this.current.ignoreTimeTint);
     pm.setUniform("terrainColorRatio", this.current.terrainColorRatio);
 
-    // Global (v3 onBind, the rest)
+    // Global
     const time = globalScene.currentBattle?.waveIndex
       ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40
       : getCurrentTime();
