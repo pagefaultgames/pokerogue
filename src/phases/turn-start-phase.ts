@@ -106,7 +106,7 @@ export class TurnStartPhase extends FieldPhase {
     /*
      * `this.end()` will call `PhaseManager#shiftPhase()`, which dumps everything from `phaseQueuePrepend`
      * (aka everything that is queued via `unshift()`) to the front of the queue and dequeues to start the next phase.
-     * This is important since stuff like `SwitchSummonPhase`, `AttemptRunPhase`, and `AttemptCapturePhase` break the "flow" and should take precedence
+     * This is important since stuff like `SwitchPhase`, `AttemptRunPhase`, and `AttemptCapturePhase` break the "flow" and should take precedence
      */
     this.end();
   }
@@ -119,16 +119,14 @@ export class TurnStartPhase extends FieldPhase {
       case Command.BALL:
         globalScene.phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
         break;
-      case Command.POKEMON:
-        globalScene.phaseManager.unshiftNew(
-          "SwitchSummonPhase",
-          turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH,
-          pokemon.getFieldIndex(),
-          turnCommand.cursor!, // TODO: Is this bang correct?
-          true,
-          pokemon.isPlayer(),
-        );
+      case Command.POKEMON: {
+        const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+        globalScene.phaseManager.queueBattlerSwitchOut(pokemon.getBattlerIndex(), {
+          switchType,
+          switchInIndex: turnCommand.cursor!,
+        }); // TODO: Fix typing and remove bang
         break;
+      }
       case Command.RUN:
         globalScene.phaseManager.unshiftNew("AttemptRunPhase");
         break;
