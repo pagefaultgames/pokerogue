@@ -1074,7 +1074,7 @@ export abstract class Move implements Localizable {
       globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
     }
 
-    if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
+    if (getEffectiveWeatherForMove(user) === WeatherType.FOG) {
       /**
        *  The 0.9 multiplier is PokeRogue-only implementation, Bulbapedia uses 3/5
        *  See Fog {@link https://bulbapedia.bulbagarden.net/wiki/Fog}
