@@ -30,6 +30,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { addMask } from "#utils/mask-utils";
 import { getDexNumber, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -1233,16 +1234,8 @@ export class SummaryUiHandler extends UiHandler {
 
         const expOverlay = globalScene.add.image(140, 153, "summary_stats_overlay_exp");
         expOverlay.setOrigin(0, 0);
+        expOverlay.setCrop(0, 0, Math.floor(expRatio * 64), expOverlay.height);
         this.statsContainer.add(expOverlay);
-
-        const expMaskRect = globalScene.make
-          .graphics({})
-          .setScale(6)
-          .fillStyle(0xffffff)
-          .beginPath()
-          .fillRect(140 + pageContainer.x, 152 + pageContainer.y + 22, Math.floor(expRatio * 64), 3);
-
-        expOverlay.enableFilters().filters?.external.addMask(expMaskRect);
 
         this.abilityPrompt = globalScene.add.image(
           0,
@@ -1360,7 +1353,11 @@ export class SummaryUiHandler extends UiHandler {
           .fillStyle(0xffffff)
           .beginPath()
           .fillRect(112, 121, 205, 59);
-        this.moveDescriptionText.enableFilters().filters?.external.addMask(moveDescriptionTextMaskRect);
+        addMask(this.moveDescriptionText, moveDescriptionTextMaskRect);
+        // Destroy this once the moveDescriptionText is destroyed to prevent memory leaks
+        this.moveDescriptionText.once(Phaser.GameObjects.Events.DESTROY, () => {
+          moveDescriptionTextMaskRect.destroy();
+        });
         break;
       }
     }

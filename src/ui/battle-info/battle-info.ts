@@ -76,8 +76,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected type3Icon: Phaser.GameObjects.Sprite;
   protected expBar: Phaser.GameObjects.Image;
 
-  public expMaskRect: Phaser.GameObjects.Graphics;
-
   protected statsContainer: Phaser.GameObjects.Container;
   protected statsBox: Phaser.GameObjects.Sprite;
   protected statValuesContainer: Phaser.GameObjects.Container;
