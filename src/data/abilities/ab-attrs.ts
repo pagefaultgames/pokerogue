@@ -1121,9 +1121,12 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 
   override apply({ simulated, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      const tempAbility = attacker.getAbility();
-      attacker.setTempAbility(pokemon.getAbility());
-      pokemon.setTempAbility(tempAbility);
+      // abilities intentionally buffered before swapping
+      const attackerAbilityId = attacker.getAbility().id;
+      const defenderAbilityId = pokemon.getAbility().id;
+
+      attacker.setTempAbility(defenderAbilityId);
+      pokemon.setTempAbility(attackerAbilityId);
     }
   }
 
@@ -1135,11 +1138,12 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
-  private readonly ability: AbilityId;
+  private readonly abilityId: AbilityId;
 
   constructor(ability: AbilityId) {
     super();
-    this.ability = ability;
+
+    this.abilityId = ability;
   }
 
   override canApply({ move, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): boolean {
@@ -1152,7 +1156,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
 
   override apply({ simulated, opponent: attacker }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      attacker.setTempAbility(allAbilities[this.ability]);
+      attacker.setTempAbility(this.abilityId);
     }
   }
 
@@ -2166,11 +2170,12 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
 
   override apply({ pokemon, simulated, victim }: PostKnockOutAbAttrParams): void {
     if (!simulated) {
-      pokemon.setTempAbility(victim.getAbility());
+      const abilityId = victim.getAbility().id;
+      pokemon.setTempAbility(abilityId);
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:copyFaintedAllyAbility", {
           pokemonNameWithAffix: getPokemonNameWithAffix(victim),
-          abilityName: allAbilities[victim.getAbility().id].name,
+          abilityName: allAbilities[abilityId].name,
         }),
       );
     }
@@ -2677,9 +2682,10 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
  */
 export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
+  private targetAbilityId: AbilityId;
   private targetAbilityName: string;
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
+  public override canApply({ pokemon, simulated, passive }: AbAttrBaseParams): boolean {
     const targets = pokemon
       .getOpponents()
       .filter(t => t.getAbility().copiable || t.getAbility().id === AbilityId.WONDER_GUARD);
@@ -2690,26 +2696,28 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
     let target: Pokemon;
     // simulated call always chooses first target so as to not advance RNG
     if (targets.length > 1 && !simulated) {
-      target = targets[randSeedInt(targets.length)];
+      target = randSeedItem(targets);
     } else {
       target = targets[0];
     }
 
     this.target = target;
-    this.targetAbilityName = allAbilities[target.getAbility().id].name;
+    this.targetAbilityId = passive && target.hasPassive() ? target.getPassiveAbility().id : target.getAbility().id;
+    this.targetAbilityName = allAbilities[this.targetAbilityId].name;
+
     return true;
   }
 
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
+  public override apply({ pokemon, simulated, passive }: AbAttrBaseParams): void {
     // Protect against this somehow being called before canApply by ensuring target is defined
     if (!simulated && this.target) {
-      pokemon.setTempAbility(this.target.getAbility());
+      pokemon.setTempAbility(this.targetAbilityId, !!passive);
       this.target.revealAbility();
       pokemon.updateInfo();
     }
   }
 
-  getTriggerMessage({ pokemon }, _abilityName: string): string {
+  public override getTriggerMessage({ pokemon }: AbAttrBaseParams): string {
     return i18next.t("abilityTriggers:trace", {
       pokemonName: getPokemonNameWithAffix(pokemon),
       targetName: getPokemonNameWithAffix(this.target),
