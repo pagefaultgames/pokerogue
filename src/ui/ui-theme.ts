@@ -68,6 +68,8 @@ export function addWindow(
       .setScale(6);
 
     addMask(window, maskRect);
+    // Destroy this once the window is destroyed to prevent memory leaks
+    window.once(Phaser.GameObjects.Events.DESTROY, () => maskRect.destroy());
   }
 
   return window;
