@@ -167,7 +167,7 @@ describe("Moves - Parting Shot", () => {
     const golisopod = game.field.getPlayerPokemon();
 
     expect(golisopod.species.speciesId).toBe(SpeciesId.GOLISOPOD);
-    expect(golisopod.tempSummonData.waveTurnCount).toBe(1);
+    expect(golisopod.summonData.waveTurnCount).toBe(1);
 
     game.move.use(MoveId.FIRST_IMPRESSION);
     await game.toNextTurn();
