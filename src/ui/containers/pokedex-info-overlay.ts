@@ -78,6 +78,8 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
 
     this.add(this.desc);
     addMask(this.desc, this.textMaskRect);
+    // Destroy this once the desc is destroyed to prevent memory leaks
+    this.desc.once(Phaser.GameObjects.Events.DESTROY, () => this.textMaskRect.destroy());
 
     if (options?.hideBg) {
       this.descBg.setVisible(false);
