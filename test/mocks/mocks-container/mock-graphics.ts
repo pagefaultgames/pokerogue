@@ -24,6 +24,10 @@ export class MockGraphics implements MockGameObject {
     return this;
   }
 
+  clear(): this {
+    return this;
+  }
+
   createGeometryMask(): this {
     // Creates a geometry mask.
     return this;
