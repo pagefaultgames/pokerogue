@@ -245,7 +245,7 @@ export class TimedEventManager {
     if (!sprites) {
       return null;
     }
-    const eventSpriteReplacements = sprites.pokemonReplacements;
+    const eventSpriteReplacements = sprites.pokemonReplacements ?? [];
     const fillRandom = sprites.fillRandom ?? false;
 
     for (const esr of eventSpriteReplacements) {
@@ -307,6 +307,27 @@ export class TimedEventManager {
     for (const tr of trainerReplacements) {
       if (tr[0] === trainerType) {
         return tr[1];
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get the event image replacement for a given image key, if it exists.
+   * @param imageKey - The image key to check for a replacement
+   * @returns The replacement image **FILENAME** if it exists, otherwise null.
+   * @remarks
+   * The image has to be in the `events` folder for it to work.
+   */
+  public getEventImageReplacement(imageKey: string): string | null {
+    const event = this.activeEvent();
+    if (!event) {
+      return null;
+    }
+    const imageReplacements = event.sprites?.imageReplacements ?? [];
+    for (const ir of imageReplacements) {
+      if (ir[0] === imageKey) {
+        return ir[1];
       }
     }
     return null;
