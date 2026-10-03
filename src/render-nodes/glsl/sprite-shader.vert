@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2026 Pagefault Games
+ * SPDX-FileContributor: FlashfyreDev
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 #pragma phaserTemplate(shaderName)
 #pragma phaserTemplate(extensions)
 #pragma phaserTemplate(features)
