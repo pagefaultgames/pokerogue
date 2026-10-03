@@ -109,19 +109,27 @@ export class GameWrapper {
       key: "",
     };
 
+    const invertFilterMock = {
+      active: false,
+      setActive(active: boolean) {
+        this.active = active;
+        return this;
+      },
+      colorMatrix: { negative: () => null },
+    };
+
     this.scene.cameras = {
       main: {
         filters: {
-          external: {
-            addColorMatrix: () => {
-              return {
-                setActive: () => null,
-              };
-            },
-          },
+          external: { addColorMatrix: () => invertFilterMock },
         },
       },
     } as any;
+
+    this.scene.spriteSubmitter = { name: "SpriteSubmitter" } as any;
+    this.scene.spriteBatchHandler = { name: "SpriteBatchHandler" } as any;
+    this.scene.fieldSpriteSubmitter = { name: "FieldSpriteSubmitter" } as any;
+    this.scene.fieldSpriteBatchHandler = { name: "FieldSpriteBatchHandler" } as any;
 
     // TODO: Replace this with a proper mock of phaser's TweenManager.
     this.scene.tweens = {

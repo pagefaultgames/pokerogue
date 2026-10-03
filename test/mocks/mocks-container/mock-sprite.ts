@@ -51,6 +51,14 @@ export class MockSprite implements MockGameObject {
 
   setRenderNodeRole(...args: Parameters<Phaser.GameObjects.Sprite["setRenderNodeRole"]>): this {
     this.phaserSprite.setRenderNodeRole(...args);
+    const renderNode = args[1];
+    if (!renderNode) {
+      return this;
+    }
+    const renderNodeData = args[2] || {};
+    const renderNodeName = typeof renderNode === "string" ? renderNode : renderNode.name;
+    this.renderNodeData[renderNodeName] ??= {};
+    Object.assign(this.renderNodeData[renderNodeName], renderNodeData);
     return this;
   }
 
