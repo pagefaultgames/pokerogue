@@ -1823,9 +1823,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               this.savedStarterPreferences.shiny = starterPreferences.shiny;
             }
 
-            let newVariant = props.variant;
+            let newVariant = props.shiny ? props.variant : -1;
             do {
-              newVariant = ((newVariant + 1) % 3) as Variant;
+              newVariant = (newVariant + 1) % 3;
               if (newVariant === 0) {
                 if (this.isCaught() & DexAttr.DEFAULT_VARIANT) {
                   break;
@@ -1839,9 +1839,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               }
             } while (newVariant !== props.variant);
 
-            starterPreferences.variant = newVariant;
+            starterPreferences.variant = newVariant as Variant;
             this.savedStarterPreferences.variant = starterPreferences.variant;
-            if (this.isCaught() & DexAttr.NON_SHINY && newVariant <= props.variant) {
+            if (props.shiny && this.isCaught() & DexAttr.NON_SHINY && newVariant <= props.variant) {
               this.setSpeciesDetails(this.species, {
                 shiny: false,
                 variant: 0,
