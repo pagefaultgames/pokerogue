@@ -820,6 +820,8 @@ export class PartyUiHandler extends MessageUiHandler {
     // PartyUiMode.TM_MODIFIER (TEACH)
     // PartyUiMode.REMEMBER_MOVE_MODIFIER (no specific option, callback is invoked when selecting a move)
     // PartyUiMode.MODIFIER (APPLY option)
+    // PartyUiMode.EVOLUTION_ITEM_MODIFIER (APPLY option)
+    // PartyUiMode.FORM_CHANGE_ITEM_MODIFIER (APPLY option)
     // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
     // These are the options that need a callback
@@ -1450,6 +1452,8 @@ export class PartyUiHandler extends MessageUiHandler {
         this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.MODIFIER:
+      case PartyUiMode.EVOLUTION_ITEM_MODIFIER:
+      case PartyUiMode.FORM_CHANGE_ITEM_MODIFIER:
         this.options.push(PartyOption.APPLY);
         this.addCommonOptions(pokemon);
         break;
