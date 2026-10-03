@@ -41,7 +41,7 @@ describe("Form Change Phase", () => {
     const zacian = game.field.getPlayerPokemon();
     expect(zacian.getFormKey()).toBe("hero-of-many-battles");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY]);
-    expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);
+    expect(zacian["calculateBaseStats"]()).toStrictEqual([92, 120, 115, 80, 115, 138]);
 
     // Give Zacian a Rusted Sword
     const rustedSwordType = generateModifierType(modifierTypes.RARE_FORM_CHANGE_ITEM)!;
@@ -55,7 +55,7 @@ describe("Form Change Phase", () => {
     expect(game.phaseInterceptor.phaseLog.includes("FormChangePhase")).toBe(true);
     expect(zacian.getFormKey()).toBe("crowned");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY, PokemonType.STEEL]);
-    expect(zacian.calculateBaseStats()).toStrictEqual([92, 150, 115, 80, 115, 148]);
+    expect(zacian["calculateBaseStats"]()).toStrictEqual([92, 150, 115, 80, 115, 148]);
   });
 
   it("should end Terastallization when the Pokemon undergoes a Primal Reversion", async () => {

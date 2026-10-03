@@ -23,20 +23,24 @@ export enum Stat {
 
 /** A constant array comprised of the {@linkcode Stat} values that make up {@linkcode PermanentStat}. */
 export const PERMANENT_STATS = [Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD] as const;
-/** Type used to describe the core, permanent stats of a Pokemon. */
+/** Type used to describe the core stats of a Pokemon which are persisted between battles. */
 export type PermanentStat = (typeof PERMANENT_STATS)[number];
 
 /** A constant array comprised of the {@linkcode Stat} values that make up {@linkcode EFfectiveStat}. */
 export const EFFECTIVE_STATS = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD] as const;
-/** Type used to describe the intersection of core stats and stats that have stages in battle. */
+/**
+ * Type used to describe the intersection of core stats and stats that have stages in battle:
+ * ATK, DEF, SPATK, SPDEF, and SPD. \
+ * (These are also the ones affected by Natures.)
+ */
 export type EffectiveStat = (typeof EFFECTIVE_STATS)[number];
 
-/** A constant array comprised of {@linkcode Stat} the values that make up {@linkcode BattleStat}. */
+/** A constant array comprised of the {@linkcode Stat} values that make up {@linkcode BattleStat}. */
 export const BATTLE_STATS = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD, Stat.ACC, Stat.EVA] as const;
 /** Type used to describe the stats that have stages which can be incremented and decremented in battle. */
 export type BattleStat = (typeof BATTLE_STATS)[number];
 
-/** A constant array comprised of {@linkcode Stat} the values that make up {@linkcode TempBattleStat}. */
+/** A constant array comprised of the {@linkcode Stat} values that make up {@linkcode TempBattleStat}. */
 export const TEMP_BATTLE_STATS = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD, Stat.ACC] as const;
 /** Type used to describe the stats that have X item (`TEMP_STAT_STAGE_BOOSTER`) equivalents. */
 export type TempBattleStat = (typeof TEMP_BATTLE_STATS)[number];
