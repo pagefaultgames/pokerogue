@@ -1060,7 +1060,9 @@ export class SummaryUiHandler extends UiHandler {
             .beginPath()
             .fillRect(110, 90, 206, 31);
 
-          abilityInfo.descriptionText.enableFilters().filters?.external.addMask(descriptionTextMaskRect);
+          addMask(abilityInfo.descriptionText, descriptionTextMaskRect);
+          // Destroys the mask when the description text is destroyed to avoid leaking
+          abilityInfo.descriptionText.on(Phaser.GameObjects.Events.DESTROY, () => descriptionTextMaskRect.destroy());
 
           const abilityDescriptionLineCount = Math.floor(abilityInfo.descriptionText.displayHeight / 14.83);
 
