@@ -19,9 +19,9 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     // Gym Leaders- Kanto
     BROCK: [SpeciesId.ONIX, SpeciesId.GEODUDE, [SpeciesId.OMANYTE, SpeciesId.KABUTO], SpeciesId.AERODACTYL],
     MISTY: [SpeciesId.STARYU, SpeciesId.PSYDUCK, SpeciesId.WOOPER, SpeciesId.LAPRAS],
-    LT_SURGE: [SpeciesId.PICHU, SpeciesId.VOLTORB, SpeciesId.ELEKID, SpeciesId.JOLTEON],
-    ERIKA: [SpeciesId.ODDISH, SpeciesId.BELLSPROUT, SpeciesId.TANGELA, SpeciesId.HOPPIP],
-    JANINE: [SpeciesId.VENONAT, SpeciesId.SPINARAK, SpeciesId.ZUBAT, SpeciesId.KOFFING],
+    LT_SURGE: [SpeciesId.RAICHU, SpeciesId.VOLTORB, SpeciesId.ELEKID, SpeciesId.JOLTEON],
+    ERIKA: [SpeciesId.ODDISH, SpeciesId.BELLSPROUT, SpeciesId.HOPPIP, SpeciesId.TANGELA],
+    JANINE: [SpeciesId.SPINARAK, SpeciesId.ZUBAT, SpeciesId.KOFFING, SpeciesId.EKANS],
     SABRINA: [SpeciesId.ABRA, SpeciesId.MR_MIME, SpeciesId.SMOOCHUM, SpeciesId.ESPEON],
     BLAINE: [SpeciesId.GROWLITHE, SpeciesId.PONYTA, SpeciesId.MAGBY, SpeciesId.VULPIX],
     GIOVANNI: [SpeciesId.RHYHORN, SpeciesId.MEOWTH, [SpeciesId.NIDORAN_F, SpeciesId.NIDORAN_M], SpeciesId.DIGLETT], // Tera Ground Meowth
@@ -30,7 +30,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     BUGSY: [SpeciesId.SCYTHER, SpeciesId.SHUCKLE, SpeciesId.YANMA, [SpeciesId.PINSIR, SpeciesId.HERACROSS]],
     WHITNEY: [SpeciesId.MILTANK, SpeciesId.AIPOM, SpeciesId.IGGLYBUFF, [SpeciesId.GIRAFARIG, SpeciesId.STANTLER]],
     MORTY: [SpeciesId.GASTLY, SpeciesId.MISDREAVUS, SpeciesId.GALAR_CORSOLA, SpeciesId.HISUI_TYPHLOSION],
-    CHUCK: [SpeciesId.POLIWRATH, SpeciesId.MANKEY, SpeciesId.TYROGUE, SpeciesId.MACHOP],
+    CHUCK: [SpeciesId.POLIWRATH, SpeciesId.MANKEY, SpeciesId.HITMONTOP, SpeciesId.MACHOP],
     JASMINE: [SpeciesId.STEELIX, SpeciesId.MAGNEMITE, SpeciesId.PINECO, SpeciesId.SKARMORY],
     PRYCE: [SpeciesId.SWINUB, SpeciesId.SEEL, SpeciesId.SHELLDER, SpeciesId.SNEASEL],
     CLAIR: [SpeciesId.HORSEA, SpeciesId.DRATINI, SpeciesId.MAGIKARP, SpeciesId.DRUDDIGON], // Tera Dragon Magikarp
@@ -66,7 +66,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     SKYLA: [SpeciesId.DUCKLETT, SpeciesId.WOOBAT, [SpeciesId.RUFFLET, SpeciesId.VULLABY], SpeciesId.ARCHEN],
     BRYCEN: [SpeciesId.CRYOGONAL, SpeciesId.VANILLITE, SpeciesId.CUBCHOO, SpeciesId.GALAR_DARUMAKA],
     DRAYDEN: [SpeciesId.AXEW, SpeciesId.DRUDDIGON, SpeciesId.TRAPINCH, SpeciesId.DEINO],
-    MARLON: [SpeciesId.FRILLISH, SpeciesId.TIRTOUGA, SpeciesId.WAILMER, SpeciesId.MANTYKE],
+    MARLON: [SpeciesId.FRILLISH, SpeciesId.TIRTOUGA, SpeciesId.MANTYKE, SpeciesId.WAILMER],
     // Gym Leaders- Kalos
     VIOLA: [SpeciesId.SCATTERBUG, SpeciesId.SURSKIT, SpeciesId.CUTIEFLY, SpeciesId.BLIPBUG],
     GRANT: [SpeciesId.TYRUNT, SpeciesId.AMAURA, SpeciesId.BINACLE, SpeciesId.DWEBBLE],
@@ -75,7 +75,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     CLEMONT: [SpeciesId.HELIOPTILE, SpeciesId.MAGNEMITE, SpeciesId.DEDENNE, SpeciesId.ROTOM],
     VALERIE: [SpeciesId.SYLVEON, SpeciesId.MAWILE, SpeciesId.MR_MIME, [SpeciesId.SPRITZEE, SpeciesId.SWIRLIX]],
     OLYMPIA: [SpeciesId.ESPURR, SpeciesId.SIGILYPH, SpeciesId.INKAY, SpeciesId.SLOWKING],
-    WULFRIC: [SpeciesId.BERGMITE, SpeciesId.SNOVER, SpeciesId.CRYOGONAL, SpeciesId.SWINUB],
+    WULFRIC: [SpeciesId.AVALUGG, SpeciesId.SNOVER, SpeciesId.CRYOGONAL, SpeciesId.SWINUB],
     // Gym Leaders- Galar
     MILO: [SpeciesId.GOSSIFLEUR, SpeciesId.SEEDOT, SpeciesId.APPLIN, SpeciesId.LOTAD],
     NESSA: [SpeciesId.CHEWTLE, SpeciesId.WIMPOD, SpeciesId.ARROKUDA, SpeciesId.MAREANIE],
@@ -91,7 +91,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     RAIHAN: [SpeciesId.DURALUDON, SpeciesId.TRAPINCH, SpeciesId.GOOMY, SpeciesId.TURTONATOR],
     // Gym Leaders- Paldea; First slot is Tera
     KATY: [SpeciesId.TEDDIURSA, SpeciesId.NYMBLE, SpeciesId.TAROUNTULA, SpeciesId.RELLOR], // Tera Bug Teddiursa
-    BRASSIUS: [SpeciesId.BONSLY, SpeciesId.SMOLIV, SpeciesId.BRAMBLIN, SpeciesId.SUNKERN], // Tera Grass Bonsly
+    BRASSIUS: [SpeciesId.BONSLY, SpeciesId.SMOLIV, SpeciesId.BRAMBLIN, [SpeciesId.PETILIL, SpeciesId.SHROOMISH]], // Tera Grass Bonsly
     IONO: [SpeciesId.MISDREAVUS, SpeciesId.TADBULB, SpeciesId.WATTREL, SpeciesId.MAGNEMITE], // Tera Ghost Misdreavus
     KOFU: [SpeciesId.CRABRAWLER, SpeciesId.VELUZA, SpeciesId.WIGLETT, SpeciesId.WINGULL], // Tera Water Crabrawler
     LARRY: [SpeciesId.STARLY, SpeciesId.DUNSPARCE, SpeciesId.LECHONK, SpeciesId.KOMALA], // Tera Normal Starly
