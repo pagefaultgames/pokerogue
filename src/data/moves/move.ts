@@ -2230,7 +2230,6 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
       const cancelled = new ValueHolder(false);
       const abAttrParams: AbAttrParamsWithCancel = { pokemon: user, cancelled };
