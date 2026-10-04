@@ -133,7 +133,7 @@ describe("Ability - Gorilla Tactics", () => {
 
     expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
     expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
-    expect(player.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
+    expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
 
   // TODO: Verify whether Gorilla Tactics increases struggle's power or not
