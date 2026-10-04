@@ -68,7 +68,7 @@ export class GameChallengesUiHandler extends UiHandler {
     this.homeKey?.on("up", this.onHomeDown, this);
 
     this.challengesContainer = globalScene.add //
-      .container(1, -canvasHeight + 1)
+      .container(0, -canvasHeight)
       .setName("challenges");
 
     this.challengesContainer.setInteractive(
@@ -77,7 +77,7 @@ export class GameChallengesUiHandler extends UiHandler {
     );
 
     const bgOverlay = globalScene.add
-      .rectangle(-1, -1, canvasWidth, canvasHeight, 0x424242, 0.8)
+      .rectangle(0, 0, canvasWidth, canvasHeight, 0x424242, 0.8)
       .setName("rect-challenge-overlay")
       .setOrigin(0);
     this.challengesContainer.add(bgOverlay);
