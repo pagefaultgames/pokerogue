@@ -1,5 +1,6 @@
 // biome-ignore-all lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
 
+import { isBeta, isDev } from "#constants/app-constants";
 import { GameDataType } from "#enums/game-data-type";
 import { version } from "#package.json";
 import { SessionMigrationError } from "#system/migration-errors";
@@ -120,7 +121,7 @@ sortMigrators(settingsMigrators);
 
 /**
  * Converts incoming {@linkcode SystemSaveData} that has a version below the
- * current version number listed in `package.json`.
+ * current version number listed in `package.json` (or equal, on beta and dev instances).
  *
  * Note that no transforms act on the {@linkcode data} if its version matches
  * the current version or if there are no migrations made between its version up
@@ -129,11 +130,28 @@ sortMigrators(settingsMigrators);
  */
 export function applySystemVersionMigration(data: SystemSaveData): void {
   const prevVersion = data.gameVersion;
-  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
+  /*
+   * Unlike other migrators, system save migrators can run on same-version saves
+   * if the migrator hasn't been applied yet, on beta and dev instances.
+   * This is done because migrators can be added over time while the client version stays the same,
+   * whereas on main all migrators are added at once with a version increase.
+   * Therefore, this checks that the current version is equal to or greater than the save's version,
+   * instead of only checking that the current version is greater.
+   *
+   * Main will still only run migrators on saves that are older than the current version.
+   */
+  const isPreviousVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === 1;
 
-  if (isCurrentVersionHigher) {
+  if (!isPreviousVersionHigher) {
+    const numPrevMigratorsApplied = Object.keys(data.appliedMigrators).length;
+
     applyMigrators(systemMigrators, data, prevVersion);
-    console.log(`System data successfully migrated to v${LATEST_VERSION}!`);
+
+    if (Object.keys(data.appliedMigrators).length > numPrevMigratorsApplied) {
+      console.log(`System data successfully migrated to v${LATEST_VERSION}!`);
+    } else {
+      console.log("No system data migrators applied.");
+    }
   }
 }
 
@@ -171,6 +189,7 @@ export function applySessionVersionMigration(data: Record<string, unknown>): voi
     }
 
     applyMigrators(sessionMigrators, data, prevVersion);
+
     console.log(`Session data successfully migrated to v${LATEST_VERSION}!`);
   }
 }
@@ -195,8 +214,10 @@ export function applySettingsVersionMigration(data: object): void {
 
   if (isCurrentVersionHigher) {
     applyMigrators(settingsMigrators, data, prevVersion);
+
     data["meta"]["gameVersion"] = LATEST_VERSION;
     localStorage.setItem(getDataTypeKey(GameDataType.SETTINGS), JSON.stringify(data));
+
     console.log(`Settings successfully migrated to v${LATEST_VERSION}!`);
   }
 }
@@ -219,14 +240,28 @@ function sortMigrators(migrators: SaveMigrator[]): void {
 function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, saveVersion: string): void {
   for (const migrator of migrators) {
     const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
+    const migratorNameVersion = `${migrator.version}-${migrator.name}`;
 
     if (isMigratorVersionHigher) {
       migrator.migrate(data as any);
 
       if ("appliedMigrators" in data) {
-        const migratorNameVersion = `${migrator.version}-${migrator.name}`;
         (data.appliedMigrators as AppliedMigrators)[migratorNameVersion] = Date.now();
       }
+
+      continue;
+    }
+
+    if (
+      (isBeta || isDev) // exclude main just in case
+      && saveVersion === migrator.version
+      && "appliedMigrators" in data
+      && !(data["appliedMigrators"] as AppliedMigrators)[migratorNameVersion]
+    ) {
+      migrator.migrate(data as any);
+
+      (data.appliedMigrators as AppliedMigrators)[migratorNameVersion] = Date.now();
+      console.log(`Applied same version migrator "${migrator.name}".`);
     }
   }
 }

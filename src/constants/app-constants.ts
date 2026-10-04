@@ -1,13 +1,13 @@
 /**
  * `true` if running in "development" mode which happens when:
- * - The build mode is "development" (`pnpm build:dev` which runs `vite build --mode development`) or
+ * - The build mode is "development" (`pnpm build:dev` which runs `vite build --mode development`), or
  * - The Vite server is started via `pnpm start:dev` (which runs `vite --mode development`)
  */
 export const isDev = import.meta.env.MODE === "development";
 
 /**
  * `true` if running in "beta" mode which happens when:
- * - The build mode is "beta" (`pnpm build:beta` which runs `vite build --mode beta`) or
+ * - The build mode is "beta" (`pnpm build:beta` which runs `vite build --mode beta`), or
  * - The Vite server is started via `pnpm start:beta` (which runs `vite --mode beta`)
  */
 export const isBeta = import.meta.env.MODE === "beta";
@@ -17,6 +17,13 @@ export const isApp = import.meta.env.MODE === "app";
 
 /** `true` if running automated tests via Vitest. */
 export const IS_TEST = import.meta.env.MODE === "test";
+
+/**
+ * `true` if running in "production" mode which happens when:
+ * - The build mode is "production" (`pnpm build` which runs `vite build`), or
+ * - The Vite server is started via `pnpm start:prod` (which runs `vite --mode production`)
+ */
+export const IS_PROD = import.meta.env.MODE === "production";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
