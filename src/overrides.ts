@@ -3,7 +3,6 @@ import { Gender } from "#data/gender";
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
-import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { Challenges } from "#enums/challenges";
@@ -34,7 +33,7 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
- * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItemId}
+ * {@linkcode EvolutionItem}, {@linkcode FormChangeItemId}
  * {@linkcode Stat}, {@linkcode PokemonType} {@linkcode Challenges} {@linkcode BiomePoolTier}
  */
 
@@ -306,7 +305,7 @@ class DefaultOverrides {
    * // Will have a quantity of 1 in-game
    * STARTING_HELD_ITEMS_OVERRIDE = [{name: "LUCKY_EGG"}]
    * // Type must be given to get a specific berry
-   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY", type: HeldItemId.SITRUS_BERRY}]
    * // A random berry will be generated at runtime
    * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY"}]
    * ```

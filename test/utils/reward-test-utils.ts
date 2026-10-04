@@ -22,7 +22,7 @@ type AllRewardsRewardType = {
  * @todo Remove `null` from signature eventually
  * @example
  * ```ts
- * const reward = generateRewardForTest({id: RewardId.BERRY, args: BerryType.SITRUS});
+ * const reward = generateRewardForTest({id: RewardId.BERRY, args: HeldItemId.SITRUS_BERRY});
  * ```
  */
 export function generateRewardForTest<T extends RewardId>(specs: RewardSpecs<T>): AllRewardsRewardType[T] | null;
