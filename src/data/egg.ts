@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import {
+  BASE_SAME_SPECIES_SHINY_INCREASE_COUNT,
   BOOSTED_RARE_EGGMOVE_RATES,
   EGG_PITY_EPIC_THRESHOLD,
   EGG_PITY_LEGENDARY_THRESHOLD,
@@ -20,18 +21,21 @@ import {
   HATCH_WAVES_MANAPHY_EGG,
   HATCH_WAVES_RARE_EGG,
   MANAPHY_EGG_MANAPHY_RATE,
+  MAX_SAME_SPECIES_SHINY_INCREASE_COUNT,
+  MISSING_VARIANT_PITY_GUARANTEE,
   RARE_EGGMOVE_RATES,
   SAME_SPECIES_EGG_HA_RATE,
   SAME_SPECIES_EGG_SHINY_RATE,
   SHINY_EPIC_CHANCE,
   SHINY_VARIANT_CHANCE,
 } from "#balance/rates";
+import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { SpeciesId } from "#enums/species-id";
 import { VariantTier } from "#enums/variant-tier";
 import type { PlayerPokemon } from "#field/pokemon";
-import { getIvsFromId, randInt, randomString, randSeedInt } from "#utils/common";
+import { getIvsFromId, randInt, randomString, randSeedFloat, randSeedInt } from "#utils/common";
 import i18next from "i18next";
 
 export const EGG_SEED = 1073741824;
@@ -172,8 +176,10 @@ export class Egg {
       this._timestamp = eggOptions?.timestamp ?? Date.now();
 
       // First roll shiny and variant so we can filter if species with an variant exist
-      this._isShiny = eggOptions?.isShiny ?? (activeOverrides.EGG_SHINY_OVERRIDE || this.rollShiny());
-      this._variantTier = eggOptions?.variantTier ?? activeOverrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant();
+      this._isShiny =
+        eggOptions?.isShiny ?? (activeOverrides.EGG_SHINY_OVERRIDE || this.rollShiny(eggOptions?.species));
+      this._variantTier =
+        eggOptions?.variantTier ?? activeOverrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant(eggOptions?.species);
       this._species = eggOptions?.species ?? this.rollSpecies()!; // TODO: Is this bang correct?
 
       this._overrideHiddenAbility = eggOptions?.overrideHiddenAbility ?? false;
@@ -513,40 +519,130 @@ export class Egg {
 
   /**
    * Rolls whether the egg is shiny or not.
+   * @param species - The species of the egg being rolled for. Only used for same species eggs.
    * @returns `true` if the egg is shiny
    */
-  private rollShiny(): boolean {
+  private rollShiny(species?: SpeciesId): boolean {
+    if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
+      const isShiny = randSeedFloat() < this.getSameSpeciesShinyChance(species);
+      if (isShiny) {
+        globalScene.gameData.dexData[species].pity[0] = 0;
+      }
+      return isShiny;
+    }
+
     let shinyChance = GACHA_DEFAULT_SHINY_RATE;
-    switch (this._sourceType) {
-      case EggSourceType.GACHA_SHINY:
-        shinyChance = GACHA_SHINY_UP_SHINY_RATE;
-        break;
-      case EggSourceType.SAME_SPECIES_EGG:
-        shinyChance = SAME_SPECIES_EGG_SHINY_RATE;
-        break;
-      default:
-        break;
+    if (this._sourceType === EggSourceType.GACHA_SHINY) {
+      shinyChance = GACHA_SHINY_UP_SHINY_RATE;
+    } else if (this._sourceType === EggSourceType.SAME_SPECIES_EGG) {
+      shinyChance = SAME_SPECIES_EGG_SHINY_RATE;
     }
 
     return !randSeedInt(shinyChance);
   }
 
+  /**
+   * Get the chance of the next same-species egg being shiny.
+   * @param species - The species of the egg being rolled for.
+   * @returns The probability of the next same-species egg being shiny. (Between 0 and 1)
+   */
+  private getSameSpeciesShinyChance(species: SpeciesId): number {
+    const baseRate = 1 / SAME_SPECIES_EGG_SHINY_RATE;
+    const targetRate = 1;
+    if (globalScene.gameData.dexData[species].pity?.[0] == null) {
+      // TODO: Maybe move to a migrator, but I don't know the version yet :)
+      globalScene.gameData.dexData[species].pity = [0, globalScene.gameData.dexData[species].pity?.[1] ?? 0];
+    }
+    globalScene.gameData.dexData[species].pity[0] += 1;
+    const count = globalScene.gameData.dexData[species].pity[0];
+
+    if (count <= BASE_SAME_SPECIES_SHINY_INCREASE_COUNT) {
+      return baseRate;
+    }
+    if (count >= MAX_SAME_SPECIES_SHINY_INCREASE_COUNT) {
+      return targetRate;
+    }
+
+    const progress =
+      (count - BASE_SAME_SPECIES_SHINY_INCREASE_COUNT)
+      / (MAX_SAME_SPECIES_SHINY_INCREASE_COUNT - BASE_SAME_SPECIES_SHINY_INCREASE_COUNT);
+
+    const currentProbability = baseRate + progress * (targetRate - baseRate);
+    // console.debug(
+    //   `Same species shiny odds for species ${SpeciesId[species]} (lastShiny: ${globalScene.gameData.dexData[species].pity[0]}): ${(currentProbability * 100).toFixed(2)}%`,
+    // );
+
+    return currentProbability;
+  }
+
   // Uses the same logic as pokemon.generateVariant(). I would like to only have this logic in one
   // place but I don't want to touch the pokemon class.
   // TODO: Remove this or replace the one in the Pokemon class.
-  private rollVariant(): VariantTier {
+  private rollVariant(species?: SpeciesId): VariantTier {
     if (!this.isShiny) {
       return VariantTier.STANDARD;
     }
 
+    let variant: VariantTier | null = null;
+    if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
+      variant = this.getSameSpeciesVariant(species);
+    }
+    if (variant !== null) {
+      return variant;
+    }
     const rand = randSeedInt(10);
+    let variantTier: VariantTier = VariantTier.STANDARD;
     if (rand >= SHINY_VARIANT_CHANCE) {
-      return VariantTier.STANDARD; // 6/10
+      variantTier = VariantTier.STANDARD; // 6/10
     }
     if (rand >= SHINY_EPIC_CHANCE) {
-      return VariantTier.RARE; // 3/10
+      variantTier = VariantTier.RARE; // 3/10
     }
-    return VariantTier.EPIC; // 1/10
+    variantTier = VariantTier.EPIC; // 1/10
+
+    if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
+      const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
+      const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
+      if (
+        (variant === VariantTier.RARE && missingVariants.includes(DexAttr.VARIANT_2))
+        || (variant === VariantTier.EPIC && missingVariants.includes(DexAttr.VARIANT_3))
+      ) {
+        globalScene.gameData.dexData[species].pity[1] = 0;
+      }
+    }
+
+    return variantTier;
+  }
+
+  // TODO: the pity triggers multiple times before the first new variant is actually hatched, it might award that one again from the pity and not a genuinely new variant
+  private getSameSpeciesVariant(species: SpeciesId): VariantTier | null {
+    const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
+    const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
+    if (missingVariants.length === 0) {
+      // No pity if all variants have been unlocked
+      return null;
+    }
+    if (globalScene.gameData.dexData[species].pity?.[1] == null) {
+      // TODO: Maybe move to a migrator, but I don't know the version yet :)
+      globalScene.gameData.dexData[species].pity = [globalScene.gameData.dexData[species].pity?.[0] ?? 0, 0];
+    }
+    globalScene.gameData.dexData[species].pity[1] += 1;
+    const count = globalScene.gameData.dexData[species].pity[1];
+    if (count < MISSING_VARIANT_PITY_GUARANTEE) {
+      // Roll normally
+      return null;
+    }
+    globalScene.gameData.dexData[species].pity[1] = 0;
+    if (missingVariants.includes(DexAttr.VARIANT_2) && missingVariants.includes(DexAttr.VARIANT_3)) {
+      return randSeedInt(4) ? VariantTier.RARE : VariantTier.EPIC; // 1/4 chance for EPIC, 3/4 chance for RARE
+    }
+    if (missingVariants.includes(DexAttr.VARIANT_3)) {
+      return VariantTier.EPIC;
+    }
+    if (missingVariants.includes(DexAttr.VARIANT_2)) {
+      return VariantTier.RARE;
+    }
+    return null;
   }
 
   private checkForPityTierOverrides(): void {
