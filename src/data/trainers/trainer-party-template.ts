@@ -218,7 +218,8 @@ export const trainerPartyTemplates = {
 
   CHAMPION: new TrainerPartyCompoundTemplate(
     new TrainerPartyTemplate(4, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
-    new TrainerPartyTemplate(2, PartyMemberStrength.STRONGER, false, true, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGEST, false, true, EvoLevelThresholdKind.STRONG),
   ),
 
   EVIL_LEADER: new TrainerPartyCompoundTemplate(
@@ -259,7 +260,7 @@ export const trainerPartyTemplates = {
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
     new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
     new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGEST),
   ),
 };
 

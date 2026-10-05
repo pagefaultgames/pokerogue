@@ -1569,6 +1569,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.PLAY_ROUGH,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationEightSpeciesData[SpeciesId.THIEVUL] = {
@@ -1634,6 +1636,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.GRASS_KNOT,
       MoveId.ACROBATICS,
       MoveId.BURNING_JEALOUSY,
+      MoveId.DOUBLE_TEAM,
+      MoveId.ROAR,
+      MoveId.TRAILBLAZE,
     ],
   };
   generationEightSpeciesData[SpeciesId.GOSSIFLEUR] = {
@@ -3409,6 +3414,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.BARRASKEWDA] = {
@@ -4036,12 +4042,11 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [5, MoveId.FEINT],
       [10, MoveId.BIND],
       [14, MoveId.DETECT],
-      [17, MoveId.BULLET_PUNCH],
+      [17, MoveId.MACH_PUNCH],
       [20, MoveId.BRICK_BREAK],
-      [22, MoveId.MACH_PUNCH],
       [25, MoveId.BULK_UP],
       [29, MoveId.SUBMISSION],
-      [32, MoveId.KNOCK_OFF],
+      [32, MoveId.STORM_THROW],
       [35, MoveId.TAUNT],
       [40, MoveId.REVERSAL],
       [45, MoveId.SUPERPOWER],
@@ -4086,6 +4091,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationEightSpeciesData[SpeciesId.GRAPPLOCT] = {
@@ -4125,12 +4131,11 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [5, MoveId.FEINT],
       [10, MoveId.BIND],
       [14, MoveId.DETECT],
-      [17, MoveId.BULLET_PUNCH],
+      [17, MoveId.MACH_PUNCH],
       [20, MoveId.BRICK_BREAK],
-      [22, MoveId.MACH_PUNCH],
       [25, MoveId.BULK_UP],
       [29, MoveId.SUBMISSION],
-      [32, MoveId.KNOCK_OFF],
+      [32, MoveId.STORM_THROW],
       [35, MoveId.TAUNT],
       [40, MoveId.REVERSAL],
       [45, MoveId.SUPERPOWER],
@@ -5142,7 +5147,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [14, MoveId.PAY_DAY],
       [17, MoveId.FURY_SWIPES],
       [20, MoveId.SCREECH],
-      [22, MoveId.FEINT_ATTACK],
+      [22, MoveId.BITE],
       [25, MoveId.TAUNT],
       [27, MoveId.MIMIC],
       [31, MoveId.METAL_BURST],
@@ -5235,6 +5240,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.SPIKES,
+      MoveId.THUNDER_WAVE,
     ],
   };
   generationEightSpeciesData[SpeciesId.CURSOLA] = {
@@ -5397,7 +5404,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [21, MoveId.DETECT],
       [25, MoveId.SWORDS_DANCE],
       [27, MoveId.DEFOG],
-      [31, MoveId.AGILITY],
+      [31, MoveId.FEATHER_DANCE],
       [37, MoveId.BRICK_BREAK],
       [43, MoveId.SLAM],
       [45, MoveId.FALSE_SWIPE],
@@ -5451,6 +5458,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.AERIAL_ACE,
+      MoveId.FEATHER_DANCE,
+      MoveId.FIRST_IMPRESSION,
     ],
   };
   generationEightSpeciesData[SpeciesId.MR_RIME] = {
@@ -7069,10 +7079,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [15, MoveId.PSYBEAM],
       [20, MoveId.HELPING_HAND],
       [22, MoveId.DRAINING_KISS],
-      [28, MoveId.TRI_ATTACK],
       [30, MoveId.AROMATHERAPY],
       [35, MoveId.PSYCHIC],
-      [38, MoveId.MOONLIGHT],
+      [38, MoveId.WISH],
       [40, MoveId.CALM_MIND],
       [50, MoveId.PSYCHIC_TERRAIN],
       [55, MoveId.HEALING_WISH],
@@ -7081,12 +7090,14 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       male: [
         [5, MoveId.ENCORE],
         [25, MoveId.AFTER_YOU],
+        [28, MoveId.TRI_ATTACK],
         [45, MoveId.POWER_SPLIT],
         [60, MoveId.LAST_RESORT],
       ],
       female: [
         [5, MoveId.BATON_PASS],
         [25, MoveId.FOLLOW_ME],
+        [28, MoveId.SING],
         [45, MoveId.GUARD_SPLIT],
       ],
     },
@@ -8135,6 +8146,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.TERA_BLAST,
       MoveId.DRAGON_CHEER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.DREEPY] = {
@@ -8615,16 +8627,17 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
+      [RELEARN_MOVE, MoveId.METAL_BURST],
       [1, MoveId.BITE],
       [1, MoveId.QUICK_ATTACK],
       [1, MoveId.METAL_CLAW],
-      [1, MoveId.ROCK_SMASH],
+      [1, MoveId.DOUBLE_KICK],
       [1, MoveId.WIDE_GUARD],
       [8, MoveId.HOWL],
       [11, MoveId.SLASH],
       [22, MoveId.IRON_DEFENSE],
       [33, MoveId.IRON_HEAD],
-      [44, MoveId.METAL_BURST],
+      [44, MoveId.BRICK_BREAK],
       [55, MoveId.CRUNCH],
       [66, MoveId.MOONBLAST],
       [77, MoveId.CLOSE_COMBAT],
@@ -10266,13 +10279,12 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [1, MoveId.LEER],
       [1, MoveId.LICK],
       [1, MoveId.FAKE_TEARS],
-      [1, MoveId.COVET],
       [8, MoveId.FURY_SWIPES],
       [13, MoveId.PAYBACK],
-      [15, MoveId.FEINT_ATTACK],
-      [18, MoveId.SWEET_SCENT],
-      [22, MoveId.SLASH],
-      [25, MoveId.PLAY_NICE],
+      [15, MoveId.COVET],
+      [18, MoveId.FEINT_ATTACK],
+      [22, MoveId.SWEET_SCENT],
+      [25, MoveId.SLASH],
       [29, MoveId.PLAY_ROUGH],
       [35, MoveId.SCARY_FACE],
       [41, MoveId.REST],
@@ -10858,7 +10870,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [14, MoveId.PAY_DAY],
       [17, MoveId.FURY_SWIPES],
       [20, MoveId.SCREECH],
-      [22, MoveId.FEINT_ATTACK],
+      [22, MoveId.BITE],
       [25, MoveId.TAUNT],
       [27, MoveId.MIMIC],
       [30, MoveId.CAPTIVATE],
@@ -10944,6 +10956,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_PONYTA] = {
@@ -11376,7 +11389,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [21, MoveId.DETECT],
       [25, MoveId.SWORDS_DANCE],
       [27, MoveId.DEFOG],
-      [31, MoveId.AGILITY],
+      [31, MoveId.FEATHER_DANCE],
       [37, MoveId.BRICK_BREAK],
       [43, MoveId.SLAM],
       [45, MoveId.FALSE_SWIPE],
@@ -11423,6 +11436,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_WEEZING] = {
@@ -12297,6 +12311,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.STOMPING_TANTRUM,
       MoveId.BODY_PRESS,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_DARUMAKA] = {
@@ -13430,6 +13445,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationEightSpeciesData[SpeciesId.HISUI_SAMUROTT] = {

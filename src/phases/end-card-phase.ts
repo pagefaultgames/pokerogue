@@ -13,7 +13,7 @@ export class EndCardPhase extends Phase {
     super.start();
 
     globalScene.ui.getMessageHandler().bg.setVisible(false);
-    globalScene.ui.getMessageHandler().nameBoxContainer.setVisible(false);
+    globalScene.ui.getMessageHandler().nameBoxContainer?.setVisible(false);
 
     this.endCard = globalScene.add.image(0, 0, `end_${settings.isPlayerFemale ? "f" : "m"}`);
     this.endCard.setOrigin(0);

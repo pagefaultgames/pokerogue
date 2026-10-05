@@ -533,7 +533,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
           if (fallbackName !== "") {
             fallbackName += ", ";
           }
-          fallbackName += challenge.toChallenge().getName();
+          fallbackName += challenge.toChallenge().name;
         }
 
         if (activeChallenges.length > 3) {

@@ -430,12 +430,14 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   }
 
   public applyChallengeVisibility(): void {
+    // TODO: this should not be handled this way
     const notFreshStart = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+    const notMovesetRandomizer = !globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER);
 
     for (const container of this.pokemonEggMoveContainers) {
-      container.setVisible(notFreshStart);
+      container.setVisible(notFreshStart && notMovesetRandomizer);
     }
-    this.eggMovesLabel.setVisible(notFreshStart);
+    this.eggMovesLabel.setVisible(notFreshStart && notMovesetRandomizer);
     // This is not enough, we need individual checks in setStarterSpecies too! :)
     this.pokemonPassiveDisabledIcon.setVisible(notFreshStart);
     this.pokemonPassiveLabelText.setVisible(notFreshStart);
@@ -709,7 +711,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
-    const newTeraType = teraType;
+    let newTeraType = teraType;
+    if (species.speciesId === SpeciesId.TERAPAGOS) {
+      newTeraType = PokemonType.STELLAR;
+    }
     this.teraIcon.setFrame(PokemonType[newTeraType].toLowerCase());
     this.teraIcon.setVisible(!this.statsMode && this.allowTera);
   }
