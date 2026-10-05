@@ -192,7 +192,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
             const naturePrefix = newNature ? "(+) " : "";
             const option: OptionSelectItem = {
               label: naturePrefix + getNatureName(nature, true, true, true),
-              style: newNature ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
+              color: newNature ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
               handler: () => {
                 // Pokemon and second option selected
                 encounter.setDialogueToken("nature", getNatureName(nature));
@@ -278,7 +278,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
               const newAbility = !globalScene.gameData.checkStarterAbilityIndexUnlocked(pokemon.species, index);
               const option: OptionSelectItem = {
                 label: newAbility ? "(+) " + ability.name : ability.name,
-                style: newAbility ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
+                color: newAbility ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
                 handler: () => {
                   // Pokemon and ability selected
                   encounter.setDialogueToken("ability", ability.name);

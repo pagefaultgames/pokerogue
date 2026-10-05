@@ -778,7 +778,7 @@ export class IonDelugeTag extends ArenaTag {
  * Uniquely, adding a tag multiple times may stack multiple "layers" of the effect, increasing its severity.
  */
 export abstract class EntryHazardTag extends SerializableArenaTag {
-  public declare abstract readonly tagType: EntryHazardTagType;
+  declare public abstract readonly tagType: EntryHazardTagType;
   /**
    * The current number of layers this tag has. \
    * Starts at `1` and increases each time the trap is laid.

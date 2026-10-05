@@ -59,7 +59,7 @@ import type { Move, MoveConditionFunc, StatusEffectAttr } from "#types/move-type
 import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
-import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, type NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
@@ -224,7 +224,7 @@ export class UngroundedAbAttr extends AbAttr {
 }
 
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -241,7 +241,7 @@ export interface DoubleBattleChanceAbAttrParams extends AbAttrBaseParams {
 
 /** Attribute for abilities that increase the chance of a double battle occurring. */
 export class DoubleBattleChanceAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -254,7 +254,7 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
 }
 
 export class PostBattleInitAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
@@ -304,7 +304,7 @@ export interface PreDefendModifyDamageAbAttrParams extends AugmentMoveInteractio
  */
 // TODO: this class is effectively useless
 export abstract class PreDefendAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
@@ -377,7 +377,7 @@ export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
   private readonly damageMultiplier: number;
 
   constructor(damageMultiplier: number) {
-    super();
+    super(false);
     this.damageMultiplier = damageMultiplier;
   }
 
@@ -437,7 +437,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 }
 
 export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
   constructor(immuneType: PokemonType) {
     super(immuneType);
   }
@@ -537,12 +536,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
  */
 export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
   override canApply({ typeMultiplier, move, pokemon }: TypeMultiplierAbAttrParams): boolean {
-    return (
-      typeMultiplier instanceof NumberHolder
-      && !move?.hasAttr("FixedDamageAttr")
-      && pokemon.isFullHp()
-      && typeMultiplier.value > 0.5
-    );
+    return !move?.hasAttr("FixedDamageAttr") && pokemon.isFullHp() && typeMultiplier.value > 0.5;
   }
 
   override apply({ typeMultiplier, pokemon }: TypeMultiplierAbAttrParams): void {
@@ -663,7 +657,7 @@ export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionA
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   override canApply(_params: PostMoveInteractionAbAttrParams): boolean {
     return true;
   }
@@ -1127,9 +1121,12 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 
   override apply({ simulated, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      const tempAbility = attacker.getAbility();
-      attacker.setTempAbility(pokemon.getAbility());
-      pokemon.setTempAbility(tempAbility);
+      // abilities intentionally buffered before swapping
+      const attackerAbilityId = attacker.getAbility().id;
+      const defenderAbilityId = pokemon.getAbility().id;
+
+      attacker.setTempAbility(defenderAbilityId);
+      pokemon.setTempAbility(attackerAbilityId);
     }
   }
 
@@ -1141,11 +1138,12 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
-  private readonly ability: AbilityId;
+  private readonly abilityId: AbilityId;
 
   constructor(ability: AbilityId) {
     super();
-    this.ability = ability;
+
+    this.abilityId = ability;
   }
 
   override canApply({ move, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): boolean {
@@ -1158,7 +1156,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
 
   override apply({ simulated, opponent: attacker }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      attacker.setTempAbility(allAbilities[this.ability]);
+      attacker.setTempAbility(this.abilityId);
     }
   }
 
@@ -1201,7 +1199,7 @@ export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
 }
 
 export class PostStatStageChangeAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 
   override canApply(_params: Closed<PostStatStageChangeAbAttrParams>) {
     return true;
@@ -1235,7 +1233,7 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
 }
 
 export abstract class PreAttackAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export interface MoveHealBoostAbAttrParams extends AugmentMoveInteractionAbAttrParams {
@@ -1460,6 +1458,10 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * @see {@linkcode MoveId.PARENTAL_BOND | Parental Bond}
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
+  constructor() {
+    super(false);
+  }
+
   override canApply({ pokemon, opponent: target, move }: AddSecondStrikeAbAttrParams): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true, target);
   }
@@ -1547,7 +1549,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
 
 export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   // Need to use declare here to override the parent class's property, allows for modification in subclass' constructor
-  protected declare readonly skipDuringMovesetGen: boolean;
+  declare protected readonly skipDuringMovesetGen: boolean;
   constructor(boostedType: PokemonType, powerMultiplier?: number, skipDuringMovesetGen?: boolean) {
     super((pokemon, _defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5, false);
     if (skipDuringMovesetGen != null) {
@@ -1558,7 +1560,7 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
 
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   protected override readonly skipDuringMovesetGen = true;
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the constructor params
+
   constructor(boostedType: PokemonType) {
     super(boostedType);
   }
@@ -1681,7 +1683,7 @@ export interface StatMultiplierAbAttrParams extends AbAttrBaseParams {
 }
 
 export class StatMultiplierAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   public readonly stat: BattleStat;
   public readonly multiplier: number;
   /**
@@ -2172,11 +2174,12 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
 
   override apply({ pokemon, simulated, victim }: PostKnockOutAbAttrParams): void {
     if (!simulated) {
-      pokemon.setTempAbility(victim.getAbility());
+      const abilityId = victim.getAbility().id;
+      pokemon.setTempAbility(abilityId);
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:copyFaintedAllyAbility", {
           pokemonNameWithAffix: getPokemonNameWithAffix(victim),
-          abilityName: allAbilities[victim.getAbility().id].name,
+          abilityName: allAbilities[abilityId].name,
         }),
       );
     }
@@ -2683,9 +2686,10 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
  */
 export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
+  private targetAbilityId: AbilityId;
   private targetAbilityName: string;
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
+  public override canApply({ pokemon, simulated, passive }: AbAttrBaseParams): boolean {
     const targets = pokemon
       .getOpponents()
       .filter(t => t.getAbility().copiable || t.getAbility().id === AbilityId.WONDER_GUARD);
@@ -2696,26 +2700,28 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
     let target: Pokemon;
     // simulated call always chooses first target so as to not advance RNG
     if (targets.length > 1 && !simulated) {
-      target = targets[randSeedInt(targets.length)];
+      target = randSeedItem(targets);
     } else {
       target = targets[0];
     }
 
     this.target = target;
-    this.targetAbilityName = allAbilities[target.getAbility().id].name;
+    this.targetAbilityId = passive && target.hasPassive() ? target.getPassiveAbility().id : target.getAbility().id;
+    this.targetAbilityName = allAbilities[this.targetAbilityId].name;
+
     return true;
   }
 
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
+  public override apply({ pokemon, simulated, passive }: AbAttrBaseParams): void {
     // Protect against this somehow being called before canApply by ensuring target is defined
     if (!simulated && this.target) {
-      pokemon.setTempAbility(this.target.getAbility());
+      pokemon.setTempAbility(this.targetAbilityId, !!passive);
       this.target.revealAbility();
       pokemon.updateInfo();
     }
   }
 
-  getTriggerMessage({ pokemon }, _abilityName: string): string {
+  public override getTriggerMessage({ pokemon }: AbAttrBaseParams): string {
     return i18next.t("abilityTriggers:trace", {
       pokemonName: getPokemonNameWithAffix(pokemon),
       targetName: getPokemonNameWithAffix(this.target),
@@ -3290,7 +3296,7 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
 
 /** Provides immunity to status effects to the user's field. */
 export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
@@ -3658,7 +3664,7 @@ export class ChangeMovePriorityInBracketAbAttr extends AbAttr {
 }
 
 export class IgnoreContactAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 /** Shared interface for attributes that respond to a weather. */
@@ -4479,7 +4485,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
 
 // TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -4673,7 +4679,7 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
 }
 
 export class BypassBurnDamageReductionAbAttr extends CancelInteractionAbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -4844,7 +4850,7 @@ export interface PostBattleAbAttrParams extends AbAttrBaseParams {
 }
 
 export abstract class PostBattleAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor(showAbility = true) {
     super(showAbility);
   }
@@ -5077,7 +5083,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 }
 
 export class BlockRedirectAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export interface ReduceStatusEffectDurationAbAttrParams extends AbAttrBaseParams {
@@ -5266,7 +5272,7 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
 
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
 export class IgnoreProtectOnContactAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
 }
 
 export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
@@ -5280,7 +5286,7 @@ export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
  * @sealed
  */
 export class InfiltratorAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -5324,7 +5330,7 @@ export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
 // TODO: Make these ability attributes be flags instead of dummy attributes
 /** @sealed */
 export class NoTransformAbilityAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -5332,7 +5338,7 @@ export class NoTransformAbilityAbAttr extends AbAttr {
 
 /** @sealed */
 export class NoFusionAbilityAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   constructor() {
     super(false);
   }
@@ -5512,7 +5518,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
  */
 
 export class PreSummonAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   apply(_params: Closed<AbAttrBaseParams>): void {}
 
   canApply(_params: Closed<AbAttrBaseParams>): boolean {
@@ -5565,7 +5571,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 
 /** @sealed */
 export class IllusionBreakAbAttr extends AbAttr {
-  private declare readonly _: never;
+  declare private readonly _: never;
   // TODO: Consider adding a `canApply` method that checks if the pokemon has an active illusion
   override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.breakIllusion();
@@ -5690,7 +5696,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
  */
 export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   constructor() {
-    super(true);
+    super(false);
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
