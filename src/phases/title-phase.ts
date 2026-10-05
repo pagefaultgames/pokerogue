@@ -177,9 +177,9 @@ export class TitlePhase extends Phase {
         keepOpen: true,
       },
       {
-        label: i18next.t("menu:settings"),
+        label: i18next.t("menu:menu"),
         handler: () => {
-          ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
+          ui.setOverlayMode(UiMode.MENU);
           return true;
         },
         keepOpen: true,

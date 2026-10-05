@@ -73,5 +73,5 @@ export function weightedPick<T>(items: Map<T, number>): T {
 
   // Failsafe if the above loop somehow failed (e.g., if all items have 0 weight)
   console.error("Random selection failed, selecting the first element instead. Original list of items:", items);
-  return items.keys()[0];
+  return [...items.keys()][0];
 }

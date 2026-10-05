@@ -57,8 +57,8 @@ export class TurnEndPhase extends FieldPhase {
 
       applyHeldItems(HeldItemEffect.TURN_END_ITEM_STEAL, { pokemon });
 
-      pokemon.tempSummonData.turnCount++;
-      pokemon.tempSummonData.waveTurnCount++;
+      pokemon.summonData.turnCount++;
+      pokemon.summonData.waveTurnCount++;
     };
 
     if (!this.upcomingInterlude) {

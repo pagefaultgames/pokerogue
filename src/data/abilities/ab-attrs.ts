@@ -379,7 +379,7 @@ export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
   private readonly damageMultiplier: number;
 
   constructor(damageMultiplier: number) {
-    super();
+    super(false);
     this.damageMultiplier = damageMultiplier;
   }
 
@@ -1456,6 +1456,10 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * @see {@linkcode MoveId.PARENTAL_BOND | Parental Bond}
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
+  constructor() {
+    super(false);
+  }
+
   override canApply({ pokemon, opponent: target, move }: AddSecondStrikeAbAttrParams): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true, target);
   }
@@ -5660,7 +5664,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
  */
 export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   constructor() {
-    super(true);
+    super(false);
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
