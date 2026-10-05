@@ -122,9 +122,14 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
-    // TODO: this can be simplified by just checking whether lastAttack is defined
-    if (pokemon.turnData.attacksReceived?.length > 0) {
-      const lastAttack = pokemon.turnData.attacksReceived[0];
+    const lastAttack = pokemon.turnData.attacksReceived[0];
+    // Only provide the attacker and move if that attack is what knocked the Pokemon out
+    // (and not, for example, a hit taken earlier in the turn before the Pokemon fainted from its own Explosion).
+    // `this.source` is only set when a move KOs the Pokemon, and that hit is always `attacksReceived[0]`,
+    // so the ID check currently always passes; it guards against a faint being queued without recording the attack.
+    // TODO: Have `MoveEffectPhase.onFaintTarget` pass the KO move to `FaintPhase` alongside `source`,
+    // and use `this.source` and that move here, instead of inferring them from `attacksReceived`
+    if (lastAttack != null && this.source != null && lastAttack.sourceId === this.source.id) {
       applyAbAttrs("PostFaintAbAttr", {
         pokemon,
         // TODO: We should refactor lastAttack's sourceId to forbid null and just use undefined
