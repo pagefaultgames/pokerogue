@@ -20,12 +20,14 @@ import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
+import { isGhostTypeCurseUser } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
@@ -192,6 +194,7 @@ export class MovePhase extends PokemonPhase {
     // Pokerogue's current implementation applies these effects during the move effect phase
     // as there is not (yet) a notion of a move-in-flight for determinations to occur
 
+    this.resolveCurseTarget();
     this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
 
@@ -624,6 +627,41 @@ export class MovePhase extends PokemonPhase {
 
       this.targets[0] = redirectTarget.value;
     }
+  }
+
+  /**
+   * Update the target of {@linkcode MoveId.CURSE | Curse} to match the user's type when the move is initiated.
+   * @remarks
+   * Curse's target is chosen when the move is selected, but the user's type can change before it moves
+   * (e.g. by Terastallizing into or out of the Ghost type). Ghost-type users that didn't choose a target
+   * curse a random opponent (never their ally), or fail if no opponent is on the field,
+   * while all other users target themselves.
+   *
+   * Type changes from Protean/Libero happen after this point, so they still result in a
+   * self-targeted Ghost-type Curse, as intended per #6829.
+   */
+  protected resolveCurseTarget(): void {
+    if (this.move.getMove().moveTarget !== MoveTarget.CURSE) {
+      return;
+    }
+
+    const user = this.pokemon;
+    const userIndex = user.getBattlerIndex();
+    const isGhost = isGhostTypeCurseUser(user);
+    const targetsUser = this.targets.length === 1 && this.targets[0] === userIndex;
+
+    let newTargets: BattlerIndex[];
+    if (!isGhost && !targetsUser) {
+      newTargets = [userIndex];
+    } else if (isGhost && targetsUser) {
+      const opponents = user.getOpponents().map(p => p.getBattlerIndex());
+      newTargets = opponents.length > 0 ? [opponents[user.randBattleSeedInt(opponents.length)]] : [];
+    } else {
+      return;
+    }
+
+    // Modify `this.targets` in place, as the move history entry used on failure shares the same array
+    this.targets.splice(0, this.targets.length, ...newTargets);
   }
 
   /**
