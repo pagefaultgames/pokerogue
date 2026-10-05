@@ -312,7 +312,11 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       const onBeforeRewards = () => {
         // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
         // One random pokemon will get its passive unlocked
-        const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
+        const isHardcore = globalScene.gameMode.hasChallenge(Challenges.HARDCORE);
+        // Only Pokemon without a passive are eligible, excluding fainted ones in Hardcore since they can't be revived
+        const passiveDisabledPokemon = globalScene
+          .getPlayerParty()
+          .filter(p => !p.passive && !(isHardcore && p.isFainted()));
         if (passiveDisabledPokemon?.length > 0) {
           // TODO: should this use `randSeedItem`?
           const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
