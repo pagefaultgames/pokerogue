@@ -233,23 +233,18 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         applyDamageToPokemon(pkm, damage);
       }
 
-      // Burn random member
-      const burnable = nonFireTypes.filter(
-        p => p.status == null || p.status.effect == null || p.status.effect === StatusEffect.NONE,
-      );
-      if (burnable?.length > 0) {
+      // Burn a random member that can be burned (accounting for existing status conditions and abilities like Water Veil)
+      const burnable = nonFireTypes.filter(p => p.canSetStatus(StatusEffect.BURN, true));
+      if (burnable.length > 0) {
         const roll = randSeedInt(burnable.length);
         const chosenPokemon = burnable[roll];
-        if (chosenPokemon.canSetStatus(StatusEffect.BURN, true)) {
-          // Burn applied
-          chosenPokemon.doSetStatus(StatusEffect.BURN);
-          encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
-          encounter.setDialogueToken("abilityName", allAbilities[AbilityId.HEATPROOF].name);
-          queueEncounterMessage(`${namespace}:option.2.targetBurned`);
+        chosenPokemon.doSetStatus(StatusEffect.BURN);
+        encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
+        encounter.setDialogueToken("abilityName", allAbilities[AbilityId.HEATPROOF].name);
+        queueEncounterMessage(`${namespace}:option.2.targetBurned`);
 
-          // Also permanently change the burned Pokemon's ability to Heatproof
-          applyAbilityOverrideToPokemon(chosenPokemon, AbilityId.HEATPROOF);
-        }
+        // Also permanently change the burned Pokemon's ability to Heatproof
+        applyAbilityOverrideToPokemon(chosenPokemon, AbilityId.HEATPROOF);
       }
 
       // No rewards
