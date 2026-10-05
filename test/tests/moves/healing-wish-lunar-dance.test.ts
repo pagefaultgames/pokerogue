@@ -213,7 +213,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     });
 
     game.move.use(MoveId.LUNAR_DANCE);
-    game.doSelectPartyPokemon(1);
+    game.doSelectPartyPokemon(1, "SwitchPhase");
 
     await game.toNextTurn();
     expect(bulbasaur.isFainted()).toBe(true);

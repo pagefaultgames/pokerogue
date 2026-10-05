@@ -21,6 +21,9 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
+/**
+ * Phase for handling the effects of a Pokemon fainting.
+ */
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
   /**
@@ -155,6 +158,8 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    // TODO: Stop queueing switch phases here and instead do it in TurnEndPhase (for revival blessing)
+    // This will require a rework of `VictoryPhase` to separate out faint handling from battle ending logic
     if (this.player) {
       /** The total number of Pokemon in the player's party that can legally fight */
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
@@ -178,7 +183,8 @@ export class FaintPhase extends PokemonPhase {
          * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
-        globalScene.phaseManager.pushNew("SwitchPhase", SwitchType.SWITCH, this.fieldIndex, true, false);
+        // TODO: This should go at turn end
+        globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.FAINT_SWITCH, -1, {});
       }
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
@@ -189,7 +195,7 @@ export class FaintPhase extends PokemonPhase {
             .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
             .length > 0;
         if (hasReservePartyMember) {
-          globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
+          globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.FAINT_SWITCH, -1, {});
         }
       }
     }
