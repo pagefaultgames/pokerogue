@@ -82,7 +82,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.BURN_UP);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       expect(magmar).toHaveTypes(PokemonType.UNKNOWN);
@@ -155,7 +155,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.POWER_SPLIT);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -194,7 +194,7 @@ describe("Transforming Effects", () => {
       await game.toEndOfTurn();
 
       expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
-      expect(game.phaseInterceptor.log).toContain("StatStageChangePhase");
+      expect(game.phaseInterceptor.phaseLog).toContain("StatStageChangePhase");
     });
 
     it("should persist transformed attributes across reloads", async () => {
@@ -205,7 +205,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.MEMENTO);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextWave();
 
       expect(game).toBeAtPhase("CommandPhase");
@@ -235,7 +235,7 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.MEMENTO);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextWave();
 
       expect(game).toBeAtPhase("CommandPhase");
@@ -297,7 +297,7 @@ describe("Transforming Effects", () => {
 
       const ditto = game.field.getPlayerPokemon();
       expect(ditto.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-      expect(game.phaseInterceptor.log).not.toContain("PokemonTransformPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonTransformPhase");
     });
   });
 
@@ -343,8 +343,8 @@ describe("Transforming Effects", () => {
       expect(ditto.isActive()).toBe(true);
       expect(ditto.isTransformed()).toBe(true);
       expect(ditto.getSpeciesForm().speciesId).toBe(enemy2.getSpeciesForm().speciesId);
-      expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
-      expect(game.phaseInterceptor.log).toContain("PokemonTransformPhase");
+      expect(game.phaseInterceptor.phaseLog).toContain("ShowAbilityPhase");
+      expect(game.phaseInterceptor.phaseLog).toContain("PokemonTransformPhase");
     });
 
     it("should not activate if both opponents are fused or have illusions", async () => {
@@ -368,8 +368,8 @@ describe("Transforming Effects", () => {
       expect(ditto.isActive()).toBe(true);
       expect(ditto.isTransformed()).toBe(false);
       expect(ditto.getSpeciesForm().speciesId).toBe(SpeciesId.DITTO);
-      expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
-      expect(game.phaseInterceptor.log).not.toContain("PokemonTransformPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonTransformPhase");
     });
   });
 });

@@ -37,7 +37,7 @@ describe("Move - Dragon Cheer", () => {
 
     game.move.use(MoveId.DRAGON_CHEER, BattlerIndex.PLAYER);
     game.move.use(MoveId.TACKLE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toEndOfTurn();
 
     const [dragonair, magikarp] = game.scene.getPlayerField();
@@ -54,7 +54,7 @@ describe("Move - Dragon Cheer", () => {
 
     game.move.use(MoveId.DRAGON_CHEER, BattlerIndex.PLAYER);
     game.move.use(MoveId.TACKLE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toEndOfTurn();
 
     const [magikarp, dragonair] = game.scene.getPlayerField();
@@ -69,7 +69,7 @@ describe("Move - Dragon Cheer", () => {
     // Use Reflect Type to become Dragon-type mid-turn
     game.move.use(MoveId.DRAGON_CHEER, BattlerIndex.PLAYER);
     game.move.use(MoveId.REFLECT_TYPE, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     // Dragon cheer added +1 stages

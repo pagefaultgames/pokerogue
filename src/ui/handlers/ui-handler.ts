@@ -1,21 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
-import type { UiMode } from "#enums/ui-mode";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.
  */
 export abstract class UiHandler {
-  protected mode: number | null;
   protected cursor = 0;
   public active = false;
-
-  /**
-   * @param mode The mode of the UI element. These should be unique.
-   */
-  constructor(mode: UiMode | null = null) {
-    this.mode = mode;
-  }
 
   abstract setup(): void;
 

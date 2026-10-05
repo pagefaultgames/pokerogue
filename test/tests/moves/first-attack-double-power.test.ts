@@ -40,14 +40,14 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
 
     // turn 1: enemy, then player (no boost)
     game.move.use(move);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
 
     // turn 2: player, then enemy (boost)
     game.move.use(move);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2);
@@ -61,7 +61,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     // Use move after everyone but P1 and enemy 1 have already moved
     game.move.use(MoveId.BOLT_BEAK, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.BOLT_BEAK].power * 2);
@@ -84,7 +84,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
 
     game.move.use(MoveId.BOLT_BEAK);
     await game.move.forceEnemyMove(MoveId.U_TURN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.BOLT_BEAK].power * 2);
@@ -108,7 +108,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
 
     game.move.use(MoveId.FISHIOUS_REND, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(allyMove, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toEndOfTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.FISHIOUS_REND].power);

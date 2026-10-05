@@ -11,7 +11,6 @@ import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter, SerializedD
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import Ajv from "ajv";
 import customDailyRunSchema from "./schema.json";
 
@@ -103,7 +102,7 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
   }
 
   if (config.formIndex != null) {
-    const speciesForm = getPokemonSpeciesForm(config.speciesId, config.formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(config.speciesId, config.formIndex);
     config.formIndex = speciesForm.formIndex;
   }
 
@@ -151,7 +150,7 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
   }
 
   if (config.formIndex != null) {
-    const speciesForm = getPokemonSpeciesForm(config.speciesId, config.formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(config.speciesId, config.formIndex);
     config.formIndex = speciesForm.formIndex;
   }
 

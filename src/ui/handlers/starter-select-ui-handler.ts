@@ -32,6 +32,7 @@ import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
@@ -48,7 +49,13 @@ import type {
 } from "#types/save-data";
 import type { CanCycle } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
-import type { OptionSelectItem, StarterSelectCallback } from "#types/ui-types";
+import type {
+  ConfirmModeConfig,
+  OptionSelectIconConfig,
+  OptionSelectItem,
+  OptionSelectModeConfig,
+  StarterSelectCallback,
+} from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -80,7 +87,7 @@ import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpeciesForm, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
+import { getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -214,10 +221,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private allowTera: boolean;
   private oldCursor = -1;
 
-  constructor() {
-    super(UiMode.STARTER_SELECT);
-  }
-
   public override setup(): void {
     const ui = this.getUi();
 
@@ -303,6 +306,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.message = addTextObject(8, 8, "", TextStyle.WINDOW, { maxLines: 2 }) //
       .setOrigin(0);
     this.starterSelectMessageBoxContainer.add(this.message);
+
+    this.initNameBox(this.starterSelectMessageBoxContainer, 8);
 
     // arrow icon for the message box
     this.initPromptSprite(this.starterSelectMessageBoxContainer);
@@ -779,6 +784,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
+    this.nameBoxContainer?.setY(this.message.y - 16);
+
     this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
@@ -1057,12 +1064,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     switch (button) {
       case Button.ACTION: {
+        // This prevents repeated rapid button presses from adding duplicate starters to the party
+        this.blockInput = true;
+
         if (this.partyStarterIds.length >= 6) {
+          this.blockInput = false;
           error = true;
           break;
         }
+
         const currentPartyValue = getPartyValue(this.partyStarterIds);
-        // Filter valid starters
         const validStarters = this.filteredStarterIds.filter(starterId => {
           const [isDupe] = this.isInParty(starterId);
           const starterCost = globalScene.gameData.getSpeciesStarterValue(starterId);
@@ -1075,13 +1086,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           return !isDupe && isValidForChallenge && currentPartyValue + starterCost <= getRunValueLimit() && isCaught;
         });
         if (validStarters.length === 0) {
-          error = true; // No valid starters available
+          this.blockInput = false;
+          error = true;
           break;
         }
-        // Select random starter
+
         const randomStarterId = validStarters[Math.floor(Math.random() * validStarters.length)];
-        // Set species and prepare attributes
         this.setStarter(randomStarterId);
+
         // TODO: this might not be needed if we change .addToParty
         const dexAttr = getDexAttrFromPreferences(randomStarterId, this.starterPreferences[randomStarterId]);
         const props = this.getStarterDexAttrPropsFromPreferences(randomStarterId);
@@ -1091,13 +1103,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         );
         const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
         const starterCost = globalScene.gameData.getSpeciesStarterValue(randomStarterId);
-        const speciesForm = getPokemonSpeciesForm(randomStarterId, props.formIndex);
-        // Load assets and add to party
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(randomStarterId, props.formIndex);
         speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
             this.addToParty(randomStarterId, dexAttr, abilityIndex, natureIndex, moveset, teraType);
             this.getUi().playSelect();
           }
+
+          this.blockInput = false;
         });
         break;
       }
@@ -1256,7 +1269,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.lastStarterId,
           this.starterPreferences[this.lastStarterId],
         );
-        const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+        const newNature = natures[Phaser.Math.Wrap(natures.indexOf(natureIndex) + 1, 0, natures.length)];
         // store cycled nature as default
         this.setNewNature(this.lastStarterId, newNature);
         cycled = true;
@@ -1267,7 +1280,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           break;
         }
 
-        const speciesForm = getPokemonSpeciesForm(this.lastStarterId, starterPreferences.formIndex ?? 0);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(
+          this.lastStarterId,
+          starterPreferences.formIndex ?? 0,
+        );
         const { teraType } = getStarterDetailsFromPreferences(
           this.lastStarterId,
           this.starterPreferences[this.lastStarterId],
@@ -1445,7 +1461,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.DOWN:
-        if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
+        if (currentRow < numOfRows - 1 && this.scrollCursor * 9 + this.cursor + 9 < this.filteredStarterIds.length) {
           // This is not the last row of starters
           if (currentRow - this.scrollCursor === 8) {
             // This is the last visible row, but there are more rows underneath, so we need to scroll
@@ -1541,7 +1557,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /** Opens the menu and populates its options. */
   private openPokemonMenu(): void {
     const ui = this.getUi();
-    let options: OptionSelectItem[] = [];
+    const options: OptionSelectItem[] = [];
 
     let starterContainer: StarterContainer;
     // The temporary, duplicated starter data to show info
@@ -1583,77 +1599,68 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       && currentPartyValue + newCost <= getRunValueLimit()
       && this.partyStarterIds.length < PLAYER_PARTY_MAX_SIZE
     ) {
-      options = [
-        {
-          label: i18next.t("starterSelectUiHandler:addToParty"),
-          handler: () => {
-            ui.setMode(UiMode.STARTER_SELECT);
-
-            const isOverValueLimit = this.tryUpdateValue(
-              globalScene.gameData.getSpeciesStarterValue(this.lastStarterId),
-              true,
-            );
-
-            if (isDupe || !isValidForChallenge || !isOverValueLimit) {
-              // this should be redundant as there is now a trigger for when a pokemon can't be added to party
-              ui.playError();
-              return true;
-            }
-
-            this.starterCursorObjs[this.partyStarterIds.length]
-              .setVisible(true)
-              .setPosition(this.cursorObj.x, this.cursorObj.y);
-            const dexAttr = getDexAttrFromPreferences(this.lastStarterId, this.starterPreferences[this.lastStarterId]);
-            const { teraType, abilityIndex, natureIndex } = getStarterDetailsFromPreferences(
-              this.lastStarterId,
-              this.starterPreferences[this.lastStarterId],
-            );
-            this.addToParty(
-              this.lastStarterId,
-              dexAttr,
-              abilityIndex,
-              natureIndex,
-              // TODO: is this guaranteed not to be `undefined`? where?
-              // if it's okay for it to be `undefined`, the param type for `addToParty` needs to be updated
-              this.starterMoveset?.slice(0) as StarterMoveset,
-              teraType,
-            );
-            ui.playSelect();
-            return true;
-          },
-          overrideSound: true,
-        },
-      ];
-    } else if (isDupe) {
-      // if it already exists in your party, it will give you the option to remove from your party
-      options = [
-        {
-          label: i18next.t("starterSelectUiHandler:removeFromParty"),
-          handler: () => {
-            this.popPartyStarter(removeIndex);
-            ui.setMode(UiMode.STARTER_SELECT);
-            return true;
-          },
-        },
-      ];
-    }
-
-    options.push(
-      // this shows the IVs for the pokemon
-      {
-        label: i18next.t("starterSelectUiHandler:toggleIVs"),
+      options.push({
+        label: i18next.t("starterSelectUiHandler:addToParty"),
         handler: () => {
-          this.toggleShowIvsMode();
+          ui.setMode(UiMode.STARTER_SELECT);
+
+          const isOverValueLimit = this.tryUpdateValue(
+            globalScene.gameData.getSpeciesStarterValue(this.lastStarterId),
+            true,
+          );
+
+          if (isDupe || !isValidForChallenge || !isOverValueLimit) {
+            // this should be redundant as there is now a trigger for when a pokemon can't be added to party
+            ui.playError();
+            return true;
+          }
+
+          this.starterCursorObjs[this.partyStarterIds.length]
+            .setVisible(true)
+            .setPosition(this.cursorObj.x, this.cursorObj.y);
+          const dexAttr = getDexAttrFromPreferences(this.lastStarterId, this.starterPreferences[this.lastStarterId]);
+          const { teraType, abilityIndex, natureIndex } = getStarterDetailsFromPreferences(
+            this.lastStarterId,
+            this.starterPreferences[this.lastStarterId],
+          );
+          this.addToParty(
+            this.lastStarterId,
+            dexAttr,
+            abilityIndex,
+            natureIndex,
+            // TODO: is this guaranteed not to be `undefined`? where?
+            // if it's okay for it to be `undefined`, the param type for `addToParty` needs to be updated
+            this.starterMoveset?.slice(0) as StarterMoveset,
+            teraType,
+          );
+          ui.playSelect();
+          return true;
+        },
+        noSoundEffects: true,
+      });
+    } else if (isDupe) {
+      options.push({
+        label: i18next.t("starterSelectUiHandler:removeFromParty"),
+        handler: () => {
+          this.popPartyStarter(removeIndex);
           ui.setMode(UiMode.STARTER_SELECT);
           return true;
         },
+      });
+    }
+
+    options.push({
+      label: i18next.t("starterSelectUiHandler:toggleIVs"),
+      handler: () => {
+        this.toggleShowIvsMode();
+        ui.setMode(UiMode.STARTER_SELECT);
+        return true;
       },
-    );
+    });
 
     const { formIndex } = getStarterDexAttrPropsFromPreferences(this.lastStarterId, starterPreferences);
     const starterMoves = getStarterMoves(this.lastStarterId, formIndex);
     if (starterMoves.length > 1) {
-      // this lets you change the pokemon moves
       const showSwapOptions = (moveset: StarterMoveset) => {
         this.blockInput = true;
 
@@ -1680,7 +1687,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                               options: possibleMoves
                                 .map(sm => {
                                   // make an option for each available starter move
-                                  const option = {
+                                  return {
                                     label: allMoves[sm].name,
                                     handler: () => {
                                       this.switchMoveHandler(i, sm, m);
@@ -1690,8 +1697,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                                     onHover: () => {
                                       this.moveInfoOverlay.show(allMoves[sm]);
                                     },
-                                  };
-                                  return option;
+                                  } satisfies OptionSelectItem as OptionSelectItem;
                                 })
                                 .concat({
                                   label: i18next.t("menu:cancel"),
@@ -1703,10 +1709,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                                     this.moveInfoOverlay.clear();
                                   },
                                 }),
-                              supportHover: true,
                               maxOptions: 8,
-                              yOffset: 19,
-                            });
+                              yOffset: 29,
+                            } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
                             this.blockInput = false;
                           },
                         );
@@ -1739,10 +1744,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     this.moveInfoOverlay.clear();
                   },
                 }),
-              supportHover: true,
               maxOptions: 8,
-              yOffset: 19,
-            });
+              yOffset: 29,
+            } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
             this.blockInput = false;
           });
         });
@@ -1792,8 +1796,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   },
                 }),
               maxOptions: 8,
-              yOffset: 19,
-            });
+              yOffset: 29,
+            } satisfies OptionSelectModeConfig as OptionSelectModeConfig);
           });
         });
       };
@@ -1890,12 +1894,20 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // Purchases with Candy
     const candyCount = starterData.candyCount;
     const showUseCandies = () => {
-      const options: any[] = []; // TODO: add proper type
+      const useCandiesOptions: OptionSelectItem[] = [];
+
+      const getColors = (func: (speciesId: SpeciesId) => boolean) =>
+        func(this.lastStarterId) ? getStarterColors(this.lastStarterId) : (["808080", "808080"] as const);
+
+      const getCandyIconsConfig = (colors: readonly [string, string]): OptionSelectIconConfig[] => [
+        { name: "items", frame: "candy", scale: 0.5, tint: argbFromRgba(rgbHexToRgba(colors[0])) },
+        { name: "items", frame: "candy_overlay", scale: 0.5, tint: argbFromRgba(rgbHexToRgba(colors[1])) },
+      ];
 
       // Unlock passive option
       if (!(passiveAttr & PassiveAttr.UNLOCKED) && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
         const passiveCost = getPassiveCandyCount(speciesDataRegistry.getStarterCost(this.lastStarterId));
-        options.push({
+        useCandiesOptions.push({
           label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
           handler: () => {
             if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
@@ -1924,11 +1936,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
             return false;
           },
-          style: isPassiveAvailable(this.lastStarterId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
-          item: "candy",
-          itemArgs: isPassiveAvailable(this.lastStarterId)
-            ? getStarterColors(this.lastStarterId)
-            : ["808080", "808080"],
+          color: isPassiveAvailable(this.lastStarterId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+          iconsConfig: getCandyIconsConfig(getColors(isPassiveAvailable)),
         });
       }
 
@@ -1937,7 +1946,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (valueReduction < VALUE_REDUCTION_MAX && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
         const starterCost = speciesDataRegistry.getStarterCost(this.lastStarterId);
         const reductionCost = getValueReductionCandyCounts(starterCost)[valueReduction];
-        options.push({
+        useCandiesOptions.push({
           label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.lastStarterId, starterData.valueReduction + 1) })}`,
           handler: () => {
             if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
@@ -1965,11 +1974,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
             return false;
           },
-          style: isValueReductionAvailable(this.lastStarterId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
-          item: "candy",
-          itemArgs: isValueReductionAvailable(this.lastStarterId)
-            ? getStarterColors(this.lastStarterId)
-            : ["808080", "808080"],
+          color: isValueReductionAvailable(this.lastStarterId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+          iconsConfig: getCandyIconsConfig(getColors(isValueReductionAvailable)),
         });
       }
 
@@ -1979,7 +1985,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         speciesDataRegistry.getStarterCost(this.lastStarterId),
         hatchedCount,
       );
-      options.push({
+      useCandiesOptions.push({
         label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
         handler: () => {
           if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
@@ -2025,23 +2031,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           }
           return false;
         },
-        style: isSameSpeciesEggAvailable(this.lastStarterId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
-        item: "candy",
-        itemArgs: isSameSpeciesEggAvailable(this.lastStarterId)
-          ? getStarterColors(this.lastStarterId)
-          : ["808080", "808080"],
+        color: isSameSpeciesEggAvailable(this.lastStarterId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+        iconsConfig: getCandyIconsConfig(getColors(isSameSpeciesEggAvailable)),
       });
-      options.push({
+      useCandiesOptions.push({
         label: i18next.t("menu:cancel"),
         handler: () => {
           ui.setMode(UiMode.STARTER_SELECT);
           return true;
         },
       });
-      ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-        options,
-        yOffset: 47,
-      });
+      ui.setModeWithoutClear(UiMode.OPTION_SELECT, { options: useCandiesOptions });
     };
     options.push({
       label: i18next.t("menuUiHandler:pokedex"),
@@ -2086,10 +2086,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         return true;
       },
     });
-    ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-      options,
-      yOffset: 47,
-    });
+    ui.setModeWithoutClear(UiMode.OPTION_SELECT, { options });
   }
 
   public override processInput(button: Button): boolean {
@@ -2234,7 +2231,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.partyStarters.push(starter);
     this.partyStarterIds.push(starterId);
-    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
+    speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     this.updateInstructions();
   }
 
@@ -2896,7 +2893,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.canCycle.tera =
       !this.showIvsMode
       && this.allowTera
-      && getPokemonSpeciesForm(species.speciesId, formIndex).type2 != null
+      && speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex).type2 != null
       && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
   }
 
@@ -3128,38 +3125,40 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.partyStarterIds.length === 0) {
       return false;
     }
+    this.blockInput = true;
 
-    const ui = this.getUi();
+    if (this.isPartyValid()) {
+      const ui = this.getUi();
 
-    const cancel = () => {
-      ui.setMode(UiMode.STARTER_SELECT);
-      if (!manualTrigger) {
-        this.popPartyStarter(this.partyStarterIds.length - 1);
-      }
-      this.clearText();
-    };
+      const cancelStartRun = () => {
+        ui.setMode(UiMode.STARTER_SELECT);
+        if (!manualTrigger) {
+          this.popPartyStarter(this.partyStarterIds.length - 1);
+        }
+        this.clearText();
+      };
 
-    const canStart = this.isPartyValid();
+      const startRun = () => {
+        globalScene.money = globalScene.gameMode.getStartingMoney();
+        const starters = this.partyStarters.slice(0);
+        ui.setMode(UiMode.STARTER_SELECT);
+        const originalStarterSelectCallback = this.starterSelectCallback;
+        this.starterSelectCallback = null;
+        originalStarterSelectCallback?.(starters);
+      };
 
-    if (canStart) {
+      const confirmStartOptions: ConfirmModeConfig = {
+        yesHandler: startRun,
+        noHandler: cancelStartRun,
+        yOffset: 29,
+      };
+
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
-        ui.setModeWithoutClear(
-          UiMode.CONFIRM,
-          () => {
-            globalScene.money = globalScene.gameMode.getStartingMoney();
-            const starters = this.partyStarters.slice(0);
-            ui.setMode(UiMode.STARTER_SELECT);
-            const originalStarterSelectCallback = this.starterSelectCallback;
-            this.starterSelectCallback = null;
-            originalStarterSelectCallback?.(starters);
-          },
-          cancel,
-          null,
-          null,
-          19,
-        );
+        this.blockInput = false;
+        ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions);
       });
     } else {
+      this.blockInput = false;
       this.tutorialActive = true;
       this.showText(
         i18next.t("starterSelectUiHandler:invalidParty"),
@@ -3210,7 +3209,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.canCycle.tera =
       !this.showIvsMode
       && this.allowTera
-      && getPokemonSpeciesForm(this.lastStarterId, formIndex ?? 0).type2 != null
+      && speciesDataRegistry.getPokemonSpeciesForm(this.lastStarterId, formIndex ?? 0).type2 != null
       && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
     this.updateInstructions();
   }
@@ -3229,32 +3228,31 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = true;
     const ui = this.getUi();
 
-    const cancel = () => {
+    const cancelExit = () => {
       ui.setMode(UiMode.STARTER_SELECT);
       this.clearText();
       this.blockInput = false;
     };
+    const doExit = () => {
+      ui.setMode(UiMode.STARTER_SELECT);
+      // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
+      if (globalScene.gameMode.isChallenge) {
+        globalScene.phaseManager.clearPhaseQueue();
+        globalScene.phaseManager.pushNew("SelectChallengePhase");
+        globalScene.phaseManager.pushNew("EncounterPhase");
+      } else {
+        globalScene.phaseManager.toTitleScreen();
+      }
+      this.clearText();
+      globalScene.phaseManager.getCurrentPhase().end();
+    };
+    const options: ConfirmModeConfig = {
+      yesHandler: doExit,
+      noHandler: cancelExit,
+      yOffset: 29,
+    };
     ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
-          ui.setMode(UiMode.STARTER_SELECT);
-          // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
-          if (globalScene.gameMode.isChallenge) {
-            globalScene.phaseManager.clearPhaseQueue();
-            globalScene.phaseManager.pushNew("SelectChallengePhase");
-            globalScene.phaseManager.pushNew("EncounterPhase");
-          } else {
-            globalScene.phaseManager.toTitleScreen();
-          }
-          this.clearText();
-          globalScene.phaseManager.getCurrentPhase()?.end();
-        },
-        cancel,
-        null,
-        null,
-        19,
-      );
+      ui.setModeWithoutClear(UiMode.CONFIRM, options);
     });
   }
 

@@ -1,4 +1,3 @@
-import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -33,7 +32,7 @@ describe("Test Ability Swapping", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
-    game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.INTIMIDATE]);
+    game.field.getPlayerPokemon().setTempAbility(AbilityId.INTIMIDATE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
@@ -44,7 +43,7 @@ describe("Test Ability Swapping", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
-    game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
+    game.field.getPlayerPokemon().setTempAbility(AbilityId.BALL_FETCH);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.weather?.weatherType).toBeUndefined();
@@ -55,7 +54,7 @@ describe("Test Ability Swapping", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
-    game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
+    game.field.getPlayerPokemon().setTempAbility(AbilityId.BALL_FETCH);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(1); // would be 2 if passive activated again

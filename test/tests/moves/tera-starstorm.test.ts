@@ -52,7 +52,7 @@ describe("Moves - Tera Starstorm", () => {
     game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.TERA_STARSTORM, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     const enemyField = game.scene.getEnemyField();
 
@@ -73,7 +73,7 @@ describe("Moves - Tera Starstorm", () => {
 
     game.move.selectWithTera(MoveId.TERA_STARSTORM, 0);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     const enemyField = game.scene.getEnemyField();
 
@@ -90,7 +90,7 @@ describe("Moves - Tera Starstorm", () => {
 
     game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     const enemyField = game.scene.getEnemyField();
 

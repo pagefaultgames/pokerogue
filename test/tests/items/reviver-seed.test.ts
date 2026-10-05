@@ -141,7 +141,7 @@ describe("Items - Reviver Seed", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DESTINY_BOND);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.isFainted()).toBeTruthy();

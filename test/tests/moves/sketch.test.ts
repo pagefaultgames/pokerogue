@@ -58,7 +58,7 @@ describe("Moves - Sketch", () => {
     game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.GROWL]);
 
     game.move.select(MoveId.GROWL);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
@@ -82,7 +82,7 @@ describe("Moves - Sketch", () => {
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome
     game.move.select(MoveId.SKETCH);
     await game.move.forceEnemyMove(MoveId.METRONOME);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);

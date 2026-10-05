@@ -5,7 +5,6 @@ import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
 import { TabMenu } from "#ui/tab-menu";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -61,10 +60,6 @@ export class GameChallengesUiHandler extends UiHandler {
     ChallengeCategory.MISC,
   ];
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
-
   public override setup(): void {
     const ui = this.getUi();
     const { width: canvasWidth, height: canvasHeight } = globalScene.scaledCanvas;
@@ -73,7 +68,7 @@ export class GameChallengesUiHandler extends UiHandler {
     this.homeKey?.on("up", this.onHomeDown, this);
 
     this.challengesContainer = globalScene.add //
-      .container(1, -canvasHeight + 1)
+      .container(0, -canvasHeight)
       .setName("challenges");
 
     this.challengesContainer.setInteractive(
@@ -82,7 +77,7 @@ export class GameChallengesUiHandler extends UiHandler {
     );
 
     const bgOverlay = globalScene.add
-      .rectangle(-1, -1, canvasWidth, canvasHeight, 0x424242, 0.8)
+      .rectangle(0, 0, canvasWidth, canvasHeight, 0x424242, 0.8)
       .setName("rect-challenge-overlay")
       .setOrigin(0);
     this.challengesContainer.add(bgOverlay);

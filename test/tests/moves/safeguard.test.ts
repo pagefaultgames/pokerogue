@@ -35,7 +35,7 @@ describe("Moves - Safeguard", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemy.status).toBeUndefined();
@@ -46,7 +46,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPORE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();
@@ -58,7 +58,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -72,7 +72,7 @@ describe("Moves - Safeguard", () => {
     game.move.select(MoveId.SPORE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.NUZZLE, 1, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -87,7 +87,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -98,7 +98,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(MoveId.SPLASH);

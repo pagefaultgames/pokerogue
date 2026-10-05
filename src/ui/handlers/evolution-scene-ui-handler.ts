@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject } from "#ui/text";
 
@@ -15,10 +14,6 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
    * If it is not set, cancel requests will be ignored.
    */
   public cancelFunc: (() => void) | undefined;
-
-  constructor() {
-    super(UiMode.EVOLUTION_SCENE);
-  }
 
   setup() {
     const ui = this.getUi();
