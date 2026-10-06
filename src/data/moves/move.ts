@@ -151,7 +151,7 @@ import {
   naturalGiftPower,
   naturalGiftSortFunc,
   naturalGiftType,
-} from "./fling-data";
+} from "./item-moves-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
