@@ -6390,11 +6390,8 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
 
     // TODO: ensure that the type is set correctly if the move is called without an item
     // Cannot pick a random item here, or type will be determined already in the command phase
-    if (!item) {
-      return false;
-    }
 
-    moveType.value = naturalGiftType[item] ?? PokemonType.NORMAL;
+    moveType.value = item ? naturalGiftType[item] : PokemonType.UNKNOWN;
 
     return true;
   }

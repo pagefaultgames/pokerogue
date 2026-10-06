@@ -1,7 +1,7 @@
 import { type BerryItemId, HeldItemId } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 
-export const flingPower = {
+export const flingPower: Partial<Record<HeldItemId, number>> = {
   [HeldItemId.SITRUS_BERRY]: 10,
   [HeldItemId.LUM_BERRY]: 10,
   [HeldItemId.ENIGMA_BERRY]: 10,
@@ -94,7 +94,7 @@ export function bestowSortFunc(itemA: HeldItemId, itemB: HeldItemId): number {
   return weightB - weightA;
 }
 
-export const naturalGiftPower = {
+export const naturalGiftPower: Record<BerryItemId, number> = {
   [HeldItemId.SITRUS_BERRY]: 80,
   [HeldItemId.LUM_BERRY]: 80,
   [HeldItemId.ENIGMA_BERRY]: 100,
@@ -108,7 +108,7 @@ export const naturalGiftPower = {
   [HeldItemId.LEPPA_BERRY]: 80,
 };
 
-export const naturalGiftType = {
+export const naturalGiftType: Record<BerryItemId, PokemonType> = {
   [HeldItemId.SITRUS_BERRY]: PokemonType.PSYCHIC,
   [HeldItemId.LUM_BERRY]: PokemonType.FLYING,
   [HeldItemId.ENIGMA_BERRY]: PokemonType.BUG,
