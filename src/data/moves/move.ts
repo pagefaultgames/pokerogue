@@ -1074,7 +1074,7 @@ export abstract class Move implements Localizable {
       globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
     }
 
-    if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
+    if (getEffectiveWeatherForMove(user) === WeatherType.FOG) {
       /**
        *  The 0.9 multiplier is PokeRogue-only implementation, Bulbapedia uses 3/5
        *  See Fog {@link https://bulbapedia.bulbagarden.net/wiki/Fog}
@@ -8457,42 +8457,38 @@ export class SketchAttr extends MoveEffectAttr {
 }
 
 export class AbilityChangeAttr extends MoveEffectAttr {
-  public ability: AbilityId;
+  public abilityId: AbilityId;
 
   constructor(ability: AbilityId, selfTarget?: boolean) {
     super(selfTarget);
 
-    this.ability = ability;
+    this.abilityId = ability;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
     const moveTarget = this.selfTarget ? user : target;
+    const pokemonName = getPokemonNameWithAffix(moveTarget);
 
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     if (moveTarget.breakIllusion()) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(moveTarget) }),
-      );
+      globalScene.phaseManager.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName }));
     }
     globalScene.phaseManager.queueMessage(
-      i18next.t("moveTriggers:acquiredAbility", {
-        pokemonName: getPokemonNameWithAffix(moveTarget),
-        abilityName: allAbilities[this.ability].name,
-      }),
+      i18next.t("moveTriggers:acquiredAbility", { pokemonName, abilityName: allAbilities[this.abilityId].name }),
     );
-    moveTarget.setTempAbility(allAbilities[this.ability]);
+    moveTarget.setTempAbility(this.abilityId);
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       (this.selfTarget ? user : target).getAbility().replaceable
-      && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+      && (this.selfTarget ? user : target).getAbility().id !== this.abilityId;
   }
 }
 
@@ -8505,38 +8501,41 @@ export class AbilityCopyAttr extends MoveEffectAttr {
     this.copyToPartner = copyToPartner;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
+
+    const abilityId = target.getAbility().id;
+    const abilityName = allAbilities[abilityId].name;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:copiedTargetAbility", {
         pokemonName: getPokemonNameWithAffix(user),
         targetName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[target.getAbility().id].name,
+        abilityName,
       }),
     );
 
-    user.setTempAbility(target.getAbility());
+    user.setTempAbility(abilityId);
     const ally = user.getAlly();
 
-    if (this.copyToPartner && globalScene.currentBattle?.double && ally != null && ally.hp) {
-      // TODO is this the best way to check that the ally is active?
+    // TODO: is this the best way to check that the ally is active?
+    if (this.copyToPartner && globalScene.currentBattle?.double && ally?.hp) {
       globalScene.phaseManager.queueMessage(
         i18next.t("moveTriggers:copiedTargetAbility", {
           pokemonName: getPokemonNameWithAffix(ally),
           targetName: getPokemonNameWithAffix(target),
-          abilityName: allAbilities[target.getAbility().id].name,
+          abilityName,
         }),
       );
-      ally.setTempAbility(target.getAbility());
+      ally.setTempAbility(abilityId);
     }
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => {
       const ally = user.getAlly();
       let ret = target.getAbility().copiable && user.getAbility().replaceable;
@@ -8557,50 +8556,54 @@ export class AbilityGiveAttr extends MoveEffectAttr {
     super(false);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
+    const abilityId = user.getAbility().id;
+
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:acquiredAbility", {
         pokemonName: getPokemonNameWithAffix(target),
-        abilityName: allAbilities[user.getAbility().id].name,
+        abilityName: allAbilities[abilityId].name,
       }),
     );
 
-    target.setTempAbility(user.getAbility());
+    target.setTempAbility(abilityId);
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) =>
       user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
 export class SwitchAbilitiesAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
-
-    const tempAbility = user.getAbility();
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:swappedAbilitiesWithTarget", { pokemonName: getPokemonNameWithAffix(user) }),
     );
 
-    user.setTempAbility(target.getAbility());
-    target.setTempAbility(tempAbility);
+    // abilities intentionally buffered before swapping
+    const userAbilityId = user.getAbility().id;
+    const targetAbilityId = target.getAbility().id;
+
+    user.setTempAbility(targetAbilityId);
+    target.setTempAbility(userAbilityId);
     // Swaps Forecast/Flower Gift from Castform/Cherrim
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     return (user, target, _move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }
@@ -11930,8 +11933,10 @@ export function initMoves() {
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, true /* NOT ADDED if already trapped */)
-      // fails if the user is currently trapped specifically from no retreat
-      .condition(user => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT, 2),
+      .condition(
+        user => !user.getLastXMoves(-1).some(m => m.move === MoveId.NO_RETREAT && m.result === MoveResult.SUCCESS),
+        2,
+      ),
     new StatusMove(MoveId.TAR_SHOT, PokemonType.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false)
