@@ -3586,6 +3586,7 @@ export const trainerConfigs: TrainerConfigs = {
       1,
       getRandomPartyMemberFunc([SpeciesId.SLOWBRO, SpeciesId.GALAR_SLOWBRO], TrainerSlot.TRAINER, true, p => {
         // Tera Ice Slowbro/G-Slowbro
+        p.abilityIndex = p.species.speciesId === SpeciesId.GALAR_SLOWBRO ? 0 : 2; // Quick Draw Galar Slowbro, Regenerator Galar Slowking
         p.generateAndPopulateMoveset();
         // Check if Ice Beam or a damaging Ice move is in the moveset, if not, replace the third move with Ice Beam.
         p.addIfNotInMoveset(MoveId.ICE_BEAM, 2, m => m.type === PokemonType.ICE && m.power > 1);
@@ -3610,10 +3611,16 @@ export const trainerConfigs: TrainerConfigs = {
     .initForEliteFour(signatureSpecies["BRUNO"], true, PokemonType.FIGHTING, 1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.HITMONLEE, SpeciesId.HITMONCHAN, SpeciesId.HITMONTOP]))
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([SpeciesId.HITMONLEE, SpeciesId.HITMONCHAN], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Reckless Hitmonlee, Iron Fist Hitmonchan
+        p.generateAndPopulateMoveset();
+      }),
+    )
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.STEELIX], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.STEELIX, SpeciesId.ALOLA_GOLEM], TrainerSlot.TRAINER, true, p => {
         // Tera Fighting Steelix
         p.abilityIndex = 1; // Sturdy
         p.generateAndPopulateMoveset();
@@ -3696,7 +3703,7 @@ export const trainerConfigs: TrainerConfigs = {
       1,
       getRandomPartyMemberFunc([SpeciesId.SLOWKING, SpeciesId.GALAR_SLOWKING], TrainerSlot.TRAINER, true, p => {
         // Tera Psychic Slowking/G-Slowking
-        p.abilityIndex = 1; // Oblivious
+        p.abilityIndex = 2; // Regenerator
         p.generateAndPopulateMoveset();
       }),
     )
@@ -3712,6 +3719,7 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.XATU], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.abilityIndex = 2; // Magic Bounce
         p.generateAndPopulateMoveset();
       }),
     ),
@@ -4481,6 +4489,8 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.BOMBIRDIER], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 2; // Rocky Payload
         p.generateAndPopulateMoveset();
+        // Check if Rock Slide or a damaging Rock move is in the moveset, if not, replace the third move with Rock Slide.
+        p.addIfNotInMoveset(MoveId.ROCK_SLIDE, 2, m => m.type === PokemonType.ROCK && m.power > 1);
       }),
     )
     .setPartyMemberFunc(
@@ -4968,6 +4978,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.gender = Gender.FEMALE;
+        // Check if Ice Beam or a damaging Ice move is in the moveset, if not, replace the third move with Ice Beam.
+        p.addIfNotInMoveset(MoveId.ICE_BEAM, 2, m => m.type === PokemonType.ICE && m.power > 1);
       }),
     )
     .setInstantTera(5) // Tera Water Milotic
@@ -5298,7 +5310,13 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LEON]: new TrainerConfig(++t)
     .initForChampion(true)
     .setMixedBattleBgm("battle_galar_champion")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.AEGISLASH]))
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([SpeciesId.AEGISLASH], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.addIfNotInMoveset(MoveId.KINGS_SHIELD, 3);
+      }),
+    )
     .setPartyMemberFunc(
       1,
       getRandomPartyMemberFunc(
@@ -5789,6 +5807,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        // Check if Shadow Ball or a damaging Ghost move is in the moveset, if not, replace the third move with Shadow Ball.
+        p.addIfNotInMoveset(MoveId.SHADOW_BALL, 2, m => m.type === PokemonType.GHOST && m.power > 1);
       }),
     ),
   [TrainerType.MAXIE]: new TrainerConfig(++t)
@@ -5871,6 +5891,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
+        p.replaceInMoveset(MoveId.ERUPTION, MoveId.FLAMETHROWER); // Too slow to use Eruption, ensures Sheer Force move
       }),
     )
     .setPartyMemberFunc(
@@ -5879,6 +5900,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        // Check if Heat Crash or a damaging Fire move is in the moveset, if not, replace the third move with Heat Crash.
+        p.addIfNotInMoveset(MoveId.HEAT_CRASH, 2, m => m.type === PokemonType.FIRE && m.power > 1);
       }),
     ),
   [TrainerType.ARCHIE]: new TrainerConfig(++t)
@@ -5954,6 +5977,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
+        p.replaceInMoveset(MoveId.NIGHT_SLASH, MoveId.CRUNCH); // Ensure Strong Jaw move
       }),
     )
     .setPartyMemberFunc(
@@ -5963,6 +5987,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
         p.replaceInMoveset(MoveId.AQUA_TAIL, MoveId.ORIGIN_PULSE); // Avoid generating with off stat move
+        // Check if Ice Beam or a damaging Ice move is in the moveset, if not, replace the third move with Ice Beam.
+        p.addIfNotInMoveset(MoveId.ICE_BEAM, 2, m => m.type === PokemonType.ICE && m.power > 1);
       }),
     ),
   [TrainerType.CYRUS]: new TrainerConfig(++t)
@@ -6426,6 +6452,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        p.replaceInMoveset(MoveId.SUPERPOWER, MoveId.HAMMER_ARM); // Ensure Iron Fist move
       }),
     )
     .setGenModifiersFunc(party => {
