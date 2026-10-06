@@ -1723,13 +1723,6 @@ export class AbilityRandomizerChallenge extends Challenge {
 
     return false;
   }
-
-  public static override loadChallenge(source: Challenge | any): Challenge {
-    const newChallenge = new AbilityRandomizerChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /**
