@@ -40,7 +40,7 @@ export class SelectBiomePhase extends BattlePhase {
     }
 
     const { biomeLinks } = allBiomes.get(currentBiome);
-    const eventBiomeLinks = timedEventManager.getEventBiomes(currentBiome);
+    const eventBiomeLinks = timedEventManager.getEventBiomeLinks(currentBiome);
     const allBiomeLinks: BiomeLinks = [...biomeLinks, ...eventBiomeLinks];
     if (allBiomeLinks.length > 1) {
       const biomes: BiomeId[] = allBiomeLinks

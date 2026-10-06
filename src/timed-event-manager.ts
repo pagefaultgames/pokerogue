@@ -373,7 +373,7 @@ export class TimedEventManager {
    * @param biomeId - the biomeId to get the links for
    * @returns the {@linkcode BiomeLinks} for the specified biome.
    */
-  public getEventBiomes(biomeId: BiomeId): BiomeLinks {
+  public getEventBiomeLinks(biomeId: BiomeId): BiomeLinks {
     const biomes = this.activeEvent()?.biomes ?? null;
 
     return biomes?.[biomeId] ?? [];
