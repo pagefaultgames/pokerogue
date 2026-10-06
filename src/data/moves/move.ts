@@ -2290,6 +2290,11 @@ export class MessageAttr extends MoveEffectAttr {
  * Move attribute to remove the item after fling and display a message.
  */
 export class PostFlingAttr extends MoveEffectAttr {
+  // Consumes the item even if the enemy is not affected
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
+  }
+
   override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
     const item = user.getTag(BattlerTagType.FLING)?.item;
     if (!item) {
@@ -2308,9 +2313,14 @@ export class PostFlingAttr extends MoveEffectAttr {
 }
 
 /**
- * Move attribute to remove the item after fling and display a message.
+ * Move attribute to remove the item after Natural Gift and display a message.
  */
 export class PostNaturalGiftAttr extends MoveEffectAttr {
+  // Consumes the item even if the enemy is not affected
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
+  }
+
   override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
     const item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
     if (!item) {
