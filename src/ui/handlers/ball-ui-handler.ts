@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { getPokeballName } from "#data/pokeball";
+import { getPokeballAtlasKey, getPokeballName } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { TextStyle } from "#enums/text-style";
@@ -13,6 +13,8 @@ import i18next from "i18next";
 export class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
   private pokeballSelectBg: Phaser.GameObjects.NineSlice;
+  private optionsText: Phaser.GameObjects.Text;
+  private cancelText: Phaser.GameObjects.Text;
   private countsText: Phaser.GameObjects.Text;
 
   private cursorObj: Phaser.GameObjects.Image | null;
@@ -27,32 +29,45 @@ export class BallUiHandler extends UiHandler {
     let optionsTextContent = "";
 
     for (let pb = 0; pb < Object.keys(globalScene.pokeballCounts).length; pb++) {
-      optionsTextContent += `${getPokeballName(pb)}\n`;
+      optionsTextContent += `${pb > 0 ? "\n" : ""}${getPokeballName(pb)}`;
     }
-    optionsTextContent += i18next.t("commandUiHandler:ballCancel");
-    const optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
-    const optionsTextWidth = optionsText.displayWidth;
-    this.pokeballSelectContainer = globalScene.add.container(
-      globalScene.scaledCanvas.width - 51 - Math.max(64, optionsTextWidth),
-      -49,
+    this.optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { maxLines: 6 });
+    this.cancelText = addTextObject(0, 0, i18next.t("commandUiHandler:ballCancel"), TextStyle.WINDOW);
+    this.countsText = addTextObject(
+      0,
+      0,
+      Object.values(globalScene.pokeballCounts)
+        .map(count => `×${count}`)
+        .join("\n"),
+      TextStyle.WINDOW,
+      { align: "right", maxLines: 5 },
     );
+    this.pokeballSelectContainer = globalScene.add.container(0, -49);
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
-    this.pokeballSelectBg = addWindow(0, 0, 50 + Math.max(64, optionsTextWidth), 32 + 480 * this.scale);
+    this.pokeballSelectBg = addWindow(0, 0, 0, 32 + 480 * this.scale);
     this.pokeballSelectBg.setOrigin(0, 1);
     this.pokeballSelectContainer.add(this.pokeballSelectBg);
-    this.pokeballSelectContainer.add(optionsText);
-    optionsText.setOrigin(0, 0);
-    optionsText.setPositionRelative(this.pokeballSelectBg, 42, 9);
-    optionsText.setLineSpacing(this.scale * 72);
+    for (let pb = 0; pb < Object.keys(globalScene.pokeballCounts).length; pb++) {
+      const ballImage = globalScene.add
+        .image(0, 0, "pb", getPokeballAtlasKey(pb))
+        .setScale(this.scale * 6)
+        .setPositionRelative(this.pokeballSelectBg, 24, 7 + (48 + pb * 96) * this.scale);
+      this.pokeballSelectContainer.add(ballImage);
+    }
+    this.pokeballSelectContainer.add(this.optionsText);
+    this.optionsText.setOrigin(0, 0);
+    this.optionsText.setPositionRelative(this.pokeballSelectBg, 36, 9);
+    this.optionsText.setLineSpacing(this.scale * 72);
 
-    this.countsText = addTextObject(0, 0, "", TextStyle.WINDOW, {
-      maxLines: 5,
-    });
-    this.countsText.setPositionRelative(this.pokeballSelectBg, 18, 9);
+    this.cancelText.setPositionRelative(this.pokeballSelectBg, 18, 9 + this.optionsText.displayHeight);
+    this.pokeballSelectContainer.add(this.cancelText);
+
+    this.countsText.setPositionRelative(this.pokeballSelectBg, 0, 9);
     this.countsText.setLineSpacing(this.scale * 72);
     this.pokeballSelectContainer.add(this.countsText);
+    this.updateLayout();
 
     this.setCursor(0);
   }
@@ -115,6 +130,18 @@ export class BallUiHandler extends UiHandler {
         .map(c => `×${c}`)
         .join("\n"),
     );
+    this.updateLayout();
+  }
+
+  private updateLayout() {
+    const contentWidth = Math.max(
+      64,
+      this.optionsText.displayWidth + 4 + this.countsText.displayWidth,
+      this.cancelText.displayWidth,
+    );
+    this.pokeballSelectBg.setSize(50 + contentWidth, 32 + 480 * this.scale);
+    this.pokeballSelectContainer.setX(globalScene.scaledCanvas.width - 51 - contentWidth);
+    this.countsText.setPositionRelative(this.pokeballSelectBg, 36 + this.optionsText.displayWidth + 4, 9);
   }
 
   setCursor(cursor: number): boolean {
