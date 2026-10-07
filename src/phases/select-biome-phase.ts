@@ -1,3 +1,4 @@
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { allBiomes } from "#data/data-lists";
 import { BiomeId } from "#enums/biome-id";
@@ -5,6 +6,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
+import type { BiomeLinks } from "#types/biomes";
 import type { OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getBiomeName, randSeedInt, randSeedItem } from "#utils/common";
@@ -38,8 +40,10 @@ export class SelectBiomePhase extends BattlePhase {
     }
 
     const { biomeLinks } = allBiomes.get(currentBiome);
-    if (biomeLinks.length > 1) {
-      const biomes: BiomeId[] = biomeLinks
+    const eventBiomeLinks = timedEventManager.getEventBiomeLinks(currentBiome);
+    const allBiomeLinks: BiomeLinks = [...biomeLinks, ...eventBiomeLinks];
+    if (allBiomeLinks.length > 1) {
+      const biomes: BiomeId[] = allBiomeLinks
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
         .map(b => (Array.isArray(b) ? b[0] : b));
 
@@ -67,19 +71,19 @@ export class SelectBiomePhase extends BattlePhase {
       return;
     }
 
-    if (biomeLinks.length === 1) {
-      if (Array.isArray(biomeLinks[0])) {
+    if (allBiomeLinks.length === 1) {
+      if (Array.isArray(allBiomeLinks[0])) {
         console.warn(
           "Biomes with a link to a single other biome should not have a weight assigned to the link.\n",
           "Biome:",
           enumValueToKey(BiomeId, allBiomes.get(currentBiome).biomeId),
           "| Links:",
-          biomeLinks,
+          allBiomeLinks,
         );
         // @ts-expect-error: failsafe for invalid biome links structure
-        biomeLinks[0] = biomeLinks[0][0];
+        allBiomeLinks[0] = allBiomeLinks[0][0];
       }
-      this.setNextBiomeAndEnd(biomeLinks[0] as BiomeId);
+      this.setNextBiomeAndEnd(allBiomeLinks[0] as BiomeId);
       return;
     }
 
