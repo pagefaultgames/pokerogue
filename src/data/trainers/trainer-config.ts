@@ -6,7 +6,6 @@ import { signatureSpecies } from "#balance/signature-species";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
-import { AbilityId } from "#enums/ability-id";
 import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { HeldItemId } from "#enums/held-item-id";
