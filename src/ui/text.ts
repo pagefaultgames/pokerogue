@@ -5,6 +5,7 @@ import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import type { TextStyleOptions } from "#types/ui-types";
+import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import i18next from "i18next";
 import type Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -23,6 +24,19 @@ export function addTextObject(
     .text(x, y, content, styleOptions)
     .setScale(scale)
     .setShadow(shadowXpos, shadowYpos, shadowColor);
+  const wordWrapWidth = ret.style.wordWrapWidth;
+  if (wordWrapWidth && !ret.style.wordWrapCallback) {
+    ret.setWordWrapCallback((text, textObject) => {
+      const currentWrapWidth = textObject.style.wordWrapWidth ?? wordWrapWidth;
+      if (hasSpecialWrapSpace(text)) {
+        return wrapTextAtSpaces(text, currentWrapWidth, line => textObject.context.measureText(line).width);
+      }
+
+      return textObject.style.wordWrapUseAdvanced
+        ? textObject.advancedWordWrap(text, textObject.context, currentWrapWidth)
+        : textObject.basicWordWrap(text, textObject.context, currentWrapWidth);
+    });
+  }
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 30);
   }

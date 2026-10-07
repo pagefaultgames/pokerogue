@@ -4,6 +4,7 @@ import { settings } from "#app/global-settings-manager";
 import { TextStyle } from "#enums/text-style";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { addBBCodeTextObject } from "#ui/text";
+import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import { getFrameMs } from "#utils/common";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -143,28 +144,33 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
       text = text.split(repname[p]).join(pokename[p]);
     }
     if (text) {
-      // Predetermine overflow line breaks to avoid words breaking while displaying
-      const textWords = text.split(" ");
-      let lastLineCount = 1;
-      let newText = "";
-      for (const textWord of textWords) {
-        const nextWordText = newText ? `${newText} ${textWord}` : textWord;
+      if (hasSpecialWrapSpace(text)) {
+        const wordWrapWidth = this.message.style.wordWrapWidth ?? this.wordWrapWidth;
+        text = wrapTextAtSpaces(text, wordWrapWidth, line => this.message.context.measureText(line).width);
+      } else {
+        // Predetermine overflow line breaks to avoid words breaking while displaying
+        const textWords = text.split(" ");
+        let lastLineCount = 1;
+        let newText = "";
+        for (const textWord of textWords) {
+          const nextWordText = newText ? `${newText} ${textWord}` : textWord;
 
-        if (textWord.includes("\n")) {
-          newText = nextWordText;
-          lastLineCount++;
-        } else {
-          const lineCount = this.message.runWordWrap(nextWordText).split(/\n/g).length;
-          if (lineCount > lastLineCount) {
-            lastLineCount = lineCount;
-            newText = `${newText}\n${textWord}`;
-          } else {
+          if (textWord.includes("\n")) {
             newText = nextWordText;
+            lastLineCount++;
+          } else {
+            const lineCount = this.message.runWordWrap(nextWordText).split(/\n/g).length;
+            if (lineCount > lastLineCount) {
+              lastLineCount = lineCount;
+              newText = `${newText}\n${textWord}`;
+            } else {
+              newText = nextWordText;
+            }
           }
         }
-      }
 
-      text = newText;
+        text = newText;
+      }
     }
 
     if (this.textTimer) {
