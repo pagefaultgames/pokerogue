@@ -1,17 +1,10 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
-import { Button } from "#enums/buttons";
-import { Command } from "#enums/command";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import { UiMode } from "#enums/ui-mode";
 import type { Move } from "#moves/move";
-import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/framework/game-manager";
-import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -44,35 +37,38 @@ describe("Moves - Natural Gift", () => {
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 
-  it("changes type to match the consumed berry", async () => {
+  it("changes type to match the consumed berry when used by a player pokemon", async () => {
+    // Berry that turns into an ice type attack
     game.override.startingHeldItems([{ entry: HeldItemId.GANLON_BERRY }]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
+    const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
     const spy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
 
-    game.promptHandler.addToNextPrompt("CommandPhase", UiMode.COMMAND, () => {
-      game.scene.ui.setMode(UiMode.FIGHT, 0);
-    });
-    game.promptHandler.addToNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-    });
-    game.promptHandler.addToNextPrompt("ItemSelectPhase", UiMode.OPTION_SELECT, () => {
-      (game.scene.ui.getHandler() as OptionSelectUiHandler).setCursor(0);
-      (game.scene.ui.getHandler() as OptionSelectUiHandler).processInput(Button.ACTION);
-    });
-    game.selectTarget(0, BattlerIndex.ENEMY);
+    game.move.useWithItem(MoveId.NATURAL_GIFT);
 
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toEndOfTurn();
 
     expect(spy).toHaveReturnedWith(4);
+
+    // Berry that turns into a ground type attack
+    playerPokemon.heldItemManager.add(HeldItemId.APICOT_BERRY);
+
+    game.move.useWithItem(MoveId.NATURAL_GIFT);
+
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(spy).toHaveReturnedWith(0);
   });
 
-  it("changes type to match the consumed berry", async () => {
+  it("changes type to match the consumed berry when used by an enemy pokemon", async () => {
     game.override.enemyHeldItems([{ entry: HeldItemId.GANLON_BERRY }]).enemyMoveset(MoveId.NATURAL_GIFT);
 
     await game.classicMode.startBattle(SpeciesId.DRAGONITE);
     const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
     game.move.use(MoveId.SPLASH);
@@ -81,5 +77,15 @@ describe("Moves - Natural Gift", () => {
     await game.toEndOfTurn();
 
     expect(spy).toHaveReturnedWith(4);
+
+    // Berry that turns into a ground type attack
+    enemyPokemon.heldItemManager.add(HeldItemId.APICOT_BERRY);
+
+    game.move.use(MoveId.SPLASH);
+
+    await game.move.forceEnemyMove(MoveId.NATURAL_GIFT);
+    await game.toEndOfTurn();
+
+    expect(spy).toHaveReturnedWith(0);
   });
 });
