@@ -4,11 +4,13 @@ import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
 import { timedEvents } from "#balance/timed-events";
 import type { PokemonSpeciesFilter } from "#data/pokemon-species";
+import type { BiomeId } from "#enums/biome-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerType } from "#enums/trainer-type";
+import type { BiomeLinks } from "#types/biomes";
 import type { EventEncounter, EventMysteryEncounterTier, EventWeatherPools, TimedEvent } from "#types/game-events";
 import type { SilentReward } from "#types/rewards";
 import { randSeedShuffle } from "#utils/common";
@@ -75,6 +77,10 @@ export class TimedEventManager {
     return this.activeEvent()?.bannerKey ?? "";
   }
 
+  public getLogoKey(): string {
+    return this.activeEvent()?.logo ?? "logo";
+  }
+
   getEventBannerLangs(): string[] {
     return [...(this.activeEvent()?.availableLangs ?? [])];
   }
@@ -114,6 +120,14 @@ export class TimedEventManager {
    */
   getUpgradeUnlockedVouchers(): boolean {
     return this.activeEvent()?.upgradeUnlockedVouchers ?? false;
+  }
+
+  /**
+   * Get the amount of extra candy to add when catching a Pokemon.
+   * @returns The amount of extra candy to add when catching a Pokemon
+   */
+  public getExtraCatchCandy(): number {
+    return this.activeEvent()?.extraCatchCandy ?? 0;
   }
 
   /**
@@ -232,7 +246,7 @@ export class TimedEventManager {
     if (!sprites) {
       return null;
     }
-    const eventSpriteReplacements = sprites.pokemonReplacements;
+    const eventSpriteReplacements = sprites.pokemonReplacements ?? [];
     const fillRandom = sprites.fillRandom ?? false;
 
     for (const esr of eventSpriteReplacements) {
@@ -300,6 +314,27 @@ export class TimedEventManager {
   }
 
   /**
+   * Get the event image replacement for a given image key, if it exists.
+   * @param imageKey - The image key to check for a replacement
+   * @returns The replacement image **FILENAME** if it exists, otherwise null.
+   * @remarks
+   * The image has to be in the `events` folder for it to work.
+   */
+  public getEventImageReplacement(imageKey: string): string | null {
+    const event = this.activeEvent();
+    if (!event) {
+      return null;
+    }
+    const imageReplacements = event.sprites?.imageReplacements ?? [];
+    for (const ir of imageReplacements) {
+      if (ir[0] === imageKey) {
+        return ir[1];
+      }
+    }
+    return null;
+  }
+
+  /**
    * Return the key replacement for the given i18n key if it exists in the active event, otherwise return the original key.
    * @param key The i18n key to check for a replacement
    * @returns The replacement key if it exists, otherwise the original key
@@ -330,8 +365,19 @@ export class TimedEventManager {
     return event.textReplacements != null && event.textReplacements.length > 0;
   }
 
-  getEventDailyStartingItems(): readonly SilentReward[] {
+  public getEventDailyStartingItems(): readonly SilentReward[] {
     return this.activeEvent()?.dailyRunStartingItems ?? [];
+  }
+
+  /**
+   * Get the biomelinks for a specific biome in the active event.
+   * @param biomeId - the biomeId to get the links for
+   * @returns the {@linkcode BiomeLinks} for the specified biome.
+   */
+  public getEventBiomeLinks(biomeId: BiomeId): BiomeLinks {
+    const biomes = this.activeEvent()?.biomes ?? null;
+
+    return biomes?.[biomeId] ?? [];
   }
 
   /**
