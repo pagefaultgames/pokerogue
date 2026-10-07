@@ -1389,6 +1389,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.HISUI_SNEASEL,
         SpeciesId.HISUI_ZORUA,
       ],
+      [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.PHIONE],
     }),
   [TrainerType.BUG_CATCHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.9)
@@ -3586,7 +3587,7 @@ export const trainerConfigs: TrainerConfigs = {
       1,
       getRandomPartyMemberFunc([SpeciesId.SLOWBRO, SpeciesId.GALAR_SLOWBRO], TrainerSlot.TRAINER, true, p => {
         // Tera Ice Slowbro/G-Slowbro
-        p.abilityIndex = p.species.speciesId === SpeciesId.GALAR_SLOWBRO ? 0 : 2; // Quick Draw Galar Slowbro, Regenerator Galar Slowking
+        p.abilityIndex = p.species.speciesId === SpeciesId.GALAR_SLOWBRO ? 0 : 2; // Quick Draw Galar Slowbro, Regenerator Slowbro
         p.generateAndPopulateMoveset();
         // Check if Ice Beam or a damaging Ice move is in the moveset, if not, replace the third move with Ice Beam.
         p.addIfNotInMoveset(MoveId.ICE_BEAM, 2, m => m.type === PokemonType.ICE && m.power > 1);
