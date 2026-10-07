@@ -5,7 +5,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { TrainerType } from "#enums/trainer-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
-import type { TerrainPool, WeatherPool } from "#types/biomes";
+import type { BiomeLinks, TerrainPool, WeatherPool } from "#types/biomes";
 
 export interface EventBanner {
   readonly bannerKey?: string;
@@ -38,18 +38,25 @@ export interface EventWaveReward {
 export type EventMusicReplacement = readonly [string, string];
 export type EventPokemonSpriteReplacement = readonly [string, string];
 export type EventTrainerSpriteReplacement = readonly [TrainerType, string];
+export type EventImageReplacement = readonly [string, string];
 
 export interface EventSpriteOptions {
   /**
    * An Array of tuples [source, target] for replacing pokemon sprites during events.
    * Format for both source and target is "speciesId[/formIndex]", where formIndex is optional and defaults to 0 if not provided.
    */
-  readonly pokemonReplacements: readonly EventPokemonSpriteReplacement[];
+  readonly pokemonReplacements?: readonly EventPokemonSpriteReplacement[];
   /**
    * An Array of tuples [source, target] for replacing trainer sprites during events.
    * Source is a {@linkcode TrainerType} and target is the literal filename of the sprite to use for that trainer type during the event (without file extension).
    */
-  readonly trainerReplacements: readonly EventTrainerSpriteReplacement[];
+  readonly trainerReplacements?: readonly EventTrainerSpriteReplacement[];
+  /**
+   * An Array of tuples [source, target] for replacing images during events.
+   * Source is the image key and target is the literal filename of the replacement image (without file extension).
+   * The image has to be in the `events` folder for it to work.
+   */
+  readonly imageReplacements?: readonly EventImageReplacement[];
   /**
    * If true, any species not explicitly listed in the replacements array will be replaced with a random species.
    * @defaultValue false
@@ -62,20 +69,25 @@ export type EventTextReplacement = readonly [string, string];
 export type EventWeatherPools = Readonly<Partial<Record<BiomeId, WeatherPool>>>;
 export type EventTerrainPools = Readonly<Partial<Record<BiomeId, TerrainPool>>>;
 
+export type EventBiomes = Readonly<Partial<Record<BiomeId, BiomeLinks>>>;
+
 export interface TimedEvent extends EventBanner {
   readonly name: string;
   readonly eventType: EventType;
+  readonly logo?: string;
   readonly shinyEncounterMultiplier?: number;
   readonly shinyCatchMultiplier?: number;
   readonly classicFriendshipMultiplier?: number;
   readonly luckBoost?: number;
   readonly upgradeUnlockedVouchers?: boolean;
+  readonly extraCatchCandy?: number;
   readonly startDate: Date;
   readonly endDate: Date;
   readonly eventEncounters?: readonly EventEncounter[];
   readonly delibirdyBuff?: readonly string[];
   readonly weather?: EventWeatherPools;
   readonly terrain?: EventTerrainPools;
+  readonly biomes?: EventBiomes;
   readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
   readonly luckBoostedSpecies?: readonly SpeciesId[];
   readonly boostFusions?: boolean; //MODIFIER REWORK PLEASE
