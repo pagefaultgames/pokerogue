@@ -50,11 +50,10 @@ export class SelectBiomePhase extends BattlePhase {
     const eventBiomeLinks = timedEventManager.getEventBiomeLinks(currentBiome);
     const allBiomeLinks: BiomeLinks = [...biomeLinks, ...eventBiomeLinks];
     if (allBiomeLinks.length > 1 || (forcedBiomes != null && forcedBiomes.length > 1)) {
-       const biomes: BiomeId[] =
+      const biomes: BiomeId[] =
         forcedBiomes != null && forcedBiomes.length > 1
           ? forcedBiomes
           : allBiomeLinks.filter(b => !Array.isArray(b) || !randSeedInt(b[1])).map(b => (Array.isArray(b) ? b[0] : b));
-
 
       if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         const biomeSelectItems = biomes.map(b => {
