@@ -52,15 +52,15 @@ describe("Moves - Natural Gift", () => {
 
     expect(spy).toHaveReturnedWith(4);
 
-    // Berry that turns into a ground type attack
-    playerPokemon.heldItemManager.add(HeldItemId.APICOT_BERRY);
+    // Berry that turns into a psychic type attack
+    playerPokemon.heldItemManager.add(HeldItemId.SITRUS_BERRY);
 
     game.move.useWithItem(MoveId.NATURAL_GIFT);
 
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toEndOfTurn();
 
-    expect(spy).toHaveReturnedWith(0);
+    expect(spy).toHaveReturnedWith(1);
   });
 
   it("changes type to match the consumed berry when used by an enemy pokemon", async () => {
@@ -72,7 +72,6 @@ describe("Moves - Natural Gift", () => {
     const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
     game.move.use(MoveId.SPLASH);
-
     await game.move.forceEnemyMove(MoveId.NATURAL_GIFT);
     await game.toEndOfTurn();
 
@@ -82,10 +81,33 @@ describe("Moves - Natural Gift", () => {
     enemyPokemon.heldItemManager.add(HeldItemId.APICOT_BERRY);
 
     game.move.use(MoveId.SPLASH);
-
     await game.move.forceEnemyMove(MoveId.NATURAL_GIFT);
     await game.toEndOfTurn();
 
     expect(spy).toHaveReturnedWith(0);
+  });
+
+  it("consumes the item even if the move has no effect", async () => {
+    // Berry that turns into a ground type attack
+    game.override
+      .startingHeldItems([{ entry: HeldItemId.APICOT_BERRY }])
+      .enemyHeldItems([{ entry: HeldItemId.APICOT_BERRY }])
+      .enemyMoveset(MoveId.NATURAL_GIFT);
+    await game.classicMode.startBattle(SpeciesId.DRAGONITE);
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const spyPlayer = vi.spyOn(playerPokemon, "getMoveEffectiveness");
+    const spyEnemy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
+
+    game.move.useWithItem(MoveId.NATURAL_GIFT);
+
+    await game.move.forceEnemyMove(MoveId.NATURAL_GIFT);
+    await game.toEndOfTurn();
+
+    expect(spyEnemy).toHaveReturnedWith(0);
+    expect(spyPlayer).toHaveReturnedWith(0);
+
+    expect(playerPokemon.heldItemManager.getStack(HeldItemId.APICOT_BERRY)).toBe(0);
+    expect(enemyPokemon.heldItemManager.getStack(HeldItemId.APICOT_BERRY)).toBe(0);
   });
 });
