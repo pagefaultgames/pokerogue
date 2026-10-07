@@ -29,6 +29,7 @@ import {
   getMaxTmCount,
   LEVEL_BASED_DENYLIST_THRESHOLD,
   MOVE_POWER_CEILING,
+  PRIORITY_STAB_LEVEL_CUTOFF,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
   RELEARN_LEVEL_REQUIREMENT,
   RELEARN_MOVE_WEIGHT,
@@ -49,6 +50,7 @@ import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -62,7 +64,7 @@ import type { LevelMovesWithSource } from "#types/level-moves";
 import type { Move, StatStageChangeAttr } from "#types/move-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import { applyChallenges } from "#utils/challenge-utils";
-import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
+import { type NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { willTerastallize } from "#utils/pokemon-utils";
 import { ValueHolder } from "#utils/value-holder";
@@ -656,6 +658,7 @@ function forceStabMove(
 ): void {
   const typesForStab = new Set(pokemon.getTypes());
   // All Pokemon force a STAB move first
+
   const totalWeight = new ValueHolder(0);
   const stabMovePool = filterPool(
     pool,
@@ -666,6 +669,8 @@ function forceStabMove(
         && (typesForStab.has(getMoveType(move, pokemon, willTera))
           || (willTera && move.hasAttr("TeraBlastTypeAttr") && pokemon.getTeraType() !== PokemonType.STELLAR))
         && !STAB_BLACKLIST.has(moveId)
+        // Priority moves are excluded from STAB forcing because they are rarely powerful enough to warrant forcing
+        && (pokemon.level <= PRIORITY_STAB_LEVEL_CUTOFF || move.priority <= 0)
       );
     },
     totalWeight,
@@ -720,13 +725,18 @@ function getMoveType(move: MoveId | Move, pokemon: Pokemon, willTera: boolean): 
  * - Types are via {@linkcode getMoveType} to account for variable type moves
  * @param pokemon - The pokemon to get move types for
  * @param willTera - Whether the pokemon is guaranteed to Tera
+ * @param filter - A function for further filtering the moves to consider.
  * @returns The set of existing damaging move types in the Pokémon's moveset
  */
-function getExistingDamageMoveTypes(pokemon: Pokemon, willTera: boolean): Set<PokemonType> {
+function getExistingDamageMoveTypes(
+  pokemon: Pokemon,
+  willTera: boolean,
+  filter?: (move: Move) => boolean,
+): Set<PokemonType> {
   const existingMoveTypes = new Set<PokemonType>();
   for (const mo of pokemon.moveset) {
     const move = mo.getMove();
-    if (move.category !== MoveCategory.STATUS && !move.hasAttr("FixedDamageAttr")) {
+    if (move.category !== MoveCategory.STATUS && !move.hasAttr("FixedDamageAttr") && (filter == null || filter(move))) {
       existingMoveTypes.add(getMoveType(move, pokemon, willTera));
     }
   }
@@ -1100,20 +1110,34 @@ function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
 }
 
 /**
+ * @returns An array of all damaging moves in the Pokémon's moveset, optionally excluding moves that target the attacker
+ * @param pokemon - The Pokémon in consideration
+ * @param includeCounterMoves - (default `true`) Whether to include moves that target the attacker (e.g., Counter, Mirror Coat)
+ */
+function getDamagingMoves(pokemon: Pokemon, includeCounterMoves = true): PokemonMove[] {
+  return pokemon.moveset.filter(
+    mo =>
+      mo.getMove().category !== MoveCategory.STATUS
+      && (includeCounterMoves || mo.getMove().moveTarget !== MoveTarget.ATTACKER),
+  );
+}
+
+/**
  * Adjust weights in the remaining move pool based on existing moves in the Pokémon's moveset
+ *
+ * @param pool - The move pool to filter
+ * @param pokemon - The Pokémon for which the moveset is being generated
  *
  * @remarks
  * Submethod for step 5 of moveset generation
- * @param pool - The move pool to filter
- * @param pokemon - The Pokémon for which the moveset is being generated
  */
-function filterRemainingTrainerMovePool(pool: [id: MoveId, weight: number][], pokemon: Pokemon) {
+function reWeightRemainingTrainerMovePool(pool: [id: MoveId, weight: number][], pokemon: Pokemon) {
   // Sqrt the weight of any damaging moves with overlapping types. pokemon is about a 0.05 - 0.1 multiplier.
   // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
   // Status moves remain unchanged on weight, pokemon encourages 1-2
 
   // TODO: Optimize this by adding the information as moves are added to the moveset rather than recalculating every time
-  const numDamageMoves = pokemon.moveset.filter(mo => (mo.getMove().power ?? 0) > 1).length;
+  const numDamageMoves = getDamagingMoves(pokemon, false).length;
   const weightDenominator = Math.max(Math.pow(4, numDamageMoves) / 8, 0.5);
   const typesForStab = new Set(pokemon.getTypes());
   const willTera = willTerastallize(pokemon);
@@ -1124,37 +1148,45 @@ function filterRemainingTrainerMovePool(pool: [id: MoveId, weight: number][], po
   }
 
   const existingMoveTypes = getExistingDamageMoveTypes(pokemon, willTera);
+  const existingPriorityMoveTypes = getExistingDamageMoveTypes(pokemon, willTera, m => m.priority > 0);
 
   for (const [idx, [moveId, weight]] of pool.entries()) {
     let ret: number;
     const move = allMoves[moveId];
+
     if (move.category === MoveCategory.STATUS) {
       continue;
     }
 
     const moveType = getMoveType(move, pokemon as EnemyPokemon, willTera);
+    const isPriority = move.priority > 0;
 
-    if (existingMoveTypes.has(moveType) && moveType !== PokemonType.UNKNOWN) {
+    const typeOverlap =
+      moveType !== PokemonType.UNKNOWN
+      && (isPriority ? existingPriorityMoveTypes.has(moveType) : existingMoveTypes.has(moveType));
+
+    if (typeOverlap) {
       ret = Math.sqrt(weight);
     } else {
       ret = weight / weightDenominator;
-      if (typesForStab.has(moveType) && !STAB_BLACKLIST.has(moveId)) {
+      // Do not consider priority moves for STAB
+      if (typesForStab.has(moveType) && !(STAB_BLACKLIST.has(moveId) || isPriority)) {
         ret *= 20;
       }
     }
+
     pool[idx] = [moveId, Math.ceil(ret)];
   }
 }
 
 /**
  * Fill in the remaining slots in the Pokémon's moveset from the provided pools
- * @param pokemon - The Pokémon for which the moveset is being generated
+ * @param pokemon - The Pokémon having its moves generated
  * @param tmPool - The TM move pool
  * @param eggMovePool - The egg move pool
  * @param tmCount - A holder for the count of moves that have been added to the moveset from TMs
  * @param eggMoveCount - A holder for the count of moves that have been added to the moveset from egg moves
- * @param baseWeights - The base weights of all moves in the master pool
- * @param remainingPool - The remaining move pool to select from
+ * @param baseWeights - The base weights of all moves in the master pool. This mutated as moves are removed from consideration
  */
 function fillInRemainingMovesetSlots(
   pokemon: Pokemon,
@@ -1163,39 +1195,64 @@ function fillInRemainingMovesetSlots(
   tmCount: NumberHolder,
   eggMoveCount: NumberHolder,
   baseWeights: Map<MoveId, number>,
-  remainingPool: [id: MoveId, weight: number][],
 ): void {
   const tmCap = getMaxTmCount(pokemon.level);
   const eggCap = getMaxEggMoveCount(pokemon.level);
-  const remainingPoolWeight = new NumberHolder(0);
   while (pokemon.moveset.length < 4) {
+    const damageMovesInMoveset = getDamagingMoves(pokemon, false).length;
+    let damagingMovesInPool = 0;
     const nonLevelMoveCount = tmCount.value + eggMoveCount.value;
-    remainingPool = filterPool(
-      baseWeights,
-      (m: MoveId) =>
+
+    // Filter once to get all moves passing condition
+    // The filter function also deletes moves from baseWeights that do not pass the filter
+    // to avoid their consideration in future iterations.
+    let filteredPool = filterPool(baseWeights, (m: MoveId) => {
+      const moveInPool = allMoves[m];
+      const result =
         !pokemon.moveset.some(
-          mo =>
-            m === mo.moveId || (allMoves[m]?.hasAttr("SacrificialAttr") && mo.getMove()?.hasAttr("SacrificialAttr")), // Only one self-KO move allowed
+          moveInMoveset =>
+            m === moveInMoveset.moveId
+            || (allMoves[m]?.hasAttr("SacrificialAttr") && moveInMoveset.getMove()?.hasAttr("SacrificialAttr")), // Only one self-KO move allowed
         )
         && (nonLevelMoveCount < tmCap || !tmPool.has(m))
-        && (nonLevelMoveCount < eggCap || !eggMovePool.has(m)),
-      remainingPoolWeight,
-    );
-    if (pokemon.hasTrainer()) {
-      filterRemainingTrainerMovePool(remainingPool, pokemon);
+        && (nonLevelMoveCount < eggCap || !eggMovePool.has(m));
+
+      // Increment the count of damaging moves in the pool if it passes the filter
+      if (result && moveInPool.category !== MoveCategory.STATUS && moveInPool.moveTarget !== MoveTarget.ATTACKER) {
+        damagingMovesInPool++;
+      } else if (!result) {
+        // baseWeights forms the basis
+        baseWeights.delete(m);
+      }
+      return result;
+    });
+
+    // This filter must be done after the first as it needs to ensure
+    // that there is at least one damaging move in the pool before filtering out
+    // status moves
+    if (damagingMovesInPool > 0 && damageMovesInMoveset < 2) {
+      filteredPool = filteredPool.filter(([moveId]) => {
+        const m = allMoves[moveId];
+        return m.category !== MoveCategory.STATUS && m.moveTarget !== MoveTarget.ATTACKER;
+      });
     }
+
     // Ensure loop cannot run infinitely if there are no allowed moves left to
     // fill the remaining slots
-    if (remainingPool.length === 0) {
+    if (filteredPool.length === 0) {
       return;
     }
-    const totalWeight = remainingPool.reduce((v, m) => v + m[1], 0);
+
+    if (pokemon.hasTrainer()) {
+      reWeightRemainingTrainerMovePool(filteredPool, pokemon);
+    }
+    const totalWeight = filteredPool.reduce((v, m) => v + m[1], 0);
     let rand = randSeedInt(totalWeight);
     let index = 0;
-    while (rand > remainingPool[index][1]) {
-      rand -= remainingPool[index++][1];
+    while (rand > filteredPool[index][1]) {
+      rand -= filteredPool[index++][1];
     }
-    const selectedMoveId = remainingPool[index][0];
+    const selectedMoveId = filteredPool[index][0];
     baseWeights.delete(selectedMoveId);
     if (tmPool.has(selectedMoveId)) {
       tmCount.value++;
@@ -1324,10 +1381,9 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
   // Should also tweak the function to skip the signature move forcing step
 
   // Step 5: Fill in remaining slots
-  const remainingPool = filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m === mo.moveId));
   do {
-    fillInRemainingMovesetSlots(pokemon, tmPool, eggMovePool, tmCount, eggMoveCount, baseWeights, remainingPool);
-  } while (remainingPool.length > 0 && filterUselessMoves(pokemon, willTera));
+    fillInRemainingMovesetSlots(pokemon, tmPool, eggMovePool, tmCount, eggMoveCount, baseWeights);
+  } while (baseWeights.size > 0 && filterUselessMoves(pokemon, willTera));
 
   globalScene.movesetGenInProgress = false;
 }
@@ -1351,7 +1407,7 @@ export const __INTERNAL_TEST_EXPORTS: {
   calculateTotalPoolWeight: typeof calculateTotalPoolWeight;
   filterPool: typeof filterPool;
   forceStabMove: typeof forceStabMove;
-  filterRemainingTrainerMovePool: typeof filterRemainingTrainerMovePool;
+  filterRemainingTrainerMovePool: typeof reWeightRemainingTrainerMovePool;
   fillInRemainingMovesetSlots: typeof fillInRemainingMovesetSlots;
   forceLogging?: boolean;
 } = {} as any;
@@ -1371,7 +1427,7 @@ if (IS_TEST) {
     calculateTotalPoolWeight,
     filterPool,
     forceStabMove,
-    filterRemainingTrainerMovePool,
+    filterRemainingTrainerMovePool: reWeightRemainingTrainerMovePool,
     fillInRemainingMovesetSlots,
     forceLogging: false,
   });

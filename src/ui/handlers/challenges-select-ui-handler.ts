@@ -68,7 +68,7 @@ export class GameChallengesUiHandler extends UiHandler {
     this.homeKey?.on("up", this.onHomeDown, this);
 
     this.challengesContainer = globalScene.add //
-      .container(1, -canvasHeight + 1)
+      .container(0, -canvasHeight)
       .setName("challenges");
 
     this.challengesContainer.setInteractive(
@@ -77,7 +77,7 @@ export class GameChallengesUiHandler extends UiHandler {
     );
 
     const bgOverlay = globalScene.add
-      .rectangle(-1, -1, canvasWidth, canvasHeight, 0x424242, 0.8)
+      .rectangle(0, 0, canvasWidth, canvasHeight, 0x424242, 0.8)
       .setName("rect-challenge-overlay")
       .setOrigin(0);
     this.challengesContainer.add(bgOverlay);
@@ -307,7 +307,7 @@ export class GameChallengesUiHandler extends UiHandler {
       if (challenge.id === Challenges.SINGLE_TYPE) {
         continue;
       }
-      const challengeName = challenge.getName();
+      const challengeName = challenge.name;
       tempText.setText(challengeName);
       let longestOptionNameWidth = 0;
       let longestOptionName = "";
@@ -360,7 +360,7 @@ export class GameChallengesUiHandler extends UiHandler {
       challengeLabel.rightArrow.setVisible(true);
       challengeLabel.leftArrow.setVisible(true);
 
-      challengeLabel.label.setText(challenge.getName());
+      challengeLabel.label.setText(challenge.name);
 
       challengeLabel.rightArrow
         .setPositionRelative(challengeLabel.label, this.optionsBg.width - 20, 4)
