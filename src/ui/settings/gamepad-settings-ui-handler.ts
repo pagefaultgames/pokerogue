@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
+import { PAD_PROCON } from "#inputs/pad-procon";
 import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
 import { PAD_XBOX360 } from "#inputs/pad-xbox360";
 import {
@@ -26,7 +27,7 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
     this.setting = SettingGamepad;
     this.settingDeviceDefaults = settingGamepadDefaults;
     this.settingDeviceOptions = settingGamepadOptions;
-    this.configs = [PAD_XBOX360, PAD_DUALSHOCK, PAD_UNLICENSED_SNES];
+    this.configs = [PAD_XBOX360, PAD_DUALSHOCK, PAD_PROCON, PAD_UNLICENSED_SNES];
     this.commonSettingsCount = 2;
     this.settingBlacklisted = settingGamepadBlackList;
     this.device = Device.GAMEPAD;
