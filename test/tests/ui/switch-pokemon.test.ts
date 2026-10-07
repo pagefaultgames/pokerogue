@@ -65,7 +65,7 @@ describe("UI - Party switch mode", () => {
    * Party reordering will happen during this function.
    */
   async function skipModifierSelect() {
-    await game.scene.ui.setModeWithoutClear(UiMode.MODIFIER_SELECT);
+    await game.scene.ui.setMode(UiMode.MODIFIER_SELECT);
     const msHandler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
     msHandler.processInput(Button.CANCEL);
     msHandler.processInput(Button.ACTION);
@@ -77,7 +77,7 @@ describe("UI - Party switch mode", () => {
 
   it("should reorder the party before a single battle", async () => {
     await setupBattle("single");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    await game.scene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK);
     const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
     const party = game.scene.getPlayerParty();
     const firstPokemon = party[0];
@@ -100,7 +100,7 @@ describe("UI - Party switch mode", () => {
 
   it("should reorder the party before a double battle", async () => {
     await setupBattle("double");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    await game.scene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK);
     const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
     const party = game.scene.getPlayerParty();
     const firstPokemon = party[0];
@@ -129,7 +129,7 @@ describe("UI - Party switch mode", () => {
 
   it("should reorder the party when going from double to single battle", async () => {
     await setupBattle("double");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    await game.scene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK);
     const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
     const party = game.scene.getPlayerParty();
     const firstPokemon = party[0];
@@ -156,7 +156,7 @@ describe("UI - Party switch mode", () => {
 
   it("should reorder the party when going from single to double battle", async () => {
     await setupBattle("single");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    await game.scene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK);
     const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
     const party = game.scene.getPlayerParty();
     const firstPokemon = party[0];
@@ -185,7 +185,7 @@ describe("UI - Party switch mode", () => {
 
   it("should reorder the party before a double battle against trainers", async () => {
     await setupBattle("double");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    await game.scene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK);
     const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
     const party = game.scene.getPlayerParty();
     const firstPokemon = party[0];
