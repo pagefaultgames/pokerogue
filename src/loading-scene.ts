@@ -295,7 +295,7 @@ export class LoadingScene extends SceneBase {
       )
 
       // egg gacha stuff
-      .loadEventBannerImages(lang)
+      .loadEventImages(lang)
       .loadAtlas("categories", "")
       .loadAtlas("egg", "egg")
       .loadAtlas("egg_crack", "egg")
@@ -586,7 +586,7 @@ export class LoadingScene extends SceneBase {
     return this;
   }
 
-  private loadEventBannerImages(lang: string): this {
+  private loadEventImages(lang: string): this {
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
       // fallback to EN banner if translation not found
@@ -594,6 +594,9 @@ export class LoadingScene extends SceneBase {
         lang = "en";
       }
       this.loadImage(`${timedEventManager.getEventBannerFilename()}-${lang}`, "events");
+    }
+    if (timedEventManager.getLogoKey() !== "logo") {
+      this.loadImage(timedEventManager.getLogoKey(), "events");
     }
     return this;
   }
