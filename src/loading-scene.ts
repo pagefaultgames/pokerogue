@@ -317,6 +317,7 @@ export class LoadingScene extends SceneBase {
       .loadImage("encounter_radar", "mystery-encounters") // Mystery Encounter dex progress icon
       // settings atlases
       .loadAtlas("dualshock", "inputs")
+      .loadAtlas("procon", "inputs")
       .loadAtlas("xbox", "inputs")
       .loadAtlas("keyboard", "inputs")
       // sound effects
