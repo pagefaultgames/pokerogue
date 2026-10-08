@@ -10623,8 +10623,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.turnData.damageTaken > 0 ? 2 : 1)),
     new StatusMove(MoveId.EMBARGO, PokemonType.DARK, 100, 15, -1, 0, 4) //
       .attr(EmbargoAttr)
-      .reflectable()
-      .unimplemented(),
+      .reflectable(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .makesContact(false)
       .unimplemented(),
@@ -10945,9 +10944,9 @@ export function initMoves() {
       .affectedByGravity()
       .reflectable(),
     new StatusMove(MoveId.MAGIC_ROOM, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
+      .attr(AddArenaTagAttr, ArenaTagType.MAGIC_ROOM, 5)
       .ignoresProtect()
-      .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
+      .target(MoveTarget.BOTH_SIDES),
     new AttackMove(MoveId.SMACK_DOWN, PokemonType.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, -1, 0, 5)
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)

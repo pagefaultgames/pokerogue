@@ -111,6 +111,7 @@ import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { groupStatChange } from "#utils/stat-change";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
 
@@ -3922,6 +3923,10 @@ export class EmbargoTag extends SerializableBattlerTag {
 
   override onAdd(pokemon: Pokemon): void {
     globalScene.phaseManager.queueMessage(`${pokemon} can't use held items anymore!`);
+  }
+
+  apply(itemsSuppressed: ValueHolder<boolean>): void {
+    itemsSuppressed.value = true;
   }
 }
 

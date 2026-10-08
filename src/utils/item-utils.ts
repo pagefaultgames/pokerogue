@@ -1,4 +1,6 @@
+import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, type HeldItemId, HeldItemNames, ITEM_CATEGORY_MASK } from "#enums/held-item-id";
@@ -7,16 +9,27 @@ import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { HeldItemConfiguration, HeldItemPool, HeldItemSpecs } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { TrainerItemPool, TrainerItemSpecs } from "#types/trainer-item-data-types";
+import { ValueHolder } from "./value-holder";
 
 // TODO: Move to another file
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
   const { pokemon } = params;
+
+  // Check whether held items are being suppressed by Embargo or Magic Room.
+  const itemsSuppressed = new ValueHolder(false);
+  globalScene.arena.applyTags(ArenaTagType.MAGIC_ROOM, itemsSuppressed);
+  const embargoTag = pokemon.getTag(BattlerTagType.EMBARGO);
+  if (embargoTag) {
+    embargoTag.apply(itemsSuppressed);
+  }
+
   for (const itemId of pokemon.heldItemManager.getItems()) {
     const heldItem = allHeldItems[itemId] as HeldItem | CosmeticHeldItem;
+    // Suppressed items are not applied.
+    if (heldItem.isSuppressable && itemsSuppressed.value) {
+      continue;
+    }
     if ("effects" in heldItem && heldItem.hasEffect(effect)) {
-      if (pokemon.getTag(BattlerTagType.EMBARGO) && heldItem.isSuppressable) {
-        continue;
-      }
       (heldItem satisfies HeldItem).apply(effect, params);
     }
   }
