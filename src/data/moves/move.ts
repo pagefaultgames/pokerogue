@@ -6568,6 +6568,16 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 }
 
 /**
+ * Adds a tag to prevent the user from using held items.
+ * Used by {@link https://bulbapedia.bulbagarden.net/wiki/Embargo_(move) | Embargo}.
+ */
+export class EmbargoAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.EMBARGO);
+  }
+}
+
+/**
  * Attribute to add the `IGNORE_FLYING` BattlerTag to the target.
  *
  * Does nothing if the target was not already ungrounded.
@@ -10612,6 +10622,7 @@ export function initMoves() {
     new AttackMove(MoveId.ASSURANCE, PokemonType.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.turnData.damageTaken > 0 ? 2 : 1)),
     new StatusMove(MoveId.EMBARGO, PokemonType.DARK, 100, 15, -1, 0, 4) //
+      .attr(EmbargoAttr)
       .reflectable()
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)

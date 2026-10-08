@@ -1,4 +1,5 @@
 import { allHeldItems } from "#data/data-lists";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, type HeldItemId, HeldItemNames, ITEM_CATEGORY_MASK } from "#enums/held-item-id";
 import { TrainerItemNames } from "#enums/trainer-item-id";
@@ -13,6 +14,9 @@ export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: Held
   for (const itemId of pokemon.heldItemManager.getItems()) {
     const heldItem = allHeldItems[itemId] as HeldItem | CosmeticHeldItem;
     if ("effects" in heldItem && heldItem.hasEffect(effect)) {
+      if (pokemon.getTag(BattlerTagType.EMBARGO) && heldItem.isSuppressable) {
+        continue;
+      }
       (heldItem satisfies HeldItem).apply(effect, params);
     }
   }
