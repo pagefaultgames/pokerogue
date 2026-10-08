@@ -6081,6 +6081,25 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   }
 }
 
+export interface SuppressHeldItemsAbAttrParams extends AbAttrBaseParams {
+  /** Holds whether the items are suppressed */
+  itemsSuppressed: ValueHolder<boolean>;
+}
+
+/**
+ * Ability attribute for suppressing held items
+ * @param itemsSuppressed a boolean holder which is set to `true`
+ */
+export class SuppressHeldItemsAbAttr extends AbAttr {
+  override canApply(_params: SuppressHeldItemsAbAttrParams): boolean {
+    return true;
+  }
+
+  override apply({ itemsSuppressed }: SuppressHeldItemsAbAttrParams): void {
+    itemsSuppressed.value = true;
+  }
+}
+
 /**
  * @returns all Pokémon on field that have weather-based forms
  */
@@ -6308,6 +6327,7 @@ export const AbilityAttrs = Object.freeze({
   StatStageChangeCopyAbAttr,
   StatStageChangeMultiplierAbAttr,
   StatusEffectImmunityAbAttr,
+  SuppressHeldItemsAbAttr,
   SuppressWeatherEffectAbAttr,
   SyncEncounterNatureAbAttr,
   SynchronizeStatusAbAttr,

@@ -1,3 +1,4 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -43,6 +44,7 @@ export function areItemsSuppressed(pokemon: Pokemon): boolean {
   if (embargoTag) {
     embargoTag.apply(itemsSuppressed);
   }
+  applyAbAttrs("SuppressHeldItemsAbAttr", { pokemon, itemsSuppressed });
   return itemsSuppressed.value;
 }
 
