@@ -65,7 +65,7 @@ describe("Moves - Retaliate", () => {
   it("should not increase in power if an ally faints during the current turn", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
-    
+
     game.move.use(MoveId.RETALIATE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.MEMENTO, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
