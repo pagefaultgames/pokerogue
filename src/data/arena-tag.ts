@@ -1216,7 +1216,7 @@ export class TrickRoomTag extends RoomArenaTag {
  * Blocks held item usage by all Pokémon on the field as long as this arena tag is up.
  */
 export class MagicRoomTag extends RoomArenaTag {
-  public readonly tagType = ArenaTagType.TRICK_ROOM;
+  public readonly tagType = ArenaTagType.MAGIC_ROOM;
   constructor(turnCount: number, sourceId?: number) {
     super(turnCount, MoveId.MAGIC_ROOM, sourceId);
   }
@@ -1801,6 +1801,8 @@ export function getArenaTag(
       return new StickyWebTag(sourceId, side);
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
+    case ArenaTagType.MAGIC_ROOM:
+      return new MagicRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:
       return new GravityTag(turnCount, sourceId);
     case ArenaTagType.REFLECT:
