@@ -12120,9 +12120,9 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, attackedByItemMessageFunc)
       .makesContact(false),
     new StatusMove(MoveId.CORROSIVE_GAS, PokemonType.POISON, 100, 40, -1, 0, 8)
+      .attr(RemoveHeldItemAttr, false)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .reflectable()
-      .unimplemented(),
+      .reflectable(),
     new StatusMove(MoveId.COACHING, PokemonType.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF], 1)
       .target(MoveTarget.NEAR_ALLY)
