@@ -4,7 +4,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { SpeciesId } from "#enums/species-id";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 
-const fixDexData: SystemSaveMigrator = {
+const fixDexData = {
   name: "fixDexData",
   version: "1.12.0.1",
   migrate: (data): void => {
@@ -50,6 +50,6 @@ const fixDexData: SystemSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [fixDexData] as const;
+export const systemMigrators = [fixDexData] as const satisfies readonly SystemSaveMigrator[];

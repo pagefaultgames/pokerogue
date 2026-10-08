@@ -429,18 +429,18 @@ function migrateValues(data: object): void {
 
 // #region Migrators
 
-const migrateSettings: SettingsSaveMigrator = {
+const migrateSettings = {
   name: "migrateSettings",
   version: "1.12.1.0",
   migrate: (data: object): void => {
     migrateKeys(data);
     migrateValues(data);
   },
-};
+} as const satisfies SettingsSaveMigrator;
 
-export const settingsMigrators: readonly SettingsSaveMigrator[] = [migrateSettings] as const;
+export const settingsMigrators = [migrateSettings] as const satisfies readonly SettingsSaveMigrator[];
 
-const migrateStarterPreferences: SystemSaveMigrator = {
+const migrateStarterPreferences = {
   name: "migrateStarterPreferences",
   version: "1.12.1.0",
   migrate: (_data: object): void => {
@@ -456,8 +456,8 @@ const migrateStarterPreferences: SystemSaveMigrator = {
 
     saveStarterPreferences(newStarterPreferences);
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [migrateStarterPreferences] as const;
+export const systemMigrators = [migrateStarterPreferences] as const satisfies readonly SystemSaveMigrator[];
 
 // #endregion Migrators
