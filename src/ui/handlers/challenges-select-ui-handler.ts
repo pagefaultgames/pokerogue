@@ -56,9 +56,8 @@ export class GameChallengesUiHandler extends UiHandler {
 
   private tabMenu: TabMenu;
   private readonly challengeCategories: ChallengeCategory[] = [
+    ChallengeCategory.GENERAL,
     ChallengeCategory.RANDOMIZER,
-    ChallengeCategory.CHALLENGE,
-    ChallengeCategory.NUZLOCKE,
     ChallengeCategory.MISC,
   ];
 
@@ -275,7 +274,7 @@ export class GameChallengesUiHandler extends UiHandler {
   private getFilteredChallenges(): Challenge[] {
     const activeCategory = this.tabMenu
       ? this.challengeCategories[this.tabMenu.selectedIndex]
-      : ChallengeCategory.CHALLENGE;
+      : ChallengeCategory.GENERAL;
 
     return globalScene.gameMode.challenges.filter(c => c.category === activeCategory);
   }
