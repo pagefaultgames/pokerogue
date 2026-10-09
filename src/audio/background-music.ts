@@ -51,8 +51,13 @@ export class BackgroundMusic {
    * @param loop - Whether to loop the bgm
    * @param loopPoint - (Default `0`) The starting point of the loop, in seconds
    */
-  constructor(key: string, loop: boolean, loopPoint = 0) {
+  constructor(key: string, loop: boolean, loopPoint = 0, isAudioEnabled = true) {
     this.key = key;
+    if (!isAudioEnabled) {
+      this.ended = true;
+      return;
+    }
+
     BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
 
     globalScene
