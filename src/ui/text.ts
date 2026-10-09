@@ -275,7 +275,7 @@ export function getTextStyleOptions(
           styleOptions.padding = { top: 10 };
           break;
         default:
-          fontSizeValue = "96px";
+          fontSizeValue = "92px";
           break;
       }
       styleOptions.fontSize = fontSizeValue;
