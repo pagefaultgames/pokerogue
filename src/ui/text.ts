@@ -270,6 +270,7 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
         case "id":
+        case "ru":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
