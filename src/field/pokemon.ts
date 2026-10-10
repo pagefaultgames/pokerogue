@@ -53,7 +53,6 @@ import {
   CustomPokemonData,
   PokemonBattleData,
   PokemonSummonData,
-  PokemonTempSummonData,
   PokemonTurnData,
   PokemonWaveData,
 } from "#data/pokemon-data";
@@ -289,8 +288,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData = new PokemonBattleData();
   /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData();
-  /** Similar to {@linkcode PokemonSummonData}, but is reset on reload (not saved to file). */
-  public tempSummonData: PokemonTempSummonData = new PokemonTempSummonData();
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData();
   /** Per-turn data like hit count & flinch tracking */
@@ -1987,9 +1984,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       level: this.level,
       startingLevel,
       pokemonSpeciesForm: this.getSpeciesForm(true),
-      pokemonFormIndex: this.formIndex,
+      pokemonFormKey: this.getFormKey(),
       fusionSpeciesForm: this.getFusionSpeciesForm(true),
-      fusionFormIndex: this.fusionFormIndex,
+      fusionFormKey: this.getFusionFormKey() ?? undefined,
     };
     return getLevelMoves(
       context,
@@ -5324,8 +5321,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
-   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * Reset this Pokemon's {@linkcode PokemonSummonData} and update sprites/UI as necessary.
+   * @remarks
+   * {@linkcode BattlerTag}s are stored in `PokemonSummonData`, and will also all be cleared.
    */
   public resetSummonData(): void {
     if (this.summonData.speciesForm) {
@@ -5334,7 +5332,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.loadAssets(false);
     }
     this.summonData = new PokemonSummonData();
-    this.tempSummonData = new PokemonTempSummonData();
     this.updateInfo();
   }
 
@@ -5351,15 +5348,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokémon's {@linkcode PokemonWaveData | waveData}
+   * Reset this Pokémon's {@linkcode PokemonWaveData}.
    *
    * @remarks
    * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
    * @see {@linkcode resetBattleAndWaveData}
    */
-  resetWaveData(): void {
+  public resetWaveData(): void {
     this.waveData = new PokemonWaveData();
-    this.tempSummonData.waveTurnCount = 1;
+    this.summonData.waveTurnCount = 1;
   }
 
   /**
@@ -6728,6 +6725,10 @@ export class EnemyPokemon extends Pokemon {
 
     if (bossConfig.moveset != null) {
       this.tryPopulateMoveset(bossConfig.moveset, true);
+    }
+
+    if (bossConfig.ivs != null) {
+      this.ivs = bossConfig.ivs;
     }
   }
 

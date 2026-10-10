@@ -3,6 +3,7 @@ import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUse
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -66,14 +67,16 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
+import { fixedInt, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
+import { ValueHolder } from "#utils/value-holder";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -1718,7 +1721,9 @@ export class GameData {
         // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
         const shinyBonus = pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant ?? 0) : 1;
         const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
-        this.addStarterCandy(species.speciesId, shinyBonus * eggOrBossBonus);
+        const eventBonus = timedEventManager.getExtraCatchCandy();
+        const totalCandy = shinyBonus * eggOrBossBonus + eventBonus;
+        this.addStarterCandy(species.speciesId, totalCandy);
       }
     }
 
@@ -2008,33 +2013,29 @@ export class GameData {
   }
 
   /**
-   * Obtain the value of a particular starter by SpeciesID
-   * @param speciesId - The {@linkcode SpeciesId} of the starter
-   * @param valueReduction - The applied value reduction; defaults to the value stored in `this.starterData[speciesId].valueReduction`
-   * @returns The value/cost of the starter
+   * Get the cost of a starter, taking into account the number of purchased cost reduction and any active challenges.
+   * @param speciesId - The {@linkcode StarterSpeciesId} of the starter
+   * @param valueReduction - (Default `this.starterData[speciesId].valueReduction`) The value reduction to apply
+   * @returns The resolved point cost of the starter
    * @privateRemarks
    * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
    */
-  getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
+  public getSpeciesStarterValue(
+    speciesId: StarterSpeciesId,
+    valueReduction: number = this.starterData[speciesId].valueReduction,
+  ): number {
     const baseValue = speciesDataRegistry.getStarterCost(speciesId);
-    const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
-    let value = baseValue as number;
+    const cost = new ValueHolder<number>(baseValue);
 
-    const decrementValue = (v: number) => {
-      if (v > 1) {
-        v--;
-      } else {
-        v /= 2;
-      }
-      return v;
-    };
-
-    for (let v = 0; v < reduction; v++) {
-      value = decrementValue(value);
-    }
-
-    const cost = new NumberHolder(value);
     applyChallenges(ChallengeType.STARTER_COST, speciesId, cost);
+
+    for (let v = 0; v < valueReduction; v++) {
+      if (cost.value > 1) {
+        cost.value--;
+      } else {
+        cost.value /= 2;
+      }
+    }
 
     return cost.value;
   }

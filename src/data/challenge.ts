@@ -5,9 +5,10 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
-import { allMoves } from "#data/data-lists";
+import { allAbilities, allMoves } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
+import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
@@ -41,6 +42,7 @@ import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type { Constructor, Jsonify } from "type-fest";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -58,7 +60,8 @@ export abstract class Challenge {
   /** The current severity of the challenge. Some challenges have multiple severities in addition to strength. */
   public severity = 0;
   /** The maximum severity of the challenge. */
-  public maxSeverity = 0;
+  public readonly maxSeverity = 0;
+
   public conditions: ChallengeCondition[] = [];
 
   /**
@@ -70,10 +73,28 @@ export abstract class Challenge {
     return 0n as RibbonFlag;
   }
 
-  /**
-   * The category of the challenge for grouping in the UI.
-   */
+  /** The category of the challenge for grouping in the UI. */
   public abstract get category(): ChallengeCategory;
+
+  /** The localised name of this challenge. */
+  public get name(): string {
+    return i18next.t(`challenges:${this.i18nKey}.name`);
+  }
+
+  /** The difficulty value of this challenge. */
+  public get difficulty(): number {
+    return this.value;
+  }
+
+  /** The minimum difficulty value of this challenge. */
+  public get minDifficulty(): number {
+    return 0;
+  }
+
+  /** The i18n key for this challenge */
+  private get i18nKey(): string {
+    return toCamelCase(Challenges[this.id]);
+  }
 
   /**
    * @param id - The enum value for the challenge
@@ -85,14 +106,9 @@ export abstract class Challenge {
   }
 
   /** Reset the challenge to a base state. */
-  reset(): void {
+  public reset(): void {
     this.value = 0;
     this.severity = 0;
-  }
-
-  /** @returns The i18n key for this challenge */
-  private geti18nKey(): string {
-    return toCamelCase(Challenges[this.id]);
   }
 
   /**
@@ -100,7 +116,7 @@ export abstract class Challenge {
    * @param data - The save data
    * @returns Whether this challenge is unlocked
    */
-  isUnlocked(data: GameData): boolean {
+  public isUnlocked(data: GameData): boolean {
     return this.conditions.every(f => f(data));
   }
 
@@ -109,15 +125,10 @@ export abstract class Challenge {
    * @param condition - The condition to add
    * @returns This challenge
    */
-  condition(condition: ChallengeCondition): Challenge {
+  public condition(condition: ChallengeCondition): Challenge {
     this.conditions.push(condition);
 
     return this;
-  }
-
-  /** @returns The localised name of this challenge. */
-  getName(): string {
-    return i18next.t(`challenges:${this.geti18nKey()}.name`);
   }
 
   /**
@@ -125,8 +136,8 @@ export abstract class Challenge {
    * @param overrideValue - (Default `this.value`) Overrides the value used
    * @returns The localised text for the current value.
    */
-  getValue(overrideValue: number = this.value): string {
-    return i18next.t(`challenges:${this.geti18nKey()}.value.${overrideValue}`);
+  public getValue(overrideValue: number = this.value): string {
+    return i18next.t(`challenges:${this.i18nKey}.value.${overrideValue}`);
   }
 
   /**
@@ -135,8 +146,8 @@ export abstract class Challenge {
    * @returns The localised description for the current value.
    */
   // TODO: Do we need an override value here? it's currently unused
-  getDescription(overrideValue: number = this.value): string {
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${overrideValue}`, `challenges:${this.geti18nKey()}.desc`])}`;
+  public getDescription(overrideValue: number = this.value): string {
+    return `${i18next.t([`challenges:${this.i18nKey}.desc.${overrideValue}`, `challenges:${this.i18nKey}.desc`])}`;
   }
 
   /**
@@ -144,7 +155,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  increaseValue(): boolean {
+  public increaseValue(): boolean {
     if (this.value < this.maxValue) {
       this.value = Math.min(this.value + 1, this.maxValue);
       return true;
@@ -157,7 +168,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  decreaseValue(): boolean {
+  public decreaseValue(): boolean {
     if (this.value > 0) {
       this.value = Math.max(this.value - 1, 0);
       return true;
@@ -169,7 +180,7 @@ export abstract class Challenge {
    * Whether to allow choosing this challenge's severity.
    * @sealed
    */
-  hasSeverity(): boolean {
+  public hasSeverity(): boolean {
     return this.value !== 0 && this.maxSeverity > 0;
   }
 
@@ -178,7 +189,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  decreaseSeverity(): boolean {
+  public decreaseSeverity(): boolean {
     if (this.severity > 0) {
       this.severity = Math.max(this.severity - 1, 0);
       return true;
@@ -191,7 +202,7 @@ export abstract class Challenge {
    * @returns Whether the value changed
    * @sealed
    */
-  increaseSeverity(): boolean {
+  public increaseSeverity(): boolean {
     if (this.severity < this.maxSeverity) {
       this.severity = Math.min(this.severity + 1, this.maxSeverity);
       return true;
@@ -199,28 +210,22 @@ export abstract class Challenge {
     return false;
   }
 
-  /** @returns The difficulty value of this challenge. */
-  getDifficulty(): number {
-    return this.value;
-  }
-
-  /** @returns The minimum difficulty value of this challenge. */
-  getMinDifficulty(): number {
-    return 0;
-  }
-
-  // TODO: Refactor the class hierarchy to remove the need for having all these methods on every class
-  // biome-ignore-start lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
-
   /**
    * Clones a challenge, either from another challenge or json.
    * @param source - The source challenge or json.
    * @returns This challenge.
    */
   // TODO: remove `| any`
-  static loadChallenge(source: Challenge | any): Challenge {
-    throw new Error("Method not implemented! Use derived class");
+  public static loadChallenge(source: Challenge | any): Challenge {
+    const c = source as Jsonify<Challenge>;
+    const challenge = getChallenge(c.id);
+    challenge.value = c.value;
+    challenge.severity = c.severity;
+    return challenge;
   }
+
+  // TODO: Refactor the class hierarchy to remove the need for having all these methods on every class
+  // biome-ignore-start lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
 
   /**
    * Modifies the availability of starters.
@@ -542,6 +547,26 @@ export abstract class Challenge {
     return false;
   }
 
+  /**
+   * Modifies the innate abilities of a species
+   * @param speciesId - The ID of the species whose abilties are being modified
+   * @param abilityId - A holder for the ability ID
+   * @returns Whether this modification was applied
+   */
+  public applySpeciesAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
+    return false;
+  }
+
+  /**
+   * Modifies the passive ability of a species
+   * @param speciesId - The ID of the species whose passive ability is being modified
+   * @param abilityId - A holder for the ability ID
+   * @returns Whether this modification was applied
+   */
+  public applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
+    return false;
+  }
+
   // biome-ignore-end lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
 }
 
@@ -826,7 +851,7 @@ export class SingleGenerationChallenge extends Challenge {
     return false;
   }
 
-  override getDifficulty(): number {
+  public override get difficulty(): number {
     return this.value > 0 ? 1 : 0;
   }
 
@@ -844,13 +869,6 @@ export class SingleGenerationChallenge extends Challenge {
     return i18next.t("challenges:singleGeneration.desc", {
       gen: i18next.t(`challenges:singleGeneration.gen.${overrideValue}`),
     });
-  }
-
-  static loadChallenge(source: SingleGenerationChallenge | any): SingleGenerationChallenge {
-    const newChallenge = new SingleGenerationChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -877,7 +895,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
-  private static TYPE_OVERRIDES: MonotypeOverride[] = [
+  private static readonly TYPE_OVERRIDES: MonotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
 
@@ -929,7 +947,7 @@ export class SingleTypeChallenge extends Challenge {
     return false;
   }
 
-  override getDifficulty(): number {
+  public override get difficulty(): number {
     return this.value > 0 ? 1 : 0;
   }
 
@@ -945,13 +963,6 @@ export class SingleTypeChallenge extends Challenge {
       type: typeColor,
     });
     return this.value === 0 ? defaultDesc : typeDesc;
-  }
-
-  static loadChallenge(source: SingleTypeChallenge | any): SingleTypeChallenge {
-    const newChallenge = new SingleTypeChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1057,15 +1068,8 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  public override getDifficulty(): number {
+  public override get difficulty(): number {
     return 0;
-  }
-
-  static loadChallenge(source: FreshStartChallenge | any): FreshStartChallenge {
-    const newChallenge = new FreshStartChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1083,14 +1087,7 @@ export class InverseBattleChallenge extends Challenge {
     super(Challenges.INVERSE_BATTLE, 1);
   }
 
-  static loadChallenge(source: InverseBattleChallenge | any): InverseBattleChallenge {
-    const newChallenge = new InverseBattleChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
-
-  override getDifficulty(): number {
+  public override get difficulty(): number {
     return 0;
   }
 
@@ -1132,13 +1129,6 @@ export class FlipStatChallenge extends Challenge {
     baseStats[5] = origStats[0];
     return true;
   }
-
-  static loadChallenge(source: FlipStatChallenge | any): FlipStatChallenge {
-    const newChallenge = new FlipStatChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /** Lowers the amount of starter points available. */
@@ -1162,13 +1152,6 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     }
     return false;
   }
-
-  static loadChallenge(source: LowerStarterMaxCostChallenge | any): LowerStarterMaxCostChallenge {
-    const newChallenge = new LowerStarterMaxCostChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /** Lowers the maximum cost of starters available. */
@@ -1188,13 +1171,6 @@ export class LowerStarterPointsChallenge extends Challenge {
   applyStarterPoints(points: NumberHolder): boolean {
     points.value -= this.value;
     return true;
-  }
-
-  static loadChallenge(source: LowerStarterPointsChallenge | any): LowerStarterPointsChallenge {
-    const newChallenge = new LowerStarterPointsChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1236,13 +1212,6 @@ export class LimitedSupportChallenge extends Challenge {
     }
     return false;
   }
-
-  static override loadChallenge(source: LimitedSupportChallenge | any): LimitedSupportChallenge {
-    const newChallenge = new LimitedSupportChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 /** Implements a Limited Catch challenge */
@@ -1270,13 +1239,6 @@ export class LimitedCatchChallenge extends Challenge {
       return true;
     }
     return false;
-  }
-
-  static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
-    const newChallenge = new LimitedCatchChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1326,13 +1288,6 @@ export class HardcoreChallenge extends Challenge {
     }
     return false;
   }
-
-  static override loadChallenge(source: HardcoreChallenge | any): HardcoreChallenge {
-    const newChallenge = new HardcoreChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
-  }
 }
 
 export class PassivesChallenge extends Challenge {
@@ -1356,13 +1311,6 @@ export class PassivesChallenge extends Challenge {
     }
     hasPassive.value = true;
     return true;
-  }
-
-  static override loadChallenge(source: PassivesChallenge | any): PassivesChallenge {
-    const newChallenge = new PassivesChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
   }
 }
 
@@ -1637,12 +1585,143 @@ export class MovesetRandomizerChallenge extends Challenge {
 
     return true;
   }
+}
 
-  public static override loadChallenge(source: Challenge | any): Challenge {
-    const newChallenge = new MovesetRandomizerChallenge();
-    newChallenge.value = source.value;
-    newChallenge.severity = source.severity;
-    return newChallenge;
+export class AbilityRandomizerChallenge extends Challenge {
+  // Challenge values:
+  // 1 - Randomize abilities
+  // 2 - Randomize abilities and passives
+  // 3 - Randomize abilities and passives, except for innate form-change abilities
+  constructor() {
+    super(Challenges.ABILITY_RANDOMIZER, 3);
+  }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.RANDOMIZER;
+  }
+
+  private static _validAbilityIds: AbilityId[];
+
+  private get validAbilityIds(): AbilityId[] {
+    // it's necessary to do it this way due to the static variable
+    // being initialized before the `allAbilities` array is
+    if (!AbilityRandomizerChallenge._validAbilityIds) {
+      const formChangeAbilities = [
+        AbilityId.DISGUISE, // can be removed if/when it gets changed to work on any Pokemon
+        AbilityId.FORECAST,
+        AbilityId.GULP_MISSILE,
+        AbilityId.HUNGER_SWITCH,
+        AbilityId.ICE_FACE, // can be removed if/when it gets changed to work on any Pokemon
+        AbilityId.MULTITYPE,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.RKS_SYSTEM,
+        AbilityId.SCHOOLING,
+        AbilityId.SHIELDS_DOWN,
+        AbilityId.STANCE_CHANGE,
+        AbilityId.TERA_SHIFT,
+        AbilityId.ZEN_MODE,
+        AbilityId.ZERO_TO_HERO,
+      ];
+      const negativeAbilities = [
+        AbilityId.DEFEATIST,
+        AbilityId.KLUTZ,
+        AbilityId.NORMALIZE,
+        AbilityId.SLOW_START,
+        AbilityId.STALL,
+        AbilityId.TRUANT,
+        AbilityId.WIMP_OUT, // Emergency Exit by itself is okay, Wimp Out is removed to not double up
+      ];
+      const disallowedAbilities = [AbilityId.NONE, AbilityId.COMMANDER, ...formChangeAbilities, ...negativeAbilities];
+      AbilityRandomizerChallenge._validAbilityIds = getEnumValues(AbilityId) //
+        .filter(v => !disallowedAbilities.includes(v) && !allAbilities[v].unimplemented);
+    }
+    return AbilityRandomizerChallenge._validAbilityIds;
+  }
+
+  public override applySpeciesAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>): boolean {
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    if (
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    if (
+      this.value > 2
+      && [
+        AbilityId.SCHOOLING,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.BATTLE_BOND,
+        AbilityId.DISGUISE,
+        AbilityId.ICE_FACE,
+        AbilityId.ZERO_TO_HERO,
+        AbilityId.TERA_SHIFT,
+        AbilityId.TERA_SHELL,
+        AbilityId.TERAFORM_ZERO,
+      ].includes(abilityId.value)
+    ) {
+      return false;
+    }
+
+    const seedOffset = 500 * speciesId + abilityId.value;
+
+    globalScene.executeWithSeedOffset(() => {
+      abilityId.value = randSeedItem(this.validAbilityIds);
+    }, seedOffset);
+
+    return true;
+  }
+
+  public override applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>): boolean {
+    if (this.value < 2) {
+      return false;
+    }
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    if (
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    const seedOffset = 500 * speciesId + abilityId.value;
+
+    globalScene.executeWithSeedOffset(() => {
+      abilityId.value = randSeedItem(this.validAbilityIds);
+    }, seedOffset);
+
+    return true;
+  }
+
+  public override applyStarterCost(speciesId: SpeciesId, cost: ValueHolder<number>): boolean {
+    switch (speciesId) {
+      case SpeciesId.NINCADA:
+        cost.value -= 2; // 4 -> 2
+        return true;
+      case SpeciesId.MEDITITE:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.AZURILL:
+        cost.value -= 1; // 4 -> 3
+        return true;
+      case SpeciesId.DEWPIDER:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.ARCHEN:
+        cost.value += 1; // 3 -> 4
+        return true;
+      case SpeciesId.SLAKOTH:
+        cost.value += 2; // 4 -> 6
+        return true;
+      case SpeciesId.REGIGIGAS:
+        cost.value += 1; // 7 -> 8
+        return true;
+    }
+
+    return false;
   }
 }
 
@@ -1678,6 +1757,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return PassivesChallenge.loadChallenge(source);
     case Challenges.MOVESET_RANDOMIZER:
       return MovesetRandomizerChallenge.loadChallenge(source);
+    case Challenges.ABILITY_RANDOMIZER:
+      return AbilityRandomizerChallenge.loadChallenge(source);
     default:
       challengeId satisfies never;
       throw new Error("Unknown challenge copied");
@@ -1686,17 +1767,40 @@ export function copyChallenge(source: Challenge | any): Challenge {
 
 export const allChallenges: Challenge[] = [];
 
-export function initChallenges() {
+export function initChallenges(): void {
   allChallenges.push(
-    new FreshStartChallenge(),
-    new HardcoreChallenge(),
-    new LimitedCatchChallenge(),
-    new LimitedSupportChallenge(),
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
-    new PassivesChallenge(),
+    // new LowerStarterMaxCostChallenge(),
+    // new LowerStarterPointsChallenge(),
+    new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new LimitedCatchChallenge(),
+    new LimitedSupportChallenge(),
+    new HardcoreChallenge(),
+    new PassivesChallenge(),
     new MovesetRandomizerChallenge(),
+    new AbilityRandomizerChallenge(),
   );
+}
+
+const challengeMap: Record<Challenges, Constructor<Challenge>> = {
+  [Challenges.SINGLE_GENERATION]: SingleGenerationChallenge,
+  [Challenges.SINGLE_TYPE]: SingleTypeChallenge,
+  [Challenges.LOWER_MAX_STARTER_COST]: LowerStarterMaxCostChallenge,
+  [Challenges.LOWER_STARTER_POINTS]: LowerStarterPointsChallenge,
+  [Challenges.FRESH_START]: FreshStartChallenge,
+  [Challenges.INVERSE_BATTLE]: InverseBattleChallenge,
+  [Challenges.FLIP_STAT]: FlipStatChallenge,
+  [Challenges.LIMITED_CATCH]: LimitedCatchChallenge,
+  [Challenges.LIMITED_SUPPORT]: LimitedSupportChallenge,
+  [Challenges.HARDCORE]: HardcoreChallenge,
+  [Challenges.PASSIVES]: PassivesChallenge,
+  [Challenges.MOVESET_RANDOMIZER]: MovesetRandomizerChallenge,
+  [Challenges.ABILITY_RANDOMIZER]: AbilityRandomizerChallenge,
+};
+
+function getChallenge(challengeId: Challenges): Challenge {
+  return new challengeMap[challengeId]();
 }

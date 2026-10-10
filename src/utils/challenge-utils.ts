@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
+import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
@@ -10,12 +11,13 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
+import { BooleanHolder, type NumberHolder } from "#utils/common";
 import type { ValueHolder } from "#utils/value-holder";
-import { BooleanHolder, type NumberHolder } from "./common";
 
 /**
  * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
@@ -377,6 +379,32 @@ export function applyChallenges(
   isAvailable: ValueHolder<boolean>,
 ): boolean;
 
+/**
+ * Apply all challenges that modify the innate abilities of a species
+ * @param challengeType - {@linkcode ChallengeType.SPECIES_ABILITY_MODIFY}
+ * @param species - The ID of the species whose abilities are being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SPECIES_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the passive ability of a species
+ * @param challengeType - {@linkcode ChallengeType.PASSIVE_ABILITY_MODIFY}
+ * @param speciesId - The ID of the species whose passive ability is being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.PASSIVE_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -477,6 +505,12 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           break;
         case ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY:
           ret ||= c.applyEggMoveRelearnAvailability(args[0], args[1]);
+          break;
+        case ChallengeType.SPECIES_ABILITY_MODIFY:
+          ret ||= c.applySpeciesAbilityModify(args[0], args[1]);
+          break;
+        case ChallengeType.PASSIVE_ABILITY_MODIFY:
+          ret ||= c.applyPassiveAbilityModify(args[0], args[1]);
           break;
         default:
           challengeType satisfies never;
@@ -584,4 +618,43 @@ export function isNuzlockeChallenge(): boolean {
     }
   }
   return isFreshStart && isLimitedCatch && isHardcore;
+}
+
+export function getRibbonsToAward(): RibbonFlag {
+  const { gameMode } = globalScene;
+  const { challenges, isClassic } = gameMode;
+
+  let ribbonFlags = 0n;
+
+  const ribbonBlockChallenges = [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER];
+  if (challenges.some(c => ribbonBlockChallenges.includes(c.id) && c.value > 0)) {
+    return ribbonFlags as RibbonFlag;
+  }
+
+  for (const challenge of challenges) {
+    const ribbon = challenge.ribbonAwarded;
+    if (challenge.value && ribbon) {
+      ribbonFlags |= ribbon;
+    }
+  }
+
+  // TODO: find a better way to handle blocking ribbons and achievements
+  // Block other ribbons if flip stats or inverse is active
+  const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+  // Block other ribbons if passives on `all` is active
+  const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
+  if (flip_or_inverse) {
+    ribbonFlags = flip_or_inverse;
+  } else if (challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+    ribbonFlags = passives;
+  } else {
+    if (isClassic) {
+      ribbonFlags |= RibbonData.CLASSIC;
+    }
+    if (isNuzlockeChallenge()) {
+      ribbonFlags |= RibbonData.NUZLOCKE;
+    }
+  }
+
+  return ribbonFlags as RibbonFlag;
 }
