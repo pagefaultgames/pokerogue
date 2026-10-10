@@ -124,43 +124,33 @@ export function doPokemonTransformationSequence(
             pokemonSprite.setVisible(false);
             globalScene.time.delayedCall(700, () => {
               globalScene.animations.doArcDownward(transformationBaseBg, transformationContainer, xOffset, yOffset);
-              globalScene.time.delayedCall(1000, () => {
-                pokemonEvoTintSprite.setScale(0.25);
-                pokemonEvoTintSprite.setVisible(true);
-                globalScene.animations.doCycle(1.5, 6, pokemonTintSprite, pokemonEvoTintSprite).then(() => {
-                  pokemonEvoSprite.setVisible(true);
-                  globalScene.animations.doCircleInward(
-                    transformationBaseBg,
-                    transformationContainer,
-                    xOffset,
-                    yOffset,
-                  );
+              globalScene.animations.doCycle(1.5, 6, pokemonTintSprite, pokemonEvoTintSprite, 1000)[0].then(() => {
+                pokemonEvoSprite.setVisible(true);
+                globalScene.animations.doCircleInward(transformationBaseBg, transformationContainer, xOffset, yOffset);
 
-                  globalScene.time.delayedCall(900, () => {
-                    globalScene.tweens.add({
-                      targets: pokemonEvoTintSprite,
-                      alpha: 0,
-                      duration: 1500,
-                      delay: 150,
-                      easing: "Sine.easeIn",
-                      onComplete: () => {
-                        globalScene.time.delayedCall(3000, () => {
-                          resolve();
-                          globalScene.tweens.add({
-                            targets: pokemonEvoSprite,
-                            alpha: 0,
-                            duration: 2000,
-                            delay: 150,
-                            easing: "Sine.easeIn",
-                            onComplete: () => {
-                              previousPokemon.destroy();
-                              transformPokemon.setVisible(false);
-                              transformPokemon.setAlpha(1);
-                            },
-                          });
-                        });
-                      },
-                    });
+                globalScene.time.delayedCall(900, () => {
+                  globalScene.tweens.add({
+                    targets: pokemonEvoTintSprite,
+                    alpha: 0,
+                    duration: 1500,
+                    delay: 150,
+                    easing: "Sine.easeIn",
+                    completeDelay: 3000,
+                    onComplete: () => {
+                      resolve();
+                      globalScene.tweens.add({
+                        targets: pokemonEvoSprite,
+                        alpha: 0,
+                        duration: 2000,
+                        delay: 150,
+                        easing: "Sine.easeIn",
+                        onComplete: () => {
+                          previousPokemon.destroy();
+                          transformPokemon.setVisible(false);
+                          transformPokemon.setAlpha(1);
+                        },
+                      });
+                    },
                   });
                 });
               });

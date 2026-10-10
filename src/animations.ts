@@ -4,7 +4,7 @@ import { settings } from "#app/global-settings-manager";
 import type { BattleAnim } from "#data/battle-anims";
 import { PokeballType } from "#enums/pokeball";
 import type { Variant } from "#sprites/variant";
-import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/common";
+import { getFrameMs, randGauss, randInt } from "#utils/common";
 
 /**
  * Class for handling general animations such as particle effects.
@@ -13,6 +13,7 @@ import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/commo
 // TODO: Can this be made into an interface/POJO?
 // TODO: Rename to not conflict with built-in `animation` class
 // TODO: Clean up a lot of the animation code to be more maintainable and add better docs
+// TODO: Rework into using and returning promises
 export class Animation {
   /**
    * Animates particles that "spiral" upwards at start of transform animation
@@ -176,47 +177,72 @@ export class Animation {
    * @param finalCycle - Number representing how many times to recursively cycle the animation
    * @param pokemonTintSprite - The tinted sprite of the Pokemon
    * @param pokemonNewFormTintSprite - The tinted sprite of the Pokemon's new form
-   * @param cancelled - If its value is set to `true` by external code during the animation, then cancel the animation.
+   * @returns A tuple containing a promise resolving to whether the cycle completed normally (`true`) or was stopped early (`false`),
+   * and a function to stop the animation early.
+   * The stop function is idempotent and can be safely called even after the tween has been destroyed.
    */
+  // TODO: Make the parameters sensible (+1 increments instead of +0.5, make things a bit more sensible)
   public doCycle(
     currentCycle: number,
     finalCycle: number,
     pokemonTintSprite: Phaser.GameObjects.Sprite,
     pokemonNewFormTintSprite: Phaser.GameObjects.Sprite,
-    cancelled?: BooleanHolder,
-  ): Promise<void> {
-    const isFinalCycle = currentCycle === finalCycle;
-    const duration = 500 / currentCycle;
+    delay = 0,
+  ): [promise: Promise<boolean>, stopFunc: () => void] {
+    pokemonNewFormTintSprite //
+      .setScale(0.25)
+      .setVisible(true);
 
-    return new Promise(resolve => {
-      globalScene.tweens.add({
-        targets: pokemonTintSprite,
-        scale: 0.25,
+    const tweenConfigs: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
+    for (; currentCycle <= finalCycle; currentCycle += 0.5) {
+      const duration = 500 / currentCycle;
+
+      tweenConfigs.push({
+        targets: [pokemonTintSprite, pokemonNewFormTintSprite],
+        // I really wish phaser's types were better
+        scale: (target: Phaser.GameObjects.Sprite) => (target === pokemonTintSprite ? 0.25 : 1),
         ease: "Cubic.easeInOut",
         duration,
-        yoyo: !isFinalCycle,
+        yoyo: currentCycle < finalCycle,
       });
-      globalScene.tweens.add({
-        targets: pokemonNewFormTintSprite,
-        scale: 1,
-        ease: "Cubic.easeInOut",
-        duration,
-        yoyo: !isFinalCycle,
-        onComplete: () => {
-          if (cancelled?.value) {
-            return resolve();
-          }
-          if (isFinalCycle) {
-            pokemonTintSprite.setVisible(false);
-            return resolve();
-          }
-          // TODO: Explain or refactor away the recursion
-          this.doCycle(currentCycle + 0.5, finalCycle, pokemonTintSprite, pokemonNewFormTintSprite, cancelled).then(
-            resolve,
-          );
-        },
-      });
+    }
+
+    // `settled` guards the visual side effects only, since the promise itself only ever honors its first `resolve` call
+    let settled = false;
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+
+    const chain = globalScene.tweens.chain({
+      delay,
+      targets: null,
+      tweens: tweenConfigs,
+      onComplete: () => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        pokemonTintSprite.setVisible(false);
+        resolve(true);
+      },
     });
+
+    return [
+      promise,
+      () => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        if (!chain.currentTween) {
+          return;
+        }
+
+        chain.currentTween.once("complete", () => {
+          chain.stop();
+          pokemonNewFormTintSprite.setVisible(false);
+          resolve(false);
+        });
+      },
+    ];
   }
 
   /**
