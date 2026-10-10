@@ -11,7 +11,6 @@ import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter, SerializedD
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import Ajv from "ajv";
 import customDailyRunSchema from "./schema.json";
 
@@ -68,7 +67,7 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     return;
   }
 
-  const { seed, boss, luck, forcedWaves, trainerManipulations, challenges, mysteryEncounters } =
+  const { seed, boss, luck, forcedWaves, trainerManipulations, challenges, mysteryEncounters, forcedBiomes } =
     globalScene.gameMode.dailyConfig;
   return {
     seed,
@@ -78,6 +77,7 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     trainerManipulations,
     challenges,
     mysteryEncounters,
+    forcedBiomes,
   } satisfies SerializedDailyRunConfig;
 }
 
@@ -103,7 +103,7 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
   }
 
   if (config.formIndex != null) {
-    const speciesForm = getPokemonSpeciesForm(config.speciesId, config.formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(config.speciesId, config.formIndex);
     config.formIndex = speciesForm.formIndex;
   }
 
@@ -135,6 +135,19 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
     config.passive = undefined;
   }
 
+  if (config.gender != null && !getEnumValues(Gender).includes(config.gender)) {
+    console.warn("Invalid gender used for custom daily run seed starter:", config.gender);
+    config.gender = undefined;
+  }
+
+  if (
+    config.ivs != null
+    && (!Array.isArray(config.ivs) || config.ivs.length !== 6 || !config.ivs.every(iv => isBetween(iv, 0, 31)))
+  ) {
+    console.warn("Invalid IVs used for custom daily run seed starter:", config.ivs);
+    config.ivs = undefined;
+  }
+
   return config;
 }
 
@@ -151,7 +164,7 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
   }
 
   if (config.formIndex != null) {
-    const speciesForm = getPokemonSpeciesForm(config.speciesId, config.formIndex);
+    const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(config.speciesId, config.formIndex);
     config.formIndex = speciesForm.formIndex;
   }
 
@@ -199,6 +212,14 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
     config.segments = undefined;
   }
 
+  if (
+    config.ivs != null
+    && (!Array.isArray(config.ivs) || config.ivs.length !== 6 || !config.ivs.every(iv => isBetween(iv, 0, 31)))
+  ) {
+    console.warn("Invalid IVs used for custom daily run seed boss:", config.ivs);
+    config.ivs = undefined;
+  }
+
   return config;
 }
 
@@ -214,12 +235,12 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,
-    undefined,
+    config?.abilityIndex,
     config?.formIndex,
-    undefined,
+    config?.gender,
     isShiny,
     config?.variant,
-    undefined,
+    config?.ivs,
     config?.nature,
   );
 

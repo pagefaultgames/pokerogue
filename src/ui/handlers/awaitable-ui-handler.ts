@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
-import type { UiMode } from "#enums/ui-mode";
 import type { AnyFn } from "#types/type-helpers";
 import { UiHandler } from "#ui/ui-handler";
 
@@ -12,10 +11,6 @@ export abstract class AwaitableUiHandler extends UiHandler {
   protected onActionInput: AnyFn<any> | null;
   public tutorialActive = false;
   public tutorialOverlay: Phaser.GameObjects.Rectangle;
-
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-  }
 
   processTutorialInput(button: Button): boolean {
     if ((button === Button.ACTION || button === Button.CANCEL) && this.onActionInput) {
@@ -40,8 +35,8 @@ export abstract class AwaitableUiHandler extends UiHandler {
         globalScene,
         -1,
         -1,
-        globalScene.scaledCanvas.width,
-        globalScene.scaledCanvas.height,
+        globalScene.scaledCanvas.width + 2,
+        globalScene.scaledCanvas.height + 2,
         0x070707,
       );
       this.tutorialOverlay.setName("tutorial-overlay");

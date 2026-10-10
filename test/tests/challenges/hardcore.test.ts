@@ -77,7 +77,7 @@ describe("Challenges - Hardcore", () => {
     await game.doKillOpponents();
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-    expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(game.scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;

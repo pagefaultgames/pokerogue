@@ -3,7 +3,7 @@
 # SPDX-FileContributor: domagoj03
 #
 # SPDX-License-Identifier: AGPL-3.0-only
-ARG NODE_VERSION=22.14
+ARG NODE_VERSION=24.9
 ARG OS=alpine
 
 FROM node:${NODE_VERSION}-${OS}
@@ -18,7 +18,7 @@ RUN apk add --no-cache git
 WORKDIR /app
 
 # Enable and prepare pnpm
-RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
 COPY . .
 

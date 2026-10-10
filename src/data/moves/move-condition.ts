@@ -28,7 +28,7 @@ import i18next from "i18next";
  * use a {@linkcode MoveRestriction} instead.
  */
 export class MoveCondition {
-  public declare readonly func: MoveConditionFunc;
+  declare public readonly func: MoveConditionFunc;
 
   /**
    * @param func - A condition function that determines if the move can be used successfully
@@ -52,7 +52,7 @@ export class MoveCondition {
  */
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super(user => user.tempSummonData.waveTurnCount === 1);
+    super(user => user.summonData.waveTurnCount === 1);
   }
 
   // TODO: Update AI move selection logic to not require this method (and this class) at all

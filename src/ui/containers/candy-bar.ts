@@ -1,10 +1,10 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { getStarterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { getStarterColors } from "#utils/pokemon-utils";
 
 export class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;

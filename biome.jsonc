@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -15,18 +15,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": [
-      "**",
-      "!src/data/balance/**",
-      "src/data/balance/species/**",
-      "src/data/balance/moves/forbidden-moves.ts",
-      "src/data/balance/moves/off-stat-denylist.ts",
-      "src/data/balance/moves/signature-moves.ts",
-      "src/data/balance/moves/superceded-moves.ts",
-      "src/data/balance/biomes/**",
-      "src/data/balance/timed-events.ts",
-      "src/data/balance/tm-pool-tiers.ts"
-    ], // TODO: enable formatting of balance folder
+    "includes": ["**"],
     "lineWidth": 120
   },
   "files": {
@@ -243,7 +232,8 @@
           }
         },
         "noMultiAssign": "error",
-        "noMultilineString": "error"
+        "noMultilineString": "error",
+        "noNestedTernary": "warn" // TODO: fix existing instances and make "error"
       },
       "suspicious": {
         "noExtraNonNullAssertion": "error",
@@ -412,6 +402,12 @@
             }
           }
         }
+      }
+    },
+    {
+      "includes": ["src/data/balance/moves/egg-moves.ts"],
+      "formatter": {
+        "lineWidth": 150
       }
     }
   ]

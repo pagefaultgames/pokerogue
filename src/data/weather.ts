@@ -1,7 +1,8 @@
-import type { PreAttackWeatherOverrideAbAttr, SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
+import type { PreAttackWeatherOverrideAbAttr } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { CommonAnim } from "#enums/move-anims-common";
 import { PokemonType } from "#enums/pokemon-type";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
@@ -15,12 +16,11 @@ export interface SerializedWeather {
 }
 
 export class Weather {
-  // TODO: Exclude `WeatherType.NONE` from this (which indicates a lack of weather)
-  public weatherType: WeatherType;
+  public readonly weatherType: Exclude<WeatherType, WeatherType.NONE>;
   public turnsLeft: number;
-  public maxDuration: number;
+  public readonly maxDuration: number;
 
-  constructor(weatherType: WeatherType, turnsLeft = 0, maxDuration: number = turnsLeft) {
+  constructor(weatherType: Exclude<WeatherType, WeatherType.NONE>, turnsLeft = 0, maxDuration: number = turnsLeft) {
     this.weatherType = weatherType;
     this.turnsLeft = this.isImmutable() ? 0 : turnsLeft;
     this.maxDuration = this.isImmutable() ? 0 : maxDuration;
@@ -86,31 +86,9 @@ export class Weather {
 
     return false;
   }
-
-  isEffectSuppressed(): boolean {
-    const field = globalScene.getField(true);
-
-    for (const pokemon of field) {
-      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null = pokemon
-        .getAbility()
-        .getAttrs("SuppressWeatherEffectAbAttr")[0];
-      if (!suppressWeatherEffectAbAttr) {
-        suppressWeatherEffectAbAttr = pokemon.hasPassive()
-          ? pokemon.getPassiveAbility().getAttrs("SuppressWeatherEffectAbAttr")[0]
-          : null;
-      }
-      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
 }
 
-// TODO: These functions should not be able to accept `WeatherType.NONE`
-// and should have `null` removed from the signature
-export function getWeatherStartMessage(weatherType: WeatherType): string | null {
+export function getWeatherStartMessage(weatherType: Exclude<WeatherType, WeatherType.NONE>): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
       return i18next.t("weather:sunnyStartMessage");
@@ -131,11 +109,9 @@ export function getWeatherStartMessage(weatherType: WeatherType): string | null 
     case WeatherType.STRONG_WINDS:
       return i18next.t("weather:strongWindsStartMessage");
   }
-
-  return null;
 }
 
-export function getWeatherLapseMessage(weatherType: WeatherType): string | null {
+export function getWeatherLapseMessage(weatherType: Exclude<WeatherType, WeatherType.NONE>): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
       return i18next.t("weather:sunnyLapseMessage");
@@ -156,11 +132,9 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string | null 
     case WeatherType.STRONG_WINDS:
       return i18next.t("weather:strongWindsLapseMessage");
   }
-
-  return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
+export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
   switch (weatherType) {
     case WeatherType.SANDSTORM:
       return i18next.t("weather:sandstormDamageMessage", {
@@ -172,10 +146,10 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
       });
   }
 
-  return null;
+  return "";
 }
 
-export function getWeatherClearMessage(weatherType: WeatherType): string | null {
+export function getWeatherClearMessage(weatherType: Exclude<WeatherType, WeatherType.NONE>): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
       return i18next.t("weather:sunnyClearMessage");
@@ -196,11 +170,9 @@ export function getWeatherClearMessage(weatherType: WeatherType): string | null 
     case WeatherType.STRONG_WINDS:
       return i18next.t("weather:strongWindsClearMessage");
   }
-
-  return null;
 }
 
-export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): string | null {
+export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.HARSH_SUN:
       return i18next.t("weather:harshSunContinueMessage");
@@ -209,7 +181,8 @@ export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): s
     case WeatherType.STRONG_WINDS:
       return i18next.t("weather:strongWindsContinueMessage");
   }
-  return null;
+
+  return "";
 }
 
 export function getWeatherBlockMessage(weatherType: WeatherType): string {
@@ -219,7 +192,26 @@ export function getWeatherBlockMessage(weatherType: WeatherType): string {
     case WeatherType.HEAVY_RAIN:
       return i18next.t("weather:heavyRainEffectMessage");
   }
+
   return i18next.t("weather:defaultEffectMessage");
+}
+
+/**
+ * Determine whether any effects that suppress weather are active;
+ * does not check if there is actually any weather currently active.
+ *
+ * @remarks
+ * Currently, the only source of weather suppression are the abilities Cloud Nine and Air Lock.
+ *
+ * @returns Whether there is any active effect suppressing weather.
+ */
+export function isWeatherSuppressed(): boolean {
+  for (const pokemon of globalScene.getField(true)) {
+    if (pokemon.hasAbilityWithAttr("SuppressWeatherEffectAbAttr")) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -243,9 +235,10 @@ export function getEffectiveWeatherForMove(user: Pokemon): WeatherType {
   }
 
   const weather = globalScene.arena.weather;
-  if (!weather || weather.isEffectSuppressed()) {
+  if (!weather || isWeatherSuppressed()) {
     return WeatherType.NONE;
   }
+
   return weather.weatherType;
 }
 
@@ -288,4 +281,13 @@ export function getWeatherMultiplierForMove(user: Pokemon, move: Move): number {
   }
 
   return 1;
+}
+
+/**
+ * Gets the animation associated with the given weather type
+ * @param weatherType - The {@linkcode WeatherType} to get the animiation for
+ * @returns The {@linkcode CommonAnim} for the given weather
+ */
+export function getWeatherAnim(weatherType: WeatherType): CommonAnim {
+  return (CommonAnim.SUNNY + (weatherType - 1)) as CommonAnim;
 }

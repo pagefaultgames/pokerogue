@@ -191,7 +191,7 @@ describe("Moves - Protect", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);

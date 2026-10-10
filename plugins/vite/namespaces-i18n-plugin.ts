@@ -1,9 +1,10 @@
 import fs from "fs";
 import path from "path";
+import MagicString from "magic-string";
 import { normalizePath, type Plugin as VitePlugin } from "vite";
-import { namespaceMap } from "../../src/i18n-namespace-map";
-import { toCamelCase } from "../../src/utils/strings";
-import { isFileInsideDir, objectSwap } from "./vite-plugin-utils";
+import { namespaceMap } from "../../src/i18n-namespace-map.ts";
+import { toCamelCase } from "../../src/utils/strings.ts";
+import { isFileInsideDir, objectSwap } from "./vite-plugin-utils.ts";
 
 const namespaceMapSwap = objectSwap(namespaceMap);
 
@@ -93,10 +94,14 @@ export function LocaleNamespace(): VitePlugin {
     },
     transform: {
       handler(code, id) {
-        if (id.endsWith("i18n.ts")) {
-          return code.replace("const nsEn = [];", `const nsEn = ${JSON.stringify(namespaces)};`);
+        if (!id.endsWith("i18n.ts")) {
+          return;
         }
-        return code;
+
+        const magicString = new MagicString(code);
+        magicString.replace("const nsEn = [];", `const nsEn = ${JSON.stringify(namespaces)};`);
+        const map = magicString.generateMap({ hires: true });
+        return { code: magicString.toString(), map };
       },
     },
   };

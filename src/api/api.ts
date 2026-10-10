@@ -3,6 +3,7 @@ import { PokerogueAdminApi } from "#api/admin-api";
 import { ApiBase } from "#api/api-base";
 import { PokerogueDailyApi } from "#api/daily-api";
 import { PokerogueSavedataApi } from "#api/savedata-api";
+import { bypassLogin } from "#constants/app-constants";
 import type { TitleStatsResponse } from "#types/api";
 
 /** A wrapper for PokéRogue API requests. */
@@ -23,6 +24,9 @@ export class PokerogueApi extends ApiBase {
 
   /** Request game title stats. */
   public async getGameTitleStats(): Promise<TitleStatsResponse | null> {
+    if (bypassLogin) {
+      return null;
+    }
     try {
       const response = await this.doGet("/game/titlestats");
       return (await response.json()) as TitleStatsResponse;

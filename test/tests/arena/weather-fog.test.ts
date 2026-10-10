@@ -40,4 +40,26 @@ describe("Weather - Fog", () => {
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 0.9);
   });
+
+  it.each<{ name: string; ability: AbilityId; side: "player" | "enemy" }>([
+    { name: "Cloud Nine", ability: AbilityId.CLOUD_NINE, side: "player" },
+    { name: "Cloud Nine", ability: AbilityId.CLOUD_NINE, side: "enemy" },
+    { name: "Air Lock", ability: AbilityId.AIR_LOCK, side: "player" },
+    { name: "Air Lock", ability: AbilityId.AIR_LOCK, side: "enemy" },
+  ])("move accuracy is not reduced when $name on the $side side suppresses the weather", async ({ ability, side }) => {
+    if (side === "player") {
+      game.override.ability(ability);
+    } else {
+      game.override.enemyAbility(ability);
+    }
+    const moveToCheck = allMoves[MoveId.TACKLE];
+
+    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
+
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+    game.move.select(MoveId.TACKLE);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
+  });
 });
