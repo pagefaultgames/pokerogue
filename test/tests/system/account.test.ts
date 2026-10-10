@@ -25,6 +25,7 @@ describe("account", () => {
           discordId: "",
           googleId: "",
           hasAdminRole: false,
+          resetCode: "abcdefgh",
         },
         200,
       ]);
