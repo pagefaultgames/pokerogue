@@ -19,9 +19,9 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     // Gym Leaders- Kanto
     BROCK: [SpeciesId.ONIX, SpeciesId.GEODUDE, [SpeciesId.OMANYTE, SpeciesId.KABUTO], SpeciesId.AERODACTYL],
     MISTY: [SpeciesId.STARYU, SpeciesId.PSYDUCK, SpeciesId.WOOPER, SpeciesId.LAPRAS],
-    LT_SURGE: [SpeciesId.RAICHU, SpeciesId.VOLTORB, SpeciesId.ELEKID, SpeciesId.JOLTEON],
+    LT_SURGE: [SpeciesId.RAICHU, SpeciesId.VOLTORB, SpeciesId.ELEKID, SpeciesId.JOLTEON], // Ensures Kanto Raichu
     ERIKA: [SpeciesId.ODDISH, SpeciesId.BELLSPROUT, SpeciesId.HOPPIP, SpeciesId.TANGELA],
-    JANINE: [SpeciesId.SPINARAK, SpeciesId.ZUBAT, SpeciesId.KOFFING, SpeciesId.EKANS],
+    JANINE: [SpeciesId.VENONAT, SpeciesId.ZUBAT, SpeciesId.SPINARAK, [SpeciesId.WEEZING, SpeciesId.EKANS]], // Ensures Kanto Weezing
     SABRINA: [SpeciesId.ABRA, SpeciesId.MR_MIME, SpeciesId.SMOOCHUM, SpeciesId.ESPEON],
     BLAINE: [SpeciesId.GROWLITHE, SpeciesId.PONYTA, SpeciesId.MAGBY, SpeciesId.VULPIX],
     GIOVANNI: [SpeciesId.RHYHORN, SpeciesId.MEOWTH, [SpeciesId.NIDORAN_F, SpeciesId.NIDORAN_M], SpeciesId.DIGLETT], // Tera Ground Meowth
@@ -75,7 +75,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy(
     CLEMONT: [SpeciesId.HELIOPTILE, SpeciesId.MAGNEMITE, SpeciesId.DEDENNE, SpeciesId.ROTOM],
     VALERIE: [SpeciesId.SYLVEON, SpeciesId.MAWILE, SpeciesId.MR_MIME, [SpeciesId.SPRITZEE, SpeciesId.SWIRLIX]],
     OLYMPIA: [SpeciesId.ESPURR, SpeciesId.SIGILYPH, SpeciesId.INKAY, SpeciesId.SLOWKING],
-    WULFRIC: [SpeciesId.AVALUGG, SpeciesId.SNOVER, SpeciesId.CRYOGONAL, SpeciesId.SWINUB],
+    WULFRIC: [SpeciesId.AVALUGG, SpeciesId.SNOVER, SpeciesId.CRYOGONAL, SpeciesId.SWINUB], // Ensures Kalos Avalugg
     // Gym Leaders- Galar
     MILO: [SpeciesId.GOSSIFLEUR, SpeciesId.SEEDOT, SpeciesId.APPLIN, SpeciesId.LOTAD],
     NESSA: [SpeciesId.CHEWTLE, SpeciesId.WIMPOD, SpeciesId.ARROKUDA, SpeciesId.MAREANIE],
