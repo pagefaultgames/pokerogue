@@ -2074,6 +2074,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param useIllusion - (Default `false`) Whether to consider an active illusion
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
+   * @param forMoveGen - (Default `false`) Whether the typing is being requested for move generation purposes
    * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes({
@@ -2082,18 +2083,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     bypassSummonData = false,
     useIllusion = false,
     ignoreThirdType = false,
+    forMoveGen = false,
   }: {
     includeTeraType?: boolean;
     returnOriginalTypesIfStellar?: boolean;
     bypassSummonData?: boolean;
     useIllusion?: boolean;
     ignoreThirdType?: boolean;
+    forMoveGen?: boolean;
   } = {}): Writable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+    if (includeTeraType && (this.isTerastallized || forMoveGen) && shouldUseTeraStellar) {
       return [teraType];
     }
 
