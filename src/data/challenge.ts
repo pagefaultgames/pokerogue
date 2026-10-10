@@ -579,7 +579,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.GENERAL;
   }
 
   constructor() {
@@ -891,7 +891,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.GENERAL;
   }
 
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
@@ -973,7 +973,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.CHALLENGE;
+    return ChallengeCategory.GENERAL;
   }
 
   constructor() {
@@ -1134,7 +1134,7 @@ export class FlipStatChallenge extends Challenge {
 /** Lowers the amount of starter points available. */
 export class LowerStarterMaxCostChallenge extends Challenge {
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.CHALLENGE;
+    return ChallengeCategory.UNUSED;
   }
 
   constructor() {
@@ -1157,7 +1157,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
 /** Lowers the maximum cost of starters available. */
 export class LowerStarterPointsChallenge extends Challenge {
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.CHALLENGE;
+    return ChallengeCategory.UNUSED;
   }
 
   constructor() {
@@ -1190,7 +1190,7 @@ export class LimitedSupportChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.NUZLOCKE;
+    return ChallengeCategory.GENERAL;
   }
 
   constructor() {
@@ -1221,7 +1221,7 @@ export class LimitedCatchChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.NUZLOCKE;
+    return ChallengeCategory.GENERAL;
   }
 
   constructor() {
@@ -1249,7 +1249,7 @@ export class HardcoreChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.NUZLOCKE;
+    return ChallengeCategory.GENERAL;
   }
 
   constructor() {
