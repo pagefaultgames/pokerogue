@@ -27,9 +27,28 @@
           "ability": {
             "$ref": "#/$defs/ability"
           },
+          "abilityIndex": {
+            "$ref": "#/$defs/abilityIndex"
+          },
           "passive": {
             "$ref": "#/$defs/passive"
+          },
+          "gender": {
+            "type": "integer",
+            "minimum": -1,
+            "maximum": 1
+          },
+          "ivs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/iv"
+            },
+            "minItems": 6,
+            "maxItems": 6
           }
+        },
+        "not": {
+          "required": ["ability", "abilityIndex"]
         },
         "required": ["speciesId"],
         "additionalProperties": false
@@ -61,6 +80,14 @@
         },
         "passive": {
           "$ref": "#/$defs/passive"
+        },
+        "ivs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/iv"
+          },
+          "minItems": 6,
+          "maxItems": 6
         },
         "segments": {
           "type": "integer",
@@ -110,6 +137,12 @@
         "$ref": "#/$defs/mysteryEncounter"
       }
     },
+    "forcedBiomes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/forcedBiome"
+      }
+    },
     "seed": {
       "type": "string"
     },
@@ -138,9 +171,19 @@
       "type": "integer",
       "exclusiveMinimum": 0
     },
+    "abilityIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2
+    },
     "passive": {
       "type": "integer",
       "exclusiveMinimum": 0
+    },
+    "iv": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 31
     },
     "moveset": {
       "type": "array",
@@ -231,6 +274,42 @@
         }
       },
       "required": ["waveIndex", "type"],
+      "additionalProperties": false
+    },
+    "forcedBiome": {
+      "type": "object",
+      "properties": {
+        "waveIndex": {
+          "type": "integer",
+          "enum": [10, 20, 30, 40]
+        },
+        "biomeId": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1
+        },
+        "allMapOptions": {
+          "type": "boolean"
+        }
+      },
+      "required": ["waveIndex"],
+      "oneOf": [
+        {
+          "required": ["biomeId"],
+          "not": {
+            "required": ["allMapOptions"]
+          }
+        },
+        {
+          "required": ["allMapOptions"],
+          "not": {
+            "required": ["biomeId"]
+          }
+        }
+      ],
       "additionalProperties": false
     }
   },
