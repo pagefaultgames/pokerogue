@@ -4242,8 +4242,12 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getRandomPartyMemberFunc([SpeciesId.DHELMISE], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        // Check if Anchor Shot or a damaging Steel move is in the moveset, if not, replace the third move with Anchor Shot.
-        p.addIfNotInMoveset(MoveId.ANCHOR_SHOT, 2, m => m.type === PokemonType.STEEL && m.power > 1);
+        // Check if Anchor Shot or a physical Steel move is in the moveset, if not, replace the third move with Anchor Shot.
+        p.addIfNotInMoveset(
+          MoveId.ANCHOR_SHOT,
+          2,
+          m => m.type === PokemonType.STEEL && m.category === MoveCategory.PHYSICAL,
+        );
       }),
     )
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.FROSLASS]))
@@ -5343,7 +5347,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.RILLABOOM, SpeciesId.CINDERACE, SpeciesId.INTELEON]))
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.ZACIAN], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.ZACIAN, SpeciesId.ZAMAZENTA], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
       }),
@@ -5909,8 +5913,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        // Check if Heat Crash or a damaging Fire move is in the moveset, if not, replace the third move with Heat Crash.
-        p.addIfNotInMoveset(MoveId.HEAT_CRASH, 2, m => m.type === PokemonType.FIRE && m.power > 1);
+        // Check if Fire Punch or a damaging Fire move is in the moveset, if not, replace the third move with Fire Punch.
+        p.addIfNotInMoveset(MoveId.FIRE_PUNCH, 2, m => m.type === PokemonType.FIRE && m.power > 1);
       }),
     ),
   [TrainerType.ARCHIE]: new TrainerConfig(++t)
