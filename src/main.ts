@@ -73,6 +73,15 @@ async function startGame(): Promise<void> {
     version,
   });
   game.sound.pauseOnBlur = isMobile();
+  // Install audio debug tools
+  if (isBeta || isDev) {
+    try {
+      const { installAudioDebug } = await import("#audio/audio-debug");
+      installAudioDebug(game);
+    } catch (err) {
+      console.warn("Failed to load audio debug tools:", err);
+    }
+  }
 }
 
 try {
