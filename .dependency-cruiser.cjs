@@ -52,7 +52,11 @@ module.exports = {
       comment: "Files in 'enums/' and '@types/' must only use type imports.",
       from: {
         path: ["(^|/)src/@types", "(^|/)src/enums", "(^|/)test/@types"],
-        pathNot: ["(^|/)src/@types/phaser[.]d[.]ts", "(^|/)test/@types/vitest[.]d[.]ts"],
+        pathNot: [
+          "(^|/)src/@types/phaser[.]d[.]ts",
+          "(^|/)test/@types/vitest[.]d[.]ts",
+          "(^|/)src/enums/held-item-id.ts",
+        ],
       },
       to: {
         dependencyTypesNot: ["type-only"],
