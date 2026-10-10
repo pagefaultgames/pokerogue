@@ -99,12 +99,7 @@
         "./src/ui/*.ts"
       ],
       "#utils/*": ["./src/utils/*.ts"],
-      "#data/*": [
-        "./src/data/daily-seed/*.ts",
-        "./src/data/pokemon-forms/*.ts",
-        "./src/data/pokemon/*.ts",
-        "./src/data/*.ts"
-      ],
+      "#data/*": ["./src/data/daily-seed/*.ts", "./src/data/*.ts"],
 
       // these must always be last
       "#test/*": ["./test/*.ts"],

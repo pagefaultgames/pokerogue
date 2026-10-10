@@ -98,7 +98,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayCursorObj.setPosition(5 + (cursor % this.maxColumns) * 18, 4 + Math.floor(cursor / this.maxColumns) * 17);
 
-    const ribbonDescription = i18next.t(`ribbons:${getRibbonKey(this.ribbons[cursor])}`);
+    const ribbonDescription = i18next.t(`ribbons:achieved.${getRibbonKey(this.ribbons[cursor])}`);
 
     this.handler.showText(ribbonDescription);
 

@@ -490,7 +490,8 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     console.log(ret.getName());
 
-    if (speciesDataRegistry.hasPrevolution(baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
+    // Retry if an evolved mon was rolled but it wouldn't be evolved at this point
+    if (speciesDataRegistry.getPrevolutionChain(baseSpecies.speciesId).includes(ret.speciesId)) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes());
@@ -502,25 +503,8 @@ export class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    // Prompts reroll of party member species if doesn't fit specialty type.
-    // Can be removed by adding a type parameter to getTrainerSpeciesForLevel and filtering the list of evolutions for that type.
-    if (!retry && this.config.hasSpecialtyType() && !ret.isOfType(this.config.specialtyType)) {
-      retry = true;
-      console.log("Attempting reroll of species evolution to fit specialty type...");
-      let evoAttempt = 0;
-      while (retry && evoAttempt++ < 10) {
-        ret = speciesDataRegistry.getSpecies(
-          baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
-        );
-        console.log(ret.name);
-        if (ret.isOfType(this.config.specialtyType)) {
-          retry = false;
-        }
-      }
-    }
-
     // Prompts reroll of party member species if species already present in the enemy party
-    if (this.checkDuplicateSpecies(baseSpecies.speciesId)) {
+    if (this.checkDuplicateSpecies(ret.speciesId)) {
       console.log("Duplicate species detected, prompting reroll...");
       retry = true;
     }
