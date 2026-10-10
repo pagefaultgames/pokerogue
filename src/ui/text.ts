@@ -213,11 +213,6 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.GROWTH_RATE_TYPE: {
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { left: 24 };
-          break;
-      }
       styleOptions.fontSize = defaultFontSize - 30;
       shadowXpos = 3;
       shadowYpos = 3;
@@ -289,11 +284,12 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
         case "id":
+        case "ru":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
         default:
-          fontSizeValue = "96px";
+          fontSizeValue = "92px";
           break;
       }
       styleOptions.fontSize = fontSizeValue;
