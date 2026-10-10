@@ -442,11 +442,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       text += `  (${info.duration}/${info.maxDuration})`;
     }
 
-    text += "\n";
     // Cast is OK here as the info types that don't have a `suppressed` property will simply have it as `undefined`
     if ((info as WeatherInfo).suppressed) {
-      text = "[s]" + text + "[/s]";
+      text = "[color=#808080][s=#808080]" + text + "[/s][/color]";
     }
+    text += "\n";
     return text;
   }
 
