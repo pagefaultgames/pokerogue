@@ -184,7 +184,7 @@ import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import SoundFade from "phaser4-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
@@ -298,9 +298,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** The position of this Pokémon on the field */
   public fieldPosition: FieldPosition;
-
-  public maskEnabled: boolean;
-  public maskSprite: Phaser.GameObjects.Sprite | null;
 
   /**
    * The set of all TMs that have been used on this Pokémon
@@ -525,12 +522,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         true,
       );
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        teraColor: getTypeRgb(this.getTeraType()),
-        isTerastallized: this.isTerastallized,
-      });
+      ret
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          teraColor: getTypeRgb(this.getTeraType()),
+          isTerastallized: this.isTerastallized,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
@@ -1151,7 +1150,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite | null {
-    return this.maskEnabled ? this.maskSprite : (this.getAt(1) as Phaser.GameObjects.Sprite);
+    return this.getAt(1) as Phaser.GameObjects.Sprite;
   }
 
   getSpriteScale(): number {
@@ -1205,13 +1204,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  async updateSpritePipelineData(): Promise<void> {
-    [this.getSprite(), this.getTintSprite()]
-      .filter(s => !!s)
-      .forEach(s => {
-        s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
-        s.pipelineData["isTerastallized"] = this.isTerastallized;
-      });
+  async updateRenderNodeData(): Promise<void> {
+    [this.getSprite(), this.getTintSprite()].forEach(s => {
+      s?.setRenderNodeData(globalScene.spriteSubmitter, "teraColor", getTypeRgb(this.getTeraType()));
+      s?.setRenderNodeData(globalScene.spriteSubmitter, "isTerastallized", this.isTerastallized);
+    });
     await this.updateInfo(true);
   }
 
@@ -3326,12 +3323,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
       this.battleInfo.setVisible(true);
-      if (this.isPlayer()) {
-        // TODO: How do you get this to not require a private property access?
-        this["battleInfo"].expMaskRect.x += 150;
-      }
       globalScene.tweens.add({
-        targets: [this.battleInfo, this.battleInfo.expMaskRect],
+        targets: this.battleInfo,
         x: this.isPlayer() ? "-=150" : `+=${this.isBoss() ? 246 : 150}`,
         duration: 1000,
         ease: "Cubic.easeOut",
@@ -3344,15 +3337,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return new Promise(resolve => {
       if (this.battleInfo?.visible) {
         globalScene.tweens.add({
-          targets: [this.battleInfo, this.battleInfo.expMaskRect],
+          targets: this.battleInfo,
           x: this.isPlayer() ? "+=150" : `-=${this.isBoss() ? 246 : 150}`,
           duration: 500,
           ease: "Cubic.easeIn",
           onComplete: () => {
-            if (this.isPlayer()) {
-              // TODO: How do you get this to not require a private property access?
-              this["battleInfo"].expMaskRect.x -= 150;
-            }
             this.battleInfo.setVisible(false);
             this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
             resolve();
@@ -5367,14 +5356,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * terastallized to no longer terastallized:
    * - Resetting stellar type boosts
    * - Updating the Pokémon's terastallization-dependent form
-   * - Adjusting the sprite pipeline to remove the Tera effect
+   * - Adjusting the sprite render node data to remove the Tera effect
    */
   resetTera(): void {
     const wasTerastallized = this.isTerastallized;
     this.isTerastallized = false;
     this.stellarTypesBoosted = [];
     if (wasTerastallized) {
-      this.updateSpritePipelineData();
+      this.updateRenderNodeData();
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
     }
   }
@@ -5426,8 +5415,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string) {
     const tintSprite = this.getTintSprite();
-    tintSprite?.setTintFill(color);
-    tintSprite?.setVisible(true);
+    tintSprite?.setTint(color).setTintMode(Phaser.TintModes.FILL).setVisible(true);
 
     if (duration) {
       tintSprite?.setAlpha(0);
@@ -5463,29 +5451,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  enableMask() {
-    if (!this.maskEnabled) {
-      this.maskSprite = this.getTintSprite();
-      this.maskSprite?.setVisible(true);
-      this.maskSprite?.setPosition(
-        this.x * this.parentContainer.scale + this.parentContainer.x,
-        this.y * this.parentContainer.scale + this.parentContainer.y,
-      );
-      this.maskSprite?.setScale(this.getSpriteScale() * this.parentContainer.scale);
-      this.maskEnabled = true;
-    }
-  }
-
-  disableMask() {
-    if (this.maskEnabled) {
-      this.maskSprite?.setVisible(false);
-      this.maskSprite?.setPosition(0, 0);
-      this.maskSprite?.setScale(this.getSpriteScale());
-      this.maskSprite = null;
-      this.maskEnabled = false;
-    }
-  }
-
   /** Play the shiny sparkle animation and effects, if applicable */
   sparkle(): void {
     if (this.shinySparkle) {
@@ -5497,9 +5462,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.getFusionSpeciesForm(ignoreOverride)) {
       [this.getSprite(), this.getTintSprite()]
         .filter(s => !!s)
-        .map(s => {
-          s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
-          s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
+        .forEach(s => {
+          s.renderNodeData[globalScene.spriteSubmitter.name][
+            `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`
+          ] = [];
+          s.renderNodeData[globalScene.spriteSubmitter.name][
+            `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`
+          ] = [];
         });
       return;
     }
@@ -5809,9 +5778,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
       .forEach(s => {
-        s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = spriteColors;
-        s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] =
-          fusionSpriteColors;
+        s.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+          spriteColors,
+        );
+        s.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+          fusionSpriteColors,
+        );
       });
 
     canvas.remove();

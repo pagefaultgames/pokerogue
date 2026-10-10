@@ -111,23 +111,27 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
 
     const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const ret = globalScene.addFieldSprite(0, 0, spriteKey);
-      ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        yShadowOffset: yShadow ?? 0,
-      });
+      ret
+        .setOrigin(0.5, 1) //
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          yShadowOffset: yShadow ?? 0,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
     const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const icon = globalScene.add.sprite(-19, 2, "items", spriteKey);
-      icon.setOrigin(0.5, 1);
-      icon.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        yShadowOffset: yShadow ?? 0,
-      });
+      icon
+        .setOrigin(0.5, 1) //
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          yShadowOffset: yShadow ?? 0,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return icon;
     };
 
@@ -155,13 +159,15 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         sprite = getSprite(spriteKey, hasShadow, yShadow);
         tintSprite = getSprite(spriteKey);
         if (isPokemon && isShiny) {
-          // Set Pipeline for shiny variant
-          sprite.setPipelineData("spriteKey", spriteKey);
-          tintSprite.setPipelineData("spriteKey", spriteKey);
-          sprite.setPipelineData("shiny", true);
-          sprite.setPipelineData("variant", variant);
-          tintSprite.setPipelineData("shiny", true);
-          tintSprite.setPipelineData("variant", variant);
+          // Set render node data for shiny variant
+          sprite
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", true)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant);
+          tintSprite
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", true)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant);
           // Create Sprite for shiny Sparkle
           pokemonShinySparkle = globalScene.add.sprite(sprite.x, sprite.y, "shiny");
           pokemonShinySparkle.setOrigin(0.5, 1);
@@ -445,7 +451,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
    */
   private tint(sprite, color: number, alpha?: number, duration?: number, ease?: string): void {
     // const tintSprites = this.getTintSprites();
-    sprite.setTintFill(color);
+    sprite.setTint(color).setTintMode(Phaser.TintModes.FILL);
     sprite.setVisible(true);
 
     if (duration) {

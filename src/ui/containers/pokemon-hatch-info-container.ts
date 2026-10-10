@@ -44,10 +44,11 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.currentPokemonSprite = globalScene.add
       .sprite(54, 80, "pkmn__sub")
       .setScale(0.8)
-      .setPipeline(globalScene.spritePipeline, {
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         ignoreTimeTint: true,
-      });
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
     // setup name and number
     this.pokemonNumberText = addTextObject(84, 107, "0000", TextStyle.EGG_SUMMARY_DEX, { fontSize: 78 }) //
@@ -137,11 +138,16 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.currentPokemonSprite.setVisible(false);
     species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
       speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry();
-      this.currentPokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-      this.currentPokemonSprite.setPipelineData("shiny", shiny);
-      this.currentPokemonSprite.setPipelineData("variant", variant);
-      this.currentPokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-      this.currentPokemonSprite.setVisible(true);
+      this.currentPokemonSprite
+        .play(species.getSpriteKey(female, formIndex, shiny, variant))
+        .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
+        .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
+        .setRenderNodeData(
+          globalScene.spriteSubmitter,
+          "spriteKey",
+          species.getSpriteKey(female, formIndex, shiny, variant),
+        )
+        .setVisible(true);
     });
   }
 

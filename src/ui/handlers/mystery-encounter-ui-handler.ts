@@ -14,8 +14,9 @@ import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
+import { addMask } from "#utils/mask-utils";
 import i18next from "i18next";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -429,14 +430,16 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
       // Sets up the mask that hides the option text to give an illusion of scrolling
       const nonScrollWidth = 90;
-      const optionTextMaskRect = globalScene.make.graphics({});
-      optionTextMaskRect.setScale(6);
-      optionTextMaskRect.fillStyle(0xffffff);
-      optionTextMaskRect.beginPath();
-      optionTextMaskRect.fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
-
-      const optionTextMask = optionTextMaskRect.createGeometryMask();
-      optionText.setMask(optionTextMask);
+      // TODO: Replace this mask with a crop on optionText..
+      const optionTextMaskRect = globalScene.make
+        .graphics({})
+        .setScale(6)
+        .fillStyle(0xffffff)
+        .beginPath()
+        .fillRect(optionText.x + 11, optionText.y + 140, nonScrollWidth, 18);
+      addMask(optionText, optionTextMaskRect);
+      // Destroy this once the optionText is destroyed to prevent memory leaks
+      optionText.once(Phaser.GameObjects.Events.DESTROY, () => optionTextMaskRect.destroy());
 
       const optionTextWidth = optionText.displayWidth;
 
@@ -500,15 +503,15 @@ export class MysteryEncounterUiHandler extends UiHandler {
     });
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
-    const descriptionTextMaskRect = globalScene.make.graphics({});
-    descriptionTextMaskRect.setScale(6);
-    descriptionTextMaskRect.fillStyle(0xffffff);
-    descriptionTextMaskRect.beginPath();
-    descriptionTextMaskRect.fillRect(6, 53, 206, 57);
-
-    const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
-
-    descriptionTextObject.setMask(abilityDescriptionTextMask);
+    const descriptionTextMaskRect = globalScene.make
+      .graphics({})
+      .setScale(6)
+      .fillStyle(0xffffff)
+      .beginPath()
+      .fillRect(6, 53, 206, 57);
+    addMask(descriptionTextObject, descriptionTextMaskRect);
+    // Destroy this once the descriptionTextObject is destroyed to prevent memory leaks
+    descriptionTextObject.once(Phaser.GameObjects.Events.DESTROY, () => descriptionTextMaskRect.destroy());
 
     const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
@@ -613,14 +616,15 @@ export class MysteryEncounterUiHandler extends UiHandler {
       this.tooltipContainer.add(tooltipTextObject);
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
-      const tooltipTextMaskRect = globalScene.make.graphics({});
-      tooltipTextMaskRect.setScale(6);
-      tooltipTextMaskRect.fillStyle(0xffffff);
-      tooltipTextMaskRect.beginPath();
-      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
-
-      const textMask = tooltipTextMaskRect.createGeometryMask();
-      tooltipTextObject.setMask(textMask);
+      const tooltipTextMaskRect = globalScene.make
+        .graphics({})
+        .setScale(6)
+        .fillStyle(0xffffff)
+        .beginPath()
+        .fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
+      addMask(tooltipTextObject, tooltipTextMaskRect);
+      // Destroy this once the tooltipTextObject is destroyed to prevent memory leaks
+      tooltipTextObject.once(Phaser.GameObjects.Events.DESTROY, () => tooltipTextMaskRect.destroy());
 
       const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
 

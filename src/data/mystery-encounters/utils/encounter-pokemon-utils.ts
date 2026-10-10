@@ -532,7 +532,7 @@ export function trainerThrowPokeball(
 
                       const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
                       pbTint.setOrigin(pokeball.originX, pokeball.originY);
-                      pbTint.setTintFill(0);
+                      pbTint.setTint(0).setTintMode(Phaser.TintModes.FILL);
                       pbTint.setAlpha(0);
                       globalScene.field.add(pbTint);
                       globalScene.tweens.add({

@@ -1,4 +1,8 @@
-import "phaser";
+// biome-ignore lint/performance/noNamespaceImport: This is what phaser recommends (https://phaser.io/news/2026/06/how-to-update-phaser-4-to-the-latest-version-without-breaking-your-project)
+import * as Phaser from "phaser";
+
+// TODO: Remove the use of globalThis in favor of just importing Phaser in modules that need it
+Object.assign(globalThis, { Phaser });
 
 // #region Types
 

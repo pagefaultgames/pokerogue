@@ -8,6 +8,7 @@ import type { Move } from "#moves/move";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
+import { addMask } from "#utils/mask-utils";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {
@@ -108,10 +109,11 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
       DESC_HEIGHT - (BORDER - 2) * 2,
     );
     moveDescriptionTextMaskRect.setScale(6);
-    const moveDescriptionTextMask = this.createGeometryMask(moveDescriptionTextMaskRect);
 
     this.add(this.desc);
-    this.desc.setMask(moveDescriptionTextMask);
+    addMask(this.desc, moveDescriptionTextMaskRect);
+    // Destroy this once the desc is destroyed to prevent memory leaks
+    this.desc.once(Phaser.GameObjects.Events.DESTROY, () => moveDescriptionTextMaskRect.destroy());
 
     // prepare the effect box
     this.val = new Phaser.GameObjects.Container(

@@ -55,8 +55,8 @@
     "i18next-http-backend": "^4.0.2",
     "i18next-korean-postposition-processor": "^1.0.0",
     "jszip": "^3.10.2",
-    "phaser": "^3.90.0",
-    "phaser3-rex-plugins": "^1.80.20"
+    "phaser": "^4.2.1",
+    "phaser4-rex-plugins": "^4.2.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
@@ -76,7 +76,6 @@
     "lefthook": "^2.1.17",
     "magic-string": "^1.4.3",
     "msw": "^2.15.0",
-    "phaser3spectorjs": "^0.0.8",
     "type-fest": "^5.10.0",
     "typedoc": "^0.28.20",
     "typedoc-github-theme": "^0.4.0",
