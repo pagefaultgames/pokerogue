@@ -6091,6 +6091,10 @@ export interface SuppressHeldItemsAbAttrParams extends AbAttrBaseParams {
  * @param itemsSuppressed a boolean holder which is set to `true`
  */
 export class SuppressHeldItemsAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
   override canApply(_params: SuppressHeldItemsAbAttrParams): boolean {
     return true;
   }

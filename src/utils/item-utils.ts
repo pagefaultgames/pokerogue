@@ -17,16 +17,13 @@ import { ValueHolder } from "./value-holder";
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
   const { pokemon } = params;
 
-  // Check whether held items are being suppressed by Embargo or Magic Room.
-  const itemsSuppressed = areItemsSuppressed(pokemon);
-
   for (const itemId of pokemon.heldItemManager.getItems()) {
     const heldItem = allHeldItems[itemId] as HeldItem | CosmeticHeldItem;
-    // Suppressed items are not applied.
-    if (heldItem.isSuppressable && itemsSuppressed) {
-      continue;
-    }
     if ("effects" in heldItem && heldItem.hasEffect(effect)) {
+      // Suppressed items are not applied.
+      if (heldItem.isSuppressable && areItemsSuppressed(pokemon)) {
+        continue;
+      }
       (heldItem satisfies HeldItem).apply(effect, params);
     }
   }
