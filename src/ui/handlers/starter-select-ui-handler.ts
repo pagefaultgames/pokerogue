@@ -3022,6 +3022,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setText(valueStr);
     let textStyle: TextStyle;
     switch (baseStarterValue - starterValue) {
+      case -2:
+      case -1:
+        textStyle = TextStyle.SUMMARY_RED;
+        break;
       case 0:
         textStyle = TextStyle.WINDOW;
         break;
