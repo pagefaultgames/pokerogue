@@ -36,10 +36,8 @@ import { join } from "path";
 import { select } from "@inquirer/prompts";
 import chalk from "chalk";
 
-/**
- * The version of this script
- */
-const SCRIPT_VERSION: string = "1.0.0";
+/** The version of this script */
+const SCRIPT_VERSION: string = "2.1.0";
 
 const rootDir = join(import.meta.dirname, "..", "..");
 
