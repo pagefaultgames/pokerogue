@@ -9,6 +9,7 @@ import { BOSS_OPTIONS } from "#daily-seed/constants";
 import {
   promptAbility,
   promptFormIndex,
+  promptIvs,
   promptMoveset,
   promptNature,
   promptSegments,
@@ -70,6 +71,9 @@ async function promptBossOptions(bossConfig: DailySeedBoss): Promise<DailySeedBo
     case "passive":
       bossConfig.passive = await promptAbility(true);
       break;
+    case "ivs":
+      bossConfig.ivs = await promptIvs();
+      break;
     case "segments":
       bossConfig.segments = await promptSegments();
       break;
@@ -81,6 +85,8 @@ async function promptBossOptions(bossConfig: DailySeedBoss): Promise<DailySeedBo
       break;
     case "finish":
       return bossConfig;
+    default:
+      option satisfies never;
   }
   bossOptions.splice(bossOptions.indexOf(option), 1);
   return await promptBossOptions(bossConfig);
