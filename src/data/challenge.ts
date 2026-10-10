@@ -5,9 +5,10 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
-import { allMoves } from "#data/data-lists";
+import { allAbilities, allMoves } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
+import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
@@ -544,6 +545,26 @@ export abstract class Challenge {
    * @returns Whether this modification was applied
    */
   public applyEggMoveRelearnAvailability(pokemon: Pokemon, isAvailable: ValueHolder<boolean>): boolean {
+    return false;
+  }
+
+  /**
+   * Modifies the innate abilities of a species
+   * @param speciesId - The ID of the species whose abilties are being modified
+   * @param abilityId - A holder for the ability ID
+   * @returns Whether this modification was applied
+   */
+  public applySpeciesAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
+    return false;
+  }
+
+  /**
+   * Modifies the passive ability of a species
+   * @param speciesId - The ID of the species whose passive ability is being modified
+   * @param abilityId - A holder for the ability ID
+   * @returns Whether this modification was applied
+   */
+  public applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
     return false;
   }
 
@@ -1570,6 +1591,144 @@ export class MovesetRandomizerChallenge extends Challenge {
   }
 }
 
+export class AbilityRandomizerChallenge extends Challenge {
+  // Challenge values:
+  // 1 - Randomize abilities
+  // 2 - Randomize abilities and passives
+  // 3 - Randomize abilities and passives, except for innate form-change abilities
+  constructor() {
+    super(Challenges.ABILITY_RANDOMIZER, 3);
+  }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.RANDOMIZER;
+  }
+
+  private static _validAbilityIds: AbilityId[];
+
+  private get validAbilityIds(): AbilityId[] {
+    // it's necessary to do it this way due to the static variable
+    // being initialized before the `allAbilities` array is
+    if (!AbilityRandomizerChallenge._validAbilityIds) {
+      const formChangeAbilities = [
+        AbilityId.DISGUISE, // can be removed if/when it gets changed to work on any Pokemon
+        AbilityId.FORECAST,
+        AbilityId.GULP_MISSILE,
+        AbilityId.HUNGER_SWITCH,
+        AbilityId.ICE_FACE, // can be removed if/when it gets changed to work on any Pokemon
+        AbilityId.MULTITYPE,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.RKS_SYSTEM,
+        AbilityId.SCHOOLING,
+        AbilityId.SHIELDS_DOWN,
+        AbilityId.STANCE_CHANGE,
+        AbilityId.TERA_SHIFT,
+        AbilityId.ZEN_MODE,
+        AbilityId.ZERO_TO_HERO,
+      ];
+      const negativeAbilities = [
+        AbilityId.DEFEATIST,
+        AbilityId.KLUTZ,
+        AbilityId.NORMALIZE,
+        AbilityId.SLOW_START,
+        AbilityId.STALL,
+        AbilityId.TRUANT,
+        AbilityId.WIMP_OUT, // Emergency Exit by itself is okay, Wimp Out is removed to not double up
+      ];
+      const disallowedAbilities = [AbilityId.NONE, AbilityId.COMMANDER, ...formChangeAbilities, ...negativeAbilities];
+      AbilityRandomizerChallenge._validAbilityIds = getEnumValues(AbilityId) //
+        .filter(v => !disallowedAbilities.includes(v) && !allAbilities[v].unimplemented);
+    }
+    return AbilityRandomizerChallenge._validAbilityIds;
+  }
+
+  public override applySpeciesAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>): boolean {
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    if (
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    if (
+      this.value > 2
+      && [
+        AbilityId.SCHOOLING,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.BATTLE_BOND,
+        AbilityId.DISGUISE,
+        AbilityId.ICE_FACE,
+        AbilityId.ZERO_TO_HERO,
+        AbilityId.TERA_SHIFT,
+        AbilityId.TERA_SHELL,
+        AbilityId.TERAFORM_ZERO,
+      ].includes(abilityId.value)
+    ) {
+      return false;
+    }
+
+    const seedOffset = 500 * speciesId + abilityId.value;
+
+    globalScene.executeWithSeedOffset(() => {
+      abilityId.value = randSeedItem(this.validAbilityIds);
+    }, seedOffset);
+
+    return true;
+  }
+
+  public override applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>): boolean {
+    if (this.value < 2) {
+      return false;
+    }
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    if (
+      [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    const seedOffset = 500 * speciesId + abilityId.value;
+
+    globalScene.executeWithSeedOffset(() => {
+      abilityId.value = randSeedItem(this.validAbilityIds);
+    }, seedOffset);
+
+    return true;
+  }
+
+  public override applyStarterCost(speciesId: SpeciesId, cost: ValueHolder<number>): boolean {
+    switch (speciesId) {
+      case SpeciesId.NINCADA:
+        cost.value -= 2; // 4 -> 2
+        return true;
+      case SpeciesId.MEDITITE:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.AZURILL:
+        cost.value -= 1; // 4 -> 3
+        return true;
+      case SpeciesId.DEWPIDER:
+        cost.value -= 1; // 3 -> 2
+        return true;
+      case SpeciesId.ARCHEN:
+        cost.value += 1; // 3 -> 4
+        return true;
+      case SpeciesId.SLAKOTH:
+        cost.value += 2; // 4 -> 6
+        return true;
+      case SpeciesId.REGIGIGAS:
+        cost.value += 1; // 7 -> 8
+        return true;
+    }
+
+    return false;
+  }
+}
+
 /**
  * @param source - A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
  * @returns The challenge in question.
@@ -1602,6 +1761,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return PassivesChallenge.loadChallenge(source);
     case Challenges.MOVESET_RANDOMIZER:
       return MovesetRandomizerChallenge.loadChallenge(source);
+    case Challenges.ABILITY_RANDOMIZER:
+      return AbilityRandomizerChallenge.loadChallenge(source);
     default:
       challengeId satisfies never;
       throw new Error("Unknown challenge copied");
@@ -1624,6 +1785,7 @@ export function initChallenges(): void {
     new HardcoreChallenge(),
     new PassivesChallenge(),
     new MovesetRandomizerChallenge(),
+    new AbilityRandomizerChallenge(),
   );
 }
 
@@ -1640,6 +1802,7 @@ const challengeMap: Record<Challenges, Constructor<Challenge>> = {
   [Challenges.HARDCORE]: HardcoreChallenge,
   [Challenges.PASSIVES]: PassivesChallenge,
   [Challenges.MOVESET_RANDOMIZER]: MovesetRandomizerChallenge,
+  [Challenges.ABILITY_RANDOMIZER]: AbilityRandomizerChallenge,
 };
 
 function getChallenge(challengeId: Challenges): Challenge {
