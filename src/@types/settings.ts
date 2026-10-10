@@ -79,6 +79,7 @@ export interface DisplaySettings {
 }
 
 export interface AudioSettings {
+  enableAudio: boolean;
   bgmVolume: number;
   fieldVolume: number;
   masterVolume: number;
@@ -134,7 +135,7 @@ export type DisplaySettingsKey = keyof DisplaySettings | "language";
 export type AudioSettingsKey = keyof AudioSettings;
 
 /** All keys for changing the volume settings */
-export type VolumeSettingsKey = Exclude<AudioSettingsKey, "musicPreference">;
+export type VolumeSettingsKey = Exclude<AudioSettingsKey, "musicPreference" | "enableAudio">;
 
 /** All keys for the gamepad settings */
 export type GamepadSettingsKey = keyof GamepadSettings;

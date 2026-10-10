@@ -410,6 +410,12 @@ export const displaySettingUiItems: SettingsUiItem<DisplaySettingsKey>[] = [
 /** UI items for audio settings */
 export const audioSettingsUiItems: SettingsUiItem<AudioSettingsKey>[] = [
   {
+    key: "enableAudio",
+    label: t("settings:enableAudio"),
+    options: useOnOffOptions(),
+    requiresReload: true,
+  },
+  {
     key: "masterVolume",
     label: t("settings:masterVolume"),
     options: useVolumeOptions(),

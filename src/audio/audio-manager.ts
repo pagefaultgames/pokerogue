@@ -19,12 +19,14 @@ interface GameVolume {
  * Global manager for audio operations
  */
 export class AudioManager {
+  public readonly isAudioEnabled: boolean;
   private readonly volume: GameVolume;
 
   private currentBgm: BackgroundMusic | null = null;
 
-  constructor(volume: GameVolume) {
+  constructor(volume: GameVolume, isAudioEnabled = true) {
     this.volume = volume;
+    this.isAudioEnabled = isAudioEnabled;
   }
 
   /**
@@ -96,6 +98,10 @@ export class AudioManager {
    */
   // TODO: use object params
   public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true, fadeDuration = 500): BackgroundMusic | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? globalScene.currentBattle?.getBgmOverride() ?? globalScene.arena?.bgm,
     );
@@ -113,7 +119,7 @@ export class AudioManager {
       resolvedName === globalScene.arena?.bgm ? globalScene.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
 
     const previous = this.currentBgm;
-    const newBgm = new BackgroundMusic(resolvedName, loop, loopPoint);
+    const newBgm = new BackgroundMusic(resolvedName, loop, loopPoint, this.isAudioEnabled);
     this.currentBgm = newBgm;
 
     globalScene.ui.bgmBar.setBgmToBgmBar(resolvedName);
@@ -176,8 +182,12 @@ export class AudioManager {
    * @param bgmName - The key for the replacement track
    * @returns The newly-created {@linkcode BackgroundMusic} object
    */
-  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
-    const tempBgm = new BackgroundMusic(bgmName, false);
+  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
+    const tempBgm = new BackgroundMusic(bgmName, false, 0, this.isAudioEnabled);
     tempBgm.onEnd(() => {
       this.currentBgm?.resume();
       tempBgm.destroy();
@@ -199,6 +209,10 @@ export class AudioManager {
     sound: string | AnySound,
     config: Phaser.Types.Sound.SoundConfig | Phaser.Types.Sound.SoundMarker = {},
   ): AnySound | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const key = typeof sound === "string" ? sound : sound.key;
     try {
       const keyDetails = key.split("/");
