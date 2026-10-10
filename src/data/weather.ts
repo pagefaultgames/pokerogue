@@ -88,8 +88,6 @@ export class Weather {
   }
 }
 
-// TODO: These functions should not be able to accept `WeatherType.NONE`
-// and should have `null` removed from the signature
 export function getWeatherStartMessage(weatherType: Exclude<WeatherType, WeatherType.NONE>): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
