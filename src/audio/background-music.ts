@@ -1,7 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import type { AnySound } from "#audio/audio-manager";
+import { canStreamBgm, StreamingTrack } from "#audio/streaming-track";
 import { fixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+
+type BgmSound = AnySound | StreamingTrack;
 
 /**
  * Class representing a single background music track.
@@ -26,7 +29,7 @@ export class BackgroundMusic {
   public readonly key: string;
 
   /** The underlying sound instance used to stream music. */
-  private sound: AnySound | undefined;
+  private sound: BgmSound | undefined;
   /** Whether this BGM has been evicted from memory. */
   private destroyed = false;
   /** Operations queued before the sound finished loading. */
@@ -54,28 +57,58 @@ export class BackgroundMusic {
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
     BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
+    this.init(loop, loopPoint).catch(() => this.destroy());
+  }
 
-    globalScene
-      .loadBgm(key)
-      .then(() => {
+  private async init(loop: boolean, loopPoint: number): Promise<void> {
+    let sound: BgmSound | undefined;
+
+    if (canStreamBgm()) {
+      try {
+        const bytes = await globalScene.loadBgmBytes(this.key);
         if (this.destroyed) {
           return;
         }
-        this.sound = globalScene.sound.add(key, { loop });
-        if (loop) {
-          this.sound.on("looped", () => {
-            if (!this.destroyed) {
-              this.sound?.play({ seek: loopPoint });
-            }
-          });
-        } else {
-          this.sound.once("complete", () => this.triggerEnd());
-          // Defensive, "complete" should be the right event but Phaser docs aren't very clear
-          this.sound.once("stop", () => this.triggerEnd());
-        }
-        this.runPendingCalls();
-      })
-      .catch(() => this.destroy());
+        sound = await StreamingTrack.create(bytes, { loop, loopPoint });
+      } catch {
+        // Can't stream this track on this device; free the bytes and fall back
+        globalScene.cache.binary.remove(this.key);
+      }
+    }
+
+    if (sound == null) {
+      await globalScene.loadBgm(this.key);
+      if (this.destroyed) {
+        return;
+      }
+      const phaserSound = globalScene.sound.add(this.key, { loop });
+      if (loop) {
+        phaserSound.on("looped", () => {
+          if (!this.destroyed) {
+            phaserSound.play({ seek: loopPoint });
+          }
+        });
+      }
+      sound = phaserSound;
+    }
+
+    if (this.destroyed) {
+      if (sound instanceof StreamingTrack) {
+        sound.destroy();
+      } else {
+        globalScene.sound.remove(sound);
+      }
+      return;
+    }
+
+    console.debug(`[bgm] ${this.key}: ${sound instanceof StreamingTrack ? "streaming" : "fully decoded"}`);
+    this.sound = sound;
+    if (!loop) {
+      sound.once("complete", () => this.triggerEnd());
+      // Defensive, "complete" should be the right event but Phaser docs aren't very clear
+      sound.once("stop", () => this.triggerEnd());
+    }
+    this.runPendingCalls();
   }
 
   public play(volume?: number): void {
@@ -164,19 +197,22 @@ export class BackgroundMusic {
     this.destroyed = true;
     this.pendingCalls.length = 0;
     this.triggerEnd();
-    if (this.sound?.isPlaying) {
-      this.sound.stop();
+    if (this.sound instanceof StreamingTrack) {
+      this.sound.destroy();
+    } else if (this.sound != null) {
+      if (this.sound.isPlaying) {
+        this.sound.stop();
+      }
+      globalScene.sound.remove(this.sound);
     }
 
-    if (this.sound != null) {
-      globalScene.sound.remove(this.sound);
-      this.sound = undefined;
-    }
+    this.sound = undefined;
 
     const remaining = (BackgroundMusic.refCounts.get(this.key) ?? 1) - 1;
     if (remaining <= 0) {
       BackgroundMusic.refCounts.delete(this.key);
       globalScene.cache.audio.remove(this.key);
+      globalScene.cache.binary.remove(this.key);
     } else {
       BackgroundMusic.refCounts.set(this.key, remaining);
     }
@@ -191,7 +227,11 @@ export class BackgroundMusic {
   public fadeOut(duration: number, fixed = false, destroy = true): void {
     const realDuration = fixed ? fixedInt(duration) : duration;
     this.withSound(sound => {
-      SoundFade.fadeOut(globalScene, sound, realDuration, false);
+      if (sound instanceof StreamingTrack) {
+        sound.fadeTo(0, realDuration);
+      } else {
+        SoundFade.fadeOut(globalScene, sound, realDuration, false);
+      }
     });
     globalScene.time.delayedCall(realDuration + 100, () => {
       if (this.destroyed) {
@@ -209,7 +249,7 @@ export class BackgroundMusic {
    * Run an operation immediately, or defer it until the sound has loaded.
    * @param operation - The function to run on ready
    */
-  private withSound(operation: (sound: AnySound) => void): void {
+  private withSound(operation: (sound: BgmSound) => void): void {
     if (this.destroyed) {
       return;
     }
