@@ -1,4 +1,9 @@
-// streaming-track.ts
+/*
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import { globalScene } from "#app/global-scene";
 import type { BackgroundMusic } from "#audio/background-music"; // used in TSDoc comment
 import { AudioBufferSink, BufferSource, Input, MP3, MP4, OGG } from "mediabunny";
@@ -30,7 +35,6 @@ interface Pass {
 
 /**
  * Determine whether the client can stream BGM (it supports the AudioDecoder API).
- *
  */
 export function canStreamBgm(): boolean {
   return globalScene.sound instanceof Phaser.Sound.WebAudioSoundManager && typeof AudioDecoder !== "undefined";
@@ -84,7 +88,9 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     this.options = options;
     const manager = globalScene.sound as Phaser.Sound.WebAudioSoundManager;
     this.ctx = manager.context;
-    this.output = this.ctx.createGain();
+    this.output = new GainNode(this.ctx, {
+      gain: 0,
+    });
     // Phaser's internal input node, so master volume and mute still apply
     this.output.connect(manager.destination);
   }
