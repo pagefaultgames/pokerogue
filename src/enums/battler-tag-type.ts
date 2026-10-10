@@ -95,4 +95,15 @@ export enum BattlerTagType {
   SUPREME_OVERLORD = "SUPREME_OVERLORD",
   BYPASS_SPEED = "BYPASS_SPEED",
   RAGE = "RAGE",
+  FLING = "FLING",
+  NATURAL_GIFT = "NATURAL_GIFT",
+  BESTOW = "BESTOW",
+  TRICK = "TRICK",
+  SWITCHEROO = "SWITCHEROO",
 }
+
+export type ChooseItemBattlerTagType =
+  | BattlerTagType.FLING
+  | BattlerTagType.BESTOW
+  | BattlerTagType.TRICK
+  | BattlerTagType.SWITCHEROO;
