@@ -1033,7 +1033,7 @@ export abstract class BattleAnim {
                   spriteSource.texture,
                   spriteSource.frame.name,
                   true,
-                ); // TODO: are those bangs correct?
+                );
                 ["spriteColors", "fusionSpriteColors"].forEach(k =>
                   sprite.setRenderNodeData(
                     globalScene.spriteSubmitter,
@@ -1047,9 +1047,10 @@ export abstract class BattleAnim {
                   "spriteKey",
                   (isUser ? user! : target).getBattleSpriteKey(),
                 );
-                sprite.setRenderNodeData(globalScene.spriteSubmitter, "shiny", (isUser ? user : target).shiny);
-                sprite.setRenderNodeData(globalScene.spriteSubmitter, "variant", (isUser ? user : target).variant);
-                sprite.setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
+                sprite
+                  .setRenderNodeData(globalScene.spriteSubmitter, "shiny", (isUser ? user : target).shiny)
+                  .setRenderNodeData(globalScene.spriteSubmitter, "variant", (isUser ? user : target).variant)
+                  .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
                 spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
                 globalScene.field.add(sprite);
                 sprites.push(sprite);
