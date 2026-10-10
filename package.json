@@ -55,6 +55,7 @@
     "i18next-http-backend": "^4.0.2",
     "i18next-korean-postposition-processor": "^1.0.0",
     "jszip": "^3.10.2",
+    "mediabunny": "^1.61.3",
     "phaser": "^3.90.0",
     "phaser3-rex-plugins": "^1.80.20"
   },
