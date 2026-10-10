@@ -220,7 +220,7 @@ export class TrainerConfig {
 
     const replacement = timedEventManager.getEventTrainerSpriteReplacement(this.trainerType);
     if (replacement) {
-      ret = replacement;
+      ret = this.hasGenders ? `${replacement}_${female ? "f" : "m"}` : replacement;
     }
 
     return ret;
