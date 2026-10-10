@@ -17,44 +17,42 @@ import { fixedInt, formatLargeNumber } from "#utils/common";
 import i18next from "i18next";
 
 export const RUN_HISTORY_LIMIT: number = 25;
+const MAX_ROWS = 3;
 
 /**
- * RunHistoryUiHandler handles the UI of the Run History Menu
- * Run History itself is broken into an array of RunEntryContainer objects that can show the user basic details about their run and allow them to access more details about their run through cursor action.
+ * `RunHistoryUiHandler` handles the UI of the Run History Menu.
+ *
+ * Run History itself is broken into an array of RunEntryContainer objects that can show the user \
+ * basic details about their run and allow them to access more details about their run through cursor action.
+ *
  * It navigates similarly to the UI of the save slot select menu.
- * The only valid input buttons are Button.ACTION and Button.CANCEL.
  */
 export class RunHistoryUiHandler extends MessageUiHandler {
-  private readonly maxRows = 3;
-
   private runSelectContainer: Phaser.GameObjects.Container;
   private runsContainer: Phaser.GameObjects.Container;
-  private runs: RunEntryContainer[];
+  private cursorObj: Phaser.GameObjects.NineSlice | null;
+
+  private runs: RunEntryContainer[] = [];
 
   private scrollCursor = 0;
 
-  private cursorObj: Phaser.GameObjects.NineSlice | null;
-
   private runContainerInitialY: number;
 
-  override setup() {
+  public override setup(): void {
     const ui = this.getUi();
+    const { height, width } = globalScene.scaledCanvas;
 
-    this.runSelectContainer = globalScene.add.container(0, 0);
-    this.runSelectContainer.setVisible(false);
+    this.runSelectContainer = globalScene.add //
+      .container(0, 0)
+      .setVisible(false);
     ui.add(this.runSelectContainer);
 
-    const loadSessionBg = globalScene.add.rectangle(
-      0,
-      0,
-      globalScene.scaledCanvas.width,
-      -globalScene.scaledCanvas.height,
-      0x006860,
-    );
-    loadSessionBg.setOrigin(0, 0);
+    const loadSessionBg = globalScene.add //
+      .rectangle(0, 0, width, -height, 0x006860)
+      .setOrigin(0, 0);
     this.runSelectContainer.add(loadSessionBg);
 
-    this.runContainerInitialY = -globalScene.scaledCanvas.height + 8;
+    this.runContainerInitialY = -height + 8;
 
     this.runsContainer = globalScene.add.container(8, this.runContainerInitialY);
     this.runSelectContainer.add(this.runsContainer);
@@ -70,7 +68,7 @@ export class RunHistoryUiHandler extends MessageUiHandler {
       .loadAtlas("rival_m", "trainer");
   }
 
-  override show(args: any[]): boolean {
+  public override show(args: any[]): boolean {
     super.show(args);
 
     this.getUi().bringToTop(this.runSelectContainer);
@@ -79,7 +77,6 @@ export class RunHistoryUiHandler extends MessageUiHandler {
       this.setScrollCursor(0);
       this.setCursor(0);
 
-      //Destroys the cursor if there are no runs saved so far.
       if (this.runs.length === 0) {
         this.clearCursor();
       }
@@ -88,90 +85,79 @@ export class RunHistoryUiHandler extends MessageUiHandler {
     return true;
   }
 
-  /**
-   * Performs a certain action based on the button pressed by the user
-   * @param button
-   * The user can navigate through the runs with Button.UP/Button.DOWN.
-   * Button.ACTION allows the user to access more information about their runs.
-   * Button.CANCEL allows the user to go back.
-   */
-  override processInput(button: Button): boolean {
+  public override processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
-    const error = false;
 
-    if ([Button.ACTION, Button.CANCEL].includes(button)) {
-      if (button === Button.ACTION) {
-        const cursor = this.cursor + this.scrollCursor;
-        if (this.runs[cursor]) {
-          globalScene.ui.setOverlayMode(UiMode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
-        } else {
-          return false;
-        }
+    if (button === Button.ACTION) {
+      const cursor = this.cursor + this.scrollCursor;
+      if (this.runs[cursor]) {
+        globalScene.ui.setOverlayMode(UiMode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
         success = true;
-        return success;
       }
+    } else if (button === Button.CANCEL) {
       success = true;
       globalScene.ui.revertMode();
     } else if (this.runs.length > 0) {
-      switch (button) {
-        case Button.UP:
-          if (this.cursor) {
-            success = this.setCursor(this.cursor - 1);
-          } else if (this.scrollCursor) {
-            success = this.setScrollCursor(this.scrollCursor - 1);
-          } else if (this.runs.length > 1) {
-            // wrap around to the bottom
-            success = this.setCursor(Math.min(this.runs.length - 1, this.maxRows - 1));
-            success = this.setScrollCursor(Math.max(0, this.runs.length - this.maxRows)) || success;
-          }
-          break;
-        case Button.DOWN:
-          if (this.cursor < Math.min(this.maxRows - 1, this.runs.length - this.scrollCursor - 1)) {
-            success = this.setCursor(this.cursor + 1);
-          } else if (this.scrollCursor < this.runs.length - this.maxRows) {
-            success = this.setScrollCursor(this.scrollCursor + 1);
-          } else if (this.runs.length > 1) {
-            // wrap around to the top
-            success = this.setCursor(0);
-            success = this.setScrollCursor(0) || success;
-          }
-          break;
+      if (button === Button.UP) {
+        if (this.cursor) {
+          success = this.setCursor(this.cursor - 1);
+        } else if (this.scrollCursor) {
+          success = this.setScrollCursor(this.scrollCursor - 1);
+        } else if (this.runs.length > 1) {
+          // wrap around to the bottom
+          success = this.setCursor(Math.min(this.runs.length - 1, MAX_ROWS - 1));
+          success ||= this.setScrollCursor(Math.max(0, this.runs.length - MAX_ROWS));
+        }
+      } else if (button === Button.DOWN) {
+        if (this.cursor < Math.min(MAX_ROWS - 1, this.runs.length - this.scrollCursor - 1)) {
+          success = this.setCursor(this.cursor + 1);
+        } else if (this.scrollCursor < this.runs.length - MAX_ROWS) {
+          success = this.setScrollCursor(this.scrollCursor + 1);
+        } else if (this.runs.length > 1) {
+          // wrap around to the top
+          success = this.setCursor(0);
+          success ||= this.setScrollCursor(0);
+        }
       }
     }
 
     if (success) {
       ui.playSelect();
-    } else if (error) {
-      ui.playError();
     }
-    return success || error;
+    return success;
   }
 
   /**
    * This retrieves the player's run history and facilitates the processes necessary for the output display.
+   *
    * Runs are displayed from newest --> oldest in descending order.
-   * In the for loop, each run is processed to create an RunEntryContainer used to display and store the run's unique information
+   *
+   * In the for loop, each run is processed to create a `RunEntryContainer`
+   * used to display and store the run's unique information
    */
-  private async populateRuns() {
+  private async populateRuns(): Promise<void> {
     const response = await globalScene.gameData.getRunHistoryData();
+
     const timestamps = Object.keys(response);
     if (timestamps.length === 0) {
       this.showEmpty();
       return;
     }
+
     const timestampsNo = timestamps.map(Number);
     if (timestamps.length > 1) {
       timestampsNo.sort((a, b) => b - a);
     }
-    const entryCount = timestamps.length;
-    for (let s = 0; s < entryCount; s++) {
+
+    for (let s = 0; s < timestamps.length; s++) {
       const entry = new RunEntryContainer(response[timestampsNo[s]], s);
       globalScene.add.existing(entry);
       this.runsContainer.add(entry);
       this.runs.push(entry);
     }
+
     if (this.cursorObj && timestamps.length > 0) {
       this.runsContainer.bringToTop(this.cursorObj);
     }
@@ -180,23 +166,24 @@ export class RunHistoryUiHandler extends MessageUiHandler {
   /**
    * If the player has no runs saved so far, this creates a giant window labeled empty instead.
    */
-  private async showEmpty() {
+  private async showEmpty(): Promise<void> {
     const emptyWindow = addWindow(0, 0, 304, 165);
     this.runsContainer.add(emptyWindow);
     const emptyWindowCoordinates = emptyWindow.getCenter();
     const emptyText = addTextObject(0, 0, i18next.t("saveSlotSelectUiHandler:empty"), TextStyle.WINDOW, {
       fontSize: "128px",
-    });
-    emptyText.setPosition(emptyWindowCoordinates.x - 18, emptyWindowCoordinates.y - 15);
+    }) //
+      .setPosition(emptyWindowCoordinates.x - 18, emptyWindowCoordinates.y - 15);
     this.runsContainer.add(emptyText);
   }
 
-  override setCursor(cursor: number): boolean {
+  public override setCursor(cursor: number): boolean {
     const changed = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = globalScene.add.nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 46, 6, 6, 6, 6);
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = globalScene.add
+        .nineslice(0, 0, "select_cursor_highlight_thick", undefined, 296, 46, 6, 6, 6, 6)
+        .setOrigin(0, 0);
       this.runsContainer.add(this.cursorObj);
     }
     this.cursorObj.setPosition(4, 4 + (cursor + this.scrollCursor) * 56);
@@ -219,11 +206,7 @@ export class RunHistoryUiHandler extends MessageUiHandler {
     return changed;
   }
 
-  /**
-   * Called when the player returns back to the menu
-   * Uses the functions clearCursor() and clearRuns()
-   */
-  override clear() {
+  public override clear(): void {
     super.clear();
     this.runSelectContainer.setVisible(false);
     this.setScrollCursor(0);
@@ -231,24 +214,17 @@ export class RunHistoryUiHandler extends MessageUiHandler {
     this.clearRuns();
   }
 
-  private clearCursor() {
-    if (this.cursorObj) {
-      this.cursorObj.destroy();
-    }
+  private clearCursor(): void {
+    this.cursorObj?.destroy();
     this.cursorObj = null;
   }
 
-  private clearRuns() {
+  private clearRuns(): void {
     this.runs.splice(0, this.runs.length);
     this.runsContainer.removeAll(true);
   }
 }
 
-/**
- * RunEntryContainer : stores/displays an individual run
- * slotId: necessary for positioning
- * entryData: the data of an individual run
- */
 class RunEntryContainer extends Phaser.GameObjects.Container {
   public entryData: RunEntry;
 
@@ -263,14 +239,14 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
   /**
    * This processes the individual run's data for display.
    *
-   * Each RunEntryContainer displayed should have the following information:
-   * Run Result: Victory || Defeat
-   * Game Mode + Final Wave
-   * Time Stamp
+   * Each `RunEntryContainer` displayed should have the following information:
+   * - Run Result: Victory or Defeat
+   * - Game Mode + Final Wave
+   * - Timestamp
    *
    * The player's party and their levels at the time of the last wave of the run are also displayed.
    */
-  private setup(run: RunEntry) {
+  private setup(run: RunEntry): void {
     const victory = run.isVictory;
     const data = globalScene.gameData.parseSessionData(JSON.stringify(run.entry));
 
@@ -392,8 +368,9 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
     const pokemonIconsContainer = globalScene.add.container(140, 17);
 
     data.party.forEach((p: PokemonData, i: number) => {
-      const iconContainer = globalScene.add.container(26 * i, 0);
-      iconContainer.setScale(0.75);
+      const iconContainer = globalScene.add //
+        .container(26 * i, 0)
+        .setScale(0.75);
       const pokemon = p.toPokemon();
       const icon = globalScene.addPokemonIcon(pokemon, 0, 0, 0, 0);
 
@@ -403,13 +380,12 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(pokemon.level, 1000)}`,
         TextStyle.PARTY,
         { fontSize: "54px", color: "#f8f8f8" },
-      );
-      text.setShadow(0, 0, undefined);
-      text.setStroke("#424242", 14);
-      text.setOrigin(1, 0);
+      )
+        .setShadow()
+        .setStroke("#424242", 14)
+        .setOrigin(1, 0);
 
-      iconContainer.add(icon);
-      iconContainer.add(text);
+      iconContainer.add([icon, text]);
 
       pokemonIconsContainer.add(iconContainer);
 
