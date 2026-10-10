@@ -1172,30 +1172,8 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
       "",
       EvolutionItem[evolutionItem].toLowerCase(),
       (_type, args) => new EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
-      (pokemon: PlayerPokemon) => {
-        if (
-          speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
-          && speciesDataRegistry
-            .getEvolutions(pokemon.species.speciesId)
-            .filter(e => e.validate(pokemon, false, this.evolutionItem)).length > 0
-          && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
-        ) {
-          return null;
-        }
-        if (
-          pokemon.isFusion()
-          && pokemon.fusionSpecies
-          && speciesDataRegistry.hasEvolutions(pokemon.fusionSpecies.speciesId)
-          && speciesDataRegistry
-            .getEvolutions(pokemon.fusionSpecies.speciesId)
-            .filter(e => e.validate(pokemon, true, this.evolutionItem)).length > 0
-          && pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
-        ) {
-          return null;
-        }
-
-        return PartyUiHandler.NoEffectMessage;
-      },
+      (pokemon: PlayerPokemon) =>
+        pokemon.isEvolutionItemCompatible(this.evolutionItem) ? null : PartyUiHandler.NoEffectMessage,
     );
 
     this.evolutionItem = evolutionItem;
@@ -1225,25 +1203,8 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
       "",
       FormChangeItem[formChangeItem].toLowerCase(),
       (_type, args) => new PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
-      (pokemon: PlayerPokemon) => {
-        // Make sure the Pokemon has alternate forms
-        if (
-          speciesDataRegistry.hasFormChanges(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
-          && speciesDataRegistry
-            .getFormChanges(pokemon.species.speciesId)
-            .filter(
-              fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
-            )
-            // Returns true if any form changes match this item
-            .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-            .flatMap(fc => fc.item)
-            .includes(this.formChangeItem)
-        ) {
-          return null;
-        }
-
-        return PartyUiHandler.NoEffectMessage;
-      },
+      (pokemon: PlayerPokemon) =>
+        pokemon.isFormChangeItemCompatible(this.formChangeItem) ? null : PartyUiHandler.NoEffectMessage,
     );
 
     this.formChangeItem = formChangeItem;

@@ -14,7 +14,12 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
+import {
+  type EvolutionItem,
+  FusionSpeciesFormEvolution,
+  SpeciesFormEvolution,
+  validateShedinjaEvo,
+} from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -42,6 +47,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -78,6 +84,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItem } from "#enums/form-change-item";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
@@ -6084,6 +6091,42 @@ export class PlayerPokemon extends Pokemon {
    */
   public isTmCompatible(tm: MoveId, excludeKnown = false): boolean {
     return this.getCompatibleTms(excludeKnown).includes(tm);
+  }
+
+  /**
+   * Check if an evolution item is compatible with this Pokémon.
+   * @param item - The {@linkcode EvolutionItem} to check
+   * @returns Whether this evolution item can trigger an evolution for this Pokémon (or its fusion component)
+   */
+  public isEvolutionItemCompatible(item: EvolutionItem): boolean {
+    if (
+      speciesDataRegistry.hasEvolutions(this.species.speciesId)
+      && speciesDataRegistry.getEvolutions(this.species.speciesId).some(e => e.validate(this, false, item))
+      && this.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+    ) {
+      return true;
+    }
+    return (
+      this.isFusion()
+      && !!this.fusionSpecies
+      && speciesDataRegistry.hasEvolutions(this.fusionSpecies.speciesId)
+      && speciesDataRegistry.getEvolutions(this.fusionSpecies.speciesId).some(e => e.validate(this, true, item))
+      && this.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+    );
+  }
+
+  /**
+   * Check if a form-change item is compatible with this Pokémon's current form.
+   * @param item - The {@linkcode FormChangeItem} to check
+   * @returns Whether this form-change item can trigger a form change for this Pokémon
+   */
+  public isFormChangeItemCompatible(item: FormChangeItem): boolean {
+    return speciesDataRegistry
+      .getFormChanges(this.species.speciesId)
+      .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === this.getFormKey())
+      .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+      .flatMap(fc => fc.item)
+      .includes(item);
   }
 
   /**
