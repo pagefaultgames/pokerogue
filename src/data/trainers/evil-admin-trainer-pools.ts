@@ -219,19 +219,19 @@ const PLASMA_ZINZOLIN: TrainerTierPools = {
 
 const PLASMA_COLRESS: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.GRIMER,
     SpeciesId.VOLTORB,
     SpeciesId.PORYGON,
     SpeciesId.NOSEPASS,
     SpeciesId.ROTOM,
     SpeciesId.DWEBBLE,
     SpeciesId.MUNNA,
+    SpeciesId.GOLETT,
   ],
   [TrainerPoolTier.UNCOMMON]: [
+    [SpeciesId.GRIMER, SpeciesId.ALOLA_GRIMER],
     [SpeciesId.MAGBY, SpeciesId.ELEKID],
     SpeciesId.BELDUM,
     [SpeciesId.TIRTOUGA, SpeciesId.ARCHEN],
-    SpeciesId.GOLETT,
     SpeciesId.TYNAMO,
     SpeciesId.VAROOM,
   ],

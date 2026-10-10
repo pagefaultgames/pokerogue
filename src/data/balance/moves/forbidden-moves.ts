@@ -130,6 +130,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.POUNCE,
   MoveId.PUNISHMENT,
   MoveId.POWDER_SNOW,
+  MoveId.PSYBEAM,
   MoveId.PSYWAVE,
   MoveId.QUICK_ATTACK,
   MoveId.RAGE,
