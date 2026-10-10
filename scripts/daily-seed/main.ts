@@ -10,12 +10,14 @@
  * Usage: `pnpm dailySeed:create`
  */
 
+import { setSpeciesDataRegistry } from "#app/global-species-data-registry";
 import { EDIT_OPTIONS } from "#daily-seed/constants";
 import { promptBoss } from "#daily-seed/prompts/boss";
 import {
   promptBiome,
   promptChallenges,
   promptEdit,
+  promptForcedBiomes,
   promptForcedWaves,
   promptLuck,
   promptMoney,
@@ -24,6 +26,7 @@ import {
   promptTrainerManipulation,
 } from "#daily-seed/prompts/general";
 import { promptStarters } from "#daily-seed/prompts/starter";
+import { SpeciesDataRegistry } from "#data/species-data-registry";
 import { getPropertyValue } from "#script-utils/arguments";
 import { promptOverwrite, writeFileSafe } from "#script-utils/file";
 import type { CustomDailyRunConfig } from "#types/daily-run";
@@ -33,10 +36,8 @@ import { join } from "path";
 import { select } from "@inquirer/prompts";
 import chalk from "chalk";
 
-/**
- * The version of this script
- */
-const SCRIPT_VERSION: string = "1.0.0";
+/** The version of this script */
+const SCRIPT_VERSION: string = "2.1.0";
 
 const rootDir = join(import.meta.dirname, "..", "..");
 
@@ -58,6 +59,7 @@ type EditOption = (typeof editOptions)[number];
  * Run the `dailySeed:create` script.
  */
 async function main(): Promise<void> {
+  setSpeciesDataRegistry(new SpeciesDataRegistry());
   // TODO: Add help text
   console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
 
@@ -73,7 +75,9 @@ async function main(): Promise<void> {
 
   try {
     // `seed` is required
-    customSeedConfig.seed = await promptSeed();
+    if (!customSeedConfig.seed) {
+      customSeedConfig.seed = await promptSeed();
+    }
     await promptOptions();
     if (process.exitCode != null) {
       return;
@@ -114,6 +118,9 @@ async function handleAnswer(answer: EditOption): Promise<void> {
     case "biome":
       customSeedConfig.biome = await promptBiome();
       break;
+    case "biome transitions":
+      customSeedConfig.forcedBiomes = await promptForcedBiomes();
+      break;
     case "luck":
       customSeedConfig.luck = await promptLuck();
       break;
@@ -139,6 +146,8 @@ async function handleAnswer(answer: EditOption): Promise<void> {
       console.log(chalk.gray("Exiting..."));
       process.exitCode = 0;
       return;
+    default:
+      answer satisfies never;
   }
 
   if (answer !== "edit") {
@@ -168,7 +177,8 @@ async function finish() {
     console.log(
       chalk.hex("#ffa500")("No outfile detected, logging to stdout...")
         + chalk.cyan("\n🌱 Your custom daily seed config is:")
-        + chalk.green(`\n${JSON.stringify(customSeedConfig)}`),
+        + chalk.green(`\n${JSON.stringify(customSeedConfig)}`)
+        + chalk.gray(`\n🧪 For testing use the "DAILY_RUN_SEED_OVERRIDE" override.`),
     );
   }
 }

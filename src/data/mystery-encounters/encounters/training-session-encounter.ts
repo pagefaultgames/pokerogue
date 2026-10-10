@@ -6,6 +6,7 @@ import { allAbilities } from "#data/data-lists";
 import { getNatureName } from "#data/nature";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Challenges } from "#enums/challenges";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -45,6 +46,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.TRAINING_SESSION,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
+  .withDisallowedChallenges(Challenges.ABILITY_RANDOMIZER)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withScenePartySizeRequirement(2)
   .withFleeAllowed(false)
