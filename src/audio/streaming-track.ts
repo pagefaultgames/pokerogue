@@ -86,7 +86,7 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     this.ctx = manager.context;
     this.output = this.ctx.createGain();
     // Phaser's internal input node, so master volume and mute still apply
-    this.output.connect((manager as any).destination);
+    this.output.connect(manager.destination);
   }
 
   public get isPlaying(): boolean {
