@@ -384,7 +384,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setVisible(false);
     this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
 
-    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" }) //
+    this.pokemonGrowthRateText = addTextObject(
+      8 + this.pokemonGrowthRateLabelText.displayWidth + 2,
+      106,
+      "",
+      TextStyle.GROWTH_RATE_TYPE,
+      { fontSize: "36px" },
+    ) //
       .setOrigin(0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
@@ -830,7 +836,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const allEvolutions = speciesDataRegistry.getEvolutions(this.species.speciesId);
 
     this.levelMoves = getLevelMoves(
-      { pokemonSpeciesForm: species, pokemonFormIndex: formIndex, level: 100, startingLevel: 1 },
+      { pokemonSpeciesForm: species, pokemonFormKey: formKey, level: 100, startingLevel: 1 },
       true,
       true,
       true,

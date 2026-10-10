@@ -1984,9 +1984,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       level: this.level,
       startingLevel,
       pokemonSpeciesForm: this.getSpeciesForm(true),
-      pokemonFormIndex: this.formIndex,
+      pokemonFormKey: this.getFormKey(),
       fusionSpeciesForm: this.getFusionSpeciesForm(true),
-      fusionFormIndex: this.fusionFormIndex,
+      fusionFormKey: this.getFusionFormKey() ?? undefined,
     };
     return getLevelMoves(
       context,
@@ -6728,6 +6728,10 @@ export class EnemyPokemon extends Pokemon {
 
     if (bossConfig.moveset != null) {
       this.tryPopulateMoveset(bossConfig.moveset, true);
+    }
+
+    if (bossConfig.ivs != null) {
+      this.ivs = bossConfig.ivs;
     }
   }
 
