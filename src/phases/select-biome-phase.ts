@@ -1,5 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { getDailyForcedBiomes } from "#data/daily-seed/daily-run";
 import { allBiomes } from "#data/data-lists";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
@@ -34,6 +35,12 @@ export class SelectBiomePhase extends BattlePhase {
       return;
     }
 
+    const forcedBiomes = getDailyForcedBiomes();
+    if (forcedBiomes != null && forcedBiomes.length === 1) {
+      this.setNextBiomeAndEnd(forcedBiomes[0]);
+      return;
+    }
+
     if (gameMode.hasRandomBiomes) {
       this.setNextBiomeAndEnd(this.generateNextBiome(nextWaveIndex));
       return;
@@ -42,10 +49,11 @@ export class SelectBiomePhase extends BattlePhase {
     const { biomeLinks } = allBiomes.get(currentBiome);
     const eventBiomeLinks = timedEventManager.getEventBiomeLinks(currentBiome);
     const allBiomeLinks: BiomeLinks = [...biomeLinks, ...eventBiomeLinks];
-    if (allBiomeLinks.length > 1) {
-      const biomes: BiomeId[] = allBiomeLinks
-        .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
-        .map(b => (Array.isArray(b) ? b[0] : b));
+    if (allBiomeLinks.length > 1 || (forcedBiomes != null && forcedBiomes.length > 1)) {
+      const biomes: BiomeId[] =
+        forcedBiomes != null && forcedBiomes.length > 1
+          ? forcedBiomes
+          : allBiomeLinks.filter(b => !Array.isArray(b) || !randSeedInt(b[1])).map(b => (Array.isArray(b) ? b[0] : b));
 
       if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         const biomeSelectItems = biomes.map(b => {
