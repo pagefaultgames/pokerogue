@@ -1,8 +1,11 @@
-import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
+import { applySingleHeldItem } from "#test/utils/item-test-utils";
+import { ValueHolder } from "#utils/value-holder";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -18,39 +21,43 @@ describe("Items - Mystical Rock", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-
     game.override
-      .enemySpecies(SpeciesId.SHUCKLE)
-      .enemyMoveset(MoveId.SPLASH)
+      .battleStyle("single")
+      .criticalHits(false)
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([MoveId.SUNNY_DAY, MoveId.GRASSY_TERRAIN])
-      .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
-      .battleStyle("single");
+      .enemyMoveset(MoveId.SPLASH)
+      .startingHeldItems([{ entry: HeldItemId.MYSTICAL_ROCK }]);
   });
 
-  it("should increase weather duration by +2 turns per stack", async () => {
-    await game.classicMode.startBattle(SpeciesId.GASTLY);
+  it("should extend the holder's weather duration by 2 turns per stack (manual)", async () => {
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    game.move.select(MoveId.SUNNY_DAY);
+    const player = game.field.getPlayerPokemon();
+    const fieldDuration = new ValueHolder(0);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    applySingleHeldItem(HeldItemId.MYSTICAL_ROCK, HeldItemEffect.FIELD_EFFECT, { pokemon: player, fieldDuration });
 
-    const weather = globalScene.arena.weather;
-
-    expect(weather).toBeDefined();
-    expect(weather!.turnsLeft).toBe(9);
+    expect(fieldDuration.value).toBe(2);
   });
 
-  it("should increase terrain duration by +2 turns per stack", async () => {
-    await game.classicMode.startBattle(SpeciesId.GASTLY);
+  it("should extend weather set by the holder to 7 turns (in battle)", async () => {
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    game.move.select(MoveId.GRASSY_TERRAIN);
+    game.move.use(MoveId.SUNNY_DAY);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(game.scene.arena.weather?.turnsLeft).toBe(6);
+  });
 
-    const terrain = globalScene.arena.terrain;
+  it("should not extend weather not set by the holder", async () => {
+    game.override.enemyMoveset([MoveId.SUNNY_DAY]).startingHeldItems([{ entry: HeldItemId.LEFTOVERS }]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    expect(terrain).toBeDefined();
-    expect(terrain!.turnsLeft).toBe(9);
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(game.scene.arena.weather?.turnsLeft).toBe(4);
   });
 });

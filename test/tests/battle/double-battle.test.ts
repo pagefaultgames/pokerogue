@@ -10,7 +10,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -34,17 +34,17 @@ describe("Double Battles", () => {
       .ability(AbilityId.BALL_FETCH);
   });
 
-  async function getModifierShopHandler(): Promise<ModifierSelectUiHandler> {
+  async function getModifierShopHandler(): Promise<RewardSelectUiHandler> {
     await game.phaseInterceptor.to("BattleEndPhase");
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
     const currentPhase = game.scene.phaseManager.getCurrentPhase()?.phaseName;
-    expect(currentPhase, "Expected battle to transition to SelectModifierPhase").toBe("SelectModifierPhase");
+    expect(currentPhase, "Expected battle to transition to SelectRewardPhase").toBe("SelectRewardPhase");
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
-    await vi.waitUntil(() => game.scene.ui.mode === UiMode.MODIFIER_SELECT);
+    await game.phaseInterceptor.to("SelectRewardPhase");
+    await vi.waitUntil(() => game.scene.ui.mode === UiMode.REWARD_SELECT);
 
-    return game.scene.ui.getHandler() as ModifierSelectUiHandler;
+    return game.scene.ui.getHandler() as RewardSelectUiHandler;
   }
 
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.

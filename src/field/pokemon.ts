@@ -42,6 +42,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -71,13 +72,15 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import type { BerryType } from "#enums/berry-type";
 import type { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { type BerryItemId, HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
@@ -104,31 +107,14 @@ import {
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
-import {
-  BaseStatModifier,
-  CritBoosterModifier,
-  EnemyDamageBoosterModifier,
-  EnemyDamageReducerModifier,
-  EnemyFusionChanceModifier,
-  EvoTrackerModifier,
-  HiddenAbilityRateBoosterModifier,
-  PokemonBaseStatFlatModifier,
-  PokemonBaseStatTotalModifier,
-  PokemonFriendshipBoosterModifier,
-  PokemonHeldItemModifier,
-  PokemonIncrementingStatModifier,
-  PokemonMultiHitModifier,
-  PokemonNatureWeightModifier,
-  ShinyRateBoosterModifier,
-  StatBoosterModifier,
-  SurviveDamageModifier,
-  TempCritBoosterModifier,
-  TempStatStageBoosterModifier,
-} from "#modifiers/modifier";
+import { HeldItemManager } from "#items/held-item-manager";
+import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { tryTransferHeldItem } from "#items/item-utility";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { HitsTagAttr, Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
@@ -148,6 +134,7 @@ import type {
   GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#types/held-item-data-types";
 import type { LevelMovesWithSource } from "#types/level-moves";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -177,6 +164,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
+import { applyHeldItems, isHeldItemSpecsArray } from "#utils/item-utils";
 import { decodeNickname, getFusedSpeciesName } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -313,6 +301,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
+  public readonly heldItemManager: HeldItemManager = new HeldItemManager();
   /** Stat stages queued by berry eating to be run in a single phase */
   // TODO: Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
   public queuedBerryStatChanges: Writable<StatChange>[] = [];
@@ -330,6 +319,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
+    // TODO split into separate params once this uses a config object
+    /** Passing a configuration generates items, passing specs assigns them directly */
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: Pokemon | PokemonData,
   ) {
     super(globalScene, x, y);
@@ -353,6 +345,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.variant = variant;
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
+
+    this.heldItemManager = new HeldItemManager();
+    if (heldItemConfig) {
+      if (isHeldItemSpecsArray(heldItemConfig)) {
+        for (const specs of heldItemConfig) {
+          this.heldItemManager.add(specs);
+        }
+      } else {
+        assignItemsFromConfiguration(heldItemConfig, this);
+      }
+    }
 
     if (dataSource) {
       this.id = dataSource.id;
@@ -431,7 +434,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (level > 1) {
         const fused = new BooleanHolder(globalScene.gameMode.isSplicedOnly);
         if (!fused.value && this.isEnemy() && !this.hasTrainer()) {
-          globalScene.applyModifier(EnemyFusionChanceModifier, false, fused);
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_FUSED_CHANCE, { booleanHolder: fused });
         }
 
         if (fused.value) {
@@ -638,7 +641,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Ability Charms should only affect wild Pokemon
     // TODO: move this `if` check into the ability charm code
     if (!this.hasTrainer()) {
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+        numberHolder: hiddenAbilityChance,
+      });
     }
 
     // Neither RNG roll depends on the outcome of the other, so that Ability Charms do not affect RNG.
@@ -1191,14 +1196,27 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  getHeldItems(): PokemonHeldItemModifier[] {
-    if (!globalScene) {
-      return [];
+  // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
+  getHeldItems(excludeTempStack = false): HeldItemId[] {
+    return this.heldItemManager.getItems(excludeTempStack);
+  }
+
+  public toggleFormChangeItem(id: FormChangeItemId): void {
+    const toggled = this.heldItemManager.toggleActive(id);
+
+    if (toggled) {
+      globalScene.triggerPokemonFormChange(this, SpeciesFormChangeItemTrigger);
     }
-    return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id,
-      this.isPlayer(),
-    ) as PokemonHeldItemModifier[];
+  }
+
+  /**
+   * @returns Whether the mon's status was intentionally inflicted by its held item
+   */
+  public hasStatusFromOrb(): boolean {
+    return (
+      (this.heldItemManager.hasItem(HeldItemId.FLAME_ORB) && this.status?.effect === StatusEffect.BURN)
+      || (this.heldItemManager.hasItem(HeldItemId.TOXIC_ORB) && this.status?.effect === StatusEffect.TOXIC)
+    );
   }
 
   updateScale(): void {
@@ -1417,8 +1435,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   getCritStage(source: Pokemon, move: Move): number {
     const critStage = new NumberHolder(0);
     applyMoveAttrs("HighCritAttr", source, this, move, critStage);
-    globalScene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
-    globalScene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
+    applyHeldItems(HeldItemEffect.CRIT_BOOST, { pokemon: source, critStage });
+    globalScene.applyPlayerItems(TrainerItemEffect.TEMP_CRIT_BOOSTER, { numberHolder: critStage });
     applyAbAttrs("BonusCritAbAttr", { pokemon: source, critStage });
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
@@ -1469,7 +1487,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   ): number {
     const statVal = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
-      globalScene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statVal);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: this, stat, statHolder: statVal });
     }
 
     // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway
@@ -1584,7 +1602,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const statHolder = new NumberHolder(Math.floor((2 * baseStats[s] + this.ivs[s]) * this.level * 0.01));
       if (s === Stat.HP) {
         statHolder.value = statHolder.value + this.level + 10;
-        globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
+        applyHeldItems(HeldItemEffect.MACHO_BRACE, { pokemon: this, stat: s, statHolder });
         if (this.hasAbility(AbilityId.WONDER_GUARD, false, true)) {
           statHolder.value = 1;
         }
@@ -1599,14 +1617,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         statHolder.value += 5;
         const natureStatMultiplier = new NumberHolder(getNatureStatMultiplier(this.getNature(), s));
-        globalScene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureStatMultiplier);
+        applyHeldItems(HeldItemEffect.NATURE_WEIGHT_BOOSTER, { pokemon: this, multiplier: natureStatMultiplier });
         if (natureStatMultiplier.value !== 1) {
           statHolder.value = Math.max(
             Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](statHolder.value * natureStatMultiplier.value),
             1,
           );
         }
-        globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
+        applyHeldItems(HeldItemEffect.MACHO_BRACE, { pokemon: this, stat: s, statHolder });
       }
 
       statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
@@ -1618,10 +1636,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   calculateBaseStats(): number[] {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     applyChallenges(ChallengeType.FLIP_STAT, this, baseStats);
-    // Shuckle Juice
-    globalScene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
-    // Old Gateau
-    globalScene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
+    // Items that add to the stats
+    applyHeldItems(HeldItemEffect.BASE_STAT_ADD, { pokemon: this, baseStats });
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats.slice(0);
       applyChallenges(ChallengeType.FLIP_STAT, this, fusionBaseStats);
@@ -1635,7 +1651,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     // Vitamins
-    globalScene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
+    applyHeldItems(HeldItemEffect.BASE_STAT_MULTIPLY, { pokemon: this, baseStats });
 
     return baseStats;
   }
@@ -2457,8 +2473,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the weight of the Pokemon with subtractive modifiers (Autotomize) happening first
-   * and then multiplicative modifiers happening after (Heavy Metal and Light Metal)
+   * Gets the weight of the Pokemon with subtractive abilities (Autotomize) happening first
+   * and then multiplicative abilities happening after (Heavy Metal and Light Metal)
    * @returns the kg of the Pokemon (minimum of 0.1)
    */
   public getWeight(): number {
@@ -3047,7 +3063,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       if (this.isPlayer() || !this.hasTrainer()) {
         // Apply shiny modifiers only to Player or wild mons
-        globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+        globalScene.applyPlayerItems(TrainerItemEffect.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
       }
     } else {
       shinyThreshold.value = thresholdOverride;
@@ -3075,18 +3091,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param maxThreshold The maximum threshold allowed after applying modifiers
    * @returns Whether this Pokémon was set to shiny
    */
-  public trySetShinySeed(
-    thresholdOverride?: number,
-    applyModifiersToOverride?: boolean,
-    maxThreshold?: number,
-  ): boolean {
+  public trySetShinySeed(thresholdOverride?: number, applyItemsToOverride?: boolean, maxThreshold?: number): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
-      if (applyModifiersToOverride) {
+      if (applyItemsToOverride) {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
-        globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+        globalScene.applyPlayerItems(TrainerItemEffect.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
       }
 
       if (maxThreshold && maxThreshold > 0) {
@@ -3163,7 +3175,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const hiddenAbilityChance = new ValueHolder(haThreshold);
-    globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+    globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+      numberHolder: hiddenAbilityChance,
+    });
 
     if (!randSeedInt(hiddenAbilityChance.value)) {
       this.abilityIndex = 2;
@@ -3177,7 +3191,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public generateFusionSpecies(forStarter?: boolean): void {
     const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     if (!this.hasTrainer()) {
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+        numberHolder: hiddenAbilityChance,
+      });
     }
 
     const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
@@ -3488,7 +3504,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreStatStage.value) {
       const statStageMultiplier = new NumberHolder(Math.max(2, 2 + statStage.value) / Math.max(2, 2 - statStage.value));
       if (!ignoreHeldItems) {
-        globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statStageMultiplier);
+        globalScene.applyPlayerItems(TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER, {
+          numberHolder: statStageMultiplier,
+        });
       }
       return Math.min(statStageMultiplier.value, 4);
     }
@@ -3522,7 +3540,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs("IgnoreOpponentStatStagesAbAttr", { pokemon: this, stat: Stat.EVA, ignored: ignoreEvaStatStage });
     applyMoveAttrs("IgnoreOpponentStatStagesAttr", this, target, sourceMove, ignoreEvaStatStage);
 
-    globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
+    globalScene.applyPlayerItems(TrainerItemEffect.TEMP_ACCURACY_BOOSTER, { numberHolder: userAccStage });
 
     userAccStage.value = ignoreAccStatStage.value ? 0 : Math.min(userAccStage.value, 6);
     targetEvaStage.value = ignoreEvaStatStage.value ? 0 : targetEvaStage.value;
@@ -3778,14 +3796,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs("FixedDamageAttr", source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new NumberHolder(1);
-      globalScene.applyModifiers(
-        PokemonMultiHitModifier,
-        source.isPlayer(),
-        source,
-        move.id,
-        null,
-        multiLensMultiplier,
-      );
+      applyHeldItems(HeldItemEffect.MULTI_HIT_DAMAGE, {
+        pokemon: source,
+        moveId: move.id,
+        damageMultiplier: multiLensMultiplier,
+      });
       fixedDamage.value = toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
       // This return skips the rest of the calculation, so abilities that endure a hit
@@ -3843,14 +3858,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Multiplier for moves enhanced by Multi-Lens and/or Parental Bond */
     const multiStrikeEnhancementMultiplier = new NumberHolder(1);
-    globalScene.applyModifiers(
-      PokemonMultiHitModifier,
-      source.isPlayer(),
-      source,
-      move.id,
-      null,
-      multiStrikeEnhancementMultiplier,
-    );
+    applyHeldItems(HeldItemEffect.MULTI_HIT_DAMAGE, {
+      pokemon: source,
+      moveId: move.id,
+      damageMultiplier: multiStrikeEnhancementMultiplier,
+    });
 
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
@@ -3942,10 +3954,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Apply the enemy's Damage and Resistance tokens */
     if (!source.isPlayer()) {
-      globalScene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+      globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_DAMAGE_BOOSTER, { numberHolder: damage });
     }
     if (!this.isPlayer()) {
-      globalScene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+      globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_DAMAGE_REDUCER, { numberHolder: damage });
     }
 
     const abAttrParams: PreAttackModifyDamageAbAttrParams = {
@@ -3955,7 +3967,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
       damage,
     };
-    // Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat)
+    // Apply this Pokemon's post-calc defensive attributes (e.g. Fur Coat)
     if (!ignoreAbility) {
       applyAbAttrs("ReceivedMoveDamageMultiplierAbAttr", abAttrParams);
 
@@ -4064,7 +4076,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (!surviveDamage.value) {
-        globalScene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
+        applyHeldItems(HeldItemEffect.SURVIVE_CHANCE, { pokemon: this, surviveDamage });
       }
 
       if (surviveDamage.value) {
@@ -4641,7 +4653,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     await this.loadAssets();
     this.calculateStats();
-    globalScene.updateModifiers(this.isPlayer(), true);
+    globalScene.updateItemBar(this.isPlayer());
     await Promise.all([this.updateInfo(this.isFainted()), globalScene.updateFieldScale()]);
   }
 
@@ -5921,25 +5933,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
-   * Does nothing if this Pokemon is somehow not the owner of the held item.
+   *
+   * Triggers in-battle effects (such as Unburden) after losing the item.
+   * @remarks
+   * Out-of-battle item loss (MEs, etc.) should use `heldItemManager.remove` directly.
    * @param heldItem - The item stack to be reduced.
-   * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
-   * Should be `false` for all item loss occurring outside of battle (MEs, etc.).
+   * @param temporary (Default `true`) Whether to remove the item temporarily or permanently
    * @returns Whether the item was removed successfully.
    */
-  public loseHeldItem(heldItem: PokemonHeldItemModifier, forBattle = true): boolean {
-    // TODO: What does a -1 pokemon id mean?
-    if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
+  public loseHeldItem(heldItemId: HeldItemId, temporary = true): boolean {
+    if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }
 
-    heldItem.stackCount--;
-    if (heldItem.stackCount <= 0) {
-      globalScene.removeModifier(heldItem, this.isEnemy());
+    if (temporary) {
+      this.heldItemManager.addTempStack(heldItemId, -1);
+    } else {
+      this.heldItemManager.remove(heldItemId);
     }
-    if (forBattle) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
-    }
+
+    applyAbAttrs("PostItemLostAbAttr", { pokemon: this });
 
     return true;
   }
@@ -5950,28 +5963,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param berryType - The type of berry being eaten.
    * @param updateHarvest - Whether to track the berry for harvest; default `true`.
    */
-  public recordEatenBerry(berryType: BerryType, updateHarvest = true) {
+  public recordEatenBerry(berryType: BerryItemId, updateHarvest = true) {
     this.battleData.hasEatenBerry = true;
     if (updateHarvest) {
       // Only track for harvest if we actually consumed the berry
       this.battleData.berriesEaten.push(berryType);
     }
     this.turnData.berriesEaten.push(berryType);
-  }
-
-  /**
-   * Get the number of persistent treasure items this Pokemon has
-   * @remarks
-   * Persistent treasure items are defined as held items that give money
-   * after battle, such as the Lucky Egg or the Amulet Coin.
-   * Used exclusively for Gimmighoul's evolution condition
-   * @returns The number of persistent treasure items this Pokémon has
-   */
-  getPersistentTreasureCount(): number {
-    return (
-      this.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length
-      + globalScene.findModifiers(m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier")).length
-    );
   }
 }
 
@@ -5988,9 +5986,25 @@ export class PlayerPokemon extends Pokemon {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
+    // TODO split into separate params once this uses a config object
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: Pokemon | PokemonData,
   ) {
-    super(106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
+    super(
+      106,
+      148,
+      species,
+      level,
+      abilityIndex,
+      formIndex,
+      gender,
+      shiny,
+      variant,
+      ivs,
+      nature,
+      heldItemConfig,
+      dataSource,
+    );
 
     if (activeOverrides.STATUS_OVERRIDE) {
       this.status = new Status(activeOverrides.STATUS_OVERRIDE, 0, 4, 4);
@@ -6144,7 +6158,7 @@ export class PlayerPokemon extends Pokemon {
       starterData.push([starterGameData[fusionStarterSpeciesId], fusionStarterSpeciesId]);
     }
     const amount = new NumberHolder(friendship);
-    globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
+    applyHeldItems(HeldItemEffect.FRIENDSHIP_BOOSTER, { pokemon: this, friendship: amount });
     friendship = amount.value;
 
     const newFriendship = this.friendship + friendship;
@@ -6212,6 +6226,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
+          this.heldItemManager.getAllItemSpecs(),
           this,
         );
         this.fusionSpecies = originalFusionSpecies;
@@ -6234,6 +6249,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
+          this.heldItemManager.getAllItemSpecs(),
           this,
         );
       }
@@ -6305,9 +6321,9 @@ export class PlayerPokemon extends Pokemon {
         });
       };
       if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
-        const evotracker = this.getHeldItems().find(m => m instanceof EvoTrackerModifier) ?? null;
+        const evotracker = this.heldItemManager.hasItem(HeldItemId.GIMMIGHOUL_EVO_TRACKER);
         if (evotracker) {
-          globalScene.removeModifier(evotracker);
+          this.heldItemManager.remove(HeldItemId.GIMMIGHOUL_EVO_TRACKER, 0, true);
         }
       }
       if (!globalScene.gameMode.isDaily || this.metBiome > -1) {
@@ -6360,16 +6376,12 @@ export class PlayerPokemon extends Pokemon {
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(isFusion ? new FusionSpeciesFormEvolution(this.id, newEvolution) : newEvolution, evoSpecies);
-        const modifiers = globalScene.findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id,
-          true,
-        ) as PokemonHeldItemModifier[];
-        modifiers.forEach(m => {
-          const clonedModifier = m.clone() as PokemonHeldItemModifier;
-          clonedModifier.pokemonId = newPokemon.id;
-          globalScene.addModifier(clonedModifier, true);
+        //TODO: This currently does not consider any values associated with the items e.g. disabled
+        const heldItems = this.getHeldItems();
+        heldItems.forEach(item => {
+          newPokemon.heldItemManager.add(item, this.heldItemManager.getStack(item));
         });
-        globalScene.updateModifiers(true);
+        globalScene.updateItemBar(true);
       }
     }
   }
@@ -6390,6 +6402,7 @@ export class PlayerPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
+        this.heldItemManager.getAllItemSpecs(),
         this,
       );
       ret.loadAssets().then(() => resolve(ret));
@@ -6414,7 +6427,7 @@ export class PlayerPokemon extends Pokemon {
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
-          globalScene.updateModifiers(true, true);
+          globalScene.updateItemBar(true);
           this.updateInfo(true).then(() => resolve());
         });
       };
@@ -6478,15 +6491,14 @@ export class PlayerPokemon extends Pokemon {
     }
 
     // combine the two mons' held items
-    const fusedPartyMemberHeldModifiers = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    for (const modifier of fusedPartyMemberHeldModifiers) {
-      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
+    const fusedPartyMemberHeldItems = pokemon.getHeldItems();
+    for (const item of fusedPartyMemberHeldItems) {
+      // TODO: is this the best way of doing this?
+      // TODO: this used to pass `ignoreUpdate = true` to skip updating the item bar
+      // but that param was removed from the function; investigate if that matters
+      tryTransferHeldItem(item, pokemon, this, pokemon.heldItemManager.getStack(item));
     }
-    globalScene.updateModifiers(true, true);
-    globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
+    globalScene.updateItemBar(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
     const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
     pokemon
@@ -6566,6 +6578,7 @@ export class EnemyPokemon extends Pokemon {
     trainerSlot: TrainerSlot,
     boss: boolean,
     shinyLock = false,
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: PokemonData,
     forRival = false,
   ) {
@@ -6581,6 +6594,7 @@ export class EnemyPokemon extends Pokemon {
       !shinyLock && dataSource ? dataSource.variant : undefined,
       undefined,
       dataSource ? dataSource.nature : undefined,
+      heldItemConfig,
       dataSource,
     );
 
@@ -7267,6 +7281,7 @@ export class EnemyPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
+        this.heldItemManager.getAllItemSpecs(),
         this,
       );
 

@@ -30,7 +30,7 @@ import { STARTING_WAVE } from "#balance/misc";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
 import { getDailyMysteryEncounter } from "#data/daily-run";
-import { allMoves, biomeDepths, modifierTypes } from "#data/data-lists";
+import { allHeldItems, allMoves, allTrainerItems, biomeDepths } from "#data/data-lists";
 import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
@@ -41,9 +41,10 @@ import { getTypeRgb } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
-import { FormChangeItem } from "#enums/form-change-item";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { GameModes } from "#enums/game-modes";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -53,15 +54,19 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { UiWindowStyle } from "#enums/ui-window-style";
+import type { Unlockables } from "#enums/unlockables";
 import { VolumeSetting } from "#enums/volume-setting";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
@@ -71,34 +76,13 @@ import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-sparkle-handler";
 import { Trainer } from "#field/trainer";
-import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "#modifiers/modifier";
-import {
-  ConsumableModifier,
-  ConsumablePokemonModifier,
-  DoubleBattleChanceBoosterModifier,
-  ExpBalanceModifier,
-  ExpShareModifier,
-  FusePokemonModifier,
-  HealingBoosterModifier,
-  ModifierBar,
-  MultipleParticipantExpBonusModifier,
-  PersistentModifier,
-  PokemonExpBoosterModifier,
-  PokemonFormChangeItemModifier,
-  PokemonHeldItemModifier,
-  PokemonHpRestoreModifier,
-  PokemonIncrementingStatModifier,
-  RememberMoveModifier,
-} from "#modifiers/modifier";
-import {
-  getDefaultModifierTypeForTier,
-  getEnemyModifierTypesForWave,
-  getLuckString,
-  getLuckTextTint,
-  getPartyLuckValue,
-  type ModifierType,
-  PokemonHeldItemModifierType,
-} from "#modifiers/modifier-type";
+import { applyTrainerItems } from "#items/all-trainer-items";
+import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
+import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
+import type { Reward } from "#items/reward";
+import type { TrainerItem } from "#items/trainer-item";
+import { TrainerItemManager } from "#items/trainer-item-manager";
+import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounter-biomes";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
@@ -107,7 +91,7 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
 import { clearVariantData, variantData } from "#sprites/variant";
 import type { Achv } from "#system/achv";
-import { achvs, ModifierAchv, MoneyAchv } from "#system/achv";
+import { achvs, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
@@ -116,7 +100,7 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { Constructor } from "#types/common";
 import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
-import type { HeldModifierConfig } from "#types/held-modifier-config";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#types/held-item-data-types";
 import type { Localizable } from "#types/locales";
 import type {
   NewBattleConstructedProps,
@@ -126,10 +110,14 @@ import type {
 } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
 import type { VolumeSettingsKey } from "#types/settings";
+import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
+import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { Exact } from "#types/type-helpers";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
 import { CharSprite } from "#ui/char-sprite";
+import { ItemBar } from "#ui/item-bar-ui";
 import { PartyExpBar } from "#ui/party-exp-bar";
 import { PokeballTray } from "#ui/pokeball-tray";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
@@ -138,7 +126,6 @@ import { UI } from "#ui/ui";
 import { addUiThemeOverrides, updateWindowType } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
 import {
-  BooleanHolder,
   fixedInt,
   formatMoney,
   getBiomeName,
@@ -153,7 +140,8 @@ import {
 import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
+import { applyHeldItems, isTrainerItemPool, isTrainerItemSpecs } from "#utils/item-utils";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
@@ -224,7 +212,7 @@ export class BattleScene extends SceneBase {
   public arena: Arena;
   public gameMode: GameMode;
   public score: number;
-  public lockModifierTiers: boolean;
+  public lockRarityTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
@@ -243,16 +231,16 @@ export class BattleScene extends SceneBase {
   private scoreText: Phaser.GameObjects.Text;
   private luckLabelText: Phaser.GameObjects.Text;
   private luckText: Phaser.GameObjects.Text;
-  private modifierBar: ModifierBar;
-  private enemyModifierBar: ModifierBar;
+  private itemBar: ItemBar;
+  private enemyItemBar: ItemBar;
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlay: Phaser.GameObjects.Rectangle;
   private shopOverlayShown = false;
 
-  public modifiers: PersistentModifier[];
-  private enemyModifiers: PersistentModifier[];
+  public trainerItems: TrainerItemManager;
+  public enemyTrainerItems: TrainerItemManager;
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
 
@@ -494,16 +482,16 @@ export class BattleScene extends SceneBase {
       .setOrigin(0)
       .setAlpha(0);
 
-    this.modifiers = [];
-    this.enemyModifiers = [];
+    this.trainerItems = new TrainerItemManager();
+    this.enemyTrainerItems = new TrainerItemManager();
 
-    this.modifierBar = new ModifierBar() //
-      .setName("modifier-bar");
-    this.add.existing(this.modifierBar);
+    this.itemBar = new ItemBar() //
+      .setName("item-bar");
+    this.add.existing(this.itemBar);
 
-    this.enemyModifierBar = new ModifierBar(true) //
-      .setName("enemy-modifier-bar");
-    this.add.existing(this.enemyModifierBar);
+    this.enemyItemBar = new ItemBar(true);
+    this.enemyItemBar.setName("enemy-item-bar");
+    this.add.existing(this.enemyItemBar);
 
     this.charSprite = new CharSprite() //
       .setName("sprite-char")
@@ -581,7 +569,7 @@ export class BattleScene extends SceneBase {
       ])
       .moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
-    this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
+    this.uiContainer.add([this.itemBar, this.enemyItemBar]);
 
     this.party = [];
 
@@ -792,12 +780,12 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * Returns the ItemBar of this scene, which is declared private and therefore not accessible elsewhere
    * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
-   * @returns The {@linkcode ModifierBar} for the given side of the field
+   * @returns The {@linkcode ItemBar} for the given side of the field
    */
-  getModifierBar(isEnemy = false): ModifierBar {
-    return isEnemy ? this.enemyModifierBar : this.modifierBar;
+  getItemBar(isEnemy = false): ItemBar {
+    return isEnemy ? this.enemyItemBar : this.itemBar;
   }
 
   // store info toggles to be accessible by the ui
@@ -839,6 +827,8 @@ export class BattleScene extends SceneBase {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
+    // TODO make separate params once this uses a config object
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
   ): PlayerPokemon {
@@ -852,6 +842,7 @@ export class BattleScene extends SceneBase {
       variant,
       ivs,
       nature,
+      heldItemConfig,
       dataSource,
     );
 
@@ -891,6 +882,7 @@ export class BattleScene extends SceneBase {
     trainerSlot: TrainerSlot,
     boss = false,
     shinyLock = false,
+    heldItemConfig?: HeldItemConfiguration | HeldItemSpecs[],
     dataSource?: PokemonData,
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
     forRival = false,
@@ -904,7 +896,16 @@ export class BattleScene extends SceneBase {
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource, forRival);
+    const pokemon = new EnemyPokemon(
+      species,
+      level,
+      trainerSlot,
+      boss,
+      shinyLock,
+      heldItemConfig,
+      dataSource,
+      forRival,
+    );
     if (activeOverrides.ENEMY_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
@@ -948,6 +949,7 @@ export class BattleScene extends SceneBase {
     }
 
     pokemon.init();
+
     return pokemon;
   }
 
@@ -968,7 +970,7 @@ export class BattleScene extends SceneBase {
       this.field.remove(pokemon, true);
       pokemon.destroy();
     }
-    this.updateModifiers(true);
+    this.updateItemBar(true);
   }
 
   addPokemonIcon(
@@ -1113,24 +1115,20 @@ export class BattleScene extends SceneBase {
     this.score = 0;
     this.money = 0;
 
-    this.lockModifierTiers = false;
+    this.lockRarityTiers = false;
 
-    if (activeOverrides.POKEBALL_OVERRIDE.active) {
-      this.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
-    } else {
-      // TODO: Remove unused luxury balls and remove the `filter`
-      this.pokeballCounts = Object.fromEntries(
-        getEnumValues(PokeballType)
-          .filter(pt => pt !== PokeballType.LUXURY_BALL)
-          .map(t => [t, 0]),
-      );
-      this.pokeballCounts[PokeballType.POKEBALL] = 5;
-    }
+    // TODO: Remove unused luxury balls and remove the `filter`
+    this.pokeballCounts = Object.fromEntries(
+      getEnumValues(PokeballType)
+        .filter(pt => pt !== PokeballType.LUXURY_BALL)
+        .map(t => [t, 0]),
+    );
+    this.pokeballCounts[PokeballType.POKEBALL] = 5;
 
-    this.modifiers = [];
-    this.enemyModifiers = [];
-    this.modifierBar.removeAll(true);
-    this.enemyModifierBar.removeAll(true);
+    this.trainerItems.clearItems();
+    this.enemyTrainerItems.clearItems();
+    this.itemBar.removeAll(true);
+    this.enemyItemBar.removeAll(true);
 
     for (const p of this.getPlayerParty()) {
       p.destroy();
@@ -1191,14 +1189,7 @@ export class BattleScene extends SceneBase {
       const localizable: Localizable[] = [
         ...speciesDataRegistry.getAllSpecies(),
         ...allMoves,
-        ...getEnumValues(ModifierPoolType)
-          .map(mpt => getModifierPoolForType(mpt))
-          .flatMap(mp =>
-            Object.values(mp)
-              .flat()
-              .map(mt => mt.modifierType)
-              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
-          ),
+        //TODO: do we need to add items and rewards here?
       ];
       for (const item of localizable) {
         item.localize();
@@ -1232,7 +1223,7 @@ export class BattleScene extends SceneBase {
   // TODO: Invert the chances for this
   private getDoubleBattleChance(newWaveIndex: number): number {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-    this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+    this.applyPlayerItems(TrainerItemEffect.DOUBLE_BATTLE_CHANCE_BOOSTER, { numberHolder: doubleChance });
     for (const p of this.getPlayerField()) {
       // TODO: This passes `null` to `applyAbAttrs`
       applyAbAttrs("DoubleBattleChanceAbAttr", { pokemon: p, chance: doubleChance });
@@ -1270,6 +1261,13 @@ export class BattleScene extends SceneBase {
     } else {
       this.handleNonFixedBattle(resolved);
     }
+
+    // Reset all temporary stacks, if they have not already been reset in reward selection
+    for (const p of this.getPlayerParty()) {
+      p.heldItemManager.clearTempStacks();
+    }
+    this.trainerItems.clearTempStacks();
+    this.updateItemBar();
 
     if (resolved.battleType == null) {
       throw new Error(
@@ -2132,12 +2130,12 @@ export class BattleScene extends SceneBase {
     await playTween({ targets: this.shopOverlay, alpha: 0, duration, ease: "Cubic.easeIn" });
   }
 
-  showEnemyModifierBar(): void {
-    this.enemyModifierBar.setVisible(true);
+  showEnemyItemBar(): void {
+    this.enemyItemBar.setVisible(true);
   }
 
-  hideEnemyModifierBar(): void {
-    this.enemyModifierBar.setVisible(false);
+  hideEnemyItemBar(): void {
+    this.enemyItemBar.setVisible(false);
   }
 
   updateBiomeWaveText(): void {
@@ -2195,7 +2193,7 @@ export class BattleScene extends SceneBase {
     for (const label of labels) {
       label.setAlpha(0);
     }
-    const luckValue = getPartyLuckValue(this.getPlayerParty());
+    const luckValue = getPartyLuckValue();
     this.luckText.setText(getLuckString(luckValue));
     if (luckValue < 14) {
       this.luckText.setTint(getLuckTextTint(luckValue));
@@ -2233,12 +2231,10 @@ export class BattleScene extends SceneBase {
   }
 
   updateUIPositions(): void {
-    const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible()).length;
+    const enemyItemCount = this.enemyItemBar.totalVisibleLength;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
-      -this.scaledCanvas.height
-        + (enemyModifierCount ? (enemyModifierCount <= 12 ? 15 : 24) : 0)
-        + biomeWaveTextHeight / 2,
+      -this.scaledCanvas.height + (enemyItemCount ? (enemyItemCount <= 12 ? 15 : 24) : 0) + biomeWaveTextHeight / 2,
     );
     this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
@@ -2265,9 +2261,9 @@ export class BattleScene extends SceneBase {
       enemy.getSpeciesForm().getBaseExp()
       * (enemy.level / this.getMaxExpLevel())
       * ((enemy.ivs.reduce((iv: number, total: number) => (total += iv), 0) / 93) * 0.2 + 0.8);
-    this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(
-      m => (scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier()),
-    );
+
+    scoreIncrease *= enemy.getHeldItems().reduce((multi, item) => multi * allHeldItems[item].getScoreMultiplier(), 1);
+
     if (enemy.isBoss()) {
       scoreIncrease *= Math.sqrt(enemy.bossSegments);
     }
@@ -2298,7 +2294,7 @@ export class BattleScene extends SceneBase {
     filterAllEvolutions = false,
   ): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue());
     }
 
     // TODO: simplify this?
@@ -2372,418 +2368,173 @@ export class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  addModifier(
-    modifier: Modifier | null,
-    ignoreUpdate?: boolean,
-    playSound?: boolean,
-    virtual?: boolean,
-    instant?: boolean,
-    cost?: number,
-  ): boolean {
-    // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
-    // that changed form change modifiers worked, had previously set the `type` field to null.
-    // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
-    if (!modifier || !modifier.type) {
-      return false;
-    }
-    let success = false;
-    const soundName = modifier.type.soundName;
-    this.validateAchvs(ModifierAchv, modifier);
-    const modifiersToRemove: PersistentModifier[] = [];
-    if (modifier instanceof PersistentModifier) {
-      if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
-        if (modifier instanceof PokemonFormChangeItemModifier) {
-          const pokemon = this.getPokemonById(modifier.pokemonId);
-          if (pokemon) {
-            success = modifier.apply(pokemon, true);
-          }
-        }
-        if (playSound && !this.sound.get(soundName)) {
-          audioManager.playSound(soundName);
-        }
-      } else if (!virtual) {
-        const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-        this.phaseManager.queueMessage(
-          i18next.t("battle:itemStackFull", {
-            fullItemName: modifier.type.name,
-            itemName: defaultModifierType.name,
-          }),
-          undefined,
-          false,
-          3000,
-        );
-        return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant);
-      }
-
-      for (const rm of modifiersToRemove) {
-        this.removeModifier(rm);
-      }
-
-      if (!ignoreUpdate && !virtual) {
-        this.updateModifiers(true, instant);
-      }
-    } else if (modifier instanceof ConsumableModifier) {
-      if (playSound && !this.sound.get(soundName)) {
-        audioManager.playSound(soundName);
-      }
-
-      if (modifier instanceof ConsumablePokemonModifier) {
-        for (const p in this.party) {
-          const pokemon = this.party[p];
-
-          const args: unknown[] = [];
-          if (modifier instanceof PokemonHpRestoreModifier) {
-            if ((modifier as PokemonHpRestoreModifier).fainted) {
-              args.push(1);
-            } else {
-              const hpRestoreMultiplier = new NumberHolder(1);
-              this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
-              args.push(hpRestoreMultiplier.value);
-            }
-          } else if (modifier instanceof FusePokemonModifier) {
-            args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-          } else if (modifier instanceof RememberMoveModifier && cost != null) {
-            args.push(cost);
-          }
-
-          if (modifier.shouldApply(pokemon, ...args)) {
-            const result = modifier.apply(pokemon, ...args);
-            success ||= result;
-          }
-        }
-
-        this.party.forEach(p => {
-          p.updateInfo(instant);
-        });
-      } else {
-        const args = [this];
-        if (modifier.shouldApply(...args)) {
-          const result = modifier.apply(...args);
-          success ||= result;
-        }
-      }
-    }
-    return success;
+  applyPlayerItems<T extends TrainerItemEffect>(effect: T, params: TrainerItemEffectParamMap[T]) {
+    applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
-    return new Promise(resolve => {
-      const modifiersToRemove: PersistentModifier[] = [];
-      if ((modifier as PersistentModifier).add(this.enemyModifiers, false)) {
-        if (modifier instanceof PokemonFormChangeItemModifier) {
-          const pokemon = this.getPokemonById(modifier.pokemonId);
-          if (pokemon) {
-            modifier.apply(pokemon, true);
+  // TODO: Move this outside of here?
+  applyReward<T extends Reward>(reward: T, params: Exact<Parameters<T["apply"]>[0]>, playSound?: boolean): boolean {
+    const { soundName } = reward;
+
+    if (playSound) {
+      audioManager.playSound(soundName);
+    }
+
+    if (!reward.shouldApply(params)) {
+      return false;
+    }
+
+    reward.apply(params);
+    return true;
+  }
+
+  assignTrainerItemsFromConfiguration(config: TrainerItemConfiguration, isPlayer: boolean) {
+    const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
+    config.forEach(item => {
+      const { entry, count } = item;
+
+      if (typeof entry === "number") {
+        manager.add(entry, count);
+      }
+
+      if (isTrainerItemSpecs(entry)) {
+        manager.add(entry);
+      }
+
+      if (isTrainerItemPool(entry)) {
+        for (let i = 1; i <= (count ?? 1); i++) {
+          const newItem = getNewTrainerItemFromPool(entry, manager);
+          if (newItem) {
+            manager.add(newItem);
           }
         }
-        for (const rm of modifiersToRemove) {
-          this.removeModifier(rm, true);
-        }
       }
-      if (!ignoreUpdate) {
-        this.updateModifiers(false, instant);
-      }
-      resolve();
     });
   }
 
-  /**
-   * Try to transfer a held item to another pokemon.
-   * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
-   * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
-   * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
-   * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
-   * @param target {@linkcode Pokemon} recepient in this transfer
-   * @param playSound `true` to play a sound when transferring the item
-   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
-   * @param instant ??? (Optional)
-   * @param ignoreUpdate ??? (Optional)
-   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
-   * @returns `true` if the transfer was successful
-   */
-  tryTransferHeldItemModifier(
-    itemModifier: PokemonHeldItemModifier,
-    target: Pokemon,
-    playSound: boolean,
-    transferQuantity = 1,
-    instant?: boolean,
-    ignoreUpdate?: boolean,
-    itemLost = true,
-  ): boolean {
-    const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
+  assignTrainerItemsFromSaveData(saveData: TrainerItemSaveData, isPlayer: boolean) {
+    const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
+    for (const item of saveData) {
+      manager.add(item);
     }
-
-    if (cancelled.value) {
-      return false;
-    }
-
-    const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-    newItemModifier.pokemonId = target.id;
-    const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier;
-
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(
-        transferQuantity,
-        itemModifier.stackCount,
-        maxStackCount - matchingModifier.stackCount,
-      );
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
-    } else {
-      const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = countTaken;
-    }
-
-    const removeOld = itemModifier.stackCount === 0;
-
-    if (!removeOld || !source || this.removeModifier(itemModifier, source.isEnemy())) {
-      const addModifier = () => {
-        if (!matchingModifier || this.removeModifier(matchingModifier, target.isEnemy())) {
-          if (target.isPlayer()) {
-            this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
-            if (source && itemLost) {
-              applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
-            }
-            return true;
-          }
-          this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
-          if (source && itemLost) {
-            applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
-          }
-          return true;
-        }
-        return false;
-      };
-      if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-        this.updateModifiers(source.isPlayer(), instant);
-        addModifier();
-      } else {
-        addModifier();
-      }
-      return true;
-    }
-    return false;
-  }
-  /**
-   * Attempt to discard one or more copies of a held item.
-   * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded
-   * @param discardQuantity - The number of copies to remove (up to the amount currently held); default `1`
-   * @returns Whether the item was successfully discarded.
-   * Removing fewer items than requested is still considered a success.
-   */
-  tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
-    const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
-    itemModifier.stackCount -= countTaken;
-
-    if (itemModifier.stackCount > 0) {
-      return true;
-    }
-
-    return this.removeModifier(itemModifier);
   }
 
-  canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
-    const mod = itemModifier.clone() as PokemonHeldItemModifier;
-    const source = mod.pokemonId ? mod.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
+  public generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
+    if (this.currentBattle.isClassicFinalBoss) {
+      return;
     }
 
-    if (cancelled.value) {
-      return false;
+    // TODO: Explain this logic and math
+    const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
+    const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
+    let chances = Math.ceil(difficultyWaveIndex / 10);
+    if (isFinalBoss) {
+      chances = Math.ceil(chances * 2.5);
     }
 
-    const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    const party = this.getEnemyParty();
 
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
-      mod.stackCount -= countTaken;
-    } else {
-      const countTaken = Math.min(transferQuantity, mod.stackCount);
-      mod.stackCount -= countTaken;
+    if (this.currentBattle.trainer) {
+      const trainerItemConfig = this.currentBattle.trainer.genTrainerItems(party);
+      this.assignTrainerItemsFromConfiguration(trainerItemConfig, false);
     }
 
-    const removeOld = mod.stackCount === 0;
-
-    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
-  }
-
-  removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
-    return new Promise(resolve => {
-      const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
-      const modifiersToRemove = this.modifiers.filter(
-        m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === pokemonId,
-      );
-      for (const m of modifiersToRemove) {
-        this.modifiers.splice(this.modifiers.indexOf(m), 1);
+    for (const [i, enemyPokemon] of party.entries()) {
+      if (heldItemConfigs?.[i]) {
+        assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
+        continue;
       }
-      this.updateModifiers();
-      resolve();
-    });
-  }
 
-  generateEnemyModifiers(heldModifiersConfigs?: HeldModifierConfig[][]): Promise<void> {
-    return new Promise(resolve => {
-      if (this.currentBattle.isClassicFinalBoss) {
-        return resolve();
+      const isBoss =
+        enemyPokemon.isBoss()
+        || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
+      let upgradeChance = 32;
+      if (isBoss) {
+        upgradeChance /= 2;
       }
-      const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
-      const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
-      let chances = Math.ceil(difficultyWaveIndex / 10);
       if (isFinalBoss) {
-        chances = Math.ceil(chances * 2.5);
+        upgradeChance /= 8;
       }
-
-      const party = this.getEnemyParty();
-
-      if (this.currentBattle.trainer) {
-        const modifiers = this.currentBattle.trainer.genModifiers(party);
-        for (const modifier of modifiers) {
-          this.addEnemyModifier(modifier, true, true);
+      let count = 0;
+      // TODO: Move this to some utility function - this is just a stock binomial distribution
+      const enemyItemChance = this.gameMode.getEnemyItemChance(isBoss);
+      for (let c = 0; c < chances; c++) {
+        if (!randSeedInt(enemyItemChance)) {
+          count++;
         }
       }
-
-      party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
-        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i]) {
-          for (const mt of heldModifiersConfigs[i]) {
-            let modifier: PokemonHeldItemModifier;
-            if (mt.modifier instanceof PokemonHeldItemModifierType) {
-              modifier = mt.modifier.newModifier(enemyPokemon);
-            } else {
-              modifier = mt.modifier as PokemonHeldItemModifier;
-              modifier.pokemonId = enemyPokemon.id;
-            }
-            modifier.stackCount = mt.stackCount ?? 1;
-            modifier.isTransferable = mt.isTransferable ?? modifier.isTransferable;
-            this.addEnemyModifier(modifier, true);
-          }
-        } else {
-          const isBoss =
-            enemyPokemon.isBoss()
-            || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
-          let upgradeChance = 32;
-          if (isBoss) {
-            upgradeChance /= 2;
-          }
-          if (isFinalBoss) {
-            upgradeChance /= 8;
-          }
-          let count = 0;
-          for (let c = 0; c < chances; c++) {
-            if (!randSeedInt(this.gameMode.getEnemyModifierChance(isBoss))) {
-              count++;
-            }
-          }
-          if (isBoss) {
-            count = Math.max(count, Math.floor(chances / 2));
-          }
-          getEnemyModifierTypesForWave(
-            difficultyWaveIndex,
-            count,
-            [enemyPokemon],
-            this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
-            upgradeChance,
-          ).map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false));
-        }
-        return true;
-      });
-      this.updateModifiers(false);
-      resolve();
-    });
+      if (isBoss) {
+        count = Math.max(count, Math.floor(chances / 2));
+      }
+      generateEnemyPokemonHeldItems(
+        count,
+        enemyPokemon,
+        this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
+        upgradeChance,
+      );
+    }
+    // gives Eternatus the MBH item on Endless X000 waves
+    if (!(difficultyWaveIndex % 1000)) {
+      party[0].heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
+    }
+    this.updateItemBar(false);
   }
 
   /**
-   * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
+   * Removes all items from enemy pokemon and trainers
    */
-  clearEnemyModifiers(): void {
-    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
-    for (const m of modifiersToRemove) {
-      this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
+  clearEnemyItems(): void {
+    this.enemyTrainerItems.clearItems();
+    for (const p of this.getEnemyParty()) {
+      p.heldItemManager.clearItems();
     }
-    this.updateModifiers(false);
+    this.updateItemBar(false);
     this.updateUIPositions();
+  }
+
+  clearAllItems(): void {
+    this.trainerItems.clearItems();
+    this.enemyTrainerItems.clearItems();
+    for (const p of this.getPlayerParty()) {
+      p.heldItemManager.clearItems();
+    }
+    for (const p of this.getEnemyParty()) {
+      p.heldItemManager.clearItems();
+    }
+    this.updateItemBar(false);
+    this.updateUIPositions();
+  }
+
+  setItemsVisible(visible: boolean) {
+    [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
 
   /**
-   * Removes all modifiers from enemy pokemon of {@linkcode PokemonHeldItemModifier} type
-   * @param pokemon - If specified, only removes held items from that {@linkcode Pokemon}
+   * Update the item bar for the given side.
+   * @param player - (Default `true`) Whether to use the player or enemy side
+   * @param showHeldItems - (Default `true`) Whether to include the held items of the first Pokemon in the party
    */
-  clearEnemyHeldItemModifiers(pokemon?: Pokemon): void {
-    const modifiersToRemove = this.enemyModifiers.filter(
-      m => m instanceof PokemonHeldItemModifier && (!pokemon || m.getPokemon() === pokemon),
-    );
-    for (const m of modifiersToRemove) {
-      this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
-    }
-    this.updateModifiers(false);
-    this.updateUIPositions();
-  }
+  public updateItemBar(player = true, showHeldItems = true): void {
+    const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
 
-  setModifiersVisible(visible: boolean) {
-    [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
-  }
+    const party = player ? this.getPlayerParty() : this.getEnemyParty();
+    this.updateParty(party, true);
+    const pokemonA = party[0];
 
-  // TODO: Document this
-  updateModifiers(player = true, instant?: boolean): void {
-    const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
-    for (let m = 0; m < modifiers.length; m++) {
-      const modifier = modifiers[m];
-      if (
-        modifier instanceof PokemonHeldItemModifier
-        && !this.getPokemonById((modifier as PokemonHeldItemModifier).pokemonId)
-      ) {
-        modifiers.splice(m--, 1);
-      }
-      if (
-        modifier instanceof PokemonHeldItemModifier
-        && modifier.getSpecies() != null
-        && !this.getPokemonById(modifier.pokemonId)?.hasSpecies(modifier.getSpecies()!)
-      ) {
-        modifiers.splice(m--, 1);
-      }
-    }
-    for (const modifier of modifiers) {
-      if (modifier instanceof PersistentModifier) {
-        (modifier as PersistentModifier).virtualStackCount = 0;
-      }
+    const itemBar = player ? this.itemBar : this.enemyItemBar;
+
+    if (showHeldItems) {
+      itemBar.updateItems(trainerItems, pokemonA);
+    } else {
+      itemBar.updateItems(trainerItems);
     }
 
-    const modifiersClone = modifiers.slice(0);
-    for (const modifier of modifiersClone) {
-      if (!modifier.getStackCount()) {
-        modifiers.splice(modifiers.indexOf(modifier), 1);
-      }
-    }
-
-    this.updatePartyForModifiers(player ? this.getPlayerParty() : this.getEnemyParty(), instant);
-    (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
     if (!player) {
       this.updateUIPositions();
     }
   }
 
-  updatePartyForModifiers(party: Pokemon[], instant?: boolean): Promise<void> {
+  updateParty(party: Pokemon[], instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       Promise.allSettled(
         party.map(p => {
@@ -2794,156 +2545,34 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  hasModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
-    return modifiers.indexOf(modifier) > -1;
-  }
+  // TODO: This is extraordinarily scuffed
+  applyShuffledStatusTokens(pokemon: Pokemon) {
+    let tokens = [
+      TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
+      TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE,
+      TrainerItemId.ENEMY_ATTACK_POISON_CHANCE,
+    ].filter(t => this.enemyTrainerItems.hasItem(t));
 
-  /**
-   * Removes a currently owned item. If the item is stacked, the entire item stack
-   * gets removed. This function does NOT apply in-battle effects, such as Unburden.
-   * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
-   * @param modifier The item to be removed.
-   * @param enemy `true` to remove an item owned by the enemy rather than the player; default `false`.
-   * @returns `true` if the item exists and was successfully removed, `false` otherwise
-   */
-  removeModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
-    const modifierIndex = modifiers.indexOf(modifier);
-    if (modifierIndex > -1) {
-      modifiers.splice(modifierIndex, 1);
-      if (modifier instanceof PokemonFormChangeItemModifier) {
-        const pokemon = this.getPokemonById(modifier.pokemonId);
-        if (pokemon) {
-          modifier.apply(pokemon, false);
-        }
-      }
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Get all of the modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that matched `modifierType`.
-   */
-  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
-  }
-
-  /**
-   * Get all of the modifiers that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that passed the `modifierFilter` function
-   */
-  findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
-    return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
-  }
-
-  /**
-   * Find the first modifier that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
-   */
-  findModifier(modifierFilter: ModifierPredicate, player = true): PersistentModifier | undefined {
-    return (player ? this.modifiers : this.enemyModifiers).find(modifierFilter);
-  }
-
-  /**
-   * Apply all modifiers that match `modifierType` in a random order
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param args The list of arguments needed to invoke `modifierType.apply`
-   * @returns the list of all modifiers that matched `modifierType` and were applied.
-   */
-  applyShuffledModifiers<T extends PersistentModifier>(
-    modifierType: Constructor<T>,
-    player = true,
-    ...args: Parameters<T["apply"]>
-  ): T[] {
-    let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(
-      (m): m is T => m instanceof modifierType && m.shouldApply(...args),
-    );
     this.executeWithSeedOffset(
+      // TODO: Fix this
       () => {
-        const shuffleModifiers = mods => {
-          if (mods.length === 0) {
-            return mods;
+        const shuffleTokens = toks => {
+          if (toks.length === 0) {
+            return toks;
           }
-          const rand = randSeedInt(mods.length);
-          return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+          const rand = randSeedInt(toks.length);
+          return [toks[rand], ...shuffleTokens(toks.filter((_, i) => i !== rand))];
         };
-        modifiers = shuffleModifiers(modifiers);
+        tokens = shuffleTokens(tokens);
       },
-      this.currentBattle.turn << 4,
+      this.currentBattle.turn << 4, // TODO: I HATE RANDOM SEED OFFSETS LIKE THIS
       this.waveSeed,
     );
-    return this.applyModifiersInternal(modifiers, player, args);
-  }
 
-  /**
-   * Apply all modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param args The list of arguments needed to invoke `modifierType.apply`
-   * @returns the list of all modifiers that matched `modifierType` and were applied.
-   */
-  applyModifiers<T extends PersistentModifier>(
-    modifierType: Constructor<T>,
-    player = true,
-    ...args: Parameters<T["apply"]>
-  ): T[] {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(
-      (m): m is T => m instanceof modifierType && m.shouldApply(...args),
-    );
-    return this.applyModifiersInternal(modifiers, player, args);
-  }
-
-  /** Helper function to apply all passed modifiers */
-  applyModifiersInternal<T extends PersistentModifier>(
-    modifiers: T[],
-    player: boolean,
-    args: Parameters<T["apply"]>,
-  ): T[] {
-    const appliedModifiers: T[] = [];
-    for (const modifier of modifiers) {
-      if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, player ? "" : "(enemy)");
-        appliedModifiers.push(modifier);
-      }
+    for (const t of tokens) {
+      const item = allTrainerItems[t] satisfies TrainerItem<EnemyAttackStatusEffectChanceTrainerItemAttr>;
+      item.apply(TrainerItemEffect.ENEMY_ATTACK_STATUS_CHANCE, { pokemon }, this.enemyTrainerItems);
     }
-
-    return appliedModifiers;
-  }
-
-  /**
-   * Apply the first modifier that matches `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param args The list of arguments needed to invoke `modifierType.apply`
-   * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
-   */
-  applyModifier<T extends PersistentModifier>(
-    modifierType: Constructor<T>,
-    player = true,
-    ...args: Parameters<T["apply"]>
-  ): T | null {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(
-      (m): m is T => m instanceof modifierType && m.shouldApply(...args),
-    );
-    for (const modifier of modifiers) {
-      if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, player ? "" : "(enemy)");
-        return modifier;
-      }
-    }
-
-    return null;
   }
 
   triggerPokemonFormChange(
@@ -2960,22 +2589,18 @@ export class BattleScene extends SceneBase {
       let matchingFormChange: SpeciesFormChange | null;
       if (pokemon.species.speciesId === SpeciesId.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
-        const formChangeItemModifiers = (
-          this.findModifiers(
-            m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id,
-          ) as PokemonFormChangeItemModifier[]
-        )
-          .filter(m => m.active)
-          .map(m => m.formChangeItem);
+        const formChangeItems = pokemon.heldItemManager.getFormChangeItems();
+        const activeFormChangeItems = formChangeItems.filter(f => pokemon.heldItemManager.hasActiveFormChangeItem(f));
 
-        matchingFormChange = formChangeItemModifiers.includes(FormChangeItem.N_LUNARIZER)
+        matchingFormChange = activeFormChangeItems.includes(FormChangeItemId.N_LUNARIZER)
           ? matchingFormChangeOpts[0]
-          : formChangeItemModifiers.includes(FormChangeItem.N_SOLARIZER)
+          : activeFormChangeItems.includes(FormChangeItemId.N_SOLARIZER)
             ? matchingFormChangeOpts[1]
             : null;
       } else {
         matchingFormChange = matchingFormChangeOpts[0];
       }
+
       if (matchingFormChange) {
         let phase: Phase;
         if (pokemon.isPlayer() && !matchingFormChange.quiet) {
@@ -3157,7 +2782,7 @@ export class BattleScene extends SceneBase {
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
-      luck: this.currentBattle ? getPartyLuckValue(this.party) : -1,
+      luck: this.currentBattle ? getPartyLuckValue() : -1,
       party:
         this.party?.map(
           p =>
@@ -3266,11 +2891,7 @@ export class BattleScene extends SceneBase {
 
     audioManager.fadeOutBgm(2000, true);
     this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
-      const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
-        pokemon,
-      ) as TurnHeldItemTransferModifier;
-      finalBossMBH.setTransferrableFalse();
-      this.addEnemyModifier(finalBossMBH, false, true);
+      pokemon.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
       pokemon.generateAndPopulateMoveset(false, 1);
       this.setFieldScale(0.75);
       this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
@@ -3304,11 +2925,9 @@ export class BattleScene extends SceneBase {
   ): void {
     // TODO: make this code actually not insane
     const party = this.getPlayerParty();
-    const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
-    const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
-    const multipleParticipantExpBonusModifier = this.findModifier(
-      m => m instanceof MultipleParticipantExpBonusModifier,
-    ) as MultipleParticipantExpBonusModifier;
+    const expShareStack = this.trainerItems.getStack(TrainerItemId.EXP_SHARE);
+    const expBalanceStack = this.trainerItems.getStack(TrainerItemId.EXP_BALANCE);
+    const ovalCharmStack = this.trainerItems.getStack(TrainerItemId.OVAL_CHARM);
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.getMaxExpLevel());
     const partyMemberExp: number[] = [];
@@ -3331,28 +2950,28 @@ export class BattleScene extends SceneBase {
         const participated = participantIds.has(pId);
         if (participated && pokemonDefeated) {
           partyMember.addFriendship(FRIENDSHIP_GAIN_FROM_BATTLE);
-          const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
-          if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount()) {
-            machoBraceModifier.stackCount++;
-            this.updateModifiers(true, true);
+          const hasMachoBrace = partyMember.heldItemManager.hasItem(HeldItemId.MACHO_BRACE);
+          if (hasMachoBrace) {
+            partyMember.heldItemManager.add(HeldItemId.MACHO_BRACE);
+            this.updateItemBar(true);
             partyMember.updateInfo();
           }
         }
         if (!expPartyMembers.includes(partyMember)) {
           continue;
         }
-        if (!participated && !expShareModifier) {
+        if (!participated && !expShareStack) {
           partyMemberExp.push(0);
           continue;
         }
         let expMultiplier = 0;
         if (participated) {
           expMultiplier += 1 / participantIds.size;
-          if (participantIds.size > 1 && multipleParticipantExpBonusModifier) {
-            expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
+          if (participantIds.size > 1 && ovalCharmStack) {
+            expMultiplier += ovalCharmStack * 0.2;
           }
-        } else if (expShareModifier) {
-          expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
+        } else if (expShareStack) {
+          expMultiplier += (expShareStack * 0.2) / participantIds.size;
         }
         if (partyMember.pokerus) {
           expMultiplier *= 1.5;
@@ -3361,11 +2980,11 @@ export class BattleScene extends SceneBase {
           expMultiplier = activeOverrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new NumberHolder(expValue * expMultiplier);
-        this.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
+        applyHeldItems(HeldItemEffect.EXP_BOOSTER, { pokemon: partyMember, expAmount: pokemonExp });
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 
-      if (expBalanceModifier) {
+      if (expBalanceStack) {
         let totalLevel = 0;
         let totalExp = 0;
         expPartyMembers.forEach((expPartyMember, epm) => {
@@ -3388,7 +3007,7 @@ export class BattleScene extends SceneBase {
           partyMemberExp[pm] = Phaser.Math.Linear(
             partyMemberExp[pm],
             recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0,
-            0.2 * expBalanceModifier.getStackCount(),
+            0.2 * expBalanceStack,
           );
         });
       }
@@ -3628,5 +3247,18 @@ export class BattleScene extends SceneBase {
     encounter = new MysteryEncounter(encounter);
     encounter.populateDialogueTokensFromRequirements();
     return encounter;
+  }
+
+  /**
+   * Determines whether an item is unlocked based on game mode
+   * @param unlockable - The {@linkcode Unlockables | unlock} to check
+   * @param ignoreDaily - (Default `true`) Whether Daily Mode runs should treat it as unlocked
+   * @returns Whether it's considered unlocked according to current game mode and challenges
+   */
+  public getUnlockStatus(unlockable: Unlockables, ignoreDaily = true): boolean {
+    return (
+      (this.gameMode.isDaily && ignoreDaily)
+      || (!this.gameMode.isFreshStartChallenge() && this.gameData.isUnlocked(unlockable))
+    );
   }
 }

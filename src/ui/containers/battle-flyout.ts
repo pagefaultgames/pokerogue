@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { TextStyle } from "#enums/text-style";
 import type { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
@@ -178,8 +178,8 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
     const berryUsedEvent = event as BerryUsedEvent;
     if (
       !berryUsedEvent
-      || berryUsedEvent.berryModifier.pokemonId !== this.pokemon?.id
-      || berryUsedEvent.berryModifier.berryType !== BerryType.LEPPA
+      || berryUsedEvent.pokemon.id !== this.pokemon?.id
+      || berryUsedEvent.berryType !== HeldItemId.LEPPA_BERRY
     ) {
       // We only care about Leppa berries
       return;

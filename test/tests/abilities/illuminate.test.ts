@@ -2,6 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -42,7 +43,7 @@ describe("Abilities - Illuminate", () => {
   });
 
   it("should guarantee double battle with any one LURE", async () => {
-    game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
+    game.override.startingTrainerItems([{ entry: TrainerItemId.LURE }]).startingWave(2);
 
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
