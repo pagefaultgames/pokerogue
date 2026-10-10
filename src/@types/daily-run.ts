@@ -11,7 +11,7 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 import type { StarterMoveset } from "./save-data";
 import type { TupleRange } from "./type-helpers";
 
-export type DailySeedIv = IntClosedRange<0, 32>;
+export type DailySeedIv = IntClosedRange<0, 31>;
 export type DailySeedIvs = TupleOf<6, DailySeedIv>;
 
 /**
