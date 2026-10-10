@@ -15,8 +15,10 @@ export interface SerializedArenaData {
   tags?: ArenaTagData[];
   positionalTags: SerializedPositionalTag[];
   playerTerasUsed?: number;
+  playerFaintedLastTurn?: true | undefined;
 }
 
+// TODO: Remove this class and use the interface instead
 export class ArenaData {
   public biome: BiomeId;
   public weather: Weather | null;
@@ -24,6 +26,7 @@ export class ArenaData {
   public tags: ArenaTag[];
   public positionalTags: SerializedPositionalTag[] = [];
   public playerTerasUsed: number;
+  public playerFaintedLastTurn: boolean;
 
   constructor(source: Arena | SerializedArenaData) {
     // Exclude any unserializable tags from the serialized data (such as ones only lasting 1 turn).
@@ -43,6 +46,7 @@ export class ArenaData {
       // The assertion here is ok - we ensure that all tags are inside the `posTagConstructorMap` map,
       // and that all `PositionalTags` will become their respective interfaces when serialized and de-serialized.
       this.positionalTags = (source.positionalTagManager.tags as unknown as SerializedPositionalTag[]) ?? [];
+      this.playerFaintedLastTurn = source.playerFaintedLastTurn;
       return;
     }
 
@@ -54,5 +58,21 @@ export class ArenaData {
       ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft, source.terrain.maxDuration)
       : null;
     this.positionalTags = source.positionalTags ?? [];
+    this.playerFaintedLastTurn = source.playerFaintedLastTurn ?? false;
+  }
+
+  /**
+   * JSON-ify an `ArenaData` instance into `SerializedArenaData`
+   * (or more accurately, an intermediate representation thereof).
+   * @privateRemarks
+   * This avoids serializing `playerFaintedLastTurn` if it is set to `false`.
+   */
+  public toJSON(): SerializedArenaData {
+    const { playerFaintedLastTurn, ...rest } = this;
+    return {
+      // TS doesn't know this, but converting to JSON removes all methods
+      ...(rest as unknown as Omit<SerializedArenaData, "playerFaintedLastTurn">),
+      playerFaintedLastTurn: playerFaintedLastTurn || undefined,
+    };
   }
 }

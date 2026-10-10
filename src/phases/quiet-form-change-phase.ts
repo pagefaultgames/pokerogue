@@ -14,7 +14,8 @@ import { playTween } from "#utils/anim-utils";
  * Phase handling mid-battle form changes that do not occur in the Party modal
  * and do not show an evolution dialogue.
  */
-// TODO: Rename as the term "quiet" can be confusing
+// TODO: The term "quiet" can be confusing; a much better moniker would be "MidBattleFormChangePhase" or similar
+// (potentially alongside an overall separation of in-battle and out-of-battle form changes)
 export class QuietFormChangePhase extends BattlePhase {
   public readonly phaseName = "QuietFormChangePhase";
 
