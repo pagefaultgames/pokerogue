@@ -1,21 +1,48 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, type HeldItemId, HeldItemNames, ITEM_CATEGORY_MASK } from "#enums/held-item-id";
 import { TrainerItemNames } from "#enums/trainer-item-id";
+import type { Pokemon } from "#field/pokemon";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { HeldItemConfiguration, HeldItemPool, HeldItemSpecs } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { TrainerItemPool, TrainerItemSpecs } from "#types/trainer-item-data-types";
+import { ValueHolder } from "./value-holder";
 
 // TODO: Move to another file
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
   const { pokemon } = params;
+
   for (const itemId of pokemon.heldItemManager.getItems()) {
     const heldItem = allHeldItems[itemId] as HeldItem | CosmeticHeldItem;
     if ("effects" in heldItem && heldItem.hasEffect(effect)) {
+      // Suppressed items are not applied.
+      if (heldItem.isSuppressable && areItemsSuppressed(pokemon)) {
+        continue;
+      }
       (heldItem satisfies HeldItem).apply(effect, params);
     }
   }
+}
+
+/**
+ * Check whether held items of a given Pokemon should be suppressed
+ * by Embargo or Magic Room.
+ * @param pokemon The Pokemon to check
+ */
+export function areItemsSuppressed(pokemon: Pokemon): boolean {
+  const itemsSuppressed = new ValueHolder(false);
+  globalScene.arena.applyTags(ArenaTagType.MAGIC_ROOM, itemsSuppressed);
+  const embargoTag = pokemon.getTag(BattlerTagType.EMBARGO);
+  if (embargoTag) {
+    embargoTag.apply(itemsSuppressed);
+  }
+  applyAbAttrs("SuppressHeldItemsAbAttr", { pokemon, itemsSuppressed });
+  return itemsSuppressed.value;
 }
 
 export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {

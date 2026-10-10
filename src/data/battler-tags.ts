@@ -111,6 +111,7 @@ import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { groupStatChange } from "#utils/stat-change";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
 
@@ -3911,6 +3912,25 @@ export class RageTag extends SerializableBattlerTag {
 }
 
 /**
+ * Tag that deactivates a Pokémon's held items.
+ * Used by {@linkcode MoveId.EMBARGO}.
+ */
+export class EmbargoTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.EMBARGO;
+  constructor() {
+    super(BattlerTagType.EMBARGO, BattlerTagLapseType.TURN_END, 5);
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    globalScene.phaseManager.queueMessage(`${pokemon} can't use held items anymore!`);
+  }
+
+  apply(itemsSuppressed: ValueHolder<boolean>): void {
+    itemsSuppressed.value = true;
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -4110,6 +4130,8 @@ export function getBattlerTag(
       return new BypassSpeedTag();
     case BattlerTagType.RAGE:
       return new RageTag();
+    case BattlerTagType.EMBARGO:
+      return new EmbargoTag();
   }
 }
 
@@ -4244,6 +4266,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
   [BattlerTagType.RAGE]: RageTag;
+  [BattlerTagType.EMBARGO]: EmbargoTag;
 };
 
 /**

@@ -379,7 +379,7 @@ export class PokemonTurnData {
   /**
    * All berries eaten by this pokemon in this turn.
    * Saved into {@linkcode PokemonSummonData} by Cud Chew on turn end.
-   * @see {@linkcode PokemonSummonData.berriesEatenLast}
+   * @see {@linkcode PokemonSummonData["berriesEatenLast"]}
    */
   public berriesEaten: BerryItemId[] = [];
 }

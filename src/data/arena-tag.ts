@@ -1212,6 +1212,29 @@ export class TrickRoomTag extends RoomArenaTag {
 }
 
 /**
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Room_(move) Magic Room}.
+ * Blocks held item usage by all Pokémon on the field as long as this arena tag is up.
+ */
+export class MagicRoomTag extends RoomArenaTag {
+  public readonly tagType = ArenaTagType.MAGIC_ROOM;
+  constructor(turnCount: number, sourceId?: number) {
+    super(turnCount, MoveId.MAGIC_ROOM, sourceId);
+  }
+
+  protected override get onAddMessageKey(): string {
+    return "arenaTag:magicRoomOnAdd";
+  }
+
+  protected override get onRemoveMessageKey(): string {
+    return "arenaTag:magicRoomOnRemove";
+  }
+
+  override apply(itemsSuppressed: ValueHolder<boolean>): void {
+    itemsSuppressed.value = true;
+  }
+}
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity}.
  *
  * Grounds all Pokémon on the field, including Flying-types and those with
@@ -1778,6 +1801,8 @@ export function getArenaTag(
       return new StickyWebTag(sourceId, side);
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
+    case ArenaTagType.MAGIC_ROOM:
+      return new MagicRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:
       return new GravityTag(turnCount, sourceId);
     case ArenaTagType.REFLECT:
@@ -1841,6 +1866,7 @@ export type ArenaTagTypeMap = {
   [ArenaTagType.STEALTH_ROCK]: StealthRockTag;
   [ArenaTagType.STICKY_WEB]: StickyWebTag;
   [ArenaTagType.TRICK_ROOM]: TrickRoomTag;
+  [ArenaTagType.MAGIC_ROOM]: MagicRoomTag;
   [ArenaTagType.GRAVITY]: GravityTag;
   [ArenaTagType.REFLECT]: ReflectTag;
   [ArenaTagType.LIGHT_SCREEN]: LightScreenTag;
