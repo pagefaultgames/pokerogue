@@ -109,4 +109,36 @@ export class SceneBase extends Phaser.Scene {
       this.load.start();
     });
   }
+
+  /**
+   * Load a BGM file as compressed bytes for streaming.
+   * This allows the game to either decode on demand, or
+   * fallback to normal loading if streaming is not supported on the device.
+   * @param extension - (Default `"mp3"`) File extension to load
+   */
+  public async loadBgmBytes(key: string, extension = "mp3"): Promise<ArrayBuffer> {
+    const cached: ArrayBuffer | undefined = this.cache.binary.get(key);
+    if (cached != null) {
+      return cached;
+    }
+
+    this.load.binary(key, getCachedUrl(`audio/bgm/${key}.${extension}`));
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      const completeEvent = `filecomplete-binary-${key}`;
+      const onComplete = (_key: string, _type: string, data: ArrayBuffer) => {
+        this.load.off(Phaser.Loader.Events.FILE_LOAD_ERROR, onError);
+        resolve(data);
+      };
+      const onError = (file: Phaser.Loader.File) => {
+        if (file.key === key) {
+          this.load.off(completeEvent, onComplete);
+          this.load.off(Phaser.Loader.Events.FILE_LOAD_ERROR, onError);
+          reject(new Error(`Failed to load BGM bytes: ${key}`));
+        }
+      };
+      this.load.once(completeEvent, onComplete);
+      this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, onError);
+      this.load.start();
+    });
+  }
 }
