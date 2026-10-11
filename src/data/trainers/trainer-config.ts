@@ -3804,7 +3804,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.STEELIX, SpeciesId.ALOLA_GOLEM], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.STEELIX], TrainerSlot.TRAINER, true, p => {
         // Tera Fighting Steelix
         p.abilityIndex = 1; // Sturdy
         p.generateAndPopulateMoveset();
