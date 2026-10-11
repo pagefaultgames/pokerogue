@@ -65,7 +65,7 @@ export function addBBCodeTextObject(
   y: number,
   content: string,
   style: TextStyle,
-  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle,
+  extraStyleOptions?: BBCodeText.TextStyle,
 ): BBCodeText {
   const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, extraStyleOptions);
 
@@ -99,7 +99,7 @@ export function addTextInputObject(
 
 export function getTextStyleOptions(
   style: TextStyle,
-  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle,
+  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle | BBCodeText.TextStyle,
 ): TextStyleOptions {
   const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
