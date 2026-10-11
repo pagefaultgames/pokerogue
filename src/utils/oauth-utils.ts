@@ -15,7 +15,7 @@ function parseOAuthError(href: string): { error: OAuthError | null; cleanedHref:
     return { error: null, cleanedHref: href };
   }
 
-  const error = { reason, provider: url.searchParams.get("provider") };
+  const error: OAuthError = { reason, provider: url.searchParams.get("provider") };
   url.searchParams.delete("oauthError");
   url.searchParams.delete("provider");
   return { error, cleanedHref: url.toString() };
