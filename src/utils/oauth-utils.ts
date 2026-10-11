@@ -8,7 +8,7 @@ export interface OAuthError {
  * @param href - The URL to read
  * @returns The error, if present, and the URL with those params removed
  */
-export function parseOAuthError(href: string): { error: OAuthError | null; cleanedHref: string } {
+function parseOAuthError(href: string): { error: OAuthError | null; cleanedHref: string } {
   const url = new URL(href);
   const reason = url.searchParams.get("oauthError");
   if (!reason) {
