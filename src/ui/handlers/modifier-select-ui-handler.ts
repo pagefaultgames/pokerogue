@@ -1040,6 +1040,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       }
     });
     // The `.then` suppresses the return type for the Promise.allSettled so that it returns void.
+    // TODO `finalPromises` is empty when it's spread here, so it isn't respected
     promiseHolder.push(Promise.allSettled([...animPromises, ...finalPromises]).then());
 
     await Promise.allSettled(animPromises);
