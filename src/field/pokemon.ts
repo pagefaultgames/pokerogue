@@ -1528,7 +1528,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (stat) {
       case Stat.ATK:
         if (this.getTag(BattlerTagType.SLOW_START)) {
-          ret /= 2;
+          ret >>= 1;
         }
         break;
       case Stat.DEF:
@@ -1549,14 +1549,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           ret *= 2;
         }
         if (globalScene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, side)) {
-          ret /= 4;
+          ret >>= 2;
         }
 
         if (this.getTag(BattlerTagType.SLOW_START)) {
-          ret /= 2;
+          ret >>= 1;
         }
-        if (this.status?.effect === StatusEffect.PARALYSIS) {
-          ret /= 2;
+        if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
+          ret >>= 1;
         }
         if (this.getTag(BattlerTagType.UNBURDEN) && this.hasAbility(AbilityId.UNBURDEN)) {
           ret *= 2;
