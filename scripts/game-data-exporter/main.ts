@@ -10,7 +10,6 @@ import "./i18n"; // needs to be imported first
 import { setSpeciesDataRegistry } from "#app/global-species-data-registry";
 import { SpeciesDataRegistry } from "#data/species-data-registry";
 import { existsSync, rmSync } from "node:fs";
-import { performance } from "node:perf_hooks";
 import chalk, { type ChalkInstance } from "chalk";
 import { cliArgs, OUTPUT_DIR, SCRIPT_VERSION } from "./constants";
 import { generateEvolutionTextsData } from "./data-generators/evolution-texts";

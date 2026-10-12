@@ -26,8 +26,8 @@ function getRegularLevelMoves(
 ): LevelMovesWithSource {
   const ret: LevelMovesWithSource = [];
   const moves = fromFusion
-    ? context.fusionSpeciesForm!.getLevelMoves(context.fusionFormIndex!)
-    : context.pokemonSpeciesForm.getLevelMoves(context.pokemonFormIndex);
+    ? context.fusionSpeciesForm!.getLevelMoves(context.fusionFormKey!)
+    : context.pokemonSpeciesForm.getLevelMoves(context.pokemonFormKey);
   for (const [level, move] of moves) {
     if (
       (includeEvolutionMoves && level === EVOLVE_MOVE)
@@ -83,7 +83,7 @@ function getPrevolutionMoves(
   for (let index = 0; index < evolutionLine.length; index++) {
     const isPrevo = index < evolutionLine.length - 1;
     const speciesLevelMoves = speciesDataRegistry
-      .getPokemonSpeciesForm(evolutionLine[index], context.pokemonFormIndex)
+      .getPokemonSpeciesForm(evolutionLine[index], context.pokemonFormKey)
       .getLevelMoves();
 
     for (const [level, move] of speciesLevelMoves) {

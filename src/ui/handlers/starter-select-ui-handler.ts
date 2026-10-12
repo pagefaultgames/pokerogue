@@ -307,6 +307,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .setOrigin(0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
+    this.initNameBox(this.starterSelectMessageBoxContainer, 8);
+
     // arrow icon for the message box
     this.initPromptSprite(this.starterSelectMessageBoxContainer);
 
@@ -781,6 +783,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }
+
+    this.nameBoxContainer?.setY(this.message.y - 16);
 
     this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
@@ -1457,7 +1461,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.DOWN:
-        if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
+        if (currentRow < numOfRows - 1 && this.scrollCursor * 9 + this.cursor + 9 < this.filteredStarterIds.length) {
           // This is not the last row of starters
           if (currentRow - this.scrollCursor === 8) {
             // This is the last visible row, but there are more rows underneath, so we need to scroll
@@ -3004,7 +3008,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   // TODO: Dedupe from pokedex
   protected updateStarterValueLabel(starter: StarterContainer): void {
-    const speciesId = starter.species.speciesId;
+    const speciesId = starter.species.speciesId as StarterSpeciesId;
     const baseStarterValue = speciesDataRegistry.getStarterCost(speciesId);
     if (baseStarterValue == null) {
       return;
@@ -3018,6 +3022,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setText(valueStr);
     let textStyle: TextStyle;
     switch (baseStarterValue - starterValue) {
+      case -2:
+      case -1:
+        textStyle = TextStyle.SUMMARY_RED;
+        break;
       case 0:
         textStyle = TextStyle.WINDOW;
         break;
@@ -3121,6 +3129,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.partyStarterIds.length === 0) {
       return false;
     }
+    this.blockInput = true;
 
     if (this.isPartyValid()) {
       const ui = this.getUi();
@@ -3149,9 +3158,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       };
 
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+        this.blockInput = false;
         ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions);
       });
     } else {
+      this.blockInput = false;
       this.tutorialActive = true;
       this.showText(
         i18next.t("starterSelectUiHandler:invalidParty"),

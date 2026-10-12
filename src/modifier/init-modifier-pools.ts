@@ -293,6 +293,11 @@ function initGreatModifierPool() {
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
       () => {
+        const party = globalScene.getPlayerParty();
+        if (!party.some(p => p.getLearnableLevelMoves().length > 0)) {
+          return 0;
+        }
+
         const { waveIndex } = globalScene.currentBattle;
         const modeAdjustedWave = globalScene.gameMode.getWaveForDifficulty(waveIndex, true);
         return Math.min(1 + Math.floor(modeAdjustedWave / 30), 4);
