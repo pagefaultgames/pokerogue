@@ -337,7 +337,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     ) //
       .setOrigin(0);
 
-    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" }) //
+    this.pokemonGrowthRateText = addTextObject(
+      8 + this.pokemonGrowthRateLabelText.displayWidth + 2,
+      106,
+      "",
+      TextStyle.GROWTH_RATE_TYPE,
+      { fontSize: "36px" },
+    ) //
       .setOrigin(0);
 
     this.pokemonLuckLabelText = addTextObject(8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
