@@ -6874,7 +6874,7 @@ export class EnemyPokemon extends Pokemon {
                 const doesNotFail =
                   !globalScene.arena.isMoveWeatherCancelled(this, move)
                   && !globalScene.arena.isMoveTerrainCancelled(this, [p.getBattlerIndex()], move)
-                  && (move.applyConditions(this, p, -1)
+                  && (move.applyConditions(this, p, -1, true)
                     || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id));
                 return (
                   doesNotFail
@@ -6931,7 +6931,7 @@ export class EnemyPokemon extends Pokemon {
               }
               // If this move is unimplemented, or the move is known to fail when used, set its target score to -20
               if (
-                (move.isUnimplemented || !move.applyConditions(this, target, -1))
+                (move.isUnimplemented || !move.applyConditions(this, target, -1, true))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
