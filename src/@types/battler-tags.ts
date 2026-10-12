@@ -117,7 +117,8 @@ export type AbilityBattlerTagType =
   | BattlerTagType.UNBURDEN
   | BattlerTagType.SLOW_START
   | BattlerTagType.TRUANT
-  | BattlerTagType.SUPREME_OVERLORD;
+  | BattlerTagType.SUPREME_OVERLORD
+  | BattlerTagType.GORILLA_TACTICS;
 
 /** Subset of {@linkcode BattlerTagType}s that provide type boosts */
 export type TypeBoostTagType = BattlerTagType.FIRE_BOOST | BattlerTagType.CHARGED;

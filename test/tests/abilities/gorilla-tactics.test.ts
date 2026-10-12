@@ -128,13 +128,11 @@ describe("Ability - Gorilla Tactics", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.GASTRO_ACID);
-    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(player).not.toHaveBattlerTag(BattlerTagType.GORILLA_TACTICS);
     expect(player).toHaveEffectiveStat(Stat.ATK, player.getStat(Stat.ATK));
     expect(player.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
-
-  // TODO: Verify whether Gorilla Tactics increases struggle's power or not
 });

@@ -144,6 +144,7 @@ import {
   PreAttackWeatherOverrideAbAttr,
   PreDefendFullHpEndureAbAttr,
   PreLeaveFieldClearWeatherAbAttr,
+  PreLeaveFieldRemoveBattlerTagAbAttr,
   PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
   PreSwitchOutFormChangeAbAttr,
   PreSwitchOutHealAbAttr,
@@ -1766,7 +1767,7 @@ export function initAbilities() {
       .attr(GorillaTacticsAbAttr)
       // stat multiplier is separate from the battler tag as it is supposed to apply even before a move is executed
       .attr(StatMultiplierAbAttr, Stat.ATK, 1.5)
-      // TODO: Verify whether Gorilla Tactics increases struggle's power or not
+      .attr(PreLeaveFieldRemoveBattlerTagAbAttr, BattlerTagType.GORILLA_TACTICS)
       .edgeCase()
       .build(),
     new AbBuilder(AbilityId.NEUTRALIZING_GAS, 8, 2) //
