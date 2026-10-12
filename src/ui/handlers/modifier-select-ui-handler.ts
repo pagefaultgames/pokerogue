@@ -290,7 +290,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // The bang here is safe, as `getValue()` only returns null if the tween has been destroyed (which obviously isn't the case inside onUpdate)
         const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
-        if (index > i && index <= typeOptions.length) {
+        while (index > i && index <= typeOptions.length) {
           const option = this.options[i];
           if (option) {
             rewardAnimPromises.push(
