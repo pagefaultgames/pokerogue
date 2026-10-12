@@ -29,7 +29,7 @@ import { UiInputs } from "#app/ui-inputs";
 import { STARTING_WAVE } from "#balance/misc";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
-import { getDailyMysteryEncounter } from "#data/daily-seed/daily-run";
+import { getDailyMysteryEncounter } from "#data/daily-run";
 import { allMoves, biomeDepths, modifierTypes } from "#data/data-lists";
 import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
@@ -70,7 +70,7 @@ import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
+import { PokemonSpriteTeraSparkleHandler } from "#field/pokemon-sprite-tera-sparkle-handler";
 import { Trainer } from "#field/trainer";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import {
@@ -268,7 +268,7 @@ export class BattleScene extends SceneBase {
   public offsetGym = false;
 
   public damageNumberHandler: DamageNumberHandler;
-  private spriteSparkleHandler: PokemonSpriteSparkleHandler;
+  private spriteTeraSparkleHandler: PokemonSpriteTeraSparkleHandler;
 
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
@@ -371,6 +371,7 @@ export class BattleScene extends SceneBase {
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     await Promise.all([
+      this.initExpSprites(),
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
@@ -551,7 +552,7 @@ export class BattleScene extends SceneBase {
     this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
-    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
+    this.spriteTeraSparkleHandler = new PokemonSpriteTeraSparkleHandler() //
       .setup();
 
     this.fieldUI
@@ -758,7 +759,7 @@ export class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon#isActive()}); default `false`.
    * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    *
@@ -902,7 +903,7 @@ export class BattleScene extends SceneBase {
       pokemon.generateFusionSpecies();
     }
 
-    if (boss && !dataSource) {
+    if (boss && !dataSource && !this.gameMode.dailyConfig?.boss?.ivs) {
       const secondaryIvs = getIvsFromId(randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {
@@ -2067,7 +2068,7 @@ export class BattleScene extends SceneBase {
       teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined,
       isTerastallized: pokemon ? pokemon.isTerastallized : false,
     });
-    this.spriteSparkleHandler.add(sprite);
+    this.spriteTeraSparkleHandler.add(sprite);
     return sprite;
   }
 
@@ -3528,7 +3529,6 @@ export class BattleScene extends SceneBase {
     ];
 
     // Adjust tier weights by previously encountered events to lower odds of only Common/Great in run
-    // biome-ignore format: biome sucks at formatting this line
     for (const seenEncounterData of this.mysteryEncounterSaveData.encounteredEvents) {
       if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
         tierWeights[0] -= 6;

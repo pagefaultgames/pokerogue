@@ -3,17 +3,18 @@ import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUse
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { speciesEggMoves } from "#balance/egg-moves";
 import { bypassLogin, isBeta, isDev, systemSaveShortKeyMap } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
-import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed-utils";
 import { allMoves } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -38,6 +39,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
+import { version } from "#package.json";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { ArenaData, type SerializedArenaData } from "#system/arena-data";
@@ -46,9 +48,9 @@ import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
-import { RibbonData } from "#system/ribbons/ribbon-data";
+import { RibbonData } from "#system/ribbon-data";
 import { TrainerData } from "#system/trainer-data";
-import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-migration/version-converter";
+import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-converter";
 import { vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
@@ -65,12 +67,16 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
+import { fixedInt, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt, getDataTypeKey, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
+import { compareVersions } from "#utils/migrator-utils";
 import { toCamelCase } from "#utils/strings";
+import { ValueHolder } from "#utils/value-holder";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -80,7 +86,8 @@ const ErrorMessages = {
   DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
   TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
   FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
-};
+  GAME_OUT_OF_DATE: i18next.t("gameData:gameOutOfDate"),
+} as const;
 
 export class GameData {
   public trainerId: number;
@@ -243,7 +250,7 @@ export class GameData {
     globalScene.time.delayedCall(fixedInt(1000), () => {
       // on the pokedex page, which changes the UiMode after calling this so the
       // user never sees the alert modal.
-      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+      if (globalScene.ui.mode === UiMode.ALERT_MODAL) {
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       } else {
         globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
@@ -319,7 +326,7 @@ export class GameData {
   }
 
   /**
-   *
+   * Used by the admin panel when searching for user accounts.
    * @param dataStr - The raw JSON string of the `SystemSaveData`
    * @returns - A new `GameData` instance initialized with the parsed `SystemSaveData`
    */
@@ -394,7 +401,7 @@ export class GameData {
     }
   }
 
-  public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+  private async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
     // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
@@ -431,6 +438,16 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
+      if (!isDev && !isBeta && compareVersions(systemData.gameVersion, version) === 1) {
+        await globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+
+        globalScene.time.delayedCall(fixedInt(1000), () => {
+          if (globalScene.ui.mode !== UiMode.ALERT_MODAL) {
+            globalScene.ui.setMode(UiMode.ALERT_MODAL, ErrorMessages.GAME_OUT_OF_DATE);
+          }
+        });
+        return false;
+      }
       this.initParsedSystem(systemData);
       return true;
     } catch (err) {
@@ -768,30 +785,28 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  async getSession(slotId: number): Promise<SessionSaveData | undefined> {
+  public async getSession(slotId: number): Promise<SessionSaveData | undefined> {
     // TODO: Do we need this fallback anymore?
     if (slotId < 0) {
       return;
     }
 
-    console.log("Getting Session Slot id: %d", slotId);
+    console.debug("Getting Session Slot id: %d", slotId);
 
-    // Check local storage for the cached session data
-    if (bypassLogin || localStorage.getItem(getSessionDataLocalStorageKey(slotId))) {
-      const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
-      if (!sessionData) {
-        console.error("No session data found!");
-        return;
-      }
+    const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
+    if (sessionData) {
       return this.parseSessionData(decrypt(sessionData, bypassLogin));
     }
+    if (bypassLogin) {
+      return;
+    }
 
-    // Ask the server API for the save data and store it in localstorage
     const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-
-    // TODO: This is a far cry from proper JSON validation
-    if (response == null || response.length === 0 || response.charAt(0) !== "{") {
-      console.error("Invalid save data JSON detected!", response);
+    if (response == null || response.trim() === "save does not exist") {
+      return;
+    }
+    if (!isValidJSON(response)) {
+      console.error("Invalid save data detected!", response);
       return;
     }
 
@@ -1305,7 +1320,7 @@ export class GameData {
   }
 
   // TODO: Refactor this spaghetti monster
-  public importData(dataType: GameDataType, slotId = 0): void {
+  public importData(dataType: GameDataType, slotId = 0, confirmWindowXOffset?: number): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
     document.getElementById("saveFile")?.remove();
@@ -1428,54 +1443,49 @@ export class GameData {
             return displayError(i18next.t("menuUiHandler:importCorrupt", { dataName }));
           }
 
-          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
-            globalScene.ui.setOverlayMode(
-              UiMode.CONFIRM,
-              () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+          // TODO: move this outside of game data
+          const importDataConfirmOptions: ConfirmModeConfig = {
+            yesHandler: () => {
+              localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-                  updateUserInfo().then(success => {
-                    if (!success[0]) {
-                      return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
+              if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+                updateUserInfo().then(success => {
+                  if (!success[0]) {
+                    return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
+                  }
+                  const { trainerId, secretId } = this;
+                  let updatePromise: Promise<string | null>;
+                  if (dataType === GameDataType.SESSION) {
+                    updatePromise = pokerogueApi.savedata.session.update(
+                      { slot: slotId, trainerId, secretId, clientSessionId },
+                      dataStr,
+                    );
+                  } else {
+                    updatePromise = pokerogueApi.savedata.system.update(
+                      { trainerId, secretId, clientSessionId },
+                      dataStr,
+                    );
+                  }
+                  updatePromise.then(error => {
+                    if (error) {
+                      console.error(error);
+                      return displayError(i18next.t("menuUiHandler:importError", { dataName }));
                     }
-                    const { trainerId, secretId } = this;
-                    let updatePromise: Promise<string | null>;
-                    if (dataType === GameDataType.SESSION) {
-                      updatePromise = pokerogueApi.savedata.session.update(
-                        {
-                          slot: slotId,
-                          trainerId,
-                          secretId,
-                          clientSessionId,
-                        },
-                        dataStr,
-                      );
-                    } else {
-                      updatePromise = pokerogueApi.savedata.system.update(
-                        { trainerId, secretId, clientSessionId },
-                        dataStr,
-                      );
-                    }
-                    updatePromise.then(error => {
-                      if (error) {
-                        console.error(error);
-                        return displayError(i18next.t("menuUiHandler:importError", { dataName }));
-                      }
-                      window.location.reload();
-                    });
+                    window.location.reload();
                   });
-                } else {
-                  window.location.reload();
-                }
-              },
-              () => {
-                globalScene.ui.revertMode();
-                globalScene.ui.showText("", 0);
-              },
-              false,
-              -98,
-            );
+                });
+              } else {
+                window.location.reload();
+              }
+            },
+            noHandler: () => {
+              globalScene.ui.revertMode();
+              globalScene.ui.showText("", 0);
+            },
+            xOffset: confirmWindowXOffset,
+          };
+          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
+            globalScene.ui.setOverlayMode(UiMode.CONFIRM, importDataConfirmOptions);
           });
         };
       })((ev.target as any).files[0]);
@@ -1711,7 +1721,9 @@ export class GameData {
         // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
         const shinyBonus = pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant ?? 0) : 1;
         const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
-        this.addStarterCandy(species.speciesId, shinyBonus * eggOrBossBonus);
+        const eventBonus = timedEventManager.getExtraCatchCandy();
+        const totalCandy = shinyBonus * eggOrBossBonus + eventBonus;
+        this.addStarterCandy(species.speciesId, totalCandy);
       }
     }
 
@@ -1910,45 +1922,40 @@ export class GameData {
     return starterCount;
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies, _forSeen = false, optimistic = false): bigint {
-    let ret = 0n;
-    const dexEntry = this.dexData[species.speciesId];
-    const attr = dexEntry.caughtAttr;
-    if (optimistic) {
-      if (attr & DexAttr.SHINY) {
-        ret |= DexAttr.SHINY;
-
-        if (attr & DexAttr.VARIANT_3) {
-          ret |= DexAttr.VARIANT_3;
-        } else if (attr & DexAttr.VARIANT_2) {
-          ret |= DexAttr.VARIANT_2;
-        } else {
-          ret |= DexAttr.DEFAULT_VARIANT;
-        }
-      } else {
-        ret |= DexAttr.NON_SHINY;
-        ret |= DexAttr.DEFAULT_VARIANT;
-      }
-    } else {
-      // Default to non shiny. Fallback to shiny if it's the only thing that's unlocked
-      ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
-
-      if (attr & DexAttr.DEFAULT_VARIANT) {
-        ret |= DexAttr.DEFAULT_VARIANT;
-      } else if (attr & DexAttr.VARIANT_2) {
-        ret |= DexAttr.VARIANT_2;
-      } else if (attr & DexAttr.VARIANT_3) {
-        ret |= DexAttr.VARIANT_3;
-      } else {
-        ret |= DexAttr.DEFAULT_VARIANT;
+  getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
+    const dexAttr = this.dexData[speciesId].caughtAttr;
+    // Default is female only for species where malePercent is not null but 0
+    const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
+    const formIndex = 0;
+    let variant: Variant = 0;
+    let shiny = false;
+    // Set shiny to true if requested, OR if non-shiny version is uncaught
+    if (defaultIsShiny || !(dexAttr & DexAttr.NON_SHINY)) {
+      // Default shiny is true if caught
+      shiny = !!(dexAttr & DexAttr.SHINY);
+      // Default is the highest variant
+      if (dexAttr & DexAttr.VARIANT_3) {
+        variant = 2;
+      } else if (dexAttr & DexAttr.VARIANT_2) {
+        variant = 1;
       }
     }
-    ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
-    ret |= this.getFormAttr(this.getFormIndex(attr));
-    return ret;
+
+    return {
+      shiny,
+      female,
+      variant,
+      formIndex,
+    };
   }
 
-  getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+  /**
+   * Converts Pokédex attributes from a `bigint` to a readable {@linkcode DexAttrProps} interface.
+   *
+   * @param dexAttr - The Pokédex attribute to convert
+   * @returns the attributes in {@linkcode DexAttrProps} format
+   */
+  getDexAttrProps(dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
     let variant: Variant = 0;
@@ -1969,23 +1976,15 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies, abilityAttr?: number): number {
-    abilityAttr ??= this.starterData[species.speciesId].abilityAttr;
-    return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
-  }
-
-  getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
-    dexEntry ??= this.dexData[species.speciesId];
-    for (let n = 0; n < 25; n++) {
-      if (dexEntry.natureAttr & (1 << (n + 1))) {
-        return n as Nature;
-      }
-    }
-    return 0 as Nature;
-  }
-
-  getSpeciesDefaultNatureAttr(species: PokemonSpecies): number {
-    return 1 << this.getSpeciesDefaultNature(species);
+  /**
+   * Checks whether a species has a specified ability index unlocked for its starter
+   * @param species - The species to check
+   * @param abilityIndex - The ability index to check
+   * @returns Whether that starter has that ability index unlocked
+   */
+  public checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
+    const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
+    return !!(abilityAttr & (1 << abilityIndex));
   }
 
   getDexAttrLuck(dexAttr: bigint): number {
@@ -2003,33 +2002,40 @@ export class GameData {
   }
 
   /**
-   * Obtain the value of a particular starter by SpeciesID
-   * @param speciesId - The {@linkcode SpeciesId} of the starter
-   * @param valueReduction - The applied value reduction; defaults to the value stored in `this.starterData[speciesId].valueReduction`
-   * @returns The value/cost of the starter
+   * Checks if a species has a particular nature unlocked
+   * @param species - The species to check
+   * @param nature - The Nature to look for
+   * @returns Whether that species has the specified nature unlocked
+   */
+  public checkSpeciesNatureUnlocked(species: PokemonSpecies, nature: Nature): boolean {
+    const dexEntry = this.dexData[species.speciesId];
+    return !!(dexEntry.natureAttr & (1 << (nature + 1)));
+  }
+
+  /**
+   * Get the cost of a starter, taking into account the number of purchased cost reduction and any active challenges.
+   * @param speciesId - The {@linkcode StarterSpeciesId} of the starter
+   * @param valueReduction - (Default `this.starterData[speciesId].valueReduction`) The value reduction to apply
+   * @returns The resolved point cost of the starter
    * @privateRemarks
    * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
    */
-  getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
+  public getSpeciesStarterValue(
+    speciesId: StarterSpeciesId,
+    valueReduction: number = this.starterData[speciesId].valueReduction,
+  ): number {
     const baseValue = speciesDataRegistry.getStarterCost(speciesId);
-    const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
-    let value = baseValue as number;
+    const cost = new ValueHolder<number>(baseValue);
 
-    const decrementValue = (v: number) => {
-      if (v > 1) {
-        v--;
-      } else {
-        v /= 2;
-      }
-      return v;
-    };
-
-    for (let v = 0; v < reduction; v++) {
-      value = decrementValue(value);
-    }
-
-    const cost = new NumberHolder(value);
     applyChallenges(ChallengeType.STARTER_COST, speciesId, cost);
+
+    for (let v = 0; v < valueReduction; v++) {
+      if (cost.value > 1) {
+        cost.value--;
+      } else {
+        cost.value /= 2;
+      }
+    }
 
     return cost.value;
   }

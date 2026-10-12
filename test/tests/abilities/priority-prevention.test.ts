@@ -16,6 +16,7 @@ import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe.each([
   { abilityId: AbilityId.DAZZLING, abilityName: "Dazzling" },
   { abilityId: AbilityId.QUEENLY_MAJESTY, abilityName: "Queenly Majesty" },
+  { abilityId: AbilityId.ARMOR_TAIL, abilityName: "Armor Tail" },
 ])("Ability - $abilityName", ({ abilityId }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -46,6 +47,16 @@ describe.each([
     await game.toEndOfTurn();
 
     expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
+  });
+
+  it("should block enemy multi-target increased priority moves", async () => {
+    game.override.ability(AbilityId.TRIAGE);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.MATCHA_GOTCHA);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.MATCHA_GOTCHA, result: MoveResult.FAIL });
   });
 
   describe("Doubles Interactions", () => {

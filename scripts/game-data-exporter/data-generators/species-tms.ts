@@ -50,5 +50,5 @@ export async function generateTmsData(): Promise<void> {
     }
   }
 
-  writeData("tms", entries);
+  writeData("species-tms", entries);
 }

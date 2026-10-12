@@ -9,7 +9,6 @@ import { blobToString } from "#test/utils/game-manager-utils";
 import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 let wasInitialized = false;
 
@@ -57,8 +56,6 @@ function setupStubs(): void {
 
   BBCodeText.prototype.destroy = () => null;
   BBCodeText.prototype.resize = () => null as any;
-  InputText.prototype.setElement = () => null as any;
-  InputText.prototype.resize = () => null as any;
   Phaser.GameObjects.Image = MockImage as any;
   window.URL.createObjectURL = (blob: Blob) => {
     blobToString(blob).then((data: string) => {

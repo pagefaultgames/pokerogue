@@ -43,7 +43,7 @@ describe("Phases - Quiet Form Change Phase", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.phaseInterceptor.log).toContain("QuietFormChangePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("QuietFormChangePhase");
     expect(morpeko.getFormKey()).toBe("hangry");
     expect(morpeko.getPassiveAbility().id).toBe(AbilityId.INTIMIDATE);
     expect(morpeko).toHaveAbilityApplied(AbilityId.INTIMIDATE);
@@ -54,7 +54,7 @@ describe("Phases - Quiet Form Change Phase", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.phaseInterceptor.log).toContain("QuietFormChangePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("QuietFormChangePhase");
     expect(morpeko.getFormKey()).toBe("full-belly");
     expect(morpeko.getPassiveAbility().id).toBe(AbilityId.INTREPID_SWORD);
     expect(morpeko).toHaveAbilityApplied(AbilityId.INTREPID_SWORD);
@@ -87,12 +87,33 @@ describe("Phases - Quiet Form Change Phase", () => {
     await game.toEndOfTurn();
 
     // normal -> water -> fire -> water -> STOP
-    expect(game.phaseInterceptor.log).toContain("QuietFormChangePhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("QuietFormChangePhase");
     expect(castform.getFormKey()).toBe("rainy");
     expect(game).toHaveWeather(WeatherType.RAIN);
     expect(castform).toHaveAbilityApplied(AbilityId.DRIZZLE);
     expect(castform).toHaveAbilityApplied(AbilityId.DROUGHT);
     expect(castform).not.toHaveAbilityApplied(AbilityId.SNOW_WARNING);
     expect(castform).not.toHaveAbilityApplied(AbilityId.CLOUD_NINE);
+  });
+
+  it("should not trigger on-summon abilities when recalling a pokemon that form-changes on leave", async () => {
+    const SUNSHINE_FORM = 1;
+    const OVERCAST_FORM = 0;
+
+    game.override.starterForms({ [SpeciesId.CHERRIM]: SUNSHINE_FORM });
+
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.MAGIKARP);
+
+    const cherrim = game.field.getPlayerPokemon();
+    expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
+    expect(cherrim.getPassiveAbility().id).toBe(AbilityId.CHLOROPHYLL);
+    expect(game.scene.arena.weather).toBeUndefined();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(cherrim.formIndex).toBe(OVERCAST_FORM);
+    expect(cherrim.getPassiveAbility().id).toBe(AbilityId.DROUGHT);
+    expect(game.scene.arena.weather).toBeUndefined();
   });
 });

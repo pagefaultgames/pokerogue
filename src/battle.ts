@@ -2,7 +2,7 @@ import { DAILY_BOSS_LEVEL } from "#app/constants";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
-import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
+import { isDailyFinalBoss } from "#data/daily-seed-utils";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -106,6 +106,8 @@ export class Battle {
    */
   public failedRunAway = false;
 
+  public successfulRun = false;
+
   constructor(
     gameMode: GameMode,
     { waveIndex, battleType, trainer, mysteryEncounterType, double = false }: NewBattleResolvedProps,
@@ -185,17 +187,10 @@ export class Battle {
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
     this.postBattleLoot.push(
-      ...globalScene
-        .findModifiers(
-          m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
-          false,
-        )
-        .map(i => {
-          const ret = i as PokemonHeldItemModifier;
-          //@ts-expect-error - this is awful to fix/change
-          ret.pokemonId = null;
-          return ret;
-        }),
+      ...(globalScene.findModifiers(
+        m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
+        false,
+      ) as PokemonHeldItemModifier[]),
     );
   }
 

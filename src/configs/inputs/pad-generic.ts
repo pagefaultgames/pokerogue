@@ -1,6 +1,6 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
-import type { GenericPadButtons, PadConfig } from "#types/configs/inputs";
+import type { GenericPadButtons, PadConfig } from "#types/inputs";
 
 /**
  * Generic pad mapping

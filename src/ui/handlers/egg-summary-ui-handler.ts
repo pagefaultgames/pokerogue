@@ -5,11 +5,11 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Button } from "#enums/buttons";
 import { EggSkipPreference } from "#enums/egg-skip-preference";
-import { UiMode } from "#enums/ui-mode";
+import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { HatchedPokemonContainer } from "#ui/hatched-pokemon-container";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
 
@@ -55,10 +55,6 @@ export class EggSummaryUiHandler extends MessageUiHandler {
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor() {
-    super(UiMode.EGG_HATCH_SUMMARY);
-  }
-
   setup() {
     const ui = this.getUi();
 
@@ -71,7 +67,6 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     ui.add(this.eggHatchContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     this.eggHatchBg = globalScene.add.image(0, 0, "egg_summary_bg");
     this.eggHatchBg.setOrigin(0, 0);

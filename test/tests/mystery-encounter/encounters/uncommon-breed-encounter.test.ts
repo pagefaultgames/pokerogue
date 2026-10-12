@@ -119,7 +119,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const statStagePhase = unshiftPhaseSpy.mock.calls
         .flat()
         .find((p): p is StatStageChangePhase => p.is("StatStageChangePhase"));
-      expect(statStagePhase?.["stats"]).toEqual([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD]);
+      expect(statStagePhase?.["stats"]).toEqual([Stat.DEF, Stat.SPDEF]);
 
       // Should have used its egg move pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
@@ -129,8 +129,8 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(eggMoves.includes(usedMove)).toBe(true);
     });
 
-    it.skip("should start a fight against the boss above wave 50", async () => {
-      game.override.startingWave(57);
+    it.skip("should start a fight against the boss above wave 150", async () => {
+      game.override.startingWave(157);
       const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
       const unshiftPhaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
@@ -146,7 +146,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       const statStagePhases = unshiftPhaseSpy.mock.calls.find(p => p[0] instanceof StatStageChangePhase)?.[0] as any;
-      expect(statStagePhases.stats).toEqual([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD]);
+      expect(statStagePhases.stats).toEqual([Stat.DEF, Stat.SPDEF, Stat.SPD]);
 
       // Should have used its egg move pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);

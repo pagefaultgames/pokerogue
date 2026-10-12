@@ -79,7 +79,7 @@ export class PokemonTransformPhase extends PokemonPhase {
         user.playAnim();
         user.updateInfo();
         // If the new ability activates immediately, it needs to happen after all the transform animations
-        user.setTempAbility(target.getAbility());
+        user.setTempAbility(target.getAbility().id);
       }),
     );
 
@@ -87,7 +87,7 @@ export class PokemonTransformPhase extends PokemonPhase {
   }
 
   /**
-   * Emit an event upon transforming and changing movesets.
+   * Emit events upon transforming and changing movesets.
    * @param origMove - The target's original {@linkcode PokemonMove} from the target's moveset
    * @param copiedMove - The new `PokemonMove` being added to the user's moveset
    */
@@ -97,7 +97,7 @@ export class PokemonTransformPhase extends PokemonPhase {
 
     globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(user.id, copiedMove));
     // If a player pokemon transforms into an enemy, permanently reveal all moves in their moveset.
-    // TODO: This can be extended to the enemy AI once a record of "seen moves" is added
+    // NB: This can (and should) hook into to the enemy AI once a record of "seen moves" is added
     if (user.isPlayer() && target.isEnemy()) {
       globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, origMove));
     }

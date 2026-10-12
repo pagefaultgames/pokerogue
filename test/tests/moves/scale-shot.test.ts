@@ -37,7 +37,7 @@ describe("Moves - Scale Shot", () => {
     const minccino = game.field.getPlayerPokemon();
     game.move.select(MoveId.SCALE_SHOT);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
     await game.phaseInterceptor.to("DamageAnimPhase");

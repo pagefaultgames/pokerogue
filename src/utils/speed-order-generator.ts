@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { PokemonPriorityQueue } from "#app/queues/pokemon-priority-queue";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { Pokemon } from "#field/pokemon";
+import { PokemonPriorityQueue } from "#queues/pokemon-priority-queue";
 
 /**
  * A generator function which uses a priority queue to yield each pokemon from a given side of the field in speed order.

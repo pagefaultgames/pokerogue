@@ -42,7 +42,7 @@ describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.mode).toBe(UiMode.MODIFIER_SELECT);
 
     const handler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
 

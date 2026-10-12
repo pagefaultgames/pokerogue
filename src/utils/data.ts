@@ -1,15 +1,16 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
 import { GameDataType } from "#enums/game-data-type";
-import type { StarterPreferences } from "#types/save-data";
+import type { AllStarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
+import type { WritableDeep } from "type-fest";
 
 /**
- * Perform a deep copy of an object.
+ * Perform a deep copy of an object and strip `readonly` from its types.
  * @param values - The object to be deep copied.
  * @returns A new object that is a deep copy of the input.
  */
-export function deepCopy<T extends object>(values: T): T {
+export function deepCopy<T extends object>(values: T): WritableDeep<T> {
   // Convert the object to a JSON string and parse it back to an object to perform a deep copy
   return JSON.parse(JSON.stringify(values));
 }
@@ -26,7 +27,7 @@ export function deepCopy<T extends object>(values: T): T {
  * @param source - The object to source merged values from
  * @remarks Do not use for regular objects; this is specifically made for JSON copying.
  */
-export function deepMergeSpriteData(dest: object, source: object) {
+export function deepMergeSpriteData(dest: object, source: object): void {
   for (const key of Object.keys(source)) {
     if (
       !(key in dest)
@@ -80,12 +81,12 @@ export function isBareObject(obj: any): boolean {
 const DEFAULT_STARTER_PREFS = "{}";
 let savedStarterPrefs: string = DEFAULT_STARTER_PREFS;
 
-export function loadStarterPreferences(): StarterPreferences {
+export function loadStarterPreferences(): AllStarterPreferences {
   savedStarterPrefs = localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) ?? DEFAULT_STARTER_PREFS;
   return JSON.parse(savedStarterPrefs);
 }
 
-export function saveStarterPreferences(prefs: StarterPreferences): void {
+export function saveStarterPreferences(prefs: AllStarterPreferences): void {
   // Fastest way to check if an object has any properties (does no allocation)
   if (isBareObject(prefs)) {
     console.warn("Refusing to save empty starter preferences");

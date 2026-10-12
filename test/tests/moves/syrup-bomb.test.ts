@@ -40,7 +40,7 @@ describe("Moves - SYRUP BOMB", () => {
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
     expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
@@ -64,7 +64,7 @@ describe("Moves - SYRUP BOMB", () => {
     const targetPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
     expect(targetPokemon.isFullHp()).toBe(true);
@@ -76,7 +76,7 @@ describe("Moves - SYRUP BOMB", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
 

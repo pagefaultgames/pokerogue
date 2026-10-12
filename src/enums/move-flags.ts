@@ -41,7 +41,7 @@ export enum MoveFlags {
   /** Indicates a move should trigger {@linkcode AbilityId.WIND_RIDER} */
   WIND_MOVE = 1 << 13,
   /** Indicates a move should trigger {@linkcode AbilityId.TRIAGE} */
-  TRIAGE_MOVE = 1 << 14,
+  HEALING_MOVE = 1 << 14,
   IGNORE_ABILITIES = 1 << 15,
   /** Enables all hits of a multi-hit move to be accuracy checked individually */
   CHECK_ALL_HITS = 1 << 16,

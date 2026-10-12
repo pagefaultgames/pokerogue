@@ -1,13 +1,13 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
-import type { PadConfig, ProconButtons } from "#types/configs/inputs";
+import type { PadConfig, ProconButtons } from "#types/inputs";
 
 /**
  * Nintendo Pro Controller mapping
  */
 export const PAD_PROCON: PadConfig<ProconButtons> = {
   padID: "Pro Controller",
-  padType: "xbox",
+  padType: "procon",
   deviceMapping: {
     RC_S: 1,
     RC_E: 0,
@@ -28,16 +28,16 @@ export const PAD_PROCON: PadConfig<ProconButtons> = {
     MENU: 16, // Home
   },
   icons: {
-    RC_S: "XB_Letter_B_OL.png",
-    RC_E: "XB_Letter_A_OL.png",
-    RC_W: "XB_Letter_Y_OL.png",
-    RC_N: "XB_Letter_X_OL.png",
-    START: "START.png",
-    SELECT: "SELECT.png",
-    LB: "Bumper_L.png",
-    RB: "Bumper_R.png",
-    LT: "Trigger_L.png",
-    RT: "Trigger_R.png",
+    RC_S: "B.png",
+    RC_E: "A.png",
+    RC_W: "Y.png",
+    RC_N: "X.png",
+    START: "PLUS.png",
+    SELECT: "MINUS.png",
+    LB: "L.png",
+    RB: "R.png",
+    LT: "ZL.png",
+    RT: "ZR.png",
     LS: "LS.png",
     RS: "RS.png",
     LC_N: "UP.png",

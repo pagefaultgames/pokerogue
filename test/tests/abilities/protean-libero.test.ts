@@ -117,7 +117,6 @@ describe("Abilities - Protean/Libero", () => {
     expectTypeChange(bulbasaur);
   });
 
-  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ category: string; move?: MoveId; passive?: AbilityId; enemyMove?: MoveId }>([
     { category: "Variable type Moves'", move: MoveId.WEATHER_BALL, passive: AbilityId.DROUGHT },
     { category: "Type Change Abilities'", passive: AbilityId.REFRIGERATE },
@@ -134,7 +133,7 @@ describe("Abilities - Protean/Libero", () => {
 
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       // We stop before running `TurnEndPhase` so that the effects of `BattlerTag`s (such as from Electrify)
       // are still active when checking the move's type
       await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -143,7 +142,6 @@ describe("Abilities - Protean/Libero", () => {
     },
   );
 
-  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ cause: string; move?: MoveId; passive?: AbilityId; enemyMove?: MoveId }>([
     { cause: "misses", move: MoveId.FOCUS_BLAST },
     { cause: "is protected against", enemyMove: MoveId.PROTECT },

@@ -129,6 +129,26 @@ describe("UI - Arena Flyout", () => {
       expect(flyout["weatherInfo"]).toBeUndefined();
     });
 
+    it.each([
+      { name: "Harsh Sun", weatherType: WeatherType.HARSH_SUN },
+      { name: "Heavy Rain", weatherType: WeatherType.HEAVY_RAIN },
+      { name: "Strong Winds", weatherType: WeatherType.STRONG_WINDS },
+    ])("should not display a turn count for $name", ({ weatherType }) => {
+      const { arena } = game.scene;
+      // Set the weather via the arena with a user (as the primal weather abilities do),
+      // rather than by dispatching a synthetic event
+      expect(arena.trySetWeather(weatherType, game.field.getPlayerPokemon())).toBe(true);
+
+      expect(flyout["weatherInfo"]).toMatchObject({ weatherType, duration: 0, maxDuration: 0 });
+      expect(flyout["flyoutTextField"].text).not.toMatch(/\(\d+\/\d+\)/);
+
+      // Should not be cleared at turn end either
+      battleEventTarget.dispatchEvent(new TurnEndEvent(1));
+      expect(flyout["weatherInfo"]).toMatchObject({ weatherType, duration: 0, maxDuration: 0 });
+
+      arena.weather = null;
+    });
+
     it("should update the terrain display correctly", () => {
       arenaEventTarget.dispatchEvent(new TerrainChangedEvent(TerrainType.MISTY, 5));
       expectInfoUpdate("terrainInfo", {
