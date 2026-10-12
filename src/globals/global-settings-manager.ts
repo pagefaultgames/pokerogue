@@ -6,14 +6,9 @@ import type { SettingsManager as GlobalSettingsManager } from "#system/settings-
 export let settings: GlobalSettingsManager;
 
 // This is necessary to allow the species data exporter script to function
-export async function initSettingsManager(): Promise<GlobalSettingsManager> {
-  if (settings) {
-    return settings;
-  }
-
+export async function initSettingsManager(): Promise<void> {
   const { getDataTypeKey } = await import("#utils/data");
   const { SettingsManager } = await import("#system/settings-manager");
 
   settings = new SettingsManager(getDataTypeKey(GameDataType.SETTINGS), defaultSettings);
-  return settings;
 }
