@@ -51,6 +51,12 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
+    // ...if the checked Pokemon is locked into a queued move (e.g. the second turn of Dig or a recharge turn)
+    if (pokemon.getMoveQueue().length > 0) {
+      this.end();
+      return;
+    }
+
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
     if (!pokemon.canSwitch()) {
       this.end();
