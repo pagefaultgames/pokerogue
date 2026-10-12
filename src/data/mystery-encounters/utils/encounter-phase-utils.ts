@@ -645,7 +645,8 @@ export function selectOptionThenPokemon(
     const displayOptions = async (config: OptionSelectModeConfig) => {
       await globalScene.ui.setMode(UiMode.MESSAGE);
       if (optionSelectPromptKey) {
-        showEncounterText(optionSelectPromptKey);
+        // The option menu takes the player's input, so the prompt text does not wait for it
+        showEncounterText(optionSelectPromptKey, null, 0, false);
       }
       // Do hover over the starting selection option
       if (fullOptions[0]?.onHover) {
@@ -679,19 +680,19 @@ export function selectOptionThenPokemon(
       );
     };
 
-    // Always appends a cancel option to bottom of options
+    // Always appends a cancel option to bottom of options.
+    // Options are copied so the caller's items can be passed in again.
     const fullOptions = options
-      .map((option, index) => {
-        // Update handler to resolve promise
-        // TODO: don't update the handler like this
-        const onSelect = option.handler;
-        option.handler = () => {
-          onSelect();
-          selectPokemonAfterOption(index);
-          return true;
-        };
-        return option;
-      })
+      .map(
+        (option, index): OptionSelectItem => ({
+          ...option,
+          handler: () => {
+            option.handler();
+            selectPokemonAfterOption(index);
+            return true;
+          },
+        }),
+      )
       .concat({
         label: i18next.t("menu:cancel"),
         handler: () => {

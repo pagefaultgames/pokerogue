@@ -1,5 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -20,7 +21,10 @@ import {
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
+import type { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/bugTypeSuperfan";
@@ -372,6 +376,86 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(SPECIAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[1].label)).toBe(true);
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);
       expect(MISC_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[3].label)).toBe(true);
+    });
+
+    describe("Backing out of the move tutor", () => {
+      let optionSelectUiHandler: OptionSelectUiHandler;
+      let partyUiHandler: PartyUiHandler;
+      let confirmUiHandler: ConfirmUiHandler;
+
+      beforeEach(async () => {
+        await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
+        await runMysteryEncounterToEnd(game, 1, undefined, true);
+        await skipBattleRunMysteryEncounterRewardsPhase(game, false);
+
+        optionSelectUiHandler = scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
+        partyUiHandler = scene.ui.handlers[UiMode.PARTY] as PartyUiHandler;
+        confirmUiHandler = scene.ui.handlers[UiMode.CONFIRM] as ConfirmUiHandler;
+        vi.spyOn(optionSelectUiHandler, "show");
+        vi.spyOn(partyUiHandler, "show");
+        vi.spyOn(confirmUiHandler, "show");
+      });
+
+      it("should skip teaching a move once the player confirms", async () => {
+        const unshiftPhaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
+        const rewardsPhasePromise = game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
+
+        await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalledTimes(1));
+        optionSelectUiHandler.processInput(Button.CANCEL);
+        await vi.waitFor(() => expect(confirmUiHandler.show).toHaveBeenCalledTimes(1));
+        // Select "Yes"
+        confirmUiHandler.processInput(Button.ACTION);
+        await rewardsPhasePromise;
+        await game.phaseInterceptor.to("SelectModifierPhase", false);
+
+        expect(game).toBeAtPhase("SelectModifierPhase");
+        expect(optionSelectUiHandler.show).toHaveBeenCalledTimes(1);
+        expect(unshiftPhaseSpy.mock.calls.some(([phase]) => phase.is("LearnMovePhase"))).toBe(false);
+      });
+
+      // A prompted message would leave the input arrow on screen behind the menus
+      it("should not wait for input on text shown with the move menu or confirmation", async () => {
+        const showTextSpy = vi.spyOn(scene.ui, "showText");
+        const rewardsPhasePromise = game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
+
+        await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalledTimes(1));
+        optionSelectUiHandler.processInput(Button.CANCEL);
+        await vi.waitFor(() => expect(confirmUiHandler.show).toHaveBeenCalledTimes(1));
+
+        const promptedTexts = showTextSpy.mock.calls.filter(([, , , , prompt]) => prompt).map(([text]) => text);
+        expect(promptedTexts).toEqual([]);
+
+        // Select "Yes"
+        confirmUiHandler.processInput(Button.ACTION);
+        await rewardsPhasePromise;
+      });
+
+      it("should reopen the move menu if the player does not confirm", async () => {
+        const encounter = scene.currentBattle.mysteryEncounter!;
+        const unshiftPhaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
+        const rewardsPhasePromise = game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
+
+        await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalledTimes(1));
+        optionSelectUiHandler.processInput(Button.CANCEL);
+        await vi.waitFor(() => expect(confirmUiHandler.show).toHaveBeenCalledTimes(1));
+        // Select "No"
+        confirmUiHandler.processInput(Button.CANCEL);
+        await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalledTimes(2));
+
+        // Teach the first offered move to the first party member
+        optionSelectUiHandler.processInput(Button.ACTION);
+        await vi.waitFor(() => expect(partyUiHandler.show).toHaveBeenCalledTimes(1));
+        partyUiHandler.processInput(Button.ACTION);
+        partyUiHandler.processInput(Button.ACTION);
+        await rewardsPhasePromise;
+
+        const learnMovePhases = unshiftPhaseSpy.mock.calls
+          .map(([phase]) => phase)
+          .filter(phase => phase.is("LearnMovePhase"));
+        expect(learnMovePhases).toHaveLength(1);
+        expect(learnMovePhases[0]["moveId"]).toBe(encounter.misc.moveTutorOptions[0].moveId);
+        expect(learnMovePhases[0]["partyMemberIndex"]).toBe(0);
+      });
     });
   });
 

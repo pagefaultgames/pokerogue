@@ -11,6 +11,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
+import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonHeldItemModifier } from "#modifiers/modifier";
 import {
@@ -22,7 +23,11 @@ import {
 } from "#modifiers/modifier";
 import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import { getEncounterText, showEncounterDialogue } from "#mystery-encounters/encounter-dialogue-utils";
+import {
+  getEncounterText,
+  showEncounterDialogue,
+  showEncounterText,
+} from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
@@ -45,7 +50,7 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectItem } from "#types/ui-types";
+import type { ConfirmModeConfig, OptionSelectItem } from "#types/ui-types";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
@@ -681,12 +686,16 @@ async function doBugTypeMoveTutor(): Promise<void> {
   });
   globalScene.ui.add(moveInfoOverlay);
 
+  const hideMoveInfoOverlay = () => {
+    moveInfoOverlay.active = false;
+    moveInfoOverlay.setVisible(false);
+  };
+
   const optionSelectItems = moveOptions.map((move: PokemonMove) => {
     const option: OptionSelectItem = {
       label: move.getName(),
       handler: () => {
-        moveInfoOverlay.active = false;
-        moveInfoOverlay.setVisible(false);
+        hideMoveInfoOverlay();
         return true;
       },
       onHover: () => {
@@ -697,24 +706,18 @@ async function doBugTypeMoveTutor(): Promise<void> {
     return option;
   });
 
-  const onHoverOverCancel = () => {
-    moveInfoOverlay.active = false;
-    moveInfoOverlay.setVisible(false);
-  };
+  const selectMoveAndPokemon = () =>
+    selectOptionThenPokemon(optionSelectItems, `${namespace}:teachMovePrompt`, undefined, hideMoveInfoOverlay);
 
-  const result = await selectOptionThenPokemon(
-    optionSelectItems,
-    `${namespace}:teachMovePrompt`,
-    undefined,
-    onHoverOverCancel,
-  );
-  // let forceExit = !!result;
-  if (!result) {
-    moveInfoOverlay.active = false;
-    moveInfoOverlay.setVisible(false);
+  let result = await selectMoveAndPokemon();
+  // Reopen the move menu until a move is chosen or the player confirms they want none
+  while (!result) {
+    hideMoveInfoOverlay();
+    if (await confirmNoMoveTaught()) {
+      break;
+    }
+    result = await selectMoveAndPokemon();
   }
-
-  // TODO: add menu to confirm player doesn't want to teach a move?
 
   // Option select complete, handle if they are learning a move
   if (result && result.selectedOptionIndex < moveOptions.length) {
@@ -724,4 +727,26 @@ async function doBugTypeMoveTutor(): Promise<void> {
       moveOptions[result.selectedOptionIndex].moveId,
     );
   }
+}
+
+/**
+ * Ask the player to confirm that they want to leave without learning any of the offered moves.
+ * @returns Whether the player confirmed
+ */
+async function confirmNoMoveTaught(): Promise<boolean> {
+  const { promise, resolve } = Promise.withResolvers<boolean>();
+
+  await globalScene.ui.setMode(UiMode.MESSAGE);
+  await showEncounterText(`${namespace}:confirmNoTeach`, null, 0, false);
+
+  const confirmConfig: ConfirmModeConfig = {
+    yesHandler: () => resolve(true),
+    noHandler: () => resolve(false),
+  };
+  await globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, confirmConfig);
+
+  const confirmed = await promise;
+  globalScene.ui.clearText();
+  await globalScene.ui.setMode(UiMode.MESSAGE);
+  return confirmed;
 }
