@@ -17,6 +17,7 @@ import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounter-
 import type { CommandPhase } from "#phases/command-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
+import { MockSprite } from "#test/mocks/mocks-container/mock-sprite";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
@@ -158,6 +159,36 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
       // Rewards
       expect(game).toBeAtPhase("SelectModifierPhase");
+    });
+
+    it("should place the hidden Wobbuffet over the costumed Wobbuffet, masking with its outline", async () => {
+      scene.money = 20000;
+      await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
+
+      // Mock sprites do not track their position, so give the costumed Wobbuffet a known one
+      const introVisuals = scene.currentBattle.mysteryEncounter!.introVisuals!;
+      const costumedWobbuffet = introVisuals.getSpriteAtIndex(1)[0];
+      costumedWobbuffet.x = -8;
+      costumedWobbuffet.y = 6;
+      // Mock sprites do not track their texture either, so record the textures they are given
+      const setTextureSpy = vi.spyOn(MockSprite.prototype, "setTexture");
+
+      await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
+
+      expect(game).toBeAtPhase("CommandPhase");
+      const wobbuffet = game.field.getEnemyPokemon();
+      expect(wobbuffet.x).toBe(introVisuals.x - 8);
+      expect(wobbuffet.y).toBe(introVisuals.y + 6);
+      const tintSpriteCallIndex = setTextureSpy.mock.contexts.lastIndexOf(wobbuffet.getTintSprite());
+      expect(setTextureSpy.mock.calls[tintSpriteCallIndex]).toEqual([costumedWobbuffet.texture.key]);
+
+      // End the minigame so the fight menu does not carry over into the next test
+      game.onNextPrompt("MessagePhase", UiMode.MESSAGE, () => {
+        game.endPhase();
+      });
+      scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
     });
 
     it("should have no items in rewards if Wubboffet doesn't take enough damage", async () => {
