@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -251,7 +252,6 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
     duration: 2000,
   });
 
-  const previousBiome = globalScene.arena.biomeId;
   await globalScene.loadBiomeAssets(nextBiome);
   globalScene.newArena(nextBiome);
 
@@ -287,7 +287,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
     globalScene.lastEnemyTrainer.destroy();
   }
 
-  globalScene.clearBiomeAssets(previousBiome);
+  // Unload the previous biome, and anything else no longer needed
+  assetManager.sweep();
 
   // TODO: This is floating
   playTween({

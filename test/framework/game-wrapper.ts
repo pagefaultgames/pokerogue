@@ -1,4 +1,5 @@
 import { BattleScene } from "#app/battle-scene";
+import { initGlobalAssetManager } from "#app/global-asset-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { FieldSpriteBatchHandler, FieldSpriteSubmitter } from "#app/render-nodes/field-sprite";
 import { SpriteBatchHandler, SpriteSubmitter } from "#app/render-nodes/sprite";
@@ -35,6 +36,7 @@ export class GameWrapper {
       vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
+    initGlobalAssetManager(phaserGame);
     // TODO: Move these mocks elsewhere
     MoveAnim.prototype.getAnim = () => ({ frames: {} }) as any;
     Pokemon.prototype.updateFusionPalette = () => null;

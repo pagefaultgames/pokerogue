@@ -1,3 +1,5 @@
+import { imageAsset, seAsset, spritesheetAsset } from "#app/asset-requests";
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
@@ -9,6 +11,7 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
+import type { AssetRequest } from "#types/asset-set";
 import type { nil } from "#types/common";
 import { coerceArray } from "#utils/array";
 import { getFrameMs } from "#utils/common";
@@ -590,75 +593,91 @@ function populateMoveChargeAnim(chargeAnim: ChargeAnim, animSource: any) {
   chargeAnims.set(chargeAnim, [chargeAnims.get(chargeAnim) as AnimConfig, moveChargeAnim]);
 }
 
-export function loadCommonAnimAssets(startLoad?: boolean): Promise<void> {
-  return new Promise(resolve => {
-    loadAnimAssets(Array.from(commonAnims.values()), startLoad).then(() => resolve());
-  });
+export function loadCommonAnimAssets(): Promise<void> {
+  return assetManager.load(getCommonAnimAssetRequests(), globalScene);
 }
 
 /**
  * Loads encounter animation assets to scene
  * MUST be called after {@linkcode initEncounterAnims()} to load all required animations properly
- * @param startLoad
+ * @param anims - The encounter animations to load assets for
  */
-export async function loadEncounterAnimAssets(startLoad?: boolean): Promise<void> {
-  await loadAnimAssets(Array.from(encounterAnims.values()), startLoad);
+export function loadEncounterAnimAssets(anims: readonly EncounterAnim[]): Promise<void> {
+  return assetManager.load(getEncounterAnimAssetRequests(anims), globalScene);
 }
 
-export function loadMoveAnimAssets(moveIds: MoveId[], startLoad?: boolean): Promise<void> {
-  return new Promise(resolve => {
-    const moveAnimations = moveIds.flatMap(m => moveAnims.get(m) as AnimConfig);
-    for (const moveId of moveIds) {
-      const chargeAnimSource = allMoves[moveId].isChargingMove()
-        ? allMoves[moveId]
-        : (allMoves[moveId].getAttrs("DelayedAttackAttr")[0] ?? allMoves[moveId].getAttrs("BeakBlastHeaderAttr")[0]);
-      if (chargeAnimSource) {
-        const moveChargeAnims = chargeAnims.get(chargeAnimSource.chargeAnim);
-        moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
-        if (Array.isArray(moveChargeAnims)) {
-          moveAnimations.push(moveChargeAnims[1]);
-        }
-      }
-    }
-    loadAnimAssets(moveAnimations, startLoad).then(() => resolve());
-  });
+/**
+ * Loads the assets for the given moves' animations, including their charge animations.
+ * MUST be called after {@linkcode initMoveAnim} for each move to load all required animations properly
+ * @param moveIds - The moves to load assets for
+ */
+export function loadMoveAnimAssets(moveIds: readonly MoveId[]): Promise<void> {
+  return assetManager.load(getMoveAnimAssetRequests(moveIds), globalScene);
 }
 
-function loadAnimAssets(anims: AnimConfig[], startLoad?: boolean): Promise<void> {
-  return new Promise(resolve => {
-    const backgrounds = new Set<string>();
-    const sounds = new Set<string>();
-    for (const a of anims) {
-      if (a.frames?.length === 0) {
-        continue;
-      }
-      const animSounds = a.getSoundResourceNames();
-      for (const ms of animSounds) {
-        sounds.add(ms);
-      }
-      const animBackgrounds = a.getBackgroundResourceNames();
-      for (const abg of animBackgrounds) {
-        backgrounds.add(abg);
-      }
-      if (a.graphic) {
-        globalScene.loadSpritesheet(a.graphic, "battle_anims", 96);
+/**
+ * @returns The requests for the assets used by every common animation
+ */
+export function getCommonAnimAssetRequests(): AssetRequest[] {
+  return getAnimAssetRequests(Array.from(commonAnims.values()));
+}
+
+/**
+ * @param anims - The encounter animations to get assets for
+ * @returns The requests for the assets used by the given encounter animations; ones not yet initialized are skipped
+ */
+export function getEncounterAnimAssetRequests(anims: readonly EncounterAnim[]): AssetRequest[] {
+  return getAnimAssetRequests(anims.map(a => encounterAnims.get(a)).filter(a => a != null));
+}
+
+/**
+ * @param moveIds - The moves to get assets for
+ * @returns The requests for the assets used by the given moves' animations, including their charge animations;
+ * ones not yet initialized are skipped
+ */
+export function getMoveAnimAssetRequests(moveIds: readonly MoveId[]): AssetRequest[] {
+  const moveAnimations = moveIds.flatMap(m => moveAnims.get(m) ?? []);
+  for (const moveId of moveIds) {
+    const chargeAnimSource = allMoves[moveId].isChargingMove()
+      ? allMoves[moveId]
+      : (allMoves[moveId].getAttrs("DelayedAttackAttr")[0] ?? allMoves[moveId].getAttrs("BeakBlastHeaderAttr")[0]);
+    if (chargeAnimSource) {
+      const moveChargeAnims = chargeAnims.get(chargeAnimSource.chargeAnim);
+      if (moveChargeAnims != null) {
+        moveAnimations.push(...coerceArray(moveChargeAnims));
       }
     }
-    for (const bg of backgrounds) {
-      globalScene.loadImage(bg, "battle_anims");
+  }
+  return getAnimAssetRequests(moveAnimations);
+}
+
+/**
+ * @param anims - The animations to get assets for
+ * @returns The requests for the spritesheets, backgrounds and sounds the given animations use
+ */
+function getAnimAssetRequests(anims: readonly AnimConfig[]): AssetRequest[] {
+  const graphics = new Set<string>();
+  const backgrounds = new Set<string>();
+  const sounds = new Set<string>();
+  for (const a of anims) {
+    if (a.frames?.length === 0) {
+      continue;
     }
-    for (const s of sounds) {
-      globalScene.loadSe(s, "battle_anims", s);
+    for (const ms of a.getSoundResourceNames()) {
+      sounds.add(ms);
     }
-    if (startLoad) {
-      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
-      if (!globalScene.load.isLoading()) {
-        globalScene.load.start();
-      }
-    } else {
-      resolve();
+    for (const abg of a.getBackgroundResourceNames()) {
+      backgrounds.add(abg);
     }
-  });
+    if (a.graphic) {
+      graphics.add(a.graphic);
+    }
+  }
+  return [
+    ...[...graphics].flatMap(graphic => spritesheetAsset(graphic, "battle_anims", 96)),
+    ...[...backgrounds].flatMap(bg => imageAsset(bg, "battle_anims")),
+    ...[...sounds].flatMap(s => seAsset(s, "battle_anims", s)),
+  ];
 }
 
 interface GraphicFrameData {

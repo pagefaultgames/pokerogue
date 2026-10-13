@@ -22,6 +22,7 @@ import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifier
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { AssetRef } from "#types/asset-set";
 import type { NewBattleResolvedProps } from "#types/new-battle-props";
 import type { TurnMove } from "#types/turn-move";
 import {
@@ -79,6 +80,11 @@ export class Battle {
    * A tracker of the last {@linkcode MoveId} successfully used this battle.
    */
   public lastMove: MoveId = MoveId.NONE;
+  /**
+   * Assets loaded for this turn only, such as the animation of a move called by Metronome, which no moveset would
+   * otherwise keep loaded. They are kept until the turn ends.
+   */
+  public turnAssets: AssetRef[] = [];
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;
@@ -176,6 +182,7 @@ export class Battle {
     this.turnCommands = Object.fromEntries(getEnumValues(BattlerIndex).map(bt => [bt, null]));
     this.preTurnCommands = Object.fromEntries(getEnumValues(BattlerIndex).map(bt => [bt, null]));
     this.battleSeedState = null;
+    this.turnAssets = [];
   }
 
   addParticipant(playerPokemon: PlayerPokemon): void {
