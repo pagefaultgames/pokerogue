@@ -1,3 +1,4 @@
+import { assetManager } from "#app/global-asset-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -2214,7 +2215,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = assetLoadCancelled;
 
       if (shouldUpdateSprite) {
-        species.loadAssets(female!, formIndex, shiny, variant, true).then(() => {
+        species.loadAssets(female!, formIndex, shiny, variant).then(() => {
           // TODO: is this bang correct?
           if (assetLoadCancelled.value) {
             return;
@@ -2328,6 +2329,8 @@ export class PokedexUiHandler extends MessageUiHandler {
         this.clearText();
         this.clear();
         ui.revertMode();
+        // Unload the sprites and cries of every species browsed, and anything else no longer needed
+        assetManager.sweep();
       },
       noHandler: () => {
         ui.setMode(UiMode.POKEDEX, "refresh");

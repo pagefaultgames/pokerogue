@@ -1,3 +1,4 @@
+import { seAsset } from "#app/asset-requests";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -187,12 +188,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
+  .withAssets(
+    seAsset("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav"),
+    seAsset("Follow Me", "battle_anims", "Follow Me.wav"),
+  )
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-
-    globalScene
-      .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
-      .loadSe("Follow Me", "battle_anims", "Follow Me.wav");
 
     // Get all player berry items, remove from party, and store reference
     const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];

@@ -1,12 +1,18 @@
+import { atlasAsset, pokemonAtlasAsset } from "#app/asset-requests";
+import { assetManager } from "#app/global-asset-manager";
 import { globalScene } from "#app/global-scene";
 import type { SpeciesId } from "#enums/species-id";
 import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import type { Variant } from "#sprites/variant";
+import type { AnimSpec, AssetRequest } from "#types/asset-set";
 import type { GameObjects } from "phaser";
 
 type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
+
+/** The animation every non-item intro sprite gets, including Pokémon. */
+const INTRO_SPRITE_ANIM: AnimSpec = { end: 128, frameRate: 10, repeat: -1 };
 
 type KnownFileRoot =
   | "arenas"
@@ -220,65 +226,32 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Get the assets needed to show the sprites that were defined on construction.
+   * @returns The requests for the sprites' atlases, along with their animations
+   */
+  getAssetRequests(): AssetRequest[] {
+    return this.spriteConfigs.flatMap(config => {
+      if (config.isPokemon) {
+        return [pokemonAtlasAsset(config.spriteKey, config.fileRoot, undefined, INTRO_SPRITE_ANIM)];
+      }
+      if (config.isItem) {
+        return atlasAsset("items", "");
+      }
+      return atlasAsset(config.spriteKey, config.fileRoot, undefined, INTRO_SPRITE_ANIM);
+    });
+  }
+
+  /**
    * Loads the assets that were defined on construction (async)
    */
-  loadAssets(): Promise<void> {
-    return new Promise(resolve => {
-      if (!this.spriteConfigs) {
-        resolve();
+  async loadAssets(): Promise<void> {
+    const shinyPromises: Promise<void>[] = [];
+    for (const config of this.spriteConfigs) {
+      if (config.isPokemon && config.isShiny && config.variant != null) {
+        shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
       }
-
-      const shinyPromises: Promise<void>[] = [];
-      this.spriteConfigs.forEach(config => {
-        if (config.isPokemon) {
-          globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
-          if (config.isShiny && config.variant != null) {
-            shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
-          }
-        } else if (config.isItem) {
-          globalScene.loadAtlas("items", "");
-        } else {
-          globalScene.loadAtlas(config.spriteKey, config.fileRoot);
-        }
-      });
-
-      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        this.spriteConfigs.every(config => {
-          if (config.isItem) {
-            return true;
-          }
-
-          const originalWarn = console.warn;
-
-          // Ignore warnings for missing frames, because there will be a lot
-          console.warn = () => {};
-          const frameNames = globalScene.anims.generateFrameNames(config.spriteKey, {
-            zeroPad: 4,
-            suffix: ".png",
-            start: 1,
-            end: 128,
-          });
-
-          console.warn = originalWarn;
-          if (!globalScene.anims.exists(config.spriteKey)) {
-            globalScene.anims.create({
-              key: config.spriteKey,
-              frames: frameNames,
-              frameRate: 10,
-              repeat: -1,
-            });
-          }
-
-          return true;
-        });
-
-        Promise.all(shinyPromises).then(() => resolve());
-      });
-
-      if (!globalScene.load.isLoading()) {
-        globalScene.load.start();
-      }
-    });
+    }
+    await Promise.all([assetManager.load(this.getAssetRequests(), globalScene), ...shinyPromises]);
   }
 
   /**

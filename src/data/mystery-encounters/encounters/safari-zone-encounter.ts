@@ -1,3 +1,4 @@
+import { atlasAsset, seAsset } from "#app/asset-requests";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
@@ -76,6 +77,14 @@ export const SafariZoneEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
+  // Bait/mud assets
+  .withAssets(
+    seAsset("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav"),
+    seAsset("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav"),
+    seAsset("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav"),
+    atlasAsset("safari_zone_bait", "mystery-encounters"),
+    atlasAsset("safari_zone_mud", "mystery-encounters"),
+  )
   .withOnInit(() => {
     globalScene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
     eventEncs.value = 0;
@@ -102,13 +111,6 @@ export const SafariZoneEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           safariPokemonRemaining: NUM_SAFARI_ENCOUNTERS,
         };
         updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
-        // Load bait/mud assets
-        globalScene
-          .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
-          .loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav")
-          .loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav")
-          .loadAtlas("safari_zone_bait", "mystery-encounters")
-          .loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
         globalScene.currentBattle.enemyParty = [];
         await transitionMysteryEncounterIntroVisuals();

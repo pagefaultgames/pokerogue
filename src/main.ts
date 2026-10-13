@@ -27,6 +27,7 @@ async function startGame(): Promise<void> {
 
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
+  const { initGlobalAssetManager } = await import("#app/global-asset-manager");
   const game = new Phaser.Game({
     type: Phaser.WEBGL,
     parent: "app",
@@ -82,6 +83,7 @@ async function startGame(): Promise<void> {
     version,
   });
   game.sound.pauseOnBlur = isMobile();
+  initGlobalAssetManager(game);
 }
 
 try {
