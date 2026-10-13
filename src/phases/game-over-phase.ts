@@ -10,7 +10,6 @@ import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
-import { Challenges } from "#enums/challenges";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -23,13 +22,13 @@ import { ArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
-import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
+import type { RibbonFlag } from "#system/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
 import type { ConfirmModeConfig } from "#types/ui-types";
-import { applyChallenges, isNuzlockeChallenge } from "#utils/challenge-utils";
+import { applyChallenges, getRibbonsToAward } from "#utils/challenge-utils";
 import { fixedInt, isLocalServerConnected } from "#utils/common";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -134,38 +133,8 @@ export class GameOverPhase extends BattlePhase {
    * based on the current game mode and challenges.
    */
   private awardRibbons(): void {
-    const { gameMode } = globalScene;
-    const { challenges, isClassic } = gameMode;
+    const ribbonFlags = getRibbonsToAward();
 
-    if (challenges.some(c => [Challenges.MOVESET_RANDOMIZER].includes(c.id) && c.value > 0)) {
-      return;
-    }
-
-    let ribbonFlags = 0n;
-    for (const challenge of challenges) {
-      const ribbon = challenge.ribbonAwarded;
-      if (challenge.value && ribbon) {
-        ribbonFlags |= ribbon;
-      }
-    }
-
-    // TODO: find a better way to handle blocking ribbons and achievements
-    // Block other ribbons if flip stats or inverse is active
-    const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
-    // Block other ribbons if passives on `all` is active
-    const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
-    if (flip_or_inverse) {
-      ribbonFlags = flip_or_inverse;
-    } else if (challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
-      ribbonFlags = passives;
-    } else {
-      if (isClassic) {
-        ribbonFlags |= RibbonData.CLASSIC;
-      }
-      if (isNuzlockeChallenge()) {
-        ribbonFlags |= RibbonData.NUZLOCKE;
-      }
-    }
     // Award ribbons to all Pokémon in the player's party that are considered valid
     // for the current game mode and challenges (as in, they can be used in battle).
     for (const pokemon of globalScene.getPlayerParty()) {

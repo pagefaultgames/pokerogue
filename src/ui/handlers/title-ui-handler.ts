@@ -254,7 +254,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private getLogo(): string {
     // Invert spawn chances on april fools
     const aprilFools = timedEventManager.isAprilFoolsActive();
-    return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : "logo";
+    const logoKey = timedEventManager.getLogoKey();
+    return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : logoKey;
   }
 
   /** Adds a snow effect on the title screen during the winter season. */
