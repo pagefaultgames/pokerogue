@@ -594,11 +594,11 @@ export class Egg {
     let variantTier: VariantTier = VariantTier.STANDARD;
     if (rand >= SHINY_VARIANT_CHANCE) {
       variantTier = VariantTier.STANDARD; // 6/10
-    }
-    if (rand >= SHINY_EPIC_CHANCE) {
+    } else if (rand >= SHINY_EPIC_CHANCE) {
       variantTier = VariantTier.RARE; // 3/10
+    } else {
+      variantTier = VariantTier.EPIC; // 1/10
     }
-    variantTier = VariantTier.EPIC; // 1/10
 
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
       const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
