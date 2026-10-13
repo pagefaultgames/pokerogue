@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -31,6 +32,7 @@ import {
 } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { playTween } from "#utils/anim-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -156,6 +158,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
 async function spawnNextTrainerOrEndEncounter() {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
   const nextConfig = encounter.enemyPartyConfigs.pop();
+  assetManager.sweep();
   if (nextConfig) {
     await initBattleWithEnemyConfig(nextConfig);
   } else {
@@ -188,17 +191,16 @@ async function endTrainerBattleAndShowDialogue(): Promise<void> {
     // Battle is over
     const trainer = globalScene.currentBattle.trainer;
     if (trainer) {
-      globalScene.tweens.add({
+      await playTween({
         targets: trainer,
         x: "+=16",
         y: "-=16",
         alpha: 0,
         ease: "Sine.easeInOut",
         duration: 750,
-        onComplete: () => {
-          globalScene.field.remove(trainer, true);
-        },
       });
+      globalScene.field.remove(trainer, true);
+      assetManager.sweep();
     }
 
     await spawnNextTrainerOrEndEncounter();
