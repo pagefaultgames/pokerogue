@@ -585,7 +585,7 @@ export class Egg {
 
     let variant: VariantTier | null = null;
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
-      variant = this.getSameSpeciesVariant(species);
+      variant = this.getSameSpeciesVariantPity(species);
     }
     if (variant !== null) {
       return variant;
@@ -614,11 +614,15 @@ export class Egg {
     return variantTier;
   }
 
-  // TODO: the pity triggers multiple times before the first new variant is actually hatched, it might award that one again from the pity and not a genuinely new variant
-  private getSameSpeciesVariant(species: SpeciesId): VariantTier | null {
-    const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
-    const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
-    if (missingVariants.length === 0) {
+  /**
+   * Get the variant tier for a same species egg based on the pity counter.
+   * @param species - The speciesId for which to get the variant tier based on the pity counter
+   * @returns The variant tier or `null` if no variant is determined by pity.
+   */
+  private getSameSpeciesVariantPity(species: SpeciesId): VariantTier | null {
+    const missingVariants = this.getMissingVariants(species);
+    const hasVariants = speciesDataRegistry.getSpecies(species).hasVariants();
+    if (missingVariants.length === 0 || !hasVariants) {
       // No pity if all variants have been unlocked
       return null;
     }
@@ -633,16 +637,39 @@ export class Egg {
       return null;
     }
     globalScene.gameData.dexData[species].pity[1] = 0;
-    if (missingVariants.includes(DexAttr.VARIANT_2) && missingVariants.includes(DexAttr.VARIANT_3)) {
+    if (missingVariants.includes(VariantTier.RARE) && missingVariants.includes(VariantTier.EPIC)) {
       return randSeedInt(4) ? VariantTier.RARE : VariantTier.EPIC; // 1/4 chance for EPIC, 3/4 chance for RARE
     }
-    if (missingVariants.includes(DexAttr.VARIANT_3)) {
+    if (missingVariants.includes(VariantTier.EPIC)) {
       return VariantTier.EPIC;
     }
-    if (missingVariants.includes(DexAttr.VARIANT_2)) {
+    if (missingVariants.includes(VariantTier.RARE)) {
       return VariantTier.RARE;
     }
     return null;
+  }
+
+  /**
+   * Get the missing variant tiers for a given species. Including unhatched variants currently in eggs.
+   * @param species - The speciesId for which to get missing variants
+   * @returns An array of VariantTiers.
+   * @remarks
+   * Does not account for {@linkcode VariantTier.STANDARD}.
+   */
+  private getMissingVariants(species: SpeciesId): VariantTier[] {
+    const variantsInEggs = globalScene.gameData.eggs.filter(egg => egg.species === species).map(egg => egg.variantTier);
+    const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
+    const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
+
+    const ret: VariantTier[] = [];
+    if (missingVariants.includes(DexAttr.VARIANT_2) && !variantsInEggs.includes(VariantTier.RARE)) {
+      ret.push(VariantTier.RARE);
+    }
+    if (missingVariants.includes(DexAttr.VARIANT_3) && !variantsInEggs.includes(VariantTier.EPIC)) {
+      ret.push(VariantTier.EPIC);
+    }
+
+    return ret;
   }
 
   private checkForPityTierOverrides(): void {
