@@ -2496,7 +2496,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       if (shouldUpdateSprite) {
         const back = !!this.showBackSprite;
         // TODO: is this bang correct?
-        species.loadAssets(female!, formIndex, shiny, variant as Variant, true, back).then(() => {
+        species.loadAssets(female!, formIndex, shiny, variant as Variant, back).then(() => {
           if (assetLoadCancelled.value) {
             return;
           }
@@ -2589,7 +2589,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Setting tint of the sprite
       if (isFormCaught) {
-        this.species.loadAssets(female!, formIndex, shiny, variant as Variant, true).then(() => {
+        this.species.loadAssets(female!, formIndex, shiny, variant as Variant).then(() => {
           const crier =
             this.species.forms && this.species.forms.length > 0
               ? this.species.forms[formIndex ?? this.formIndex]
