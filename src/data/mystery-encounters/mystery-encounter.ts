@@ -1,8 +1,12 @@
+import { imageAsset, seAsset } from "#app/asset-requests";
+import { assetManager } from "#app/global-asset-manager";
 import { globalScene } from "#app/global-scene";
+import { getEncounterAnimAssetRequests, getMoveAnimAssetRequests } from "#data/battle-anims";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { Challenges } from "#enums/challenges";
 import type { EncounterAnim } from "#enums/encounter-anims";
 import type { GameModes } from "#enums/game-modes";
+import type { MoveId } from "#enums/move-id";
 import type { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -25,6 +29,7 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
+import type { AssetRef, AssetRequest } from "#types/asset-set";
 import { coerceArray } from "#utils/array";
 import { randSeedInt } from "#utils/common";
 import { capitalizeFirstLetter } from "#utils/strings";
@@ -41,6 +46,16 @@ const DEFAULT_MAX_ALLOWED_ENCOUNTERS = 2;
 const DEFAULT_MAX_ALLOWED_ROGUE_ENCOUNTERS = 1;
 
 /**
+ * @returns The exclamation bubble and sound effect shown at the start of every mystery encounter
+ */
+function getEncounterExclaimAssets(): AssetRequest[] {
+  return [
+    ...seAsset("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav"),
+    ...imageAsset("encounter_exclaim", "mystery-encounters"),
+  ];
+}
+
+/**
  * Used by {@linkcode MysteryEncounterBuilder} class to define required/optional properties on the {@linkcode MysteryEncounter} class when building.
  *
  * Should ONLY contain properties that are necessary for {@linkcode MysteryEncounter} construction.
@@ -52,6 +67,7 @@ export interface IMysteryEncounter {
   spriteConfigs: MysteryEncounterSpriteConfig[];
   encounterTier: MysteryEncounterTier;
   encounterAnimations?: EncounterAnim[];
+  assets?: AssetRequest[];
   disallowedGameModes?: GameModes[];
   disallowedChallenges?: Challenges[];
   hideBattleIntroMessage: boolean;
@@ -106,6 +122,12 @@ export class MysteryEncounter implements IMysteryEncounter {
    * Specify here so that assets are loaded on initialization of encounter
    */
   encounterAnimations?: EncounterAnim[];
+  /**
+   * Assets the encounter's own code uses, such as sound effects or extra images, other than its intro sprites and
+   * encounter animations.
+   * Specify here so that they are loaded on initialization of the encounter, and kept until it is over
+   */
+  assets?: AssetRequest[];
   /**
    * If specified, defines any game modes where the {@linkcode MysteryEncounter} should *NOT* spawn
    */
@@ -274,6 +296,11 @@ export class MysteryEncounter implements IMysteryEncounter {
    */
   loadAssets: Promise<void>[];
   /**
+   * Moves whose animations were loaded with `loadCustomMovesForEncounter`, so they are kept loaded until the
+   * encounter is over
+   */
+  customMoves: MoveId[];
+  /**
    * Generic property to set any custom data required for the encounter
    * Extremely useful for carrying state/data between onPreOptionPhase/onOptionPhase/onPostOptionPhase
    */
@@ -318,6 +345,31 @@ export class MysteryEncounter implements IMysteryEncounter {
     this.misc = null;
     this.expMultiplier = 1;
     this.loadAssets = [];
+    this.customMoves = [];
+  }
+
+  /**
+   * Get every asset this encounter may use without loading it again first: the exclamation bubble, its declared
+   * assets, its encounter animations, its intro sprites and its custom moves' animations.
+   * @returns The assets this encounter needs
+   */
+  getRequiredAssets(): AssetRef[] {
+    return [
+      ...getEncounterExclaimAssets(),
+      ...(this.assets ?? []),
+      ...getEncounterAnimAssetRequests(this.encounterAnimations ?? []),
+      ...(this.introVisuals?.getAssetRequests() ?? []),
+      ...getMoveAnimAssetRequests(this.customMoves),
+    ];
+  }
+
+  /**
+   * Load the exclamation bubble and the assets declared with {@linkcode MysteryEncounterBuilder.withAssets}.
+   * Intro sprites and encounter animations are loaded separately.
+   * @returns A promise that resolves once the assets have loaded
+   */
+  loadDeclaredAssets(): Promise<void> {
+    return assetManager.load([...getEncounterExclaimAssets(), ...(this.assets ?? [])], globalScene);
   }
 
   /**
@@ -731,6 +783,19 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   ): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
     const animations = coerceArray(encounterAnimations);
     return Object.assign(this, { encounterAnimations: animations });
+  }
+
+  /**
+   * Defines any assets the encounter's own code uses, such as sound effects or extra images, other than its intro
+   * sprites and encounter animations.
+   * They are loaded on encounter init, and kept until the encounter is over
+   * @param assets - The assets, as built by the helpers in `asset-requests.ts`
+   * @returns
+   */
+  withAssets(
+    ...assets: (AssetRequest | readonly AssetRequest[])[]
+  ): this & Required<Pick<IMysteryEncounter, "assets">> {
+    return Object.assign(this, { assets: assets.flat() });
   }
 
   /**

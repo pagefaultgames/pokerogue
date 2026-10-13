@@ -8,8 +8,17 @@ export class MockLoader {
     this.cacheManager = new CacheManager(scene);
   }
 
-  once(_event, callback) {
+  once(_event, callback): this {
     callback();
+    return this;
+  }
+
+  on(_event, _callback): this {
+    return this;
+  }
+
+  off(_event, _callback): this {
+    return this;
   }
 
   setBaseURL(_url) {

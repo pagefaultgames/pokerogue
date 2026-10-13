@@ -1,3 +1,4 @@
+import { assetManager } from "#app/global-asset-manager";
 import { globalScene } from "#app/global-scene";
 import type { BiomeId } from "#enums/biome-id";
 import { getBiomeKey } from "#field/arena";
@@ -38,8 +39,6 @@ export class SwitchBiomePhase extends BattlePhase {
         await biomeLoadPromise;
 
         globalScene.arenaEnemy.setX(globalScene.arenaEnemy.x - 600);
-        // Capture BEFORE newArena overwrites globalScene.arena
-        const previousBiome = globalScene.arena.biomeId;
         globalScene.newArena(this.nextBiome);
 
         const biomeKey = getBiomeKey(this.nextBiome);
@@ -69,8 +68,8 @@ export class SwitchBiomePhase extends BattlePhase {
             if (globalScene.lastEnemyTrainer) {
               globalScene.lastEnemyTrainer.destroy();
             }
-            // Clear previous biome textures now that the transition is complete
-            globalScene.clearBiomeAssets(previousBiome);
+            // Unload the previous biome, and anything else no longer needed, now that the transition is complete
+            assetManager.sweep();
             this.end();
           },
         });
