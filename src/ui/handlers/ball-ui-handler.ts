@@ -8,6 +8,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 
 export class BallUiHandler extends UiHandler {
@@ -16,8 +17,12 @@ export class BallUiHandler extends UiHandler {
   private optionsText: Phaser.GameObjects.Text;
   private cancelText: Phaser.GameObjects.Text;
   private countsText: Phaser.GameObjects.Text;
+  private pokeballImages: Phaser.GameObjects.Image[] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
+  private pokeballWiggleTween: Phaser.Tweens.TweenChain | null = null;
+  private wigglingPokeball: Phaser.GameObjects.Image | null = null;
+  private wigglingPokeballX: number | null = null;
 
   private scale = 0.1666666667;
 
@@ -54,6 +59,7 @@ export class BallUiHandler extends UiHandler {
         .image(0, 0, "pb", getPokeballAtlasKey(pb))
         .setScale(this.scale * 6)
         .setPositionRelative(this.pokeballSelectBg, 24, 7 + (48 + pb * 96) * this.scale);
+      this.pokeballImages.push(ballImage);
       this.pokeballSelectContainer.add(ballImage);
     }
     this.pokeballSelectContainer.add(this.optionsText);
@@ -145,6 +151,7 @@ export class BallUiHandler extends UiHandler {
   }
 
   setCursor(cursor: number): boolean {
+    this.stopPokeballWiggle();
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
@@ -155,11 +162,64 @@ export class BallUiHandler extends UiHandler {
     this.cursorObj.setScale(this.scale * 6);
     this.cursorObj.setPositionRelative(this.pokeballSelectBg, 12, 15 + (6 + this.cursor * 96) * this.scale);
 
+    if (this.active && this.cursor < this.pokeballImages.length) {
+      this.startPokeballWiggle(this.pokeballImages[this.cursor]);
+    }
+
     return ret;
+  }
+
+  private startPokeballWiggle(pokeball: Phaser.GameObjects.Image) {
+    this.wigglingPokeball = pokeball;
+    this.wigglingPokeballX = pokeball.x;
+    this.pokeballWiggleTween = globalScene.tweens.chain({
+      targets: pokeball,
+      loop: -1,
+      loopDelay: fixedInt(1000),
+      tweens: [
+        {
+          x: pokeball.x + 4,
+          angle: 27.5,
+          duration: fixedInt(150),
+          ease: "Cubic.easeOut",
+        },
+        {
+          x: pokeball.x,
+          angle: 0,
+          duration: fixedInt(150),
+          ease: "Cubic.easeOut",
+        },
+        {
+          x: pokeball.x - 4,
+          angle: -27.5,
+          duration: fixedInt(150),
+          delay: fixedInt(250),
+          ease: "Cubic.easeOut",
+        },
+        {
+          x: pokeball.x,
+          angle: 0,
+          duration: fixedInt(150),
+          ease: "Cubic.easeOut",
+        },
+      ],
+    });
+  }
+
+  private stopPokeballWiggle() {
+    this.pokeballWiggleTween?.stop();
+    this.pokeballWiggleTween = null;
+    if (this.wigglingPokeball && this.wigglingPokeballX !== null) {
+      this.wigglingPokeball.setX(this.wigglingPokeballX);
+    }
+    this.wigglingPokeball?.setAngle(0);
+    this.wigglingPokeball = null;
+    this.wigglingPokeballX = null;
   }
 
   clear() {
     super.clear();
+    this.stopPokeballWiggle();
     this.pokeballSelectContainer.setVisible(false);
     this.eraseCursor();
   }
