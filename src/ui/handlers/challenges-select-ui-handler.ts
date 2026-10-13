@@ -55,11 +55,9 @@ export class GameChallengesUiHandler extends UiHandler {
   private optionsWidth: number;
 
   private tabMenu: TabMenu;
-  private readonly challengeCategories: ChallengeCategory[] = [
-    ChallengeCategory.GENERAL,
-    ChallengeCategory.RANDOMIZER,
-    ChallengeCategory.MISC,
-  ];
+  private readonly challengeCategories: ChallengeCategory[] = Object.values(ChallengeCategory).filter(
+    cat => cat !== ChallengeCategory.UNUSED,
+  );
 
   public override setup(): void {
     const ui = this.getUi();
@@ -274,7 +272,7 @@ export class GameChallengesUiHandler extends UiHandler {
   private getFilteredChallenges(): Challenge[] {
     const activeCategory = this.tabMenu
       ? this.challengeCategories[this.tabMenu.selectedIndex]
-      : ChallengeCategory.GENERAL;
+      : ChallengeCategory.DIFFICULTY;
 
     return globalScene.gameMode.challenges.filter(c => c.category === activeCategory);
   }
