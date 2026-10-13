@@ -323,7 +323,8 @@ export class SummaryUiHandler extends UiHandler {
     if (page === undefined) {
       page = this.cursor;
     }
-    return `summary_${Page[page].toLowerCase()}`;
+    const pageName = Page[page as keyof typeof Page] ?? Page[Page.PROFILE] ?? "profile";
+    return `summary_${String(pageName).toLowerCase()}`;
   }
 
   show(
@@ -847,7 +848,8 @@ export class SummaryUiHandler extends UiHandler {
     } else {
       changed = this.cursor !== cursor;
       if (changed) {
-        const forward = this.cursor < cursor;
+        const oldCursor = this.cursor;
+        const forward = oldCursor < cursor;
         this.cursor = cursor;
 
         this.tabSprite.setTexture(getLocalizedSpriteKey(`summary_tabs_${this.cursor + 1}`)); // Pixel text 'STATUS' and "MOVES" tabs
@@ -856,7 +858,8 @@ export class SummaryUiHandler extends UiHandler {
 
         if (this.summaryPageContainer.visible) {
           this.transitioning = true;
-          this.populatePageContainer(this.summaryPageTransitionContainer, forward ? cursor : cursor + 1);
+          const transitionPage = forward ? this.cursor : oldCursor;
+          this.populatePageContainer(this.summaryPageTransitionContainer, transitionPage);
           if (forward) {
             this.summaryPageTransitionContainer.x += 214;
           } else {
@@ -1357,20 +1360,22 @@ export class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, {
           wordWrap: { width: moveDescriptionWrapWidth },
         });
-        this.moveDescriptionText.setWordWrapCallback((text, textObject) => {
-          const wordWrapWidth = textObject.style.wordWrapWidth ?? moveDescriptionWrapWidth;
-          if (hasSpecialWrapSpace(text)) {
-            return wrapTextAtSpaces(
-              text,
-              Math.min(wordWrapWidth, moveDescriptionMaskWidth),
-              line => textObject.context.measureText(line).width,
-            );
-          }
+        if ("setWordWrapCallback" in this.moveDescriptionText && typeof (this.moveDescriptionText as any).setWordWrapCallback === "function") {
+          (this.moveDescriptionText as any).setWordWrapCallback((text: string, textObject: any) => {
+            const wordWrapWidth = textObject.style.wordWrapWidth ?? moveDescriptionWrapWidth;
+            if (hasSpecialWrapSpace(text)) {
+              return wrapTextAtSpaces(
+                text,
+                Math.min(wordWrapWidth, moveDescriptionMaskWidth),
+                (line: string) => textObject.context.measureText(line).width,
+              );
+            }
 
-          return textObject.style.wordWrapUseAdvanced
-            ? textObject.advancedWordWrap(text, textObject.context, wordWrapWidth)
-            : textObject.basicWordWrap(text, textObject.context, wordWrapWidth);
-        });
+            return textObject.style.wordWrapUseAdvanced
+              ? textObject.advancedWordWrap(text, textObject.context, wordWrapWidth)
+              : textObject.basicWordWrap(text, textObject.context, wordWrapWidth);
+          });
+        }
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});
