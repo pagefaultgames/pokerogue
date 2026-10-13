@@ -1360,7 +1360,10 @@ export class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, {
           wordWrap: { width: moveDescriptionWrapWidth },
         });
-        if ("setWordWrapCallback" in this.moveDescriptionText && typeof (this.moveDescriptionText as any).setWordWrapCallback === "function") {
+        if (
+          "setWordWrapCallback" in this.moveDescriptionText
+          && typeof (this.moveDescriptionText as any).setWordWrapCallback === "function"
+        ) {
           (this.moveDescriptionText as any).setWordWrapCallback((text: string, textObject: any) => {
             const wordWrapWidth = textObject.style.wordWrapWidth ?? moveDescriptionWrapWidth;
             if (hasSpecialWrapSpace(text)) {
