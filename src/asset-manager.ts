@@ -257,7 +257,23 @@ export class AssetManager {
    * Unload every tracked asset that is no longer needed.
    */
   public sweep(): void {
+    console.debug(
+      "%cAssetManager.sweep: checking for unneeded assets. Before Sweep: %d managed, %d permanent, %d in-flight, %d waiting for audio",
+      "color: green",
+      this.managed.size,
+      this.permanent.size,
+      this.inFlight.size,
+      this.waitingForAudio.size,
+    );
     this.unloadUnused([...this.managed]);
+    console.debug(
+      "%cAssetManager.sweep: finished. After Sweep: %d managed, %d permanent, %d in-flight, %d waiting for audio",
+      "color: green",
+      this.managed.size,
+      this.permanent.size,
+      this.inFlight.size,
+      this.waitingForAudio.size,
+    );
   }
 
   /**
