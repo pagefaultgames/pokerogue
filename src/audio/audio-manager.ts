@@ -23,8 +23,24 @@ export class AudioManager {
 
   private currentBgm: BackgroundMusic | null = null;
 
+  /** Cached result of {@linkcode canStreamBgm}; `undefined` until first read. */
+  private streamingSupported: boolean | undefined;
+
   constructor(volume: GameVolume) {
     this.volume = volume;
+  }
+
+  /**
+   * Whether the client can stream BGM (it uses Web Audio and supports the AudioDecoder API).
+   *
+   * @remarks
+   * Neither can change while the game is running, so this is only computed once. It is computed
+   * on first read rather than on construction, as the sound manager doesn't exist yet at that point.
+   */
+  public get canStreamBgm(): boolean {
+    this.streamingSupported ??=
+      globalScene.sound instanceof Phaser.Sound.WebAudioSoundManager && typeof AudioDecoder !== "undefined";
+    return this.streamingSupported;
   }
 
   /**
@@ -113,7 +129,7 @@ export class AudioManager {
       resolvedName === globalScene.arena?.bgm ? globalScene.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
 
     const previous = this.currentBgm;
-    const newBgm = new BackgroundMusic(resolvedName, loop, loopPoint);
+    const newBgm = new BackgroundMusic(resolvedName, loop, this.canStreamBgm, loopPoint);
     this.currentBgm = newBgm;
 
     globalScene.ui.bgmBar.setBgmToBgmBar(resolvedName);
@@ -177,7 +193,7 @@ export class AudioManager {
    * @returns The newly-created {@linkcode BackgroundMusic} object
    */
   public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
-    const tempBgm = new BackgroundMusic(bgmName, false);
+    const tempBgm = new BackgroundMusic(bgmName, false, this.canStreamBgm);
     tempBgm.onEnd(() => {
       this.currentBgm?.resume();
       tempBgm.destroy();

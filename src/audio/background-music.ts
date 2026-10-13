@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import type { AnySound } from "#audio/audio-manager";
-import { canStreamBgm, StreamingTrack } from "#audio/streaming-track";
+import type { AnySound, AudioManager } from "#audio/audio-manager"; // AudioManager used in TSDoc comment
+import { StreamingTrack } from "#audio/streaming-track";
 import { fixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
@@ -24,6 +24,12 @@ export class BackgroundMusic {
    * This will almost always be 1, but with i.e. paused/resumed music it may be more.
    */
   private static readonly refCounts = new Map<string, number>();
+
+  /**
+   * Keys of tracks that failed to set up for streaming, so they go straight to normal loading next time.
+   * Network failures aren't recorded here, since those may succeed on retry.
+   */
+  private static readonly unstreamableKeys = new Set<string>();
 
   /** The key for the audio file */
   public readonly key: string;
@@ -52,28 +58,20 @@ export class BackgroundMusic {
   /**
    * @param key - The bgm to use
    * @param loop - Whether to loop the bgm
+   * @param canStream - Whether the client supports streaming BGM; see {@linkcode AudioManager.canStreamBgm}
    * @param loopPoint - (Default `0`) The starting point of the loop, in seconds
    */
-  constructor(key: string, loop: boolean, loopPoint = 0) {
+  constructor(key: string, loop: boolean, canStream: boolean, loopPoint = 0) {
     this.key = key;
     BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
-    this.init(loop, loopPoint).catch(() => this.destroy());
+    this.init(loop, canStream, loopPoint).catch(() => this.destroy());
   }
 
-  private async init(loop: boolean, loopPoint: number): Promise<void> {
+  private async init(loop: boolean, canStream: boolean, loopPoint: number): Promise<void> {
     let sound: BgmSound | undefined;
 
-    if (canStreamBgm()) {
-      try {
-        const bytes = await globalScene.loadBgmBytes(this.key);
-        if (this.destroyed) {
-          return;
-        }
-        sound = await StreamingTrack.create(bytes, { loop, loopPoint });
-      } catch {
-        // Can't stream this track on this device; free the bytes and fall back
-        globalScene.cache.binary.remove(this.key);
-      }
+    if (canStream) {
+      sound = await this.tryStream(loop, loopPoint);
     }
 
     if (sound == null) {
@@ -109,6 +107,34 @@ export class BackgroundMusic {
       sound.once("stop", () => this.triggerEnd());
     }
     this.runPendingCalls();
+  }
+
+  /**
+   * Try to set up this track for streaming.
+   * @returns The streaming track, or `undefined` if it should be loaded normally instead
+   */
+  private async tryStream(loop: boolean, loopPoint: number): Promise<StreamingTrack | undefined> {
+    if (BackgroundMusic.unstreamableKeys.has(this.key)) {
+      return;
+    }
+
+    let bytes: ArrayBuffer;
+    try {
+      bytes = await globalScene.loadBgmBytes(this.key);
+    } catch {
+      // May be a transient network error, so streaming is tried again next time
+      return;
+    }
+
+    try {
+      return await StreamingTrack.create(bytes, { loop, loopPoint });
+    } catch {
+      // Demuxing and decoder support checks give the same result every time for the same file,
+      // so don't try to stream it again; free the bytes and fall back
+      BackgroundMusic.unstreamableKeys.add(this.key);
+      globalScene.cache.binary.remove(this.key);
+      return;
+    }
   }
 
   public play(volume?: number): void {
