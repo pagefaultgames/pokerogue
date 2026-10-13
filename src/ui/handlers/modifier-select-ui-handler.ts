@@ -290,7 +290,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // The bang here is safe, as `getValue()` only returns null if the tween has been destroyed (which obviously isn't the case inside onUpdate)
         const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
-        if (index > i && index <= typeOptions.length) {
+        while (index > i && index <= typeOptions.length) {
           const option = this.options[i];
           if (option) {
             rewardAnimPromises.push(
@@ -1040,6 +1040,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       }
     });
     // The `.then` suppresses the return type for the Promise.allSettled so that it returns void.
+    // TODO `finalPromises` is empty when it's spread here, so it isn't respected
     promiseHolder.push(Promise.allSettled([...animPromises, ...finalPromises]).then());
 
     await Promise.allSettled(animPromises);
