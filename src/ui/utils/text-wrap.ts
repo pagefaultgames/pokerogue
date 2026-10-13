@@ -13,6 +13,27 @@ export function wrapTextAtSpaces(text: string, maxWidth: number, measureLine: (l
     let currentLine = "";
     let separator = "";
 
+    const appendPart = (part: string) => {
+      if (measureLine(part) <= maxWidth) {
+        outputLine += `${separator}${part}`;
+        currentLine = currentLine ? `${currentLine}${separator}${part}` : part;
+        return;
+      }
+
+      outputLine += separator;
+      for (const character of part) {
+        const nextLine = currentLine ? `${currentLine}${character}` : character;
+        if (currentLine && measureLine(nextLine) > maxWidth) {
+          wrappedLines.push(outputLine);
+          outputLine = character;
+          currentLine = character;
+        } else {
+          outputLine += character;
+          currentLine = nextLine;
+        }
+      }
+    };
+
     for (const part of parts) {
       if (part === " " || part === "\u200b" || part === "\u3000") {
         separator += part;
@@ -22,11 +43,12 @@ export function wrapTextAtSpaces(text: string, maxWidth: number, measureLine: (l
       const nextLine = currentLine ? `${currentLine}${separator}${part}` : part;
       if (currentLine && measureLine(nextLine) > maxWidth) {
         wrappedLines.push(outputLine);
-        outputLine = part;
-        currentLine = part;
+        outputLine = "";
+        currentLine = "";
+        separator = "";
+        appendPart(part);
       } else {
-        outputLine += `${separator}${part}`;
-        currentLine = nextLine;
+        appendPart(part);
       }
       separator = "";
     }

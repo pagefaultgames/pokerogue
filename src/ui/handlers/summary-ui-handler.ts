@@ -27,6 +27,7 @@ import { achvs } from "#system/achv";
 import type { ConfirmModeConfig, OptionSelectItem } from "#types/ui-types";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -1351,7 +1352,25 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1252 } });
+        const moveDescriptionWrapWidth = 1252;
+        const moveDescriptionMaskWidth = 205 * 6;
+        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, {
+          wordWrap: { width: moveDescriptionWrapWidth },
+        });
+        this.moveDescriptionText.setWordWrapCallback((text, textObject) => {
+          const wordWrapWidth = textObject.style.wordWrapWidth ?? moveDescriptionWrapWidth;
+          if (hasSpecialWrapSpace(text)) {
+            return wrapTextAtSpaces(
+              text,
+              Math.min(wordWrapWidth, moveDescriptionMaskWidth),
+              line => textObject.context.measureText(line).width,
+            );
+          }
+
+          return textObject.style.wordWrapUseAdvanced
+            ? textObject.advancedWordWrap(text, textObject.context, wordWrapWidth)
+            : textObject.basicWordWrap(text, textObject.context, wordWrapWidth);
+        });
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});
