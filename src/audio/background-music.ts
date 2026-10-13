@@ -1,7 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import type { AnySound } from "#audio/audio-manager";
+import type { AnySound, AudioManager } from "#audio/audio-manager"; // AudioManager used in TSDoc comment
+import { StreamingTrack } from "#audio/streaming-track";
 import { fixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+
+type BgmSound = AnySound | StreamingTrack;
 
 /**
  * Class representing a single background music track.
@@ -22,11 +25,17 @@ export class BackgroundMusic {
    */
   private static readonly refCounts = new Map<string, number>();
 
+  /**
+   * Keys of tracks that failed to set up for streaming, so they go straight to normal loading next time.
+   * Network failures aren't recorded here, since those may succeed on retry.
+   */
+  private static readonly unstreamableKeys = new Set<string>();
+
   /** The key for the audio file */
   public readonly key: string;
 
   /** The underlying sound instance used to stream music. */
-  private sound: AnySound | undefined;
+  private sound: BgmSound | undefined;
   /** Whether this BGM has been evicted from memory. */
   private destroyed = false;
   /** Operations queued before the sound finished loading. */
@@ -49,33 +58,83 @@ export class BackgroundMusic {
   /**
    * @param key - The bgm to use
    * @param loop - Whether to loop the bgm
+   * @param canStream - Whether the client supports streaming BGM; see {@linkcode AudioManager.canStreamBgm}
    * @param loopPoint - (Default `0`) The starting point of the loop, in seconds
    */
-  constructor(key: string, loop: boolean, loopPoint = 0) {
+  constructor(key: string, loop: boolean, canStream: boolean, loopPoint = 0) {
     this.key = key;
     BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
+    this.init(loop, canStream, loopPoint).catch(() => this.destroy());
+  }
 
-    globalScene
-      .loadBgm(key)
-      .then(() => {
-        if (this.destroyed) {
-          return;
-        }
-        this.sound = globalScene.sound.add(key, { loop });
-        if (loop) {
-          this.sound.on("looped", () => {
-            if (!this.destroyed) {
-              this.sound?.play({ seek: loopPoint });
-            }
-          });
-        } else {
-          this.sound.once("complete", () => this.triggerEnd());
-          // Defensive, "complete" should be the right event but Phaser docs aren't very clear
-          this.sound.once("stop", () => this.triggerEnd());
-        }
-        this.runPendingCalls();
-      })
-      .catch(() => this.destroy());
+  private async init(loop: boolean, canStream: boolean, loopPoint: number): Promise<void> {
+    let sound: BgmSound | undefined;
+
+    if (canStream) {
+      sound = await this.tryStream(loop, loopPoint);
+    }
+
+    if (sound == null) {
+      await globalScene.loadBgm(this.key);
+      if (this.destroyed) {
+        return;
+      }
+      const phaserSound = globalScene.sound.add(this.key, { loop });
+      if (loop) {
+        phaserSound.on("looped", () => {
+          if (!this.destroyed) {
+            phaserSound.play({ seek: loopPoint });
+          }
+        });
+      }
+      sound = phaserSound;
+    }
+
+    if (this.destroyed) {
+      if (sound instanceof StreamingTrack) {
+        sound.destroy();
+      } else {
+        globalScene.sound.remove(sound);
+      }
+      return;
+    }
+
+    console.debug(`[bgm] ${this.key}: ${sound instanceof StreamingTrack ? "streaming" : "fully decoded"}`);
+    this.sound = sound;
+    if (!loop) {
+      sound.once("complete", () => this.triggerEnd());
+      // Defensive, "complete" should be the right event but Phaser docs aren't very clear
+      sound.once("stop", () => this.triggerEnd());
+    }
+    this.runPendingCalls();
+  }
+
+  /**
+   * Try to set up this track for streaming.
+   * @returns The streaming track, or `undefined` if it should be loaded normally instead
+   */
+  private async tryStream(loop: boolean, loopPoint: number): Promise<StreamingTrack | undefined> {
+    if (BackgroundMusic.unstreamableKeys.has(this.key)) {
+      return;
+    }
+
+    let bytes: ArrayBuffer;
+    try {
+      bytes = await globalScene.loadBgmBytes(this.key);
+    } catch {
+      // May be a transient network error, so streaming is tried again next time
+      return;
+    }
+
+    try {
+      return await StreamingTrack.create(bytes, { loop, loopPoint });
+    } catch {
+      // Demuxing and decoder support checks give the same result every time for the same file,
+      // so don't try to stream it again; free the bytes and fall back
+      BackgroundMusic.unstreamableKeys.add(this.key);
+      globalScene.cache.binary.remove(this.key);
+      return;
+    }
   }
 
   public play(volume?: number): void {
@@ -164,19 +223,22 @@ export class BackgroundMusic {
     this.destroyed = true;
     this.pendingCalls.length = 0;
     this.triggerEnd();
-    if (this.sound?.isPlaying) {
-      this.sound.stop();
+    if (this.sound instanceof StreamingTrack) {
+      this.sound.destroy();
+    } else if (this.sound != null) {
+      if (this.sound.isPlaying) {
+        this.sound.stop();
+      }
+      globalScene.sound.remove(this.sound);
     }
 
-    if (this.sound != null) {
-      globalScene.sound.remove(this.sound);
-      this.sound = undefined;
-    }
+    this.sound = undefined;
 
     const remaining = (BackgroundMusic.refCounts.get(this.key) ?? 1) - 1;
     if (remaining <= 0) {
       BackgroundMusic.refCounts.delete(this.key);
       globalScene.cache.audio.remove(this.key);
+      globalScene.cache.binary.remove(this.key);
     } else {
       BackgroundMusic.refCounts.set(this.key, remaining);
     }
@@ -191,7 +253,11 @@ export class BackgroundMusic {
   public fadeOut(duration: number, fixed = false, destroy = true): void {
     const realDuration = fixed ? fixedInt(duration) : duration;
     this.withSound(sound => {
-      SoundFade.fadeOut(globalScene, sound, realDuration, false);
+      if (sound instanceof StreamingTrack) {
+        sound.fadeTo(0, realDuration);
+      } else {
+        SoundFade.fadeOut(globalScene, sound, realDuration, false);
+      }
     });
     globalScene.time.delayedCall(realDuration + 100, () => {
       if (this.destroyed) {
@@ -209,7 +275,7 @@ export class BackgroundMusic {
    * Run an operation immediately, or defer it until the sound has loaded.
    * @param operation - The function to run on ready
    */
-  private withSound(operation: (sound: AnySound) => void): void {
+  private withSound(operation: (sound: BgmSound) => void): void {
     if (this.destroyed) {
       return;
     }
