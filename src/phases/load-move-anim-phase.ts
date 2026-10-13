@@ -1,5 +1,6 @@
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
+import { getMoveAnimAssetRequests, initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import type { MoveId } from "#enums/move-id";
 
 /**
@@ -15,7 +16,11 @@ export class LoadMoveAnimPhase extends Phase {
 
   public override start(): void {
     initMoveAnim(this.moveId)
-      .then(() => loadMoveAnimAssets([this.moveId], true))
+      .then(() => {
+        // Keep them loaded until the turn ends, as moves loaded this way usually aren't in any moveset that would
+        globalScene.currentBattle.turnAssets.push(...getMoveAnimAssetRequests([this.moveId]));
+        return loadMoveAnimAssets([this.moveId]);
+      })
       .then(() => this.end());
   }
 }

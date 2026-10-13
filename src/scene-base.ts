@@ -1,6 +1,6 @@
+import { atlasAsset, imageAsset, queueAssetRequest, seAsset, spritesheetAsset } from "#app/asset-requests";
 import { audioManager } from "#app/global-audio-manager";
-import { timedEventManager } from "#app/global-event-manager";
-import { coerceArray } from "#utils/array";
+import type { AssetRequest } from "#types/asset-set";
 import { getCachedUrl } from "#utils/fetch-utils";
 
 export const legacyCompatibleImages: string[] = [];
@@ -30,52 +30,15 @@ export class SceneBase extends Phaser.Scene {
   }
 
   public loadImage(key: string, folder: string, filename = `${key}.png`): this {
-    const eventReplacment = timedEventManager.getEventImageReplacement(key);
-    if (eventReplacment) {
-      folder = "events";
-      filename = `${eventReplacment}.png`;
-    }
-    this.load.image(key, getCachedUrl(`images/${folder}/${filename}`));
-    if (folder.startsWith("ui")) {
-      folder = folder.replace("ui", "ui/legacy");
-      this.load.image(`${key}_legacy`, getCachedUrl(`images/${folder}/${filename}`));
-    }
-    return this;
+    return this.queueAssets(imageAsset(key, folder, filename));
   }
 
   public loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`): this {
-    this.load.spritesheet(key, getCachedUrl(`images/${folder}/${filename}`), {
-      frameWidth: size,
-      frameHeight: size,
-    });
-    if (folder.startsWith("ui")) {
-      folder = folder.replace("ui", "ui/legacy");
-      this.load.spritesheet(`${key}_legacy`, getCachedUrl(`images/${folder}/${filename}`), {
-        frameWidth: size,
-        frameHeight: size,
-      });
-    }
-    return this;
+    return this.queueAssets(spritesheetAsset(key, folder, size, filename));
   }
 
   public loadAtlas(key: string, folder: string, filenameRoot = key): this {
-    if (folder) {
-      folder += "/";
-    }
-    this.load.atlas(
-      key,
-      getCachedUrl(`images/${folder}${filenameRoot}.png`),
-      getCachedUrl(`images/${folder}${filenameRoot}.json`),
-    );
-    if (folder.startsWith("ui")) {
-      folder = folder.replace("ui", "ui/legacy");
-      this.load.atlas(
-        `${key}_legacy`,
-        getCachedUrl(`images/${folder}${filenameRoot}.png`),
-        getCachedUrl(`images/${folder}${filenameRoot}.json`),
-      );
-    }
-    return this;
+    return this.queueAssets(atlasAsset(key, folder, filenameRoot));
   }
 
   public loadSe(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): this {
@@ -83,12 +46,17 @@ export class SceneBase extends Phaser.Scene {
       return this;
     }
 
-    folder += "/";
+    return this.queueAssets(seAsset(key, folder, filenames));
+  }
 
-    filenames = coerceArray(filenames);
-    for (const f of filenames as string[]) {
-      // TODO: Use actual path joining logic
-      this.load.audio(folder + key, getCachedUrl(`audio/${folder}${f}`));
+  /**
+   * Queue the given requests on this scene's loader, without tracking them.
+   * Assets loaded this way are never unloaded; use the asset manager for anything that should be.
+   * @param requests - The requests to queue
+   */
+  protected queueAssets(requests: readonly AssetRequest[]): this {
+    for (const request of requests) {
+      queueAssetRequest(this.load, request);
     }
     return this;
   }

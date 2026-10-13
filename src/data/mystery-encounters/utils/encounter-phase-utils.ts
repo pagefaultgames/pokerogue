@@ -455,11 +455,13 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * Load special move animations/sfx for hard-coded encounter-specific moves that a pokemon uses at the start of an encounter
  * @see {@linkcode MysteryEncounter.startOfBattleEffects}
  * @remarks
- * This promise does not need to be awaited if called in an encounter's `onInit` (will just load lazily)
+ * This promise does not need to be awaited if called in an encounter's `onInit` (will just load lazily).
+ * The animations are kept loaded until the current encounter is over.
  * @param moves
  */
 export async function loadCustomMovesForEncounter(moves: MoveId | MoveId[]): Promise<void> {
   const movesArray: MoveId[] = coerceArray(moves);
+  globalScene.currentBattle.mysteryEncounter?.customMoves.push(...movesArray);
   return Promise.all(movesArray.map((move: MoveId) => initMoveAnim(move))).then(() => loadMoveAnimAssets(movesArray));
 }
 

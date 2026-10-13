@@ -5,12 +5,12 @@ import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { BiomeId } from "#enums/biome-id";
 import { GachaType } from "#enums/gacha-types";
-import { getBiomeHasProps } from "#field/arena";
+import { getBiomeAssetRequests } from "#field/arena";
 import { initializeGame } from "#init/init";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
 import { hasAllLocalizedSprites, localPing } from "#utils/common";
-import { enumValueToKey, getEnumValues } from "#utils/enums";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -548,32 +548,9 @@ export class LoadingScene extends SceneBase {
   }
 
   private loadBiomeImages(startingBiome: BiomeId = BiomeId.TOWN): this {
-    const biomesToLoad = new Set([BiomeId.TOWN, startingBiome]);
-    biomesToLoad.forEach(bt => {
-      const btKey = enumValueToKey(BiomeId, bt).toLowerCase();
-      const isBaseAnimated = btKey === "end";
-      const baseAKey = `${btKey}_a`;
-      const baseBKey = `${btKey}_b`;
-      this.loadImage(`${btKey}_bg`, "arenas");
-      if (isBaseAnimated) {
-        this.loadAtlas(baseAKey, "arenas").loadAtlas(baseBKey, "arenas");
-      } else {
-        this.loadImage(baseAKey, "arenas").loadImage(baseBKey, "arenas");
-      }
-
-      if (!getBiomeHasProps(bt)) {
-        return;
-      }
-      for (let p = 1; p <= 3; p++) {
-        const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
-        const propKey = `${btKey}_b_${p}`;
-        if (isPropAnimated) {
-          this.loadAtlas(propKey, "arenas");
-        } else {
-          this.loadImage(propKey, "arenas");
-        }
-      }
-    });
+    for (const biome of new Set([BiomeId.TOWN, startingBiome])) {
+      this.queueAssets(getBiomeAssetRequests(biome));
+    }
     return this;
   }
 

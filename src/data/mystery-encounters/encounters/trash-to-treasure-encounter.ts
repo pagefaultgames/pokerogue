@@ -1,3 +1,4 @@
+import { seAsset } from "#app/asset-requests";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
@@ -73,6 +74,10 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
+  .withAssets(
+    seAsset("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav"),
+    seAsset("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav"),
+  )
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
@@ -131,10 +136,6 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Load animations/sfx for Garbodor fight start moves
     loadCustomMovesForEncounter([MoveId.TOXIC, MoveId.STOCKPILE]);
-
-    globalScene
-      .loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav")
-      .loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
 
     encounter.setDialogueToken("costMultiplier", SHOP_ITEM_COST_MULTIPLIER.toString());
 

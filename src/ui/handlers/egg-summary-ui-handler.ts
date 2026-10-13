@@ -1,3 +1,4 @@
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
@@ -114,22 +115,8 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchBg.setVisible(false);
     this.getUi().hideTooltip();
 
-    // Note: Questions on garbage collection go to @frutescens
-    const activeKeys = globalScene.getActiveKeys();
-    // Removing unnecessary sprites from animation manager
-    const animKeys = Object.keys(globalScene.anims["anims"]["entries"]);
-    animKeys.forEach(key => {
-      if (key.startsWith("pkmn__") && !activeKeys.includes(key)) {
-        globalScene.anims.remove(key);
-      }
-    });
-    // Removing unnecessary cries from audio cache
-    const audioKeys = Object.keys(globalScene.cache.audio.entries.entries);
-    audioKeys.forEach(key => {
-      if (key.startsWith("cry/") && !activeKeys.includes(key)) {
-        delete globalScene.cache.audio.entries.entries[key];
-      }
-    });
+    // Unload the hatched Pokémon's sprites and cries, and anything else no longer needed
+    assetManager.sweep();
     // Clears eggHatchData in EggSummaryUiHandler
     this.eggHatchData.length = 0;
     // Removes Pokemon icons in EggSummaryUiHandler
