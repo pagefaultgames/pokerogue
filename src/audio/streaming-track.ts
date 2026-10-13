@@ -34,13 +34,6 @@ interface Pass {
 }
 
 /**
- * Determine whether the client can stream BGM (it supports the AudioDecoder API).
- */
-export function canStreamBgm(): boolean {
-  return globalScene.sound instanceof Phaser.Sound.WebAudioSoundManager && typeof AudioDecoder !== "undefined";
-}
-
-/**
  * A music track that decodes incrementally while playing, instead of decoding the
  * whole file up front.
  *
