@@ -18,6 +18,6 @@ export async function initGlobalAudioManager(): Promise<GlobalAudioManager> {
     soundEffectsVolume: se,
     uiVolume: ui,
   } = settings.audio;
-  audioManager = new AudioManager({ bgm, field, main, se, ui }, settings?.audio?.enableAudio ?? true);
+  audioManager = new AudioManager({ bgm, field, main, se, ui }, settings.audio.enableAudio);
   return audioManager;
 }

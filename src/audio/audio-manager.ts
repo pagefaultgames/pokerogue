@@ -119,7 +119,7 @@ export class AudioManager {
       resolvedName === globalScene.arena?.bgm ? globalScene.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
 
     const previous = this.currentBgm;
-    const newBgm = new BackgroundMusic(resolvedName, loop, loopPoint, this.isAudioEnabled);
+    const newBgm = new BackgroundMusic(resolvedName, loop, loopPoint);
     this.currentBgm = newBgm;
 
     globalScene.ui.bgmBar.setBgmToBgmBar(resolvedName);
@@ -141,7 +141,7 @@ export class AudioManager {
   public updateSoundVolume(): void {
     this.currentBgm?.setVolume(this.getVolume(VolumeSetting.BGM));
 
-    if (!globalScene.sound) {
+    if (!this.isAudioEnabled) {
       return;
     }
 
@@ -187,7 +187,7 @@ export class AudioManager {
       return null;
     }
 
-    const tempBgm = new BackgroundMusic(bgmName, false, 0, this.isAudioEnabled);
+    const tempBgm = new BackgroundMusic(bgmName, false);
     tempBgm.onEnd(() => {
       this.currentBgm?.resume();
       tempBgm.destroy();

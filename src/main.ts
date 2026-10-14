@@ -81,9 +81,7 @@ async function startGame(): Promise<void> {
     scene: [LoadingScene, BattleScene],
     version,
   });
-  if (game.sound) {
-    game.sound.pauseOnBlur = isMobile();
-  }
+  game.sound.pauseOnBlur = isMobile();
 }
 
 try {
