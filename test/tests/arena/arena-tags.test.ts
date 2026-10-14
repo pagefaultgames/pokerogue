@@ -41,8 +41,9 @@ describe("Arena Tags", () => {
 
   beforeEach(() => {
     // Mock the message queue function to not unshift phases and just spit the text out directly
-    vi.spyOn(game.scene.phaseManager, "queueMessage").mockImplementation((text, callbackDelay, prompt, promptDelay) =>
-      game.scene.ui.showText(text, null, null, callbackDelay, prompt, promptDelay),
+    vi.spyOn(game.scene.phaseManager, "queueMessage").mockImplementation(
+      (text, { callbackDelay, prompt, promptDelay } = {}) =>
+        game.scene.ui.showText(text, { callbackDelay, prompt, promptDelay }),
     );
     game.textInterceptor.clearLogs();
   });

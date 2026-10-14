@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { FairyLockTag } from "#data/arena-tag";
 import { TrappedTag } from "#data/battler-tags";
 import { getDailyEventSeedBoss } from "#data/daily-run";
 import { isDailyFinalBoss } from "#data/daily-seed-utils";
@@ -206,16 +207,13 @@ export class CommandPhase extends FieldPhase {
   private queueFightErrorMessage(msg: string): void {
     const ui = globalScene.ui;
     ui.setMode(UiMode.MESSAGE);
-    ui.showText(
-      msg,
-      null,
-      () => {
+    ui.showText(msg, {
+      callback: () => {
         ui.clearText();
         ui.setMode(UiMode.FIGHT, this.fieldIndex);
       },
-      null,
-      true,
-    );
+      prompt: true,
+    });
   }
 
   /**
@@ -326,16 +324,13 @@ export class CommandPhase extends FieldPhase {
     globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
     globalScene.ui.setMode(UiMode.MESSAGE);
 
-    globalScene.ui.showText(
-      i18next.t(key),
-      null,
-      () => {
-        globalScene.ui.showText("", 0);
+    globalScene.ui.showText(i18next.t(key), {
+      callback: () => {
+        globalScene.ui.showText("", { delay: 0 });
         globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
       },
-      null,
-      true,
-    );
+      prompt: true,
+    });
   }
 
   /**
@@ -470,36 +465,35 @@ export class CommandPhase extends FieldPhase {
    * @returns Whether the pokemon is currently trapped
    */
   private handleTrap(): boolean {
+    const { arena, ui } = globalScene;
+
     const playerPokemon = this.getPokemon();
     const trappedAbMessages: string[] = [];
     const isSwitch = this.isSwitch;
+
     if (!playerPokemon.isTrapped(trappedAbMessages)) {
       return false;
     }
+
     if (trappedAbMessages.length > 0) {
       if (isSwitch) {
-        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-          globalScene.ui.showText(
-            trappedAbMessages[0],
-            null,
-            () => {
-              globalScene.ui.showText("", 0);
-              if (isSwitch) {
-                globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-              }
+        ui.setMode(UiMode.MESSAGE).then(() => {
+          ui.showText(trappedAbMessages[0], {
+            callback: () => {
+              ui.showText("", { delay: 0 });
+              ui.setMode(UiMode.COMMAND, this.fieldIndex);
             },
-            null,
-            true,
-          );
+            prompt: true,
+          });
         });
       }
     } else {
       const trapTag = playerPokemon.getTag(TrappedTag);
-      const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+      const fairyLockTag = arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER) as FairyLockTag | undefined;
 
       if (!isSwitch) {
-        globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-        globalScene.ui.setMode(UiMode.MESSAGE);
+        ui.setMode(UiMode.COMMAND, this.fieldIndex);
+        ui.setMode(UiMode.MESSAGE);
       }
       if (trapTag) {
         this.showNoEscapeText(trapTag, false);
@@ -529,16 +523,13 @@ export class CommandPhase extends FieldPhase {
     if (isCommanded) {
       if (this.isSwitch) {
         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-          globalScene.ui.showText(
-            i18next.t("battle:noEscapeForce"),
-            null,
-            () => {
-              globalScene.ui.showText("", 0);
+          globalScene.ui.showText(i18next.t("battle:noEscapeForce"), {
+            callback: () => {
+              globalScene.ui.showText("", { delay: 0 });
               globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
             },
-            null,
-            true,
-          );
+            prompt: true,
+          });
         });
       }
       return false;
@@ -546,14 +537,8 @@ export class CommandPhase extends FieldPhase {
 
     if (isBatonSwitch || !this.handleTrap()) {
       currentBattle.turnCommands[this.fieldIndex] = this.isSwitch
-        ? {
-            command: Command.POKEMON,
-            cursor,
-            args: [isBatonSwitch],
-          }
-        : {
-            command: Command.RUN,
-          };
+        ? { command: Command.POKEMON, cursor, args: [isBatonSwitch] }
+        : { command: Command.RUN };
       if (!this.isSwitch && this.fieldIndex) {
         currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
       }
@@ -599,25 +584,21 @@ export class CommandPhase extends FieldPhase {
   /**
    * Show a message indicating that the pokemon cannot escape, and then return to the command phase.
    */
-  private showNoEscapeText(tag: any, isSwitch: boolean): void {
+  private showNoEscapeText(tag: TrappedTag | FairyLockTag, isSwitch: boolean): void {
+    const pokemonName =
+      tag.sourceId && globalScene.getPokemonById(tag.sourceId)
+        ? getPokemonNameWithAffix(globalScene.getPokemonById(tag.sourceId)!)
+        : "";
+    const escapeVerb = i18next.t(isSwitch ? "battle:escapeVerbSwitch" : "battle:escapeVerbFlee");
+    const callback = () => {
+      globalScene.ui.showText("", { delay: 0 });
+      if (!isSwitch) {
+        globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+      }
+    };
     globalScene.ui.showText(
-      i18next.t("battle:noEscapePokemon", {
-        pokemonName:
-          tag.sourceId && globalScene.getPokemonById(tag.sourceId)
-            ? getPokemonNameWithAffix(globalScene.getPokemonById(tag.sourceId)!)
-            : "",
-        moveName: tag.getMoveName(),
-        escapeVerb: i18next.t(isSwitch ? "battle:escapeVerbSwitch" : "battle:escapeVerbFlee"),
-      }),
-      null,
-      () => {
-        globalScene.ui.showText("", 0);
-        if (!isSwitch) {
-          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-        }
-      },
-      null,
-      true,
+      i18next.t("battle:noEscapePokemon", { pokemonName, moveName: tag.getMoveName(), escapeVerb }),
+      { callback, prompt: true },
     );
   }
 
