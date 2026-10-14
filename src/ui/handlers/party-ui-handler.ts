@@ -1567,6 +1567,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // Item management mode uses a taller message box due to two-line messages,
     // but only when selecting the first Pokémon, not the one that receives the item.
+    // TODO: why does this have to be done here?
     if (this.isItemManageMode() && !this.transferMode) {
       this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
     } else {
