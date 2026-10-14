@@ -2,7 +2,6 @@ import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getPokeballTintColor } from "#data/pokeball";
-import { BattleType } from "#enums/battle-type";
 import { FieldPosition } from "#enums/field-position";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
@@ -17,11 +16,24 @@ const REPOSITION_SLIDE_DURATION = 500;
  * in the party. This phase recalls and sends out Pokémon, or moves them in a
  * different position on the field, to account for the new order.
  *
- * Reordering is only necessary when the next battle is a wild battle in the same biome.
- * If that is not the case, all Pokémon on the field are recalled, and the phase ends.
+ * Reordering is only necessary when the arena state carries over into the next battle
+ * (i.e. a wild battle in the same biome). If that is not the case, all Pokémon on the field
+ * are recalled, and the phase ends.
  */
 export class PartyReorderSwitchPhase extends BattlePhase {
   public readonly phaseName = "PartyReorderSwitchPhase";
+  /** Whether every Pokémon on the field should be recalled, rather than reordered */
+  private readonly recallAll: boolean;
+
+  /**
+   * @param recallAll - Whether every Pokémon on the field should be recalled, rather than reordered.
+   * Should be `true` whenever the arena state is reset for the new battle (trainer battles,
+   * Mystery Encounters, new biomes, etc.)
+   */
+  constructor(recallAll: boolean) {
+    super();
+    this.recallAll = recallAll;
+  }
 
   public override async start(): Promise<void> {
     super.start();
@@ -41,7 +53,7 @@ export class PartyReorderSwitchPhase extends BattlePhase {
       return;
     }
 
-    if (globalScene.currentBattle.battleType !== BattleType.WILD || this.hasBiomeChanged()) {
+    if (this.recallAll) {
       const displacedPokemon = party.filter(pokemon => pokemon.isOnField());
       await this.recallPokemon(displacedPokemon);
       this.end();
@@ -63,18 +75,6 @@ export class PartyReorderSwitchPhase extends BattlePhase {
     });
 
     this.end();
-  }
-
-  /**
-   * Utility function to check whether the biome has changed with the current wave.
-   */
-  // TODO: It should not be necessary to have this function here. There is already globalScene.isNewBiome(),
-  // but it returns `true` if the _next_ wave will be in a new biome.
-  private hasBiomeChanged(): boolean {
-    const isEndlessOrDaily = globalScene.gameMode.hasShortBiomes || globalScene.gameMode.isDaily;
-    const isEndlessSixthWave = globalScene.gameMode.hasShortBiomes && globalScene.currentBattle.waveIndex % 10 === 6;
-    const isWaveIndexMultipleOfFifty = globalScene.currentBattle.waveIndex % 50 === 0;
-    return isEndlessSixthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFifty);
   }
 
   /**
