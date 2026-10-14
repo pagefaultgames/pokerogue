@@ -12,7 +12,7 @@ import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
-import { initGlobalScene } from "#app/global-scene";
+import { globalScene, initGlobalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { InputsController } from "#app/inputs-controller";
@@ -765,7 +765,7 @@ export class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon#isActive()}); default `false`.
    * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    *
@@ -909,7 +909,7 @@ export class BattleScene extends SceneBase {
       pokemon.generateFusionSpecies();
     }
 
-    if (boss && !dataSource) {
+    if (boss && !dataSource && !this.gameMode.dailyConfig?.boss?.ivs) {
       const secondaryIvs = getIvsFromId(randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {
@@ -1278,6 +1278,8 @@ export class BattleScene extends SceneBase {
       );
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
+
+    globalScene.phaseManager.unshiftNew("PartyReorderSwitchPhase");
 
     const lastBattle: Battle | null = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
