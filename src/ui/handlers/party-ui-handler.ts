@@ -125,7 +125,6 @@ export class PartyUiHandler extends MessageUiHandler {
   /** Whether to transfer all items */
   private transferAll: boolean;
 
-  private partySwitchMode = false;
   private partySwitchCursor = -1;
 
   private lastCursor = 0;
@@ -303,7 +302,6 @@ export class PartyUiHandler extends MessageUiHandler {
       this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double" : ""}`);
     }
 
-    this.partySwitchMode = false;
     this.partySwitchCursor = -1;
     this.populatePartySlots();
     // If we are currently transferring items, set the icon to its proper state and reveal the button.
@@ -753,7 +751,13 @@ export class PartyUiHandler extends MessageUiHandler {
 
     if (this.partyUiMode === PartyUiMode.CHECK && option === PartyOption.SWITCH) {
       this.clearOptions();
-      this.startPartySwitchSelection(this.cursor);
+      if (this.isSwappable(this.cursor)) {
+        this.startPartySwitch(this.cursor);
+      } else {
+        ui.playError();
+        this.showText(i18next.t("partyUiHandler:cannotSwitch"));
+        return false;
+      }
       ui.playSelect();
       return true;
     }
@@ -973,33 +977,30 @@ export class PartyUiHandler extends MessageUiHandler {
     return this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.DISCARD;
   }
 
+  private isSwappable(cursor: number) {
+    const party = globalScene.getPlayerParty();
+    if (cursor < 0 || cursor > party.length - 1) {
+      return false;
+    }
+    if (party[cursor].cannotSwitchOut()) {
+      return false;
+    }
+    return true;
+  }
+
   private processPartyActionInput(): boolean {
     const ui = this.getUi();
-    if (
-      this.partyUiMode === PartyUiMode.CHECK
-      && !this.partySwitchMode
-      && this.partySwitchCursor >= 0
-      && this.cursor < 6
-    ) {
-      if (this.cursor === this.partySwitchCursor) {
-        this.clearPartySwitchSelection();
-      } else {
-        this.swapPartyMembers(this.partySwitchCursor, this.cursor);
-        this.clearPartySwitchSelection();
-      }
-      ui.playSelect();
-      return true;
-    }
-    if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchMode) {
+    if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchCursor >= 0) {
       if (this.cursor < 6) {
-        if (this.partySwitchCursor < 0) {
-          this.partySwitchCursor = this.cursor;
-          this.partySlots[this.partySwitchCursor].setTransfer(true);
-        } else if (this.cursor === this.partySwitchCursor) {
+        if (this.cursor === this.partySwitchCursor) {
           this.clearPartySwitchSelection();
-        } else {
+        } else if (this.isSwappable(this.cursor)) {
           this.swapPartyMembers(this.partySwitchCursor, this.cursor);
           this.clearPartySwitchSelection();
+        } else {
+          ui.playError();
+          this.showText(i18next.t("partyUiHandler:cannotSwitch"));
+          return false;
         }
         ui.playSelect();
         return true;
@@ -1034,10 +1035,8 @@ export class PartyUiHandler extends MessageUiHandler {
     // Prevent changing mode, when currently transfering an item
     if (this.cursor === 7 && !this.transferMode) {
       if (this.partyUiMode === PartyUiMode.CHECK) {
-        if (this.partySwitchMode) {
+        if (this.partySwitchCursor >= 0) {
           this.clearPartySwitch();
-        } else {
-          this.startPartySwitch(-1);
         }
         ui.playSelect();
         return true;
@@ -1070,8 +1069,9 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private processPartyCancelInput(): boolean {
     const ui = this.getUi();
-    if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchMode) {
+    if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchCursor >= 0) {
       this.clearPartySwitchSelection();
+      return true;
     }
     if (
       (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE)
@@ -1787,19 +1787,21 @@ export class PartyUiHandler extends MessageUiHandler {
     }
   }
 
-  private startPartySwitch(startCursor = this.cursor): void {
-    this.partySwitchMode = true;
+  private startPartySwitch(startCursor: number): void {
+    if (startCursor < 0 || startCursor > 6) {
+      return;
+    }
     this.partySwitchCursor = startCursor;
     if (this.partySwitchCursor >= 0) {
       this.partySlots[this.partySwitchCursor].setTransfer(true);
     }
+    this.showPartyText();
   }
 
   private clearPartySwitch(): void {
     if (this.partySwitchCursor >= 0) {
       this.partySlots[this.partySwitchCursor].setTransfer(false);
     }
-    this.partySwitchMode = false;
     this.partySwitchCursor = -1;
     this.showPartyText();
   }
@@ -1809,14 +1811,6 @@ export class PartyUiHandler extends MessageUiHandler {
       this.partySlots[this.partySwitchCursor].setTransfer(false);
     }
     this.partySwitchCursor = -1;
-    this.showPartyText();
-  }
-
-  private startPartySwitchSelection(startCursor: number): void {
-    this.partySwitchCursor = startCursor;
-    if (this.partySwitchCursor >= 0) {
-      this.partySlots[this.partySwitchCursor].setTransfer(true);
-    }
     this.showPartyText();
   }
 

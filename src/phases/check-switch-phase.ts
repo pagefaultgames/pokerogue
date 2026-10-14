@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
@@ -53,11 +52,7 @@ export class CheckSwitchPhase extends BattlePhase {
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
-    if (
-      pokemon.getTag(BattlerTagType.FRENZY)
-      || pokemon.isTrapped()
-      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
-    ) {
+    if (pokemon.cannotSwitchOut()) {
       this.end();
       return;
     }
