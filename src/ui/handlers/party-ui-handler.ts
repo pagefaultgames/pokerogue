@@ -1334,10 +1334,10 @@ export class PartyUiHandler extends MessageUiHandler {
   showPartyText() {
     switch (this.partyUiMode) {
       case PartyUiMode.MODIFIER_TRANSFER:
-        this.showText(i18next.t("partyUiHandler:partyTransfer"));
+        this.showText(i18next.t("partyUiHandler:partyTransfer"), 0);
         break;
       case PartyUiMode.DISCARD:
-        this.showText(i18next.t("partyUiHandler:partyDiscard"));
+        this.showText(i18next.t("partyUiHandler:partyDiscard"), 0);
         break;
       default:
         this.showText(i18next.t("partyUiHandler:choosePokemon"), 0);
