@@ -989,7 +989,9 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterCost(speciesId: SpeciesId, cost: NumberHolder): boolean {
-    cost.value = speciesDataRegistry.getStarterCost(speciesId);
+    // Add the value reduction to the cost, so it cancels out in the cost calculation;
+    // doing it this ways allows other challenges (i.e. ability randomizer) to also alter the cost.
+    cost.value += globalScene.gameData.starterData[speciesId].valueReduction;
     return true;
   }
 
