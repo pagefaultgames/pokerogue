@@ -579,7 +579,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.STARTERS;
   }
 
   constructor() {
@@ -891,7 +891,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.STARTERS;
   }
 
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
@@ -973,7 +973,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.CHALLENGE;
+    return ChallengeCategory.STARTERS;
   }
 
   constructor() {
@@ -1082,7 +1082,7 @@ export class InverseBattleChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.GIMMICK;
   }
 
   constructor() {
@@ -1114,7 +1114,7 @@ export class FlipStatChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.GIMMICK;
   }
 
   constructor() {
@@ -1136,7 +1136,7 @@ export class FlipStatChallenge extends Challenge {
 /** Lowers the amount of starter points available. */
 export class LowerStarterMaxCostChallenge extends Challenge {
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.CHALLENGE;
+    return ChallengeCategory.UNUSED;
   }
 
   constructor() {
@@ -1159,7 +1159,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
 /** Lowers the maximum cost of starters available. */
 export class LowerStarterPointsChallenge extends Challenge {
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.CHALLENGE;
+    return ChallengeCategory.UNUSED;
   }
 
   constructor() {
@@ -1192,7 +1192,7 @@ export class LimitedSupportChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.NUZLOCKE;
+    return ChallengeCategory.DIFFICULTY;
   }
 
   constructor() {
@@ -1223,7 +1223,7 @@ export class LimitedCatchChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.NUZLOCKE;
+    return ChallengeCategory.DIFFICULTY;
   }
 
   constructor() {
@@ -1251,7 +1251,7 @@ export class HardcoreChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.NUZLOCKE;
+    return ChallengeCategory.DIFFICULTY;
   }
 
   constructor() {
@@ -1298,7 +1298,7 @@ export class PassivesChallenge extends Challenge {
   }
 
   public override get category(): ChallengeCategory {
-    return ChallengeCategory.MISC;
+    return ChallengeCategory.GIMMICK;
   }
 
   constructor() {
@@ -1770,6 +1770,7 @@ export function copyChallenge(source: Challenge | any): Challenge {
 export const allChallenges: Challenge[] = [];
 
 export function initChallenges(): void {
+  // TODO: Use `ChallengeCategory.UNUSED` to avoid activating a challenge without a real category
   allChallenges.push(
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
