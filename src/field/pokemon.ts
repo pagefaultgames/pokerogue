@@ -2611,6 +2611,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Determine whether this Pokemon can be switched out (e.g. it is not trapped,
+   * locked into using a move, or using Commander/being commanded).
+   * @returns Whether the pokemon is able to switch
+   * @remarks Pokemon that aren't on the field can always switch
+   */
+  public canSwitch(): boolean {
+    // Pokemon that are not on the field are not being switched out
+    if (!this.isOnField()) {
+      return true;
+    }
+    return (
+      this.getTag(BattlerTagType.FRENZY) == null
+      && !this.isTrapped()
+      && !(this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()).some(p =>
+        p.getTag(BattlerTagType.COMMANDED),
+      )
+    );
+  }
+
+  /**
    * Calculates the type of a move when used by this Pokemon after
    * type-changing move and ability attributes have applied.
    * @param move - {@linkcode Move} The move being used.

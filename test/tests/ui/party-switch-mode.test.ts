@@ -1,4 +1,6 @@
 import { getPokemonNameWithAffix } from "#app/messages";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
@@ -226,6 +228,26 @@ describe("UI - Party switch mode", () => {
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
     expect(onField[1]).toBe(fourthPokemon);
+  });
+
+  it("should allow swapping two benched pokémon while Fairy Lock is active", async () => {
+    await setupBattle("single");
+    game.scene.arena.addTag(
+      ArenaTagType.FAIRY_LOCK,
+      2,
+      MoveId.FAIRY_LOCK,
+      game.field.getPlayerPokemon().id,
+      ArenaTagSide.BOTH,
+    );
+
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
+    const [, , thirdPokemon, fourthPokemon] = game.scene.getPlayerParty();
+
+    swapInParty(partyHandler, 2, 3);
+
+    expect(game.scene.getPlayerParty()[2]).toBe(fourthPokemon);
+    expect(game.scene.getPlayerParty()[3]).toBe(thirdPokemon);
   });
 
   it.each([
