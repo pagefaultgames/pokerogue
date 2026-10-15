@@ -1798,13 +1798,11 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   private startPartySwitch(startCursor: number): void {
-    if (startCursor < 0 || startCursor > 5) {
+    if (startCursor < 0 || startCursor >= this.partySlots.length) {
       return;
     }
     this.partySwitchCursor = startCursor;
-    if (this.partySwitchCursor >= 0) {
-      this.partySlots[this.partySwitchCursor].setTransfer(true);
-    }
+    this.partySlots[this.partySwitchCursor].setTransfer(true);
     this.showPartyText();
   }
 
