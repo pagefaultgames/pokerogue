@@ -15,12 +15,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { getShortenedStatKey, Stat } from "#enums/stat";
-<<<<<<< HEAD
 import type { Pokemon } from "#field/pokemon";
-=======
-import type { Modifier } from "#modifiers/modifier";
-import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
->>>>>>> afd3b43f54534ae5ae82f651fd150188b189bc82
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import type { NumberHolder } from "#utils/common";
