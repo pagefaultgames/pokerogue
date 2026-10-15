@@ -1,14 +1,19 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
+import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
+import type { PhaseString } from "#types/phase-types";
 import type { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -33,16 +38,15 @@ describe("UI - Party switch mode", () => {
    */
   async function setupBattle(battleStyle: "single" | "double") {
     game.override
-      .moveset(MoveId.SPLASH)
       .startingLevel(200)
       .enemySpecies(SpeciesId.MAGIKARP)
       .battleStyle(battleStyle)
       .battleType(BattleType.WILD);
 
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA, SpeciesId.RAYQUAZA, SpeciesId.MAGCARGO);
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     if (battleStyle === "double") {
-      game.move.select(MoveId.SPLASH);
+      game.move.use(MoveId.SPLASH);
     }
     await game.doKillOpponents();
     await game.phaseInterceptor.to("SelectModifierPhase");
@@ -63,8 +67,10 @@ describe("UI - Party switch mode", () => {
   /**
    * Helper function to skip modifier select and go to the next wave.
    * Party reordering will happen during this function.
+   * @param target - The phase to stop at; default `TurnInitPhase`
+   * @param runTarget - Whether to run the target phase; default `true`
    */
-  async function skipModifierSelect() {
+  async function skipModifierSelect(target: PhaseString = "TurnInitPhase", runTarget = true) {
     await game.scene.ui.setMode(UiMode.MODIFIER_SELECT);
     const msHandler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
     msHandler.processInput(Button.CANCEL);
@@ -72,7 +78,15 @@ describe("UI - Party switch mode", () => {
     const confirmHandler = game.scene.ui.getHandler() as ConfirmUiHandler;
     confirmHandler.processInput(Button.ACTION);
 
-    await game.phaseInterceptor.to("TurnInitPhase");
+    await game.phaseInterceptor.to(target, runTarget);
+  }
+
+  /**
+   * Helper function to count how many times the "come back" message was shown for a pokémon.
+   */
+  function countRecallMessages(pokemon: Pokemon): number {
+    const message = i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(pokemon) });
+    return game.textInterceptor.logs.filter(log => log === message).length;
   }
 
   it("should reorder the party before a single battle", async () => {
@@ -212,5 +226,115 @@ describe("UI - Party switch mode", () => {
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
     expect(onField[1]).toBe(fourthPokemon);
+  });
+
+  it.each([
+    { battleStyle: "single", trainerType: TrainerType.YOUNGSTER },
+    { battleStyle: "double", trainerType: TrainerType.TWINS },
+  ] as const)(
+    "should only recall each pokémon once before a $battleStyle trainer battle",
+    async ({ battleStyle, trainerType }) => {
+      await setupBattle(battleStyle);
+      const recalledPokemon = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
+      expect(recalledPokemon).toHaveLength(battleStyle === "double" ? 2 : 1);
+
+      game.override.battleType(BattleType.TRAINER).randomTrainer({ trainerType });
+      game.textInterceptor.clearLogs();
+
+      game.doSelectModifier();
+      await game.phaseInterceptor.to("TurnInitPhase");
+
+      for (const pokemon of recalledPokemon) {
+        expect(countRecallMessages(pokemon)).toBe(1);
+      }
+    },
+  );
+
+  it("should recall all pokémon instead of reordering them before the classic final boss", async () => {
+    game.override.startingWave(199);
+    await setupBattle("single");
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
+    const party = game.scene.getPlayerParty();
+    const firstPokemon = party[0];
+    const thirdPokemon = party[2];
+
+    swapInParty(partyHandler, 0, 2);
+    game.textInterceptor.clearLogs();
+
+    await skipModifierSelect("NextEncounterPhase", false);
+
+    // The new lead should only be sent out by the encounter itself, not before it
+    expect(game.scene.currentBattle.isClassicFinalBoss, "Expected classic final boss on wave 200").toBe(true);
+    expect(game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField())).not.toContain(thirdPokemon);
+    expect(firstPokemon.isOnField()).toBe(false);
+    expect(countRecallMessages(firstPokemon)).toBe(1);
+  });
+
+  it("should send out both pokémon during the encounter when entering a new biome in a double battle", async () => {
+    game.override
+      .startingWave(10)
+      .startingLevel(200)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .battleStyle("single")
+      .battleType(BattleType.WILD);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA, SpeciesId.RAYQUAZA);
+    const [firstPokemon, secondPokemon] = game.scene.getPlayerParty();
+
+    game.move.use(MoveId.SPLASH);
+    await game.doKillOpponents();
+    game.override.battleStyle("double");
+    game.textInterceptor.clearLogs();
+
+    await game.phaseInterceptor.to("NewBiomeEncounterPhase", false);
+
+    // Both pokémon should be sent out by the encounter, after the trainer reappears
+    expect(game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField())).toHaveLength(0);
+    expect(countRecallMessages(firstPokemon)).toBe(1);
+
+    await game.phaseInterceptor.to("TurnInitPhase");
+
+    expect(game.scene.getPlayerField()).toEqual([firstPokemon, secondPokemon]);
+    for (const pokemon of [firstPokemon, secondPokemon]) {
+      expect(game.textInterceptor.logs).toContain(
+        i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(pokemon) }),
+      );
+    }
+  });
+
+  it("should recall all pokémon instead of reordering them when entering a new biome after a reward screen", async () => {
+    game.override
+      .startingWave(10)
+      .startingLevel(200)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .battleStyle("single")
+      .battleType(BattleType.WILD);
+    // "No Heal" replaces the party heal before x1 waves with a reward screen
+    game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 1, 1);
+    await game.challengeMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA, SpeciesId.RAYQUAZA);
+
+    game.move.use(MoveId.SPLASH);
+    await game.doKillOpponents();
+    await game.phaseInterceptor.to("SelectModifierPhase");
+
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
+    const party = game.scene.getPlayerParty();
+    const firstPokemon = party[0];
+    const thirdPokemon = party[2];
+
+    swapInParty(partyHandler, 0, 2);
+    game.textInterceptor.clearLogs();
+
+    await skipModifierSelect("NewBiomeEncounterPhase", false);
+
+    // The new lead should only be sent out by the encounter, after the trainer reappears
+    expect(game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField())).toHaveLength(0);
+    expect(countRecallMessages(firstPokemon)).toBe(1);
+
+    await game.phaseInterceptor.to("TurnInitPhase");
+
+    expect(game.scene.getPlayerField()).toEqual([thirdPokemon]);
+    expect(countRecallMessages(firstPokemon)).toBe(1);
   });
 });
