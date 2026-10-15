@@ -1,6 +1,6 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
@@ -248,6 +248,8 @@ describe("UI - Party switch mode", () => {
 
     expect(game.scene.getPlayerParty()[2]).toBe(fourthPokemon);
     expect(game.scene.getPlayerParty()[3]).toBe(thirdPokemon);
+  });
+
   it.each([
     { battleStyle: "single", trainerType: TrainerType.YOUNGSTER },
     { battleStyle: "double", trainerType: TrainerType.TWINS },
