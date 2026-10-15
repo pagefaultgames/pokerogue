@@ -753,7 +753,7 @@ export class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon#isActive()}); default `false`.
    * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    *
@@ -1547,17 +1547,17 @@ export class BattleScene extends SceneBase {
       this.arena.updatePoolsForTimeOfDay();
     }
 
-    // use the old value of `double` to ensure both combatants get recalled properly when going from double to single battles
+    // Recalls, repositions and sends out the player's Pokemon as needed for the new battle
+    this.phaseManager.unshiftNew("PartyReorderSwitchPhase", resetArenaState);
+
+    // use the old value of `double` to ensure both combatants are handled properly when going from double to single battles
     const playerField = this.getPlayerParty().slice(0, 1 + Number(lastBattle.double));
     if (resetArenaState) {
       this.arena.resetArenaEffects();
 
-      playerField.forEach((pokemon, index) => {
+      for (const pokemon of playerField) {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
-        if (pokemon.isOnField()) {
-          this.phaseManager.pushNew("ReturnPhase", index);
-        }
-      });
+      }
 
       for (const pokemon of this.getPlayerParty()) {
         pokemon.resetBattleAndWaveData();
