@@ -1221,8 +1221,10 @@ export class PartyUiHandler extends MessageUiHandler {
         this.showPartyText();
       } else if (cursor === 6) {
         this.partyCancelButton.select();
-        this.showText("");
+        this.hideText();
       } else if (cursor === 7) {
+        // TODO: make showing text behavior uniform; currently partyDiscardModeButton
+        // contains a reference to party and calls showPartyText
         this.partyDiscardModeButton.select();
       }
     }
@@ -1278,11 +1280,6 @@ export class PartyUiHandler extends MessageUiHandler {
     prompt?: boolean | null,
     promptDelay?: number | null,
   ) {
-    if (text === "") {
-      this.partyMessageBox.setVisible(false);
-      this.message.setVisible(false);
-      return;
-    }
     this.partyMessageBox.setVisible(true);
     this.message.setVisible(true);
 
@@ -1295,6 +1292,11 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  hideText() {
+    this.partyMessageBox.setVisible(false);
+    this.message.setVisible(false);
   }
 
   showOptions() {
