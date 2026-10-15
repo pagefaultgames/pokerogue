@@ -779,7 +779,7 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns the ItemBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
+   * @param isEnemy - Whether to return the enemy item bar instead of the player bar; default `false`
    * @returns The {@linkcode ItemBar} for the given side of the field
    */
   getItemBar(isEnemy = false): ItemBar {
