@@ -168,6 +168,7 @@ import {
   StatStageChangeMultiplierAbAttr,
   StatusEffectImmunityAbAttr,
   SummonTerrainAiMovegenMoveStatsAbAttr,
+  SuppressHeldItemsAbAttr,
   SuppressWeatherEffectAbAttr,
   SyncEncounterNatureAbAttr,
   SynchronizeStatusAbAttr,
@@ -735,7 +736,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.KLUTZ, 4, 1) //
-      .unimplemented()
+      .attr(SuppressHeldItemsAbAttr)
       .build(),
     new AbBuilder(AbilityId.MOLD_BREAKER, 4) //
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
