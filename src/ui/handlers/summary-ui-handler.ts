@@ -325,7 +325,7 @@ export class SummaryUiHandler extends UiHandler {
     }
 
     const safePage = typeof page === "number" && page >= 0 && page < getEnumValues(Page).length ? page : Page.PROFILE;
-    const pageName = Page[safePage] ?? Page[Page.PROFILE] ?? "profile";
+    const pageName = Page[safePage] ?? Page[Page.PROFILE];
     return `summary_${String(pageName).toLowerCase()}`;
   }
 
