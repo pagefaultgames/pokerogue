@@ -16,8 +16,9 @@
 the Pokémon on the field will not correspond to the first one or two Pokémon
 in the party. This phase recalls and sends out Pokémon, or moves them in a
 different position on the field, to account for the new order.</p>
-<p>Reordering is only necessary when the next battle is a wild battle in the same biome.
-If that is not the case, all Pokémon on the field are recalled, and the phase ends.</p>
+<p>Reordering is only necessary when the arena state carries over into the next battle
+(i.e. a wild battle in the same biome). If that is not the case, all Pokémon on the field
+are recalled, and the phase ends.</p>
 </div></section>
 <section class="tsd-panel tsd-hierarchy" data-refl="57281">
 <h4>Hierarchy (<a href="../hierarchy.html#src/phases/party-reorder-switch-phase.PartyReorderSwitchPhase">View Summary</a>)</h4>
@@ -26,7 +27,7 @@ If that is not the case, all Pokémon on the field are recalled, and the phase e
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">PartyReorderSwitchPhase</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/party-reorder-switch-phase.ts#L23">src/phases/party-reorder-switch-phase.ts:23</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L23">src/phases/party-reorder-switch-phase.ts:23</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -39,11 +40,11 @@ If that is not the case, all Pokémon on the field are recalled, and the phase e
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-index-list"><a href="#phasename" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>phase<wbr/>Name</span></a>
+<a href="#recallall" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>recall<wbr/>All</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-index-list"><a href="#end" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a>
-<a href="#hasbiomechanged" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Biome<wbr/>Changed</span></a>
 <a href="#hideenemytrainer" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide<wbr/>Enemy<wbr/>Trainer</span></a>
 <a href="#is" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is</span></a>
 <a href="#recallpokemon" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>recall<wbr/>Pokemon</span></a>
@@ -58,10 +59,20 @@ If that is not the case, all Pokémon on the field are recalled, and the phase e
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorpartyreorderswitchphase"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PartyReorderSwitchPhase</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PartyReorderSwitchPhase</a><a href="#constructorpartyreorderswitchphase" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorpartyreorderswitchphase"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PartyReorderSwitchPhase</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">recallAll</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PartyReorderSwitchPhase</a><a href="#constructorpartyreorderswitchphase" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">recallAll</span>: <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p>Whether every Pokémon on the field should be recalled, rather than reordered.
+Should be <code>true</code> whenever the arena state is reset for the new battle (trainer battles,
+Mystery Encounters, new biomes, etc.)</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PartyReorderSwitchPhase</a></h4><aside class="tsd-sources">
-<p>Inherited from <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#constructor">constructor</a></p></aside></div></li></ul></section></section></details>
+<p>Overrides <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#constructor">constructor</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L33">src/phases/party-reorder-switch-phase.ts:33</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -72,7 +83,14 @@ If that is not the case, all Pokémon on the field are recalled, and the phase e
 </div><aside class="tsd-sources">
 <p>Overrides <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#phasename">phaseName</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/party-reorder-switch-phase.ts#L24">src/phases/party-reorder-switch-phase.ts:24</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L24">src/phases/party-reorder-switch-phase.ts:24</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-private">
+<h3 class="tsd-anchor-link" id="recallall"><code class="tsd-tag">Private</code> <code class="tsd-tag">Readonly</code><span>recall<wbr/>All</span><a href="#recallall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">recallAll</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether every Pokémon on the field should be recalled, rather than reordered</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L26">src/phases/party-reorder-switch-phase.ts:26</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -92,18 +110,7 @@ Additionally, attempting to call this function multiple times from the same Phas
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#end">end</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phase.ts#L20">src/phase.ts:20</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private">
-<h3 class="tsd-anchor-link" id="hasbiomechanged"><code class="tsd-tag">Private</code><span>has<wbr/>Biome<wbr/>Changed</span><a href="#hasbiomechanged" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="">
-<div class="tsd-signature tsd-anchor-link" id="hasbiomechanged-1"><span class="tsd-kind-call-signature">hasBiomeChanged</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#hasbiomechanged-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
-<div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Utility function to check whether the biome has changed with the current wave.</p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/party-reorder-switch-phase.ts#L73">src/phases/party-reorder-switch-phase.ts:73</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phase.ts#L20">src/phase.ts:20</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="hideenemytrainer"><span>hide<wbr/>Enemy<wbr/>Trainer</span><a href="#hideenemytrainer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -113,7 +120,7 @@ Additionally, attempting to call this function multiple times from the same Phas
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#hideenemytrainer">hideEnemyTrainer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/battle-phase.ts#L33">src/phases/battle-phase.ts:33</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/battle-phase.ts#L33">src/phases/battle-phase.ts:33</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="is"><span>is</span><a href="#is" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -141,7 +148,7 @@ This method exists to avoid circular import issues, as using <code>instanceof</c
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#is">is</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phase.ts#L43">src/phase.ts:43</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phase.ts#L43">src/phase.ts:43</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="recallpokemon"><code class="tsd-tag">Private</code><span>recall<wbr/>Pokemon</span><a href="#recallpokemon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -159,7 +166,7 @@ removing them from the field once the animation completes.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/party-reorder-switch-phase.ts#L120">src/phases/party-reorder-switch-phase.ts:120</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L120">src/phases/party-reorder-switch-phase.ts:120</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="repositionstayingpokemon"><code class="tsd-tag">Private</code><span>reposition<wbr/>Staying<wbr/>Pokemon</span><a href="#repositionstayingpokemon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -181,7 +188,7 @@ its target field position.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The slide tween promises that were started</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/party-reorder-switch-phase.ts#L87">src/phases/party-reorder-switch-phase.ts:87</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L87">src/phases/party-reorder-switch-phase.ts:87</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="showenemytrainer"><span>show<wbr/>Enemy<wbr/>Trainer</span><a href="#showenemytrainer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -195,7 +202,7 @@ its target field position.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#showenemytrainer">showEnemyTrainer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/battle-phase.ts#L6">src/phases/battle-phase.ts:6</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/battle-phase.ts#L6">src/phases/battle-phase.ts:6</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="start"><span>start</span><a href="#start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -208,7 +215,7 @@ Called automatically by the <a href="src_phase-manager.PhaseManager.html" class=
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_phases_battle-phase.BattlePhase.html">BattlePhase</a>.<a href="src_phases_battle-phase.BattlePhase.html#start">start</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/494ff6326b7c379b445dbf621efd6cdb9df29a6c/src/phases/party-reorder-switch-phase.ts#L26">src/phases/party-reorder-switch-phase.ts:26</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/4d3aa8822c09556dbe720f33d804b463d0faef28/src/phases/party-reorder-switch-phase.ts#L38">src/phases/party-reorder-switch-phase.ts:38</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -228,9 +235,9 @@ Called automatically by the <a href="src_phase-manager.PhaseManager.html" class=
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#phasename"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>phase<wbr/>Name</span></a></div></details>
+<div><a href="#phasename"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>phase<wbr/>Name</span></a><a href="#recallall" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>recall<wbr/>All</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#end" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a><a href="#hasbiomechanged" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Biome<wbr/>Changed</span></a><a href="#hideenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide<wbr/>Enemy<wbr/>Trainer</span></a><a href="#is" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is</span></a><a href="#recallpokemon" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>recall<wbr/>Pokemon</span></a><a href="#repositionstayingpokemon" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reposition<wbr/>Staying<wbr/>Pokemon</span></a><a href="#showenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Enemy<wbr/>Trainer</span></a><a href="#start"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>start</span></a></div></details></div></details></div>
+<div><a href="#end" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>end</span></a><a href="#hideenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide<wbr/>Enemy<wbr/>Trainer</span></a><a href="#is" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is</span></a><a href="#recallpokemon" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>recall<wbr/>Pokemon</span></a><a href="#repositionstayingpokemon" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reposition<wbr/>Staying<wbr/>Pokemon</span></a><a href="#showenemytrainer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show<wbr/>Enemy<wbr/>Trainer</span></a><a href="#start"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>start</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
 <nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
