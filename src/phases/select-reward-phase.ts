@@ -25,7 +25,13 @@ import {
   generateRewardPoolWeights,
   getRewardPoolForType,
 } from "#items/reward-pool-utils";
-import { getPlayerShopRewardOptionsForWave, isMoveReward, isRememberMoveReward, isTmReward } from "#items/reward-utils";
+import {
+  applyReward,
+  getPlayerShopRewardOptionsForWave,
+  isMoveReward,
+  isRememberMoveReward,
+  isTmReward,
+} from "#items/reward-utils";
 import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
 import type { ConfirmModeConfig } from "#types/ui-types";
@@ -179,7 +185,7 @@ export class SelectRewardPhase extends BattlePhase {
         this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else {
-      globalScene.applyReward(reward, {}, true);
+      applyReward(reward, {}, true);
       globalScene.updateItemBar(true);
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
@@ -322,7 +328,7 @@ export class SelectRewardPhase extends BattlePhase {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             const params = getParams(slotIndex, option);
-            const result = globalScene.applyReward(reward, params, true);
+            const result = applyReward(reward, params, true);
             this.postApplyPokemonReward(reward, result, cost);
           });
         } else {

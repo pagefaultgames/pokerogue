@@ -79,7 +79,6 @@ import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
 import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
-import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
@@ -112,7 +111,6 @@ import type { SessionSaveData } from "#types/save-data";
 import type { VolumeSettingsKey } from "#types/settings";
 import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { Exact } from "#types/type-helpers";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -2370,22 +2368,6 @@ export class BattleScene extends SceneBase {
 
   applyPlayerItems<T extends TrainerItemEffect>(effect: T, params: TrainerItemEffectParamMap[T]) {
     applyTrainerItems(effect, this.trainerItems, params);
-  }
-
-  // TODO: Move this outside of here?
-  applyReward<T extends Reward>(reward: T, params: Exact<Parameters<T["apply"]>[0]>, playSound?: boolean): boolean {
-    const { soundName } = reward;
-
-    if (playSound) {
-      audioManager.playSound(soundName);
-    }
-
-    if (!reward.shouldApply(params)) {
-      return false;
-    }
-
-    reward.apply(params);
-    return true;
   }
 
   assignTrainerItemsFromConfiguration(config: TrainerItemConfiguration, isPlayer: boolean) {
