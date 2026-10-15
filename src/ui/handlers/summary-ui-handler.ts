@@ -27,6 +27,7 @@ import { achvs } from "#system/achv";
 import type { ConfirmModeConfig, OptionSelectItem } from "#types/ui-types";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -322,7 +323,10 @@ export class SummaryUiHandler extends UiHandler {
     if (page === undefined) {
       page = this.cursor;
     }
-    return `summary_${Page[page].toLowerCase()}`;
+
+    const safePage = typeof page === "number" && page >= 0 && page < getEnumValues(Page).length ? page : Page.PROFILE;
+    const pageName = Page[safePage] ?? Page[Page.PROFILE];
+    return `summary_${String(pageName).toLowerCase()}`;
   }
 
   show(
@@ -1351,7 +1355,33 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1252 } });
+        const moveDescriptionWrapWidth = 1252;
+        const moveDescriptionMaskWidth = 205 * 6;
+        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, {
+          wordWrap: { width: moveDescriptionWrapWidth },
+        });
+
+        if (typeof (this.moveDescriptionText as any).setWordWrapCallback === "function") {
+          (this.moveDescriptionText as any).setWordWrapCallback((text: string, textObject: any) => {
+            const wordWrapWidth = textObject.style?.wordWrapWidth ?? moveDescriptionWrapWidth;
+            if (hasSpecialWrapSpace(text)) {
+              return wrapTextAtSpaces(
+                text,
+                Math.min(wordWrapWidth, moveDescriptionMaskWidth),
+                (line: string) => textObject.context.measureText(line).width,
+              );
+            }
+
+            return textObject.style?.wordWrapUseAdvanced
+              ? textObject.advancedWordWrap(text, textObject.context, wordWrapWidth)
+              : textObject.basicWordWrap(text, textObject.context, wordWrapWidth);
+          });
+        } else {
+          const style = (this.moveDescriptionText as any).style ?? {};
+          style.wordWrapWidth = Math.min(moveDescriptionWrapWidth, moveDescriptionMaskWidth);
+          (this.moveDescriptionText as any).style = style;
+        }
+
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});
