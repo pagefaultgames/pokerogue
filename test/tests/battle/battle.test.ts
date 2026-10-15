@@ -170,7 +170,7 @@ describe("Phase - Battle Phase", () => {
 
     await game.phaseInterceptor.to("BattleEndPhase");
     game.doRevivePokemon(0); // pretend max revive was picked
-    game.doSelectModifier();
+    game.doSelectReward();
 
     game.onNextPrompt(
       "SwitchPhase",
@@ -183,7 +183,7 @@ describe("Phase - Battle Phase", () => {
     await game.phaseInterceptor.to("SwitchPhase");
   });
 
-  it("should completely bypass the modifier select phase on a standard run away", async () => {
+  it("should completely bypass the reward select phase on a standard run away", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).enemyMoveset([MoveId.SPLASH]).battleStyle("single");
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 

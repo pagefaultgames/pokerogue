@@ -312,7 +312,7 @@ export class GameManager {
   }
 
   /** Queue up button presses to skip taking an item on the next {@linkcode SelectRewardPhase} */
-  doSelectModifier() {
+  doSelectReward() {
     this.onNextPrompt(
       "SelectRewardPhase",
       UiMode.REWARD_SELECT,
@@ -377,7 +377,7 @@ export class GameManager {
    * and then transition to the next {@linkcode CommandPhase}.
    */
   async toNextWave(): Promise<void> {
-    this.doSelectModifier();
+    this.doSelectReward();
 
     await this.phaseInterceptor.to("TurnInitPhase");
     await this.phaseInterceptor.to("CommandPhase");

@@ -177,11 +177,11 @@ describe.todo("UI - Transfer Items", () => {
 
     game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, async () => {
       await new Promise(r => setTimeout(r, 100));
-      const modifierHandler = game.scene.ui.getHandler<RewardSelectUiHandler>();
+      const rewardHandler = game.scene.ui.getHandler<RewardSelectUiHandler>();
 
-      modifierHandler.processInput(Button.DOWN);
-      modifierHandler.setCursor(1);
-      modifierHandler.processInput(Button.ACTION);
+      rewardHandler.processInput(Button.DOWN);
+      rewardHandler.setCursor(1);
+      rewardHandler.processInput(Button.ACTION);
     });
 
     game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, async () => {

@@ -29,7 +29,7 @@ describe("Move - Roar", () => {
     game.override.moveset([MoveId.SPLASH, MoveId.ROAR]).startingLevel(100).enemyLevel(10).criticalHits(false);
   });
 
-  async function getModifierShopHandler(): Promise<RewardSelectUiHandler> {
+  async function getRewardShopHandler(): Promise<RewardSelectUiHandler> {
     await game.phaseInterceptor.to("BattleEndPhase");
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
@@ -48,7 +48,7 @@ describe("Move - Roar", () => {
 
     game.move.select(MoveId.ROAR);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(0);
   });
 

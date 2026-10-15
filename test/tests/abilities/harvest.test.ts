@@ -17,7 +17,7 @@ describe("Abilities - Harvest", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  /** Check whether the player's Modifiers contains the specified berries and nothing else. */
+  /** Check whether the player party's items contains the specified berries and nothing else. */
   function expectBerriesContaining(berries: PokemonItemMap[]): void {
     const actualBerries = getPartyItemsInCategory(HeldItemCategoryId.BERRY);
     for (const berry of berries) {

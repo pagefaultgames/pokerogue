@@ -47,7 +47,7 @@ describe("SelectRewardPhase", () => {
       .battleStyle("single");
   });
 
-  it("should start a select modifier phase", async () => {
+  it("should start a select reward phase", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const selectRewardPhase = new SelectRewardPhase();
     scene.phaseManager.unshiftPhase(selectRewardPhase);
@@ -56,7 +56,7 @@ describe("SelectRewardPhase", () => {
     expect(scene.ui.mode).toBe(UiMode.REWARD_SELECT);
   });
 
-  it("should generate random modifiers", async () => {
+  it("should generate random rewards", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectRewardPhase");
@@ -85,7 +85,7 @@ describe("SelectRewardPhase", () => {
     expect(cost2).toEqual(cost1 * 2);
   });
 
-  it.todo("should generate random modifiers from reroll", async () => {
+  it.todo("should generate random rewards from reroll", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     settings.update("display", "shopCursorTarget", ShopCursorTarget.REROLL);
@@ -108,7 +108,7 @@ describe("SelectRewardPhase", () => {
     expect(rewardSelectHandler.options.length).toEqual(3);
   });
 
-  it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
+  it.todo("should generate random rewards of same tier for reroll with reroll lock", async () => {
     game.override.startingTrainerItems([{ entry: TrainerItemId.LOCK_CAPSULE }]);
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
@@ -146,7 +146,7 @@ describe("SelectRewardPhase", () => {
     ).toEqual(firstRollTiers[2]);
   });
 
-  it("should generate custom modifiers", async () => {
+  it("should generate custom rewards", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
@@ -179,7 +179,7 @@ describe("SelectRewardPhase", () => {
     );
   });
 
-  it("should generate custom modifier tiers that can upgrade from luck", async () => {
+  it("should generate custom reward tiers that can upgrade from luck", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
@@ -234,7 +234,7 @@ describe("SelectRewardPhase", () => {
     ).toEqual(RarityTier.MASTER);
   });
 
-  it("should generate custom modifiers and modifier tiers together", async () => {
+  it("should generate custom rewards and reward tiers together", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
@@ -257,7 +257,7 @@ describe("SelectRewardPhase", () => {
     expect(rewardSelectHandler.options[3].rewardOption.tier).toEqual(RarityTier.MASTER);
   });
 
-  it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
+  it("should fill remaining rewards if fillRemaining is true with custom rewards", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {

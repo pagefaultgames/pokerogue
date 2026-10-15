@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
+import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
@@ -15,8 +16,8 @@ import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
+import { BooleanHolder, type NumberHolder } from "#utils/common";
 import type { ValueHolder } from "#utils/value-holder";
-import { BooleanHolder, type NumberHolder } from "./common";
 
 /**
  * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
@@ -378,107 +379,207 @@ export function applyChallenges(
   isAvailable: ValueHolder<boolean>,
 ): boolean;
 
+/**
+ * Apply all challenges that modify the innate abilities of a species
+ * @param challengeType - {@linkcode ChallengeType.SPECIES_ABILITY_MODIFY}
+ * @param species - The ID of the species whose abilities are being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SPECIES_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the passive ability of a species
+ * @param challengeType - {@linkcode ChallengeType.PASSIVE_ABILITY_MODIFY}
+ * @param speciesId - The ID of the species whose passive ability is being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.PASSIVE_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
     if (c.value !== 0) {
       switch (challengeType) {
-        case ChallengeType.STARTER_CHOICE:
-          ret ||= c.applyStarterChoice(args[0], args[1], args[2]);
+        case ChallengeType.STARTER_CHOICE: {
+          const r = c.applyStarterChoice(args[0], args[1], args[2]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_POINTS:
-          ret ||= c.applyStarterPoints(args[0]);
+        }
+        case ChallengeType.STARTER_POINTS: {
+          const r = c.applyStarterPoints(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_COST:
-          ret ||= c.applyStarterCost(args[0], args[1]);
+        }
+        case ChallengeType.STARTER_COST: {
+          const r = c.applyStarterCost(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_SELECT_MODIFY:
-          ret ||= c.applyStarterSelectModify(args[0], args[1], args[2]);
+        }
+        case ChallengeType.STARTER_SELECT_MODIFY: {
+          const r = c.applyStarterSelectModify(args[0], args[1], args[2]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_MODIFY:
-          ret ||= c.applyStarterModify(args[0]);
+        }
+        case ChallengeType.STARTER_MODIFY: {
+          const r = c.applyStarterModify(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_IN_BATTLE:
-          ret ||= c.applyPokemonInBattle(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_IN_BATTLE: {
+          const r = c.applyPokemonInBattle(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.FIXED_BATTLES:
-          ret ||= c.applyFixedBattle(args[0], args[1]);
+        }
+        case ChallengeType.FIXED_BATTLES: {
+          const r = c.applyFixedBattle(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.TYPE_EFFECTIVENESS:
-          ret ||= c.applyTypeEffectiveness(args[0]);
+        }
+        case ChallengeType.TYPE_EFFECTIVENESS: {
+          const r = c.applyTypeEffectiveness(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.AI_LEVEL:
-          ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
+        }
+        case ChallengeType.AI_LEVEL: {
+          const r = c.applyLevelChange(args[0], args[1], args[2], args[3]);
+          ret ||= r;
           break;
-        case ChallengeType.AI_MOVE_SLOTS:
-          ret ||= c.applyMoveSlot(args[0], args[1]);
+        }
+        case ChallengeType.AI_MOVE_SLOTS: {
+          const r = c.applyMoveSlot(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PASSIVE_ACCESS:
-          ret ||= c.applyPassiveAccess(args[0], args[1]);
+        }
+        case ChallengeType.PASSIVE_ACCESS: {
+          const r = c.applyPassiveAccess(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.GAME_MODE_MODIFY:
-          ret ||= c.applyGameModeModify();
+        }
+        case ChallengeType.GAME_MODE_MODIFY: {
+          const r = c.applyGameModeModify();
+          ret ||= r;
           break;
-        case ChallengeType.MOVE_ACCESS:
-          ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
+        }
+        case ChallengeType.MOVE_ACCESS: {
+          const r = c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
+          ret ||= r;
           break;
-        case ChallengeType.MOVE_WEIGHT:
-          ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
+        }
+        case ChallengeType.MOVE_WEIGHT: {
+          const r = c.applyMoveWeight(args[0], args[1], args[2], args[3]);
+          ret ||= r;
           break;
-        case ChallengeType.FLIP_STAT:
-          ret ||= c.applyFlipStat(args[0], args[1]);
+        }
+        case ChallengeType.FLIP_STAT: {
+          const r = c.applyFlipStat(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PARTY_HEAL:
-          ret ||= c.applyPartyHeal(args[0]);
+        }
+        case ChallengeType.PARTY_HEAL: {
+          const r = c.applyPartyHeal(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.SHOP:
-          ret ||= c.applyShop(args[0]);
+        }
+        case ChallengeType.SHOP: {
+          const r = c.applyShop(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_ADD_TO_PARTY:
-          ret ||= c.applyPokemonAddToParty(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_ADD_TO_PARTY: {
+          const r = c.applyPokemonAddToParty(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_FUSION:
-          ret ||= c.applyPokemonFusion(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_FUSION: {
+          const r = c.applyPokemonFusion(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_MOVE:
-          ret ||= c.applyPokemonMove(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_MOVE: {
+          const r = c.applyPokemonMove(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.SHOP_ITEM:
-          ret ||= c.applyShopItem(args[0], args[1]);
+        }
+        case ChallengeType.SHOP_ITEM: {
+          const r = c.applyShopItem(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.WAVE_REWARD:
-          ret ||= c.applyWaveReward(args[0], args[1]);
+        }
+        case ChallengeType.WAVE_REWARD: {
+          const r = c.applyWaveReward(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PREVENT_REVIVE:
-          ret ||= c.applyPreventRevive(args[0]);
+        }
+        case ChallengeType.PREVENT_REVIVE: {
+          const r = c.applyPreventRevive(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.MOVESET_MODIFY:
-          ret ||= c.applyMovesetModify(args[0]);
+        }
+        case ChallengeType.MOVESET_MODIFY: {
+          const r = c.applyMovesetModify(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.LEVEL_UP_MOVESET:
-          ret ||= c.applyLevelUpMoveset(args[0], args[1]);
+        }
+        case ChallengeType.LEVEL_UP_MOVESET: {
+          const r = c.applyLevelUpMoveset(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PLAYER_TM_COMPATIBILITY:
-          ret ||= c.applyPlayerTMCompatibility(args[0], args[1]);
+        }
+        case ChallengeType.PLAYER_TM_COMPATIBILITY: {
+          const r = c.applyPlayerTMCompatibility(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.ENEMY_TM_COMPATIBILITY:
-          ret ||= c.applyEnemyTMCompatibility(args[0], args[1]);
+        }
+        case ChallengeType.ENEMY_TM_COMPATIBILITY: {
+          const r = c.applyEnemyTMCompatibility(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.AI_MOVE_GENERATION_EGG_POOL:
-          ret ||= c.applyAIMoveGenerationEggPool(args[0], args[1]);
+        }
+        case ChallengeType.AI_MOVE_GENERATION_EGG_POOL: {
+          const r = c.applyAIMoveGenerationEggPool(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.AI_MOVE_GENERATION_SUPERCEDED_MAP:
-          ret ||= c.applyAIMoveGenerationSupercededMap(args[0]);
+        }
+        case ChallengeType.AI_MOVE_GENERATION_SUPERCEDED_MAP: {
+          const r = c.applyAIMoveGenerationSupercededMap(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.MODIFY_EVOLUTIONS:
-          ret ||= c.applyModifyEvolutions(args[0], args[1]);
+        }
+        case ChallengeType.MODIFY_EVOLUTIONS: {
+          const r = c.applyModifyEvolutions(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.ME_MOVESET_MODIFY:
-          ret ||= c.applyMysteryEncounterMovesetModify(args[0]);
+        }
+        case ChallengeType.ME_MOVESET_MODIFY: {
+          const r = c.applyMysteryEncounterMovesetModify(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY:
-          ret ||= c.applyEggMoveRelearnAvailability(args[0], args[1]);
+        }
+        case ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY: {
+          const r = c.applyEggMoveRelearnAvailability(args[0], args[1]);
+          ret ||= r;
           break;
+        }
+        case ChallengeType.SPECIES_ABILITY_MODIFY: {
+          const r = c.applySpeciesAbilityModify(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.PASSIVE_ABILITY_MODIFY: {
+          const r = c.applyPassiveAbilityModify(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
         default:
           challengeType satisfies never;
           break;
@@ -593,7 +694,8 @@ export function getRibbonsToAward(): RibbonFlag {
 
   let ribbonFlags = 0n;
 
-  if (challenges.some(c => [Challenges.MOVESET_RANDOMIZER].includes(c.id) && c.value > 0)) {
+  const ribbonBlockChallenges = [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER];
+  if (challenges.some(c => ribbonBlockChallenges.includes(c.id) && c.value > 0)) {
     return ribbonFlags as RibbonFlag;
   }
 

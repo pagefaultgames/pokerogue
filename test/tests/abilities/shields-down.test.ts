@@ -77,7 +77,7 @@ describe("Abilities - Shields Down", () => {
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toEndOfTurn();
-    game.doSelectModifier();
+    game.doSelectReward();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(minior.formIndex).toBe(redMeteorForm);
