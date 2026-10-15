@@ -3935,7 +3935,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     ],
     passives: {
       0: AbilityId.ADAPTABILITY,
-      1: AbilityId.SUPER_LUCK,
+      1: AbilityId.LONG_REACH,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.MACH_PUNCH],
@@ -8878,7 +8878,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     starterCost: 5,
     evolutions: [],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.MAGIC_BOUNCE,
+    passives: AbilityId.AURA_GUARD,
     levelMoves: [
       [RELEARN_MOVE, MoveId.SNORE],
       [RELEARN_MOVE, MoveId.IRON_TAIL],
