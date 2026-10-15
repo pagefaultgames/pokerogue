@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import { addTextObject } from "#ui/text";
@@ -68,7 +69,7 @@ export class PartyExpBar extends Phaser.GameObjects.Container {
       this.tween = globalScene.tweens.add({
         targets: this,
         x: globalScene.scaledCanvas.width - (this.bg.width - 5),
-        duration: 500 / Math.pow(2, globalScene.expGainsSpeed),
+        duration: 500 / Math.pow(2, settings.general.expGainsSpeed),
         ease: "Sine.easeOut",
         onComplete: () => {
           this.tween = null;

@@ -1,6 +1,7 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { BackgroundMusic } from "#audio/background-music";
+import { PRSFX_SOUND_ADJUSTMENT_RATIO } from "#constants/app-constants";
 import { VolumeSetting } from "#enums/volume-setting";
 import { fixedInt } from "#utils/common";
 
@@ -18,17 +19,14 @@ interface GameVolume {
  * Global manager for audio operations
  */
 export class AudioManager {
-  public readonly volume: GameVolume;
+  public readonly isAudioEnabled: boolean;
+  private readonly volume: GameVolume;
+
   private currentBgm: BackgroundMusic | null = null;
 
-  constructor() {
-    this.volume = {
-      main: 0.5,
-      bgm: 1,
-      field: 1,
-      se: 1,
-      ui: 1,
-    };
+  constructor(volume: GameVolume, isAudioEnabled = true) {
+    this.volume = volume;
+    this.isAudioEnabled = isAudioEnabled;
   }
 
   /**
@@ -51,9 +49,39 @@ export class AudioManager {
         break;
       case VolumeSetting.UI:
         mul = this.volume.ui;
+        break;
     }
 
     return this.volume.main * mul;
+  }
+
+  /**
+   * Updates the volume and applies the changes to active audio.
+   * @param setting - The {@linkcode VolumeSetting} to change the volume of
+   * @param value - The new volume
+   */
+  public setVolume(setting: VolumeSetting, value: number): void {
+    switch (setting) {
+      case VolumeSetting.BGM:
+        this.volume.bgm = value;
+        break;
+      case VolumeSetting.FIELD:
+        this.volume.field = value;
+        break;
+      case VolumeSetting.MAIN:
+        this.volume.main = value;
+        break;
+      case VolumeSetting.SE:
+        this.volume.se = value;
+        break;
+      case VolumeSetting.UI:
+        this.volume.ui = value;
+        break;
+      default:
+        setting satisfies never;
+    }
+
+    this.updateSoundVolume();
   }
 
   /**
@@ -70,6 +98,10 @@ export class AudioManager {
    */
   // TODO: use object params
   public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true, fadeDuration = 500): BackgroundMusic | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? globalScene.currentBattle?.getBgmOverride() ?? globalScene.arena?.bgm,
     );
@@ -109,7 +141,7 @@ export class AudioManager {
   public updateSoundVolume(): void {
     this.currentBgm?.setVolume(this.getVolume(VolumeSetting.BGM));
 
-    if (!globalScene.sound) {
+    if (!this.isAudioEnabled) {
       return;
     }
 
@@ -119,7 +151,7 @@ export class AudioManager {
         case "battle_anims":
         case "cry":
           if (name?.startsWith("PRSFX- ")) {
-            sound.setVolume(this.getVolume(VolumeSetting.FIELD) * 0.5);
+            sound.setVolume(this.getVolume(VolumeSetting.FIELD) * PRSFX_SOUND_ADJUSTMENT_RATIO);
           } else {
             sound.setVolume(this.getVolume(VolumeSetting.FIELD));
           }
@@ -150,7 +182,11 @@ export class AudioManager {
    * @param bgmName - The key for the replacement track
    * @returns The newly-created {@linkcode BackgroundMusic} object
    */
-  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
+  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const tempBgm = new BackgroundMusic(bgmName, false);
     tempBgm.onEnd(() => {
       this.currentBgm?.resume();
@@ -173,6 +209,10 @@ export class AudioManager {
     sound: string | AnySound,
     config: Phaser.Types.Sound.SoundConfig | Phaser.Types.Sound.SoundMarker = {},
   ): AnySound | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const key = typeof sound === "string" ? sound : sound.key;
     try {
       const keyDetails = key.split("/");

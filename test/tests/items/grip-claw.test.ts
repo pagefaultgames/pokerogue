@@ -95,6 +95,29 @@ describe("Items - Grip Claw", () => {
     expect(enemy2HeldItemCountsAfter).toBe(enemy2HeldItemCount);
   });
 
+  it("should not steal items when the holder faints from the target's contact damage", async () => {
+    game.override.battleStyle("single").enemyAbility(AbilityId.ROUGH_SKIN).criticalHits(false);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+
+    const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
+    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
+
+    const enemyHeldItemCount = getHeldItemCount(enemyPokemon);
+    expect(enemyHeldItemCount).toBeGreaterThan(0);
+
+    // Leave the holder low enough that Rough Skin's recoil knocks it out
+    playerPokemon.hp = 1;
+
+    game.move.use(MoveId.TACKLE);
+    await game.phaseInterceptor.to("FaintPhase");
+
+    expect(playerPokemon.isFainted()).toBe(true);
+    expect(getHeldItemCount(enemyPokemon)).toBe(enemyHeldItemCount);
+  });
+
   it("should not allow Pollen Puff to steal items when healing ally", async () => {
     game.override
       .battleStyle("double")

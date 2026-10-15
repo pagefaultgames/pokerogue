@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { PlayerGender } from "#enums/player-gender";
+import { settings } from "#app/global-settings-manager";
 import { BattlePhase } from "#phases/battle-phase";
 
 export class ShowTrainerPhase extends BattlePhase {
@@ -7,9 +7,7 @@ export class ShowTrainerPhase extends BattlePhase {
   start() {
     super.start();
 
-    globalScene.trainer
-      .setVisible(true)
-      .setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+    globalScene.trainer.setVisible(true).setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
 
     globalScene.tweens.add({
       targets: globalScene.trainer,

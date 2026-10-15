@@ -7,7 +7,7 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class SelectTargetPhase extends PokemonPhase {
   public readonly phaseName = "SelectTargetPhase";
-  // biome-ignore lint/complexity/noUselessConstructor: This makes `fieldIndex` required
+
   constructor(fieldIndex: number) {
     super(fieldIndex);
   }

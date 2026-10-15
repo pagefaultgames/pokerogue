@@ -15,3 +15,5 @@ export const catchableSpecies: CatchableSpecies = {} as CatchableSpecies;
 export const biomeDepths: BiomeDepths = {};
 
 export const allBiomes: DataMap<BiomeId, Biome> = new Map<BiomeId, Biome>() as DataMap<BiomeId, Biome>;
+
+export const starterColors: { [key: string]: [string, string] } = {};

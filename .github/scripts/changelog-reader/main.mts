@@ -13,7 +13,7 @@ import { formatChangelog, type PullRequest } from "./format.mts";
 chalk.level = 2;
 
 /** The version of this script */
-const SCRIPT_VERSION: string = "1.0.1";
+const SCRIPT_VERSION: string = "1.0.2";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -73,9 +73,13 @@ async function getAndProcessChangelog(): Promise<void> {
   } else {
     //! Note: to run locally, a separate GitHub API token needs to be generated
 
+    const description =
+      `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
+      + output
+      + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
     // dynamically imported to not need the checkout of the helper file during the workflow
     const { writeFileSafe } = await import("../../../scripts/utils/file.ts");
-    writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
+    writeFileSafe(CONFIG.OUTPUT_FILE, description, "utf8");
     console.log(`✔ Output written to ${CONFIG.OUTPUT_FILE} successfully!`);
   }
 }
@@ -108,6 +112,7 @@ async function getDiff(): Promise<Set<string>> {
  */
 async function getPullRequests(commits: Set<string>): Promise<PullRequest[]> {
   const pullRequests: PullRequest[] = [];
+  const seenPrs = new Set<number>();
   for (const sha of commits) {
     try {
       const prs = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
@@ -115,10 +120,11 @@ async function getPullRequests(commits: Set<string>): Promise<PullRequest[]> {
         repo: CONFIG.REPO_NAME,
         commit_sha: sha,
       });
-      const pr = prs.data.find(p => p.merged_at != null && p.base.ref === CONFIG.REPO_BRANCH);
-      if (!pr) {
+      const pr = prs.data.find(p => p.merged_at != null);
+      if (!pr || seenPrs.has(pr.number)) {
         continue;
       }
+      seenPrs.add(pr.number);
       const section = getChangelogSection(pr.body || "");
       pullRequests.push({
         number: pr.number,

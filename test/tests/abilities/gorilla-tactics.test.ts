@@ -60,7 +60,7 @@ describe("Abilities - Gorilla Tactics", () => {
     // Second turn, Growl is interrupted by Disable
     game.move.select(MoveId.GROWL);
     await game.move.forceEnemyMove(MoveId.DISABLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1); // Only the effect of the first Growl should be applied
@@ -68,7 +68,7 @@ describe("Abilities - Gorilla Tactics", () => {
     // Third turn, Struggle is used
     game.move.select(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SPLASH); // prevent disable from being used by the enemy
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
@@ -116,7 +116,7 @@ describe("Abilities - Gorilla Tactics", () => {
     const darmanitan = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceMiss();
     await game.toEndOfTurn();
 

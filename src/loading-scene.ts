@@ -1,12 +1,12 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { initializeGame } from "#app/init/init";
 import { activeOverrides } from "#app/overrides";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { BiomeId } from "#enums/biome-id";
 import { GachaType } from "#enums/gacha-types";
 import { getBiomeHasProps } from "#field/arena";
+import { initializeGame } from "#init/init";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
 import { hasAllLocalizedSprites, localPing } from "#utils/common";
@@ -295,7 +295,7 @@ export class LoadingScene extends SceneBase {
       )
 
       // egg gacha stuff
-      .loadEventBannerImages(lang)
+      .loadEventImages(lang)
       .loadAtlas("categories", "")
       .loadAtlas("egg", "egg")
       .loadAtlas("egg_crack", "egg")
@@ -317,6 +317,7 @@ export class LoadingScene extends SceneBase {
       .loadImage("encounter_radar", "mystery-encounters") // Mystery Encounter dex progress icon
       // settings atlases
       .loadAtlas("dualshock", "inputs")
+      .loadAtlas("procon", "inputs")
       .loadAtlas("xbox", "inputs")
       .loadAtlas("keyboard", "inputs")
       // sound effects
@@ -585,7 +586,7 @@ export class LoadingScene extends SceneBase {
     return this;
   }
 
-  private loadEventBannerImages(lang: string): this {
+  private loadEventImages(lang: string): this {
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
       // fallback to EN banner if translation not found
@@ -593,6 +594,9 @@ export class LoadingScene extends SceneBase {
         lang = "en";
       }
       this.loadImage(`${timedEventManager.getEventBannerFilename()}-${lang}`, "events");
+    }
+    if (timedEventManager.getLogoKey() !== "logo") {
+      this.loadImage(timedEventManager.getLogoKey(), "events");
     }
     return this;
   }

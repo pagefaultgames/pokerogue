@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { SpeciesId } from "#enums/species-id";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 
 /**
  * Award one or more ribbons to a species and its pre-evolutions
@@ -84,6 +84,14 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
       imageKey ??= "ribbon_dark";
     case RibbonData.MONO_FAIRY:
       imageKey ??= "ribbon_fairy";
+    case RibbonData.FRESH_START:
+      imageKey ??= "fresh_start_ribbon";
+    case RibbonData.HARDCORE:
+      imageKey ??= "hardcore_ribbon";
+    case RibbonData.INVERSE:
+      imageKey ??= "inverse_ribbon";
+    case RibbonData.FLIP_STATS:
+      imageKey ??= "flip_stats_ribbon";
     default:
       imageKey ??= "ribbon_typeless";
       return globalScene.add.image(0, 0, "items", imageKey).setDisplaySize(16, 16);

@@ -1,12 +1,15 @@
 import { updateUserInfo } from "#app/account";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { bypassLogin } from "#constants/app-constants";
+import { PlayerGender } from "#enums/player-gender";
 import { UiMode } from "#enums/ui-mode";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
+import { consumeOAuthError, type OAuthError } from "#utils/oauth-utils";
 import i18next, { t } from "i18next";
 
 export class LoginPhase extends Phase {
@@ -19,6 +22,9 @@ export class LoginPhase extends Phase {
    */
   private readonly showText: boolean;
 
+  /** The error left in the URL by a failed OAuth redirect, if any. */
+  private oauthError: OAuthError | null = null;
+
   constructor(showText = true) {
     super();
 
@@ -29,6 +35,8 @@ export class LoginPhase extends Phase {
     const { gameData, ui } = globalScene;
 
     super.start();
+
+    this.oauthError = consumeOAuthError();
 
     const hasSession = !!getCookie(sessionIdKey);
 
@@ -55,7 +63,7 @@ export class LoginPhase extends Phase {
   public override async end(): Promise<void> {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
-    if (!globalScene.gameData.gender) {
+    if (settings.general.playerGender === PlayerGender.UNSET) {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 
@@ -79,6 +87,22 @@ export class LoginPhase extends Phase {
     super.end();
   }
 
+  /**
+   * Text to display for the login prompt, based on the OAuth error (if any).
+   */
+  private get loginPromptText(): string {
+    const provider = this.oauthError?.provider === "google" ? "Google" : "Discord";
+    switch (this.oauthError?.reason) {
+      case "not_linked":
+        return i18next.t("menu:oauthNotLinked", { provider });
+      case "provider_error":
+      case "server_error":
+        return i18next.t("menu:oauthFailed", { provider });
+      default:
+        return i18next.t("menu:logInOrCreateAccount");
+    }
+  }
+
   private showLoginRegister(): void {
     const { ui } = globalScene;
 
@@ -91,7 +115,7 @@ export class LoginPhase extends Phase {
     };
 
     if (this.showText) {
-      ui.showText(i18next.t("menu:logInOrCreateAccount"));
+      ui.showText(this.loginPromptText);
     }
 
     audioManager.playSound("ui/menu_open");

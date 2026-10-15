@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { settings } from "#app/global-settings-manager";
 import { FixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
@@ -15,17 +16,16 @@ const TIME_RELATED_PROPERTIES = [
 
 /**
  * Compute the new value of a duration or other time-based property based on the current game speed.
- * @param scene - The current {@linkcode BattleScene}
  * @param value - The base amount of time the effect should last at 1x speed
  * @returns The updated duration value accounting for game speed
  * @remarks
  * Any {@linkcode FixedInt}s passed in will be returned verbatim without adjustment.
  */
-function applyGameSpeedMult(scene: BattleScene, value: number | FixedInt): number {
+function applyGameSpeedMult(value: number | FixedInt): number {
   if (value instanceof FixedInt) {
     return value.value;
   }
-  return Math.ceil(value / scene.gameSpeed);
+  return Math.ceil(value / settings.general.gameSpeed);
 }
 
 /**
@@ -64,7 +64,7 @@ function mutateTimeRelatedProperties(
   for (const prop of TIME_RELATED_PROPERTIES) {
     const timeVal = obj[prop] satisfies number | FixedInt | undefined;
     if (typeof timeVal === "number" || timeVal instanceof FixedInt) {
-      obj[prop] = applyGameSpeedMult(scene, timeVal);
+      obj[prop] = applyGameSpeedMult(timeVal);
     }
   }
 
@@ -90,7 +90,7 @@ export function initGameSpeed(scene: BattleScene): void {
   const originalAddEvent = scene.time.addEvent;
   scene.time.addEvent = function (this: Phaser.Time.Clock, config) {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
-      config.delay = applyGameSpeedMult(scene, config.delay);
+      config.delay = applyGameSpeedMult(config.delay);
     }
     return originalAddEvent.call(this, config);
   } satisfies typeof originalAddEvent;
@@ -137,10 +137,10 @@ export function initGameSpeed(scene: BattleScene): void {
   ): Phaser.Sound.BaseSound => {
     if (typeof args[1] === "number") {
       // no scene included; duration is at index 1
-      (args[1] as number) = applyGameSpeedMult(scene, args[1] as number);
+      (args[1] as number) = applyGameSpeedMult(args[1] as number);
     } else {
       // scene included in parameter list; duration is at index 2
-      (args[2] as number) = applyGameSpeedMult(scene, args[2] as number);
+      (args[2] as number) = applyGameSpeedMult(args[2] as number);
     }
     return originalFadeOut(...(args as Parameters<typeof originalFadeOut>));
   }) satisfies typeof originalFadeOut;
@@ -164,10 +164,10 @@ export function initGameSpeed(scene: BattleScene): void {
   ): Phaser.Sound.BaseSound => {
     if (typeof args[1] === "number") {
       // no scene included; duration is at index 1
-      (args[1] as number) = applyGameSpeedMult(scene, args[1] as number);
+      (args[1] as number) = applyGameSpeedMult(args[1] as number);
     } else {
       // scene included in parameter list; duration is at index 2
-      (args[2] as number) = applyGameSpeedMult(scene, args[2] as number);
+      (args[2] as number) = applyGameSpeedMult(args[2] as number);
     }
     return originalFadeIn(...(args as Parameters<typeof originalFadeIn>));
   }) satisfies typeof originalFadeIn;

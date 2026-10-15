@@ -44,7 +44,7 @@ describe("Moves - Round", () => {
     await game.move.selectEnemyMove(MoveId.ROUND, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     const actualTurnOrder: BattlerIndex[] = [];
 

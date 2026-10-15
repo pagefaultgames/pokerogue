@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import { UiMode } from "#enums/ui-mode";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
@@ -17,6 +18,15 @@ export enum Tutorial {
   EGG_GACHA = "EGG_GACHA",
 }
 
+/**
+ * Show a tutorial text with a speaker box.
+ * @param key - The i18next key for the tutorial text
+ * @param callback - Callback for when the tutorial dialogue is dismissed
+ */
+function showTutorialDialogue(key: string, callback: () => void): void {
+  globalScene.ui.showDialogue(i18next.t(key), i18next.t("tutorial:name"), null, callback);
+}
+
 const tutorialHandlers = {
   [Tutorial.INTRO]: () => {
     return new Promise<void>(resolve => {
@@ -25,54 +35,30 @@ const tutorialHandlers = {
   },
   [Tutorial.ACCESS_MENU]: () => {
     return new Promise<void>(resolve => {
-      if (globalScene.enableTouchControls) {
+      if (settings.general.enableTouchControls) {
         return resolve();
       }
       globalScene
         .showFieldOverlay(1000)
         .then(() =>
-          globalScene.ui.showText(
-            i18next.t("tutorial:accessMenu"),
-            null,
-            () => globalScene.hideFieldOverlay(1000).then(() => resolve()),
-            null,
-            true,
-          ),
+          showTutorialDialogue("tutorial:accessMenu", () => globalScene.hideFieldOverlay(1000).then(() => resolve())),
         );
     });
   },
   [Tutorial.MENU]: () => {
     return new Promise<void>(resolve => {
       globalScene.gameData.saveTutorialFlag(Tutorial.ACCESS_MENU, true);
-      globalScene.ui.showText(
-        i18next.t("tutorial:menu"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:menu", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
   [Tutorial.STARTER_SELECT]: () => {
     return new Promise<void>(resolve => {
-      globalScene.ui.showText(
-        i18next.t("tutorial:starterSelect"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:starterSelect", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
   [Tutorial.POKERUS]: () => {
     return new Promise<void>(resolve => {
-      globalScene.ui.showText(
-        i18next.t("tutorial:pokerus"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:pokerus", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
   [Tutorial.STAT_CHANGE]: () => {
@@ -80,12 +66,8 @@ const tutorialHandlers = {
       globalScene
         .showFieldOverlay(1000)
         .then(() =>
-          globalScene.ui.showText(
-            i18next.t("tutorial:statChange"),
-            null,
-            () => globalScene.ui.showText("", null, () => globalScene.hideFieldOverlay(1000).then(() => resolve())),
-            null,
-            true,
+          showTutorialDialogue("tutorial:statChange", () =>
+            globalScene.ui.showText("", null, () => globalScene.hideFieldOverlay(1000).then(() => resolve())),
           ),
         );
     });
@@ -93,46 +75,37 @@ const tutorialHandlers = {
   [Tutorial.SELECT_ITEM]: () => {
     return new Promise<void>(resolve => {
       globalScene.ui.setModeWithoutClear(UiMode.MESSAGE).then(() => {
-        globalScene.ui.showText(
-          i18next.t("tutorial:selectItem"),
-          null,
-          () =>
-            globalScene.ui.showText("", null, () =>
-              globalScene.ui.setModeWithoutClear(UiMode.MODIFIER_SELECT).then(() => resolve()),
-            ),
-          null,
-          true,
+        showTutorialDialogue("tutorial:selectItem", () =>
+          globalScene.ui.showText("", null, () =>
+            globalScene.ui.setModeWithoutClear(UiMode.MODIFIER_SELECT).then(() => resolve()),
+          ),
         );
       });
     });
   },
   [Tutorial.EGG_GACHA]: () => {
     return new Promise<void>(resolve => {
-      globalScene.ui.showText(
-        i18next.t("tutorial:eggGacha"),
-        null,
-        () => globalScene.ui.showText("", null, () => resolve()),
-        null,
-        true,
-      );
+      showTutorialDialogue("tutorial:eggGacha", () => globalScene.ui.showText("", null, () => resolve()));
     });
   },
 };
 
 /**
- * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done
- * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}
+ * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done. \
+ * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}. \
  * The main menu will also get disabled while the tutorial is running
- * @param tutorial the {@linkcode Tutorial} to play
+ * @param tutorial - The {@linkcode Tutorial} to play
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
-  if (!globalScene.enableTutorials && !activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
-    return false;
-  }
+  if (!activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+    if (!settings.general.enableTutorials) {
+      return false;
+    }
 
-  if (globalScene.gameData.getTutorialFlags()[tutorial] && !activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
-    return false;
+    if (globalScene.gameData.getTutorialFlags()[tutorial]) {
+      return false;
+    }
   }
 
   const handler = globalScene.ui.getHandler();

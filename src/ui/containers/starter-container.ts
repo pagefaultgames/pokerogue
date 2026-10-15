@@ -1,6 +1,9 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
+import type { DexAttrProps } from "#types/save-data";
 import { addTextObject } from "#ui/text";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
@@ -16,15 +19,13 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
   public cost = 0;
 
-  constructor(species: PokemonSpecies) {
+  constructor(speciesId: SpeciesId) {
     super(globalScene, 0, 0);
 
-    this.species = species;
+    const defaultProps = globalScene.gameData.getSpeciesDefaultDexAttrProps(speciesId);
 
-    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+    this.setSpecies(speciesId, defaultProps);
 
-    // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
     starterPassiveBg.setOrigin(0, 0);
     starterPassiveBg.setScale(0.75);
@@ -32,22 +33,6 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(starterPassiveBg);
     this.starterPassiveBgs = starterPassiveBg;
 
-    // icon
-    this.icon = globalScene.add.sprite(
-      -2,
-      2,
-      species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
-    );
-    this.icon.setScale(0.5);
-    this.icon.setOrigin(0, 0);
-    this.icon.setFrame(
-      species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
-    );
-    this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
-    this.icon.setTint(0);
-    this.add(this.icon);
-
-    // shiny icons
     for (let i = 0; i < 3; i++) {
       const shinyIcon = globalScene.add.image(i * -3 + 12, 2, "shiny_star_small");
       shinyIcon.setScale(0.5);
@@ -57,17 +42,13 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     }
     this.add(this.shinyIcons);
 
-    // value label
-    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, {
-      fontSize: "32px",
-    });
+    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, { fontSize: "32px" });
     label.setShadowOffset(2, 2);
     label.setOrigin(0, 0);
     label.setVisible(false);
     this.add(label);
     this.label = label;
 
-    // hidden ability icon
     const abilityIcon = globalScene.add.image(12, 7, "ha_capsule");
     abilityIcon.setOrigin(0, 0);
     abilityIcon.setScale(0.5);
@@ -75,7 +56,6 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(abilityIcon);
     this.hiddenAbilityIcon = abilityIcon;
 
-    // favorite icon
     const favoriteIcon = globalScene.add.image(0, 7, "favorite");
     favoriteIcon.setOrigin(0, 0);
     favoriteIcon.setScale(0.5);
@@ -83,7 +63,6 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(favoriteIcon);
     this.favoriteIcon = favoriteIcon;
 
-    // classic win icon
     const classicWinIcon = globalScene.add.image(0, 12, "champion_ribbon");
     classicWinIcon.setOrigin(0, 0);
     classicWinIcon.setScale(0.5);
@@ -91,7 +70,6 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(classicWinIcon);
     this.classicWinIcon = classicWinIcon;
 
-    // candy upgrade icon
     const candyUpgradeIcon = globalScene.add.image(12, 12, "candy");
     candyUpgradeIcon.setOrigin(0, 0);
     candyUpgradeIcon.setScale(0.25);
@@ -99,13 +77,46 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(candyUpgradeIcon);
     this.candyUpgradeIcon = candyUpgradeIcon;
 
-    // candy upgrade overlay icon
     const candyUpgradeOverlayIcon = globalScene.add.image(12, 12, "candy_overlay");
     candyUpgradeOverlayIcon.setOrigin(0, 0);
     candyUpgradeOverlayIcon.setScale(0.25);
     candyUpgradeOverlayIcon.setVisible(false);
     this.add(candyUpgradeOverlayIcon);
     this.candyUpgradeOverlayIcon = candyUpgradeOverlayIcon;
+  }
+
+  public setSpecies(speciesId: SpeciesId, props: DexAttrProps) {
+    this.species = speciesDataRegistry.getSpecies(speciesId);
+
+    const { shiny, formIndex, female, variant } = props;
+
+    if (this.icon) {
+      this.remove(this.icon);
+      this.icon.destroy();
+    }
+
+    this.icon = globalScene.add
+      .sprite(-2, 2, this.species.getIconAtlasKey(formIndex, shiny, variant))
+      .setScale(0.5)
+      .setOrigin(0)
+      .setFrame(this.species.getIconId(female, formIndex, shiny, variant))
+      .setTint(0);
+    this.checkIconId(female, formIndex, shiny, variant);
+    this.add(this.icon);
+
+    [
+      this.label,
+      ...this.shinyIcons,
+      this.hiddenAbilityIcon,
+      this.favoriteIcon,
+      this.classicWinIcon,
+      this.candyUpgradeIcon,
+      this.candyUpgradeOverlayIcon,
+    ].forEach(icon => {
+      if (icon) {
+        this.bringToTop(icon);
+      }
+    });
   }
 
   checkIconId(female, formIndex, shiny, variant) {

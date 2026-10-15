@@ -88,6 +88,10 @@ const excludedBosses = [
   SpeciesId.MELMETAL,
   SpeciesId.ZARUDE,
   SpeciesId.PECHARUNT,
+  /** Special Forms */
+  SpeciesId.ETERNAL_FLOETTE,
+  SpeciesId.BLOODMOON_URSALUNA,
+  SpeciesId.BATTLE_BOND_GRENINJA,
 ];
 
 /**

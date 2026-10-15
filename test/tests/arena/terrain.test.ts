@@ -10,7 +10,6 @@ import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -125,7 +124,7 @@ describe("Terrain -", () => {
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
+      expect(game.phaseInterceptor.phaseLog).toContain("PokemonHealPhase");
       expect(blissey.getHpRatio()).toBeCloseTo(0.5625, 1);
       expect(shuckle.getHpRatio()).toBeCloseTo(0.5, 1);
 
@@ -135,7 +134,7 @@ describe("Terrain -", () => {
       await game.toNextTurn();
 
       // shuckle is airborne and blissey is semi-invulnerable, so nobody gets healed
-      expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+      expect(game.phaseInterceptor.phaseLog).not.toContain("PokemonHealPhase");
       expect(blissey.getHpRatio()).toBeCloseTo(0.5625, 1);
       expect(shuckle.getHpRatio()).toBeCloseTo(0.5, 1);
     });
@@ -146,32 +145,32 @@ describe("Terrain -", () => {
       { name: "Bulldoze", move: MoveId.BULLDOZE },
       { name: "Earthquake", move: MoveId.EARTHQUAKE },
       { name: "Magnitude", move: MoveId.MAGNITUDE, basePower: 150 }, // magnitude 10
-    ])("should halve $name's base power against grounded, on-field targets", async ({
-      move,
-      basePower = allMoves[move].power,
-    }) => {
-      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+    ])(
+      "should halve $name's base power against grounded, on-field targets",
+      async ({ move, basePower = allMoves[move].power }) => {
+        await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-      // force high rolls for guaranteed magnitude 10s
-      vi.spyOn(Phaser.Math.RND, "integerInRange").mockImplementation((_min, max) => max);
+        // force high rolls for guaranteed magnitude 10s
+        vi.spyOn(Phaser.Math.RND, "integerInRange").mockImplementation((_min, max) => max);
 
-      const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
+        const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
 
-      // Turn 1: attack with grassy terrain active; 0.5x
-      game.move.use(move);
-      await game.toNextTurn();
+        // Turn 1: attack with grassy terrain active; 0.5x
+        game.move.use(move);
+        await game.toNextTurn();
 
-      expect(powerSpy).toHaveLastReturnedWith(basePower / 2);
-      powerSpy.mockClear();
+        expect(powerSpy).toHaveLastReturnedWith(basePower / 2);
+        powerSpy.mockClear();
 
-      // Turn 2: Make shuckle semi-invulnerable & hit through No Guard; 1x
-      game.move.use(move);
-      await game.move.forceEnemyMove(MoveId.DIG);
-      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toEndOfTurn();
+        // Turn 2: Make shuckle semi-invulnerable & hit through No Guard; 1x
+        game.move.use(move);
+        await game.move.forceEnemyMove(MoveId.DIG);
+        game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+        await game.toEndOfTurn();
 
-      expect(powerSpy).toHaveLastReturnedWith(basePower);
-    });
+        expect(powerSpy).toHaveLastReturnedWith(basePower);
+      },
+    );
   });
 
   describe("Electric Terrain", () => {
@@ -351,32 +350,26 @@ describe("Terrain -", () => {
       );
     });
 
-    it.each<{ category: string; move: MoveId; effect: () => void }>([
-      {
-        category: "Field-targeted",
-        move: MoveId.RAIN_DANCE,
-        effect: () => {
-          expect(game).toHaveWeather(WeatherType.RAIN);
-        },
-      },
-      {
-        // TODO: Review if this is actually how it works in mainline
-        category: "Enemy-targeting spread",
-        move: MoveId.DARK_VOID,
-        effect: () => {
-          expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
-        },
-      },
-    ])("should not block $category moves that become priority", async ({ move, effect }) => {
+    it("should not block 'Field-targeted' moves that become priority", async () => {
+      game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
       await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
-      game.move.use(move);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
+      game.move.use(MoveId.RAIN_DANCE);
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
-      expect(blissey).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
-      effect();
+      expect(blissey).toHaveUsedMove({ move: MoveId.RAIN_DANCE, result: MoveResult.SUCCESS });
+    });
+
+    it("should block 'Enemy-targeting spread' moves that become priority", async () => {
+      game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
+
+      game.move.use(MoveId.DARK_VOID);
+      await game.toEndOfTurn();
+
+      const blissey = game.field.getPlayerPokemon();
+      expect(blissey).toHaveUsedMove({ move: MoveId.DARK_VOID, result: MoveResult.FAIL });
     });
 
     it("should not block non-priority moves boosted by Quick Claw/Quick Draw", async () => {

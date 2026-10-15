@@ -82,7 +82,7 @@ describe("Moves - Baton Pass", () => {
     const [player1, player2] = game.scene.getPlayerParty();
 
     game.move.select(MoveId.BATON_PASS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(player1.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeTruthy();
     game.doSelectPartyPokemon(1);
@@ -99,7 +99,7 @@ describe("Moves - Baton Pass", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FIRE_SPIN);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
 
     await game.toNextTurn();

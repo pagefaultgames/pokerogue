@@ -140,7 +140,7 @@ describe("Moves - Dynamax Cannon", () => {
     await game.classicMode.startBattle(SpeciesId.ETERNATUS);
 
     game.move.select(dynamaxCannon.id);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase", false);
     expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(dynamaxCannon.id);

@@ -62,7 +62,7 @@ describe("Reload", () => {
       (game.scene.time as MockClock).overrideDelay = 1;
     });
     await game.toNextWave();
-    expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("NewBiomeEncounterPhase");
 
     const preReloadRngState = Phaser.Math.RND.state();
 
@@ -89,7 +89,7 @@ describe("Reload", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
-    expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("NewBiomeEncounterPhase");
 
     const preReloadWeather = game.scene.arena.weather;
 

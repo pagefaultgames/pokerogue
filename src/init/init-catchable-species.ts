@@ -4,8 +4,8 @@ import type { BiomePoolTier } from "#enums/biome-pool-tier";
 import { SpeciesId } from "#enums/species-id";
 import type { TimeOfDay } from "#enums/time-of-day";
 import type { BiomeTierTimeOfDay } from "#types/biomes";
-import type { Mutable } from "#types/type-helpers";
 import { getEnumValues } from "#utils/enums";
+import type { Writable } from "type-fest";
 
 type SpeciesBiomeMap = Record<SpeciesId, Record<BiomeId, Record<BiomePoolTier, TimeOfDay[]>>>;
 
@@ -36,7 +36,7 @@ export function initCatchableSpecies(): void {
 
   // TODO: replace `catchableSpecies` with `speciesBiomeMap` and refactor pokedex
   for (const speciesId of getEnumValues(SpeciesId)) {
-    (catchableSpecies[speciesId] as Mutable<BiomeTierTimeOfDay[]>) = [];
+    (catchableSpecies[speciesId] as Writable<BiomeTierTimeOfDay[]>) = [];
   }
 
   for (const [speciesId, biomeTierTod] of Object.entries(speciesBiomeMap)) {
@@ -44,7 +44,7 @@ export function initCatchableSpecies(): void {
       for (const [biomePoolTier, timesOfDay] of Object.entries(tierTod)) {
         const biome = Number(biomeId) as BiomeId;
         const tier = Number(biomePoolTier) as BiomePoolTier;
-        (catchableSpecies[speciesId] as Mutable<BiomeTierTimeOfDay[]>).push({ biome, tier, timesOfDay });
+        (catchableSpecies[speciesId] as Writable<BiomeTierTimeOfDay[]>).push({ biome, tier, timesOfDay });
       }
     }
   }

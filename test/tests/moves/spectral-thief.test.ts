@@ -181,7 +181,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);

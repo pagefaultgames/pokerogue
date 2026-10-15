@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
@@ -12,7 +13,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { PlayerGender } from "#enums/player-gender";
 import { MAX_POKEMON_TYPE } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -22,7 +22,11 @@ import type { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier } from "#modifiers/modifier";
 import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import {
+  getEncounterText,
+  showEncounterDialogue,
+  showEncounterText,
+} from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
@@ -48,6 +52,12 @@ import i18next from "i18next";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
+
+function setPassiveUnlockDialogueTokens(pokemon: PlayerPokemon): void {
+  const encounter = globalScene.currentBattle.mysteryEncounter!;
+  encounter.setDialogueToken("pokemonName", pokemon.getNameToRender());
+  encounter.setDialogueToken("passiveName", pokemon.getPassiveAbility().name);
+}
 
 /** Exclude Ultra Beasts, Paradox, Eternatus, and all legendary/mythical/trio pokemon that are below 570 BST */
 const EXCLUDED_TRANSFORMATION_SPECIES = [
@@ -293,17 +303,11 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         enemyPokemonConfigs.push(enemyConfig);
       }
 
-      const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+      const female = settings.isPlayerFemale;
       const trainerConfig =
-        trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
-        ].clone();
+        trainerConfigs[female ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
-      const enemyPartyConfig: EnemyPartyConfig = {
-        trainerConfig,
-        pokemonConfigs: enemyPokemonConfigs,
-        female: genderIndex === PlayerGender.FEMALE,
-      };
+      const enemyPartyConfig: EnemyPartyConfig = { trainerConfig, pokemonConfigs: enemyPokemonConfigs, female };
 
       const onBeforeRewards = () => {
         // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
@@ -314,6 +318,22 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
           enablePassiveMon.passive = true;
           enablePassiveMon.updateInfo(true);
+
+          setPassiveUnlockDialogueTokens(enablePassiveMon);
+          globalScene.phaseManager.unshiftNew(
+            "MessagePhase",
+            getEncounterText(`${namespace}:passiveUnlockNpc`) ?? "",
+            null,
+            true,
+            null,
+            getEncounterText(`${namespace}:speaker`) ?? "",
+          );
+          globalScene.phaseManager.unshiftNew(
+            "MessagePhase",
+            getEncounterText(`${namespace}:passiveUnlockSystem`) ?? "",
+            null,
+            true,
+          );
         }
       };
 
@@ -492,6 +512,10 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
     enablePassiveMon.passive = true;
     await enablePassiveMon.updateInfo(true);
+
+    setPassiveUnlockDialogueTokens(enablePassiveMon);
+    await showEncounterDialogue(`${namespace}:passiveUnlockNpc`, `${namespace}:speaker`);
+    await showEncounterText(`${namespace}:passiveUnlockSystem`);
   }
 
   // If at least one new starter was unlocked, play 1 fanfare
