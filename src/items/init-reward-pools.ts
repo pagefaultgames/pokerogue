@@ -273,11 +273,9 @@ function initUltraRewardPool() {
 
             // Moves that take advantage of obtaining the actual status effect
             const hasStatusMoves = [MoveId.FACADE, MoveId.PSYCHO_SHIFT].some(m => moveset.includes(m));
-            // Moves that take advantage of being able to give the target a status orb
-            // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
-            const hasItemMoves = [
-              /* MoveId.TRICK, MoveId.FLING, MoveId.SWITCHEROO */
-            ].some(m => moveset.includes(m));
+            const hasItemMoves = [MoveId.TRICK, MoveId.FLING, MoveId.SWITCHEROO, MoveId.BESTOW].some(m =>
+              moveset.includes(m),
+            );
 
             if (canSetStatus) {
               // Abilities that take advantage of obtaining the actual status effect, separated based on specificity to the orb
@@ -319,11 +317,9 @@ function initUltraRewardPool() {
 
             // Moves that take advantage of obtaining the actual status effect
             const hasStatusMoves = [MoveId.FACADE, MoveId.PSYCHO_SHIFT].some(m => moveset.includes(m));
-            // Moves that take advantage of being able to give the target a status orb
-            // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
-            const hasItemMoves = [
-              /* MoveId.TRICK, MoveId.FLING, MoveId.SWITCHEROO */
-            ].some(m => moveset.includes(m));
+            const hasItemMoves = [MoveId.TRICK, MoveId.FLING, MoveId.SWITCHEROO, MoveId.BESTOW].some(m =>
+              moveset.includes(m),
+            );
 
             if (canSetStatus) {
               // Abilities that take advantage of obtaining the actual status effect, separated based on specificity to the orb
