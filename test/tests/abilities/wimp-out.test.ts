@@ -194,7 +194,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   // TODO: Enable when this behavior is fixed (currently Shell Bell won't activate if Wimp Out activates because
-  // the pokemon is removed from the field before the Shell Bell modifier is applied, so it can't see the
+  // the pokemon is removed from the field before the Shell Bell item is applied, so it can't see the
   // damage dealt and doesn't heal the pokemon)
   it.todo("If it falls below half and recovers back above half from a Shell Bell, Wimp Out will activate even after the Shell Bell recovery", async () => {
     game.override

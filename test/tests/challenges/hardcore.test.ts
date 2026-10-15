@@ -79,14 +79,14 @@ describe("Challenges - Hardcore", () => {
 
     await game.phaseInterceptor.to("SelectRewardPhase");
     expect(game.scene.ui.mode).toBe(UiMode.REWARD_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler)!;
+    const rewardSelectHandler = game.scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler)!;
     expect(
-      modifierSelectHandler.options.find(
+      rewardSelectHandler.options.find(
         reward => getRewardCategory(reward.rewardOption.type.id) === RewardCategoryId.REVIVE,
       ),
     ).toBeUndefined();
     expect(
-      modifierSelectHandler.shopOptionsRows.find(row =>
+      rewardSelectHandler.shopOptionsRows.find(row =>
         row.find(item => getRewardCategory(item.rewardOption.type.id) === RewardCategoryId.REVIVE),
       ),
     ).toBeUndefined();
@@ -128,7 +128,7 @@ describe("Challenges - Hardcore", () => {
       UiMode.REWARD_SELECT,
       () => {
         const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
-        // Traverse to and select first modifier
+        // Traverse to and select first reward
         handler.setCursor(0);
         handler.setRowCursor(ShopCursorTarget.REWARDS);
         handler.processInput(Button.ACTION);
@@ -165,7 +165,7 @@ describe("Challenges - Hardcore", () => {
       UiMode.REWARD_SELECT,
       () => {
         const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
-        // Traverse to and select first modifier
+        // Traverse to and select first reward
         handler.setCursor(0);
         handler.setRowCursor(ShopCursorTarget.REWARDS);
         handler.processInput(Button.ACTION);

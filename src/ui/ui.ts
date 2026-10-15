@@ -632,7 +632,7 @@ export class UI extends Phaser.GameObjects.Container {
    * getGamepadType - returns the type of gamepad being used
    * inputMethod could be "keyboard" or "touch" or "gamepad"
    * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
-   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "dualshock"
+   * if inputMethod is "gamepad", then the gamepad type is returned (e.g. "xbox", "dualshock", or "procon")
    * @returns gamepad type
    */
   public getGamepadType(): string {

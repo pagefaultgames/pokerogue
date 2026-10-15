@@ -206,7 +206,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
       expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("reward:addPokeball.name", {
-          modifierCount: 5,
+          rewardCount: 5,
           pokeballName: i18next.t("pokeball:greatBall"),
         }),
       );

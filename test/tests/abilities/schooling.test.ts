@@ -42,7 +42,7 @@ describe("Abilities - SCHOOLING", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.doSelectModifier();
+    game.doSelectReward();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(wishiwashi.formIndex).toBe(soloForm);

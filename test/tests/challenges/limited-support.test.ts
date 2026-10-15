@@ -38,10 +38,10 @@ describe("Challenges - Limited Support", () => {
     await game.phaseInterceptor.to("SelectRewardPhase");
 
     expect(game.scene.ui.mode).toBe(UiMode.REWARD_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
+    const rewardSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
+    expect(rewardSelectHandler.shopOptionsRows).toHaveLength(0);
   });
 
   it('should disable the automatic party heal in "No Heal"', async () => {
@@ -80,9 +80,9 @@ describe("Challenges - Limited Support", () => {
     await game.phaseInterceptor.to("SelectRewardPhase");
 
     expect(game.scene.ui.mode).toBe(UiMode.REWARD_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
+    const rewardSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
+    expect(rewardSelectHandler.shopOptionsRows).toHaveLength(0);
   });
 });

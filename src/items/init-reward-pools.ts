@@ -491,11 +491,11 @@ function initMasterRewardPool() {
 }
 
 /**
- * Initialize {@linkcode rewardPool} with the initial set of modifier types.
+ * Initialize {@linkcode rewardPool} with the initial set of reward types.
  * {@linkcode initRewards} MUST be called before this function.
  */
 export function initRewardPools() {
-  // The modifier pools the player chooses from during modifier selection
+  // The reward pools the player chooses from during reward selection
   initCommonRewardPool();
   initGreatRewardPool();
   initUltraRewardPool();
