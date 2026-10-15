@@ -233,9 +233,8 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyMessageBox = partyMessageBox;
 
-    const partyMessageText = addTextObject(10, 8, i18next.t("partyUiHandler:choosePokemon"), TextStyle.WINDOW, {
-      maxLines: 2,
-    });
+    const partyMessageText = //
+      addTextObject(10, 8, i18next.t("partyUiHandler:choosePokemon"), TextStyle.WINDOW, { maxLines: 2 });
     partyMessageText.setName("text-party-msg");
 
     partyMessageText.setOrigin(0);
@@ -982,7 +981,7 @@ export class PartyUiHandler extends MessageUiHandler {
     if (cursor < 0 || cursor > party.length - 1) {
       return false;
     }
-    if (party[cursor].cannotSwitchOut()) {
+    if (!party[cursor].canSwitch()) {
       return false;
     }
     return true;
