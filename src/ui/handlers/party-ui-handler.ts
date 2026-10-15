@@ -1071,6 +1071,7 @@ export class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     if (this.partyUiMode === PartyUiMode.CHECK && this.partySwitchCursor >= 0) {
       this.clearPartySwitchSelection();
+      ui.playSelect();
       return true;
     }
     if (
