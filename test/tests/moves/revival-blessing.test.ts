@@ -1,12 +1,11 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { BerryModifier } from "#modifiers/modifier";
-import type { ModifierOverride } from "#modifiers/modifier-type";
 import { GameManager } from "#test/framework/game-manager";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -134,19 +133,17 @@ describe("Moves - Revival Blessing", () => {
     expect(game.field.getEnemyPokemon()).toBe(enemyFainting);
   });
 
-  it("should reclaim held items from post-battle loot when reviving a fainted enemy", async () => {
-    const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.LUM, count: 1 }];
+  it("should keep held items when reviving a fainted enemy", async () => {
+    const initBerries: HeldItemConfiguration = [{ entry: HeldItemId.LUM_BERRY }];
     game.override.enemyHeldItems(initBerries).enemyMoveset(MoveId.REVIVAL_BLESSING).startingWave(8);
 
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const firstEnemy = game.scene.getEnemyParty()[0];
+    const itemsBefore = firstEnemy.getHeldItems();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
-
-    const postBattleLootBefore = game.scene.currentBattle.postBattleLoot;
-    expect(postBattleLootBefore.some(loot => loot.pokemonId === firstEnemy.id)).toBe(true);
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
@@ -155,11 +152,11 @@ describe("Moves - Revival Blessing", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(firstEnemy.isFainted()).toBe(false);
+    const postBattleLoot = game.scene.currentBattle.postBattleLoot;
+    expect(postBattleLoot.some(loot => loot === HeldItemId.LUM_BERRY)).toBe(true);
 
-    const postBattleLootAfter = game.scene.currentBattle.postBattleLoot;
-    expect(postBattleLootAfter.some(loot => loot.pokemonId === firstEnemy.id)).toBe(false);
-
-    const heldItems = firstEnemy.getHeldItems();
-    expect(heldItems.some(m => m instanceof BerryModifier && m.berryType === BerryType.LUM)).toBe(true);
+    const heldItemsAfter = firstEnemy.getHeldItems();
+    expect(heldItemsAfter.some(m => m === HeldItemId.LUM_BERRY)).toBe(true);
+    expect(heldItemsAfter).toEqual(itemsBefore);
   });
 });

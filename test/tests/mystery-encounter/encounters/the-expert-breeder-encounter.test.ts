@@ -167,8 +167,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       const eggsAfter = scene.gameData.eggs;
       const commonEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon1CommonEggs;
@@ -252,8 +252,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       const eggsAfter = scene.gameData.eggs;
       const commonEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon2CommonEggs;
@@ -334,8 +334,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       const eggsAfter = scene.gameData.eggs;
       const commonEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon3CommonEggs;

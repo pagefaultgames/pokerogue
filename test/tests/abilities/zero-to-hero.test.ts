@@ -46,7 +46,7 @@ describe("Abilities - ZERO TO HERO", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.doSelectModifier();
+    game.doSelectReward();
     await game.phaseInterceptor.to("QuietFormChangePhase");
     await game.phaseInterceptor.to("QuietFormChangePhase");
 

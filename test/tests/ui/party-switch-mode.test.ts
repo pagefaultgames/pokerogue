@@ -13,8 +13,8 @@ import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import type { PhaseString } from "#types/phase-types";
 import type { ConfirmUiHandler } from "#ui/confirm-ui-handler";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
+import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -36,7 +36,7 @@ describe("UI - Party switch mode", () => {
   /**
    * Setup for every test. We want the first battle to be against wild pokémon,
    * the party to have four pokémon so we can swap them around,
-   * and we immediately jump to the modifier select phase.
+   * and we immediately jump to the reward select phase.
    */
   async function setupBattle(battleStyle: "single" | "double") {
     game.override
@@ -51,7 +51,7 @@ describe("UI - Party switch mode", () => {
       game.move.use(MoveId.SPLASH);
     }
     await game.doKillOpponents();
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   }
 
   /**
@@ -67,14 +67,14 @@ describe("UI - Party switch mode", () => {
   }
 
   /**
-   * Helper function to skip modifier select and go to the next wave.
+   * Helper function to skip reward select and go to the next wave.
    * Party reordering will happen during this function.
    * @param target - The phase to stop at; default `TurnInitPhase`
    * @param runTarget - Whether to run the target phase; default `true`
    */
-  async function skipModifierSelect(target: PhaseString = "TurnInitPhase", runTarget = true) {
-    await game.scene.ui.setMode(UiMode.MODIFIER_SELECT);
-    const msHandler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+  async function skipRewardSelect(target: PhaseString = "TurnInitPhase", runTarget = true) {
+    await game.scene.ui.setMode(UiMode.REWARD_SELECT);
+    const msHandler = game.scene.ui.getHandler() as RewardSelectUiHandler;
     msHandler.processInput(Button.CANCEL);
     msHandler.processInput(Button.ACTION);
     const confirmHandler = game.scene.ui.getHandler() as ConfirmUiHandler;
@@ -108,7 +108,7 @@ describe("UI - Party switch mode", () => {
     let onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField).not.toContain(thirdPokemon);
 
-    await skipModifierSelect();
+    await skipRewardSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
@@ -136,7 +136,7 @@ describe("UI - Party switch mode", () => {
     expect(onField).not.toContain(thirdPokemon);
     expect(onField).not.toContain(fourthPokemon);
 
-    await skipModifierSelect();
+    await skipRewardSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
@@ -162,7 +162,7 @@ describe("UI - Party switch mode", () => {
 
     game.override.battleStyle("single");
 
-    await skipModifierSelect();
+    await skipRewardSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
@@ -191,7 +191,7 @@ describe("UI - Party switch mode", () => {
 
     game.override.battleStyle("double");
 
-    await skipModifierSelect();
+    await skipRewardSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
@@ -223,7 +223,7 @@ describe("UI - Party switch mode", () => {
 
     game.override.battleType(BattleType.TRAINER).randomTrainer({ trainerType: TrainerType.TWINS });
 
-    await skipModifierSelect();
+    await skipRewardSelect();
 
     onField = game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField());
     expect(onField[0]).toBe(thirdPokemon);
@@ -263,7 +263,7 @@ describe("UI - Party switch mode", () => {
       game.override.battleType(BattleType.TRAINER).randomTrainer({ trainerType });
       game.textInterceptor.clearLogs();
 
-      game.doSelectModifier();
+      game.doSelectReward();
       await game.phaseInterceptor.to("TurnInitPhase");
 
       for (const pokemon of recalledPokemon) {
@@ -284,7 +284,7 @@ describe("UI - Party switch mode", () => {
     swapInParty(partyHandler, 0, 2);
     game.textInterceptor.clearLogs();
 
-    await skipModifierSelect("NextEncounterPhase", false);
+    await skipRewardSelect("NextEncounterPhase", false);
 
     // The new lead should only be sent out by the encounter itself, not before it
     expect(game.scene.currentBattle.isClassicFinalBoss, "Expected classic final boss on wave 200").toBe(true);
@@ -337,7 +337,7 @@ describe("UI - Party switch mode", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
 
     await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
     const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
@@ -348,7 +348,7 @@ describe("UI - Party switch mode", () => {
     swapInParty(partyHandler, 0, 2);
     game.textInterceptor.clearLogs();
 
-    await skipModifierSelect("NewBiomeEncounterPhase", false);
+    await skipRewardSelect("NewBiomeEncounterPhase", false);
 
     // The new lead should only be sent out by the encounter, after the trainer reappears
     expect(game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField())).toHaveLength(0);

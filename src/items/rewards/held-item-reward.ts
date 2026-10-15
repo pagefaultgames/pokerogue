@@ -1,0 +1,91 @@
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { allHeldItems } from "#data/data-lists";
+import type { BerryItemId, HeldItemId } from "#enums/held-item-id";
+import type { PokemonType } from "#enums/pokemon-type";
+import { RewardId } from "#enums/reward-id";
+import type { PermanentStat } from "#enums/stat";
+import type { PlayerPokemon } from "#field/pokemon";
+import { attackTypeToHeldItem } from "#items/attack-type-booster";
+import { permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
+import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import i18next from "i18next";
+
+export class HeldItemReward extends PokemonReward {
+  public itemId: HeldItemId;
+  constructor(id: RewardId, itemId: HeldItemId, group?: string, soundName?: string) {
+    super(
+      id,
+      "",
+      "",
+      (pokemon: PlayerPokemon) => {
+        const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
+        const maxStackCount = allHeldItems[this.itemId].maxStackCount;
+        if (!maxStackCount) {
+          return i18next.t("reward:pokemonHeldItem.extra.inoperable", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
+          return i18next.t("reward:pokemonHeldItem.extra.tooMany", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        return null;
+      },
+      group,
+      soundName,
+    );
+    this.itemId = itemId;
+  }
+
+  get name(): string {
+    return allHeldItems[this.itemId].name;
+  }
+
+  get description(): string {
+    return allHeldItems[this.itemId].description;
+  }
+
+  get iconName(): string {
+    return allHeldItems[this.itemId].iconName;
+  }
+
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    return pokemon.heldItemManager.add(this.itemId);
+  }
+}
+
+export class BerryRewardGenerator extends RewardGenerator {
+  override generateReward(pregenArgs?: BerryItemId): HeldItemReward | null {
+    if (pregenArgs !== undefined) {
+      const item = pregenArgs;
+      return new HeldItemReward(RewardId.BERRY, item);
+    }
+    return new HeldItemReward(RewardId.BERRY, getNewBerryHeldItem());
+  }
+}
+
+export class AttackTypeBoosterRewardGenerator extends RewardGenerator {
+  override generateReward(pregenArgs?: PokemonType) {
+    if (pregenArgs !== undefined) {
+      const item = attackTypeToHeldItem[pregenArgs];
+      return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
+    }
+    return new HeldItemReward(
+      RewardId.ATTACK_TYPE_BOOSTER,
+      getNewAttackTypeBoosterHeldItem(undefined, globalScene.getPlayerParty()),
+    );
+  }
+}
+
+export class BaseStatBoosterRewardGenerator extends RewardGenerator {
+  override generateReward(pregenArgs?: PermanentStat) {
+    if (pregenArgs !== undefined) {
+      const item = permanentStatToHeldItem[pregenArgs];
+      return new HeldItemReward(RewardId.VITAMIN, item);
+    }
+    return new HeldItemReward(RewardId.VITAMIN, getNewVitaminHeldItem());
+  }
+}

@@ -6,8 +6,10 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { EvoCondKey, EvolutionItem, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { allHeldItems } from "#data/data-lists";
 import { getGenderSymbol } from "#data/gender";
+import { EvolutionItem } from "#enums/evolution-item";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -89,7 +91,7 @@ export function getEvoConditionDescription(evo: SpeciesFormEvolution, t: TFuncti
             species: speciesDataRegistry.getSpecies(cond.speciesCaught)?.name,
           });
         case EvoCondKey.HELD_ITEM:
-          return t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
+          return t(`pokemonEvolutions:heldItem.${toCamelCase(allHeldItems[cond.itemKey].name)}`);
         case EvoCondKey.RANDOM_FORM:
           return null;
         default:

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -24,7 +24,7 @@ describe("Abilities - Cud Chew", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.BUG_BITE, MoveId.SPLASH, MoveId.HYPER_VOICE, MoveId.STUFF_CHEEKS])
-      .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
+      .startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }])
       .ability(AbilityId.CUD_CHEW)
       .battleStyle("single")
       .criticalHits(false)
@@ -45,18 +45,18 @@ describe("Abilities - Cud Chew", () => {
 
       // berries tracked in turnData; not moved to battleData yet
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
-      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([HeldItemId.SITRUS_BERRY]);
 
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // berries stored in battleData; not yet cleared from turnData
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
-      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([HeldItemId.SITRUS_BERRY]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([HeldItemId.SITRUS_BERRY]);
 
       await game.toNextTurn();
 
       // turnData cleared on turn start
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([HeldItemId.SITRUS_BERRY]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
     });
 
@@ -74,7 +74,7 @@ describe("Abilities - Cud Chew", () => {
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // doesn't trigger since cud chew hasn't eaten berry yet
-      expect(farigiraf.summonData.berriesEatenLast).toContain(BerryType.SITRUS);
+      expect(farigiraf.summonData.berriesEatenLast).toContain(HeldItemId.SITRUS_BERRY);
       expect(abDisplaySpy).not.toHaveBeenCalledWith(farigiraf);
       await game.toNextTurn();
 
@@ -107,8 +107,8 @@ describe("Abilities - Cud Chew", () => {
       // always eat first berry for stuff cheeks & company
       game.override
         .startingHeldItems([
-          { name: "BERRY", type: BerryType.PETAYA, count: 3 },
-          { name: "BERRY", type: BerryType.LIECHI, count: 3 },
+          { entry: HeldItemId.PETAYA_BERRY, count: 3 },
+          { entry: HeldItemId.LIECHI_BERRY, count: 3 },
         ])
         .enemyMoveset(MoveId.TEATIME);
       await game.classicMode.startBattle(SpeciesId.FARIGIRAF);
@@ -124,10 +124,10 @@ describe("Abilities - Cud Chew", () => {
 
       // Ate 2 petayas from moves + 1 of each at turn end; all 4 get tallied on turn end
       expect(farigiraf.summonData.berriesEatenLast).toEqual([
-        BerryType.PETAYA,
-        BerryType.PETAYA,
-        BerryType.PETAYA,
-        BerryType.LIECHI,
+        HeldItemId.PETAYA_BERRY,
+        HeldItemId.PETAYA_BERRY,
+        HeldItemId.PETAYA_BERRY,
+        HeldItemId.LIECHI_BERRY,
       ]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
 
@@ -135,7 +135,7 @@ describe("Abilities - Cud Chew", () => {
       await game.toNextTurn();
 
       // previous berries eaten and deleted from summon data as remaining eaten berries move to replace them
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.LIECHI, BerryType.LIECHI]);
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([HeldItemId.LIECHI_BERRY, HeldItemId.LIECHI_BERRY]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
       expect(farigiraf.getStatStage(Stat.SPATK)).toBe(6); // 3+0+3
       expect(farigiraf.getStatStage(Stat.ATK)).toBe(4); // 1+2+1
@@ -180,7 +180,7 @@ describe("Abilities - Cud Chew", () => {
       await game.phaseInterceptor.to("BerryPhase");
 
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
-      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([HeldItemId.SITRUS_BERRY]);
 
       await game.toNextTurn();
 
@@ -202,7 +202,7 @@ describe("Abilities - Cud Chew", () => {
       await game.toNextTurn();
 
       // ate 1 sitrus the turn prior, spitball pending
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([HeldItemId.SITRUS_BERRY]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
       expect(apply.mock.lastCall).toBeUndefined();
 
@@ -254,7 +254,7 @@ describe("Abilities - Cud Chew", () => {
     it("works with pluck", async () => {
       game.override
         .enemySpecies(SpeciesId.BLAZIKEN)
-        .enemyHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
+        .enemyHeldItems([{ entry: HeldItemId.PETAYA_BERRY }])
         .startingHeldItems([]);
       await game.classicMode.startBattle(SpeciesId.FARIGIRAF);
 
@@ -297,14 +297,14 @@ describe("Abilities - Cud Chew", () => {
       await game.toNextWave();
 
       // berry went yummy yummy in big fat giraffe tummy
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([HeldItemId.SITRUS_BERRY]);
       expect(farigiraf.hp).toBeGreaterThan(1);
 
       // reload and the berry should still be there
       await game.reload.reloadSession();
 
       const farigirafReloaded = game.field.getPlayerPokemon();
-      expect(farigirafReloaded.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigirafReloaded.summonData.berriesEatenLast).toEqual([HeldItemId.SITRUS_BERRY]);
 
       const wave1Hp = farigirafReloaded.hp;
 

@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
@@ -32,7 +32,7 @@ describe("Check Biome End Phase", () => {
     game.override
       .startingWave(10)
       .weather(WeatherType.SANDSTORM)
-      .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+      .startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();

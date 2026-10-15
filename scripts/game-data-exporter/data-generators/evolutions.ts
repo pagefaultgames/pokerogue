@@ -6,8 +6,10 @@
  */
 
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { EvoCondKey, EvolutionItem } from "#balance/pokemon-evolutions";
+import { EvoCondKey } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
+import { EvolutionItem } from "#enums/evolution-item";
+import { HeldItemNames } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
@@ -92,7 +94,7 @@ export async function generateEvolutionsData(): Promise<void> {
               evoEntry.nature = cond.nature.map(nature => Nature[nature]).join("|");
               break;
             case EvoCondKey.HELD_ITEM:
-              evoEntry.heldItemCond = cond.itemKey;
+              evoEntry.heldItemCond = HeldItemNames[cond.itemKey];
               break;
             case EvoCondKey.EVO_TREASURE_TRACKER:
               evoEntry.evoTreasureTracker = cond.value;

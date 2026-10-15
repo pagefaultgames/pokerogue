@@ -4,6 +4,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -193,13 +194,13 @@ describe("Abilities - Wimp Out", () => {
   });
 
   // TODO: Enable when this behavior is fixed (currently Shell Bell won't activate if Wimp Out activates because
-  // the pokemon is removed from the field before the Shell Bell modifier is applied, so it can't see the
+  // the pokemon is removed from the field before the Shell Bell item is applied, so it can't see the
   // damage dealt and doesn't heal the pokemon)
   it.todo("If it falls below half and recovers back above half from a Shell Bell, Wimp Out will activate even after the Shell Bell recovery", async () => {
     game.override
       .moveset([MoveId.DOUBLE_EDGE])
       .enemyMoveset([MoveId.SPLASH])
-      .startingHeldItems([{ name: "SHELL_BELL", count: 4 }]);
+      .startingHeldItems([{ entry: HeldItemId.SHELL_BELL, count: 4 }]);
     await game.classicMode.startBattle(SpeciesId.WIMPOD, SpeciesId.TYRUNT);
 
     const wimpod = game.field.getPlayerPokemon();
@@ -424,7 +425,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("triggers after last hit of multi hit move (multi lens)", async () => {
-    game.override.enemyMoveset(MoveId.TACKLE).enemyHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+    game.override.enemyMoveset(MoveId.TACKLE).enemyHeldItems([{ entry: HeldItemId.MULTI_LENS, count: 1 }]);
     await game.classicMode.startBattle(SpeciesId.WIMPOD, SpeciesId.TYRUNT);
 
     game.field.getPlayerPokemon().hp *= 0.51;
@@ -540,7 +541,7 @@ describe("Abilities - Wimp Out", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.ENDURE);
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
   });
 });
