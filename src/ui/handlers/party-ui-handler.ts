@@ -1294,7 +1294,7 @@ export class PartyUiHandler extends MessageUiHandler {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  hideText() {
+  private hideText(): void {
     this.partyMessageBox.setVisible(false);
     this.message.setVisible(false);
   }
