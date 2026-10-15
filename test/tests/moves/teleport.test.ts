@@ -33,7 +33,7 @@ describe("Move - Teleport", () => {
       .enemyLevel(100);
   });
 
-  async function getModifierShopHandler(): Promise<RewardSelectUiHandler> {
+  async function getRewardShopHandler(): Promise<RewardSelectUiHandler> {
     await game.phaseInterceptor.to("BattleEndPhase");
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
@@ -118,7 +118,7 @@ describe("Move - Teleport", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.TELEPORT);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(0);
   });
 });

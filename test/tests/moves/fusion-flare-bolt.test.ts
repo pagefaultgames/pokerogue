@@ -156,7 +156,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
 
-    // Get rid of any modifiers that may alter power
+    // Get rid of any items that may alter power
     game.scene.clearEnemyItems();
 
     // Mock stats by replacing entries in copy with desired values for specific stats
@@ -209,7 +209,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
 
-    // Get rid of any modifiers that may alter power
+    // Get rid of any items that may alter power
     game.scene.clearEnemyItems();
 
     // Mock stats by replacing entries in copy with desired values for specific stats

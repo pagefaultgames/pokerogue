@@ -189,7 +189,7 @@ describe("LevelAchv", () => {
 });
 
 describe("HeldItemAchv", () => {
-  it("should create an instance of ModifierAchv", () => {
+  it("should create an instance of HeldItemAchv", () => {
     const heldItemAchv = new HeldItemAchv("", "modifier_icon", 10, () => true);
     expect(heldItemAchv).toBeInstanceOf(HeldItemAchv);
     expect(heldItemAchv instanceof Achv).toBe(true);

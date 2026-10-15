@@ -547,7 +547,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
-    // the modifier selection has been updated, always hide the overlay
+    // the reward selection has been updated, always hide the overlay
     this.moveInfoOverlay.clear();
     if (this.rowCursor) {
       if (this.rowCursor === 1 && options.length === 0) {

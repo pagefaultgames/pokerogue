@@ -33,7 +33,7 @@ describe("Ability - Emergency Exit", () => {
       .enemyAbility(AbilityId.EMERGENCY_EXIT);
   });
 
-  async function getModifierShopHandler(): Promise<RewardSelectUiHandler> {
+  async function getRewardShopHandler(): Promise<RewardSelectUiHandler> {
     await game.phaseInterceptor.to("BattleEndPhase");
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
@@ -55,7 +55,7 @@ describe("Ability - Emergency Exit", () => {
 
     game.move.select(MoveId.FALSE_SWIPE);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(0);
   });
 
@@ -74,7 +74,7 @@ describe("Ability - Emergency Exit", () => {
     game.move.select(MoveId.FALSE_SWIPE, 0, 3);
     game.move.select(MoveId.SPLASH, 1);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(3);
   });
 
@@ -93,7 +93,7 @@ describe("Ability - Emergency Exit", () => {
     game.move.select(MoveId.FALSE_SWIPE, 0, 3);
     game.move.select(MoveId.SPLASH, 1);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(0);
   });
 });

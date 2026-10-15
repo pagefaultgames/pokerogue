@@ -34,7 +34,7 @@ describe("Double Battles", () => {
       .ability(AbilityId.BALL_FETCH);
   });
 
-  async function getModifierShopHandler(): Promise<RewardSelectUiHandler> {
+  async function getRewardShopHandler(): Promise<RewardSelectUiHandler> {
     await game.phaseInterceptor.to("BattleEndPhase");
     await vi.waitUntil(() => !game.scene.phaseManager.getCurrentPhase()?.is("BattleEndPhase"));
 
@@ -65,7 +65,7 @@ describe("Double Battles", () => {
     await game.doKillOpponents();
 
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.doSelectModifier();
+    game.doSelectReward();
 
     const charizard = game.scene.getPlayerParty().findIndex(p => p.species.speciesId === SpeciesId.CHARIZARD);
     game.doRevivePokemon(charizard);
@@ -120,7 +120,7 @@ describe("Double Battles", () => {
     game.move.select(MoveId.ROAR, 0, 3);
     game.move.select(MoveId.SPLASH, 1);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(0);
   });
 
@@ -139,7 +139,7 @@ describe("Double Battles", () => {
     game.move.select(MoveId.ROAR, 0, 3);
     game.move.select(MoveId.SPLASH, 1);
 
-    const handler = await getModifierShopHandler();
+    const handler = await getRewardShopHandler();
     expect(handler.options.length).toBe(3);
   });
 
