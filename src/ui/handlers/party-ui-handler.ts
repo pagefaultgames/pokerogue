@@ -982,7 +982,7 @@ export class PartyUiHandler extends MessageUiHandler {
     if (cursor < 0 || cursor > party.length - 1) {
       return false;
     }
-    if (party[cursor].cannotSwitchOut()) {
+    if (!party[cursor].canSwitch()) {
       return false;
     }
     return true;

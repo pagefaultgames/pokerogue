@@ -52,7 +52,7 @@ export class CheckSwitchPhase extends BattlePhase {
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
-    if (pokemon.cannotSwitchOut()) {
+    if (!pokemon.canSwitch()) {
       this.end();
       return;
     }
