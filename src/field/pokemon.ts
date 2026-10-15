@@ -2611,9 +2611,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Determine whether this Pokemon can be switched out, i.e. it is not trapped,
-   * locked into using a move, or using Commander/being commanded.
-   * @returns `true` if the pokemon is not on the field or is able to switch out
+   * Determine whether this Pokemon can be switched out (e.g. it is not trapped,
+   * locked into using a move, or using Commander/being commanded).
+   * @returns Whether the pokemon is able to switch
+   * @remarks Pokemon that aren't on the field can always switch
    */
   public canSwitch(): boolean {
     // Pokemon that are not on the field are not being switched out
