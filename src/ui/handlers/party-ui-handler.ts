@@ -1796,7 +1796,7 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   private startPartySwitch(startCursor: number): void {
-    if (startCursor < 0 || startCursor > 6) {
+    if (startCursor < 0 || startCursor > 5) {
       return;
     }
     this.partySwitchCursor = startCursor;
