@@ -68,7 +68,7 @@ export class ChangeTeraTypeReward extends PokemonReward {
     pokemon.teraType = this.teraType;
     return true;
   }
-} // todo: denest
+}
 
 export class TeraTypeRewardGenerator extends RewardGenerator {
   override generateReward(pregenArgs?: PokemonType) {

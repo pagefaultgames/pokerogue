@@ -61,7 +61,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    globalScene.trainerItems.lapseItems();
+    globalScene.trainerItems.decreaseDurations();
 
     globalScene.updateItemBar();
     if (!this.isVictory && !globalScene.phaseManager.hasPhaseOfType("SelectRewardPhase")) {
