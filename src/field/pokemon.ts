@@ -2624,7 +2624,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return (
       this.getTag(BattlerTagType.FRENZY) == null
       && !this.isTrapped()
-      && !globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+      && !(this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()).some(p => p.getTag(BattlerTagType.COMMANDED))
     );
   }
 
