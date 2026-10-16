@@ -12,7 +12,7 @@ import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
-import { globalScene, initGlobalScene } from "#app/global-scene";
+import { initGlobalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { InputsController } from "#app/inputs-controller";
@@ -1284,8 +1284,6 @@ export class BattleScene extends SceneBase {
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
-    globalScene.phaseManager.unshiftNew("PartyReorderSwitchPhase");
-
     const lastBattle: Battle | null = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
 
@@ -1556,17 +1554,17 @@ export class BattleScene extends SceneBase {
       this.arena.updatePoolsForTimeOfDay();
     }
 
-    // use the old value of `double` to ensure both combatants get recalled properly when going from double to single battles
+    // Recalls, repositions and sends out the player's Pokemon as needed for the new battle
+    this.phaseManager.unshiftNew("PartyReorderSwitchPhase", resetArenaState);
+
+    // use the old value of `double` to ensure both combatants are handled properly when going from double to single battles
     const playerField = this.getPlayerParty().slice(0, 1 + Number(lastBattle.double));
     if (resetArenaState) {
       this.arena.resetArenaEffects();
 
-      playerField.forEach((pokemon, index) => {
+      for (const pokemon of playerField) {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
-        if (pokemon.isOnField()) {
-          this.phaseManager.pushNew("ReturnPhase", index);
-        }
-      });
+      }
 
       for (const pokemon of this.getPlayerParty()) {
         pokemon.resetBattleAndWaveData();
