@@ -243,8 +243,7 @@ describe("UI - Party switch mode", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
-    game.doSelectModifier();
-    await game.phaseInterceptor.to("CommandPhase", false);
+    await game.toNextWave();
 
     expect(game.scene.currentBattle.double, "Expected a double battle on wave 2").toBe(true);
     expect(game).toBeAtPhase("CommandPhase");
