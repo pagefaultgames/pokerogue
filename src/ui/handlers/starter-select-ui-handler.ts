@@ -1376,25 +1376,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const numberOfStarters = this.filteredStarterIds.length;
     const onScreenLastIndex = Math.min(this.filteredStarterIds.length - 1, ROWS * COLUMNS - 1);
 
-    if (button === Button.ACTION) {
-      this.openPokemonMenu();
-      return true;
-    }
-
-    if (
-      [
-        Button.CYCLE_SHINY,
-        Button.CYCLE_FORM,
-        Button.CYCLE_GENDER,
-        Button.CYCLE_ABILITY,
-        Button.CYCLE_NATURE,
-        Button.CYCLE_TERA,
-      ].includes(button)
-    ) {
-      return this.processCycleButtonsInput(button);
-    }
-
     switch (button) {
+      case Button.ACTION:
+        this.openPokemonMenu();
+        return true;
+      case Button.CYCLE_SHINY:
+      case Button.CYCLE_FORM:
+      case Button.CYCLE_GENDER:
+      case Button.CYCLE_ABILITY:
+      case Button.CYCLE_NATURE:
+      case Button.CYCLE_TERA:
+        return this.processCycleButtonsInput(button);
       case Button.UP:
         if (this.partyIconsCursorIndex === 0) {
           // Up from first Pokemon in the team > go to Random selection
