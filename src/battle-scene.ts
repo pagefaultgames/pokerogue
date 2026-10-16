@@ -1145,6 +1145,11 @@ export class BattleScene extends SceneBase {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
 
+    // Same for trainers, which would otherwise stay on the field into the next run
+    this.currentBattle?.trainer?.destroy();
+    this.lastEnemyTrainer?.destroy();
+    this.lastEnemyTrainer = null;
+
     this.currentBattle = null!; // TODO: this should never be `null`, probably needs multiple scenes
 
     // Reset RNG after end of game or save & quit.
