@@ -10753,7 +10753,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     eggTier: EggTier.EPIC,
     passives: {
-      0: AbilityId.FAIRY_AURA,
+      0: AbilityId.CLOUD_NINE,
       1: AbilityId.FAIRY_AURA,
     },
     levelMoves: [
