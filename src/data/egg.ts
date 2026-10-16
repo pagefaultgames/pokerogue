@@ -549,10 +549,6 @@ export class Egg {
   private getSameSpeciesShinyChance(species: SpeciesId): number {
     const baseRate = 1 / SAME_SPECIES_EGG_SHINY_RATE;
     const targetRate = 1;
-    if (globalScene.gameData.dexData[species].pity?.[0] == null) {
-      // TODO: Maybe move to a migrator, but I don't know the version yet :)
-      globalScene.gameData.dexData[species].pity = [0, globalScene.gameData.dexData[species].pity?.[1] ?? 0];
-    }
     globalScene.gameData.dexData[species].pity[0] += 1;
     const count = globalScene.gameData.dexData[species].pity[0];
 
@@ -625,10 +621,6 @@ export class Egg {
     if (missingVariants.length === 0 || !hasVariants) {
       // No pity if all variants have been unlocked
       return null;
-    }
-    if (globalScene.gameData.dexData[species].pity?.[1] == null) {
-      // TODO: Maybe move to a migrator, but I don't know the version yet :)
-      globalScene.gameData.dexData[species].pity = [globalScene.gameData.dexData[species].pity?.[0] ?? 0, 0];
     }
     globalScene.gameData.dexData[species].pity[1] += 1;
     const count = globalScene.gameData.dexData[species].pity[1];
