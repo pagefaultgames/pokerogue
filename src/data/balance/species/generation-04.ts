@@ -8332,6 +8332,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     evolutions: [],
     passives: AbilityId.LEVITATE,
     levelMoves: [
+      [RELEARN_MOVE, MoveId.FLASH_CANNON],
       [RELEARN_MOVE, MoveId.GRAVITY],
       [RELEARN_MOVE, MoveId.MAGNET_RISE],
       [RELEARN_MOVE, MoveId.WIDE_GUARD],
