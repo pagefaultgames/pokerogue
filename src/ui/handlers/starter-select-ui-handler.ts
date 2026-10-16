@@ -1931,6 +1931,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
               persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
               starterData.passiveAttr = persistentStarterData.passiveAttr;
+              // isDupe indicates that the starter is in the party; removeIndex tells us where
+              if (isDupe) {
+                this.partyStarters[removeIndex].passive = true;
+              }
               if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                 persistentStarterData.candyCount -= passiveCost;
                 starterData.candyCount = persistentStarterData.candyCount;
