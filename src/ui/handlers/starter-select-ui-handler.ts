@@ -1155,7 +1155,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /** Processes inputs when pressing one of the cycle buttons. */
   private processCycleButtonsInput(button: Button): boolean {
     let cycled = false;
-    console.log(this.lastStarterId);
     const props = this.getStarterDexAttrPropsFromPreferences(this.lastStarterId);
     this.starterPreferences[this.lastStarterId] ??= {};
     const starterPreferences = this.starterPreferences[this.lastStarterId]!;
