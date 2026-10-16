@@ -2009,11 +2009,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option.
-            const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
-              speciesDataRegistry.getStarterCost(this.starterId),
-              hatchCount,
-            );
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.starterId));
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
               handler: () => {
