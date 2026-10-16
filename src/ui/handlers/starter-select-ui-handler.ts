@@ -1376,6 +1376,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const numberOfStarters = this.filteredStarterIds.length;
     const onScreenLastIndex = Math.min(this.filteredStarterIds.length - 1, ROWS * COLUMNS - 1);
 
+    if (button === Button.ACTION) {
+      this.openPokemonMenu();
+      return true;
+    }
+
     if (
       [
         Button.CYCLE_SHINY,
