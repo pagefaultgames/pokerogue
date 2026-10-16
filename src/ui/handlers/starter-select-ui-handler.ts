@@ -1155,6 +1155,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /** Processes inputs when pressing one of the cycle buttons. */
   private processCycleButtonsInput(button: Button): boolean {
     let cycled = false;
+    console.log(this.lastStarterId);
     const props = this.getStarterDexAttrPropsFromPreferences(this.lastStarterId);
     this.starterPreferences[this.lastStarterId] ??= {};
     const starterPreferences = this.starterPreferences[this.lastStarterId]!;
@@ -1375,6 +1376,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const numberOfStarters = this.filteredStarterIds.length;
     const onScreenLastIndex = Math.min(this.filteredStarterIds.length - 1, ROWS * COLUMNS - 1);
+
+    if (
+      [
+        Button.CYCLE_SHINY,
+        Button.CYCLE_FORM,
+        Button.CYCLE_GENDER,
+        Button.CYCLE_ABILITY,
+        Button.CYCLE_NATURE,
+        Button.CYCLE_TERA,
+      ].includes(button)
+    ) {
+      return this.processCycleButtonsInput(button);
+    }
 
     switch (button) {
       case Button.UP:
@@ -2735,6 +2749,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     // Set the cursors, using preferences if possible, default options otherwise
     this.starterSummary.setStarter(starterId, this.starterPreferences[starterId] ?? {});
+
+    this.lastStarterId = starterId;
 
     if (dexEntry?.caughtAttr) {
       this.setStarterDetails(starterId, false);
