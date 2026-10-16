@@ -53,4 +53,9 @@ export class PositionalTagManager {
     }
     this.tags = leftoverTags;
   }
+
+  /** Remove all pending {@linkcode PositionalTag}s from the field without triggering them. */
+  public removeAllTags(): void {
+    this.tags = [];
+  }
 }
