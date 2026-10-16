@@ -2623,6 +2623,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     return (
       this.getTag(BattlerTagType.FRENZY) == null
+      // A queued move (e.g. the second turn of Dig or a recharge turn) must be used before switching
+      && this.getMoveQueue().length === 0
       && !this.isTrapped()
       && !(this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()).some(p =>
         p.getTag(BattlerTagType.COMMANDED),

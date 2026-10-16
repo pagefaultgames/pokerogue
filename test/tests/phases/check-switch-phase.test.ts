@@ -87,6 +87,30 @@ describe("Phases - CheckSwitchPhase", () => {
     expect(feebas).not.toHaveBattlerTag(BattlerTagType.UNDERGROUND);
   });
 
+  it("should not ask to switch at the start of the next wave while the Pokemon is mid-way through a two-turn move", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+    game.field.getEnemyPokemon().hp = 1;
+
+    game.move.select(MoveId.DIG);
+    game.settings.battleStyle(BattleStyle.SWITCH);
+    game.doSelectModifier();
+    game.onNextPrompt(
+      "CheckSwitchPhase",
+      UiMode.CONFIRM,
+      () => {
+        switchPromptShown = true;
+        game.setMode(UiMode.MESSAGE);
+        game.endPhase();
+      },
+      () => game.isCurrentPhase("CommandPhase", "TurnInitPhase"),
+    );
+    await game.phaseInterceptor.to("TurnInitPhase");
+    await game.phaseInterceptor.to("CommandPhase");
+
+    expect(switchPromptShown).toBe(false);
+    expect(game.field.getPlayerPokemon()).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
+  });
+
   it("should not ask to switch after reloading while the Pokemon must recharge", async () => {
     await reloadAfterFinalMove(MoveId.HYPER_BEAM);
 
