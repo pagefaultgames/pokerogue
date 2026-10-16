@@ -42,7 +42,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
+import { BattlerTagType, type ChooseItemBattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
@@ -73,7 +73,7 @@ import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { BerryHeldItemAttr } from "#items/berry";
-import { canSteal, tryStealHeldItem } from "#items/item-utility";
+import { canSteal, getTransferableAmount, tryGiveHeldItem, tryStealHeldItem } from "#items/item-utility";
 import type { MultiHitCountHeldItemAttr } from "#items/multi-hit";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -109,6 +109,7 @@ import { getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
+import type { HeldItemSortFunc } from "#types/held-item-data-types";
 import type { Localizable } from "#types/locales";
 import type {
   ChargingMove,
@@ -143,6 +144,14 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
+import {
+  bestowSortFunc,
+  flingPower,
+  flingSortFunc,
+  naturalGiftPower,
+  naturalGiftSortFunc,
+  naturalGiftType,
+} from "./item-moves-data";
 
 // TODO: Make these (and all condition functions actually)
 // take interfaces instead of plain parameters
@@ -1883,6 +1892,81 @@ export class PreMoveMessageAttr extends MoveAttr {
   }
 }
 
+export abstract class PreMoveChooseItemAttr extends MoveAttr {}
+
+/**
+ * Attribute to prompt the user to choose an item before the move is executed.
+ */
+export class PreMoveChooseAnyItemAttr extends PreMoveChooseItemAttr {
+  public readonly message: string | MoveMessageFunc;
+  private tagType: ChooseItemBattlerTagType;
+  private sortFunc: HeldItemSortFunc;
+
+  constructor(message: string | MoveMessageFunc, tagType: ChooseItemBattlerTagType, sortFunc: HeldItemSortFunc) {
+    super();
+    this.message = message;
+    this.tagType = tagType;
+    this.sortFunc = sortFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    const message = typeof this.message === "function" ? this.message(user, target, move) : this.message;
+
+    const items = user.heldItemManager.getTransferableHeldItems();
+
+    items.sort((a, b) => this.sortFunc(a, b));
+
+    if (message) {
+      globalScene.phaseManager.queueMessage(message, 500);
+
+      const chooseItemPhase = globalScene.phaseManager.create(
+        "ItemSelectPhase",
+        items,
+        (itemId: HeldItemId) => {
+          user.addTag(this.tagType, 0, move.id);
+          user.getTag(this.tagType)?.chooseItem(itemId);
+        },
+        () => {
+          const fieldIndex = user.getFieldIndex();
+          globalScene.currentBattle.turnCommands[fieldIndex] = null;
+          globalScene.phaseManager.unshiftNew("CommandPhase", fieldIndex);
+        },
+      );
+      globalScene.phaseManager.unshiftPhase(chooseItemPhase);
+
+      return true;
+    }
+    return false;
+  }
+}
+
+export class PreMoveChooseBerryAttr extends PreMoveChooseItemAttr {
+  apply(user: Pokemon, _target: Pokemon, move: Move): boolean {
+    const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]) as BerryItemId[];
+
+    items.sort((a, b) => naturalGiftSortFunc(a, b));
+
+    globalScene.phaseManager.queueMessage("What berry to choose for Natural Gift?", 500);
+
+    const chooseItemPhase = globalScene.phaseManager.create(
+      "ItemSelectPhase",
+      items,
+      (itemId: HeldItemId) => {
+        user.addTag(BattlerTagType.NATURAL_GIFT, 0, move.id);
+        user.getTag(BattlerTagType.NATURAL_GIFT)?.chooseItem(itemId as BerryItemId);
+      },
+      () => {
+        const fieldIndex = user.getFieldIndex();
+        globalScene.currentBattle.turnCommands[fieldIndex] = null;
+        globalScene.phaseManager.unshiftNew("CommandPhase", fieldIndex);
+      },
+    );
+    globalScene.phaseManager.unshiftPhase(chooseItemPhase);
+
+    return true;
+  }
+}
+
 /**
  * Attribute for moves that can be conditionally interrupted to be considered to
  * have failed before their "useMove" message is displayed. Currently used by
@@ -2199,6 +2283,58 @@ export class MessageAttr extends MoveEffectAttr {
       return true;
     }
     return false;
+  }
+}
+
+/**
+ * Move attribute to remove the item after fling and display a message.
+ */
+export class PostFlingAttr extends MoveEffectAttr {
+  // Consumes the item even if the enemy is not affected
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
+  }
+
+  override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
+    const item = user.getTag(BattlerTagType.FLING)?.item;
+    if (!item) {
+      // This should never happen at this point
+      return false;
+    }
+
+    // TODO: decide whether to fling a single item or the whole stack
+    user.heldItemManager.addTempStack(item, -1);
+    user.removeTag(BattlerTagType.FLING);
+    globalScene.updateItemBar(user.isPlayer());
+
+    globalScene.phaseManager.queueMessage(`${user.name} threw its ${allHeldItems[item].name}!`, 500);
+    return true;
+  }
+}
+
+/**
+ * Move attribute to remove the item after Natural Gift and display a message.
+ */
+export class PostNaturalGiftAttr extends MoveEffectAttr {
+  // Consumes the item even if the enemy is not affected
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.POST_TARGET });
+  }
+
+  override apply(user: Pokemon, _target: Pokemon, _move: Move): boolean {
+    const item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+    if (!item) {
+      return false;
+    }
+
+    user.heldItemManager.addTempStack(item, -1);
+    user.removeTag(BattlerTagType.NATURAL_GIFT);
+    globalScene.updateItemBar(user.isPlayer());
+
+    user.battleData.berriesEaten.push(item);
+
+    globalScene.phaseManager.queueMessage(`${user.name} consumed its ${allHeldItems[item].name}!`, 500);
+    return true;
   }
 }
 
@@ -4211,6 +4347,56 @@ export class SecretPowerAttr extends MoveEffectAttr {
   }
 }
 
+export class FlingEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  /**
+   * Used to apply the secondary effect to the target Pokemon
+   * @returns `true` if a secondary effect is successfully applied
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+    let secondaryEffect: MoveEffectAttr | undefined;
+
+    const item = user.getTag(BattlerTagType.FLING)?.item;
+
+    if (!item) {
+      return false;
+    }
+
+    switch (item) {
+      case HeldItemId.POISON_BARB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.POISON, false);
+        break;
+      case HeldItemId.LIGHT_BALL:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
+        break;
+      case HeldItemId.FLAME_ORB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+        break;
+      case HeldItemId.TOXIC_ORB:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.TOXIC, false);
+        break;
+      case HeldItemId.KINGS_ROCK:
+        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+        break;
+      case HeldItemId.WHITE_HERB:
+        secondaryEffect = new ResetNegativeStatsAttr(false);
+        break;
+    }
+
+    if (!secondaryEffect) {
+      return false;
+    }
+
+    return secondaryEffect.apply(user, target, move, []);
+  }
+}
+
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private readonly stats: BattleStat[];
   private readonly stages: number;
@@ -4409,6 +4595,15 @@ export class ResetStatsAttr extends MoveEffectAttr {
       pokemon.setStatStage(s, 0);
     }
     pokemon.updateInfo();
+  }
+}
+
+// Currently only used as an effect of Fling when throwing a White Herb
+export class ResetNegativeStatsAttr extends MoveEffectAttr {
+  override apply(_user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    target.summonData.statStages = target.summonData.statStages.map(stage => Math.max(stage, 0));
+    target.updateInfo();
+    return true;
   }
 }
 
@@ -4704,6 +4899,80 @@ export class WeightPowerAttr extends VariablePowerAttr {
     }
 
     power.value = (w + 1) * 20;
+
+    return true;
+  }
+}
+
+export class FlingPowerAttr extends VariablePowerAttr {
+  /**
+   * Move power depends on the item being thrown
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const power = args[0] as NumberHolder;
+
+    // TODO: Add check that the chosen item tag was added by Fling and not some other move
+    let item = user.getTag(BattlerTagType.FLING)?.item;
+    // If there is no battle tag, choose a new item based on the priority list
+    // This should happen if the move is used by an enemy Pokémon, or if the move is called through other means
+    if (!item) {
+      const items = user.heldItemManager.getTransferableHeldItems();
+      if (items.length === 0) {
+        return false;
+      }
+      items.sort((a, b) => flingSortFunc(a, b));
+      item = items[0];
+      user.addTag(BattlerTagType.FLING, 0, MoveId.FLING);
+      user.getTag(BattlerTagType.FLING)?.chooseItem(item);
+    }
+
+    if (!item) {
+      power.value = -1;
+      return true;
+    }
+
+    power.value = flingPower[item] ?? 10;
+
+    return true;
+  }
+}
+
+export class NaturalGiftPowerAttr extends VariablePowerAttr {
+  /**
+   * Move power depends on the item being thrown
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args [0] {@linkcode NumberHolder} of power
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const power = args[0] as NumberHolder;
+
+    let item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+
+    if (!item) {
+      const items = user.heldItemManager.filterRequestedItems([HeldItemCategoryId.BERRY]) as BerryItemId[];
+      if (items.length === 0) {
+        return false;
+      }
+      items.sort((a, b) => flingSortFunc(a, b));
+      item = items[0];
+      user.addTag(BattlerTagType.NATURAL_GIFT, 0, MoveId.NATURAL_GIFT);
+      user.getTag(BattlerTagType.NATURAL_GIFT)?.chooseItem(item);
+    }
+
+    if (!item) {
+      power.value = -1;
+      return true;
+    }
+
+    power.value = naturalGiftPower[item] ?? 10;
 
     return true;
   }
@@ -6110,6 +6379,26 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     }
 
     return defaultType;
+  }
+}
+
+export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
+    const moveType = args[0];
+
+    const item = user.getTag(BattlerTagType.NATURAL_GIFT)?.item;
+
+    // TODO: ensure that the type is set correctly if the move is called without an item
+    // Cannot pick a random item here, or type will be determined already in the command phase
+
+    moveType.value = item ? naturalGiftType[item] : PokemonType.UNKNOWN;
+
+    return true;
+  }
+
+  override getTypeForMovegen(_user: Pokemon, _move: Move): PokemonType {
+    // TODO: what should we do here?
+    return PokemonType.NORMAL;
   }
 }
 
@@ -7551,6 +7840,92 @@ export class CopyTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Bestow_(move)} */
+export class BestowHeldItemAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const item = user.getTag(BattlerTagType.BESTOW)?.item;
+    if (!item || getTransferableAmount(item, user, target) < 1) {
+      return false;
+    }
+
+    tryGiveHeldItem(item, user, target, 1);
+    user.removeTag(BattlerTagType.BESTOW);
+    globalScene.updateItemBar();
+    globalScene.updateItemBar(false);
+
+    globalScene.phaseManager.queueMessage(`${user.name} bestowed its ${allHeldItems[item].name} to ${target.name}!`);
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => {
+      const givenItem = user.getTag(BattlerTagType.BESTOW)?.item;
+      console.log("Bestow condition", givenItem, !!givenItem, getTransferableAmount(givenItem!, user, target) > 0);
+      return !!givenItem && getTransferableAmount(givenItem, user, target) > 0;
+    };
+  }
+}
+
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick_(move)} */
+export class SwapHeldItemAttr extends MoveEffectAttr {
+  private readonly tagType: BattlerTagType.TRICK | BattlerTagType.SWITCHEROO;
+
+  constructor(tagType: BattlerTagType.TRICK | BattlerTagType.SWITCHEROO) {
+    super(false);
+    this.tagType = tagType;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
+      return false;
+    }
+
+    const stealableHeldItems = target.heldItemManager
+      .getTransferableHeldItems()
+      .filter(id => canSteal(id, target, user));
+    if (stealableHeldItems.length === 0) {
+      return false;
+    }
+    const stolenItem = stealableHeldItems[user.randBattleSeedInt(stealableHeldItems.length)];
+
+    const givenItem = user.getTag(this.tagType)?.item;
+    if (!givenItem || getTransferableAmount(givenItem, user, target) < 1) {
+      return false;
+    }
+
+    tryGiveHeldItem(givenItem, user, target, 1);
+    tryStealHeldItem(stolenItem, target, user, 1);
+    user.removeTag(this.tagType);
+    globalScene.updateItemBar();
+    globalScene.updateItemBar(false);
+
+    globalScene.phaseManager.queueMessage(
+      `${user.name} gave its ${allHeldItems[givenItem].name} to ${target.name} and took ${allHeldItems[stolenItem].name}!`,
+    );
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => {
+      const stealableHeldItems = target.heldItemManager
+        .getTransferableHeldItems()
+        .filter(id => canSteal(id, target, user));
+      const givenItem = user.getTag(this.tagType)?.item;
+      return !!givenItem && getTransferableAmount(givenItem, user, target) > 0 && stealableHeldItems.length > 0;
+    };
+  }
+}
+
 export class CopyBiomeTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -8954,6 +9329,9 @@ const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.i
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
   target.heldItemManager.getTransferableHeldItems().length > 0;
 
+const failIfNoUserHeldItemsCondition: MoveConditionFunc = (user, _target) =>
+  user.heldItemManager.getTransferableHeldItems().length > 0;
+
 // #endregion Condition functions
 
 const attackedByItemMessageFunc: MoveMessageFunc = (_user, target) => {
@@ -9154,6 +9532,7 @@ const MoveAttrs = Object.freeze({
   AddBattlerTagHeaderAttr,
   BeakBlastHeaderAttr,
   PreMoveMessageAttr,
+  PreMoveChooseItemAttr,
   PreUseInterruptAttr,
   RespectAttackTypeImmunityAttr,
   IgnoreOpponentStatStagesAttr,
@@ -10259,8 +10638,16 @@ export function initMoves() {
       .condition(failIfSingleBattle)
       // should stack multiplicatively if used multiple times in 1 turn
       .edgeCase(),
-    new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3) //
-      .unimplemented(),
+    new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
+      .attr(
+        PreMoveChooseAnyItemAttr,
+        (_user, _target, _move) => "What item to swap?",
+        BattlerTagType.TRICK,
+        bestowSortFunc,
+      )
+      .attr(SwapHeldItemAttr, BattlerTagType.TRICK)
+      .condition(failIfNoUserHeldItemsCondition, 2)
+      .partial(),
     new StatusMove(MoveId.ROLE_PLAY, PokemonType.PSYCHIC, -1, 10, -1, 0, 3)
       .ignoresSubstitute()
       // TODO: Enable / remove once balance reaches a consensus on ability overrides during boss fights
@@ -10566,13 +10953,17 @@ export function initMoves() {
     new AttackMove(MoveId.BRINE, PokemonType.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.getHpRatio() < 0.5 ? 2 : 1)),
     new AttackMove(MoveId.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
+      .attr(PreMoveChooseBerryAttr)
+      .attr(NaturalGiftPowerAttr)
+      .attr(NaturalGiftTypeAttr)
+      .attr(PostNaturalGiftAttr)
       .makesContact(false)
       /*
       NOTE: To whoever tries to implement this, reminder to push to battleData.berriesEaten
       and enable the harvest test..
       Do NOT push to berriesEatenLast or else cud chew will puke the berry.
       */
-      .unimplemented(),
+      .partial(),
     new AttackMove(MoveId.FEINT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [BattlerTagType.PROTECTED])
       .attr(
@@ -10615,8 +11006,18 @@ export function initMoves() {
       .reflectable()
       .unimplemented(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
+      .attr(
+        PreMoveChooseAnyItemAttr,
+        (_user, _target, _move) => "What item to Fling?",
+        BattlerTagType.FLING,
+        flingSortFunc,
+      )
+      .attr(FlingPowerAttr)
+      .attr(FlingEffectAttr)
+      .attr(PostFlingAttr)
+      .condition(failIfNoUserHeldItemsCondition, 2)
       .makesContact(false)
-      .unimplemented(),
+      .partial(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
       // TODO: Verify status applied if a statused pokemon obtains Comatose (via Transform) and uses Psycho Shift
@@ -10732,8 +11133,16 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(MoveId.EARTH_POWER, PokemonType.GROUND, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 4) //
       .attr(StatStageChangeAttr, [Stat.SPDEF], -1),
-    new StatusMove(MoveId.SWITCHEROO, PokemonType.DARK, 100, 10, -1, 0, 4) //
-      .unimplemented(),
+    new StatusMove(MoveId.SWITCHEROO, PokemonType.DARK, 100, 10, -1, 0, 4)
+      .attr(
+        PreMoveChooseAnyItemAttr,
+        (_user, _target, _move) => "What item to swap?",
+        BattlerTagType.SWITCHEROO,
+        bestowSortFunc,
+      )
+      .attr(SwapHeldItemAttr, BattlerTagType.SWITCHEROO)
+      .condition(failIfNoUserHeldItemsCondition, 2)
+      .partial(),
     new AttackMove(MoveId.GIGA_IMPACT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 150, 90, 5, -1, 0, 4) //
       .attr(RechargeAttr),
     new SelfStatusMove(MoveId.NASTY_PLOT, PokemonType.DARK, -1, 20, -1, 0, 4) //
@@ -11084,9 +11493,18 @@ export function initMoves() {
       .attr(UserHpDamageAttr)
       .attr(SacrificialAttrOnHit),
     new StatusMove(MoveId.BESTOW, PokemonType.NORMAL, -1, 15, -1, 0, 5)
+      .attr(
+        PreMoveChooseAnyItemAttr,
+        (_user, _target, _move) => "What item to Bestow?",
+        BattlerTagType.BESTOW,
+        // TODO: Have a different sort function for Bestow
+        bestowSortFunc,
+      )
+      .attr(BestowHeldItemAttr)
+      .condition(failIfNoUserHeldItemsCondition, 2)
       .ignoresProtect()
       .ignoresSubstitute()
-      .unimplemented(),
+      .partial(),
     new AttackMove(MoveId.INFERNO, PokemonType.FIRE, MoveCategory.SPECIAL, 100, 50, 5, 100, 0, 5) //
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(MoveId.WATER_PLEDGE, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 5)

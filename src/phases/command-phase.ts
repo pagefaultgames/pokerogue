@@ -6,6 +6,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
 import { getDailyEventSeedBoss } from "#data/daily-run";
 import { isDailyFinalBoss } from "#data/daily-seed-utils";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -20,6 +21,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PokeballType } from "#enums/pokeball";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
+import { applyMoveAttrs } from "#moves/apply-attrs";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { MoveTargetSet } from "#types/move-target-set";
@@ -294,6 +296,8 @@ export class CommandPhase extends FieldPhase {
       "\nPlayer Pokemon:",
       getPokemonNameWithAffix(playerPokemon),
     );
+
+    applyMoveAttrs("PreMoveChooseItemAttr", playerPokemon, playerPokemon, allMoves[moveId]);
 
     if (moveTargets.targets.length > 1 && moveTargets.multiple) {
       globalScene.phaseManager.unshiftNew("SelectTargetPhase", this.fieldIndex);
