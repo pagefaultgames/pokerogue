@@ -230,6 +230,26 @@ describe("UI - Party switch mode", () => {
     expect(onField[1]).toBe(fourthPokemon);
   });
 
+  it("should not trigger a game over when only one pokémon can battle in a double battle", async () => {
+    game.override
+      .startingLevel(200)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .battleStyle("even-doubles")
+      .battleType(BattleType.WILD);
+    await game.classicMode.startBattle(SpeciesId.MANKEY, SpeciesId.ABRA, SpeciesId.VOLCARONA);
+    const [mankey, abra, volcarona] = game.scene.getPlayerParty();
+    abra.hp = 0;
+    volcarona.hp = 0;
+
+    game.move.use(MoveId.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(game.scene.currentBattle.double, "Expected a double battle on wave 2").toBe(true);
+    expect(game).toBeAtPhase("CommandPhase");
+    expect(game.scene.getPlayerParty().filter(pokemon => pokemon.isOnField())).toEqual([mankey]);
+  });
+
   it("should allow swapping two benched pokémon while Fairy Lock is active", async () => {
     await setupBattle("single");
     game.scene.arena.addTag(
