@@ -1887,9 +1887,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterSummary.updateName(
                   name.length > 0 ? name : speciesDataRegistry.getSpecies(this.lastStarterId).name,
                 );
-                const partyIndex = this.partyStarterIds.indexOf(this.lastStarterId);
-                if (partyIndex !== -1) {
-                  this.partyStarters[partyIndex].nickname = starterPreferences.nickname;
+                if (isDupe) {
+                  this.partyStarters[removeIndex].nickname = starterPreferences.nickname;
                 }
                 ui.setMode(UiMode.STARTER_SELECT);
               },
