@@ -591,7 +591,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
           messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconImage);
         } else {
-          messageHandler.showNameText(type.name, type.iconImage);
+          messageHandler.showNameText(getTextWithColors(type.name, TextStyle.MESSAGE, true), type.iconImage);
         }
 
         if (type instanceof TmModifierType) {

@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { TextStyle } from "#enums/text-style";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
-import { addBBCodeTextObject } from "#ui/text";
+import { addBBCodeTextObject, getTextWithColors } from "#ui/text";
 import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import { getFrameMs } from "#utils/common";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -93,7 +93,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   ) {
     this.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     if (name) {
-      this.showNameText(name);
+      this.showNameText(getTextWithColors(name, TextStyle.MESSAGE));
     }
   }
 
