@@ -71,8 +71,8 @@ const allStarterCandyCosts: readonly StarterCandyCosts[] = [
   { passive: 25, costReduction: [12, 35], eggCost: 10 }, // 5 Cost
   { passive: 20, costReduction: [10, 30], eggCost: 8 }, // 6 Cost
   { passive: 15, costReduction: [8, 20], eggCost: 7 }, // 7 Cost
-  { passive: 10, costReduction: [5, 15], eggCost: 5 }, // 8 Cost
-  { passive: 10, costReduction: [5, 15], eggCost: 5 }, // 9 Cost
+  { passive: 10, costReduction: [5, 15], eggCost: 6 }, // 8 Cost
+  { passive: 10, costReduction: [5, 15], eggCost: 6 }, // 9 Cost
   { passive: 10, costReduction: [5, 15], eggCost: 5 }, // 10 Cost
 ];
 
