@@ -275,6 +275,8 @@ export class CommandPhase extends FieldPhase {
     };
 
     const moveTargets: MoveTargetSet =
+      // `move.targets` normally shouldn't be `null`,
+      // that check is to guard against bugs that can cause it to become `null`
       move === undefined || move.targets == null
         ? getMoveTargets(playerPokemon, moveId)
         : {
