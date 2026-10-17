@@ -559,6 +559,7 @@ export class Egg {
       return targetRate;
     }
 
+    // linear increase of shiny chance based on pity count
     const progress =
       (count - BASE_SAME_SPECIES_SHINY_INCREASE_COUNT)
       / (MAX_SAME_SPECIES_SHINY_INCREASE_COUNT - BASE_SAME_SPECIES_SHINY_INCREASE_COUNT);
@@ -600,6 +601,7 @@ export class Egg {
     }
 
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
+      // reset the pity if a variant was obtained by a normal same-species egg
       const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
       const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
       if (
