@@ -150,11 +150,7 @@ export class EnemyBattleInfo extends BattleInfo {
   updateEffectiveness(effectiveness?: string) {
     this.currentEffectiveness = effectiveness;
 
-    if (
-      settings.display.typeHintsMode === TypeHints.OFF
-      || effectiveness === undefined
-      || this.flyoutMenu.flyoutVisible
-    ) {
+    if (settings.display.typeHintsMode === TypeHints.OFF || effectiveness === undefined || this.flyoutMenu.isVisible) {
       this.effectivenessContainer.setVisible(false);
       return;
     }
