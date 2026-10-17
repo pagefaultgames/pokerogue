@@ -1994,11 +1994,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       // Same species egg menu option.
-      const hatchedCount = globalScene.gameData.dexData[this.lastStarterId].hatchedCount;
-      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
-        speciesDataRegistry.getStarterCost(this.lastStarterId),
-        hatchedCount,
-      );
+      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.lastStarterId));
       useCandiesOptions.push({
         label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
         handler: () => {

@@ -50,6 +50,7 @@ export class EggHatchData {
       hatchedCount: currDexEntry.hatchedCount,
       ivs: [...currDexEntry.ivs],
       ribbons: currDexEntry.ribbons,
+      pity: currDexEntry.pity,
     };
     this.starterDataEntryBeforeUpdate = {
       moveset: currStarterDataEntry.moveset,
