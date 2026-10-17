@@ -11,6 +11,67 @@ import type Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
+interface TextWithCanvasContext {
+  context: CanvasRenderingContext2D;
+  updateText: (...args: never[]) => unknown;
+}
+
+function enableTextShadows<T extends TextWithCanvasContext>(text: T): void {
+  const updateText = text.updateText;
+  text.updateText = function (this: T) {
+    const { context } = this;
+    const originalFillText = context.fillText.bind(context);
+    const originalStrokeText = context.strokeText.bind(context);
+
+    const drawWithShadows = (drawText: typeof context.fillText): typeof context.fillText => {
+      return (...args: Parameters<typeof context.fillText>) => {
+        const { shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, globalCompositeOperation } = context;
+        if (shadowOffsetX === 0 && shadowOffsetY === 0 && shadowBlur === 0) {
+          drawText(...args);
+          return;
+        }
+
+        try {
+          for (const [offsetX, offsetY] of [
+            [shadowOffsetX, shadowOffsetY],
+            [shadowOffsetX, 0],
+            [0, shadowOffsetY],
+          ]) {
+            context.globalCompositeOperation = "destination-over";
+            context.shadowOffsetX = offsetX;
+            context.shadowOffsetY = offsetY;
+            drawText(...args);
+          }
+
+          context.globalCompositeOperation = "source-over";
+          context.shadowColor = "rgba(0, 0, 0, 0)";
+          context.shadowOffsetX = 0;
+          context.shadowOffsetY = 0;
+          context.shadowBlur = 0;
+          drawText(...args);
+        } finally {
+          context.shadowColor = shadowColor;
+          context.shadowOffsetX = shadowOffsetX;
+          context.shadowOffsetY = shadowOffsetY;
+          context.shadowBlur = shadowBlur;
+          context.globalCompositeOperation = globalCompositeOperation;
+        }
+      };
+    };
+
+    context.fillText = drawWithShadows(originalFillText);
+    context.strokeText = drawWithShadows(originalStrokeText);
+    try {
+      return updateText.call(this);
+    } finally {
+      context.fillText = originalFillText;
+      context.strokeText = originalStrokeText;
+    }
+  };
+
+  text.updateText();
+}
+
 export function addTextObject(
   x: number,
   y: number,
@@ -40,6 +101,7 @@ export function addTextObject(
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 30);
   }
+  enableTextShadows(ret);
 
   return ret;
 }
@@ -76,6 +138,7 @@ export function addBBCodeTextObject(
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 60);
   }
+  enableTextShadows(ret);
 
   return ret;
 }
@@ -102,7 +165,7 @@ export function getTextStyleOptions(
   extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle | BBCodeText.TextStyle,
 ): TextStyleOptions {
   const lang = i18next.resolvedLanguage;
-  let shadowXpos = 4;
+  let shadowXpos = 5;
   let shadowYpos = 5;
   const scale = 0.1666666667;
   const defaultFontSize = 96;
@@ -197,8 +260,8 @@ export function getTextStyleOptions(
     case TextStyle.WINDOW_ALT:
     case TextStyle.ME_OPTION_DEFAULT:
     case TextStyle.ME_OPTION_SPECIAL:
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     case TextStyle.LUCK_VALUE: {
       const fontSizeLabel = "96px";
@@ -208,14 +271,14 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-      shadowXpos = 3;
-      shadowYpos = 4;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.GROWTH_RATE_TYPE: {
       styleOptions.fontSize = defaultFontSize - 30;
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.WINDOW_BATTLE_COMMAND: {
@@ -239,8 +302,8 @@ export function getTextStyleOptions(
       let fontSizeLabel = "96px";
       switch (lang) {
         case "de":
-          shadowXpos = 3;
-          shadowYpos = 3;
+          shadowXpos = 5;
+          shadowYpos = 5;
           fontSizeLabel = "80px";
           break;
         default:
@@ -251,8 +314,8 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.STATS_VALUE: {
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       let fontSizeValue = "96px";
       switch (lang) {
         case "de":
@@ -278,8 +341,8 @@ export function getTextStyleOptions(
     }
     case TextStyle.SETTINGS_VALUE:
     case TextStyle.SETTINGS_LABEL: {
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -296,8 +359,8 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.SETTINGS_LABEL_NAVBAR: {
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -311,8 +374,8 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.SETTINGS_LOCKED: {
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -328,8 +391,8 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.SETTINGS_SELECTED: {
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -349,8 +412,8 @@ export function getTextStyleOptions(
     case TextStyle.MONEY_WINDOW:
     case TextStyle.TOOLTIP_TITLE:
       styleOptions.fontSize = defaultFontSize - 24;
-      shadowXpos = 3.5;
-      shadowYpos = 3.5;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED: {
@@ -390,8 +453,8 @@ export function getTextStyleOptions(
       }
       styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.MOVE_LABEL: {
@@ -436,8 +499,8 @@ export function getTextStyleOptions(
     }
     case TextStyle.STARTER_VALUE_LIMIT:
       styleOptions.fontSize = defaultFontSize - 36;
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     case TextStyle.TOOLTIP_CONTENT: {
       switch (lang) {
@@ -449,8 +512,8 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 32;
           break;
       }
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.FILTER_BAR_MAIN: {
@@ -463,43 +526,42 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 32;
           break;
       }
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.STATS_HEXAGON:
       styleOptions.fontSize = defaultFontSize - 32;
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     case TextStyle.MOVE_INFO_CONTENT:
       styleOptions.fontSize = defaultFontSize - 40;
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     case TextStyle.SMALLER_WINDOW_ALT:
       styleOptions.fontSize = defaultFontSize - 36;
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     case TextStyle.BGM_BAR:
       styleOptions.fontSize = defaultFontSize - 24;
-      shadowXpos = 3;
-      shadowYpos = 3;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
   }
 
   const shadowColor = getTextColor(style, true);
 
   if (extraStyleOptions) {
-    if (extraStyleOptions.fontSize) {
-      const sizeRatio =
-        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2))
-        / Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
-      shadowXpos *= sizeRatio;
-    }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
   }
+
+  const fontSize = Number.parseFloat(String(styleOptions.fontSize ?? defaultFontSize));
+  const shadowScale = Number.isFinite(fontSize) && fontSize > 0 ? fontSize / defaultFontSize : 1;
+  shadowXpos *= shadowScale;
+  shadowYpos *= shadowScale;
 
   return { scale, styleOptions, shadowColor, shadowXpos, shadowYpos };
 }
