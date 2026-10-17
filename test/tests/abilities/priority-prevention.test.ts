@@ -59,41 +59,53 @@ describe.each([
     expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.MATCHA_GOTCHA, result: MoveResult.FAIL });
   });
 
+  it("should not block self-targeted increased priority moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
+    expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
+  });
+
   describe("Doubles Interactions", () => {
     beforeEach(() => {
       game.override.battleStyle("double");
     });
 
-    it("should block enemy single-target increased priority moves from affecting allies", async () => {
+    it("should prevent enemy increased priority moves from affecting allies", async () => {
       game.override.enemyAbility(AbilityId.BALL_FETCH);
-      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.field.mockAbility(game.field.getEnemyPokemon(), abilityId);
 
-      game.move.use(MoveId.SPLASH);
-      game.move.use(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+      game.move.use(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
       await game.toEndOfTurn();
 
-      expect(game.scene.getPlayerField()[1]).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
-      expect(game.scene.getEnemyField()[1].hasAbility(AbilityId.BALL_FETCH)).toBeTruthy();
+      const player = game.field.getPlayerPokemon();
+      expect(player).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
     });
 
-    it("should not block allied single-target increased priority moves", async () => {
-      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+    it("should not affect the user or their allies", async () => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.use(MoveId.SPLASH);
-      game.move.use(MoveId.SPLASH, 1);
       await game.move.forceEnemyMove(MoveId.QUICK_ATTACK, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.ACCELEROCK, BattlerIndex.PLAYER);
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.SUCCESS });
+      const [enemy1, enemy2] = game.scene.getEnemyField();
+      expect(enemy1).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.SUCCESS });
+      expect(enemy2).toHaveUsedMove({ move: MoveId.ACCELEROCK, result: MoveResult.SUCCESS });
     });
 
-    it("should not block enemy single-target increased priority moves if the enemy targeted the other enemy", async () => {
+    it("should not block opposing increased priority moves that do not target the user's side", async () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
-      game.move.use(MoveId.SPLASH);
-      game.move.use(MoveId.QUICK_ATTACK, 1, BattlerIndex.PLAYER);
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+      game.move.use(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
       await game.toEndOfTurn();
 
       expect(game.scene.getPlayerField()[1]).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.SUCCESS });
