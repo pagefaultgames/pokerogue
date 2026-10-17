@@ -588,6 +588,7 @@ export class Egg {
     }
     if (pityVariant !== null) {
       // Return early if a variant is determined by pity
+      globalScene.gameData.dexData[species!].pity[1] = 0;
       return pityVariant;
     }
     const rand = randSeedInt(10);
@@ -606,7 +607,7 @@ export class Egg {
       const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
       if (
         (variantTier === VariantTier.RARE && missingVariants.includes(DexAttr.VARIANT_2))
-        || (pityVariant === VariantTier.EPIC && missingVariants.includes(DexAttr.VARIANT_3))
+        || (variantTier === VariantTier.EPIC && missingVariants.includes(DexAttr.VARIANT_3))
       ) {
         globalScene.gameData.dexData[species].pity[1] = 0;
       }
@@ -627,7 +628,6 @@ export class Egg {
       // Roll normally
       return null;
     }
-    globalScene.gameData.dexData[species].pity[1] = 0;
     if (missingVariants.includes(VariantTier.RARE) && missingVariants.includes(VariantTier.EPIC)) {
       return randSeedInt(4) ? VariantTier.RARE : VariantTier.EPIC; // 1/4 chance for EPIC, 3/4 chance for RARE
     }
