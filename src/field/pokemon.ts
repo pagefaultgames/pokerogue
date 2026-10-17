@@ -2385,10 +2385,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (globalScene.movesetGenInProgress) {
       return true;
     }
+
     if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
       return false;
     }
-    const arena = globalScene?.arena;
+    const { arena } = globalScene;
     if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
     }
