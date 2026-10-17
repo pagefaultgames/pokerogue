@@ -1377,6 +1377,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenLastIndex = Math.min(this.filteredStarterIds.length - 1, ROWS * COLUMNS - 1);
 
     switch (button) {
+      case Button.ACTION:
+        this.openPokemonMenu();
+        return true;
+      case Button.CYCLE_SHINY:
+      case Button.CYCLE_FORM:
+      case Button.CYCLE_GENDER:
+      case Button.CYCLE_ABILITY:
+      case Button.CYCLE_NATURE:
+      case Button.CYCLE_TERA:
+        return this.processCycleButtonsInput(button);
       case Button.UP:
         if (this.partyIconsCursorIndex === 0) {
           // Up from first Pokemon in the team > go to Random selection
@@ -1913,6 +1923,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
               persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
               starterData.passiveAttr = persistentStarterData.passiveAttr;
+              // isDupe indicates that the starter is in the party; removeIndex tells us where
+              if (isDupe) {
+                this.partyStarters[removeIndex].passive = true;
+              }
               if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                 persistentStarterData.candyCount -= passiveCost;
                 starterData.candyCount = persistentStarterData.candyCount;
@@ -2735,6 +2749,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     // Set the cursors, using preferences if possible, default options otherwise
     this.starterSummary.setStarter(starterId, this.starterPreferences[starterId] ?? {});
+
+    this.lastStarterId = starterId;
 
     if (dexEntry?.caughtAttr) {
       this.setStarterDetails(starterId, false);

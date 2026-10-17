@@ -34,11 +34,11 @@ describe("Moves - Tail whip", () => {
     await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA);
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, 0);
 
     game.move.select(moveToUse);
     await game.toEndOfTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, -1);
   });
 });
