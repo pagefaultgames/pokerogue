@@ -17,6 +17,16 @@ interface TextWithCanvasContext {
 }
 
 function enableTextShadows<T extends TextWithCanvasContext>(text: T, getFontSize: () => string | number): void {
+  const context = text.context;
+  if (
+    typeof text.updateText !== "function"
+    || !context
+    || typeof context.fillText !== "function"
+    || typeof context.strokeText !== "function"
+  ) {
+    return;
+  }
+
   const updateText = text.updateText;
   const baseFontSize = Number.parseFloat(String(getFontSize()));
   text.updateText = function (this: T) {
