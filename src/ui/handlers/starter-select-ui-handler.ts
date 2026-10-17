@@ -1023,7 +1023,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // TODO: how can we get here if start button can't be selected? this appears to be redundant
           this.startCursorObj.setVisible(false);
           this.showRandomCursor();
-          this.setNoStarter();
         }
         success = true;
         break;
@@ -1092,7 +1091,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         const randomStarterId = validStarters[Math.floor(Math.random() * validStarters.length)];
-        this.setStarter(randomStarterId);
+        this.setStarter(randomStarterId, false);
 
         // TODO: this might not be needed if we change .addToParty
         const dexAttr = getDexAttrFromPreferences(randomStarterId, this.starterPreferences[randomStarterId]);
@@ -2718,7 +2717,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    *
    * @param starterId - the id of the new starter
    */
-  private setStarter(starterId: StarterSpeciesId): void {
+  private setStarter(starterId: StarterSpeciesId, iconAnimation = true): void {
     const { dexEntry } = getStarterData(starterId);
 
     // Stop animation for the previously selected starter
@@ -2734,7 +2733,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (dexEntry?.caughtAttr) {
       this.setStarterDetails(starterId, false);
 
-      this.startIconAnimation(this.cursor);
+      if (iconAnimation) {
+        this.startIconAnimation(this.cursor);
+      }
 
       if (this.pokerusSpeciesIds.includes(starterId)) {
         handleTutorial(Tutorial.POKERUS);
@@ -3285,6 +3286,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.cursor = -1;
     this.oldCursor = -1;
     this.instructionsContainer.hideInstructions();
+    this.randomCursorObj.setVisible(false);
 
     this.starterSummary.clear();
 
