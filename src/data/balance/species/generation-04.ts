@@ -6503,6 +6503,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       [40, MoveId.NASTY_PLOT],
       [44, MoveId.SLUDGE_BOMB],
       [48, MoveId.BELCH],
+      [52, MoveId.CLOSE_COMBAT],
     ],
     tms: [
       MoveId.MEGA_PUNCH,
@@ -6639,6 +6640,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       [42, MoveId.NASTY_PLOT],
       [48, MoveId.SLUDGE_BOMB],
       [54, MoveId.BELCH],
+      [60, MoveId.CLOSE_COMBAT],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
@@ -8330,6 +8332,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     evolutions: [],
     passives: AbilityId.LEVITATE,
     levelMoves: [
+      [RELEARN_MOVE, MoveId.FLASH_CANNON],
       [RELEARN_MOVE, MoveId.GRAVITY],
       [RELEARN_MOVE, MoveId.MAGNET_RISE],
       [RELEARN_MOVE, MoveId.WIDE_GUARD],

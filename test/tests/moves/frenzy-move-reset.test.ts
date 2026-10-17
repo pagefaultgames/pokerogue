@@ -123,4 +123,26 @@ describe("Frenzy Move Reset", () => {
 
     expect(player.summonData.moveQueue[0].targets[0]).toBe(BattlerIndex.ENEMY);
   });
+
+  it("should not fail if fainting an enemy on the first turn of the move (singles)", async () => {
+    game.override //
+      .enemyLevel(1)
+      .startingLevel(100)
+      .enemySpecies(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.THRASH);
+    await game.toNextWave();
+
+    expect(player).toHaveUsedMove({ move: MoveId.THRASH, result: MoveResult.SUCCESS });
+
+    const enemy = game.field.getEnemyPokemon();
+
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.THRASH, result: MoveResult.SUCCESS });
+    expect(enemy).toHaveFainted();
+  });
 });
