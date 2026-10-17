@@ -26,6 +26,7 @@ export class PokemonIconAnimHelper {
   private readonly icons: Map<PokemonIcon, IconState> = new Map();
 
   private toggled = false;
+  private jumpOffset = 0;
 
   constructor() {
     // Existing passive/active animation.
@@ -87,6 +88,8 @@ export class PokemonIconAnimHelper {
         return this.toggled ? -2 : 0;
 
       case PokemonIconAnimMode.JUMP:
+        return this.jumpOffset;
+
       case PokemonIconAnimMode.NONE:
         return 0;
     }
