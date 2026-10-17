@@ -131,11 +131,9 @@ export class SummonPhase extends PokemonPhase {
       currentBattle.battleType === BattleType.TRAINER
       || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
-      // TODO: This check is wrong and breaks 2-trainer faint switches.
-      // A proper "solution" would be queueing a combined switch animation for both battlers
-      // (which would also achieve better mainline parity)
       // TODO: In battles against 2 Trainers, the second Trainer may not show itself
       // when both enemy Pokemon faint on the same turn.
+      // This should be replaced by a combined switch out animation for initial doubles send-outs
       if (this.playTrainerAnim && !globalScene.getEnemyParty().some(p => p.isOnField())) {
         await this.playEnemyTrainerThrowSequence();
       }

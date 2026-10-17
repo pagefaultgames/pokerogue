@@ -14,7 +14,8 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
-    // TODO: This should be moved to turn end alongside faint switches
+    // TODO: This should be removed in favor of eagerly forcing a switch after evolution or form change
+    // modifies eligibility
     globalScene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
       if (p.isOnField() && !p.isAllowedInBattle()) {
