@@ -59,7 +59,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     // Lvl 1 0 Atk Magikarp Tackle vs. 0 HP / 0 Def Aggron: 1-1 (0.3 - 0.3%) -- possibly the worst move ever
-    expect(aggron.hp).toBe(aggron.getMaxHp() - 1);
+    expect(aggron).toHaveTakenDamage(1);
   });
 
   it("Attacks deal 1 damage at minimum even with many tokens", async () => {
@@ -77,7 +77,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(aggron.hp).toBe(aggron.getMaxHp() - 1);
+    expect(aggron).toHaveTakenDamage(1);
   });
 
   it("Fixed-damage moves ignore damage multipliers", async () => {
@@ -113,7 +113,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.phaseInterceptor.to("DamageAnimPhase");
 
-    expect(shedinja.hp).toBe(shedinja.getMaxHp() - 1);
+    expect(shedinja).toHaveTakenDamage(1);
   });
 
   it("Charizard with odd HP survives Stealth Rock damage twice", async () => {
@@ -127,7 +127,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
     if (charizard.getMaxHp() % 2 === 1) {
       expect(charizard.hp).toBeGreaterThan(charizard.getMaxHp() / 2);
     } else {
-      expect(charizard.hp).toBe(charizard.getMaxHp() / 2);
+      expect(charizard).toHaveHp(charizard.getMaxHp() / 2);
     }
   });
 });
