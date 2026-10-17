@@ -40,7 +40,7 @@ describe("Moves - Baton Pass", () => {
 
     let playerPokemon = game.field.getPlayerPokemon();
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 2);
 
     // round 2 - baton pass
     game.move.select(MoveId.BATON_PASS);
@@ -50,7 +50,7 @@ describe("Moves - Baton Pass", () => {
     // assert
     playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.species.speciesId).toEqual(SpeciesId.SHUCKLE);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 2);
   });
 
   it("passes stat stage buffs when AI uses it", async () => {
@@ -69,7 +69,7 @@ describe("Moves - Baton Pass", () => {
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
     // check buffs are still there
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPATK)).toEqual(2);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.SPATK, 2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
     expect(game.field.getEnemyPokemon().summonData.moveHistory).toHaveLength(0);
@@ -84,11 +84,12 @@ describe("Moves - Baton Pass", () => {
     game.move.select(MoveId.BATON_PASS);
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(player1.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeTruthy();
+
+    expect(player1).toHaveBattlerTag(BattlerTagType.SALT_CURED);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(player2.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
+    expect(player2).not.toHaveBattlerTag(BattlerTagType.SALT_CURED);
   });
 
   it("doesn't allow binding effects from the user to persist", async () => {
@@ -104,13 +105,13 @@ describe("Moves - Baton Pass", () => {
 
     await game.toNextTurn();
 
-    expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
+    expect(enemy).toHaveBattlerTag(BattlerTagType.FIRE_SPIN);
 
     game.move.select(MoveId.BATON_PASS);
 
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeUndefined();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.FIRE_SPIN);
   });
 });
