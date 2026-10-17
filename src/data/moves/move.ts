@@ -103,6 +103,7 @@ import {
   lastResortCondition,
   MoveCondition,
   MoveRestriction,
+  RequireTypeCondition,
   targetSleptOrComatoseCondition,
   upperHandCondition,
   userSleptOrComatoseCondition,
@@ -527,10 +528,15 @@ export abstract class Move implements Localizable {
 
   /**
    * Check whether the move has the specified condition in any of its condition arrays.
-   * @param condition - The {@linkcode MoveCondition}, must be the same instance.
+   * @param condition - Either a {@linkcode MoveCondition} instance or a function that takes a {@linkcode MoveCondition} and returns a boolean.
    * @returns Whether the move has the specified condition
    */
-  public hasCondition(condition: MoveCondition): boolean {
+  public hasCondition(condition: MoveCondition | ((condition: MoveCondition) => boolean)): boolean {
+    if (typeof condition === "function") {
+      return (
+        this.conditions.some(condition) || this.conditionsSeq2.some(condition) || this.conditionsSeq3.some(condition)
+      );
+    }
     return (
       this.conditions.includes(condition)
       || this.conditionsSeq2.includes(condition)
@@ -11679,7 +11685,7 @@ export function initMoves() {
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(MoveId.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
       // fail if the user is not currently Fire-type (including being Terastallized to Stellar)
-      .condition(user => user.isOfType(PokemonType.FIRE, { returnOriginalTypesIfStellar: true }), 2)
+      .condition(new RequireTypeCondition(PokemonType.FIRE), 2)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, PokemonType.FIRE, user => {
@@ -12551,7 +12557,7 @@ export function initMoves() {
       .healingMove(),
     new AttackMove(MoveId.DOUBLE_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
       // Pass `true` to `isOfType` to fail if the user is terastallized to a type other than ELECTRIC
-      .condition(user => user.isOfType(PokemonType.ELECTRIC, { returnOriginalTypesIfStellar: true }), 2)
+      .condition(new RequireTypeCondition(PokemonType.ELECTRIC), 2)
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, PokemonType.ELECTRIC, user => {
         globalScene.phaseManager.queueMessage(

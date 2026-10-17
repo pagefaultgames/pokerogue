@@ -8,9 +8,11 @@ import {
 import { allMoves } from "#data/data-lists";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
+import { type MoveCondition, RequireTypeCondition } from "#moves/move-condition";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -136,53 +138,137 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
       expect(totalWeight.value).toBe(0);
     });
   });
+});
 
-  describe("getAllowedTmTiers", () => {
-    const { getAllowedTmTiers } = __INTERNAL_TEST_EXPORTS;
+describe("getAllowedTmTiers", () => {
+  const { getAllowedTmTiers } = __INTERNAL_TEST_EXPORTS;
 
-    it.each([
-      { tierName: "common", resIdx: 0, level: COMMON_TIER_TM_LEVEL_REQUIREMENT - 1 },
-      { tierName: "great", resIdx: 1, level: GREAT_TIER_TM_LEVEL_REQUIREMENT - 1 },
-      { tierName: "ultra", resIdx: 2, level: ULTRA_TIER_TM_LEVEL_REQUIREMENT - 1 },
-    ])("should prevent $name TMs when below level $level", ({ level, resIdx }) => {
-      expect(getAllowedTmTiers(level)[resIdx]).toBe(false);
-    });
-
-    it.each([
-      { tierName: "common", resIdx: 0, level: COMMON_TIER_TM_LEVEL_REQUIREMENT },
-      { tierName: "great", resIdx: 1, level: GREAT_TIER_TM_LEVEL_REQUIREMENT },
-      { tierName: "ultra", resIdx: 2, level: ULTRA_TIER_TM_LEVEL_REQUIREMENT },
-    ])("should allow $name TMs when at level $level", ({ level, resIdx }) => {
-      expect(getAllowedTmTiers(level)[resIdx]).toBe(true);
-    });
+  it.each([
+    { tierName: "common", resIdx: 0, level: COMMON_TIER_TM_LEVEL_REQUIREMENT - 1 },
+    { tierName: "great", resIdx: 1, level: GREAT_TIER_TM_LEVEL_REQUIREMENT - 1 },
+    { tierName: "ultra", resIdx: 2, level: ULTRA_TIER_TM_LEVEL_REQUIREMENT - 1 },
+  ])("should prevent $name TMs when below level $level", ({ level, resIdx }) => {
+    expect(getAllowedTmTiers(level)[resIdx]).toBe(false);
   });
 
-  // Unit tests for methods that require a game context
-  describe("", () => {
-    let phaserGame: Phaser.Game;
-    /**A pokemon object that will be cleaned up after every test */
-    let pokemon: EnemyPokemon | null = null;
+  it.each([
+    { tierName: "common", resIdx: 0, level: COMMON_TIER_TM_LEVEL_REQUIREMENT },
+    { tierName: "great", resIdx: 1, level: GREAT_TIER_TM_LEVEL_REQUIREMENT },
+    { tierName: "ultra", resIdx: 2, level: ULTRA_TIER_TM_LEVEL_REQUIREMENT },
+  ])("should allow $name TMs when at level $level", ({ level, resIdx }) => {
+    expect(getAllowedTmTiers(level)[resIdx]).toBe(true);
+  });
+});
 
-    beforeAll(async () => {
-      phaserGame = new Phaser.Game({
-        type: Phaser.HEADLESS,
+// Unit tests for methods that require a game context
+describe("", () => {
+  let phaserGame: Phaser.Game;
+  /**A pokemon object that will be cleaned up after every test */
+  let pokemon: EnemyPokemon | null = null;
+
+  beforeAll(async () => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+    // Game manager can be reused between tests as we are not really modifying the global state
+    // So there is no need to put this in a beforeEach with cleanup in afterEach.
+    // TODO: Remove once we actually start games properly; this is only required to stub out properties on
+    // `phaserGame` that are never actually initialized properly (or at all)
+    new GameManager(phaserGame);
+  });
+
+  afterEach(() => {
+    pokemon?.destroy();
+  });
+
+  function createCharmander(_ = pokemon): asserts _ is EnemyPokemon {
+    pokemon?.destroy();
+    pokemon = createTestablePokemon(SpeciesId.CHARMANDER, { level: 10 });
+    expect(pokemon).toBeInstanceOf(EnemyPokemon);
+  }
+
+  describe("filterMovePool", () => {
+    const { filterMovePool } = __INTERNAL_TEST_EXPORTS;
+    describe("type requirement conditions", () => {
+      beforeAll(() => {
+        // Ensure that burn up works as we expect...
+        expect(
+          allMoves[MoveId.BURN_UP].hasCondition(
+            (condition: MoveCondition) =>
+              condition instanceof RequireTypeCondition && condition.requiredType === PokemonType.FIRE,
+          ),
+          "Violated assumption: Burn up should have a type requirement condition for Fire type",
+        ).toBe(true);
       });
-      // Game manager can be reused between tests as we are not really modifying the global state
-      // So there is no need to put this in a beforeEach with cleanup in afterEach.
-      // TODO: Remove once we actually start games properly; this is only required to stub out properties on
-      // `phaserGame` that are never actually initialized properly (or at all)
-      new GameManager(phaserGame);
+
+      it("does not filter out moves that have a type requirement that the pokemon meets", () => {
+        pokemon = createTestablePokemon(SpeciesId.CHARMANDER, { level: 10 });
+        pokemon.teraType = PokemonType.FIRE;
+        const pool = new Map<MoveId, number>([
+          [MoveId.BURN_UP, 1],
+          [MoveId.TACKLE, 1],
+          [MoveId.SCRATCH, 1],
+          [MoveId.SMOKESCREEN, 1],
+          [MoveId.EMBER, 1],
+        ]);
+        filterMovePool(pool, true, false, pokemon, false);
+        expect(pool).toHaveKey(MoveId.BURN_UP);
+      });
+      it("retains the move for a mon that will gain the required type when it teras", () => {
+        pokemon = createTestablePokemon(SpeciesId.MAGIKARP, { level: 10 });
+        pokemon.teraType = PokemonType.FIRE;
+        const pool = new Map<MoveId, number>([
+          [MoveId.BURN_UP, 1],
+          [MoveId.TACKLE, 1],
+          [MoveId.SCRATCH, 1],
+          [MoveId.SMOKESCREEN, 1],
+          [MoveId.EMBER, 1],
+        ]);
+        filterMovePool(pool, true, false, pokemon, true);
+        expect(pool).toHaveKey(MoveId.BURN_UP);
+      });
+
+      it("will filter out the move for a mon that will lose the required type when it teras", () => {
+        pokemon = createTestablePokemon(SpeciesId.CHARMANDER, { level: 10 });
+        pokemon.teraType = PokemonType.WATER;
+        const pool = new Map<MoveId, number>([
+          [MoveId.BURN_UP, 1],
+          [MoveId.TACKLE, 1],
+          [MoveId.SCRATCH, 1],
+          [MoveId.SMOKESCREEN, 1],
+          [MoveId.EMBER, 1],
+        ]);
+        filterMovePool(pool, true, false, pokemon, true);
+        expect(pool).not.toHaveKey(MoveId.BURN_UP);
+      });
+      it("retains the move for a tera stellar mon whose original types met the requirement", () => {
+        pokemon = createTestablePokemon(SpeciesId.CHARMANDER, { level: 10 });
+        pokemon.teraType = PokemonType.STELLAR;
+        const pool = new Map<MoveId, number>([
+          [MoveId.BURN_UP, 1],
+          [MoveId.TACKLE, 1],
+          [MoveId.SCRATCH, 1],
+          [MoveId.SMOKESCREEN, 1],
+          [MoveId.EMBER, 1],
+        ]);
+        filterMovePool(pool, true, false, pokemon, true);
+        expect(pool).toHaveKey(MoveId.BURN_UP);
+      });
+      it("does not retain the move for a tera stellar mon whose original types did not meet the requirement", () => {
+        pokemon = createTestablePokemon(SpeciesId.MAGIKARP, { level: 10 });
+        pokemon.teraType = PokemonType.STELLAR;
+        const pool = new Map<MoveId, number>([
+          [MoveId.BURN_UP, 1],
+          [MoveId.TACKLE, 1],
+          [MoveId.SCRATCH, 1],
+          [MoveId.SMOKESCREEN, 1],
+          [MoveId.EMBER, 1],
+        ]);
+        filterMovePool(pool, true, false, pokemon, true);
+        expect(pool).not.toHaveKey(MoveId.BURN_UP);
+      });
     });
 
-    afterEach(() => {
-      pokemon?.destroy();
-    });
-
-    function createCharmander(_ = pokemon): asserts _ is EnemyPokemon {
-      pokemon?.destroy();
-      pokemon = createTestablePokemon(SpeciesId.CHARMANDER, { level: 10 });
-      expect(pokemon).toBeInstanceOf(EnemyPokemon);
-    }
     describe("getAndWeightLevelMoves", () => {
       const { getAndWeightLevelMoves } = __INTERNAL_TEST_EXPORTS;
 
