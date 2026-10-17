@@ -580,8 +580,7 @@ export class Egg {
     let pityVariant: VariantTier | null = null;
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
       const missingVariants = this.getMissingVariants(species);
-      const hasVariants = speciesDataRegistry.getSpecies(species).hasVariants();
-      if (missingVariants.length > 0 || hasVariants) {
+      if (missingVariants.length > 0) {
         globalScene.gameData.dexData[species].pity[1] += 1;
         pityVariant = this.getVariantFromPity(species);
       }
@@ -646,8 +645,12 @@ export class Egg {
    * @returns An array of VariantTiers.
    * @remarks
    * Does not account for {@linkcode VariantTier.STANDARD}.
+   * Species without variants will return an empty array.
    */
   private getMissingVariants(species: SpeciesId): VariantTier[] {
+    if (!speciesDataRegistry.getSpecies(species).hasVariants()) {
+      return [];
+    }
     const variantsInEggs = globalScene.gameData.eggs.filter(egg => egg.species === species).map(egg => egg.variantTier);
     const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
     const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
