@@ -275,7 +275,7 @@ export class CommandPhase extends FieldPhase {
     };
 
     const moveTargets: MoveTargetSet =
-      move === undefined
+      move === undefined || move.targets == null
         ? getMoveTargets(playerPokemon, moveId)
         : {
             targets: move.targets,
