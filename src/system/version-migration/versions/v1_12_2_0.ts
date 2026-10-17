@@ -1,4 +1,5 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { DexAttr } from "#enums/dex-attr";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 
 const eggCostReductionThresholds = {
@@ -22,7 +23,9 @@ const addPityTracker: SystemSaveMigrator = {
       if (data.dexData[speciesId].pity == null) {
         data.dexData[speciesId].pity = [0, 0];
       }
-      if (speciesDataRegistry.hasPrevolution(speciesId)) {
+      const caughtAttr = data.dexData[speciesId]?.caughtAttr ?? 0n;
+      const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
+      if (speciesDataRegistry.hasPrevolution(speciesId) || missingVariants.length === 0) {
         // need to do it this way because of Pikachu :(
         continue;
       }
