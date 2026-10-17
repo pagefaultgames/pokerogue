@@ -26225,6 +26225,13 @@
     "dexNum": 196,
     "id": "ESPEON",
     "form": null,
+    "level": 23,
+    "move": "SAFEGUARD"
+  },
+  {
+    "dexNum": 196,
+    "id": "ESPEON",
+    "form": null,
     "level": 25,
     "move": "HEAL_BLOCK"
   },
@@ -58597,6 +58604,13 @@
     "move": "BELCH"
   },
   {
+    "dexNum": 453,
+    "id": "CROAGUNK",
+    "form": null,
+    "level": 52,
+    "move": "CLOSE_COMBAT"
+  },
+  {
     "dexNum": 454,
     "id": "TOXICROAK",
     "form": null,
@@ -58721,6 +58735,13 @@
     "form": null,
     "level": 54,
     "move": "BELCH"
+  },
+  {
+    "dexNum": 454,
+    "id": "TOXICROAK",
+    "form": null,
+    "level": 60,
+    "move": "CLOSE_COMBAT"
   },
   {
     "dexNum": 455,
@@ -61675,6 +61696,13 @@
     "form": null,
     "level": 62,
     "move": "CLOSE_COMBAT"
+  },
+  {
+    "dexNum": 476,
+    "id": "PROBOPASS",
+    "form": null,
+    "level": "RELEARN_MOVE",
+    "move": "FLASH_CANNON"
   },
   {
     "dexNum": 476,
@@ -86625,6 +86653,13 @@
     "move": "MILK_DRINK"
   },
   {
+    "dexNum": 672,
+    "id": "SKIDDO",
+    "form": null,
+    "level": 54,
+    "move": "MEGAHORN"
+  },
+  {
     "dexNum": 673,
     "id": "GOGOAT",
     "form": null,
@@ -86754,8 +86789,15 @@
     "dexNum": 673,
     "id": "GOGOAT",
     "form": null,
-    "level": 66,
+    "level": 60,
     "move": "EARTHQUAKE"
+  },
+  {
+    "dexNum": 673,
+    "id": "GOGOAT",
+    "form": null,
+    "level": 65,
+    "move": "MEGAHORN"
   },
   {
     "dexNum": 674,
@@ -105052,6 +105094,13 @@
     "dexNum": 827,
     "id": "NICKIT",
     "form": null,
+    "level": 10,
+    "move": "ROAR"
+  },
+  {
+    "dexNum": 827,
+    "id": "NICKIT",
+    "form": null,
     "level": 12,
     "move": "SNARL"
   },
@@ -105159,6 +105208,13 @@
     "form": null,
     "level": 8,
     "move": "HONE_CLAWS"
+  },
+  {
+    "dexNum": 828,
+    "id": "THIEVUL",
+    "form": null,
+    "level": 10,
+    "move": "ROAR"
   },
   {
     "dexNum": 828,
