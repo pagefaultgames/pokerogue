@@ -470,8 +470,8 @@ export function getTextStyleOptions(
       }
       styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
-      shadowXpos = 6;
-      shadowYpos = 6;
+      shadowXpos = 12;
+      shadowYpos = 12;
       break;
     }
     case TextStyle.MOVE_LABEL: {
@@ -493,6 +493,8 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontFamily = "pkmnems";
+      shadowXpos = 12;
+      shadowYpos = 12;
       break;
     }
     case TextStyle.EGG_LIST:
