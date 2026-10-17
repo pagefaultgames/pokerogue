@@ -5,7 +5,7 @@ import { DexAttr } from "#enums/dex-attr";
 import type { SystemSaveData } from "#types/save-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 
-const createStarterData: SystemSaveMigrator = {
+const createStarterData = {
   name: "createStarterData",
   version: "1.0.3",
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: it's simpler this way
@@ -80,6 +80,6 @@ const createStarterData: SystemSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [createStarterData] as const;
+export const systemMigrators = [createStarterData] as const satisfies readonly SystemSaveMigrator[];
