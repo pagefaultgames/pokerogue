@@ -1,4 +1,5 @@
 import { BattleScene } from "#app/battle-scene";
+import { initGlobalAssetManager } from "#app/global-asset-manager";
 import { timedEventManager } from "#app/global-event-manager";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as appConstants from "#constants/app-constants";
@@ -33,6 +34,7 @@ export class GameWrapper {
       vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
+    initGlobalAssetManager(phaserGame);
     // TODO: Move these mocks elsewhere
     MoveAnim.prototype.getAnim = () => ({ frames: {} }) as any;
     Pokemon.prototype.enableMask = () => null;
