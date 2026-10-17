@@ -5,6 +5,7 @@ import { SUPPORTED_LANGUAGE_ENTRIES } from "#system/supported-languages";
 import type { ModalConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import { fixedInt } from "#utils/common";
+import { getUsernames } from "#utils/usernames";
 import i18next from "i18next";
 import JSZip from "jszip";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
@@ -77,7 +78,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
   }
 
   private buildInfoContainer() {
-    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", { x: 0, scale: 0.5 });
+    this.usernameInfoImage = this.buildInteractableImage("silver_key", "username-info-icon", { x: 0, scale: 0.75 });
     this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", { x: 20, scale: 0.75 });
     this.changeLanguageImage = this.buildInteractableImage("language_icon", "change-language-icon", {
       x: 40,
@@ -176,33 +177,35 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       return;
     }
 
-    const localStorageKeys = Object.keys(localStorage);
-    const keyToFind = "data_";
-    const dataKeys = localStorageKeys.filter(ls => ls.includes(keyToFind));
+    const usernames = getUsernames();
 
-    if (dataKeys.length === 0) {
+    if (usernames.length === 0) {
       this.onFail(ERR_NO_SAVES, config);
       return;
     }
-    if (dataKeys.length > MAX_SAVES_FOR_USERNAME_PANEL) {
+    if (usernames.length > MAX_SAVES_FOR_USERNAME_PANEL) {
       this.onFail(ERR_TOO_MANY_SAVES, config);
       return;
     }
 
     const options: OptionSelectItem[] = [];
-    const handler = () => {
+
+    const codeHandler = () => {
       ui.revertMode();
       this.infoContainer.disableInteractive();
       this.setInteractive(true);
       return true;
     };
 
-    for (const key of dataKeys) {
-      options.push({ label: key.replace(keyToFind, ""), handler });
+    for (const username of usernames) {
+      options.push({
+        label: username,
+        handler: codeHandler,
+      });
     }
 
     const xOffset = scaledCanvas.width;
-    const yOffset = scaledCanvas.height - this.usernameInfoImage.displayHeight - 16 * dataKeys.length - 22;
+    const yOffset = scaledCanvas.height - this.usernameInfoImage.displayHeight - 16 * usernames.length - 22;
     const optionSelectConfig: OptionSelectModeConfig = { options, inputDelay: 1000, xOffset, yOffset };
     ui.setOverlayMode(UiMode.OPTION_SELECT, optionSelectConfig);
 
