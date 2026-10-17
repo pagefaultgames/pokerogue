@@ -1,4 +1,3 @@
-import { IS_TEST } from "#constants/app-constants";
 import type { IntClosedRange } from "type-fest";
 
 export const POKERUS_STARTER_COUNT = 5;
@@ -101,17 +100,4 @@ export function getValueReductionCandyCounts(starterCost: number): readonly [num
  */
 export function getSameSpeciesEggCandyCounts(starterCost: number): number {
   return allStarterCandyCosts[starterCost - 1].eggCost;
-}
-
-/**
- * ⚠️ This is used for internal testing purposes only and will not be populated outside of the test environment.
- * @internal
- */
-export const __TEST_allStarterCandyCosts: readonly StarterCandyCosts[] = [];
-
-if (IS_TEST) {
-  for (const starterCandyCosts of allStarterCandyCosts) {
-    // @ts-expect-error: done this way to keep it `readonly`
-    __TEST_allStarterCandyCosts.push(starterCandyCosts);
-  }
 }
