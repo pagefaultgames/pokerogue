@@ -564,9 +564,6 @@ export class Egg {
       / (MAX_SAME_SPECIES_SHINY_INCREASE_COUNT - BASE_SAME_SPECIES_SHINY_INCREASE_COUNT);
 
     const currentProbability = baseRate + progress * (targetRate - baseRate);
-    // console.debug(
-    //   `Same species shiny odds for species ${SpeciesId[species]} (lastShiny: ${globalScene.gameData.dexData[species].pity[0]}): ${(currentProbability * 100).toFixed(2)}%`,
-    // );
 
     return currentProbability;
   }
