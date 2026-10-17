@@ -1928,9 +1928,9 @@ export class GameData {
     const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
     // First caught form is set as the default
     let formIndex = 0;
-    for (let attr = 128n, i = 0n; attr <= dexAttr; attr <<= 1n, i++) {
+    for (let attr = 128n, i = 0; attr <= dexAttr; attr <<= 1n, i++) {
       if ((dexAttr & attr) !== 0n) {
-        formIndex = Number(i);
+        formIndex = i;
         break;
       }
     }
