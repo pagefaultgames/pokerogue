@@ -6,14 +6,14 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import { TabMenu } from "#ui/tab-menu";
-import { addTextObject } from "#ui/text";
+import { addBBCodeTextObject, addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getRibbonsToAward } from "#utils/challenge-utils";
 import { getLocalizedSpriteKey } from "#utils/common";
 import { getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 type ChallengeLabel = {
   label: Phaser.GameObjects.Text;
@@ -113,7 +113,7 @@ export class GameChallengesUiHandler extends UiHandler {
       .setOrigin(0)
       .setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
-    this.descriptionText = new BBCodeText(globalScene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
+    this.descriptionText = addBBCodeTextObject(descriptionBg.x + 6, descriptionBg.y + 4, "", TextStyle.MESSAGE, {
       fontFamily: "emerald",
       fontSize: 84,
       color: Color.ORANGE,
@@ -122,9 +122,8 @@ export class GameChallengesUiHandler extends UiHandler {
     })
       .setName("text-desc")
       .setScale(1 / 6)
-      .setShadow(4, 5, ShadowColor.ORANGE)
+      .setShadow((4 * 84) / 96, (5 * 84) / 96, ShadowColor.ORANGE)
       .setOrigin(0);
-    globalScene.add.existing(this.descriptionText);
     this.descriptionTextBaseY = this.descriptionText.y;
     this.descriptionTextMaxHeight = descriptionBg.height - 8;
 

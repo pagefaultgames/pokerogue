@@ -12,7 +12,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
-import { TypeColor, TypeShadow } from "#enums/color";
+import { Color, ShadowColor, TypeColor, TypeShadow } from "#enums/color";
 import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
@@ -957,7 +957,9 @@ export class SingleTypeChallenge extends Challenge {
 
   getDescription(overrideValue: number = this.value): string {
     const type = i18next.t(getPokemonTypeLocaleKey(overrideValue - 1));
-    const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
+    const typeColor =
+      `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`
+      + `[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]`;
     const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {
       type: typeColor,

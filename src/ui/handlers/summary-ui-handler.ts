@@ -1081,9 +1081,9 @@ export class SummaryUiHandler extends UiHandler {
         this.passiveContainer?.nameText?.setVisible(false);
         this.passiveContainer?.descriptionText?.setVisible(false);
 
-        const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
+        const defaultStyleFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
         const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
-        const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
+        const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${defaultStyleFragment}`; // TODO: is this bang correct?
 
         const profileContainerMemoTitle = globalScene.add.image(
           7,
@@ -1097,15 +1097,15 @@ export class SummaryUiHandler extends UiHandler {
           metFragment: i18next.t(
             `pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`,
             {
-              biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
-              level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
-              wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${closeFragment}`,
+              biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${defaultStyleFragment}`, // TODO: is this bang correct?
+              level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${defaultStyleFragment}`, // TODO: is this bang correct?
+              wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${defaultStyleFragment}`,
             },
           ),
           natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature }),
         });
 
-        const memoText = addBBCodeTextObject(7, 113, String(memoString), TextStyle.WINDOW_ALT);
+        const memoText = addBBCodeTextObject(7, 113, `${defaultStyleFragment}${memoString}`, TextStyle.WINDOW_ALT);
         memoText.setOrigin(0, 0);
         profileContainer.add(memoText);
         break;
