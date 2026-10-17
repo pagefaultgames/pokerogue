@@ -96,6 +96,11 @@ export class SummonPhase extends PokemonPhase {
     const legalIndex = party.findIndex((p, i) => i > this.fieldIndex && p.isAllowedInBattle() && !p.isOnField());
 
     if (legalIndex > -1) {
+      // Ensure the illegal Pokemon doesn't linger on the field after being swapped out
+      if (illegalPokemon.isOnField()) {
+        illegalPokemon.leaveField();
+      }
+
       // Swap positions of illegal and legal Pokemon in the party
       [party[this.fieldIndex], party[legalIndex]] = [party[legalIndex], party[this.fieldIndex]];
       console.warn(
@@ -115,8 +120,8 @@ export class SummonPhase extends PokemonPhase {
   private async playSummonSequence(): Promise<void> {
     const { currentBattle, pbTray, pbTrayEnemy, trainer } = globalScene;
     if (this.player) {
+      // TODO: we should await these (possibly with Promise.allSettled)
       pbTray.hide();
-      // TODO: Should we await this?
       this.playSendOutMessage(true);
       if (trainer.visible) {
         await this.playPlayerTrainerThrowSequence();
@@ -126,16 +131,21 @@ export class SummonPhase extends PokemonPhase {
       currentBattle.battleType === BattleType.TRAINER
       || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
+      // TODO: This check is wrong and breaks 2-trainer faint switches.
+      // A proper "solution" would be queueing a combined switch animation for both battlers
+      // (which would also achieve better mainline parity)
       // TODO: In battles against 2 Trainers, the second Trainer may not show itself
       // when both enemy Pokemon faint on the same turn.
       if (this.playTrainerAnim && !globalScene.getEnemyParty().some(p => p.isOnField())) {
         await this.playEnemyTrainerThrowSequence();
       }
+      await this.playSendOutMessage(false);
       await this.playPokeBallSummonFX();
     } else {
       // At the moment, this is only reached during Mystery Encounters where the Player
       // may battle "wild" Pokemon. The enemy's Poke Ball tray is shown during prior phases
       // of the encounter.
+      // TODO: This should be expanded if or when the animations get removed from `EncounterPhase`
       pbTrayEnemy.hide();
       await this.playWildSummonFX();
     }
@@ -189,8 +199,6 @@ export class SummonPhase extends PokemonPhase {
     }
 
     await Promise.allSettled([this.hideEnemyTrainer(), pbTrayEnemy.hide()]);
-
-    await this.playSendOutMessage(false);
   }
 
   /**

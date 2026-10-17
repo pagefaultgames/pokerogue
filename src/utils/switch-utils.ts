@@ -11,7 +11,7 @@ import type { RecallPhase } from "#phases/recall-phase";
 import type { ScanIvsPhase } from "#phases/scan-ivs-phase";
 import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
 import type { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
-import type { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple, TupleOf } from "type-fest";
 
 /**
  * Options type for {@linkcode queueBattlerEntrancePhases}.
@@ -29,15 +29,16 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
   /**
    * Whether to skip queueing {@linkcode SummonPhase}s when summoning wild enemy Pokemon.
    * @privateRemarks
-   * Only used in `EncounterPhase` to circumvent its absolutely abhorrent code structure, as summoning wild Pokemon
-   * plays animations directly without an intermediate phase (while trainers play their animation during a separate phase).
+   * Only used in `EncounterPhase` to circumvent its absolutely abhorrent code structure;
+   * summoning wild Pokemon plays animations directly without an intermediate phase
+   * (while trainers use the normal switch-in animation flow from `SummonPhase`).
    */
   skipEnemySummon: boolean;
 
   /**
    * Whether to summon Pokemon and queue phases as if loading from a save file.
    * @remarks
-   * This notably skips queueing the phases used for single->double and double->single battle transition.
+   * This simply removes the phases used for single->double and double->single battle transition.
    */
   readonly loaded?: boolean;
 }
@@ -58,8 +59,8 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
   const addPlayer2 = double && availablePlayerPartyMembers.length > 1;
   const addEnemy2 = double && availableEnemyPartyMembers.length > 1;
 
-  const playerMons = globalScene.getPlayerParty().slice(0, addPlayer2 ? 2 : 1);
-  const enemyMons = globalScene.getEnemyParty().slice(0, addEnemy2 ? 2 : 1);
+  const playerMons = globalScene.getPlayerParty().slice(0, addPlayer2 ? 2 : 1) as TupleOf<1 | 2, PlayerPokemon>;
+  const enemyMons = globalScene.getEnemyParty().slice(0, addEnemy2 ? 2 : 1) as TupleOf<1 | 2, EnemyPokemon>;
 
   // TODO: Consider reworking the code to use iterators instead of arrays
   const phases = [
@@ -70,8 +71,8 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
     ...getPostSummonPhases([...playerMons, ...enemyMons], params),
   ] as const;
 
-  // The above should ALWAYS unshift at least 1 phase (to summon the player party), so we throw an error in tests to ensure the invariant isn't violated
-  // (and let vite remove it during prod)
+  // The above should ALWAYS unshift at least 1 phase (to summon the player party);
+  // the throw here is done mostly to make the type assertion enforced
   if (IS_TEST && phases.length === 0) {
     throw new Error("No phases were queued for battler entrances!");
   }
@@ -86,7 +87,7 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
  * @returns The {@linkcode SummonPhase}s to be queued for the enemy Pokemon
  */
 function getEnemySummonPhases(
-  enemyMons: readonly EnemyPokemon[],
+  enemyMons: TupleOf<1 | 2, EnemyPokemon>,
   { skipEnemySummon, ...summonPhaseOpts }: BattlerEntranceParams,
 ): SummonPhase[] {
   if (skipEnemySummon) {
@@ -103,27 +104,29 @@ function getEnemySummonPhases(
  * @param playerMons - The first 1-2 pokemon in the player's party; assumed to be slated to enter the field
  */
 function getPlayerSummonPhases(
-  playerMons: readonly PlayerPokemon[],
+  playerMons: TupleOf<1 | 2, PlayerPokemon>,
   availablePlayerPartyMembers: readonly PlayerPokemon[],
-  { skipEnemySummon: _skip, checkSwitch: _cs, ...summonPhaseOpts }: BattlerEntranceParams,
+  { skipEnemySummon, checkSwitch, ...summonPhaseOpts }: BattlerEntranceParams,
 ): (SummonPhase | RecallPhase | ToggleDoublePositionPhase)[] {
   const { phaseManager } = globalScene;
   const { loaded } = summonPhaseOpts;
 
   const phases: (SummonPhase | RecallPhase | ToggleDoublePositionPhase)[] = [];
 
-  // Queue switch-outs to replace any inactive/fainted pokemon currently on field.
+  // Queue switch-outs to replace any off-field pokemon.
+  // This uses `isOnField` instead of `isActive` for challenge eligibility reasons
   // TODO: This use of raw `BattlerIndex`es as arguments (while mirroring prior behavior) is brittle and
   // actively relies on the "invalid summon" kludge in SummonPhase to handle edge cases.
   // We should revisit and revise this at a later date to make it more sensible
-  if (!playerMons[0].isActive(true)) {
+  if (!playerMons[0].isOnField()) {
     phases.push(phaseManager.create("SummonPhase", BattlerIndex.PLAYER, summonPhaseOpts));
   }
 
   if (!loaded) {
     phases.push(...getTransitionPhases(availablePlayerPartyMembers));
   }
-  if (playerMons[1] != null && !playerMons[1].isActive(true)) {
+
+  if (playerMons[1] != null && !playerMons[1].isOnField()) {
     phases.push(phaseManager.create("SummonPhase", BattlerIndex.PLAYER_2, summonPhaseOpts));
   }
 
@@ -141,7 +144,7 @@ function getTransitionPhases(
 
   const transitionPhases: (RecallPhase | ToggleDoublePositionPhase)[] = [];
 
-  // If the second player mon is already on the field, recall it before toggling double battle position
+  // Recall a 2nd player pokemon on singles
   if (!double && availablePlayerPartyMembers[1]?.isOnField()) {
     transitionPhases.push(phaseManager.create("RecallPhase", BattlerIndex.PLAYER_2));
   }
@@ -167,7 +170,13 @@ function getPostSummonPhases(
 ): (CheckSwitchPhase | PostSummonPhase)[] {
   const { phaseManager } = globalScene;
 
-  return battlers.map(p =>
-    phaseManager.create(p.isPlayer() && checkSwitch ? "CheckSwitchPhase" : "PostSummonPhase", p.getBattlerIndex()),
-  );
+  return battlers
+    .filter(p => p.isEnemy() || !isUnavailableOnField(p))
+    .map(p =>
+      phaseManager.create(p.isPlayer() && checkSwitch ? "CheckSwitchPhase" : "PostSummonPhase", p.getBattlerIndex()),
+    );
+}
+
+function isUnavailableOnField(pokemon: PlayerPokemon): boolean {
+  return pokemon.isOnField() && !pokemon.isAllowedInBattle();
 }

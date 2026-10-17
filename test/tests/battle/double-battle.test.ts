@@ -14,6 +14,7 @@ import { UiMode } from "#enums/ui-mode";
 import { PostSummonActivateAbilityPhase } from "#phases/post-summon-activate-ability-phase";
 import { GameManager } from "#test/framework/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -182,6 +183,17 @@ describe("Double Battles", () => {
       ["SummonPhase", expect.anything()],
       ["PostSummonPhase", expect.anything()],
     ]);
+  });
+
+  it("should display messages and send-out animations twice during trainer double battles", async () => {
+    game.override
+      .battleStyle("double")
+      .battleType(BattleType.TRAINER)
+      .randomTrainer({ trainerType: TrainerType.TWINS });
+
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
+
+    expect(game).toHaveShownMessage(i18next.t("battle:trainerSendOut", {}));
   });
 
   it("should offer no rewards when both opponents flee and zero are defeated", async () => {

@@ -595,6 +595,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this pokemon is considered "active", as described above.
    * Returns `false` if there is no active {@linkcode BattleScene} or the pokemon is disallowed.
    */
+  // TODO: This method direly needs a rework and conflates 3 different concepts only vaguely related.
+  // It is also unclear which callsites should use this versus `isOnField` versus `isAllowedInBattle`,
+  // many of which do indeed diverge.
+  //
   public isActive(onField = false): boolean {
     if (!globalScene) {
       return false;

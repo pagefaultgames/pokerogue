@@ -14,6 +14,7 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
+    // TODO: This should be moved to turn end alongside faint switches
     globalScene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
       if (p.isOnField() && !p.isAllowedInBattle()) {
@@ -33,9 +34,8 @@ export class TurnInitPhase extends FieldPhase {
           allowedPokemon.length >= globalScene.currentBattle.getBattlerCount()
           || (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))
         ) {
-          // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          // TODO: Is this sustainable?
-          globalScene.phaseManager.queueBattlerEntrance(p.getBattlerIndex(), { when: "eager" });
+          // If there is at least one pokemon in the back that is legal to switch in, recall the illegal one and force a switch.
+          globalScene.phaseManager.queueBattlerSwitchOut(p.getBattlerIndex(), { when: "eager" });
         } else {
           // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
           // This should only happen in double battles.
