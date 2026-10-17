@@ -16,6 +16,7 @@ import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbA
 import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change";
 import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
+import { addMask } from "#utils/mask-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { Writable } from "type-fest";
@@ -371,8 +372,6 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param onComplete - Callback for after the animation completes
    */
   private async playStatChangeAnimation(pokemon: Pokemon): Promise<void> {
-    pokemon.enableMask();
-
     const scale = pokemon.getSpriteScale() * globalScene.field.scale;
 
     const tileX = (this.player ? 106 : 236) * scale;
@@ -384,32 +383,37 @@ export class StatStageChangePhase extends PokemonPhase {
     const spriteColor = this.isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
     const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
     statSprite
-      .setPipeline(globalScene.fieldSpritePipeline)
+      // TODO: Make a tileSpriteBatchHandler for tile sprites; reusing fieldSpriteSubmitter will not work
+      // .setRenderNodeRole("Submitter", globalScene.fieldSpriteSubmitter)
+      // .setRenderNodeRole("BatchHandler", globalScene.fieldSpriteBatchHandler)
       .setAlpha(0)
       .setScale(6)
-      .setOrigin(0.5, 1)
-      .setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
+      .setOrigin(0.5, 1);
+    addMask(statSprite, pokemon.getSprite(), true);
 
     audioManager.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
-    await playTween({
-      targets: statSprite,
-      duration: 250,
-      alpha: 0.8375,
-    });
+    try {
+      await playTween({
+        targets: statSprite,
+        duration: 250,
+        alpha: 0.8375,
+      });
 
-    await playTween({
-      targets: statSprite,
-      duration: 1500,
-      y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
-    });
+      await playTween({
+        targets: statSprite,
+        duration: 1500,
+        y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
+      });
 
-    await playTween({
-      targets: statSprite,
-      duration: 250,
-      alpha: 0,
-    });
-
-    pokemon.disableMask();
+      await playTween({
+        targets: statSprite,
+        duration: 250,
+        alpha: 0,
+      });
+    } finally {
+      // clean up the sprite
+      statSprite.destroy();
+    }
   }
 }

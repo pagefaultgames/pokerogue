@@ -5,6 +5,7 @@ import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
+import { addMask } from "#utils/mask-utils";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
@@ -74,10 +75,11 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
       DESC_HEIGHT - (BORDER - 2) * 2,
     );
     this.textMaskRect.setScale(6);
-    const textMask = this.createGeometryMask(this.textMaskRect);
 
     this.add(this.desc);
-    this.desc.setMask(textMask);
+    addMask(this.desc, this.textMaskRect);
+    // Destroy this once the desc is destroyed to prevent memory leaks
+    this.desc.once(Phaser.GameObjects.Events.DESTROY, () => this.textMaskRect.destroy());
 
     if (options?.hideBg) {
       this.descBg.setVisible(false);
@@ -106,16 +108,16 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     const lineCount = Math.floor((this.desc.displayHeight * (96 / 72)) / 14.83);
 
     const newHeight = lineCount >= 3 ? 48 : lineCount === 2 ? 36 : 24;
-    this.textMaskRect.clear();
-    this.textMaskRect.fillStyle(0xff0000);
-    this.textMaskRect.fillRect(
-      this.maskPointOriginX + BORDER,
-      this.maskPointOriginY + (BORDER - 2) + (48 - newHeight),
-      this.width - BORDER * 2,
-      newHeight - (BORDER - 2) * 2,
-    );
-    const updatedMask = this.createGeometryMask(this.textMaskRect);
-    this.desc.setMask(updatedMask);
+    // Updating textMask here automatically re-renders; no need to re-add the mask here.
+    this.textMaskRect
+      .clear()
+      .fillStyle(0xff0000)
+      .fillRect(
+        this.maskPointOriginX + BORDER,
+        this.maskPointOriginY + (BORDER - 2) + (48 - newHeight),
+        this.width - BORDER * 2,
+        newHeight - (BORDER - 2) * 2,
+      );
 
     this.descBg.setSize(this.descBg.width, newHeight);
     this.descBg.setY(48 - newHeight);

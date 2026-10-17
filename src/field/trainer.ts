@@ -106,16 +106,18 @@ export class Trainer extends Phaser.GameObjects.Container {
     }
 
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = globalScene.addFieldSprite(
-        0,
-        0,
-        this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
-      );
-      ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-      });
+      const ret = globalScene
+        .addFieldSprite(
+          0,
+          0,
+          this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
+        )
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
@@ -726,8 +728,8 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
-    tintSprites.map(tintSprite => {
-      tintSprite.setTintFill(color);
+    tintSprites.forEach(tintSprite => {
+      tintSprite.setTint(color).setTintMode(Phaser.TintModes.FILL);
       tintSprite.setVisible(true);
 
       if (duration) {

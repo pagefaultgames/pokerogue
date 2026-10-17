@@ -865,7 +865,7 @@ export abstract class BattleAnim {
       userSprite.setPosition(0, 0);
       userSprite.setScale(1);
       userSprite.setAlpha(1);
-      userSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
+      userSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]);
       userSprite.setAngle(0);
       if (targetSubstitute) {
         targetSprite.setPosition(
@@ -879,7 +879,7 @@ export abstract class BattleAnim {
         targetSprite.setScale(1);
         targetSprite.setAlpha(1);
       }
-      targetSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
+      targetSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]);
       targetSprite.setAngle(0);
 
       // Remove animation event listeners to enable sprites to be freed.
@@ -1027,20 +1027,30 @@ export abstract class BattleAnim {
             if ((isUser ? u : t) === sprites.length) {
               if (isUser || !targetSubstitute) {
                 const sprite = globalScene.addPokemonSprite(
-                  isUser ? user! : target,
+                  isUser ? user : target,
                   0,
                   0,
-                  spriteSource!.texture,
-                  spriteSource!.frame.name,
+                  spriteSource.texture,
+                  spriteSource.frame.name,
                   true,
-                ); // TODO: are those bangs correct?
-                ["spriteColors", "fusionSpriteColors"].map(
-                  k => (sprite.pipelineData[k] = (isUser ? user! : target).getSprite().pipelineData[k]),
-                ); // TODO: are those bangs correct?
-                sprite.setPipelineData("spriteKey", (isUser ? user! : target).getBattleSpriteKey());
-                sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
-                sprite.setPipelineData("variant", (isUser ? user : target).variant);
-                sprite.setPipelineData("ignoreFieldPos", true);
+                );
+                ["spriteColors", "fusionSpriteColors"].forEach(k =>
+                  sprite.setRenderNodeData(
+                    globalScene.spriteSubmitter,
+                    k,
+                    (isUser ? user : target).getSprite().renderNodeData[globalScene.spriteSubmitter.name][k],
+                  ),
+                );
+
+                sprite.setRenderNodeData(
+                  globalScene.spriteSubmitter,
+                  "spriteKey",
+                  (isUser ? user! : target).getBattleSpriteKey(),
+                );
+                sprite
+                  .setRenderNodeData(globalScene.spriteSubmitter, "shiny", (isUser ? user : target).shiny)
+                  .setRenderNodeData(globalScene.spriteSubmitter, "variant", (isUser ? user : target).variant)
+                  .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
                 spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
                 globalScene.field.add(sprite);
                 sprites.push(sprite);
@@ -1073,7 +1083,7 @@ export abstract class BattleAnim {
             pokemonSprite.setData("locked", frame.locked);
 
             pokemonSprite.setAlpha(frame.opacity / 255);
-            pokemonSprite.pipelineData["tone"] = frame.tone;
+            pokemonSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", frame.tone);
             pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
             pokemonSprite.setBlendMode(
               frame.blendType === AnimBlendType.NORMAL

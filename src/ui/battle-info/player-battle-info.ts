@@ -15,7 +15,24 @@ export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
   protected hpNumbersContainer: Phaser.GameObjects.Container;
   protected expBarLabel: Phaser.GameObjects.Image;
+  private _expBarOffset = 0;
 
+  /**
+   * How far the exp bar overlay is hidden from the left, in the same units as `EXP_BAR_WIDTH`.
+   */
+  private get expBarOffset(): number {
+    return this._expBarOffset;
+  }
+
+  /**
+   * How much of the exp bar fill is shown from the left, in the same units as `EXP_BAR_WIDTH`.
+   */
+  private set expBarOffset(value: number) {
+    this._expBarOffset = value;
+    const frameWidth = this.expBar.frame.width;
+    const cropWidth = (value / EXP_BAR_WIDTH) * frameWidth;
+    this.expBar.setCrop(0, 0, cropWidth, this.expBar.frame.height);
+  }
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
   }
@@ -61,26 +78,15 @@ export class PlayerBattleInfo extends BattleInfo {
     const expBar = globalScene.add.image(-98, 18, "overlay_exp").setName("overlay_exp").setOrigin(0);
     this.add(expBar);
 
-    const expMaskRect = globalScene.make
-      .graphics({})
-      .setScale(6)
-      .fillStyle(0xffffff)
-      .beginPath()
-      .fillRect(127, 126, 85, 2);
-
-    const expMask = expMaskRect.createGeometryMask();
-
-    expBar.setMask(expMask);
-
     this.expBarLabel = expBarLabel;
     this.expBar = expBar;
-    this.expMaskRect = expMaskRect;
+    this.expBarOffset = 0; // was the mask setup
   }
 
   override initInfo(pokemon: PlayerPokemon): void {
     super.initInfo(pokemon);
     this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
-    this.expMaskRect.x =
+    this.expBarOffset =
       (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * EXP_BAR_WIDTH;
 
     this.statValuesContainer.setPosition(8, 7);
@@ -146,7 +152,7 @@ export class PlayerBattleInfo extends BattleInfo {
     if (skip) {
       this.setLevelDisplay(pokemon.level);
       const relLevelExp = getLevelRelExp(pokemon.level + 1, pokemon.species.growthRate);
-      this.expMaskRect.x = EXP_BAR_WIDTH * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
+      this.expBarOffset = EXP_BAR_WIDTH * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
       return;
     }
 
@@ -211,9 +217,9 @@ export class PlayerBattleInfo extends BattleInfo {
     }
     return new Promise(resolve => {
       globalScene.tweens.add({
-        targets: this.expMaskRect,
+        targets: this,
         ease: "Sine.easeIn",
-        x: nextWidth,
+        expBarOffset: nextWidth,
         duration,
         onComplete: () => {
           if (!globalScene) {
@@ -226,7 +232,7 @@ export class PlayerBattleInfo extends BattleInfo {
             audioManager.playSound("se/level_up");
             this.setLevelDisplay(level);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
-              this.expMaskRect.x = 0;
+              this.expBarOffset = 0;
               resolve();
             });
             return;

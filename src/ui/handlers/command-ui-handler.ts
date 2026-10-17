@@ -41,12 +41,14 @@ export class CommandUiHandler extends UiHandler {
     this.teraButton.setName("terastallize-button");
     this.teraButton.setScale(1.3);
     this.teraButton.setFrame("fire");
-    this.teraButton.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-      teraColor: getTypeRgb(PokemonType.FIRE),
-      isTerastallized: false,
-    });
+    this.teraButton
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        ignoreTimeTint: true,
+        teraColor: getTypeRgb(PokemonType.FIRE),
+        isTerastallized: false,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
     this.commandsContainer.add(this.teraButton);
 
     for (let c = 0; c < commands.length; c++) {
@@ -201,7 +203,7 @@ export class CommandUiHandler extends UiHandler {
   }
 
   toggleTeraButton() {
-    this.teraButton.setPipeline(globalScene.spritePipeline, {
+    this.teraButton.setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
       tone: [0.0, 0.0, 0.0, 0.0],
       ignoreTimeTint: true,
       teraColor: getTypeRgb(globalScene.getField()[this.fieldIndex].getTeraType()),

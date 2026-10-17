@@ -134,10 +134,12 @@ export class EggHatchPhase extends Phase {
           this.eggHatchBg.displayHeight / 2,
           "pkmn__sub",
         );
-        ret.setPipeline(globalScene.spritePipeline, {
-          tone: [0.0, 0.0, 0.0, 0.0],
-          ignoreTimeTint: true,
-        });
+        ret
+          .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+            tone: [0.0, 0.0, 0.0, 0.0],
+            ignoreTimeTint: true,
+          })
+          .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
         return ret;
       };
 
@@ -358,11 +360,12 @@ export class EggHatchPhase extends Phase {
     const spriteKey = this.pokemon.getSpriteKey(true);
     this.pokemonSprite.play(spriteKey);
 
-    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
-    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
-    this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
-    this.pokemonSprite.setVisible(true);
+    this.pokemonSprite
+      .setRenderNodeData(globalScene.spriteSubmitter, "ignoreTimeTint", true)
+      .setRenderNodeData(globalScene.spriteSubmitter, "shiny", isShiny)
+      .setRenderNodeData(globalScene.spriteSubmitter, "variant", this.pokemon.variant)
+      .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+      .setVisible(true);
 
     globalScene.time.delayedCall(fixedInt(250), () => {
       this.eggsToHatchCount--;

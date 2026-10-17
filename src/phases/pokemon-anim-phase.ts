@@ -71,10 +71,8 @@ export class PokemonAnimPhase extends BattlePhase {
     const [subSprite, subTintSprite] = [getSprite(), getSprite()];
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
 
-    subSprite.setVisible(false);
-    subSprite.setScale(subScale);
-    subTintSprite.setTintFill(0xffffff);
-    subTintSprite.setScale(0.01);
+    subSprite.setVisible(false).setScale(subScale);
+    subTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setScale(0.01);
 
     if (this.pokemon.isPlayer()) {
       globalScene.field.bringToTop(this.pokemon);
@@ -202,9 +200,11 @@ export class PokemonAnimPhase extends BattlePhase {
 
     const subTintSprite = getSprite();
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
-    subTintSprite.setAlpha(0);
-    subTintSprite.setTintFill(0xffffff);
-    subTintSprite.setScale(subScale);
+    subTintSprite //
+      .setAlpha(0)
+      .setTint(0xffffff)
+      .setTintMode(Phaser.TintModes.FILL)
+      .setScale(subScale);
 
     globalScene.tweens.add({
       targets: subTintSprite,
@@ -273,13 +273,18 @@ export class PokemonAnimPhase extends BattlePhase {
         this.pokemon.getSprite()!.frame.name,
         true,
       );
-      ["spriteColors", "fusionSpriteColors"].map(
-        k => (sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]),
+      ["spriteColors", "fusionSpriteColors"].map(k =>
+        sprite.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          k,
+          this.pokemon.getSprite().setRenderNodeData[globalScene.spriteSubmitter.name][k],
+        ),
       );
-      sprite.setPipelineData("spriteKey", this.pokemon.getBattleSpriteKey());
-      sprite.setPipelineData("shiny", this.pokemon.shiny);
-      sprite.setPipelineData("variant", this.pokemon.variant);
-      sprite.setPipelineData("ignoreFieldPos", true);
+      sprite
+        .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", this.pokemon.getBattleSpriteKey())
+        .setRenderNodeData(globalScene.spriteSubmitter, "shiny", this.pokemon.shiny)
+        .setRenderNodeData(globalScene.spriteSubmitter, "variant", this.pokemon.variant)
+        .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
       sprite.setOrigin(0.5, 1);
       this.pokemon.getSprite().on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
       globalScene.field.add(sprite);
@@ -347,16 +352,19 @@ export class PokemonAnimPhase extends BattlePhase {
       this.pokemon.x + this.pokemon.getSprite().x,
       this.pokemon.y + this.pokemon.getSprite().y + this.pokemon.height / 2,
       tatsugiri.getSprite().texture,
-      tatsugiri.getSprite()!.frame.name,
+      tatsugiri.getSprite().frame.name,
       true,
     );
-    ["spriteColors", "fusionSpriteColors"].map(
-      k => (tatsuSprite.pipelineData[k] = tatsugiri.getSprite().pipelineData[k]),
+    ["spriteColors", "fusionSpriteColors"].forEach(
+      k =>
+        (tatsuSprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+          tatsugiri.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k]),
     );
-    tatsuSprite.setPipelineData("spriteKey", tatsugiri.getBattleSpriteKey());
-    tatsuSprite.setPipelineData("shiny", tatsugiri.shiny);
-    tatsuSprite.setPipelineData("variant", tatsugiri.variant);
-    tatsuSprite.setPipelineData("ignoreFieldPos", true);
+    tatsuSprite
+      .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", tatsugiri.getBattleSpriteKey())
+      .setRenderNodeData(globalScene.spriteSubmitter, "shiny", tatsugiri.shiny)
+      .setRenderNodeData(globalScene.spriteSubmitter, "variant", tatsugiri.variant)
+      .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
     this.pokemon.getSprite().on("animationupdate", (_anim, frame) => tatsuSprite.setFrame(frame.textureFrame));
 
     tatsuSprite.setOrigin(0.5, 1);
