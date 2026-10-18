@@ -1522,6 +1522,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [1, MoveId.QUICK_ATTACK],
       [4, MoveId.BEAT_UP],
       [8, MoveId.HONE_CLAWS],
+      [10, MoveId.ROAR],
       [12, MoveId.SNARL],
       [14, MoveId.FAKE_TEARS],
       [16, MoveId.ASSURANCE],
@@ -1608,6 +1609,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [1, MoveId.QUICK_ATTACK],
       [4, MoveId.BEAT_UP],
       [8, MoveId.HONE_CLAWS],
+      [10, MoveId.ROAR],
       [12, MoveId.SNARL],
       [14, MoveId.FAKE_TEARS],
       [16, MoveId.ASSURANCE],
@@ -10753,7 +10755,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     eggTier: EggTier.EPIC,
     passives: {
-      0: AbilityId.FAIRY_AURA,
+      0: AbilityId.CLOUD_NINE,
       1: AbilityId.FAIRY_AURA,
     },
     levelMoves: [

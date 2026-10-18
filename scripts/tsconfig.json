@@ -63,12 +63,7 @@
         "../src/ui/utils/*.ts",
         "../src/ui/*.ts"
       ],
-      "#data/*": [
-        "../src/data/daily-seed/*.ts",
-        "../src/data/pokemon-forms/*.ts",
-        "../src/data/pokemon/*.ts",
-        "../src/data/*.ts"
-      ],
+      "#data/*": ["../src/data/daily-seed/*.ts", "../src/data/*.ts"],
       "#utils/*": ["../src/utils/*.ts"],
 
       // new subpath imports for script folders

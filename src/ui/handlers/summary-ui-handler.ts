@@ -1354,7 +1354,7 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1252 } });
+        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1224 } });
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});

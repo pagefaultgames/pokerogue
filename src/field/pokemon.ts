@@ -53,7 +53,6 @@ import {
   CustomPokemonData,
   PokemonBattleData,
   PokemonSummonData,
-  PokemonTempSummonData,
   PokemonTurnData,
   PokemonWaveData,
 } from "#data/pokemon-data";
@@ -64,7 +63,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
-import { getEffectiveWeatherForMove, getWeatherMultiplierForMove } from "#data/weather";
+import { getEffectiveWeatherForMove, getWeatherMultiplierForMove, isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -289,8 +288,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData = new PokemonBattleData();
   /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData();
-  /** Similar to {@linkcode PokemonSummonData}, but is reset on reload (not saved to file). */
-  public tempSummonData: PokemonTempSummonData = new PokemonTempSummonData();
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData();
   /** Per-turn data like hit count & flinch tracking */
@@ -1987,9 +1984,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       level: this.level,
       startingLevel,
       pokemonSpeciesForm: this.getSpeciesForm(true),
-      pokemonFormIndex: this.formIndex,
+      pokemonFormKey: this.getFormKey(),
       fusionSpeciesForm: this.getFusionSpeciesForm(true),
-      fusionFormIndex: this.fusionFormIndex,
+      fusionFormKey: this.getFusionFormKey() ?? undefined,
     };
     return getLevelMoves(
       context,
@@ -2441,10 +2438,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon has an ability with the given {@linkcode AbAttr}.
    */
   public hasAbilityWithAttr(attrType: AbAttrString, canApply = true, ignoreOverride = false): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType)) {
+    // n.b. Check if the ability has attribute *first*. This prevents recursion issues for some functions,
+    // like `isWeatherSuppressed`, that invoke this method, while the `canApplyAbility` check has some
+    // abilities that in turn call `isWeatherSuppressed` as part of their conditions.
+    if (this.getAbility(ignoreOverride).hasAttr(attrType) && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
+    return this.hasPassive() && this.getPassiveAbility().hasAttr(attrType) && (!canApply || this.canApplyAbility(true));
   }
 
   /**
@@ -2607,6 +2607,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     return (
       trapped.value || !!this.getTag(TrappedTag) || !!globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, side)
+    );
+  }
+
+  /**
+   * Determine whether this Pokemon can be switched out (e.g. it is not trapped,
+   * locked into using a move, or using Commander/being commanded).
+   * @returns Whether the pokemon is able to switch
+   * @remarks Pokemon that aren't on the field can always switch
+   */
+  public canSwitch(): boolean {
+    // Pokemon that are not on the field are not being switched out
+    if (!this.isOnField()) {
+      return true;
+    }
+    return (
+      this.getTag(BattlerTagType.FRENZY) == null
+      && !this.isTrapped()
+      && !(this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()).some(p =>
+        p.getTag(BattlerTagType.COMMANDED),
+      )
     );
   }
 
@@ -2832,7 +2852,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       !ignoreStrongWinds
       && arena.weatherType === WeatherType.STRONG_WINDS
-      && !arena.weather?.isEffectSuppressed()
+      && !isWeatherSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {
@@ -5324,8 +5344,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
-   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * Reset this Pokemon's {@linkcode PokemonSummonData} and update sprites/UI as necessary.
+   * @remarks
+   * {@linkcode BattlerTag}s are stored in `PokemonSummonData`, and will also all be cleared.
    */
   public resetSummonData(): void {
     if (this.summonData.speciesForm) {
@@ -5334,7 +5355,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.loadAssets(false);
     }
     this.summonData = new PokemonSummonData();
-    this.tempSummonData = new PokemonTempSummonData();
     this.updateInfo();
   }
 
@@ -5351,15 +5371,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokémon's {@linkcode PokemonWaveData | waveData}
+   * Reset this Pokémon's {@linkcode PokemonWaveData}.
    *
    * @remarks
    * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
    * @see {@linkcode resetBattleAndWaveData}
    */
-  resetWaveData(): void {
+  public resetWaveData(): void {
     this.waveData = new PokemonWaveData();
-    this.tempSummonData.waveTurnCount = 1;
+    this.summonData.waveTurnCount = 1;
   }
 
   /**
@@ -6728,6 +6748,10 @@ export class EnemyPokemon extends Pokemon {
 
     if (bossConfig.moveset != null) {
       this.tryPopulateMoveset(bossConfig.moveset, true);
+    }
+
+    if (bossConfig.ivs != null) {
+      this.ivs = bossConfig.ivs;
     }
   }
 

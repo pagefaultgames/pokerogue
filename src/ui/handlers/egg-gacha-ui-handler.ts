@@ -326,6 +326,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     this.initTutorialOverlay(this.eggGachaContainer);
     this.eggGachaContainer.add(gachaMessageBoxContainer);
 
+    this.initNameBox(gachaMessageBoxContainer, 8, -7);
     this.initPromptSprite(gachaMessageBoxContainer);
 
     this.setCursor(0);
@@ -674,17 +675,23 @@ export class EggGachaUiHandler extends MessageUiHandler {
       text = this.defaultText;
     }
 
-    if (text?.indexOf("\n") === -1) {
+    this.resizeMessageBox(text);
+
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  private resizeMessageBox(text: string): void {
+    if (text.indexOf("\n") === -1) {
       this.eggGachaMessageBox.setSize(320, 32);
       this.eggGachaMessageBox.setY(0);
       this.message.setY(8);
+      this.nameBoxContainer?.setY(-7);
     } else {
       this.eggGachaMessageBox.setSize(320, 46);
       this.eggGachaMessageBox.setY(-14);
       this.message.setY(-6);
+      this.nameBoxContainer?.setY(-21);
     }
-
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   showError(text: string): void {
