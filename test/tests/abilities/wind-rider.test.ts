@@ -30,14 +30,14 @@ describe("Abilities - Wind Rider", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const shiftry = game.field.getEnemyPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.PETAL_BLIZZARD);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.isFullHp()).toBe(true);
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
+    expect(shiftry).toHaveFullHp();
+    expect(shiftry).toHaveStatStage(Stat.ATK, 1);
   });
 
   it("ATK stat stage is raised by 1 when Tailwind is present on its side", async () => {
@@ -46,13 +46,13 @@ describe("Abilities - Wind Rider", () => {
     await game.classicMode.startBattle(SpeciesId.SHIFTRY);
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 1);
   });
 
   it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
@@ -62,15 +62,15 @@ describe("Abilities - Wind Rider", () => {
     const magikarp = game.field.getEnemyPokemon();
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 0);
+    expect(magikarp).toHaveStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 1);
+    expect(magikarp).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
@@ -80,15 +80,15 @@ describe("Abilities - Wind Rider", () => {
     const magikarp = game.field.getEnemyPokemon();
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 0);
+    expect(magikarp).toHaveStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(1);
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 1);
+    expect(magikarp).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("does not interact with Sandstorm", async () => {
@@ -97,14 +97,14 @@ describe("Abilities - Wind Rider", () => {
     await game.classicMode.startBattle(SpeciesId.SHIFTRY);
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(shiftry.isFullHp()).toBe(true);
+    expect(shiftry).toHaveStatStage(Stat.ATK, 0);
+    expect(shiftry).toHaveFullHp();
 
     game.move.select(MoveId.SANDSTORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(shiftry.hp).toBeLessThan(shiftry.getMaxHp());
+    expect(shiftry).toHaveStatStage(Stat.ATK, 0);
+    expect(shiftry).not.toHaveFullHp();
   });
 });
