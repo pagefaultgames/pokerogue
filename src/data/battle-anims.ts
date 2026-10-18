@@ -674,9 +674,9 @@ function getAnimAssetRequests(anims: readonly AnimConfig[]): AssetRequest[] {
     }
   }
   return [
-    ...[...graphics].flatMap(graphic => spritesheetAsset(graphic, "battle_anims", 96)),
-    ...[...backgrounds].flatMap(bg => imageAsset(bg, "battle_anims")),
-    ...[...sounds].flatMap(s => seAsset(s, "battle_anims", s)),
+    ...graphics.values().flatMap(graphic => spritesheetAsset(graphic, "battle_anims", 96)),
+    ...backgrounds.values().flatMap(bg => imageAsset(bg, "battle_anims")),
+    ...sounds.values().flatMap(s => seAsset(s, "battle_anims", s)),
   ];
 }
 
