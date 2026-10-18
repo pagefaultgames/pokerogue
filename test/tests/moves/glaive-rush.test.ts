@@ -72,7 +72,7 @@ describe("Moves - Glaive Rush", () => {
     player.hp = 1000;
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(1000);
+    expect(player).toHaveHp(1000);
   });
 
   it("secondary effects only last until next move", async () => {
@@ -88,7 +88,7 @@ describe("Moves - Glaive Rush", () => {
 
     game.move.select(MoveId.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(1000);
+    expect(player).toHaveHp(1000);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -97,7 +97,7 @@ describe("Moves - Glaive Rush", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(damagedHp);
+    expect(player).toHaveHp(damagedHp);
   });
 
   it("secondary effects are removed upon switching", async () => {
@@ -112,13 +112,13 @@ describe("Moves - Glaive Rush", () => {
 
     game.move.select(MoveId.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
 
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
   });
 
   it("secondary effects don't activate if move fails", async () => {

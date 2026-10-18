@@ -41,14 +41,14 @@ describe("Moves - Metal Burst", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy2.isFullHp()).toBe(false);
+    expect(enemy2).not.toHaveFullHp();
   });
 
   it("should not crash if both opponents faint before the move is used", async () => {
@@ -62,15 +62,15 @@ describe("Moves - Metal Burst", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.move.forceHit();
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFainted()).toBe(true);
-    expect(enemy2.isFainted()).toBe(true);
-    expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(enemy1).toHaveFainted();
+    expect(enemy2).toHaveFainted();
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.METAL_BURST, result: MoveResult.FAIL });
   });
 });

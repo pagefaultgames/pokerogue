@@ -1,7 +1,9 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import type { PokemonSpecies } from "#data/pokemon-species";
+import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
+import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
@@ -9,9 +11,13 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
+import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import { BooleanHolder, type NumberHolder } from "./common";
+import type { StarterSpeciesId } from "#types/starter-species-id";
+import { BooleanHolder, type NumberHolder } from "#utils/common";
+import type { ValueHolder } from "#utils/value-holder";
 
 /**
  * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
@@ -268,79 +274,314 @@ export function applyChallenges(
  */
 export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE, status: BooleanHolder): boolean;
 
+/**
+ * Apply all challenges that modify a Pokemon's moveset after generation
+ * @param challengeType - {@linkcode ChallengeType.MOVESET_MODIFY}
+ * @param pokemon - The Pokemon whose moveset is being modified
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(challengeType: ChallengeType.MOVESET_MODIFY, pokemon: Pokemon): boolean;
+
+/**
+ * Apply all challenges that modify a species' level up moveset
+ * @param challengeType - {@linkcode ChallengeType.LEVEL_UP_MOVESET}
+ * @param species - The species whose level up moveset is being modified
+ * @param levelMoves - The level up moveset being modified
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.LEVEL_UP_MOVESET,
+  species: PokemonSpeciesForm,
+  levelMoves: LevelMoves,
+): boolean;
+
+/**
+ * Apply all challenges that modify a player Pokemon's TM compatibility list
+ * @param challengeType - {@linkcode ChallengeType.PLAYER_TM_COMPATIBILITY}
+ * @param pokemon - The player Pokemon whose TM compatibility is being modified
+ * @param tms - A `Set` containing the list of compatible TMs
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.PLAYER_TM_COMPATIBILITY,
+  pokemon: PlayerPokemon,
+  tms: Set<MoveId>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the TM compatibility list of an enemy species
+ * @param challengeType - {@linkcode ChallengeType.ENEMY_TM_COMPATIBILITY}
+ * @param species - The species whose TM compatibility is being modified
+ * @param tmList - The array of compatible TMs
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.ENEMY_TM_COMPATIBILITY,
+  species: PokemonSpecies,
+  tmList: MoveId[],
+): boolean;
+
+/**
+ * Apply all challenges that modify the egg move pool available to be used in AI moveset generation.
+ * @param challengeType - {@linkcode ChallengeType.AI_MOVE_GENERATION_EGG_POOL}
+ * @param speciesId - The {@linkcode SpeciesId | ID of the species} whose egg move pool should be modified
+ * @param movePool - The map of {@linkcode MoveId}s to weights
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.AI_MOVE_GENERATION_EGG_POOL,
+  speciesId: SpeciesId,
+  movePool: Map<MoveId, number>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the {@link SUPERCEDED_MOVES | superceded move map} used in AI moveset generation
+ * @param challengeType - {@linkcode ChallengeType.AI_MOVE_GENERATION_SUPERCEDED_MAP}
+ * @param supercededMoves - The map of {@linkcode MoveId}s to replacement move IDs
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.AI_MOVE_GENERATION_SUPERCEDED_MAP,
+  supercededMoves: Partial<Record<MoveId, MoveId[]>>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the evolutions of a Pokemon.
+ * @param challengeType - {@linkcode ChallengeType.MODIFY_EVOLUTIONS}
+ * @param pokemon - The {@linkcode Pokemon} to get evolutions for
+ * @param evos - The array of {@linkcode SpeciesFormEvolution}s for that Pokemon
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.MODIFY_EVOLUTIONS,
+  pokemon: Pokemon,
+  evos: SpeciesFormEvolution[],
+): boolean;
+
+/**
+ * Apply all challenges that modify a Pokemon's moveset after generation during a Mystery Encounter
+ * @param challengeType - {@linkcode ChallengeType.ME_MOVESET_MODIFY}
+ * @param pokemon - The Pokemon whose moveset is being modified
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(challengeType: ChallengeType.ME_MOVESET_MODIFY, pokemon: Pokemon): boolean;
+
+/**
+ * Apply all challenges that modify the ability to relearn egg moves via Memory Mushroom for player Pokemon.
+ * @param challengeType - {@linkcode ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY}
+ * @param pokemon - The {@linkcode Pokemon} to set egg move legality for
+ * @param isAvailable - A holder used to set egg move legality
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY,
+  pokemon: Pokemon,
+  isAvailable: ValueHolder<boolean>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the innate abilities of a species
+ * @param challengeType - {@linkcode ChallengeType.SPECIES_ABILITY_MODIFY}
+ * @param species - The ID of the species whose abilities are being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SPECIES_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
+/**
+ * Apply all challenges that modify the passive ability of a species
+ * @param challengeType - {@linkcode ChallengeType.PASSIVE_ABILITY_MODIFY}
+ * @param speciesId - The ID of the species whose passive ability is being modified
+ * @param abilityId - A holder for the ability ID
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.PASSIVE_ABILITY_MODIFY,
+  speciesId: SpeciesId,
+  abilityId: ValueHolder<AbilityId>,
+): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
     if (c.value !== 0) {
       switch (challengeType) {
-        case ChallengeType.STARTER_CHOICE:
-          ret ||= c.applyStarterChoice(args[0], args[1], args[2]);
+        case ChallengeType.STARTER_CHOICE: {
+          const r = c.applyStarterChoice(args[0], args[1], args[2]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_POINTS:
-          ret ||= c.applyStarterPoints(args[0]);
+        }
+        case ChallengeType.STARTER_POINTS: {
+          const r = c.applyStarterPoints(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_COST:
-          ret ||= c.applyStarterCost(args[0], args[1]);
+        }
+        case ChallengeType.STARTER_COST: {
+          const r = c.applyStarterCost(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_SELECT_MODIFY:
-          ret ||= c.applyStarterSelectModify(args[0], args[1], args[2]);
+        }
+        case ChallengeType.STARTER_SELECT_MODIFY: {
+          const r = c.applyStarterSelectModify(args[0], args[1], args[2]);
+          ret ||= r;
           break;
-        case ChallengeType.STARTER_MODIFY:
-          ret ||= c.applyStarterModify(args[0]);
+        }
+        case ChallengeType.STARTER_MODIFY: {
+          const r = c.applyStarterModify(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_IN_BATTLE:
-          ret ||= c.applyPokemonInBattle(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_IN_BATTLE: {
+          const r = c.applyPokemonInBattle(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.FIXED_BATTLES:
-          ret ||= c.applyFixedBattle(args[0], args[1]);
+        }
+        case ChallengeType.FIXED_BATTLES: {
+          const r = c.applyFixedBattle(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.TYPE_EFFECTIVENESS:
-          ret ||= c.applyTypeEffectiveness(args[0]);
+        }
+        case ChallengeType.TYPE_EFFECTIVENESS: {
+          const r = c.applyTypeEffectiveness(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.AI_LEVEL:
-          ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
+        }
+        case ChallengeType.AI_LEVEL: {
+          const r = c.applyLevelChange(args[0], args[1], args[2], args[3]);
+          ret ||= r;
           break;
-        case ChallengeType.AI_MOVE_SLOTS:
-          ret ||= c.applyMoveSlot(args[0], args[1]);
+        }
+        case ChallengeType.AI_MOVE_SLOTS: {
+          const r = c.applyMoveSlot(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PASSIVE_ACCESS:
-          ret ||= c.applyPassiveAccess(args[0], args[1]);
+        }
+        case ChallengeType.PASSIVE_ACCESS: {
+          const r = c.applyPassiveAccess(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.GAME_MODE_MODIFY:
-          ret ||= c.applyGameModeModify();
+        }
+        case ChallengeType.GAME_MODE_MODIFY: {
+          const r = c.applyGameModeModify();
+          ret ||= r;
           break;
-        case ChallengeType.MOVE_ACCESS:
-          ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
+        }
+        case ChallengeType.MOVE_ACCESS: {
+          const r = c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
+          ret ||= r;
           break;
-        case ChallengeType.MOVE_WEIGHT:
-          ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
+        }
+        case ChallengeType.MOVE_WEIGHT: {
+          const r = c.applyMoveWeight(args[0], args[1], args[2], args[3]);
+          ret ||= r;
           break;
-        case ChallengeType.FLIP_STAT:
-          ret ||= c.applyFlipStat(args[0], args[1]);
+        }
+        case ChallengeType.FLIP_STAT: {
+          const r = c.applyFlipStat(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PARTY_HEAL:
-          ret ||= c.applyPartyHeal(args[0]);
+        }
+        case ChallengeType.PARTY_HEAL: {
+          const r = c.applyPartyHeal(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.SHOP:
-          ret ||= c.applyShop(args[0]);
+        }
+        case ChallengeType.SHOP: {
+          const r = c.applyShop(args[0]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_ADD_TO_PARTY:
-          ret ||= c.applyPokemonAddToParty(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_ADD_TO_PARTY: {
+          const r = c.applyPokemonAddToParty(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_FUSION:
-          ret ||= c.applyPokemonFusion(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_FUSION: {
+          const r = c.applyPokemonFusion(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.POKEMON_MOVE:
-          ret ||= c.applyPokemonMove(args[0], args[1]);
+        }
+        case ChallengeType.POKEMON_MOVE: {
+          const r = c.applyPokemonMove(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.SHOP_ITEM:
-          ret ||= c.applyShopItem(args[0], args[1]);
+        }
+        case ChallengeType.SHOP_ITEM: {
+          const r = c.applyShopItem(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.WAVE_REWARD:
-          ret ||= c.applyWaveReward(args[0], args[1]);
+        }
+        case ChallengeType.WAVE_REWARD: {
+          const r = c.applyWaveReward(args[0], args[1]);
+          ret ||= r;
           break;
-        case ChallengeType.PREVENT_REVIVE:
-          ret ||= c.applyPreventRevive(args[0]);
+        }
+        case ChallengeType.PREVENT_REVIVE: {
+          const r = c.applyPreventRevive(args[0]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.MOVESET_MODIFY: {
+          const r = c.applyMovesetModify(args[0]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.LEVEL_UP_MOVESET: {
+          const r = c.applyLevelUpMoveset(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.PLAYER_TM_COMPATIBILITY: {
+          const r = c.applyPlayerTMCompatibility(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.ENEMY_TM_COMPATIBILITY: {
+          const r = c.applyEnemyTMCompatibility(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.AI_MOVE_GENERATION_EGG_POOL: {
+          const r = c.applyAIMoveGenerationEggPool(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.AI_MOVE_GENERATION_SUPERCEDED_MAP: {
+          const r = c.applyAIMoveGenerationSupercededMap(args[0]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.MODIFY_EVOLUTIONS: {
+          const r = c.applyModifyEvolutions(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.ME_MOVESET_MODIFY: {
+          const r = c.applyMysteryEncounterMovesetModify(args[0]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.EGG_MOVE_RELEARN_AVAILABILITY: {
+          const r = c.applyEggMoveRelearnAvailability(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.SPECIES_ABILITY_MODIFY: {
+          const r = c.applySpeciesAbilityModify(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        case ChallengeType.PASSIVE_ABILITY_MODIFY: {
+          const r = c.applyPassiveAbilityModify(args[0], args[1]);
+          ret ||= r;
+          break;
+        }
+        default:
+          challengeType satisfies never;
           break;
       }
     }
@@ -351,25 +592,22 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
 /**
  * Apply all challenges to the given starter (and form) to check its validity.
  * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes.
- * @param species - The {@linkcode PokemonSpecies} to check the validity of.
+ * @param starterId - The {@linkcode StarterSpeciesId} of the Pokemon to check the validity of.
  * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
  * @param soft - If `true`, allow it if it could become valid through evolution or form change.
  * @returns `true` if the species is considered valid.
  */
-export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props: DexAttrProps, soft: boolean) {
+  const species = speciesDataRegistry.getSpecies(starterId);
   if (!soft) {
     const isValidForChallenge = new BooleanHolder(true);
     applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
     return isValidForChallenge.value;
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
-  const speciesToCheck = [species.speciesId];
+  const speciesToCheck: SpeciesId[] = [starterId];
   while (speciesToCheck.length > 0) {
-    const checking = speciesToCheck.pop();
-    // Linter complains if we don't handle this
-    if (!checking) {
-      return false;
-    }
+    const checking = speciesToCheck.pop()!;
     const checkingSpecies = speciesDataRegistry.getSpecies(checking);
     if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
       return true;
@@ -448,4 +686,43 @@ export function isNuzlockeChallenge(): boolean {
     }
   }
   return isFreshStart && isLimitedCatch && isHardcore;
+}
+
+export function getRibbonsToAward(): RibbonFlag {
+  const { gameMode } = globalScene;
+  const { challenges, isClassic } = gameMode;
+
+  let ribbonFlags = 0n;
+
+  const ribbonBlockChallenges = [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER];
+  if (challenges.some(c => ribbonBlockChallenges.includes(c.id) && c.value > 0)) {
+    return ribbonFlags as RibbonFlag;
+  }
+
+  for (const challenge of challenges) {
+    const ribbon = challenge.ribbonAwarded;
+    if (challenge.value && ribbon) {
+      ribbonFlags |= ribbon;
+    }
+  }
+
+  // TODO: find a better way to handle blocking ribbons and achievements
+  // Block other ribbons if flip stats or inverse is active
+  const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+  // Block other ribbons if passives on `all` is active
+  const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
+  if (flip_or_inverse) {
+    ribbonFlags = flip_or_inverse;
+  } else if (challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+    ribbonFlags = passives;
+  } else {
+    if (isClassic) {
+      ribbonFlags |= RibbonData.CLASSIC;
+    }
+    if (isNuzlockeChallenge()) {
+      ribbonFlags |= RibbonData.NUZLOCKE;
+    }
+  }
+
+  return ribbonFlags as RibbonFlag;
 }

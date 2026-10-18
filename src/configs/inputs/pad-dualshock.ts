@@ -1,6 +1,6 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
-import type { DualshockButtons, PadConfig } from "#types/configs/inputs";
+import type { DualshockButtons, PadConfig } from "#types/inputs";
 
 /**
  * Dualshock mapping

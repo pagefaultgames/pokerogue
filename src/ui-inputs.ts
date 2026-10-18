@@ -8,10 +8,10 @@ import { Button } from "#enums/buttons";
 import { GameSpeed } from "#enums/game-speed";
 import { UiMode } from "#enums/ui-mode";
 import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
+import { GameChallengesUiHandler } from "#ui/challenges-select-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
 import { GeneralSettingsUiHandler } from "#ui/general-settings-ui-handler";
-import { GameChallengesUiHandler } from "#ui/handlers/challenges-select-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
@@ -186,7 +186,7 @@ export class UiInputs {
     if (globalScene.disableMenu) {
       return;
     }
-    switch (globalScene.ui?.getMode()) {
+    switch (globalScene.ui?.mode) {
       // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
       case UiMode.MESSAGE: {
         const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
@@ -237,7 +237,7 @@ export class UiInputs {
   private buttonSpeedChange(up = true): void {
     const { ui } = globalScene;
 
-    if (SETTINGS_UI_MODES.includes(ui?.getMode())) {
+    if (SETTINGS_UI_MODES.includes(ui?.mode)) {
       return;
     }
 

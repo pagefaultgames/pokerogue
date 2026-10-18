@@ -22,13 +22,19 @@ vi.mock(import("#app/overrides"), async importOriginal => {
   } satisfies typeof import("#app/overrides");
 });
 
-/**
- * This is a hacky way to mock the i18n backend requests (with the help of {@link https://mswjs.io/ | msw}).
+/*
+ * This is a hacky way to mock the i18n backend requests (with the help of msw, cf https://mswjs.io/).
  * The reason to put it inside of a mock is to elevate it.
  * This is necessary because how our code is structured.
  * Do NOT try to put any of this code into external functions, it won't work as it's elevated during runtime.
  */
 vi.mock(import("i18next"), async importOriginal => {
+  // Avoid re-initializing locales mock if already done (since this is run once per file)
+  if (globalThis.localesMockActive) {
+    return await importOriginal();
+  }
+  globalThis.localesMockActive = true;
+
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
 

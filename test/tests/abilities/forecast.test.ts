@@ -190,7 +190,7 @@ describe("Abilities - Forecast", () => {
 
     // First turn - Forecast is suppressed
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceHit();
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -228,7 +228,7 @@ describe("Abilities - Forecast", () => {
 
     // Damage phase should come first
     await game.phaseInterceptor.to("DamageAnimPhase");
-    expect(castform.hp).toBeLessThan(castform.getMaxHp());
+    expect(castform).not.toHaveFullHp();
 
     // Then change form
     await game.phaseInterceptor.to("QuietFormChangePhase");

@@ -8,6 +8,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
+import type { VariableHealAttr } from "#moves/move";
 import { GameManager } from "#test/framework/game-manager";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import { ValueHolder } from "#utils/value-holder";
@@ -46,8 +47,8 @@ describe("Abilities - Mega Sol", () => {
     game.move.use(MoveId.SOLAR_BEAM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -96,14 +97,14 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 0);
 
     game.move.use(MoveId.GROWTH);
     await game.toEndOfTurn();
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(2);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(2);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 2);
   });
 
   it("should change Weather Ball to Fire type and double its power", async () => {
@@ -121,21 +122,6 @@ describe("Abilities - Mega Sol", () => {
       .apply(game.field.getPlayerPokemon(), game.field.getEnemyPokemon(), weatherBall, [moveType]);
     expect(moveType.value).toBe(PokemonType.FIRE);
     expect(weatherBall.calculateBattlePower).toHaveLastReturnedWith(100);
-  });
-
-  it("should cause Synthesis to heal 2/3 HP as if sunny", async () => {
-    await game.classicMode.startBattle(SpeciesId.MEGANIUM);
-
-    const playerPokemon = game.field.getPlayerPokemon();
-    const maxHp = playerPokemon.getMaxHp();
-    playerPokemon.hp = 1;
-
-    game.move.use(MoveId.SYNTHESIS);
-    await game.toEndOfTurn();
-
-    const expectedHeal = Math.floor(maxHp * (2 / 3));
-    expect(playerPokemon.hp).toBeGreaterThanOrEqual(1 + expectedHeal - 1);
-    expect(playerPokemon.hp).toBeLessThanOrEqual(1 + expectedHeal + 1);
   });
 
   // TODO: This interaction needs to be verified in game; Bulbapedia may be incorrect
@@ -195,5 +181,43 @@ describe("Abilities - Mega Sol", () => {
 
     params.ignoreOppAbility = false; // test with mega sol factored in
     expect(enemyPokemon.getEffectiveStat(Stat.DEF, params)).toBe(100);
+  });
+
+  // NB: the tests checking that these moves actually work
+  it("should cause weather-based healing moves to act as if it was sunny", async () => {
+    game.override.weather(WeatherType.SANDSTORM);
+    await game.classicMode.startBattle(SpeciesId.MEGANIUM);
+
+    const meganium = game.field.getPlayerPokemon();
+    meganium.hp = 1; // ensure healing is not blocked by full HP
+
+    const synthesisHealFunc = vi.spyOn(
+      allMoves[MoveId.SYNTHESIS].getAttrs("VariableHealAttr")[0] as unknown as {
+        healFunc: VariableHealAttr["healFunc"];
+      },
+      "healFunc",
+    );
+
+    game.move.use(MoveId.SYNTHESIS);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(synthesisHealFunc).toHaveLastReturnedWith(2 / 3);
+
+    await game.toEndOfTurn();
+
+    meganium.hp = 1;
+
+    const shoreUpHealFunc = vi.spyOn(
+      allMoves[MoveId.SHORE_UP].getAttrs("VariableHealAttr")[0] as unknown as {
+        healFunc: VariableHealAttr["healFunc"];
+      },
+      "healFunc",
+    );
+
+    game.move.use(MoveId.SHORE_UP);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    // 50% instead of the 66% that would be expected in sandstorm
+    expect(shoreUpHealFunc).toHaveLastReturnedWith(1 / 2);
   });
 });

@@ -38,17 +38,17 @@ describe("Moves - Jaw Lock", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase", false);
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 
   it("should not trap either pokemon if the target faints", async () => {
@@ -59,22 +59,22 @@ describe("Moves - Jaw Lock", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase", false);
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("FaintPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 
   it("should only trap the user until the target faints", async () => {
@@ -84,18 +84,18 @@ describe("Moves - Jaw Lock", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     await game.doKillOpponents();
 
-    expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 
   it("should not trap other targets after the first target is trapped", async () => {
@@ -109,12 +109,12 @@ describe("Moves - Jaw Lock", () => {
 
     game.move.select(MoveId.JAW_LOCK, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(enemyPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon[0]).toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.toNextTurn();
 
@@ -123,9 +123,8 @@ describe("Moves - Jaw Lock", () => {
 
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    expect(enemyPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)?.sourceId).toBe(enemyPokemon[0].id);
+    expect(enemyPokemon[1]).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(playerPokemon).toHaveBattlerTag({ tagType: BattlerTagType.TRAPPED, sourceId: enemyPokemon[0].id });
   });
 
   it("should not trap either pokemon if the target is protected", async () => {
@@ -140,7 +139,7 @@ describe("Moves - Jaw Lock", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 });

@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
-import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
-import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
+import { ribbonFlagToAssetKey } from "#system/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
@@ -98,7 +98,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayCursorObj.setPosition(5 + (cursor % this.maxColumns) * 18, 4 + Math.floor(cursor / this.maxColumns) * 17);
 
-    const ribbonDescription = i18next.t(`ribbons:${getRibbonKey(this.ribbons[cursor])}`);
+    const ribbonDescription = i18next.t(`ribbons:achieved.${getRibbonKey(this.ribbons[cursor])}`);
 
     this.handler.showText(ribbonDescription);
 

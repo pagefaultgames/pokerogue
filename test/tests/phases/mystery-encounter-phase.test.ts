@@ -53,7 +53,7 @@ describe("Mystery Encounter Phases", () => {
         MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
       );
       expect(game.scene.mysteryEncounterSaveData.encounteredEvents[0].tier).toEqual(MysteryEncounterTier.GREAT);
-      expect(game.scene.ui.getMode()).toBe(UiMode.MYSTERY_ENCOUNTER);
+      expect(game.scene.ui.mode).toBe(UiMode.MYSTERY_ENCOUNTER);
     });
 
     it("Selects an option for MysteryEncounterPhase", async () => {
@@ -79,7 +79,7 @@ describe("Mystery Encounter Phases", () => {
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
       await vi.waitFor(() => expect(game).toBeAtPhase("MysteryEncounterOptionSelectedPhase"));
-      expect(ui.getMode()).toBe(UiMode.MESSAGE);
+      expect(ui.mode).toBe(UiMode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);
       expect(ui.showText).toHaveBeenCalledTimes(2);
       expect(ui.showDialogue).toHaveBeenCalledWith(

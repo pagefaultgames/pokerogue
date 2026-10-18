@@ -23,6 +23,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon } from "#field/pokemon";
 import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { achvs } from "#system/achv";
+import type { OptionSelectModeConfig } from "#types/ui-types";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { playNumberTween, playTween } from "#utils/anim-utils";
@@ -424,8 +425,6 @@ export class AttemptCapturePhase extends Phase {
         }),
       );
 
-      globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
-
       const action = await this.promptFullPartyCatchAction();
       switch (action) {
         case "summary":
@@ -443,6 +442,7 @@ export class AttemptCapturePhase extends Phase {
           return;
         }
         case "cancel":
+          await globalScene.ui.setMode(UiMode.MESSAGE);
           this.removeCaughtPokemonFromField();
           await this.finishCatch();
           return;
@@ -456,14 +456,42 @@ export class AttemptCapturePhase extends Phase {
    */
   private async promptFullPartyCatchAction(): Promise<FullPartyCatchAction> {
     const { promise, resolve } = Promise.withResolvers<FullPartyCatchAction>();
-    globalScene.ui.setMode(
-      UiMode.CONFIRM,
-      () => resolve("summary"),
-      () => resolve("pokedex"),
-      () => resolve("release"),
-      () => resolve("cancel"),
-      "fullParty",
-    );
+    globalScene.ui.setMode(UiMode.OPTION_SELECT, {
+      options: [
+        {
+          label: i18next.t("partyUiHandler:summary"),
+          handler: () => {
+            resolve("summary");
+            return true;
+          },
+        },
+        {
+          label: i18next.t("menuUiHandler:pokedex"),
+          handler: () => {
+            resolve("pokedex");
+            return true;
+          },
+        },
+        {
+          label: i18next.t("menu:yes"),
+          handler: () => {
+            resolve("release");
+            return true;
+          },
+        },
+        {
+          label: i18next.t("menu:no"),
+          handler: () => {
+            resolve("cancel");
+            return true;
+          },
+        },
+      ],
+      yOffset: 48,
+      onResize: (w: number, _h: number) => {
+        globalScene.pokemonInfoContainer.makeRoomForOptionSelectUi(w);
+      },
+    } satisfies OptionSelectModeConfig);
     return promise;
   }
 
@@ -531,7 +559,7 @@ export class AttemptCapturePhase extends Phase {
   private async promptCatchReleaseSlot(): Promise<number> {
     const { pokemon } = this;
 
-    return await new Promise(resolve => {
+    return new Promise(resolve => {
       globalScene.ui.setMode(
         UiMode.PARTY,
         PartyUiMode.RELEASE,

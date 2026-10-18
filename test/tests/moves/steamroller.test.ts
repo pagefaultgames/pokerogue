@@ -37,7 +37,7 @@ describe("Moves - Steamroller", () => {
     vi.spyOn(ironBoulder, "getAccuracyMultiplier");
     // Turn 1
     game.move.select(MoveId.STEAMROLLER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     // Turn 2
     game.move.select(MoveId.STEAMROLLER);
@@ -48,7 +48,7 @@ describe("Moves - Steamroller", () => {
       .mock.results.map(r => r.value);
 
     expect(dmgCalcTurn2.damage).toBeGreaterThanOrEqual(dmgCalcTurn1.damage * 2);
-    expect(ditto.getTag(BattlerTagType.MINIMIZED)).toBeDefined();
+    expect(ditto).toHaveBattlerTag(BattlerTagType.MINIMIZED);
     expect(steamroller.calculateBattleAccuracy).toHaveReturnedWith(-1);
   });
 });

@@ -43,9 +43,9 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
-    expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(playerPokemon).toHaveStatStage(Stat.SPDEF, 1);
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGED);
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("should activate regardless of accuracy checks", async () => {
@@ -61,12 +61,12 @@ describe("Abilities - Volt Absorb", () => {
 
     game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp -= 1;
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("regardless of accuracy should not trigger on pokemon in semi invulnerable state", async () => {
@@ -82,9 +82,9 @@ describe("Abilities - Volt Absorb", () => {
 
     game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp -= 1;
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 });

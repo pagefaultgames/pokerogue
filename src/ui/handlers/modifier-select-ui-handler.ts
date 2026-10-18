@@ -9,7 +9,6 @@ import { Button } from "#enums/buttons";
 import type { PokeballType } from "#enums/pokeball";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
@@ -37,7 +36,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
-  protected declare onActionInput: ModifierSelectCallback | null;
+  declare protected onActionInput: ModifierSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -49,17 +48,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private transferButtonWidth: number;
   private checkButtonWidth: number;
 
-  public options: ModifierOption[];
-  public shopOptionsRows: ModifierOption[][];
+  public options: ModifierOption[] = [];
+  public shopOptionsRows: ModifierOption[][] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
-
-  constructor() {
-    super(UiMode.CONFIRM);
-
-    this.options = [];
-    this.shopOptionsRows = [];
-  }
 
   setup() {
     const ui = this.getUi();
@@ -298,7 +290,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // The bang here is safe, as `getValue()` only returns null if the tween has been destroyed (which obviously isn't the case inside onUpdate)
         const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
-        if (index > i && index <= typeOptions.length) {
+        while (index > i && index <= typeOptions.length) {
           const option = this.options[i];
           if (option) {
             rewardAnimPromises.push(
@@ -726,6 +718,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.awaitingActionInput = false;
     this.onActionInput = null;
     this.getUi().clearText();
+    this.getUi().getMessageHandler().hideNameText();
     this.eraseCursor();
 
     // Reset cursor positions
@@ -1047,6 +1040,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       }
     });
     // The `.then` suppresses the return type for the Promise.allSettled so that it returns void.
+    // TODO `finalPromises` is empty when it's spread here, so it isn't respected
     promiseHolder.push(Promise.allSettled([...animPromises, ...finalPromises]).then());
 
     await Promise.allSettled(animPromises);

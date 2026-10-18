@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
-import type { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { DynamicPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
-import { sortInSpeedOrder } from "#app/utils/speed-order";
+import { PostSummonActivateAbilityPhase } from "#phases/post-summon-activate-ability-phase";
+import type { PostSummonPhase } from "#phases/post-summon-phase";
+import { DynamicPhasePriorityQueue } from "#queues/pokemon-phase-priority-queue";
+import { sortInSpeedOrder } from "#utils/speed-order";
 
 /**
  * Priority Queue for {@linkcode PostSummonPhase} and {@linkcode PostSummonActivateAbilityPhase}

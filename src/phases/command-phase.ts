@@ -4,8 +4,8 @@ import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
-import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
-import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
+import { getDailyEventSeedBoss } from "#data/daily-run";
+import { isDailyFinalBoss } from "#data/daily-seed-utils";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -275,7 +275,9 @@ export class CommandPhase extends FieldPhase {
     };
 
     const moveTargets: MoveTargetSet =
-      move === undefined
+      // `move.targets` normally shouldn't be `null`,
+      // that check is to guard against bugs that can cause it to become `null`
+      move === undefined || move.targets == null
         ? getMoveTargets(playerPokemon, moveId)
         : {
             targets: move.targets,

@@ -37,7 +37,7 @@ describe("Abilities - Flash Fire", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(blissey.hp).toBe(blissey.getMaxHp());
+    expect(blissey).toHaveFullHp();
   });
 
   it("not activate if the Pokémon is protected from the Fire-type move", async () => {
@@ -48,7 +48,7 @@ describe("Abilities - Flash Fire", () => {
 
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(blissey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
+    expect(blissey!).not.toHaveBattlerTag(BattlerTagType.FIRE_BOOST);
   });
 
   it("activated by Will-O-Wisp", async () => {
@@ -63,7 +63,7 @@ describe("Abilities - Flash Fire", () => {
     await game.move.forceHit();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(blissey!.getTag(BattlerTagType.FIRE_BOOST)).toBeDefined();
+    expect(blissey!).toHaveBattlerTag(BattlerTagType.FIRE_BOOST);
   });
 
   it("activated after being frozen", async () => {
@@ -75,7 +75,7 @@ describe("Abilities - Flash Fire", () => {
     game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(blissey!.getTag(BattlerTagType.FIRE_BOOST)).toBeDefined();
+    expect(blissey!).toHaveBattlerTag(BattlerTagType.FIRE_BOOST);
   });
 
   it("not passing with baton pass", async () => {
@@ -84,14 +84,14 @@ describe("Abilities - Flash Fire", () => {
 
     // ensure use baton pass after enemy moved
     game.move.select(MoveId.BATON_PASS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     const chansey = game.field.getPlayerPokemon();
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.CHANSEY);
-    expect(chansey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
+    expect(chansey!).not.toHaveBattlerTag(BattlerTagType.FIRE_BOOST);
   });
 
   it("boosts Fire-type move when the ability is activated", async () => {
@@ -107,7 +107,7 @@ describe("Abilities - Flash Fire", () => {
 
     // first turn
     game.move.select(MoveId.EMBER);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
     const originalDmg = initialHP - blissey.hp;
 
@@ -137,7 +137,7 @@ describe("Abilities - Flash Fire", () => {
 
     // first turn
     game.move.select(MoveId.FIRE_PLEDGE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
     await game.move.forceMiss();
     await game.phaseInterceptor.to("TurnEndPhase");

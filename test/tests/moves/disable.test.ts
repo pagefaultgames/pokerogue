@@ -40,7 +40,7 @@ describe("Moves - Disable", () => {
 
     game.move.select(MoveId.DISABLE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyMon.getLastXMoves(-1)).toHaveLength(2);
@@ -55,13 +55,10 @@ describe("Moves - Disable", () => {
     const enemyMon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DISABLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(playerMon.getLastXMoves()[0]).toMatchObject({
-      move: MoveId.DISABLE,
-      result: MoveResult.FAIL,
-    });
+    expect(playerMon).toHaveUsedMove({ move: MoveId.DISABLE, result: MoveResult.FAIL });
     expect(enemyMon.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
 
@@ -71,7 +68,7 @@ describe("Moves - Disable", () => {
     const enemyMon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DISABLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     game.move.select(MoveId.SPLASH);
@@ -90,11 +87,11 @@ describe("Moves - Disable", () => {
 
     game.move.select(MoveId.DISABLE);
     await game.move.forceEnemyMove(MoveId.STRUGGLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyMon.getLastXMoves()[0].move).toBe(MoveId.STRUGGLE);
+    expect(playerMon).toHaveUsedMove({ move: MoveId.DISABLE, result: MoveResult.FAIL });
+    expect(enemyMon).toHaveUsedMove(MoveId.STRUGGLE);
     expect(enemyMon.hasRestrictingTag(MoveId.STRUGGLE)).toBe(false);
   });
 
@@ -110,7 +107,7 @@ describe("Moves - Disable", () => {
     });
 
     game.move.select(MoveId.DISABLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     const enemyHistory = enemyMon.getLastXMoves(-1);
@@ -133,7 +130,7 @@ describe("Moves - Disable", () => {
 
     game.move.select(MoveId.DISABLE);
     await game.move.forceEnemyMove(moveId);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     const enemyMon = game.field.getEnemyPokemon();
@@ -155,12 +152,12 @@ describe("Moves - Disable", () => {
 
     game.move.select(MoveId.SWORDS_DANCE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     game.move.select(MoveId.DISABLE);
     await game.move.selectEnemyMove(MoveId.SWORDS_DANCE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     // Dancer-induced Swords Dance was ignored in favor of splash,
@@ -168,7 +165,7 @@ describe("Moves - Disable", () => {
     const shuckle = game.field.getEnemyPokemon();
     expect.soft(shuckle.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect.soft(shuckle.hasRestrictingTag(MoveId.SWORDS_DANCE)).toBe(false);
-    expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
-    expect(shuckle.getStatStage(Stat.ATK)).toBe(4);
+    expect(shuckle).toHaveUsedMove({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
+    expect(shuckle).toHaveStatStage(Stat.ATK, 4);
   });
 });

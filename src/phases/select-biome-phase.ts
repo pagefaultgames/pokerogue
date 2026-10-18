@@ -1,11 +1,14 @@
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { getDailyForcedBiomes } from "#data/daily-seed/daily-run";
 import { allBiomes } from "#data/data-lists";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
-import type { OptionSelectItem } from "#types/ui-types";
+import type { BiomeLinks } from "#types/biomes";
+import type { OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getBiomeName, randSeedInt, randSeedItem } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
@@ -32,16 +35,25 @@ export class SelectBiomePhase extends BattlePhase {
       return;
     }
 
+    const forcedBiomes = getDailyForcedBiomes();
+    if (forcedBiomes != null && forcedBiomes.length === 1) {
+      this.setNextBiomeAndEnd(forcedBiomes[0]);
+      return;
+    }
+
     if (gameMode.hasRandomBiomes) {
       this.setNextBiomeAndEnd(this.generateNextBiome(nextWaveIndex));
       return;
     }
 
     const { biomeLinks } = allBiomes.get(currentBiome);
-    if (biomeLinks.length > 1) {
-      const biomes: BiomeId[] = biomeLinks
-        .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
-        .map(b => (Array.isArray(b) ? b[0] : b));
+    const eventBiomeLinks = timedEventManager.getEventBiomeLinks(currentBiome);
+    const allBiomeLinks: BiomeLinks = [...biomeLinks, ...eventBiomeLinks];
+    if (allBiomeLinks.length > 1 || (forcedBiomes != null && forcedBiomes.length > 1)) {
+      const biomes: BiomeId[] =
+        forcedBiomes != null && forcedBiomes.length > 1
+          ? forcedBiomes
+          : allBiomeLinks.filter(b => !Array.isArray(b) || !randSeedInt(b[1])).map(b => (Array.isArray(b) ? b[0] : b));
 
       if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         const biomeSelectItems = biomes.map(b => {
@@ -54,29 +66,32 @@ export class SelectBiomePhase extends BattlePhase {
             },
           } satisfies OptionSelectItem as OptionSelectItem;
         });
-        globalScene.ui.setMode(UiMode.OPTION_SELECT, {
+        const optionSelectConfig: OptionSelectModeConfig = {
           options: biomeSelectItems,
-          delay: 1000,
-        });
+          blockCancelButton: true,
+          inputDelay: 1000,
+          yOffset: 48,
+        };
+        globalScene.ui.setMode(UiMode.OPTION_SELECT, optionSelectConfig);
       } else {
         this.setNextBiomeAndEnd(randSeedItem(biomes));
       }
       return;
     }
 
-    if (biomeLinks.length === 1) {
-      if (Array.isArray(biomeLinks[0])) {
+    if (allBiomeLinks.length === 1) {
+      if (Array.isArray(allBiomeLinks[0])) {
         console.warn(
           "Biomes with a link to a single other biome should not have a weight assigned to the link.\n",
           "Biome:",
           enumValueToKey(BiomeId, allBiomes.get(currentBiome).biomeId),
           "| Links:",
-          biomeLinks,
+          allBiomeLinks,
         );
         // @ts-expect-error: failsafe for invalid biome links structure
-        biomeLinks[0] = biomeLinks[0][0];
+        allBiomeLinks[0] = allBiomeLinks[0][0];
       }
-      this.setNextBiomeAndEnd(biomeLinks[0] as BiomeId);
+      this.setNextBiomeAndEnd(allBiomeLinks[0] as BiomeId);
       return;
     }
 

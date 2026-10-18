@@ -39,10 +39,10 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should still charge and burn opponents if the user is sleeping", async () => {
@@ -56,10 +56,10 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should not burn attackers that don't make contact", async () => {
@@ -73,10 +73,10 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should be blocked by Protect", async () => {
@@ -90,11 +90,11 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MovePhase", false);
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
+    expect(enemyPokemon).toHaveFullHp();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.BEAK_BLAST_CHARGING);
   });
 
   it("should still burn the enemy if the user is knocked out", async () => {
@@ -105,7 +105,7 @@ describe("Moves - Beak Blast", () => {
     user.hp = 1;
     game.move.select(MoveId.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should not burn a long reach enemy that hits the user with a contact move", async () => {
@@ -114,6 +114,6 @@ describe("Moves - Beak Blast", () => {
     game.move.select(MoveId.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 });

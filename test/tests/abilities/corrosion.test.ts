@@ -35,12 +35,12 @@ describe("Abilities - Corrosion", () => {
     await game.classicMode.startBattle(SpeciesId.SALANDIT);
 
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.status?.effect).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.POISON_GAS);
     await game.toEndOfTurn();
 
-    expect(enemy.status?.effect).toBe(StatusEffect.POISON);
+    expect(enemy).toHaveStatusEffect(StatusEffect.POISON);
   });
 
   it("should not affect Toxic Spikes", async () => {
@@ -51,7 +51,7 @@ describe("Abilities - Corrosion", () => {
     await game.toNextWave();
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not affect an opponent's Synchronize ability", async () => {
@@ -60,13 +60,13 @@ describe("Abilities - Corrosion", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status?.effect).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.TOXIC);
     await game.toEndOfTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.TOXIC);
-    expect(playerPokemon.status?.effect).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.TOXIC);
+    expect(playerPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should affect the user's held Toxic Orb", async () => {
@@ -74,11 +74,11 @@ describe("Abilities - Corrosion", () => {
     await game.classicMode.startBattle(SpeciesId.SALAZZLE);
 
     const salazzle = game.field.getPlayerPokemon();
-    expect(salazzle.status?.effect).toBeUndefined();
+    expect(salazzle).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(salazzle.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(salazzle).toHaveStatusEffect(StatusEffect.TOXIC);
   });
 });

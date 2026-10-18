@@ -38,7 +38,7 @@ describe("Moves - Spite", () => {
 
     game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
@@ -58,7 +58,7 @@ describe("Moves - Spite", () => {
 
     game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     const feebas = game.field.getPlayerPokemon();
@@ -74,7 +74,7 @@ describe("Moves - Spite", () => {
 
     game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     const feebas = game.field.getPlayerPokemon();
@@ -91,7 +91,7 @@ describe("Moves - Spite", () => {
 
     game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     const feebas = game.field.getPlayerPokemon();
@@ -110,7 +110,7 @@ describe("Moves - Spite", () => {
     game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.METRONOME);
     await game.move.selectEnemyMove(MoveId.SWORDS_DANCE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     // Spite ignored virtual splash and swords dance, instead only docking from metronome

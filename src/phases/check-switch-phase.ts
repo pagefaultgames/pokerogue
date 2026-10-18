@@ -2,10 +2,10 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import i18next from "i18next";
 
 export class CheckSwitchPhase extends BattlePhase {
@@ -20,7 +20,7 @@ export class CheckSwitchPhase extends BattlePhase {
     this.useName = useName;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const pokemon = globalScene.getPlayerField()[this.fieldIndex];
@@ -36,7 +36,8 @@ export class CheckSwitchPhase extends BattlePhase {
     // ...if the checked Pokemon is somehow not on the field
     if (globalScene.field.getAll().indexOf(pokemon) === -1) {
       globalScene.phaseManager.unshiftNew("SummonMissingPhase", this.fieldIndex);
-      return super.end();
+      super.end();
+      return;
     }
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
@@ -51,11 +52,7 @@ export class CheckSwitchPhase extends BattlePhase {
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
-    if (
-      pokemon.getTag(BattlerTagType.FRENZY)
-      || pokemon.isTrapped()
-      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
-    ) {
+    if (!pokemon.canSwitch()) {
       this.end();
       return;
     }
@@ -66,18 +63,18 @@ export class CheckSwitchPhase extends BattlePhase {
       }),
       null,
       () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          () => {
+        const options: ConfirmModeConfig = {
+          yesHandler: () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
             globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
             this.end();
           },
-          () => {
+          noHandler: () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
             this.end();
           },
-        );
+        };
+        globalScene.ui.setMode(UiMode.CONFIRM, options);
       },
     );
   }

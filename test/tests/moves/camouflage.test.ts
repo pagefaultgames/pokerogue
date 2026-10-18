@@ -30,16 +30,19 @@ describe("Moves - Camouflage", () => {
       .enemyMoveset(MoveId.PSYCHIC_TERRAIN);
   });
 
-  it("Camouflage should look at terrain first when selecting a type to change into", async () => {
+  it("should look at terrain first when selecting a type to change into", async () => {
     await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.CAMOUFLAGE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
+
     expect(game).toHaveTerrain(TerrainType.PSYCHIC);
-    const pokemonType = playerPokemon.getTypes()[0];
-    expect(pokemonType).toBe(PokemonType.PSYCHIC);
+
+    expect(playerPokemon).toHaveTypes(PokemonType.PSYCHIC);
   });
+
+  // TODO: Make test for move actually working
 });

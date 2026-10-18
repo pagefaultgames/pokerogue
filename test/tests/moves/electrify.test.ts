@@ -38,11 +38,11 @@ describe("Moves - Electrify", () => {
 
     game.move.select(MoveId.ELECTRIFY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
   });
 
   it("should override type changes from abilities", async () => {
@@ -56,10 +56,10 @@ describe("Moves - Electrify", () => {
 
     game.move.select(MoveId.ELECTRIFY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
   });
 });

@@ -41,13 +41,13 @@ describe("Moves - Plasma Fists", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
     field.forEach(p => {
       expect(p.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-      expect(p.hp).toBeLessThan(p.getMaxHp());
+      expect(p).not.toHaveFullHp();
     });
   });
 
@@ -62,11 +62,11 @@ describe("Moves - Plasma Fists", () => {
 
     game.move.select(MoveId.PLASMA_FISTS);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.FAIRY);
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
   });
 
   it("should affect moves that become Normal type due to Normalize", async () => {
@@ -80,10 +80,10 @@ describe("Moves - Plasma Fists", () => {
 
     game.move.select(MoveId.PLASMA_FISTS);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
   });
 });

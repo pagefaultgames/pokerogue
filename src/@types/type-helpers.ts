@@ -18,7 +18,6 @@ import type {
 import type { ValueOf as ObjectValues } from "type-fest";
 export type { ObjectValues };
 export type { RequiredKeysOf as RequiredKeys };
-export type { Writable as Mutable } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.

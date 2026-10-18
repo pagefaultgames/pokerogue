@@ -11,7 +11,7 @@ import {
   settingKeyboardDefaults,
   settingKeyboardOptions,
 } from "#system/settings-keyboard";
-import type { InterfaceConfig } from "#types/configs/inputs";
+import type { InterfaceConfig } from "#types/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
@@ -20,8 +20,8 @@ import i18next from "i18next";
 
 /** Class representing the settings UI handler for keyboards */
 export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  constructor() {
+    super();
 
     this.titleSelected = "Keyboard";
     this.setting = SettingKeyboard;
@@ -73,10 +73,10 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
    * Handle the home key press event.
    */
   onHomeDown(): void {
-    if (![UiMode.SETTINGS_KEYBOARD, UiMode.SETTINGS_GAMEPAD].includes(globalScene.ui.getMode())) {
+    if (![UiMode.SETTINGS_KEYBOARD, UiMode.SETTINGS_GAMEPAD].includes(globalScene.ui.mode)) {
       return;
     }
-    const isKeyboard = globalScene.ui.getMode() === UiMode.SETTINGS_KEYBOARD;
+    const isKeyboard = globalScene.ui.mode === UiMode.SETTINGS_KEYBOARD;
     globalScene.gameData.resetMappingToDefault(isKeyboard ? Device.KEYBOARD : Device.GAMEPAD);
     this.tabMenu?.updateIcons();
   }
@@ -85,7 +85,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
    * Handle the delete key press event.
    */
   onDeleteDown(): void {
-    if (globalScene.ui.getMode() !== UiMode.SETTINGS_KEYBOARD) {
+    if (globalScene.ui.mode !== UiMode.SETTINGS_KEYBOARD) {
       return;
     }
     const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
