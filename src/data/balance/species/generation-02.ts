@@ -4128,6 +4128,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [13, MoveId.QUICK_ATTACK],
       [17, MoveId.SWIFT],
       [20, MoveId.PSYBEAM],
+      [23, MoveId.SAFEGUARD],
       [25, MoveId.HEAL_BLOCK],
       [29, MoveId.PSYCH_UP],
       [33, MoveId.MORNING_SUN],

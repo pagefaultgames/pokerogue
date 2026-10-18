@@ -45,7 +45,7 @@ describe("Moves - Fissure", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("DamageAnimPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
   });
 
   it("ignores user's ACC stat stage", async () => {

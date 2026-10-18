@@ -38,7 +38,7 @@ describe("Moves - Safeguard", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy.status).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from status moves", async () => {
@@ -49,7 +49,7 @@ describe("Moves - Safeguard", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from confusion", async () => {
@@ -78,8 +78,8 @@ describe("Moves - Safeguard", () => {
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    expect(enemyPokemon[0].status).toBeUndefined();
-    expect(enemyPokemon[1].status).toBeUndefined();
+    expect(enemyPokemon[0]).toHaveStatusEffect(StatusEffect.NONE);
+    expect(enemyPokemon[1]).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from Yawn", async () => {
@@ -147,6 +147,6 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

@@ -35,7 +35,7 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getEnemyPokemon().hp).toBe(1);
+    expect(game.field.getEnemyPokemon()).toHaveHp(1);
   });
 
   it("should let the pokemon survive with 1 HP from multi-strike moves", async () => {
@@ -44,7 +44,7 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getEnemyPokemon().hp).toBe(1);
+    expect(game.field.getEnemyPokemon()).toHaveHp(1);
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
@@ -54,7 +54,7 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.SHEER_COLD);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.hp).toBe(1);
+    expect(enemy).toHaveHp(1);
   });
 
   // comprehensive indirect damage test copied from Reviver Seed test
@@ -75,6 +75,6 @@ describe("Moves - Endure", () => {
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy).toHaveFainted();
   });
 });

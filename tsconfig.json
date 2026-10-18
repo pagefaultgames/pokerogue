@@ -8,7 +8,7 @@
     "target": "ES2022",
     "module": "ES2022",
     // Modifying this option requires all values to be set manually because the defaults get overridden
-    // ES2022 stdlibs taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2022.full.d.ts
+    // ES2022 stdlibs taken from https://github.com/microsoft/TypeScript/blob/9eedcb0dd7257f8a1a175adbef28f3b6d3492d7a/tsc/internal/bundled/libs/lib.es2022.full.d.ts
     "lib": [
       // ES2022 stdlibs
       "ES2022",
@@ -99,12 +99,7 @@
         "./src/ui/*.ts"
       ],
       "#utils/*": ["./src/utils/*.ts"],
-      "#data/*": [
-        "./src/data/daily-seed/*.ts",
-        "./src/data/pokemon-forms/*.ts",
-        "./src/data/pokemon/*.ts",
-        "./src/data/*.ts"
-      ],
+      "#data/*": ["./src/data/daily-seed/*.ts", "./src/data/*.ts"],
 
       // these must always be last
       "#test/*": ["./test/*.ts"],

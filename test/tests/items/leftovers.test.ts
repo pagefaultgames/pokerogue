@@ -37,7 +37,7 @@ describe("Items - Leftovers", () => {
     const leadPokemon = game.field.getPlayerPokemon();
 
     // We should have full hp
-    expect(leadPokemon.isFullHp()).toBe(true);
+    expect(leadPokemon).toHaveFullHp();
 
     game.move.select(MoveId.SPLASH);
 

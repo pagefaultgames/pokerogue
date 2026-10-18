@@ -42,7 +42,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected settingLabels: Phaser.GameObjects.Text[];
   protected optionValueLabels: Phaser.GameObjects.Text[][];
 
-  // layout will contain the 3 Gamepad tab for each config - dualshock, xbox, snes
+  // Layouts are created for each gamepad config, such as dualshock, xbox, procon, and snes.
   protected layout: Map<string, LayoutConfig> = new Map<string, LayoutConfig>();
   // Will contain the input icons from the selected layout
   protected inputsIcons: InputsIcons;
@@ -293,7 +293,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
 
     this.keys.forEach((key, index) => {
       if (key === "enabled") {
-        this.setOptionCursor(index, settings.gamepad[key] ? Number(!settings.gamepad[key]) : this.optionCursors[index]);
+        this.setOptionCursor(index, Number(!settings.gamepad[key]));
       }
     });
 
