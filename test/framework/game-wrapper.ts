@@ -127,28 +127,11 @@ export class GameWrapper {
       killTweensOf: () => [] as any,
       // @ts-expect-error
       chain: data => {
+        // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
         // @ts-expect-error: missing params for `onComplete`
         (data as Phaser.Types.Tweens.TweenChainBuilderConfig)?.tweens?.forEach(tween => tween.onComplete?.());
         // @ts-expect-error: missing params for `onComplete`
         (data as Phaser.Types.Tweens.TweenChainBuilderConfig).onComplete?.();
-
-        // TODO: This is a fucking hack and doesn't support phaser events
-        function setCallback(
-          this: Phaser.Tweens.Tween,
-          ...[type, callback, params]: Parameters<Phaser.Tweens.BaseTween["setCallback"]>
-        ) {
-          if (type === "onComplete") {
-            callback(...(params ?? []));
-          } else if (type === "onStop") {
-            this.stop = callback.bind(this, ...(params ?? []));
-          }
-          return this;
-        }
-        return {
-          currentTween: { callbacks: {}, setCallback },
-          stop() {},
-          setCallback,
-        };
       },
       // @ts-expect-error
       addCounter: data => {

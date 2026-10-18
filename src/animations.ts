@@ -199,7 +199,6 @@ export class Animation {
 
       tweenConfigs.push({
         targets: [pokemonTintSprite, pokemonNewFormTintSprite],
-        // I really wish phaser's types were better
         scale: (target: Phaser.GameObjects.Sprite) => (target === pokemonTintSprite ? 0.25 : 1),
         ease: "Cubic.easeInOut",
         duration,
