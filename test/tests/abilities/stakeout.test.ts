@@ -51,7 +51,7 @@ describe("Abilities - Stakeout", () => {
     game.forceEnemyToSwitch();
     await game.toNextTurn();
 
-    expect(enemy1.isFainted()).toBe(false);
+    expect(enemy1).not.toHaveFainted();
     expect(isBetween(enemy1.getInverseHp(), damage1 * 2 - 5, damage1 * 2 + 5)).toBe(true);
   });
 
@@ -72,10 +72,10 @@ describe("Abilities - Stakeout", () => {
 
     game.move.select(MoveId.SURF);
     await game.move.selectEnemyMove(MoveId.FLIP_TURN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy1.isFainted()).toBe(false);
+    expect(enemy1).not.toHaveFainted();
     expect(isBetween(enemy1.getInverseHp(), damage1 * 2 - 5, damage1 * 2 + 5)).toBe(true);
   });
 });

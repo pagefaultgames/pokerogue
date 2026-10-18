@@ -39,14 +39,14 @@ describe("Move - Payback", () => {
 
     // turn 1: enemy, then player (boost)
     game.move.use(MoveId.PAYBACK);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.PAYBACK].power * 2);
 
     // turn 2: player, then enemy (no boost)
     game.move.use(MoveId.PAYBACK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.PAYBACK].power);

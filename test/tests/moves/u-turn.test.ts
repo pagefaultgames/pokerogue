@@ -42,10 +42,8 @@ describe("Moves - U-turn", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // assert
-    expect(game.scene.getPlayerParty()[1].hp).toEqual(
-      Math.floor(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp),
-    );
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.scene.getPlayerParty()[1]).toHaveHp(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp);
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });
 
@@ -61,10 +59,10 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.field.getPlayerPokemon();
-    expect(playerPkm.hp).not.toEqual(playerPkm.getMaxHp());
+    expect(playerPkm).not.toHaveFullHp();
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchSummonPhase");
   });
 
   it("triggers contact abilities on the u-turn user (eg poison point) before a new pokemon is switched in", async () => {
@@ -79,10 +77,10 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.field.getPlayerPokemon();
-    expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
+    expect(playerPkm).toHaveStatusEffect(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchSummonPhase");
   });
 
   it("still forces a switch if u-turn KO's the opponent", async () => {
@@ -94,10 +92,10 @@ describe("Moves - U-turn", () => {
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy).toHaveFainted();
 
     // Check that U-Turn forced a switch
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });
 
@@ -125,7 +123,7 @@ describe("Moves - U-turn", () => {
     game.move.use(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.move.forceEnemyMove(MoveId.DESTINY_BOND);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(karp).toHaveFainted();
@@ -133,7 +131,7 @@ describe("Moves - U-turn", () => {
     expect(feebas.isOnField()).toBe(false);
 
     // Make sure feebas' faint phase runs before being switched out (since that was the root cause of the crash)
-    const logs = game.phaseInterceptor.log;
+    const logs = game.phaseInterceptor.phaseLog;
     expect(logs).toContain("SwitchSummonPhase");
     expect(logs).toContain("FaintPhase");
     expect(logs.indexOf("SwitchSummonPhase")).toBeGreaterThan(logs.indexOf("FaintPhase"));

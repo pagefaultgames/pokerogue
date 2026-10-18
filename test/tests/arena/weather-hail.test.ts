@@ -30,12 +30,12 @@ describe("Weather - Hail", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.scene.getField(true).forEach(pokemon => {
-      expect(pokemon.hp).toBe(pokemon.getMaxHp() - Math.max(Math.floor(pokemon.getMaxHp() / 16), 1));
+      expect(pokemon).toHaveTakenDamage(Math.max(Math.floor(pokemon.getMaxHp() / 16), 1));
     });
   });
 
@@ -44,15 +44,15 @@ describe("Weather - Hail", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.DIG);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
+    expect(playerPokemon).toHaveFullHp();
+    expect(enemyPokemon).toHaveTakenDamage(Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
 
   it("does not inflict damage to Ice type Pokemon", async () => {
@@ -65,7 +65,7 @@ describe("Weather - Hail", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
+    expect(playerPokemon).toHaveFullHp();
+    expect(enemyPokemon).toHaveTakenDamage(Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
   });
 });

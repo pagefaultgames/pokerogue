@@ -5,7 +5,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
+import type { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -74,7 +74,7 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.WISH);
     await game.toEndOfTurn();
 
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(alomomola).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
     expect(alomomola).toHaveUsedMove({ move: MoveId.WISH, result: MoveResult.FAIL });
   });
 
@@ -87,7 +87,7 @@ describe("Move - Wish", () => {
 
     game.move.use(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH);
@@ -105,40 +105,41 @@ describe("Move - Wish", () => {
     vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
     vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
-    const oldOrder = game.field.getSpeedOrder();
-
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER);
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
-    // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+
+    const oldOrder = [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2];
+    game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
 
-    // Lower speed to change turn order
-    alomomola.setStatStage(Stat.SPD, 6);
-    blissey.setStatStage(Stat.SPD, -6);
-
-    const newOrder = game.field.getSpeedOrder();
-    expect(newOrder).not.toEqual(oldOrder);
-
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+
+    game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("PositionalTagPhase");
 
-    // all wishes have activated and added healing phases
+    // all wishes should have activated and added healing phases
     expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
+    expect(game).toBeAtPhase("PokemonHealPhase");
 
     const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
+    // account for the current phase about to be ran also being a PHP
+    // TODO: Make this into a matcher or similar
+    healPhases.unshift(game.scene.phaseManager.getCurrentPhase() as PokemonHealPhase);
+
     expect(healPhases).toHaveLength(4);
-    expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
+    expect(healPhases.map(php => php["battlerIndex"])).toEqual(oldOrder);
 
     await game.toEndOfTurn();
 
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(blissey.hp).toBe(toDmgValue(blissey.getMaxHp() / 2) + 1);
+    expect(alomomola).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(blissey).toHaveHp(toDmgValue(blissey.getMaxHp() / 2) + 1);
   });
 
   it("should vanish and not play message if slot is empty", async () => {
@@ -166,6 +167,6 @@ describe("Move - Wish", () => {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
       }),
     );
-    expect(alomomola.hp).toBe(1);
+    expect(alomomola).toHaveHp(1);
   });
 });

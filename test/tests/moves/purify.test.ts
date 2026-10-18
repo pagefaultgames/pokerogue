@@ -39,11 +39,11 @@ describe("Moves - Purify", () => {
     enemyPokemon.status = new Status(StatusEffect.BURN);
 
     game.move.select(MoveId.PURIFY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemyPokemon.status).toBeNull();
-    expect(playerPokemon.isFullHp()).toBe(true);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
+    expect(playerPokemon).toHaveFullHp();
   });
 
   test("Purify does not heal if opponent doesnt have any status effect", async () => {
@@ -55,9 +55,9 @@ describe("Moves - Purify", () => {
     const playerInitialHp = playerPokemon.hp;
 
     game.move.select(MoveId.PURIFY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.hp).toBe(playerInitialHp);
+    expect(playerPokemon).toHaveHp(playerInitialHp);
   });
 });

@@ -9,6 +9,7 @@ import { EggSkipPreference } from "#enums/egg-skip-preference";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { achvs } from "#system/achv";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import i18next from "i18next";
 
 /**
@@ -41,40 +42,33 @@ export class EggLapsePhase extends Phase {
             i18next.t("battle:eggHatching"),
             0,
             () => {
-              // show prompt for skip, blocking inputs for 1 second
-              globalScene.ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatch.length }), 0);
-              globalScene.ui.setModeWithoutClear(
-                UiMode.CONFIRM,
-                () => {
+              const options: ConfirmModeConfig = {
+                yesHandler: () => {
                   this.hatchEggsSkipped(eggsToHatch);
                   this.showSummary();
                 },
-                () => {
+                noHandler: () => {
                   this.hatchEggsRegular(eggsToHatch);
                   this.end();
                 },
-                null,
-                null,
-                null,
-                1000,
-                true,
-              );
+                inputDelay: 1000,
+              };
+              globalScene.ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatch.length }), 0);
+              globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, options);
             },
             100,
             true,
           );
-          break;
+          return;
         case EggSkipPreference.ALWAYS:
           globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
           this.hatchEggsSkipped(eggsToHatch);
           this.showSummary();
-          break;
+          return;
       }
-
-      return;
     }
 
-    // regular hatches, no summary
+    // `EggSkipPreference.NEVER` or fewer than `minEggsToSkip` eggs: regular hatches, no summary
     globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
     this.hatchEggsRegular(eggsToHatch);
     this.end();

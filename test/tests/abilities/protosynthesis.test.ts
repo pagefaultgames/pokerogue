@@ -48,7 +48,7 @@ describe("Abilities - Protosynthesis", () => {
     const atk_before_boost = mew.getEffectiveStat(Stat.ATK, effectiveStatParams);
     const initialHp = enemy.hp;
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     const unboosted_dmg = initialHp - enemy.hp;
     enemy.hp = initialHp;

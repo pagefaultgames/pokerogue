@@ -40,10 +40,6 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
   protected fromCommand: Command = Command.FIGHT;
   protected cursor2 = 0;
 
-  constructor() {
-    super(UiMode.FIGHT);
-  }
-
   /**
    * Set the visibility of the objects in the move info container.
    */
@@ -133,7 +129,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
     const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
-    if (pokemon.tempSummonData.turnCount <= 1) {
+    if (pokemon.summonData.turnCount <= 1) {
       this.setCursor(0);
     } else {
       this.setCursor(this.fieldIndex ? this.cursor2 : this.cursor);

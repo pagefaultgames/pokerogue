@@ -37,24 +37,24 @@ describe("Moves - SYRUP BOMB", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const targetPokemon = game.field.getEnemyPokemon();
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-1);
+    expect(targetPokemon).toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, -1);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-2);
+    expect(targetPokemon).toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, -2);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-3);
+    expect(targetPokemon).not.toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, -3);
   });
 
   it("does not affect Pokemon with the ability Bulletproof", async () => {
@@ -64,25 +64,25 @@ describe("Moves - SYRUP BOMB", () => {
     const targetPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
-    expect(targetPokemon.isFullHp()).toBe(true);
-    expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
-    expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(targetPokemon).toHaveFullHp();
+    expect(targetPokemon).not.toHaveBattlerTag(BattlerTagType.SYRUP_BOMB);
+    expect(targetPokemon).toHaveStatStage(Stat.SPD, 0);
   });
 
   it("stops lowering the target's speed if the user leaves the field", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPD)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.SPD, -1);
   });
 });

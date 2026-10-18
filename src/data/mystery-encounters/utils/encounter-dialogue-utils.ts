@@ -34,7 +34,7 @@ function getTextWithDialogueTokens(keyOrString: string): string | null {
   const tokens = globalScene.currentBattle?.mysteryEncounter?.dialogueTokens;
 
   if (i18next.exists(keyOrString, tokens)) {
-    return i18next.t(keyOrString, tokens) as string;
+    return i18next.t(keyOrString, tokens);
   }
 
   return keyOrString ?? null;

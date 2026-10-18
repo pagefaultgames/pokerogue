@@ -91,9 +91,7 @@ export class PromptHandler extends GameManagerHelper {
   ): ReturnType<typeof this.originalSetModeInternal> {
     const mode = args[0];
 
-    this.doLog(
-      `UI mode changed from ${getEnumStr(UiMode, this.game.scene.ui.getMode())} to ${getEnumStr(UiMode, mode)}!`,
-    );
+    this.log(`UI mode changed from ${getEnumStr(UiMode, this.game.scene.ui.mode)} to ${getEnumStr(UiMode, mode)}!`);
     // TODO: Add `await` to this
     const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args);
 
@@ -122,7 +120,7 @@ export class PromptHandler extends GameManagerHelper {
 
     const currentPhase = this.game.scene.phaseManager.getCurrentPhase().phaseName;
     const currentHandler = this.game.scene.ui.getHandler();
-    const mode = this.game.scene.ui.getMode();
+    const mode = this.game.scene.ui.mode;
 
     // If the current mode, phase, and handler match the expected values, execute the callback and continue.
     // If not, leave it there.
@@ -171,7 +169,7 @@ export class PromptHandler extends GameManagerHelper {
    * @param args - Arguments to original logging function
    */
   // TODO: Move this to colors.ts & change color after mock console PR
-  private doLog(...args: unknown[]): void {
+  private log(...args: unknown[]): void {
     console.log(chalk.hex(PROMPT_HANDLER_COLOR)(...args));
   }
 }

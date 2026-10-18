@@ -35,10 +35,10 @@ describe("Moves - Safeguard", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy.status).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from status moves", async () => {
@@ -46,10 +46,10 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPORE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from confusion", async () => {
@@ -58,7 +58,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -72,14 +72,14 @@ describe("Moves - Safeguard", () => {
     game.move.select(MoveId.SPORE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.NUZZLE, 1, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase");
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    expect(enemyPokemon[0].status).toBeUndefined();
-    expect(enemyPokemon[1].status).toBeUndefined();
+    expect(enemyPokemon[0]).toHaveStatusEffect(StatusEffect.NONE);
+    expect(enemyPokemon[1]).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from Yawn", async () => {
@@ -87,7 +87,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon.summonData.tags).toEqual([]);
@@ -98,7 +98,7 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(MoveId.SPLASH);
@@ -147,6 +147,6 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

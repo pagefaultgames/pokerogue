@@ -70,7 +70,7 @@ describe("Abilities - Flower Gift", () => {
     await game.move.selectEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     // Ensure sunny day is used last.
-    await game.setTurnOrder([attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
+    game.setTurnOrder([attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
     const damageWithoutGift = initialHp - target.hp;
 
@@ -81,7 +81,7 @@ describe("Abilities - Flower Gift", () => {
     game.move.select(ally_move, 1, ally_target);
     await game.move.selectEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index]);
     await game.phaseInterceptor.to("TurnEndPhase");
     const damageWithGift = initialHp - target.hp;
 
@@ -119,14 +119,14 @@ describe("Abilities - Flower Gift", () => {
     game.move.select(MoveId.SUNNY_DAY, 0);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
-    expect(cherrim.getEffectiveStat(Stat.ATK)).toBe(Math.floor(cherrimAtkStat * 1.5));
-    expect(cherrim.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(cherrimSpDefStat * 1.5));
-    expect(magikarp.getEffectiveStat(Stat.ATK)).toBe(Math.floor(magikarpAtkStat * 1.5));
-    expect(magikarp.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(magikarpSpDefStat * 1.5));
+    expect(cherrim).toHaveEffectiveStat(Stat.ATK, Math.floor(cherrimAtkStat * 1.5));
+    expect(cherrim).toHaveEffectiveStat(Stat.SPDEF, Math.floor(cherrimSpDefStat * 1.5));
+    expect(magikarp).toHaveEffectiveStat(Stat.ATK, Math.floor(magikarpAtkStat * 1.5));
+    expect(magikarp).toHaveEffectiveStat(Stat.SPDEF, Math.floor(magikarpSpDefStat * 1.5));
   });
 
   it("should not increase the damage of an ally using an ability ignoring move", async () => {
@@ -188,7 +188,7 @@ describe("Abilities - Flower Gift", () => {
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(cherrim.summonData.abilitySuppressed).toBe(true);

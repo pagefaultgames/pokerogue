@@ -46,7 +46,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
@@ -67,7 +67,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
@@ -77,7 +77,7 @@ describe("Moves - Pledge Moves", () => {
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(80);
     expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.FIRE);
 
-    enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).not.toHaveFullHp());
   });
 
   it("Fire Pledge - should not combine with an enemy's Pledge move", async () => {
@@ -94,9 +94,9 @@ describe("Moves - Pledge Moves", () => {
 
     // Neither Pokemon should defer their move's effects as they would
     // if they combined moves, so both should be damaged.
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    expect(game.scene.arena.getTag(ArenaTagType.FIRE_GRASS_PLEDGE)).toBeUndefined();
+    expect(playerPokemon).not.toHaveFullHp();
+    expect(enemyPokemon).not.toHaveFullHp();
+    expect(game).not.toHaveArenaTag(ArenaTagType.FIRE_GRASS_PLEDGE);
   });
 
   it("Grass Pledge - should combine with Fire Pledge to form a 150-power Fire-type attack that creates a 'sea of fire'", async () => {
@@ -114,7 +114,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.GRASS_PLEDGE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -124,8 +124,8 @@ describe("Moves - Pledge Moves", () => {
 
     const baseDmg = baseDmgMock.mock.results.at(-1)!.value;
     expect(enemyPokemon[0].getMaxHp() - enemyPokemon[0].hp).toBe(toDmgValue(baseDmg * 1.5));
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp()); // PLAYER should not have attacked
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FIRE_GRASS_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(enemyPokemon[1]).toHaveFullHp(); // PLAYER should not have attacked
+    expect(game).toHaveArenaTag(ArenaTagType.FIRE_GRASS_PLEDGE, ArenaTagSide.ENEMY);
 
     const enemyStartingHp = enemyPokemon.map(p => p.hp);
     await game.toNextTurn();
@@ -148,15 +148,15 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
     }
     expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.WATER);
     expect(firePledge.calculateBattlePower).toHaveLastReturnedWith(150);
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp()); // PLAYER should not have attacked
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(enemyPokemon[1]).toHaveFullHp(); // PLAYER should not have attacked
+    expect(game).toHaveArenaTag(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
 
     await game.toNextTurn();
 
@@ -165,7 +165,7 @@ describe("Moves - Pledge Moves", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     // Rainbow effect should increase Fiery Dance's chance of raising Sp. Atk to 100%
-    expect(playerPokemon[0].getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon[0]).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("Water Pledge - should combine with Grass Pledge to form a 150-power Grass-type attack that creates a 'swamp'", async () => {
@@ -183,7 +183,7 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -191,10 +191,10 @@ describe("Moves - Pledge Moves", () => {
 
     expect(playerPokemon[1].getMoveType).toHaveLastReturnedWith(PokemonType.GRASS);
     expect(waterPledge.calculateBattlePower).toHaveLastReturnedWith(150);
-    expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[1]).toHaveFullHp();
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
-    enemyPokemon.forEach((p, i) => expect(p.getEffectiveStat(Stat.SPD)).toBe(Math.floor(enemyStartingSpd[i] / 4)));
+    expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
+    enemyPokemon.forEach((p, i) => expect(p).toHaveEffectiveStat(Stat.SPD, Math.floor(enemyStartingSpd[i] / 4)));
   });
 
   it("Pledge Moves - should alter turn order when used in combination", async () => {
@@ -205,13 +205,13 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
     // PLAYER_2 should act with a combined move immediately after PLAYER as the second move in the turn
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEndPhase");
     }
-    expect(enemyPokemon[0].hp).toBe(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).toHaveFullHp();
+    expect(enemyPokemon[1]).not.toHaveFullHp();
   });
 
   it("Pledge Moves - 'rainbow' effect should not stack with Serene Grace when applied to flinching moves", async () => {
@@ -229,7 +229,7 @@ describe("Moves - Pledge Moves", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
 
     game.move.select(MoveId.IRON_HEAD, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
@@ -252,11 +252,11 @@ describe("Moves - Pledge Moves", () => {
     await game.move.selectEnemyMove(MoveId.SPORE, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    enemyPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    enemyPokemon.forEach(p => expect(p).toHaveFullHp());
   });
 
   it("Pledge Moves - should ignore redirection from another Pokemon's Storm Drain", async () => {
@@ -268,12 +268,12 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].getStatStage(Stat.SPATK)).toBe(0);
+    expect(enemyPokemon[0]).not.toHaveFullHp();
+    expect(enemyPokemon[1]).toHaveStatStage(Stat.SPATK, 0);
   });
 
   it("Pledge Moves - should not ignore redirection from another Pokemon's Follow Me", async () => {
@@ -289,7 +289,7 @@ describe("Moves - Pledge Moves", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     const enemyPokemon = game.scene.getEnemyField();
-    expect(enemyPokemon[0].hp).toBe(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[1].getMaxHp());
+    expect(enemyPokemon[0]).toHaveFullHp();
+    expect(enemyPokemon[1]).not.toHaveFullHp();
   });
 });

@@ -63,7 +63,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).not.toHaveFullHp();
     expect(enemy).toHaveStatStage(Stat.ATK, 0);
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("should not activate against field-targeted moves", async () => {
@@ -111,7 +111,7 @@ describe("Abilities - Sap Sipper", () => {
     await game.toEndOfTurn();
 
     expect(player).toHaveStatStage(Stat.ATK, 0);
-    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.phaseLog).not.toContain("ShowAbilityPhase");
   });
 
   it("should activate even on missed moves", async () => {

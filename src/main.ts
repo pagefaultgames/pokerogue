@@ -3,7 +3,7 @@ import "#init/init-manifest"; // initializes the manifest, must be done *before*
 import "#app/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
-import { preventDoubleTapZoom } from "#app/touch-controls";
+import { isMobile, preventDoubleTapZoom } from "#app/touch-controls";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
@@ -19,11 +19,20 @@ if (isBeta || isDev) {
 preventDoubleTapZoom();
 
 async function startGame(): Promise<void> {
+  const { initSettingsManager } = await import("#app/global-settings-manager");
+  const { initGlobalAudioManager } = await import("#app/global-audio-manager");
+
+  await initSettingsManager();
+  const audioManager = await initGlobalAudioManager();
+
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
   const game = new Phaser.Game({
     type: Phaser.WEBGL,
     parent: "app",
+    audio: {
+      noAudio: !audioManager.isAudioEnabled,
+    },
     scale: {
       width: 1920,
       height: 1080,
@@ -72,7 +81,7 @@ async function startGame(): Promise<void> {
     scene: [LoadingScene, BattleScene],
     version,
   });
-  game.sound.pauseOnBlur = false;
+  game.sound.pauseOnBlur = isMobile();
 }
 
 try {

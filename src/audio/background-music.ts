@@ -53,6 +53,7 @@ export class BackgroundMusic {
    */
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
+
     BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
 
     globalScene

@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
@@ -29,10 +28,6 @@ export class EggListUiHandler extends MessageUiHandler {
   private scrollGridHandler: ScrollableGridHelper;
 
   private iconAnimHandler: PokemonIconAnimHelper;
-
-  constructor() {
-    super(UiMode.EGG_LIST);
-  }
 
   setup() {
     const ui = this.getUi();

@@ -36,7 +36,7 @@ describe("Move - Hydro Steam", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.HYDRO_STEAM);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     const beforeDamage = enemy.getInverseHp();

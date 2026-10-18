@@ -8,47 +8,55 @@ import { addWindow } from "#ui/ui-theme";
 
 /**
  * A reusable UI container that manages tab-based navigation.
- * It supports button navigation (e.g., CYCLE_FORM/CYCLE_SHINY) and updates the visual state of the tabs.
+ *
+ * It supports button navigation (e.g., `CYCLE_FORM`/`CYCLE_SHINY`) and updates the visual state of the tabs.
  */
 export class TabMenu extends Phaser.GameObjects.Container {
+  private static readonly CENTERED_LABEL_LEFT_BOUNDARY = 24;
+  private static readonly CENTERED_LABEL_RIGHT_BOUNDARY = 24;
+
   public selectedIndex = 0;
-  private labels: string[];
-  private headerTitles: Phaser.GameObjects.Text[] = [];
-  private navigationIcons: Partial<Record<MappingSettingName, Phaser.GameObjects.Sprite>> = {};
+
+  private readonly labels: string[];
+  private readonly headerTitles: Phaser.GameObjects.Text[] = [];
+  private readonly navigationIcons: Partial<Record<MappingSettingName, Phaser.GameObjects.Sprite>> = {};
 
   /**
    * Callback executed whenever the user navigates to a new tab.
-   * @param tabIndex The index of the newly selected tab.
+   * @param tabIndex - The index of the newly selected tab.
    */
-  private onChangeCallback: (tabIndex: number) => void;
+  private readonly onChangeCallback: (tabIndex: number) => void;
 
   constructor(x: number, y: number, width: number, labels: string[], onChange: (tabIndex: number) => void) {
     super(globalScene, x, y);
+
     this.labels = labels;
     this.onChangeCallback = onChange;
 
-    const headerBg = addWindow(0, 0, width, 24).setOrigin(0, 0);
+    const headerBg = addWindow(0, 0, width, 24) //
+      .setOrigin(0);
     this.add(headerBg);
     this.width = headerBg.width;
     this.height = headerBg.height;
 
-    const iconPreviousTab = globalScene.add.sprite(8, 4, "keyboard").setOrigin(0, -0.1);
-    iconPreviousTab.setPositionRelative(headerBg, 8, 4);
+    const iconPreviousTab = globalScene.add //
+      .sprite(8, 4, "keyboard")
+      .setOrigin(0, -0.1)
+      .setPositionRelative(headerBg, 8, 4);
     this.navigationIcons["BUTTON_CYCLE_FORM"] = iconPreviousTab;
 
-    const iconNextTab = globalScene.add.sprite(0, 0, "keyboard").setOrigin(0, -0.1);
-    iconNextTab.setPositionRelative(headerBg, headerBg.width - 20, 4);
+    const iconNextTab = globalScene.add //
+      .sprite(0, 0, "keyboard")
+      .setOrigin(0, -0.1)
+      .setPositionRelative(headerBg, headerBg.width - 20, 4);
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
-    let currentX = 24;
     for (const label of this.labels) {
-      const labelText = addTextObject(currentX, 4, label, TextStyle.SETTINGS_LABEL_NAVBAR).setOrigin(0, 0);
-
+      const labelText = addTextObject(0, 4, label, TextStyle.SETTINGS_LABEL_NAVBAR).setOrigin(0);
       this.add(labelText);
       this.headerTitles.push(labelText);
-
-      currentX += labelText.displayWidth + 16;
     }
+    this.layoutLabels();
 
     this.add(iconPreviousTab);
     this.add(iconNextTab);
@@ -65,7 +73,10 @@ export class TabMenu extends Phaser.GameObjects.Container {
   public updateIcons(): void {
     for (const settingName of Object.keys(this.navigationIcons)) {
       if (specialIconKeys?.includes(settingName)) {
-        this.navigationIcons[settingName].setTexture("keyboard").setFrame(specialIcons[settingName]).setAlpha(1);
+        this.navigationIcons[settingName] //
+          .setTexture("keyboard")
+          .setFrame(specialIcons[settingName])
+          .setAlpha(1);
         continue;
       }
       const { inputController } = globalScene;
@@ -76,6 +87,23 @@ export class TabMenu extends Phaser.GameObjects.Container {
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }
+    }
+    this.layoutLabels();
+  }
+
+  private layoutLabels(): void {
+    const textWidth = this.headerTitles.reduce((total, label) => total + label.displayWidth, 0);
+    const gapCount = Math.max(this.headerTitles.length - 1, 0);
+    const leftBoundary = TabMenu.CENTERED_LABEL_LEFT_BOUNDARY;
+    const availableWidth = this.width - leftBoundary - TabMenu.CENTERED_LABEL_RIGHT_BOUNDARY;
+    const labelSpacing = gapCount > 0 ? Math.max(0, (availableWidth - textWidth) / gapCount) : 0;
+    const groupWidth = textWidth + gapCount * labelSpacing;
+    const startX = leftBoundary + (availableWidth - groupWidth) / 2;
+
+    let currentX = startX;
+    for (const title of this.headerTitles) {
+      title.setX(currentX);
+      currentX += title.displayWidth + labelSpacing;
     }
   }
 

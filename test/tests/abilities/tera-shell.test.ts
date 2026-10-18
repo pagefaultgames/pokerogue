@@ -89,7 +89,7 @@ describe("Abilities - Tera Shell", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(spy).toHaveLastReturnedWith(1);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
+    expect(playerPokemon).toHaveTakenDamage(40);
   });
 
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {
@@ -102,7 +102,7 @@ describe("Abilities - Tera Shell", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceHit();
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEffectPhase");

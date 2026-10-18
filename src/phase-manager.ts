@@ -25,6 +25,7 @@ import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { DancerPhase } from "#phases/dancer-phase";
 import { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import { EggHatchPhase } from "#phases/egg-hatch-phase";
 import { EggLapsePhase } from "#phases/egg-lapse-phase";
@@ -71,6 +72,7 @@ import { NextEncounterPhase } from "#phases/next-encounter-phase";
 import { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import { PartyExpPhase } from "#phases/party-exp-phase";
 import { PartyHealPhase } from "#phases/party-heal-phase";
+import { PartyReorderSwitchPhase } from "#phases/party-reorder-switch-phase";
 import { PokemonAnimPhase } from "#phases/pokemon-anim-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
@@ -133,6 +135,7 @@ const PHASES = Object.freeze({
   CheckSwitchPhase,
   CommandPhase,
   CommonAnimPhase,
+  DancerPhase,
   DamageAnimPhase,
   DynamicPhaseMarker,
   EggHatchPhase,
@@ -178,6 +181,7 @@ const PHASES = Object.freeze({
   ObtainStatusEffectPhase,
   PartyExpPhase,
   PartyHealPhase,
+  PartyReorderSwitchPhase,
   PokemonAnimPhase,
   PokemonHealPhase,
   PokemonTransformPhase,
@@ -298,7 +302,8 @@ export class PhaseManager {
   public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
       const toAdd = this.checkDynamic(phase);
-      if (phase.is("MovePhase")) {
+      // TODO: Remove the dancer phase check once a move in flight allows `MoveEndPhase` to handle dancer interactions itself
+      if (phase.is("MovePhase") || phase.is("DancerPhase")) {
         this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
       } else {
         this.phaseQueue.addPhase(toAdd);

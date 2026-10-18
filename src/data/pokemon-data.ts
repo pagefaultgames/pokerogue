@@ -19,7 +19,6 @@ import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
@@ -63,7 +62,7 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
     return null;
   }
 
-  return getPokemonSpeciesForm(id, formIdx);
+  return speciesDataRegistry.getPokemonSpeciesForm(id, formIdx);
 }
 
 interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {
@@ -151,6 +150,22 @@ export class PokemonSummonData {
    */
   // TODO: Rework this into a sort of "global move history" that also allows checking execution order (for Fusion Bolt/Flare)
   public moveHistory: TurnMove[] = [];
+
+  // Non-serialized fields
+
+  /**
+   * The number of turns this pokemon has spent without switching out.
+   * @remarks
+   * Only currently used for positioning the battle cursor.
+   */
+  public turnCount = 1;
+  /**
+   * The number of turns this pokemon has spent in the active position
+   * since the start of the wave without switching out.
+   * @remarks
+   * Used to evaluate "first turn only" condition moves such as Fake Out and First Impression.
+   */
+  public waveTurnCount = 1;
 
   constructor(source?: PokemonSummonData | SerializedPokemonSummonData) {
     if (source == null) {
@@ -247,6 +262,8 @@ export class PokemonSummonData {
               fusionSpecies: illusionSpeciesForm?.speciesId,
             },
       abilitiesApplied: [...this.abilitiesApplied.values()],
+      turnCount: undefined,
+      waveTurnCount: undefined,
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
     for (const [key, value] of Object.entries<unknown>(t)) {
@@ -256,23 +273,6 @@ export class PokemonSummonData {
     }
     return t;
   }
-}
-
-// TODO: Merge this inside `PokemonSummmonData` and exclude from save via `toJSON`
-export class PokemonTempSummonData {
-  /**
-   * The number of turns this pokemon has spent without switching out.
-   * @remarks
-   * Only currently used for positioning the battle cursor.
-   */
-  turnCount = 1;
-  /**
-   * The number of turns this pokemon has spent in the active position
-   * since the start of the wave without switching out.
-   * @remarks
-   * Used to evaluate "first turn only" condition moves such as Fake Out and First Impression.
-   */
-  waveTurnCount = 1;
 }
 
 /**
