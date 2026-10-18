@@ -44,7 +44,7 @@ describe("Abilities - Battle Bond", () => {
 
       greninja.hp = 0;
       greninja.status = new Status(StatusEffect.FAINT);
-      expect(greninja.isFainted()).toBe(true);
+      expect(greninja).toHaveFainted();
 
       game.move.use(MoveId.SPLASH);
       await game.doKillOpponents();

@@ -47,6 +47,7 @@ import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RegistrationFormUiHandler } from "#ui/registration-form-ui-handler";
 import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import { RenameRunFormUiHandler } from "#ui/rename-run-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
@@ -62,7 +63,6 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
-import { RewardSelectUiHandler } from "./handlers/reward-select-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,

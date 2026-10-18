@@ -24,7 +24,7 @@ import {
 } from "#items/reward-weight-funcs";
 
 /**
- * Initialize the common modifier pool
+ * Initialize the Common reward pool
  */
 function initCommonRewardPool() {
   rewardPool[RarityTier.COMMON] = [
@@ -58,7 +58,7 @@ function initCommonRewardPool() {
 }
 
 /**
- * Initialize the Great modifier pool
+ * Initialize the Great reward pool
  */
 function initGreatRewardPool(): void {
   rewardPool[RarityTier.GREAT] = [
@@ -197,7 +197,7 @@ function initGreatRewardPool(): void {
 }
 
 /**
- * Initialize the Ultra modifier pool
+ * Initialize the Ultra reward pool
  */
 function initUltraRewardPool() {
   rewardPool[RarityTier.ULTRA] = [
@@ -415,6 +415,9 @@ function initUltraRewardPool() {
   ];
 }
 
+/**
+ * Initialize the Rogue reward pool
+ */
 function initRogueRewardPool() {
   rewardPool[RarityTier.ROGUE] = [
     { id: RewardId.ROGUE_BALL, weight: () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), maxWeight: 16 },
@@ -456,7 +459,7 @@ function initRogueRewardPool() {
 }
 
 /**
- * Initialize the Master modifier pool
+ * Initialize the Master reward pool
  */
 function initMasterRewardPool() {
   rewardPool[RarityTier.MASTER] = [

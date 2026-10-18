@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { ChallengeType } from "#enums/challenge-type";
 import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
@@ -8,6 +9,7 @@ import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { rewardRarities } from "#items/reward-defaults-tiers";
 import { trainerItemRarities } from "#items/trainer-item-default-tiers";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
+import type { Exact } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { ValueHolder } from "#utils/value-holder";
 import { EmptyReward, type PokemonMoveReward, type Reward, RewardGenerator, RewardOption } from "./reward";
@@ -27,6 +29,25 @@ export function isMoveReward(reward: Reward): reward is PokemonMoveReward {
 
 export function isRememberMoveReward(reward: Reward): reward is RememberMoveReward {
   return reward.id === RewardId.MEMORY_MUSHROOM;
+}
+
+export function applyReward<T extends Reward>(
+  reward: T,
+  params: Exact<Parameters<T["apply"]>[0]>,
+  playSound?: boolean,
+): boolean {
+  const { soundName } = reward;
+
+  if (playSound) {
+    audioManager.playSound(soundName);
+  }
+
+  if (!reward.shouldApply(params)) {
+    return false;
+  }
+
+  reward.apply(params);
+  return true;
 }
 
 /**

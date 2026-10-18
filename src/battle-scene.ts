@@ -79,7 +79,6 @@ import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
 import { assignItemsFromConfiguration, generateEnemyPokemonHeldItems } from "#items/held-item-pool";
-import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
@@ -112,7 +111,6 @@ import type { SessionSaveData } from "#types/save-data";
 import type { VolumeSettingsKey } from "#types/settings";
 import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { Exact } from "#types/type-helpers";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -781,7 +779,7 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns the ItemBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
+   * @param isEnemy - Whether to return the enemy item bar instead of the player bar; default `false`
    * @returns The {@linkcode ItemBar} for the given side of the field
    */
   getItemBar(isEnemy = false): ItemBar {
@@ -1142,6 +1140,11 @@ export class BattleScene extends SceneBase {
     if (this.currentBattle?.mysteryEncounter?.introVisuals) {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
+
+    // Same for trainers, which would otherwise stay on the field into the next run
+    this.currentBattle?.trainer?.destroy();
+    this.lastEnemyTrainer?.destroy();
+    this.lastEnemyTrainer = null;
 
     this.currentBattle = null!; // TODO: this should never be `null`, probably needs multiple scenes
 
@@ -2370,22 +2373,6 @@ export class BattleScene extends SceneBase {
 
   applyPlayerItems<T extends TrainerItemEffect>(effect: T, params: TrainerItemEffectParamMap[T]) {
     applyTrainerItems(effect, this.trainerItems, params);
-  }
-
-  // TODO: Move this outside of here?
-  applyReward<T extends Reward>(reward: T, params: Exact<Parameters<T["apply"]>[0]>, playSound?: boolean): boolean {
-    const { soundName } = reward;
-
-    if (playSound) {
-      audioManager.playSound(soundName);
-    }
-
-    if (!reward.shouldApply(params)) {
-      return false;
-    }
-
-    reward.apply(params);
-    return true;
   }
 
   assignTrainerItemsFromConfiguration(config: TrainerItemConfiguration, isPlayer: boolean) {

@@ -74,7 +74,7 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.WISH);
     await game.toEndOfTurn();
 
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(alomomola).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
     expect(alomomola).toHaveUsedMove({ move: MoveId.WISH, result: MoveResult.FAIL });
   });
 
@@ -138,8 +138,8 @@ describe("Move - Wish", () => {
 
     await game.toEndOfTurn();
 
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(blissey.hp).toBe(toDmgValue(blissey.getMaxHp() / 2) + 1);
+    expect(alomomola).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(blissey).toHaveHp(toDmgValue(blissey.getMaxHp() / 2) + 1);
   });
 
   it("should vanish and not play message if slot is empty", async () => {
@@ -167,6 +167,6 @@ describe("Move - Wish", () => {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
       }),
     );
-    expect(alomomola.hp).toBe(1);
+    expect(alomomola).toHaveHp(1);
   });
 });

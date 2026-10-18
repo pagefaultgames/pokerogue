@@ -56,7 +56,7 @@ describe("Items - Leftovers", () => {
     await game.toEndOfTurn();
     await game.phaseInterceptor.to("CommandPhase", false);
 
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
     expect(player).toHaveHeldItem(HeldItemId.LEFTOVERS);
   });
 });

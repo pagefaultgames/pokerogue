@@ -267,9 +267,9 @@ class DefaultOverrides {
   readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number = 0;
   readonly UNLIMITED_EGG_COUNT_OVERRIDE: boolean = false;
 
-  // -------------------------
+  // ---------------------------
   // MYSTERY ENCOUNTER OVERRIDES
-  // -------------------------
+  // ---------------------------
 
   /**
    * `1` (almost never) to `256` (always), set to `null` to disable the override
@@ -280,11 +280,11 @@ class DefaultOverrides {
   readonly MYSTERY_ENCOUNTER_TIER_OVERRIDE: MysteryEncounterTier | null = null;
   readonly MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType | null = null;
 
-  // -------------------------
-  // MODIFIER / ITEM OVERRIDES
-  // -------------------------
+  // -----------------------------
+  // TRAINER / HELD ITEM OVERRIDES
+  // -----------------------------
   /**
-   * Overrides labeled `MODIFIER` deal with any modifier so long as it doesn't require a party
+   * Overrides labeled `TRAINER_ITEM` deal with any items so long as it doesn't require a party
    * member to hold it (typically this is, extends, or generates a {@linkcode Reward}),
    * like `EXP_SHARE`, `CANDY_JAR`, etc.
    *
@@ -293,7 +293,7 @@ class DefaultOverrides {
    *
    * Note that, if count is not provided, it will default to 1.
    *
-   * Additionally, note that some held items and modifiers are grouped together via
+   * Additionally, note that some held items and trainer items are grouped together via
    * a {@linkcode RewardGenerator} and require pre-generation arguments to get
    * a specific item from that group. If a type is not set, the generator will either
    * use the party to weight item choice or randomly pick an item.
@@ -301,7 +301,7 @@ class DefaultOverrides {
    * @example
    * ```
    * // Will have a quantity of 2 in-game
-   * STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}]
+   * STARTING_TRAINER_ITEMS_OVERRIDE = [{name: "EXP_SHARE", count: 2}]
    * // Will have a quantity of 1 in-game
    * STARTING_HELD_ITEMS_OVERRIDE = [{name: "LUCKY_EGG"}]
    * // Type must be given to get a specific berry

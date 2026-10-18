@@ -34,11 +34,6 @@ abstract class StatBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
   public override apply({ statHolder }: StatBoostParams): void {
     statHolder.value *= this.multiplier;
   }
-
-  // TODO: This looks like a holdover that can be removed
-  getMaxHeldItemCount(): number {
-    return 1;
-  }
 }
 
 // TODO: Since the core logic for both classes is somewhat similar, could we try to combine them?

@@ -17,7 +17,7 @@ import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { Reward } from "#items/reward";
-import { generateRewardOptionFromId } from "#items/reward-utils";
+import { applyReward, generateRewardOptionFromId } from "#items/reward-utils";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -164,7 +164,7 @@ async function spawnNextTrainerOrEndEncounter() {
     // Give 10x Voucher
     // TODO: Fix
     const reward = generateRewardOptionFromId(RewardId.VOUCHER_PREMIUM).type;
-    globalScene.applyReward(reward as Reward, {});
+    applyReward(reward as Reward, {});
     audioManager.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: (reward as Reward).name }));
 
