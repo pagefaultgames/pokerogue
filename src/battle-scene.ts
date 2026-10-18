@@ -801,7 +801,8 @@ export class BattleScene extends SceneBase {
   // TODO: Replace prior indexing into `getField` with this abstraction to make an overhaul of this system easier
   public getPokemonByBattlerIndex<B extends BattlerIndex>(battlerIndex: B): BattlerIndexToPokemon<B> | undefined;
   public getPokemonByBattlerIndex(battlerIndex: BattlerIndex): Pokemon | undefined {
-    // TODO: `?? undefined` is dumb and a byproduct of us splicing `null`s into `getFIeld`
+    // NB: `?? undefined` required due to the questionable practice of
+    // splicing `null`s into `getField`
     return this.getField()[battlerIndex] ?? undefined;
   }
 
