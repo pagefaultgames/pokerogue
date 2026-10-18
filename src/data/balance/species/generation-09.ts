@@ -3359,7 +3359,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.TOEDSCRUEL, level: 30 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.RUN_AWAY,
+    passives: AbilityId.WATER_ABSORB,
     levelMoves: [
       [1, MoveId.WRAP],
       [1, MoveId.MUD_SLAP],
@@ -3459,7 +3459,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.TOEDSCOOL,
     evolutions: [],
-    passives: AbilityId.PRANKSTER,
+    passives: AbilityId.WATER_ABSORB,
     levelMoves: [
       [1, MoveId.WRAP],
       [1, MoveId.MUD_SLAP],

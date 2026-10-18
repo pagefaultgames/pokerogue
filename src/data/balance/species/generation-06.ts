@@ -3929,6 +3929,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [42, MoveId.HORN_LEECH],
       [45, MoveId.LEAF_BLADE],
       [50, MoveId.MILK_DRINK],
+      [54, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.BODY_SLAM,
@@ -4039,7 +4040,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [47, MoveId.HORN_LEECH],
       [55, MoveId.LEAF_BLADE],
       [58, MoveId.MILK_DRINK],
-      [66, MoveId.EARTHQUAKE],
+      [60, MoveId.EARTHQUAKE],
+      [65, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.HYPER_BEAM,

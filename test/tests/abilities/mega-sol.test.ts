@@ -47,8 +47,8 @@ describe("Abilities - Mega Sol", () => {
     game.move.use(MoveId.SOLAR_BEAM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -97,14 +97,14 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 0);
 
     game.move.use(MoveId.GROWTH);
     await game.toEndOfTurn();
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(2);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(2);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 2);
   });
 
   it("should change Weather Ball to Fire type and double its power", async () => {

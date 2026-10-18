@@ -99,14 +99,14 @@ describe("Challenges - Hardcore", () => {
     const faintedPokemon = game.scene.getPlayerParty()[1];
     faintedPokemon.hp = 0;
     faintedPokemon.status = new Status(StatusEffect.FAINT);
-    expect(faintedPokemon.isFainted()).toBe(true);
+    expect(faintedPokemon).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
     await game.toNextWave();
 
-    expect(faintedPokemon.isFainted()).toBe(true);
+    expect(faintedPokemon).toHaveFainted();
   });
 
   // TODO: Couldn't figure out how to select party Pokémon
@@ -117,7 +117,7 @@ describe("Challenges - Hardcore", () => {
     const faintedPokemon = game.scene.getPlayerParty()[1];
     faintedPokemon.hp = 0;
     faintedPokemon.status = new Status(StatusEffect.FAINT);
-    expect(faintedPokemon.isFainted()).toBe(true);
+    expect(faintedPokemon).toHaveFainted();
 
     game.move.select(MoveId.RAZOR_LEAF);
     await game.doKillOpponents();
@@ -154,7 +154,7 @@ describe("Challenges - Hardcore", () => {
     const faintedPokemon = game.scene.getPlayerParty()[1];
     faintedPokemon.hp = 0;
     faintedPokemon.status = new Status(StatusEffect.FAINT);
-    expect(faintedPokemon.isFainted()).toBe(true);
+    expect(faintedPokemon).toHaveFainted();
 
     game.move.select(MoveId.RAZOR_LEAF);
     await game.doKillOpponents();
@@ -176,7 +176,7 @@ describe("Challenges - Hardcore", () => {
         handler.processInput(Button.ACTION);
         handler.processInput(Button.ACTION);
 
-        expect(faintedPokemon.isFainted()).toBe(true);
+        expect(faintedPokemon).toHaveFainted();
       },
       () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("NewBattlePhase"),
       true,

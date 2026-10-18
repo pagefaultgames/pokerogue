@@ -1,7 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { Reward } from "#items/reward";
-import { generateRewardOptionFromId } from "#items/reward-utils";
+import { applyReward, generateRewardOptionFromId } from "#items/reward-utils";
 import { BattlePhase } from "#phases/battle-phase";
 import type { SilentReward } from "#types/rewards";
 import i18next from "i18next";
@@ -27,7 +27,7 @@ export class RewardPhase extends BattlePhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       // TODO: Type unsafe
-      globalScene.applyReward(this.reward, {});
+      applyReward(this.reward, {});
       audioManager.playSound("item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {

@@ -25,8 +25,7 @@ export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemDa
   }
 
   /** Decrease the durations of all duration-based trainer items on turn end. */
-  // TODO: We should avoid reusing the nebulous "lapse" terminology and name this something like "decreaseDurations"/etc.
-  public lapseItems(): void {
+  public decreaseDurations(): void {
     for (const item of this.items.keys()) {
       if (allTrainerItems[item].isLapsing) {
         this.remove(item, 1);

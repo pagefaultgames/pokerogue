@@ -11,6 +11,7 @@ import { MoveId } from "#enums/move-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { HeldItemReward } from "#items/held-item-reward";
+import { applyReward } from "#items/reward-utils";
 import { GameManager } from "#test/framework/game-manager";
 import { generateRewardForTest } from "#test/utils/reward-test-utils";
 import { getHeldItemCategory } from "#utils/item-utils";
@@ -48,7 +49,7 @@ describe("{{description}}", () => {
     const reward = generateRewardForTest(RewardId.BERRY)!;
     expect(reward).toBeInstanceOf(HeldItemReward); // Replace with actual reward instance
     expect(getHeldItemCategory(reward["itemId"])).toBe(HeldItemCategoryId.BERRY);
-    game.scene.applyReward(reward, { pokemon: feebas });
+    applyReward(reward, { pokemon: feebas });
 
     expect(feebas).toHaveHeldItem(HeldItemCategoryId.BERRY);
   });

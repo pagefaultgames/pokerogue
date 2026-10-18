@@ -3,7 +3,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { enemyBuffTokenPool } from "#items/trainer-item-pool";
 
 /**
- * Initialize the enemy buff modifier pool
+ * Initialize the enemy buff token pool
  */
 function initEnemyBuffTokenPool() {
   enemyBuffTokenPool[RarityTier.COMMON] = [

@@ -41,7 +41,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.hp).toBe(snorlax.getMaxHp());
+    expect(snorlax).toHaveFullHp();
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
@@ -57,20 +57,20 @@ describe("Move - Rest", () => {
     await game.toNextTurn();
 
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(snorlax.status?.sleepTurnsRemaining).toBe(3);
+    expect(snorlax).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 3 });
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.sleepTurnsRemaining).toBe(2);
+    expect(snorlax).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 2 });
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.sleepTurnsRemaining).toBe(1);
+    expect(snorlax).toHaveStatusEffect({ effect: StatusEffect.SLEEP, sleepTurnsRemaining: 1 });
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.effect).toBeUndefined();
-    expect(snorlax.getStatStage(Stat.ATK)).toBe(2);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.NONE);
+    expect(snorlax).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should preserve non-volatile status conditions", async () => {
@@ -83,7 +83,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.getTag(BattlerTagType.CONFUSED)).toBeDefined();
+    expect(snorlax).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
   it.each<{ name: string; status?: StatusEffect; ability?: AbilityId; dmg?: number }>([
@@ -102,7 +102,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(snorlax).toHaveUsedMove({ move: MoveId.REST, result: MoveResult.FAIL });
   });
 
   it("should fail if called while already asleep", async () => {
@@ -116,7 +116,7 @@ describe("Move - Rest", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.toEndOfTurn();
 
-    expect(snorlax.isFullHp()).toBe(false);
+    expect(snorlax).not.toHaveFullHp();
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.FAIL, MoveResult.SUCCESS]);
   });
@@ -135,8 +135,8 @@ describe("Move - Rest", () => {
     await game.toNextTurn();
 
     expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
-    expect(snorlax.isFullHp()).toBe(true);
-    expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(snorlax).toHaveFullHp();
+    expect(snorlax).toHaveUsedMove({ move: MoveId.REST, result: MoveResult.SUCCESS });
     expect(snorlax.status!.sleepTurnsRemaining).toBeGreaterThan(1);
   });
 });

@@ -37,6 +37,6 @@ describe("Moves - Diamond Storm", () => {
     game.move.select(MoveId.DIAMOND_STORM);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.DEF)).toBe(2);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.DEF, 2);
   });
 });
