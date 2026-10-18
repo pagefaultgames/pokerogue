@@ -70,7 +70,7 @@ describe.each([
     expect(typeSpy).toHaveLastReturnedWith(ty);
     expect(enemySpy).toHaveReturnedWith(1);
     expect(powerSpy).toHaveReturnedWith(48);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   it("should not affect moves that are not Normal type", async () => {
@@ -109,7 +109,7 @@ describe.each([
     expect(typeSpy).toHaveLastReturnedWith(ty);
     expect(enemySpy).toHaveReturnedWith(1);
     expect(powerSpy).toHaveReturnedWith(144); // 120 * 1.2
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   // Galvanize specifically would like to check for volt absorb's activation
@@ -133,7 +133,7 @@ describe.each([
 
       expect(tySpy).toHaveLastReturnedWith(PokemonType.ELECTRIC);
       expect(enemyEffectivenessSpy).toHaveReturnedWith(0);
-      expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+      expect(enemyPokemon).toHaveFullHp();
     });
   }
 
@@ -174,7 +174,7 @@ describe.each([
 
     await game.phaseInterceptor.to("MoveEffectPhase");
     expect(playerPokemon.turnData.hitCount).toBeGreaterThan(1);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
 
     while (playerPokemon.turnData.hitsLeft > 0) {
       const enemyStartingHp = enemyPokemon.hp;

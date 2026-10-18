@@ -72,8 +72,8 @@ describe("Abilities - Flower Veil", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
     const user = game.field.getPlayerPokemon();
-    expect(user.getTag(BattlerTagType.DROWSY)).toBeFalsy();
-    expect(ally.getTag(BattlerTagType.DROWSY)).toBeFalsy();
+    expect(user).not.toHaveBattlerTag(BattlerTagType.DROWSY);
+    expect(ally).not.toHaveBattlerTag(BattlerTagType.DROWSY);
   });
 
   it("should prevent status conditions from moves like Thunder Wave for a grass user and its grass allies", async () => {
@@ -84,7 +84,7 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
@@ -116,8 +116,8 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(user.getStatStage(Stat.ATK)).toBe(0);
-    expect(ally.getStatStage(Stat.ATK)).toBe(0);
+    expect(user).toHaveStatStage(Stat.ATK, 0);
+    expect(ally).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not prevent status drops for a non-grass user and its non-grass allies", async () => {
@@ -129,8 +129,8 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(user.getStatStage(Stat.ATK)).toBe(-2);
-    expect(ally.getStatStage(Stat.ATK)).toBe(-2);
+    expect(user).toHaveStatStage(Stat.ATK, -2);
+    expect(ally).toHaveStatStage(Stat.ATK, -2);
   });
 
   it("should not prevent self-inflicted stat drops from moves like Close Combat for a user or its allies", async () => {
@@ -143,10 +143,10 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.CLOSE_COMBAT, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.CLOSE_COMBAT, 1, BattlerIndex.ENEMY_2);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(user.getStatStage(Stat.DEF)).toBe(-1);
-    expect(user.getStatStage(Stat.SPDEF)).toBe(-1);
-    expect(ally.getStatStage(Stat.DEF)).toBe(-1);
-    expect(ally.getStatStage(Stat.SPDEF)).toBe(-1);
+    expect(user).toHaveStatStage(Stat.DEF, -1);
+    expect(user).toHaveStatStage(Stat.SPDEF, -1);
+    expect(ally).toHaveStatStage(Stat.DEF, -1);
+    expect(ally).toHaveStatStage(Stat.SPDEF, -1);
   });
 
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
@@ -155,7 +155,7 @@ describe("Abilities - Flower Veil", () => {
     const user = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(user.getStatStage(Stat.ATK)).toBe(2);
-    expect(user.getStatStage(Stat.DEF)).toBe(0);
+    expect(user).toHaveStatStage(Stat.ATK, 2);
+    expect(user).toHaveStatStage(Stat.DEF, 0);
   });
 });

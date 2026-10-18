@@ -416,6 +416,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.FLOATY_FALL,
     MoveId.DUAL_WINGBEAT,
   ],
+  [MoveId.PHANTOM_FORCE]: [MoveId.SHADOW_FORCE],
   [MoveId.POISON_STING]: [
     MoveId.POISON_FANG,
     MoveId.POISON_JAB,

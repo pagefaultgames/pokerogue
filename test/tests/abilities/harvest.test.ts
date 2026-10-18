@@ -128,13 +128,13 @@ describe("Abilities - Harvest", () => {
     // ate 1 berry without recovering (no harvest)
     expect(regieleki.battleData.berriesEaten).toEqual([HeldItemId.PETAYA_BERRY]);
     expectBerriesContaining([{ item: { id: HeldItemId.PETAYA_BERRY, stack: 1 }, pokemon: regieleki }]);
-    expect(regieleki.getStatStage(Stat.SPATK)).toBe(1);
+    expect(regieleki).toHaveStatStage(Stat.SPATK, 1);
 
     await game.toNextWave();
 
     expect(regieleki.battleData.berriesEaten).toEqual([HeldItemId.PETAYA_BERRY]);
     expectBerriesContaining([{ item: { id: HeldItemId.PETAYA_BERRY, stack: 1 }, pokemon: regieleki }]);
-    expect(regieleki.getStatStage(Stat.SPATK)).toBe(1);
+    expect(regieleki).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("keeps harvested berries across reloads", async () => {

@@ -40,7 +40,10 @@ export class PartyReorderSwitchPhase extends BattlePhase {
 
     const party = globalScene.getPlayerParty();
     const isDouble = globalScene.currentBattle.double;
-    const desiredField = party.slice(0, isDouble ? 2 : 1);
+    // Only fill the second slot if there is a second Pokémon able to battle; otherwise,
+    // SummonPhase would fail to find a replacement for it and trigger a game over
+    const availableCount = globalScene.getPokemonAllowedInBattle().length;
+    const desiredField = party.slice(0, isDouble && availableCount > 1 ? 2 : 1);
 
     if (desiredField.length === 0) {
       this.end();

@@ -43,7 +43,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy is KO'd by status effect", async () => {
@@ -55,7 +55,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy is KO'd by damaging weather", async () => {
@@ -68,7 +68,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy is KO'd by Dry Skin + Harsh Sunlight", async () => {
@@ -81,7 +81,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
@@ -92,7 +92,7 @@ describe("Moves - Fell Stinger", () => {
     game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy is KO'd by Salt Cure", async () => {
@@ -111,13 +111,13 @@ describe("Moves - Fell Stinger", () => {
 
     //  Turn 2: enemy Endures Fell Stinger, then dies to Salt Cure
     await game.toNextTurn();
-    expect(leftEnemy.isFainted()).toBe(false);
+    expect(leftEnemy).not.toHaveFainted();
     leftEnemy.heal(leftEnemy.getMaxHp());
     game.move.select(MoveId.FELL_STINGER);
     await game.toNextTurn();
 
-    expect(leftEnemy.isFainted()).toBe(true);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leftEnemy).toHaveFainted();
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy dies to Bind or a similar effect", async () => {
@@ -134,13 +134,13 @@ describe("Moves - Fell Stinger", () => {
 
     // Turn 2: enemy Endures Fell Stinger, then dies to Bind
     await game.toNextTurn();
-    expect(leftEnemy.isFainted()).toBe(false);
+    expect(leftEnemy).not.toHaveFainted();
     leftEnemy.heal(leftEnemy.getMaxHp());
     game.move.select(MoveId.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
     await game.toNextTurn();
 
-    expect(leftEnemy.isFainted()).toBe(true);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leftEnemy).toHaveFainted();
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not grant stat boost if enemy dies to Leech Seed", async () => {
@@ -157,13 +157,13 @@ describe("Moves - Fell Stinger", () => {
 
     // Turn 2: enemy Endures Fell Stinger, then dies to Leech Seed
     await game.toNextTurn();
-    expect(leftEnemy.isFainted()).toBe(false);
+    expect(leftEnemy).not.toHaveFainted();
     leftEnemy.heal(leftEnemy.getMaxHp());
     game.move.select(MoveId.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
     await game.toNextTurn();
 
-    expect(leftEnemy.isFainted()).toBe(true);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(leftEnemy).toHaveFainted();
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should grant stat boost if enemy dies directly to hit", async () => {
@@ -175,6 +175,6 @@ describe("Moves - Fell Stinger", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(3);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 3);
   });
 });
