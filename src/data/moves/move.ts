@@ -3148,14 +3148,14 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target) => {
+    return (user, target, _move, simulated) => {
       if (target.status?.effect) {
         return false;
       }
 
       const statusToApply =
         user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : StatusEffect.NONE);
-      return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
+      return !!statusToApply && target.canSetStatus(statusToApply, simulated, false, user);
     };
   }
 
@@ -7392,20 +7392,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) =>
-      move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
+    return (user, target, move, simulated) =>
+      move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move, simulated);
   }
 
   getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled });
+    // simulated, as the move's condition has already shown the ability's flyout
+    applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled, simulated: true });
     if (cancelled.value) {
       return i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) });
     }
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
-    return (user, target, move) => {
+    return (user, target, move, simulated) => {
       const switchOutTarget = this.selfSwitch ? user : target;
       const player = switchOutTarget.isPlayer();
       const forceSwitchAttr = move
@@ -7443,7 +7444,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
 
         const blockedByAbility = new BooleanHolder(false);
-        applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled: blockedByAbility });
+        applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled: blockedByAbility, simulated });
         if (blockedByAbility.value) {
           return false;
         }
@@ -7511,8 +7512,9 @@ export class ChillyReceptionAttr extends ForceSwitchOutAttr {
 
   getCondition(): MoveConditionFunc {
     // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
-    return (user, target, move) =>
-      globalScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
+    return (user, target, move, simulated) =>
+      globalScene.arena.weather?.weatherType !== WeatherType.SNOW
+      || super.getSwitchOutCondition()(user, target, move, simulated);
   }
 }
 
