@@ -75,6 +75,16 @@ export const PartyUiMode = {
    * This type of selection can be cancelled.
    */
   DISCARD: 13,
+  /**
+   * Indicates that the party UI is open to select a mon to use an evolution item on.
+   * This type of selection can be cancelled.
+   */
+  EVOLUTION_ITEM_MODIFIER: 14,
+  /**
+   * Indicates that the party UI is open to select a mon to use a form-change item on.
+   * This type of selection can be cancelled.
+   */
+  FORM_CHANGE_ITEM_MODIFIER: 15,
 } as const;
 
 export type PartyUiMode = ObjectValues<typeof PartyUiMode>;
