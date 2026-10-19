@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { RewardId } from "#enums/reward-id";
-import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
@@ -13,39 +12,18 @@ import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class EvolutionItemReward extends PokemonReward {
-  public evolutionItem: EvolutionItem;
+  public evolutionItemId: EvolutionItemId;
 
-  constructor(id: RewardId, evolutionItem: EvolutionItem) {
-    super(id, "", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
-      if (
-        speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
-        && speciesDataRegistry
-          .getEvolutions(pokemon.species.speciesId)
-          .filter(e => e.validate(pokemon, false, this.evolutionItem)).length > 0
-        && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
-      ) {
-        return null;
-      }
-      if (
-        pokemon.isFusion()
-        && pokemon.fusionSpecies
-        && speciesDataRegistry.hasEvolutions(pokemon.fusionSpecies.speciesId)
-        && speciesDataRegistry
-          .getEvolutions(pokemon.fusionSpecies.speciesId)
-          .filter(e => e.validate(pokemon, true, this.evolutionItem)).length > 0
-        && pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
-      ) {
-        return null;
-      }
+  constructor(id: RewardId, evolutionItemId: EvolutionItemId) {
+    super(id, "", EvolutionItemId[evolutionItemId].toLowerCase(), (pokemon: PlayerPokemon) => 
+      pokemon.isEvolutionItemCompatible(this.evolutionItemId) ? null : PartyUiHandler.NoEffectMessage
+    );
 
-      return PartyUiHandler.NoEffectMessage;
-    });
-
-    this.evolutionItem = evolutionItem;
+    this.evolutionItemId = evolutionItemId;
   }
 
   get name(): string {
-    return i18next.t(`item:${toCamelCase(EvolutionItem[this.evolutionItem])}.name`);
+    return i18next.t(`item:${toCamelCase(EvolutionItemId[this.evolutionItemId])}.name`);
   }
 
   get description(): string {
@@ -61,13 +39,13 @@ export class EvolutionItemReward extends PokemonReward {
     let matchingEvolution = speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
       ? speciesDataRegistry
           .getEvolutions(pokemon.species.speciesId)
-          .find(e => e.item === this.evolutionItem && e.validate(pokemon, false, e.item!))
+          .find(e => e.item === this.evolutionItemId && e.validate(pokemon, false, e.item!))
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
       matchingEvolution = speciesDataRegistry
         .getEvolutions(pokemon.fusionSpecies!.speciesId)
-        .find(e => e.item === this.evolutionItem && e.validate(pokemon, true, e.item!));
+        .find(e => e.item === this.evolutionItemId && e.validate(pokemon, true, e.item!));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
       }
@@ -89,7 +67,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
     this.rare = rare;
   }
 
-  override generateReward(pregenArgs?: EvolutionItem) {
+  override generateReward(pregenArgs?: EvolutionItemId) {
     if (pregenArgs !== undefined) {
       return new EvolutionItemReward(this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM, pregenArgs);
     }

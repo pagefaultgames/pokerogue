@@ -19,48 +19,32 @@ import { isItemInCategory } from "#utils/item-utils";
  * Class that represents form changing items
  */
 export class FormChangeItemReward extends PokemonReward {
-  public formChangeItem: FormChangeItemId;
+  public formChangeItemId: FormChangeItemId;
 
-  constructor(id: RewardId, formChangeItem: FormChangeItemId) {
-    super(id, "", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
-      // Make sure the Pokemon has alternate forms
-      if (
-        speciesDataRegistry.hasFormChanges(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
-        && speciesDataRegistry
-          .getFormChanges(pokemon.species.speciesId)
-          .filter(
-            fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
-          )
-          // Returns true if any form changes match this item
-          .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-          .flatMap(fc => fc.item)
-          .includes(this.formChangeItem)
-      ) {
-        return null;
-      }
+  constructor(id: RewardId, formChangeItemId: FormChangeItemId) {
+    super(id, "", allHeldItems[formChangeItemId].iconName, (pokemon: PlayerPokemon) => 
+      pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage,
+    );
 
-      return PartyUiHandler.NoEffectMessage;
-    });
-
-    this.formChangeItem = formChangeItem;
+    this.formChangeItemId = formChangeItemId;
     this.id = RewardId.FORM_CHANGE_ITEM;
   }
 
   get name(): string {
-    return allHeldItems[this.formChangeItem].name;
+    return allHeldItems[this.formChangeItemId].name;
   }
 
   get description(): string {
-    return allHeldItems[this.formChangeItem].description;
+    return allHeldItems[this.formChangeItemId].description;
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
-    if (pokemon.heldItemManager.hasItem(this.formChangeItem)) {
+    if (pokemon.heldItemManager.hasItem(this.formChangeItemId)) {
       return false;
     }
 
-    pokemon.heldItemManager.add(this.formChangeItem);
-    pokemon.toggleFormChangeItem(this.formChangeItem);
+    pokemon.heldItemManager.add(this.formChangeItemId);
+    pokemon.toggleFormChangeItem(this.formChangeItemId);
 
     globalScene.updateItemBar(true);
 

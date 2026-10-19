@@ -984,7 +984,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getFormKey(formIndex = this.formIndex): string {
-    return this.forms[formIndex].formKey ?? "";
+    return this.forms[formIndex]?.formKey ?? "";
   }
 
   /**

@@ -201,8 +201,8 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     globalScene.add.existing(this.statsContainer);
 
     this.add([
-      this.pokemonSprite,
       this.shinyOverlay,
+      this.pokemonSprite,
       this.pokemonNumberText,
       this.pokemonNameText,
       this.pokemonUncaughtText,

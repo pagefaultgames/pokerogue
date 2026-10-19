@@ -15,7 +15,7 @@ import { SpeciesFormChange, SpeciesFormChangeCondition } from "#data/pokemon-for
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
@@ -3665,7 +3665,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.FLORGES,
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [29, 34, 39],
       }),
     ],
@@ -5094,7 +5094,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.AEGISLASH,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [50, 60, 70],
       }),
     ],
@@ -5279,7 +5279,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.AROMATISSE,
         level: 1,
-        item: EvolutionItem.SACHET,
+        item: EvolutionItemId.SACHET,
         evoDelay: [25, 30, 35],
       }),
     ],
@@ -5457,7 +5457,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SLURPUFF,
         level: 1,
-        item: EvolutionItem.WHIPPED_DREAM,
+        item: EvolutionItemId.WHIPPED_DREAM,
         evoDelay: [25, 30, 35],
       }),
     ],
@@ -6512,7 +6512,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HELIOLISK,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [32, 36, 36],
       }),
     ],
@@ -7915,7 +7915,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.TREVENANT,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -8204,7 +8204,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GOURGEIST,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [30, 35, 40],
       }),
     ],

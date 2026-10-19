@@ -16,7 +16,7 @@ import {
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -1528,7 +1528,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SIMISAGE,
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [24, 28, 32],
       }),
     ],
@@ -1711,7 +1711,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SIMISEAR,
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [24, 28, 32],
       }),
     ],
@@ -1895,7 +1895,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SIMIPOUR,
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [24, 28, 32],
       }),
     ],
@@ -2083,7 +2083,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MUSHARNA,
         level: 1,
-        item: EvolutionItem.MOON_STONE,
+        item: EvolutionItemId.MOON_STONE,
         evoDelay: [28, 32, 32],
       }),
     ],
@@ -2698,7 +2698,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GIGALITH,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [35, 40, 45],
       }),
     ],
@@ -3535,7 +3535,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CONKELDURR,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [35, 40, 45],
       }),
     ],
@@ -4610,7 +4610,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.WHIMSICOTT,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [28, 32, 32],
       }),
     ],
@@ -4781,13 +4781,13 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HISUI_LILLIGANT,
         level: 1,
-        item: EvolutionItem.DAWN_STONE,
+        item: EvolutionItemId.DAWN_STONE,
         evoDelay: [28, 32, 32],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.LILLIGANT,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [28, 32, 32],
       }),
     ],
@@ -7239,7 +7239,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CINCCINO,
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [24, 32, 32],
       }),
     ],
@@ -8743,7 +8743,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ESCAVALIER,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         condition: { key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.SHELMET },
         evoDelay: [30, 30, 35],
       }),
@@ -9881,7 +9881,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.EELEKTROSS,
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [49, 54, 54],
       }),
     ],
@@ -10418,7 +10418,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CHANDELURE,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [51, 56, 56],
       }),
     ],
@@ -11138,7 +11138,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ACCELGOR,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         condition: { key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.KARRABLAST },
         evoDelay: [30, 30, 35],
       }),
@@ -12117,7 +12117,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.KINGAMBIT,
         level: 1,
-        item: EvolutionItem.LEADERS_CREST,
+        item: EvolutionItemId.LEADERS_CREST,
         evoDelay: [70, 85, 100],
       }),
     ],

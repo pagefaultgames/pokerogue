@@ -6,7 +6,7 @@ import { SpeciesFormChange } from "#data/pokemon-forms";
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -2402,7 +2402,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.TOGEKISS,
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [40, 45, 50],
       }),
     ],
@@ -3661,7 +3661,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SUNFLORA,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [16, 18, 20],
       }),
     ],
@@ -4291,7 +4291,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HONCHKROW,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [26, 32, 38],
       }),
     ],
@@ -4510,7 +4510,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MISMAGIUS,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [22, 26, 30],
       }),
     ],
@@ -5940,7 +5940,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GLISCOR,
         level: 1,
-        item: EvolutionItem.RAZOR_FANG,
+        item: EvolutionItemId.RAZOR_FANG,
         condition: { key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT] },
         evoDelay: [48, 56, 64],
       }),
@@ -7009,7 +7009,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.WEAVILE,
         level: 1,
-        item: EvolutionItem.RAZOR_CLAW,
+        item: EvolutionItemId.RAZOR_CLAW,
         condition: { key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT] },
         evoDelay: [48, 56, 64],
       }),
@@ -7285,7 +7285,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.URSALUNA,
         level: 1,
-        item: EvolutionItem.PEAT_BLOCK,
+        item: EvolutionItemId.PEAT_BLOCK,
         evoDelay: [70, 85, 100],
       }),
     ],
@@ -8860,7 +8860,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.PORYGON_Z,
         level: 1,
-        item: EvolutionItem.DUBIOUS_DISC,
+        item: EvolutionItemId.DUBIOUS_DISC,
         evoDelay: [64, 72, 80],
       }),
     ],

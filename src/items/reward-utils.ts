@@ -5,6 +5,8 @@ import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id"
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { allRewards } from "#items/all-rewards";
+import type { EvolutionItemReward } from "#items/evolution-item";
+import type { FormChangeItemReward } from "#items/form-change";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { rewardRarities } from "#items/reward-defaults-tiers";
 import { trainerItemRarities } from "#items/trainer-item-default-tiers";
@@ -29,6 +31,16 @@ export function isMoveReward(reward: Reward): reward is PokemonMoveReward {
 
 export function isRememberMoveReward(reward: Reward): reward is RememberMoveReward {
   return reward.id === RewardId.MEMORY_MUSHROOM;
+}
+
+export function isEvolutionItemReward(reward: Reward): reward is EvolutionItemReward {
+  const categoryId = getRewardCategory(reward.id);
+  return categoryId === RewardCategoryId.EVOLUTION_ITEM;
+}
+
+export function isFormChangeItemReward(reward: Reward): reward is FormChangeItemReward {
+  const categoryId = getRewardCategory(reward.id);
+  return categoryId === RewardCategoryId.FORM_CHANGE_ITEM;
 }
 
 export function applyReward<T extends Reward>(

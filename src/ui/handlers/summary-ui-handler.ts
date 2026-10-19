@@ -1113,6 +1113,9 @@ export class SummaryUiHandler extends UiHandler {
       case Page.STATS: {
         this.statsContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(this.statsContainer);
+        // Added first so that all other elements on the page (e.g. titles, prompts and stats) render above held items
+        const itemIconsContainer = globalScene.add.container(0, 0);
+        this.statsContainer.add(itemIconsContainer);
         this.permStatsContainer = globalScene.add.container(27, 64);
         this.statsContainer.add(this.permStatsContainer);
         this.ivContainer = globalScene.add.container(27, 64);
@@ -1199,9 +1202,8 @@ export class SummaryUiHandler extends UiHandler {
               icon.alpha = 0.3;
             }
 
-            console.log(icon); // TODO: don't log a container to the console pretty please
             icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
-            this.statsContainer.add(icon);
+            itemIconsContainer.add(icon);
 
             icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
             icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.name, heldItem.description, true));
