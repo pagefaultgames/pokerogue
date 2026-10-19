@@ -339,11 +339,9 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            const params = getParams(slotIndex, option);
-            const result = applyReward(reward, params, true);
-            this.postApplyPokemonReward(reward, result, cost);
-          });
+          const params = getParams(slotIndex, option);
+          const result = applyReward(reward, params, true);
+          this.postApplyPokemonReward(reward, result, cost);
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
@@ -367,27 +365,29 @@ export class SelectRewardPhase extends BattlePhase {
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.
-    if (reward instanceof RememberMoveReward || reward instanceof TmReward) {
-      globalScene.phaseManager.unshiftPhase(this.copy());
-    }
-
-    if (cost !== -1 && !(reward instanceof RememberMoveReward)) {
-      if (result) {
-        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
-          globalScene.money -= cost;
-          globalScene.updateMoneyText();
-          globalScene.animateMoneyChanged(false);
-        }
-        audioManager.playSound("se/buy");
-        (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
-      } else {
-        globalScene.ui.playError();
+    globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
+      if (reward instanceof RememberMoveReward || reward instanceof TmReward) {
+        globalScene.phaseManager.unshiftPhase(this.copy());
       }
-    } else {
-      globalScene.ui.clearText();
-      globalScene.ui.setMode(UiMode.MESSAGE);
-      super.end();
-    }
+
+      if (cost !== -1 && !(reward instanceof RememberMoveReward)) {
+        if (result) {
+          if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
+            globalScene.money -= cost;
+            globalScene.updateMoneyText();
+            globalScene.animateMoneyChanged(false);
+          }
+          audioManager.playSound("se/buy");
+          (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
+        } else {
+          globalScene.ui.playError();
+        }
+      } else {
+        globalScene.ui.clearText();
+        globalScene.ui.setMode(UiMode.MESSAGE);
+        super.end();
+      }
+    });
   }
 
   // Function that determines how many reward slots are available
