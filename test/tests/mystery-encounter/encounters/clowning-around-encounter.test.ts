@@ -333,28 +333,25 @@ describe("Clowning Around - Mystery Encounter", () => {
     it("should randomize the pokemon types of the party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
+      const [player1, player2, player3] = game.field.getPlayerParty();
       // Same type moves on lead
-      game.move.changeMoveset(game.field.getPlayerPokemon(), [MoveId.ICE_BEAM, MoveId.SURF]);
+      game.move.changeMoveset(player1, [MoveId.ICE_BEAM, MoveId.SURF]);
       // Different type moves on second
-      game.move.changeMoveset(scene.getPlayerParty()[1], [MoveId.GRASS_KNOT, MoveId.ELECTRO_BALL]);
+      game.move.changeMoveset(player2, [MoveId.GRASS_KNOT, MoveId.ELECTRO_BALL]);
       // No moves on third
-      scene.getPlayerParty()[2].moveset = [];
+      game.move.changeMoveset(player3, []);
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = game.field.getPlayerPokemon().getTypes();
-      const secondaryTypesAfter = scene.getPlayerParty()[1].getTypes();
-      const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
+      const leadTypesAfter = player1.getTypes();
+      const secondaryTypesAfter = player2.getTypes();
+      const thirdTypesAfter = player3.getTypes();
 
-      expect(leadTypesAfter.length).toBe(2);
-      expect(leadTypesAfter[0]).toBe(PokemonType.WATER);
-      expect([PokemonType.WATER, PokemonType.ICE].includes(leadTypesAfter[1])).toBeFalsy();
-      expect(secondaryTypesAfter.length).toBe(2);
-      expect(secondaryTypesAfter[0]).toBe(PokemonType.GHOST);
-      expect([PokemonType.GHOST, PokemonType.POISON].includes(secondaryTypesAfter[1])).toBeFalsy();
-      expect([PokemonType.GRASS, PokemonType.ELECTRIC].includes(secondaryTypesAfter[1])).toBeTruthy();
-      expect(thirdTypesAfter.length).toBe(2);
-      expect(thirdTypesAfter[0]).toBe(PokemonType.PSYCHIC);
-      expect(secondaryTypesAfter[1]).not.toBe(PokemonType.PSYCHIC);
+      expect(player1).toHaveTypes([PokemonType.WATER, leadTypesAfter[1]]);
+      expect(leadTypesAfter[1]).not.toBeOneOf([PokemonType.WATER, PokemonType.ICE]);
+      expect(player2).toHaveTypes([PokemonType.GHOST, secondaryTypesAfter[1]]);
+      expect(secondaryTypesAfter[1]).toBeOneOf([PokemonType.GRASS, PokemonType.ELECTRIC]);
+      expect(player3).toHaveTypes([PokemonType.PSYCHIC, thirdTypesAfter[1]]);
+      expect(thirdTypesAfter[1]).not.toBe(PokemonType.PSYCHIC);
     });
 
     it("should leave encounter without battle", async () => {

@@ -19,11 +19,20 @@ if (isBeta || isDev) {
 preventDoubleTapZoom();
 
 async function startGame(): Promise<void> {
+  const { initSettingsManager } = await import("#app/global-settings-manager");
+  const { initGlobalAudioManager } = await import("#app/global-audio-manager");
+
+  await initSettingsManager();
+  const audioManager = await initGlobalAudioManager();
+
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
   const game = new Phaser.Game({
     type: Phaser.WEBGL,
     parent: "app",
+    audio: {
+      noAudio: !audioManager.isAudioEnabled,
+    },
     scale: {
       width: 1920,
       height: 1080,

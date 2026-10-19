@@ -11,7 +11,7 @@ import { getPokeballName } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
-import type { Weather } from "#data/weather";
+import { isWeatherSuppressed, type Weather } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -377,7 +377,7 @@ export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
   private readonly damageMultiplier: number;
 
   constructor(damageMultiplier: number) {
-    super();
+    super(false);
     this.damageMultiplier = damageMultiplier;
   }
 
@@ -1458,6 +1458,10 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * @see {@linkcode MoveId.PARENTAL_BOND | Parental Bond}
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
+  constructor() {
+    super(false);
+  }
+
   override canApply({ pokemon, opponent: target, move }: AddSecondStrikeAbAttrParams): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true, target);
   }
@@ -3703,19 +3707,12 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
 }
 
 export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
-  public readonly affectsImmutable: boolean;
-
-  constructor(affectsImmutable = false) {
+  constructor() {
     super(true);
-
-    this.affectsImmutable = affectsImmutable;
   }
 
   override canApply({ weather, cancelled }: PreWeatherEffectAbAttrParams): boolean {
-    if (!weather || cancelled.value) {
-      return false;
-    }
-    return this.affectsImmutable || weather.isImmutable();
+    return !cancelled.value && weather != null;
   }
 
   override apply({ cancelled }: PreWeatherEffectAbAttrParams): void {
@@ -5692,7 +5689,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
  */
 export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   constructor() {
-    super(true);
+    super(false);
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
@@ -6129,7 +6126,7 @@ function getPokemonWithWeatherBasedForms() {
 
 export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return () => {
-    if (globalScene.arena.weather?.isEffectSuppressed()) {
+    if (isWeatherSuppressed()) {
       return false;
     }
     return weatherTypes.includes(globalScene.arena.weatherType);

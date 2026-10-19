@@ -59,18 +59,16 @@ export class EggLapsePhase extends Phase {
             100,
             true,
           );
-          break;
+          return;
         case EggSkipPreference.ALWAYS:
           globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
           this.hatchEggsSkipped(eggsToHatch);
           this.showSummary();
-          break;
+          return;
       }
-
-      return;
     }
 
-    // regular hatches, no summary
+    // `EggSkipPreference.NEVER` or fewer than `minEggsToSkip` eggs: regular hatches, no summary
     globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
     this.hatchEggsRegular(eggsToHatch);
     this.end();

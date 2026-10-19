@@ -13,6 +13,7 @@ export const EDIT_OPTIONS = [
   "boss",
   "biome",
   "luck",
+  "biome transitions",
   "forced waves",
   "trainer manipulation",
   "challenges",
@@ -32,10 +33,22 @@ export const BOSS_OPTIONS = [
   "nature",
   "ability",
   "passive",
+  "ivs",
   "segments",
   "catchable",
   "finish",
 ] as const;
 
 /** All accepted options for configuring a starter Pokemon. */
-export const STARTER_OPTIONS = ["formIndex", "variant", "moveset", "nature", "ability", "passive", "finish"] as const;
+export const STARTER_OPTIONS = [
+  "formIndex",
+  "variant",
+  "moveset",
+  "nature",
+  "ability",
+  "abilityIndex",
+  "passive",
+  "ivs",
+  "gender",
+  "finish",
+] as const;

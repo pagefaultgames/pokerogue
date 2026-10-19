@@ -12,6 +12,9 @@ import { addWindow } from "#ui/ui-theme";
  * It supports button navigation (e.g., `CYCLE_FORM`/`CYCLE_SHINY`) and updates the visual state of the tabs.
  */
 export class TabMenu extends Phaser.GameObjects.Container {
+  private static readonly CENTERED_LABEL_LEFT_BOUNDARY = 24;
+  private static readonly CENTERED_LABEL_RIGHT_BOUNDARY = 24;
+
   public selectedIndex = 0;
 
   private readonly labels: string[];
@@ -48,16 +51,12 @@ export class TabMenu extends Phaser.GameObjects.Container {
       .setPositionRelative(headerBg, headerBg.width - 20, 4);
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
-    let currentX = 24;
     for (const label of this.labels) {
-      const labelText = addTextObject(currentX, 4, label, TextStyle.SETTINGS_LABEL_NAVBAR) //
-        .setOrigin(0);
-
+      const labelText = addTextObject(0, 4, label, TextStyle.SETTINGS_LABEL_NAVBAR).setOrigin(0);
       this.add(labelText);
       this.headerTitles.push(labelText);
-
-      currentX += labelText.displayWidth + 16;
     }
+    this.layoutLabels();
 
     this.add(iconPreviousTab);
     this.add(iconNextTab);
@@ -88,6 +87,23 @@ export class TabMenu extends Phaser.GameObjects.Container {
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }
+    }
+    this.layoutLabels();
+  }
+
+  private layoutLabels(): void {
+    const textWidth = this.headerTitles.reduce((total, label) => total + label.displayWidth, 0);
+    const gapCount = Math.max(this.headerTitles.length - 1, 0);
+    const leftBoundary = TabMenu.CENTERED_LABEL_LEFT_BOUNDARY;
+    const availableWidth = this.width - leftBoundary - TabMenu.CENTERED_LABEL_RIGHT_BOUNDARY;
+    const labelSpacing = gapCount > 0 ? Math.max(0, (availableWidth - textWidth) / gapCount) : 0;
+    const groupWidth = textWidth + gapCount * labelSpacing;
+    const startX = leftBoundary + (availableWidth - groupWidth) / 2;
+
+    let currentX = startX;
+    for (const title of this.headerTitles) {
+      title.setX(currentX);
+      currentX += title.displayWidth + labelSpacing;
     }
   }
 
