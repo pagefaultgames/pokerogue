@@ -312,11 +312,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       const onBeforeRewards = () => {
         // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
         // One random pokemon will get its passive unlocked
-        const isHardcore = globalScene.gameMode.hasChallenge(Challenges.HARDCORE);
-        // Only Pokemon without a passive are eligible, excluding fainted ones in Hardcore since they can't be revived
-        const passiveDisabledPokemon = globalScene
-          .getPlayerParty()
-          .filter(p => !p.passive && !(isHardcore && p.isFainted()));
+        const passiveDisabledPokemon = getPassiveUnlockCandidates();
         if (passiveDisabledPokemon?.length > 0) {
           // TODO: should this use `randSeedItem`?
           const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
@@ -465,6 +461,15 @@ function getTeamTransformations(): PokemonTransformation[] {
   return pokemonTransformations;
 }
 
+/**
+ * Get the party members that can have their passive unlocked by this encounter's rewards.
+ * @returns The party members without a passive, excluding fainted ones in Hardcore since they can't be revived
+ */
+function getPassiveUnlockCandidates(): PlayerPokemon[] {
+  const isHardcore = globalScene.gameMode.hasChallenge(Challenges.HARDCORE);
+  return globalScene.getPlayerParty().filter(p => !p.passive && !(isHardcore && p.isFainted()));
+}
+
 async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   let atLeastOneNewStarter = false;
   for (const transformation of transformations) {
@@ -510,7 +515,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   }
 
   // One random pokemon will get its passive unlocked
-  const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
+  const passiveDisabledPokemon = getPassiveUnlockCandidates();
   if (passiveDisabledPokemon?.length > 0) {
     // TODO: should this use `randSeedItem`?
     const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
