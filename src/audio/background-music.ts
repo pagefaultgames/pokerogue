@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { AnySound, AudioManager } from "#audio/audio-manager"; // AudioManager used in TSDoc comment
+import type { AnySound, AudioManager } from "#audio/audio-manager";
 import { StreamingTrack } from "#audio/streaming-track";
 import { fixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";

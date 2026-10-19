@@ -2,6 +2,7 @@
  * Meant to be used only during development, to inspect memory footprint of audio assets.
  * @module
  */
+
 import type Phaser from "phaser";
 
 type StereoRow = {
