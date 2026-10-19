@@ -37,7 +37,6 @@ export class GameStats {
   public rareEggsPulled: number;
   public epicEggsPulled: number;
   public legendaryEggsPulled: number;
-  public manaphyEggsPulled: number;
 
   constructor(source?: any) {
     this.playTime = source?.playTime || 0;
@@ -76,6 +75,5 @@ export class GameStats {
     this.rareEggsPulled = source?.rareEggsPulled || 0;
     this.epicEggsPulled = source?.epicEggsPulled || 0;
     this.legendaryEggsPulled = source?.legendaryEggsPulled || 0;
-    this.manaphyEggsPulled = source?.manaphyEggsPulled || 0;
   }
 }

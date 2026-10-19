@@ -113,26 +113,6 @@ describe("Egg Generation Tests", () => {
 
     expect(result).toBe(expectedTier);
   });
-  it("should return a manaphy egg set via species", () => {
-    const scene = game.scene;
-    const expectedResult = true;
-
-    const result = new Egg({ scene, species: SpeciesId.MANAPHY }).isManaphyEgg();
-
-    expect(result).toBe(expectedResult);
-  });
-  it("should return a manaphy egg set via id", () => {
-    const scene = game.scene;
-    const expectedResult = true;
-
-    const result = new Egg({
-      scene,
-      tier: EggTier.COMMON,
-      id: 204,
-    }).isManaphyEgg();
-
-    expect(result).toBe(expectedResult);
-  });
   it("should return an egg with 1000 hatch waves", () => {
     const scene = game.scene;
     const expectedHatchWaves = 1000;
@@ -310,35 +290,6 @@ describe("Egg Generation Tests", () => {
     expect(scene.gameData.eggPity[EggTier.RARE]).toBe(startPityValues[EggTier.RARE] + 1);
     expect(scene.gameData.eggPity[EggTier.EPIC]).toBe(startPityValues[EggTier.EPIC] + 1);
     expect(scene.gameData.eggPity[EggTier.LEGENDARY]).toBe(startPityValues[EggTier.LEGENDARY] + 2);
-  });
-  it("should not increase manaphy egg count if bulbasaurs are pulled", () => {
-    const scene = game.scene;
-    const startingManaphyEggCount = scene.gameData.gameStats.manaphyEggsPulled;
-
-    for (let i = 0; i < 200; i++) {
-      new Egg({
-        scene,
-        sourceType: EggSourceType.GACHA_MOVE,
-        pulled: true,
-        species: SpeciesId.BULBASAUR,
-      });
-    }
-
-    expect(scene.gameData.gameStats.manaphyEggsPulled).toBe(startingManaphyEggCount);
-  });
-  it("should increase manaphy egg count", () => {
-    const scene = game.scene;
-    const startingManaphyEggCount = scene.gameData.gameStats.manaphyEggsPulled;
-
-    new Egg({
-      scene,
-      sourceType: EggSourceType.GACHA_MOVE,
-      pulled: true,
-      id: 204,
-      tier: EggTier.COMMON,
-    });
-
-    expect(scene.gameData.gameStats.manaphyEggsPulled).toBe(startingManaphyEggCount + 1);
   });
   it("should increase rare eggs pulled statistic", () => {
     const scene = game.scene;

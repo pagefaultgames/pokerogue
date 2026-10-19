@@ -454,7 +454,7 @@ export class EggHatchPhase extends Phase {
   doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
-    const shardKey = this.egg.isManaphyEgg() ? "1" : this.egg.tier.toString();
+    const shardKey = this.egg.tier.toString();
     const particle = globalScene.add.image(initialX, initialY, "egg_shard", `${shardKey}_${Math.floor(trigIndex / 2)}`);
     this.eggHatchContainer.add(particle);
 

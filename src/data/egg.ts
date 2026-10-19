@@ -17,9 +17,7 @@ import {
   HATCH_WAVES_COMMON_EGG,
   HATCH_WAVES_EPIC_EGG,
   HATCH_WAVES_LEGENDARY_EGG,
-  HATCH_WAVES_MANAPHY_EGG,
   HATCH_WAVES_RARE_EGG,
-  MANAPHY_EGG_MANAPHY_RATE,
   RARE_EGGMOVE_RATES,
   SAME_SPECIES_EGG_HA_RATE,
   SAME_SPECIES_EGG_SHINY_RATE,
@@ -38,7 +36,7 @@ export const EGG_SEED = 1073741824;
 
 /** Egg options to override egg properties */
 export interface IEggOptions {
-  /** ID. Used to check if egg type will be manaphy (`id % 204 === 0`) */
+  /** ID of the egg. */
   id?: number;
   /** Timestamp when this egg got created */
   timestamp?: number;
@@ -214,18 +212,7 @@ export class Egg {
 
   // #region Public methods
 
-  public isManaphyEgg(): boolean {
-    return (
-      this._species === SpeciesId.PHIONE
-      || this._species === SpeciesId.MANAPHY
-      || (this._tier === EggTier.COMMON && !(this._id % 204) && !this._species)
-    );
-  }
-
   public getKey(): string {
-    if (this.isManaphyEgg()) {
-      return "manaphy";
-    }
     return this._tier.toString();
   }
 
@@ -240,13 +227,7 @@ export class Egg {
         this._species = this.rollSpecies()!; // TODO: is this bang correct?
       }
 
-      let pokemonSpecies = speciesDataRegistry.getSpecies(this._species);
-      // Special condition to have Phione eggs also have a chance of generating Manaphy
-      if (this._species === SpeciesId.PHIONE && this._sourceType === EggSourceType.SAME_SPECIES_EGG) {
-        pokemonSpecies = speciesDataRegistry.getSpecies(
-          randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? SpeciesId.PHIONE : SpeciesId.MANAPHY,
-        );
-      }
+      const pokemonSpecies = speciesDataRegistry.getSpecies(this._species);
 
       // Sets the hidden ability if a hidden ability exists and
       // the override is set or the egg hits the chance
@@ -288,9 +269,6 @@ export class Egg {
   }
 
   public getEggDescriptor(): string {
-    if (this.isManaphyEgg()) {
-      return i18next.t("egg:manaphyTier");
-    }
     switch (this.tier) {
       case EggTier.RARE:
         return i18next.t("egg:greatTier");
@@ -353,22 +331,17 @@ export class Egg {
    * @returns the slot for the egg move
    */
   private rollEggMoveIndex() {
-    const tierNum = this.isManaphyEgg() ? 2 : this.tier;
     let baseChance: number;
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG || this._sourceType === EggSourceType.GACHA_MOVE) {
-      baseChance = BOOSTED_RARE_EGGMOVE_RATES[tierNum];
+      baseChance = BOOSTED_RARE_EGGMOVE_RATES[this._tier];
     } else {
-      baseChance = RARE_EGGMOVE_RATES[tierNum];
+      baseChance = RARE_EGGMOVE_RATES[this._tier];
     }
 
     return randSeedInt(baseChance) ? randSeedInt(3) : 3;
   }
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
-    if (this._species === SpeciesId.PHIONE || this._species === SpeciesId.MANAPHY) {
-      return HATCH_WAVES_MANAPHY_EGG;
-    }
-
     switch (eggTier ?? this._tier) {
       case EggTier.COMMON:
         return HATCH_WAVES_COMMON_EGG;
@@ -397,20 +370,6 @@ export class Egg {
     if (!globalScene) {
       return null;
     }
-    /**
-     * Manaphy eggs have a 1/8 chance of being Manaphy and 7/8 chance of being Phione
-     * Legendary eggs pulled from the legendary gacha have a 50% of being converted into
-     * the species that was the legendary focus at the time
-     */
-    if (this.isManaphyEgg()) {
-      /**
-       * Adding a technicality to make unit tests easier: By making this check pass
-       * when Utils.randSeedInt(8) = 1, and by making the generatePlayerPokemon() species
-       * check pass when Utils.randSeedInt(8) = 0, we can tell them apart during tests.
-       */
-      const rand = randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1;
-      return rand ? SpeciesId.PHIONE : SpeciesId.MANAPHY;
-    }
     if (this.tier === EggTier.LEGENDARY && this._sourceType === EggSourceType.GACHA_LEGENDARY && !randSeedInt(2)) {
       return getLegendaryGachaSpeciesForTimestamp(this.timestamp);
     }
@@ -437,7 +396,7 @@ export class Egg {
         break;
     }
 
-    const ignoredSpecies = [SpeciesId.PHIONE, SpeciesId.MANAPHY, SpeciesId.ETERNATUS];
+    const ignoredSpecies = [SpeciesId.ETERNATUS];
 
     let speciesPool = speciesDataRegistry
       .getSpeciesForEggTier(this.tier)
@@ -571,11 +530,6 @@ export class Egg {
 
   private increasePullStatistic(): void {
     globalScene.gameData.gameStats.eggsPulled++;
-    if (this.isManaphyEgg()) {
-      globalScene.gameData.gameStats.manaphyEggsPulled++;
-      this._hatchWaves = this.getEggTierDefaultHatchWaves(EggTier.EPIC);
-      return;
-    }
     switch (this.tier) {
       case EggTier.RARE:
         globalScene.gameData.gameStats.rareEggsPulled++;

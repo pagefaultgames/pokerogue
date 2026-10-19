@@ -2643,11 +2643,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
-        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
-          this.pokemonHatchedIcon.setFrame("manaphy");
-        } else {
-          this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
-        }
+
+        this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry?.hatchedCount}`);
 
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);

@@ -10354,7 +10354,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     starter: SpeciesId.PHIONE,
     starterCost: 4,
     evolutions: [],
-    eggTier: EggTier.EPIC,
+    eggTier: EggTier.RARE,
     passives: AbilityId.SIMPLE,
     levelMoves: [
       [1, MoveId.SUPERSONIC],
