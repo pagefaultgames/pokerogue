@@ -101,10 +101,10 @@ describe("Battler Tags - Damage Over Time", () => {
     });
 
     it.each([
-      { name: "dual Water/Steel", types: [PokemonType.WATER, PokemonType.STEEL], dmgPercent: 25 },
-      { name: "Steel", types: [PokemonType.STEEL], dmgPercent: 25 },
-      { name: "Water", types: [PokemonType.WATER], dmgPercent: 25 },
-      { name: "neither Water nor Steel", types: [PokemonType.GRASS], dmgPercent: 12.5 },
+      { name: "dual Water/Steel", types: [PokemonType.WATER, PokemonType.STEEL], dmgPercent: 12.5 },
+      { name: "Steel", types: [PokemonType.STEEL], dmgPercent: 12.5 },
+      { name: "Water", types: [PokemonType.WATER], dmgPercent: 12.5 },
+      { name: "neither Water nor Steel", types: [PokemonType.GRASS], dmgPercent: 6.25 },
     ])("should deal $dmgPercent% of max HP to a $name-type Pokemon", ({ dmgPercent, types }) => {
       feebas.summonData.types = types;
 
