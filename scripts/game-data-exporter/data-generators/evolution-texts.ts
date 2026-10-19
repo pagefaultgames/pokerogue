@@ -9,7 +9,7 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { allHeldItems } from "#data/data-lists";
 import { getGenderSymbol } from "#data/gender";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -107,7 +107,7 @@ export function getEvoConditionDescription(evo: SpeciesFormEvolution, t: TFuncti
     ret.push(t("pokemonEvolutions:atLevel", { lv: evo.level }));
   }
   if (evo.item) {
-    const itemDescription = t(`modifierType:EvolutionItem.${EvolutionItem[evo.item].toUpperCase()}`);
+    const itemDescription = t(`modifierType:EvolutionItem.${EvolutionItemId[evo.item].toUpperCase()}`);
     const rarity = evo.item > 50 ? t("pokemonEvolutions:ultra") : t("pokemonEvolutions:great");
     ret.push(t("pokemonEvolutions:using", { item: itemDescription, tier: rarity }));
   }
