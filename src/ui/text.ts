@@ -83,7 +83,12 @@ function installTextCopyShadows(context: CanvasRenderingContext2D, onDestroy: (l
 }
 
 export function enableTextCopyShadows(text: Phaser.GameObjects.Text | BBCodeText): void {
-  installTextCopyShadows(text.context, listener => text.once("destroy", listener));
+  const context = text.context;
+  if (!context || typeof context.fillText !== "function" || typeof context.strokeText !== "function") {
+    return;
+  }
+
+  installTextCopyShadows(context, listener => text.once("destroy", listener));
 }
 
 export function addTextObject(
