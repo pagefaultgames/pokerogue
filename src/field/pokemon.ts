@@ -6364,6 +6364,10 @@ export class PlayerPokemon extends Pokemon {
           this.abilityIndex = 0;
         }
       }
+      // Abilities like Truant only add their tags on summon, so re-apply them if evolving while on the field
+      if (this.isOnField()) {
+        applyAbAttrs("PostSummonAddBattlerTagAbAttr", { pokemon: this });
+      }
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();

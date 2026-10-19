@@ -1,5 +1,7 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -64,5 +66,41 @@ describe("Ability - Truant", () => {
       expect.objectContaining({ move: MoveId.TACKLE, result: MoveResult.SUCCESS }),
     );
     expect(enemy).not.toHaveFullHp();
+  });
+
+  it("should activate when gained by evolving while on the field", async () => {
+    game.override
+      .ability(AbilityId.NONE)
+      .battleType(BattleType.WILD)
+      .startingWave(71)
+      .startingLevel(35)
+      .enemySpecies(SpeciesId.GOLEM)
+      .enemyLevel(100);
+
+    await game.classicMode.startBattle(SpeciesId.VIGOROTH);
+
+    const player = game.field.getPlayerPokemon();
+    player.abilityIndex = 0;
+    expect(player.getAbility().id).toBe(AbilityId.VITAL_SPIRIT);
+
+    game.field.getEnemyPokemon().hp = 1;
+    game.move.select(MoveId.TACKLE);
+    await game.toNextWave();
+
+    expect(player.species.speciesId).toBe(SpeciesId.SLAKING);
+    expect(player.isOnField()).toBe(true);
+    expect(player).toHaveBattlerTag(BattlerTagType.TRUANT);
+
+    // Turn 1: Truant activates, since Slaking attacked on the turn it evolved
+    game.move.select(MoveId.TACKLE);
+    await game.toNextTurn();
+    expect(player.getLastXMoves(1)[0]).toEqual(expect.objectContaining({ move: MoveId.NONE, result: MoveResult.FAIL }));
+
+    // Turn 2: Truant didn't activate, tackle worked
+    game.move.select(MoveId.TACKLE);
+    await game.toNextTurn();
+    expect(player.getLastXMoves(1)[0]).toEqual(
+      expect.objectContaining({ move: MoveId.TACKLE, result: MoveResult.SUCCESS }),
+    );
   });
 });
