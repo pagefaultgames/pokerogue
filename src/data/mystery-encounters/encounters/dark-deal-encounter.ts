@@ -189,7 +189,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const bossSpecies = speciesDataRegistry.getSpecies(
           // Never give back the same species as the one that was traded away (consistent with Weird Dream).
           // The boss can still be from the same species line, e.g. a traded Charizard can give back a Charmander,
-          // since only the exact species is excluded.
+          // since only the exact species is excluded. In practice this is rare: bosses are 6+ cost starters.
           getRandomSpeciesByStarterCost(starterTier, [...excludedBosses, encounter.misc.removedSpeciesId], bossTypes),
         );
         const pokemonConfig: EnemyPokemonConfig = {
