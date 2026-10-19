@@ -221,10 +221,9 @@ export const failIfDampCondition = new MoveCondition((user, _target, move) => {
 });
 
 export class RequireTypeCondition extends MoveCondition {
-  /**
-   * The required type that the user must have to use the move.
-   */
+  /** The required type that the user must have to use the move. */
   public readonly requiredType: PokemonType;
+
   constructor(requiredType: PokemonType) {
     super(user => user.isOfType(requiredType, { returnOriginalTypesIfStellar: true }));
     // Note: `this.requiredType` is not mutable, so instead of having the above
