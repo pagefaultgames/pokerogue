@@ -1554,17 +1554,20 @@ export class BattleScene extends SceneBase {
       this.arena.updatePoolsForTimeOfDay();
     }
 
-    // Recalls, repositions and sends out the player's Pokemon as needed for the new battle
-    this.phaseManager.unshiftNew("PartyReorderSwitchPhase", resetArenaState);
-
     // use the old value of `double` to ensure both combatants are handled properly when going from double to single battles
     const playerField = this.getPlayerParty().slice(0, 1 + Number(lastBattle.double));
     if (resetArenaState) {
-      this.arena.resetArenaEffects();
-
+      // Remove the tag so that Tatsugiri is ejected, and will be recalled correctly
       for (const pokemon of playerField) {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
       }
+    }
+
+    // Recalls, repositions and sends out the player's Pokemon as needed for the new battle
+    this.phaseManager.unshiftNew("PartyReorderSwitchPhase", resetArenaState);
+
+    if (resetArenaState) {
+      this.arena.resetArenaEffects();
 
       for (const pokemon of this.getPlayerParty()) {
         pokemon.resetBattleAndWaveData();
