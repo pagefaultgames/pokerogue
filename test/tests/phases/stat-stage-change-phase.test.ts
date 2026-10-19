@@ -1,3 +1,4 @@
+import { settings } from "#app/global-settings-manager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -195,5 +196,37 @@ describe("StatStageChangePhase", () => {
     await game.toEndOfTurn();
 
     expect(player).toHaveStatStage(Stat.ATK, 1);
+  });
+
+  it("should destroy the stat change animation's sprite once the animation ends", async () => {
+    settings.update("display", "enableMoveAnimations", true);
+    // The test scene has no tint sprite to build the arrows' mask from
+    vi.spyOn(Phaser.Display.Masks, "BitmapMask").mockImplementation(function () {
+      return {} as Phaser.Display.Masks.BitmapMask;
+    });
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
+    const player = game.field.getPlayerPokemon();
+
+    const addTileSprite = game.scene.add.tileSprite;
+    const statSprites: Phaser.GameObjects.TileSprite[] = [];
+    vi.spyOn(game.scene.add, "tileSprite").mockImplementation((x, y, width, height, texture, frame) => {
+      const sprite = addTileSprite(x, y, width, height, texture, frame);
+      vi.spyOn(sprite, "destroy");
+      statSprites.push(sprite);
+      return sprite;
+    });
+
+    game.scene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: player.getBattlerIndex(),
+      changes: groupStatChange([Stat.ATK], 1),
+      sourcePokemon: player,
+    });
+
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveStatStage(Stat.ATK, 1);
+    expect(statSprites).toHaveLength(1);
+    expect(statSprites[0].destroy).toHaveBeenCalled();
   });
 });
