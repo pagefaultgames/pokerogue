@@ -9,7 +9,7 @@ import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTagAddedEvent, ArenaTagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
@@ -152,15 +152,16 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       0,
       i18next.t("arenaFlyout:activeBattleEffects"),
       TextStyle.BATTLE_INFO,
+      { fontSize: 54 },
     )
-      .setFontSize(54)
       .setAlign("center")
       .setOrigin();
 
     this.timeOfDayWidget = new TimeOfDayWidget(FLYOUT_WIDTH / 2 + this.flyoutWindowHeader.displayWidth / 2);
 
-    this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE)
-      .setFontSize(54)
+    this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE, {
+      fontSize: 54,
+    })
       .setAlign("left")
       .setOrigin(0);
 
@@ -169,8 +170,8 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       5,
       i18next.t("arenaFlyout:field"),
       TextStyle.SUMMARY_GREEN,
+      { fontSize: 54 },
     )
-      .setFontSize(54)
       .setAlign("center")
       .setOrigin(0.5, 0);
 
@@ -179,27 +180,26 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       5,
       i18next.t("arenaFlyout:enemy"),
       TextStyle.SUMMARY_RED,
+      { fontSize: 54 },
     )
-      .setFontSize(54)
       .setAlign("right")
       .setOrigin(1, 0);
 
-    this.flyoutTextPlayer = addTextObject(6, 13, "", TextStyle.BATTLE_INFO)
+    this.flyoutTextPlayer = addTextObject(6, 13, "", TextStyle.BATTLE_INFO, { fontSize: 48 })
       .setLineSpacing(-1)
-      .setFontSize(48)
       .setAlign("left")
       .setOrigin(0);
 
-    this.flyoutTextField = addBBCodeTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO)
+    this.flyoutTextField = addBBCodeTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO, {
+      fontSize: 48,
+    })
       .setLineSpacing(-1)
-      .setFontSize(48)
       .setAlign("center")
       .setOrigin(0.5, 0)
       .setStrikethrough(getTextColor(TextStyle.BATTLE_INFO), 4, -10);
 
-    this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO)
+    this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO, { fontSize: 48 })
       .setLineSpacing(-1)
-      .setFontSize(48)
       .setAlign("right")
       .setOrigin(1, 0);
 
@@ -418,10 +418,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     if (this.weatherInfo) {
       this.weatherInfo.suppressed = isWeatherSuppressed();
-      this.flyoutTextField.text += this.getTagText(this.weatherInfo);
+      this.flyoutTextField.text += this.getTagText(this.weatherInfo, true);
     }
     if (this.terrainInfo) {
-      this.flyoutTextField.text += this.getTagText(this.terrainInfo);
+      this.flyoutTextField.text += this.getTagText(this.terrainInfo, true);
     }
 
     this.arenaTags.sort((infoA, infoB) => infoA.duration - infoB.duration);
@@ -435,7 +435,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param info - The {@linkcode ArenaTagInfo}, {@linkcode TerrainInfo} or {@linkcode WeatherInfo} being updated
    * @returns The text to be added to the container
    */
-  private getTagText(info: ArenaTagInfo | WeatherInfo | TerrainInfo): string {
+  private getTagText(info: ArenaTagInfo | WeatherInfo | TerrainInfo, useBBCode = false): string {
     let text = info.name;
 
     if (info.maxDuration > 0) {
@@ -445,6 +445,9 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     // Cast is OK here as the info types that don't have a `suppressed` property will simply have it as `undefined`
     if ((info as WeatherInfo).suppressed) {
       text = "[color=#808080][s=#808080]" + text + "[/s][/color]";
+    }
+    if (useBBCode) {
+      text = getBBCodeFrag(text, TextStyle.BATTLE_INFO, true);
     }
     text += "\n";
     return text;
