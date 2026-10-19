@@ -4,8 +4,9 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 import { globalScene } from "#app/global-scene";
-import type { BackgroundMusic } from "#audio/background-music"; // used in TSDoc comment
+import type { BackgroundMusic } from "#audio/background-music";
 import { AudioBufferSink, BufferSource, Input, MP3, MP4, OGG } from "mediabunny";
 
 /** How far ahead of the playhead to decode, in seconds. */
@@ -34,8 +35,8 @@ interface Pass {
 }
 
 /**
- * A music track that decodes incrementally while playing, instead of decoding the
- * whole file up front.
+ * A music track that decodes incrementally while playing,
+ * instead of decoding the whole file up front.
  *
  * @privateRemarks
  * Intended to mirror the parts of Phaser's sound API that {@linkcode BackgroundMusic} uses.
@@ -44,7 +45,6 @@ interface Pass {
  * which loads the whole file into memory rather than streaming it.
  *
  * Music tracks can be large, sometimes in the tens of megabytes.
- *
  */
 export class StreamingTrack extends Phaser.Events.EventEmitter {
   private readonly ctx: AudioContext;
@@ -52,6 +52,7 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
   private readonly nodes = new Set<AudioBufferSourceNode>();
   private readonly sink: AudioBufferSink;
   private readonly options: StreamingTrackOptions;
+
   private passes: Pass[] = [];
   /** Incremented on every start/stop, so stale decode loops exit. */
   private generation = 0;
@@ -77,13 +78,12 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
   // Constructor is private as StreamingTrack should be created via `create`.
   private constructor(sink: AudioBufferSink, options: StreamingTrackOptions) {
     super();
+
     this.sink = sink;
     this.options = options;
     const manager = globalScene.sound as Phaser.Sound.WebAudioSoundManager;
     this.ctx = manager.context;
-    this.output = new GainNode(this.ctx, {
-      gain: 0,
-    });
+    this.output = new GainNode(this.ctx, { gain: 0 });
     // Phaser's internal input node, so master volume and mute still apply
     this.output.connect(manager.destination);
   }
