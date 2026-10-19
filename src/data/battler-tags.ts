@@ -2257,8 +2257,15 @@ export class UnburdenTag extends AbilityBattlerTag {
 
 export class TruantTag extends AbilityBattlerTag {
   public override readonly tagType = BattlerTagType.TRUANT;
+  /** The length of the Pokemon's move history when this tag was added; earlier moves are ignored */
+  public readonly moveHistoryStart: number = 0;
   constructor() {
     super(BattlerTagType.TRUANT, AbilityId.TRUANT, BattlerTagLapseType.CUSTOM, 1);
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    (this as Writable<TruantTag>).moveHistoryStart = pokemon.getMoveHistory().length;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -2267,7 +2274,7 @@ export class TruantTag extends AbilityBattlerTag {
       return super.lapse(pokemon, lapseType);
     }
 
-    const lastMove = pokemon.getLastXMoves(1).at(0);
+    const lastMove = pokemon.getMoveHistory().slice(this.moveHistoryStart).at(-1);
 
     if (!lastMove || lastMove.move === MoveId.NONE) {
       // Don't interrupt move if last move was `MoveId.NONE` OR no prior move was found
@@ -2287,6 +2294,11 @@ export class TruantTag extends AbilityBattlerTag {
     globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, false);
 
     return true;
+  }
+
+  public override loadTag(source: BaseBattlerTag & Pick<TruantTag, "tagType" | "moveHistoryStart">): void {
+    super.loadTag(source);
+    (this as Writable<TruantTag>).moveHistoryStart = source.moveHistoryStart ?? 0;
   }
 }
 
