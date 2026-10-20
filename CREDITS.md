@@ -12,17 +12,16 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 ## Team Members
 
 ### Senior Artist
-- damocleas
+- bwl626
+- "Green Ninja757" (aka DaleB)
 - “Hanniel” hanniel.15
 
 ### Artist
-- bwl626
 - “Caramel” saltedcarriemel
-- “chorus” worm_wcry.o
 - Crow W (aka Crowo)
 - Dops
-- "Green Ninja757" (aka DaleB)
 - Fontbane
+- “June D. aka worm_wcry.o“
 - “Momo” sphinx_sage
 - “Necrowmancy” (aka Olivia W.)
 - officerporkchops
@@ -54,6 +53,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 ## UI
 - GAMEFREAK
 - LJ Birdman
+- “Necrowmancy” (aka Olivia W.)
 
 ## Pagefault Games Intro
 - Spectremint
@@ -695,7 +695,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 ## Current and Former Wiki Contributors
 - Quill
 - Akuma
-- Blitzy (aka Kazapple)
+- Blitzy (aka Kazapp>le)
 - BlueVaron
 - Brain Frog
 - Ceimir
