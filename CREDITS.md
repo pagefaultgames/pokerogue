@@ -24,7 +24,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 - "Green Ninja757" (aka DaleB)
 - Fontbane
 - “Momo” sphinx_sage
-- Necrow (aka Necrowmancy)
+- “Necrowmancy” (aka Olivia W.)
 - officerporkchops
 - Omniv
 - redactedinlight
