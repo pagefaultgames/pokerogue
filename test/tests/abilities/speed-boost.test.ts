@@ -91,24 +91,37 @@ describe("Abilities - Speed Boost", () => {
     expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 
-  it("should not trigger if pokemon fails to escape", async () => {
-    //Account for doubles, should not trigger on either pokemon
-    game.override.battleStyle("double");
-    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
+  // https://github.com/pagefaultgames/pokerogue/issues/5982
+  it.each([
+    { battleStyle: "single", party: [SpeciesId.SHUCKLE] },
+    { battleStyle: "double", party: [SpeciesId.SHUCKLE, SpeciesId.NINJASK] },
+  ] as const)(
+    "should not trigger on any pokemon if they fail to escape in a $battleStyle battle",
+    async ({ battleStyle, party }) => {
+      game.override.battleStyle(battleStyle);
+      await game.classicMode.startBattle(...party);
 
-    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(false);
+      const playerField = game.scene.getPlayerField();
+      expect(playerField).toHaveLength(party.length);
 
-    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
+      vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(false);
 
-    await game.phaseInterceptor.to("AttemptRunPhase");
-    await game.toNextTurn();
+      const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
+      commandPhase.handleCommand(Command.RUN, 0);
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon).toHaveStatStage(Stat.SPD, 0);
+      await game.phaseInterceptor.to("AttemptRunPhase");
+      await game.toNextTurn();
 
-    game.move.select(MoveId.SPLASH);
-    await game.toNextTurn();
-    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);
-  });
+      for (const pokemon of playerField) {
+        expect(pokemon).toHaveStatStage(Stat.SPD, 0);
+      }
+
+      playerField.forEach((_, i) => game.move.select(MoveId.SPLASH, i));
+      await game.toNextTurn();
+
+      for (const pokemon of playerField) {
+        expect(pokemon).toHaveStatStage(Stat.SPD, 1);
+      }
+    },
+  );
 });
