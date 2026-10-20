@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
+import type { Phase } from "#app/phase";
 import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allMoves } from "#data/data-lists";
 import { LearnMoveType } from "#enums/learn-move-type";
@@ -59,12 +60,18 @@ export class TmReward extends PokemonReward {
       globalScene.getPlayerParty().indexOf(pokemon),
       this.moveId,
       LearnMoveType.TM,
+      () => {
+        if (!pokemon.usedTMs.includes(this.moveId)) {
+          pokemon.usedTMs.push(this.moveId);
+        }
+        globalScene.phaseManager.tryRemovePhase("SelectRewardPhase");
+      },
     );
 
     return true;
   }
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, callingPhase: Phase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.TM_REWARD,
@@ -75,6 +82,7 @@ export class TmReward extends PokemonReward {
           const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
           this.apply(params);
           postApply();
+          globalScene.phaseManager.unshiftPhase(callingPhase);
         } else {
           onCancel();
         }

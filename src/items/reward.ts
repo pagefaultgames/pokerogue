@@ -45,6 +45,7 @@
 */
 
 import { globalScene } from "#app/global-scene";
+import type { Phase } from "#app/phase";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import type { RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
@@ -144,7 +145,7 @@ export abstract class PokemonReward extends Reward {
 
   abstract override apply(_params: PokemonRewardParams): void;
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.REWARD,
@@ -184,7 +185,7 @@ export abstract class PokemonMoveReward extends PokemonReward {
     return false;
   }
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.MOVE_REWARD,
@@ -222,7 +223,7 @@ export interface PokemonMoveRewardParams {
 export interface PokemonMoveRecallRewardParams {
   pokemon: PlayerPokemon;
   moveIndex: number;
-  cost?: number;
+  postApply: () => void;
 }
 
 export interface PokemonFusionRewardParams {

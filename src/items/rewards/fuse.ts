@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import type { Phase } from "#app/phase";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardId } from "#enums/reward-id";
 import { UiMode } from "#enums/ui-mode";
@@ -32,7 +33,7 @@ export class FusePokemonReward extends PokemonReward {
     return true;
   }
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.SPLICE,

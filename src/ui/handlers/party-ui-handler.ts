@@ -685,6 +685,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear();
     const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
     if (filterResult === null) {
+      console.log("selectCallback", this.selectCallback);
       this.selectCallback?.(this.cursor, option);
       this.clearOptions();
     } else {

@@ -5,6 +5,8 @@ import { RewardId } from "#enums/reward-id";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { type PokemonMoveRecallRewardParams, PokemonReward } from "#items/reward";
+import type { BattlePhase } from "#phases/battle-phase";
+import type { SelectRewardPhase } from "#phases/select-reward-phase";
 import { type PartyOption, PartyUiHandler } from "#ui/party-ui-handler";
 
 export class RememberMoveReward extends PokemonReward {
@@ -28,19 +30,19 @@ export class RememberMoveReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  apply({ pokemon, moveIndex, cost }: PokemonMoveRecallRewardParams): boolean {
+  apply({ pokemon, moveIndex, postApply }: PokemonMoveRecallRewardParams): boolean {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(pokemon as PlayerPokemon),
       pokemon.getLearnableLevelMoves()[moveIndex][1],
       LearnMoveType.MEMORY,
-      cost, // TODO: Is it really necessary to have this cost here?
+      postApply,
     );
 
     return true;
   }
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, callingPhase: BattlePhase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.REMEMBER_MOVE_REWARD,
@@ -51,9 +53,15 @@ export class RememberMoveReward extends PokemonReward {
           const params: PokemonMoveRecallRewardParams = {
             pokemon: globalScene.getPlayerParty()[slotIndex],
             moveIndex: option,
+            postApply,
           };
+          console.log("About to apply...");
           this.apply(params);
-          postApply();
+          console.log("Applied...");
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, true).then(() => {
+            globalScene.phaseManager.unshiftPhase((callingPhase as SelectRewardPhase).copy());
+            callingPhase.end();
+          });
         } else {
           onCancel();
         }

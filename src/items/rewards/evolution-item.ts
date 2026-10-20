@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import type { Phase } from "#app/phase";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { EvolutionItemId } from "#enums/evolution-item";
 import { PartyUiMode } from "#enums/party-ui-mode";
@@ -61,7 +62,7 @@ export class EvolutionItemReward extends PokemonReward {
     return false;
   }
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.EVOLUTION_ITEM_REWARD,

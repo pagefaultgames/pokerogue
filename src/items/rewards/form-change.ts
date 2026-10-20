@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import type { Phase } from "#app/phase";
 import { allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeCondition } from "#data/pokemon-forms";
@@ -53,7 +54,7 @@ export class FormChangeItemReward extends PokemonReward {
     return true;
   }
 
-  openParty(postApply: () => void, onCancel: () => void): void {
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.FORM_CHANGE_ITEM_REWARD,
