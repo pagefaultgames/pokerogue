@@ -498,8 +498,11 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 ## Bug/Issue Managers
 - Daleks
 - Lily
-- PigeonBar
+- RoflKucki
 - Snailman
+
+## Past Members
+- PigeonBar
 
 # ⚖️ Balance
 
