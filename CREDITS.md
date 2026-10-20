@@ -518,7 +518,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Zaccie
 
 ### Past Members
-- Cynthia_calliope
+- lillie_lily_lilith_iris
 - Sethcurry
 - Swizzo
 
@@ -732,7 +732,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Pom
 
 ## Moderators
-- Cynthia_calliope
+- lillie_lily_lilith_iris
 - ChaosGrimmon
 - Kat
 - Mitsue
