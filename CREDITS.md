@@ -732,16 +732,14 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Pom
 
 ## Moderators
-- lillie_lily_lilith_iris
-- ChaosGrimmon
-- Kat
-- Mitsue
-- Rizbh
-
-## Junior Moderators
 - Blitzy (aka Kazapple)
 - bwl626
+- ChaosGrimmon
 - Kappals
+- Kat
+- lillie_lily_lilith_iris
+- Mitsue
+- Rizbh
 
 ## Past Moderators
 - Cent
