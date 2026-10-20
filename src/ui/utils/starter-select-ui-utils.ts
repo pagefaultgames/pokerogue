@@ -176,7 +176,7 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
   },
   zh: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "26px",
+    instructionTextSize: "28px",
     starterInfoXPos: 26,
   },
   ko: {

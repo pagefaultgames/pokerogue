@@ -439,6 +439,10 @@ export function getTextStyleOptions(
       styleOptions.fontFamily = "pkmnems";
       shadowXpos = 12;
       shadowYpos = 12;
+      if (lang === "zh-Hans" || lang === "zh-Hant") {
+        shadowXpos = 6;
+        shadowYpos = 6;
+      }
       break;
     }
     case TextStyle.PARTY_CANCEL_BUTTON: {
@@ -455,6 +459,8 @@ export function getTextStyleOptions(
         case "zh-Hant":
           styleOptions.fontSize = defaultFontSize - 48;
           styleOptions.padding = { top: -4, bottom: 12 };
+          shadowXpos = 6;
+          shadowYpos = 6;
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;
@@ -462,8 +468,10 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontFamily = "pkmnems";
-      shadowXpos = 12;
-      shadowYpos = 12;
+      if (!(lang === "zh-Hans" || lang === "zh-Hant")) {
+        shadowXpos = 12;
+        shadowYpos = 12;
+      }
       break;
     }
     case TextStyle.INSTRUCTIONS_TEXT: {
@@ -476,6 +484,10 @@ export function getTextStyleOptions(
       styleOptions.fontFamily = "pkmnems";
       shadowXpos = 12;
       shadowYpos = 12;
+      if (lang === "zh-Hans" || lang === "zh-Hant") {
+        shadowXpos = 6;
+        shadowYpos = 6;
+      }
       break;
     }
     case TextStyle.MOVE_LABEL: {
@@ -491,14 +503,18 @@ export function getTextStyleOptions(
         case "zh-Hant":
           styleOptions.fontSize = defaultFontSize - 32;
           styleOptions.padding = { top: -18, bottom: 10 };
+          shadowXpos = 6;
+          shadowYpos = 6;
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;
           break;
       }
       styleOptions.fontFamily = "pkmnems";
-      shadowXpos = 12;
-      shadowYpos = 12;
+      if (!(lang === "zh-Hans" || lang === "zh-Hant")) {
+        shadowXpos = 12;
+        shadowYpos = 12;
+      }
       break;
     }
     case TextStyle.EGG_LIST:

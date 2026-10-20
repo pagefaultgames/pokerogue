@@ -176,8 +176,8 @@ export class RunInfoUiHandler extends UiHandler {
     if (this.runInfo.modifiers.length > 0) {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = globalScene.add.container(0, 0);
-      const abilityButtonText = addTextObject(8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {
-        fontSize: "34px",
+      const abilityButtonText = addTextObject(8, -2, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {
+        fontSize: "60px",
       });
       const gamepadType = this.getUi().getGamepadType();
       let abilityButtonElement: Phaser.GameObjects.Sprite;
