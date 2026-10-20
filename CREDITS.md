@@ -555,9 +555,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Curbio
 
 ### 🇯🇵 Japanese (ja)
-- 6mozuke9
 - Chapybara
-- PeachFresca
 
 ### 🇰🇷 Korean (ko)
 - sodamelon
@@ -588,9 +586,18 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 
 ### 🇷🇺 Russian (ru)
 - Shinigami Holo
+- SHOCK
+- frogspawner
 
 ### 🇺🇦 Ukrainian (uk)
 - Rahr
+- Avineldon
+
+### 🇵🇱 Polish (pl)
+- El Probador
+- HermitPurple
+- Faner
+- kryßteqq
 
 ### 🇹🇷 Turkish (tr)
 - hotpink77
@@ -598,6 +605,10 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 
 ### 🇹🇭 Thai (th)
 - tEmar1
+
+### Hindi (hi)
+- Chai
+- GreatGreatness
 
 ### Basque (eu)
 - Moro
@@ -621,6 +632,8 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Rafa (es-ES)
 - Returntoice (ko)
 - Seagull (zh-Hant)
+- 6mozuke9 (ja)
+- PeachFresca (ja)
 
 ## Wiki Translators
 
