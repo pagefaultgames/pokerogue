@@ -2159,7 +2159,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       0,
       0,
       this.pokemon.level.toString(),
-      this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED,
+      this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY_LEVEL_HP : TextStyle.PARTY_RED,
     )
       .setPositionRelative(slotLevelLabel, levelTextToLevelLabelOffset.x, levelTextToLevelLabelOffset.y)
       .setOrigin(0, 0.25);
@@ -2234,7 +2234,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       .setScale(hpRatio, 1)
       .setVisible(false);
 
-    this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY)
+    this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY_LEVEL_HP)
       .setOrigin(1, 0)
       .setPositionRelative(
         this.slotHpBar,

@@ -433,13 +433,14 @@ export function getTextStyleOptions(
       shadowYpos = 6;
       break;
     case TextStyle.PARTY:
-    case TextStyle.PARTY_RED: {
+    case TextStyle.PARTY_RED:
+    case TextStyle.PARTY_LEVEL_HP: {
       styleOptions.padding = { top: 2, bottom: 16 };
       styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
       shadowXpos = 12;
       shadowYpos = 12;
-      if (lang === "zh-Hans" || lang === "zh-Hant") {
+      if (style === TextStyle.PARTY && (lang === "zh-Hans" || lang === "zh-Hant")) {
         shadowXpos = 6;
         shadowYpos = 6;
       }
@@ -699,6 +700,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
       }
       return shadow ? "#6b5a73" : "#f8f8f8";
     case TextStyle.PARTY:
+    case TextStyle.PARTY_LEVEL_HP:
     case TextStyle.PARTY_CANCEL_BUTTON:
     case TextStyle.INSTRUCTIONS_TEXT:
     case TextStyle.MOVE_LABEL:
