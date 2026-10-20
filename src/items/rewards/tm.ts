@@ -81,7 +81,7 @@ export class TmReward extends PokemonReward {
       },
       this.selectFilter,
       undefined,
-      { tmMoveId: this.moveId },
+      { moveId: this.moveId },
     );
   }
 }

@@ -187,10 +187,10 @@ export class SelectRewardPhase extends BattlePhase {
         this.openFusionMenu(reward, cost, rewardSelectCallback);
       } else {
         reward.openParty(
-          () => this.postApplyPokemonReward(reward),
+          () => this.postApplyPokemonReward(reward, true, cost),
           () => this.resetRewardSelect(rewardSelectCallback),
         );
-        this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
+        //        this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else {
       applyReward(reward, {}, true);
@@ -326,6 +326,7 @@ export class SelectRewardPhase extends BattlePhase {
     if (isTmReward(reward)) {
       partyUiMode = PartyUiMode.TM_REWARD;
       tmMoveId = reward.moveId;
+      console.log("Reward's tm", tmMoveId);
     }
     if (isEvolutionItemReward(reward)) {
       partyUiMode = PartyUiMode.EVOLUTION_ITEM_REWARD;
@@ -352,9 +353,7 @@ export class SelectRewardPhase extends BattlePhase {
       },
       reward.selectFilter,
       moveSelectFilter,
-      tmMoveId,
-      isMove,
-      itemId,
+      { moveId: tmMoveId, showMovePp: isMove, itemId },
     );
   }
 

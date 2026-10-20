@@ -299,6 +299,7 @@ export class PartyUiHandler extends MessageUiHandler {
         ? (args[4] as PokemonMoveSelectFilter)
         : PartyUiHandler.FilterAllMoves;
 
+    console.log("args5", args[5]);
     const { moveId, showMovePp, itemId }: PartyRewardOptions = args.length > 5 && args[5] ? args[5] : {};
     this.tmMoveId = moveId ?? MoveId.NONE;
     this.showMovePp = !!showMovePp;
@@ -2232,6 +2233,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotHpText.setVisible(false);
       let slotTmText: string;
 
+      console.log("Tm move id: ", tmMoveId);
       if (this.pokemon.getMoveset().some(m => m.moveId === tmMoveId)) {
         slotTmText = i18next.t("partyUiHandler:learned");
       } else if (this.pokemon.isTmCompatible(tmMoveId)) {
