@@ -44,13 +44,13 @@ describe("Moves - Scale Shot", () => {
 
     //check that stats haven't changed after one or two hits have occurred
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(minccino.getStatStage(Stat.DEF)).toBe(0);
-    expect(minccino.getStatStage(Stat.SPD)).toBe(0);
+    expect(minccino).toHaveStatStage(Stat.DEF, 0);
+    expect(minccino).toHaveStatStage(Stat.SPD, 0);
 
     //check that stats changed on last hit
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(minccino.getStatStage(Stat.DEF)).toBe(-1);
-    expect(minccino.getStatStage(Stat.SPD)).toBe(1);
+    expect(minccino).toHaveStatStage(Stat.DEF, -1);
+    expect(minccino).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("unaffected by sheer force", async () => {
@@ -68,8 +68,8 @@ describe("Moves - Scale Shot", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     //effect not nullified by sheer force
-    expect(minccino.getStatStage(Stat.DEF)).toBe(-1);
-    expect(minccino.getStatStage(Stat.SPD)).toBe(1);
+    expect(minccino).toHaveStatStage(Stat.DEF, -1);
+    expect(minccino).toHaveStatStage(Stat.SPD, 1);
 
     //power not boosted by sheer force
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
