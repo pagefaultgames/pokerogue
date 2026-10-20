@@ -21,7 +21,7 @@ import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { SessionSaveData } from "#types/save-data";
-import { addBBCodeTextObject, addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
@@ -556,29 +556,30 @@ export class RunInfoUiHandler extends UiHandler {
   private async parseRunInfo(windowX: number, windowY: number) {
     // Parsing and displaying the mode.
     // In the future, parsing Challenges + Challenge Rules may have to be reworked as PokeRogue adds additional challenges and users can stack these challenges in various ways.
+    const windowFrag = (text: string) => getBBCodeFrag(text, TextStyle.WINDOW, true);
     const modeText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
       lineSpacing: 3,
     });
     modeText.setPosition(7, 5);
-    modeText.appendText(i18next.t("runHistory:mode") + ": ", false);
+    modeText.appendText(windowFrag(i18next.t("runHistory:mode") + ": "), false);
     switch (this.runInfo.gameMode) {
       case GameModes.DAILY:
-        modeText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:dailyRun")}`), false);
         break;
       case GameModes.SPLICED_ENDLESS:
-        modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:endlessSpliced")}`), false);
         break;
       case GameModes.CHALLENGE: {
-        modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
-        modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:challenge")}`), false);
+        modeText.appendText(windowFrag(`${i18next.t("runHistory:challengeRules")}: `));
         modeText.setWrapMode(1); // wrap by word
         modeText.setWrapWidth(500);
         const rules: string[] = this.challengeParser();
         if (rules) {
           for (let i = 0; i < rules.length; i++) {
             if (i > 0) {
-              modeText.appendText(" + ", false);
+              modeText.appendText(windowFrag(" + "), false);
             }
             modeText.appendText(rules[i], false);
           }
@@ -586,10 +587,10 @@ export class RunInfoUiHandler extends UiHandler {
         break;
       }
       case GameModes.ENDLESS:
-        modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:endless")}`), false);
         break;
       case GameModes.CLASSIC:
-        modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:classic")}`), false);
         break;
     }
 
@@ -598,7 +599,7 @@ export class RunInfoUiHandler extends UiHandler {
       (this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS)
       && this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave
     ) {
-      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.appendText(windowFrag(` [${i18next.t("runHistory:personalBest")}]`));
       modeText.setTint(...RAINBOW_TINT);
     }
 
@@ -611,11 +612,11 @@ export class RunInfoUiHandler extends UiHandler {
       lineSpacing,
     });
     const runTime = getPlayTimeString(this.runInfo.playTime);
-    runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
+    runInfoText.appendText(windowFrag(`${i18next.t("runHistory:runLength")}: ${runTime}`), false);
     const runMoney = formatMoney(settings.display.moneyFormat, this.runInfo.money);
     const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false);
     runInfoText.appendText(
-      `[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney: runMoney })}[/color]`,
+      `[color=${moneyTextColor}][shadow=${getTextColor(TextStyle.MONEY_WINDOW, true)}]${i18next.t("battleScene:moneyOwned", { formattedMoney: runMoney })}[/shadow][/color]`,
     );
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
@@ -633,8 +634,16 @@ export class RunInfoUiHandler extends UiHandler {
     );
     let luckInfo = i18next.t("runHistory:luck") + ": " + getLuckString(luckValue);
     if (luckValue < 14) {
-      luckInfo = "[color=#" + getLuckTextTint(luckValue).toString(16) + "]" + luckInfo + "[/color]";
+      luckInfo =
+        "[color=#"
+        + getLuckTextTint(luckValue).toString(16)
+        + "][shadow="
+        + getTextColor(TextStyle.WINDOW, true)
+        + "]"
+        + luckInfo
+        + "[/shadow][/color]";
     } else {
+      luckInfo = windowFrag(luckInfo);
       luckText.setTint(...RAINBOW_TINT);
     }
     luckText.appendText("[align=right]" + luckInfo + "[/align]", false);
