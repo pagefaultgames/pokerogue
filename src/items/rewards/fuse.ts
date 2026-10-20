@@ -1,4 +1,7 @@
+import { globalScene } from "#app/global-scene";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardId } from "#enums/reward-id";
+import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { type PokemonFusionRewardParams, PokemonReward } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -27,5 +30,28 @@ export class FusePokemonReward extends PokemonReward {
   apply({ pokemon, pokemon2 }: PokemonFusionRewardParams): boolean {
     pokemon.fuse(pokemon2);
     return true;
+  }
+
+  openParty(postApply: () => void, onCancel: () => void): void {
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.SPLICE,
+      -1,
+      (fromSlotIndex: number, spliceSlotIndex: number) => {
+        if (
+          spliceSlotIndex !== undefined
+          && fromSlotIndex < 6
+          && spliceSlotIndex < 6
+          && fromSlotIndex !== spliceSlotIndex
+        ) {
+          const party = globalScene.getPlayerParty();
+          this.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
+          postApply();
+        } else {
+          onCancel();
+        }
+      },
+      this.selectFilter,
+    );
   }
 }

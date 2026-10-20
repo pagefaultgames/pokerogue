@@ -44,13 +44,16 @@
  * @packageDocumentation
 */
 
+import { globalScene } from "#app/global-scene";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import type { RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
+import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 // biome-ignore lint/correctness/noUnusedImports: used in TSDoc
 import type { SelectRewardPhase } from "#phases/select-reward-phase";
 import type { Exact } from "#types/type-helpers";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyOption, type PokemonMoveSelectFilter, type PokemonSelectFilter } from "#ui/party-ui-handler";
 import i18next from "i18next";
 
 export abstract class Reward {
@@ -140,6 +143,25 @@ export abstract class PokemonReward extends Reward {
   }
 
   abstract override apply(_params: PokemonRewardParams): void;
+
+  openParty(postApply: () => void, onCancel: () => void): void {
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.REWARD,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          // TODO: improve this check here
+          const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
+          this.apply(params);
+          postApply();
+        } else {
+          onCancel();
+        }
+      },
+      this.selectFilter,
+    );
+  }
 }
 
 export abstract class PokemonMoveReward extends PokemonReward {
@@ -160,6 +182,31 @@ export abstract class PokemonMoveReward extends PokemonReward {
 
   apply(_params: PokemonMoveRewardParams): boolean {
     return false;
+  }
+
+  openParty(postApply: () => void, onCancel: () => void): void {
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.MOVE_REWARD,
+      -1,
+      (slotIndex: number, option: PartyOption) => {
+        if (slotIndex < 6) {
+          // TODO: improve this check here
+          const params: PokemonMoveRewardParams = {
+            pokemon: globalScene.getPlayerParty()[slotIndex],
+            moveIndex: option - PartyOption.MOVE_1,
+          };
+          // TODO: this is a bad way of doing it, directly return the moveIndex instead\
+          this.apply(params);
+          postApply();
+        } else {
+          onCancel();
+        }
+      },
+      this.selectFilter,
+      this.moveSelectFilter,
+      { showMovePp: true },
+    );
   }
 }
 

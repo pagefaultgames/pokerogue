@@ -186,6 +186,10 @@ export class SelectRewardPhase extends BattlePhase {
       if (reward instanceof FusePokemonReward) {
         this.openFusionMenu(reward, cost, rewardSelectCallback);
       } else {
+        reward.openParty(
+          () => this.postApplyPokemonReward(reward),
+          () => this.resetRewardSelect(rewardSelectCallback),
+        );
         this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else {
