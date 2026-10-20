@@ -782,15 +782,19 @@ export class RunInfoUiHandler extends UiHandler {
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility(true).name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
-      const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
+      const summaryFrag = (text: string) => getBBCodeFrag(text, TextStyle.SUMMARY, true);
+      const summaryShadow = getTextColor(TextStyle.SUMMARY, true);
+      const pokeInfoText = addBBCodeTextObject(0, 0, summaryFrag(pName), TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
         lineSpacing,
       });
       pokeInfoText.appendText(
-        `${i18next.t("saveSlotSelectUiHandler:lv")}${formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
+        summaryFrag(
+          `${i18next.t("saveSlotSelectUiHandler:lv")}${formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
+        ),
       );
-      pokeInfoText.appendText(pAbilityInfo);
-      pokeInfoText.appendText(pPassiveInfo);
+      pokeInfoText.appendText(summaryFrag(pAbilityInfo));
+      pokeInfoText.appendText(summaryFrag(pPassiveInfo));
       pokeInfoTextContainer.add(pokeInfoText);
 
       // Pokemon Stats
@@ -800,19 +804,24 @@ export class RunInfoUiHandler extends UiHandler {
       pokemon.stats.forEach(element => pStats.push(formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pNature, i);
-        pStats[i] = isMult < 1 ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
-        pStats[i] = isMult > 1 ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
+        const arrow =
+          isMult < 1
+            ? `[color=#40c8f8][shadow=${summaryShadow}]↓[/shadow][/color]`
+            : isMult > 1
+              ? `[color=#f89890][shadow=${summaryShadow}]↑[/shadow][/color]`
+              : "";
+        pStats[i] = summaryFrag(pStats[i]) + arrow;
       }
-      const hp = i18next.t("pokemonInfo:stat.hpShortened") + ": " + pStats[0];
-      const atk = i18next.t("pokemonInfo:stat.atkShortened") + ": " + pStats[1];
-      const def = i18next.t("pokemonInfo:stat.defShortened") + ": " + pStats[2];
-      const spatk = i18next.t("pokemonInfo:stat.spatkShortened") + ": " + pStats[3];
-      const spdef = i18next.t("pokemonInfo:stat.spdefShortened") + ": " + pStats[4];
+      const hp = summaryFrag(i18next.t("pokemonInfo:stat.hpShortened") + ": ") + pStats[0];
+      const atk = summaryFrag(i18next.t("pokemonInfo:stat.atkShortened") + ": ") + pStats[1];
+      const def = summaryFrag(i18next.t("pokemonInfo:stat.defShortened") + ": ") + pStats[2];
+      const spatk = summaryFrag(i18next.t("pokemonInfo:stat.spatkShortened") + ": ") + pStats[3];
+      const spdef = summaryFrag(i18next.t("pokemonInfo:stat.spdefShortened") + ": ") + pStats[4];
       const speedLabel =
         currentLanguage === "es-ES" || currentLanguage === "pt_BR"
           ? i18next.t("runHistory:spdShortened")
           : i18next.t("pokemonInfo:stat.spdShortened");
-      const speed = speedLabel + ": " + pStats[5];
+      const speed = summaryFrag(speedLabel + ": ") + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(-5, 0, hp, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
