@@ -27,6 +27,20 @@ describe("Utils - French articles", () => {
     expect(withFrenchArticle(noun, form)).toBe(expected);
   });
 
+  it("handles possessives", () => {
+    expect(withFrenchArticle("Vitesse", "possessive")).toBe("sa Vitesse");
+    expect(withFrenchArticle("Esquive", "possessive")).toBe("son Esquive");
+    expect(withFrenchArticle("Attaque", "possessive")).toBe("son Attaque");
+    expect(withFrenchArticle("PV", "possessive")).toBe("ses PV");
+  });
+
+  it("handles demonstratives", () => {
+    expect(withFrenchArticle("Poireau", "demonstrative")).toBe("ce Poireau");
+    expect(withFrenchArticle("Élixir", "demonstrative")).toBe("cet Élixir");
+    expect(withFrenchArticle("Potion", "demonstrative")).toBe("cette Potion");
+    expect(withFrenchArticle("Restes", "demonstrative")).toBe("ces Restes");
+  });
+
   it("only applies in French", () => {
     const formatter = createFrenchArticleFormatter("definite");
     expect(formatter("Poireau", "fr")).toBe("le Poireau");

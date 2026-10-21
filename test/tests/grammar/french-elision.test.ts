@@ -20,4 +20,9 @@ describe("Utils - French elision", () => {
   ])("%j -> %j", (input, expected) => {
     expect(applyFrenchElision(input)).toBe(expected);
   });
+
+  it("leaves protected interpolated values untouched", () => {
+    expect(applyFrenchElision("le Hibou dit : le Ami !", ["le Ami"])).toBe("le Hibou dit : le Ami !");
+    expect(applyFrenchElision("le Ami", [])).toBe("l’Ami");
+  });
 });

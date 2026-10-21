@@ -1,7 +1,5 @@
 import type { PostProcessorModule } from "i18next";
 
-// #region Elision
-
 const ELIDED_FORMS: Readonly<Record<string, string>> = {
   le: "l",
   la: "l",
@@ -14,9 +12,7 @@ const ELIDED_FORMS: Readonly<Record<string, string>> = {
   que: "qu",
 };
 
-/** Lowercase words starting with an *h aspiré* (or a vowel letter with a consonant sound), which block elision. */
 export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
-  // h aspiré
   "hache",
   "hachécateur",
   "hanche",
@@ -35,7 +31,6 @@ export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
   "huit",
   "hurle",
   "hurlement",
-  // vowel letters with a consonant sound
   "onze",
   "oui",
   "uhlan",
@@ -48,17 +43,11 @@ export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
 
 const VOWEL_START = /^[aeiouyàâäéèêëîïôöùûüœæh]/i;
 
-// Optional game markup (such as "@c{smile}") may sit between the article and the next word.
 const ELISION_PATTERN = new RegExp(
   `(?<![\\p{L}\\p{N}'’])(${Object.keys(ELIDED_FORMS).join("|")})\\s+((?:@\\w\\{[^}]*\\})*)(\\p{L}[\\p{L}'’-]*)`,
   "giu",
 );
 
-/**
- * Whether `word` begins with a vowel sound (or *h muet*) and thus triggers elision.
- * @param word - The word to check
- * @param ignoreExceptions - (Default `false`) Whether to skip the {@linkcode NO_ELISION_WORDS} list and only test the first letter
- */
 export function startsWithVowelSound(word: string, ignoreExceptions = false): boolean {
   if (!VOWEL_START.test(word)) {
     return false;
@@ -66,19 +55,14 @@ export function startsWithVowelSound(word: string, ignoreExceptions = false): bo
   if (ignoreExceptions) {
     return true;
   }
-  // Compound words such as "Hurle-Queue" are checked on their first part only
   const firstPart = word.toLowerCase().split(/[-’']/)[0];
   return !NO_ELISION_WORDS.has(firstPart);
 }
 
-/**
- * Replace "le/la/je/me/te/se/ne/de/que" followed by a vowel sound with the elided form (`l’`, `d’`, `qu’`, ...).
- * @param text - The fully interpolated French text
- * @returns The text with elisions applied
- */
-export function applyFrenchElision(text: string): string {
-  return text.replace(ELISION_PATTERN, (match, article: string, markup: string, next: string) => {
-    if (!startsWithVowelSound(next)) {
+export function applyFrenchElision(text: string, protectedValues: readonly string[] = []): string {
+  const spans = findProtectedSpans(text, protectedValues);
+  return text.replace(ELISION_PATTERN, (match, article: string, markup: string, next: string, offset: number) => {
+    if (!startsWithVowelSound(next) || spans.some(([start, end]) => offset >= start && offset < end)) {
       return match;
     }
     const base = ELIDED_FORMS[article.toLowerCase()];
@@ -86,7 +70,19 @@ export function applyFrenchElision(text: string): string {
   });
 }
 
-/** i18next post-processor applying {@linkcode applyFrenchElision} to French translations only. */
+function findProtectedSpans(text: string, values: readonly string[]): [number, number][] {
+  const spans: [number, number][] = [];
+  for (const value of values) {
+    if (!value.includes(" ")) {
+      continue;
+    }
+    for (let index = text.indexOf(value); index !== -1; index = text.indexOf(value, index + value.length)) {
+      spans.push([index, index + value.length]);
+    }
+  }
+  return spans;
+}
+
 export class FrenchElisionProcessor implements PostProcessorModule {
   public readonly name = "french-elision";
   public readonly type = "postProcessor";
@@ -94,29 +90,20 @@ export class FrenchElisionProcessor implements PostProcessorModule {
   process(
     value: string,
     _key: string | string[],
-    options: { lng?: string } | undefined,
+    options: { lng?: string; [variable: string]: unknown } | undefined,
     translator: { language?: string },
   ): string {
     const language = options?.lng ?? translator.language ?? "";
-    return language.startsWith("fr") ? applyFrenchElision(value) : value;
+    if (!language.startsWith("fr")) {
+      return value;
+    }
+    const variables = Object.values(options ?? {}).filter((v): v is string => typeof v === "string");
+    return applyFrenchElision(value, variables);
   }
 }
 
-// #endregion Elision
-
-// #region Noun data
-
-/**
- * Codes: `m` / `f` = gender; append `p` for plural names; append `h` to block elision
- * (*h aspiré*, or a vowel letter with a consonant sound such as "onze").
- */
 export type FrenchNounCode = "m" | "f" | "mp" | "fp" | "mh" | "fh";
 
-/**
- * Grammatical info for French nouns, as comma/newline-separated lists of localized names per code.
- * Names that are missing fall back to masculine, singular, with elision decided from the first letter.
- * Run `pnpm french-grammar:missing` to list names that still have no entry.
- */
 const NOUN_LISTS: Readonly<Record<FrenchNounCode, string>> = {
   m: `
     Méga-Bracelet, Poignet Dynamax, Total Soin, PP Plus, PP Max, Multi Exp, Équilibr’Exp, Muscle +, Poireau,
@@ -131,14 +118,9 @@ const NOUN_LISTS: Readonly<Record<FrenchNounCode, string>> = {
   mp: "Restes, Trésors, Maxi Champis, PV",
   fp: "Lunettes Noires, Rênes de l’Unité du Froid, Rênes de l’Unité d’Effroi",
   mh: "",
-  // "Heatran" is pronounced with an aspirated h
   fh: "Heatranite",
 };
 
-/**
- * Head words: the first word of a name found here decides its code (checked after the exact names above).
- * Modifiers like "Super", "Hyper", "Maxi", "Vieux" or "Rogue" are not listed, so they are skipped.
- */
 const HEAD_LISTS: Readonly<Record<"m" | "f", string>> = {
   m: `
     Charme, Jeton, Module, Masque, Rouleau, Globe, Galet, Bol, Bracelet, Orbe, Jus, Grelot, Poing, Croc,
@@ -153,10 +135,8 @@ const HEAD_LISTS: Readonly<Record<"m" | "f", string>> = {
   `,
 };
 
-/** Mega Stones ("Dracaufite X", "Absolite Z"...) are all feminine. */
 const MEGA_STONE_PATTERN = /[iï]te( [xyz])?$/;
 
-/** Build the lookup key for a noun: lowercase, NFC-normalized, with any whitespace (including non-breaking spaces) collapsed. */
 export function toFrenchNounKey(name: string): string {
   return name.trim().toLowerCase().normalize("NFC").replace(/\s+/g, " ");
 }
@@ -172,7 +152,6 @@ function parseList(list: string, code: FrenchNounCode, target: Map<string, Frenc
   }
 }
 
-/** Build the lookups on first use so French grammar data costs nothing for players in other languages. */
 function buildLookups(): Map<string, FrenchNounCode> {
   if (nounCodes === undefined || headCodes === undefined) {
     nounCodes = new Map();
@@ -187,11 +166,6 @@ function buildLookups(): Map<string, FrenchNounCode> {
   return nounCodes;
 }
 
-/**
- * Get the grammar code of a noun: exact entry first, then the first known head word, then Mega Stone suffix.
- * @param name - The localized noun
- * @returns The noun's {@linkcode FrenchNounCode}, or `undefined` if it has no entry
- */
 export function getFrenchNounCode(name: string): FrenchNounCode | undefined {
   const key = toFrenchNounKey(name);
   const exact = buildLookups().get(key);
@@ -207,16 +181,11 @@ export function getFrenchNounCode(name: string): FrenchNounCode | undefined {
   return MEGA_STONE_PATTERN.test(key) ? "f" : undefined;
 }
 
-// #endregion Noun data
-
-// #region Articles
-
-export type FrenchArticleForm = "definite" | "indefinite" | "de" | "a";
+export type FrenchArticleForm = "definite" | "indefinite" | "de" | "a" | "possessive" | "demonstrative";
 
 interface NounInfo {
   feminine: boolean;
   plural: boolean;
-  /** Whether a singular definite/prepositional article would elide before this noun */
   elides: boolean;
 }
 
@@ -235,8 +204,9 @@ function lookupNoun(noun: string): NounInfo {
 interface ArticleForms {
   masculine: string;
   feminine: string;
-  /** Used before a vowel sound; the apostrophe attaches directly to the noun. Indefinite forms never elide. */
   elided?: string;
+  vowelMasculine?: string;
+  vowelFeminine?: string;
   plural: string;
 }
 
@@ -245,18 +215,10 @@ const ARTICLE_FORMS: Readonly<Record<FrenchArticleForm, ArticleForms>> = {
   indefinite: { masculine: "un", feminine: "une", plural: "des" },
   de: { masculine: "du", feminine: "de la", elided: "de l’", plural: "des" },
   a: { masculine: "au", feminine: "à la", elided: "à l’", plural: "aux" },
+  possessive: { masculine: "son", feminine: "sa", vowelFeminine: "son", plural: "ses" },
+  demonstrative: { masculine: "ce", feminine: "cette", vowelMasculine: "cet", plural: "ces" },
 };
 
-/**
- * Prepend the requested French article to `noun`, choosing it from the noun's gender, number and first sound.
- * @param noun - The localized noun
- * @param form - Which article to use:
- * - `definite`: le / la / l’ / les
- * - `indefinite`: un / une / des
- * - `de`: du / de la / de l’ / des
- * - `a`: au / à la / à l’ / aux
- * @returns The noun preceded by its article, in lowercase
- */
 export function withFrenchArticle(noun: string, form: FrenchArticleForm): string {
   const { feminine, plural, elides } = lookupNoun(noun);
   const forms = ARTICLE_FORMS[form];
@@ -267,26 +229,23 @@ export function withFrenchArticle(noun: string, form: FrenchArticleForm): string
   if (elides && forms.elided) {
     return `${forms.elided}${noun}`;
   }
-  return `${feminine ? forms.feminine : forms.masculine} ${noun}`;
+  const plainForm = feminine ? forms.feminine : forms.masculine;
+  const vowelForm = feminine ? forms.vowelFeminine : forms.vowelMasculine;
+  return `${(elides && vowelForm) || plainForm} ${noun}`;
 }
 
-/** Formatter names (all lowercase, as i18next normalizes them) mapped to their article form. */
 export const FRENCH_ARTICLE_FORMATS: Readonly<Record<string, FrenchArticleForm>> = {
   fr_definite: "definite",
   fr_indefinite: "indefinite",
   fr_de: "de",
   fr_a: "a",
+  fr_possessive: "possessive",
+  fr_demonstrative: "demonstrative",
 };
 
-/**
- * Create an i18next formatter that applies an article form for French and returns the value untouched otherwise.
- * @param form - The article form to apply
- */
 export function createFrenchArticleFormatter(form: FrenchArticleForm): (value: unknown, lng?: string) => string {
   return (value, lng) => {
     const text = String(value);
     return lng?.startsWith("fr") ? withFrenchArticle(text, form) : text;
   };
 }
-
-// #endregion Articles
