@@ -8100,7 +8100,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       canChangeForm: false,
       forms: [
         new PokemonForm({
-          formName: "Average Size",
+          formName: "Medium Variety",
           formKey: "",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8124,7 +8124,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Small Size",
+          formName: "Small Variety",
           formKey: "small",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8148,7 +8148,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Large Size",
+          formName: "Large Variety",
           formKey: "large",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8172,8 +8172,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Super Size",
-          formKey: "super",
+          formName: "Jumbo Variety",
+          formKey: "jumbo",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
           height: 0.8,
@@ -8328,7 +8328,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       canChangeForm: false,
       forms: [
         new PokemonForm({
-          formName: "Average Size",
+          formName: "Medium Variety",
           formKey: "",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8352,7 +8352,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Small Size",
+          formName: "Small Variety",
           formKey: "small",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8376,7 +8376,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Large Size",
+          formName: "Large Variety",
           formKey: "large",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8400,8 +8400,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Super Size",
-          formKey: "super",
+          formName: "Jumbo Variety",
+          formKey: "jumbo",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
           height: 1.7,
