@@ -710,7 +710,10 @@ export abstract class PokemonSpeciesForm {
     // We need to populate the color cache for this species' variant
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
-    globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
+    // TODO: this should be routed through audiomanager rather than a raw `load.audio` call
+    if (audioManager.isAudioEnabled) {
+      globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
+    }
     if (variant != null) {
       await this.loadVariantColors(spriteKey, female, variant, back, formIndex);
     }
@@ -981,7 +984,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getFormKey(formIndex = this.formIndex): string {
-    return this.forms[formIndex].formKey ?? "";
+    return this.forms[formIndex]?.formKey ?? "";
   }
 
   /**

@@ -42,12 +42,12 @@ describe("Moves - Astonish", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.getTag(BattlerTagType.FLINCHED)).toBeDefined();
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.FLINCHED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(enemyPokemon.getTag(BattlerTagType.FLINCHED)).toBeUndefined();
+    expect(leadPokemon).toHaveFullHp();
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.FLINCHED);
 
     await game.phaseInterceptor.to("CommandPhase", false);
 
@@ -55,6 +55,6 @@ describe("Moves - Astonish", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    expect(leadPokemon).not.toHaveFullHp();
   });
 });

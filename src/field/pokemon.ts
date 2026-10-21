@@ -14,7 +14,12 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
+import {
+  type EvolutionItem,
+  FusionSpeciesFormEvolution,
+  SpeciesFormEvolution,
+  validateShedinjaEvo,
+} from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -42,6 +47,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -63,7 +69,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
-import { getEffectiveWeatherForMove, getWeatherMultiplierForMove } from "#data/weather";
+import { getEffectiveWeatherForMove, getWeatherMultiplierForMove, isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -78,6 +84,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItem } from "#enums/form-change-item";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
@@ -2441,10 +2448,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon has an ability with the given {@linkcode AbAttr}.
    */
   public hasAbilityWithAttr(attrType: AbAttrString, canApply = true, ignoreOverride = false): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType)) {
+    // n.b. Check if the ability has attribute *first*. This prevents recursion issues for some functions,
+    // like `isWeatherSuppressed`, that invoke this method, while the `canApplyAbility` check has some
+    // abilities that in turn call `isWeatherSuppressed` as part of their conditions.
+    if (this.getAbility(ignoreOverride).hasAttr(attrType) && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
+    return this.hasPassive() && this.getPassiveAbility().hasAttr(attrType) && (!canApply || this.canApplyAbility(true));
   }
 
   /**
@@ -2607,6 +2617,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     return (
       trapped.value || !!this.getTag(TrappedTag) || !!globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, side)
+    );
+  }
+
+  /**
+   * Determine whether this Pokemon can be switched out (e.g. it is not trapped,
+   * locked into using a move, or using Commander/being commanded).
+   * @returns Whether the pokemon is able to switch
+   * @remarks Pokemon that aren't on the field can always switch
+   */
+  public canSwitch(): boolean {
+    // Pokemon that are not on the field are not being switched out
+    if (!this.isOnField()) {
+      return true;
+    }
+    return (
+      this.getTag(BattlerTagType.FRENZY) == null
+      && !this.isTrapped()
+      && !(this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()).some(p =>
+        p.getTag(BattlerTagType.COMMANDED),
+      )
     );
   }
 
@@ -2832,7 +2862,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       !ignoreStrongWinds
       && arena.weatherType === WeatherType.STRONG_WINDS
-      && !arena.weather?.isEffectSuppressed()
+      && !isWeatherSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {
@@ -6087,6 +6117,42 @@ export class PlayerPokemon extends Pokemon {
    */
   public isTmCompatible(tm: MoveId, excludeKnown = false): boolean {
     return this.getCompatibleTms(excludeKnown).includes(tm);
+  }
+
+  /**
+   * Check if an evolution item is compatible with this Pokémon.
+   * @param item - The {@linkcode EvolutionItem} to check
+   * @returns Whether this evolution item can trigger an evolution for this Pokémon (or its fusion component)
+   */
+  public isEvolutionItemCompatible(item: EvolutionItem): boolean {
+    if (
+      speciesDataRegistry.hasEvolutions(this.species.speciesId)
+      && speciesDataRegistry.getEvolutions(this.species.speciesId).some(e => e.validate(this, false, item))
+      && this.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+    ) {
+      return true;
+    }
+    return (
+      this.isFusion()
+      && !!this.fusionSpecies
+      && speciesDataRegistry.hasEvolutions(this.fusionSpecies.speciesId)
+      && speciesDataRegistry.getEvolutions(this.fusionSpecies.speciesId).some(e => e.validate(this, true, item))
+      && this.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+    );
+  }
+
+  /**
+   * Check if a form-change item is compatible with this Pokémon's current form.
+   * @param item - The {@linkcode FormChangeItem} to check
+   * @returns Whether this form-change item can trigger a form change for this Pokémon
+   */
+  public isFormChangeItemCompatible(item: FormChangeItem): boolean {
+    return speciesDataRegistry
+      .getFormChanges(this.species.speciesId)
+      .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === this.getFormKey())
+      .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+      .flatMap(fc => fc.item)
+      .includes(item);
   }
 
   /**

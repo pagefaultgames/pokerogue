@@ -2465,7 +2465,7 @@ export class HealAttr extends MoveEffectAttr {
    */
   private readonly showAnim: boolean;
   /**
-   * Whether the move should fail if the target is at full HP.
+   * Whether the move should count as failed if the target is at full HP.
    * @defaultValue `true`
    */
   // TODO: Remove post move failure rework -
@@ -12084,11 +12084,14 @@ export function initMoves() {
     new AttackMove(MoveId.STRANGE_STEAM, PokemonType.FAIRY, MoveCategory.SPECIAL, 90, 95, 10, 20, 0, 8) //
       .attr(ConfuseAttr),
     new StatusMove(MoveId.LIFE_DEW, PokemonType.WATER, -1, 10, -1, 0, 8)
-      .attr(HealAttr, 0.25, true, false)
+      .attr(HealAttr, 0.25, true, false, false)
       .target(MoveTarget.USER_AND_ALLIES)
       .ignoresProtect()
       .ignoresSubstitute()
-      .healingMove(),
+      .healingMove()
+      // Should count as failed when both targets are unaffected;
+      // will need more thorough move failure state tracking
+      .edgeCase(),
     new SelfStatusMove(MoveId.OBSTRUCT, PokemonType.DARK, 100, 5, -1, 4, 8)
       .attr(ProtectAttr, BattlerTagType.OBSTRUCT)
       .condition(failIfLastCondition, 3),
