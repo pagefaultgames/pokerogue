@@ -103,7 +103,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
   return eggs;
 }
 
-const shinyCompensationMigrator: SystemSaveMigrator = {
+const shinyCompensationMigrator = {
   name: "shinyCompensationMigrator",
   version: "1.12.0.3",
   migrate: (data): void => {
@@ -149,9 +149,9 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
       seed.toString(),
     );
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-const voucherCompensationMigrator: SystemSaveMigrator = {
+const voucherCompensationMigrator = {
   name: "voucherCompensationMigrator",
   version: "1.12.0.3",
   migrate: (data): void => {
@@ -169,10 +169,10 @@ const voucherCompensationMigrator: SystemSaveMigrator = {
     data.voucherCounts[VoucherType.PREMIUM] += 2;
     data.voucherCounts[VoucherType.GOLDEN] += 1;
   },
-};
+} as const satisfies SystemSaveMigrator;
 
 // a copy of the 1.12.0.1 migrator with the `.abilityAttr` check fixed
-const fixDexData: SystemSaveMigrator = {
+const fixDexData = {
   name: "fixDexData",
   version: "1.12.0.3",
   migrate: (data): void => {
@@ -218,10 +218,10 @@ const fixDexData: SystemSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [
+export const systemMigrators = [
   fixDexData,
   shinyCompensationMigrator,
   voucherCompensationMigrator,
-] as const;
+] as const satisfies readonly SystemSaveMigrator[];
