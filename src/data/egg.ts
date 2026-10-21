@@ -577,18 +577,17 @@ export class Egg {
       return VariantTier.STANDARD;
     }
 
-    let pityVariant: VariantTier | null = null;
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
       const missingVariants = this.getMissingVariants(species);
       if (missingVariants.length > 0) {
         globalScene.gameData.starterData[species].pity[1] += 1;
-        pityVariant = this.getVariantFromPity(species);
+        const pityVariant = this.getVariantFromPity(species);
+        if (pityVariant !== null) {
+          // Return early if a variant is determined by pity
+          globalScene.gameData.starterData[species].pity[1] = 0;
+          return pityVariant;
+        }
       }
-    }
-    if (pityVariant !== null) {
-      // Return early if a variant is determined by pity
-      globalScene.gameData.starterData[species!].pity[1] = 0;
-      return pityVariant;
     }
     const rand = randSeedInt(10);
     let variantTier: VariantTier = VariantTier.STANDARD;
