@@ -1036,7 +1036,7 @@ export class RunInfoUiHandler extends UiHandler {
       speciesLoaded.set(id, false);
 
       const female = pkmn.gender === 1;
-      species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
+      species.loadAssets(female, formIndex, shiny, variant).then(() => {
         speciesLoaded.set(id, true);
         pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
         pokemonSprite.setPipelineData("shiny", shiny);

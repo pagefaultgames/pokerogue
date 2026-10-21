@@ -2,9 +2,11 @@ import type { PreAttackModifyDamageAbAttrParams, UngroundedAbAttr } from "#abili
 import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#ai/ai-moveset-gen";
+import { POKEMON_SPRITE_ANIM, pokemonAtlasAsset } from "#app/asset-requests";
 import type { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
@@ -25,6 +27,7 @@ import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
+import { getMoveAnimAssetRequests } from "#data/battle-anims";
 import {
   AutotomizedTag,
   BattlerTag,
@@ -148,6 +151,7 @@ import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
+import type { AssetRef, AssetRequest } from "#types/asset-set";
 import type { Constructor } from "#types/common";
 import type {
   GetAttackDamageParams,
@@ -197,6 +201,18 @@ import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
+
+/**
+ * The arguments {@linkcode PokemonSpeciesForm.loadAssets} and {@linkcode PokemonSpeciesForm.getAssetRequests}
+ * take for one of a Pokémon's species forms.
+ */
+interface SpeciesFormAssetParams {
+  speciesForm: PokemonSpeciesForm;
+  female: boolean;
+  formIndex: number | undefined;
+  shiny: boolean | undefined;
+  variant: Variant | undefined;
+}
 
 export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
@@ -781,42 +797,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Assets for moves
     loadPromises.push(loadMoveAnimations(this.getMoveset().map(m => m.getMove().id)));
 
-    /** alias for `this.summonData.illusion`; bangs on this are safe when guarded with `useIllusion` being true   */
-    const illusion = this.summonData.illusion;
-    useIllusion = useIllusion && !!illusion;
+    useIllusion = useIllusion && !!this.summonData.illusion;
 
     // Load the assets for the species form
-    const formIndex = useIllusion ? illusion!.formIndex : this.formIndex;
-    loadPromises.push(
-      this.getSpeciesForm(false, useIllusion).loadAssets(
-        this.getGender(useIllusion) === Gender.FEMALE,
-        formIndex,
-        this.isShiny(useIllusion),
-        this.getVariant(useIllusion),
-      ),
-    );
-
-    if (this.isPlayer() || this.getFusionSpeciesForm(false, useIllusion)) {
-      globalScene.loadPokemonAtlas(
-        this.getBattleSpriteKey(true, ignoreOverride),
-        this.getBattleSpriteAtlasPath(true, ignoreOverride),
-      );
+    for (const { speciesForm, female, formIndex, shiny, variant } of this.getSpeciesFormAssetParams(useIllusion)) {
+      loadPromises.push(speciesForm.loadAssets(female, formIndex, shiny, variant));
     }
-    if (this.getFusionSpeciesForm()) {
-      const { fusionFormIndex, fusionShiny, fusionVariant } = useIllusion ? illusion! : this;
-      loadPromises.push(
-        this.getFusionSpeciesForm(false, useIllusion).loadAssets(
-          this.getFusionGender(false, useIllusion) === Gender.FEMALE,
-          fusionFormIndex,
-          fusionShiny,
-          fusionVariant,
-        ),
-      );
-      globalScene.loadPokemonAtlas(
-        this.getFusionBattleSpriteKey(true, ignoreOverride),
-        this.getFusionBattleSpriteAtlasPath(true, ignoreOverride),
-      );
-    }
+    loadPromises.push(assetManager.load(this.getBackSpriteAssetRequests(ignoreOverride, useIllusion), globalScene));
 
     if (this.isShiny(true)) {
       loadPromises.push(populateVariantColors(this, false, ignoreOverride));
@@ -827,42 +814,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     await Promise.allSettled(loadPromises);
 
-    // This must be initiated before we queue loading, otherwise the load could have finished before
-    // we reach the line of code that adds the listener, causing a deadlock.
-    const waitOnLoadPromise = new Promise<void>(resolve =>
-      globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve),
-    );
-
-    if (!globalScene.load.isLoading()) {
-      globalScene.load.start();
-    }
-
-    // Wait for the assets we queued to load to finish loading, then...
-    // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises#creating_a_promise_around_an_old_callback_api
-    await waitOnLoadPromise;
-
-    // With the sprites loaded, generate the animation frame information
-    if (this.isPlayer()) {
-      const originalWarn = console.warn;
-      // Ignore warnings for missing frames, because there will be a lot
-      console.warn = () => {};
-      const battleSpriteKey = this.getBattleSpriteKey(this.isPlayer(), ignoreOverride);
-      const battleFrameNames = globalScene.anims.generateFrameNames(battleSpriteKey, {
-        zeroPad: 4,
-        suffix: ".png",
-        start: 1,
-        end: 400,
-      });
-      console.warn = originalWarn;
-      if (!globalScene.anims.exists(battleSpriteKey)) {
-        globalScene.anims.create({
-          key: battleSpriteKey,
-          frames: battleFrameNames,
-          frameRate: 10,
-          repeat: -1,
-        });
-      }
-    }
     // With everything loaded, now begin playing the animation.
     this.playAnim();
 
@@ -871,6 +822,102 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData.speciesForm) {
       this.updateFusionPalette(true);
     }
+  }
+
+  /**
+   * Get every asset this Pokémon may use without loading it again first.
+   * Covers its own appearance, any Transform or Illusion it is under, both halves of a fusion (including the sprites
+   * the fusion palette is read from), its moves' animations, and the animations of moves it still has queued.
+   * @returns The assets this Pokémon needs
+   */
+  public getRequiredAssets(): AssetRef[] {
+    const assets: AssetRef[] = [];
+    // `true` covers this Pokémon's own appearance, `false` any Transform it is under
+    for (const ignoreOverride of [true, false]) {
+      for (const useIllusion of [false, true]) {
+        for (const params of this.getSpeciesFormAssetParams(useIllusion, ignoreOverride)) {
+          const { speciesForm, female, formIndex, shiny, variant } = params;
+          assets.push(...speciesForm.getAssetRequests(female, formIndex, shiny, variant));
+        }
+        assets.push(...this.getBackSpriteAssetRequests(ignoreOverride, useIllusion));
+      }
+      assets.push(...getMoveAnimAssetRequests(this.getMoveset(ignoreOverride).map(m => m.getMove().id)));
+      if (this.getFusionSpeciesForm(ignoreOverride)) {
+        for (const key of this.getFusionPaletteSpriteKeys(ignoreOverride)) {
+          assets.push({ kind: "atlas", key });
+        }
+      }
+    }
+    // Moves still to come, such as the second turn of a charging move or forced moves, like Outrage
+    // which may not be in the moveset (e.g. when called by Metronome)
+    assets.push(...getMoveAnimAssetRequests(this.getMoveQueue().map(turnMove => turnMove.move)));
+    return assets;
+  }
+
+  /**
+   * Get the species forms whose front sprite and cry {@linkcode loadAssets} loads, along with how to load them.
+   * @param useIllusion - Whether to use the Pokémon this one is disguised as with Illusion, if any
+   * @param ignoreOverride - (Default `false`) Whether to ignore any Transform this Pokémon is under
+   * @returns The params for this Pokémon's species form, and for its fusion's if it is fused
+   */
+  private getSpeciesFormAssetParams(useIllusion: boolean, ignoreOverride = false): SpeciesFormAssetParams[] {
+    /** alias for `this.summonData.illusion`; bangs on this are safe when guarded with `useIllusion` being true   */
+    const illusion = this.summonData.illusion;
+    useIllusion = useIllusion && !!illusion;
+
+    const params: SpeciesFormAssetParams[] = [
+      {
+        speciesForm: this.getSpeciesForm(ignoreOverride, useIllusion),
+        female: this.getGender(useIllusion) === Gender.FEMALE,
+        formIndex: useIllusion ? illusion!.formIndex : this.formIndex,
+        shiny: this.isShiny(useIllusion),
+        variant: this.getVariant(useIllusion),
+      },
+    ];
+    if (this.getFusionSpeciesForm()) {
+      const { fusionFormIndex, fusionShiny, fusionVariant } = useIllusion ? illusion! : this;
+      params.push({
+        speciesForm: this.getFusionSpeciesForm(ignoreOverride, useIllusion),
+        female: this.getFusionGender(false, useIllusion) === Gender.FEMALE,
+        formIndex: fusionFormIndex,
+        shiny: fusionShiny,
+        variant: fusionVariant,
+      });
+    }
+    return params;
+  }
+
+  /**
+   * Get the back sprites {@linkcode loadAssets} loads: this Pokémon's own if it is on the player's side or fused,
+   * and its fusion's if it is fused.
+   * @param ignoreOverride - Whether to ignore any Transform this Pokémon is under
+   * @param useIllusion - Whether to use the Pokémon this one is disguised as with Illusion, if any
+   * @returns The requests for the back sprites
+   */
+  private getBackSpriteAssetRequests(ignoreOverride: boolean, useIllusion: boolean): AssetRequest[] {
+    const requests: AssetRequest[] = [];
+    if (this.isPlayer() || this.getFusionSpeciesForm(false, useIllusion)) {
+      requests.push(
+        pokemonAtlasAsset(
+          this.getBattleSpriteKey(true, ignoreOverride),
+          this.getBattleSpriteAtlasPath(true, ignoreOverride),
+          undefined,
+          // Only the player's side shows its back sprite, so only it needs the animation
+          this.isPlayer() ? POKEMON_SPRITE_ANIM : null,
+        ),
+      );
+    }
+    if (this.getFusionSpeciesForm()) {
+      requests.push(
+        pokemonAtlasAsset(
+          this.getFusionBattleSpriteKey(true, ignoreOverride),
+          this.getFusionBattleSpriteAtlasPath(true, ignoreOverride),
+          undefined,
+          null,
+        ),
+      );
+    }
+    return requests;
   }
 
   /**
@@ -5523,17 +5570,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  updateFusionPalette(ignoreOverride?: boolean): void {
-    if (!this.getFusionSpeciesForm(ignoreOverride)) {
-      [this.getSprite(), this.getTintSprite()]
-        .filter(s => !!s)
-        .map(s => {
-          s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
-          s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
-        });
-      return;
-    }
-
+  /**
+   * Get the keys of the textures {@linkcode updateFusionPalette} reads a fused Pokémon's colors from.
+   * @param ignoreOverride - Whether to ignore any Transform this Pokémon is under
+   * @returns The keys of the front and back sprites of this Pokémon's species form, then of its fusion's
+   * @remarks
+   * Must only be called on a fused Pokémon.
+   */
+  private getFusionPaletteSpriteKeys(
+    ignoreOverride?: boolean,
+  ): [spriteKey: string, backSpriteKey: string, fusionSpriteKey: string, fusionBackSpriteKey: string] {
     const speciesForm = this.getSpeciesForm(ignoreOverride);
     const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride);
 
@@ -5560,6 +5606,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         this.fusionVariant,
       )
       .replace("pkmn__", "pkmn__back__");
+
+    return [spriteKey, backSpriteKey, fusionSpriteKey, fusionBackSpriteKey];
+  }
+
+  updateFusionPalette(ignoreOverride?: boolean): void {
+    if (!this.getFusionSpeciesForm(ignoreOverride)) {
+      [this.getSprite(), this.getTintSprite()]
+        .filter(s => !!s)
+        .map(s => {
+          s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
+          s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
+        });
+      return;
+    }
+
+    const [spriteKey, backSpriteKey, fusionSpriteKey, fusionBackSpriteKey] =
+      this.getFusionPaletteSpriteKeys(ignoreOverride);
 
     const sourceTexture = globalScene.textures.get(spriteKey);
     const sourceBackTexture = globalScene.textures.get(backSpriteKey);

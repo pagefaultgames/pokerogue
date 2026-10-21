@@ -16,6 +16,7 @@ import type { PersistentModifier } from "#modifiers/modifier";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { AssetRef } from "#types/asset-set";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
@@ -646,6 +647,13 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   loadAssets(): Promise<void> {
     return this.config.loadAssets(this.variant);
+  }
+
+  /**
+   * @returns The assets this trainer needs; the ones {@linkcode loadAssets} loads
+   */
+  getRequiredAssets(): AssetRef[] {
+    return this.config.getAssetRequests(this.variant);
   }
 
   initSprite(): void {

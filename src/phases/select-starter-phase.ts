@@ -1,3 +1,4 @@
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -123,6 +124,8 @@ export class SelectStarterPhase extends Phase {
       globalScene.getPlayerParty().forEach(p => {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
       });
+      // Unload the sprites and cries of every species browsed in starter select, now that the party is set
+      assetManager.sweep();
       this.end();
     });
   }
