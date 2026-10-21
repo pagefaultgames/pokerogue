@@ -5,7 +5,6 @@ import { allMoves } from "#data/data-lists";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Gender } from "#data/gender";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
 import { addTextObject, updateCandyCountTextStyle } from "#ui/text";
@@ -193,10 +192,6 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     // will always have at least one egg move
     this.pokemonEggMovesContainer.setVisible(true);
 
-    if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
-      this.pokemonHatchedIcon.setFrame("manaphy");
-    } else {
-      this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
-    }
+    this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
   }
 }

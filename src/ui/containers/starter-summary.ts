@@ -557,11 +557,8 @@ export class StarterSummary extends Phaser.GameObjects.Container {
         .setShadowColor(getGrowthRateColor(species.growthRate, true));
 
       this.pokemonCaughtCountText.setText(`${dexEntry.caughtCount}`);
-      if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
-        this.pokemonHatchedIcon.setFrame("manaphy");
-      } else {
-        this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
-      }
+
+      this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
       this.pokemonHatchedCountText.setText(`${dexEntry.hatchedCount}`);
 
       const defaultDexAttr = getDexAttrFromPreferences(starterId, starterPreferences);

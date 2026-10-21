@@ -35,18 +35,16 @@ export const HATCH_WAVES_COMMON_EGG = 10;
 export const HATCH_WAVES_RARE_EGG = 25;
 export const HATCH_WAVES_EPIC_EGG = 50;
 export const HATCH_WAVES_LEGENDARY_EGG = 100;
-export const HATCH_WAVES_MANAPHY_EGG = 50;
 
 // Rates for specific random properties in 1/x
 export const GACHA_DEFAULT_SHINY_RATE = 128;
 export const GACHA_SHINY_UP_SHINY_RATE = 64;
 export const SAME_SPECIES_EGG_SHINY_RATE = 12;
 export const SAME_SPECIES_EGG_HA_RATE = 8;
-export const MANAPHY_EGG_MANAPHY_RATE = 8;
 export const GACHA_EGG_HA_RATE = 192;
 
 // Odds are 1/x
-// [COMMON, RARE, EPIC/MANAPHY, LEGEND]
+// [COMMON, RARE, EPIC, LEGEND]
 export const RARE_EGGMOVE_RATES: readonly number[] = [48, 24, 12, 6];
 export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [16, 12, 6, 3];
 

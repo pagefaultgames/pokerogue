@@ -215,11 +215,6 @@ const displayStats: DisplayStats = {
     sourceFunc: gameData => gameData.gameStats.legendaryEggsPulled.toString(),
     hidden: true,
   },
-  manaphyEggsPulled: {
-    label_key: "manaphyEggsPulled",
-    sourceFunc: gameData => gameData.gameStats.manaphyEggsPulled.toString(),
-    hidden: true,
-  },
 };
 
 export class GameStatsUiHandler extends UiHandler {

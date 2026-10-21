@@ -593,7 +593,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
           const eggText = addTextObject(0, 14, egg.getEggDescriptor(), TextStyle.PARTY, { align: "center" });
           eggText.setOrigin(0.5, 0);
-          eggText.setTint(getEggTierTextTint(egg.isManaphyEgg() ? EggTier.EPIC : egg.tier));
+          eggText.setTint(getEggTierTextTint(egg.tier));
           ret.add(eggText);
 
           this.eggGachaSummaryContainer.addAt(ret, 0);
