@@ -91,6 +91,7 @@ export interface TimedEvent extends EventBanner {
   readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
   readonly luckBoostedSpecies?: readonly SpeciesId[];
   readonly boostFusions?: boolean; //MODIFIER REWORK PLEASE
+  readonly boostSootheBell?: boolean;
   readonly classicWaveRewards?: readonly EventWaveReward[]; // Rival battle rewards
   readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   readonly music?: readonly EventMusicReplacement[];
