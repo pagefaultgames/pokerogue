@@ -62,6 +62,11 @@ export class SceneBase extends Phaser.Scene {
     if (folder) {
       folder += "/";
     }
+    const eventReplacment = timedEventManager.getEventImageReplacement(key);
+    if (eventReplacment) {
+      folder = "events/";
+      filenameRoot = `${eventReplacment}`;
+    }
     this.load.atlas(
       key,
       getCachedUrl(`images/${folder}${filenameRoot}.png`),
