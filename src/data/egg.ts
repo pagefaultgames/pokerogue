@@ -524,10 +524,10 @@ export class Egg {
    */
   private rollShiny(species?: SpeciesId): boolean {
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
-      globalScene.gameData.dexData[species].pity[0] += 1;
+      globalScene.gameData.starterData[species].pity[0] += 1;
       const isShiny = randSeedFloat() < this.getSameSpeciesShinyChance(species);
       if (isShiny) {
-        globalScene.gameData.dexData[species].pity[0] = 0;
+        globalScene.gameData.starterData[species].pity[0] = 0;
       }
       return isShiny;
     }
@@ -550,7 +550,7 @@ export class Egg {
   private getSameSpeciesShinyChance(species: SpeciesId): number {
     const baseRate = 1 / SAME_SPECIES_EGG_SHINY_RATE;
     const targetRate = 1;
-    const count = globalScene.gameData.dexData[species].pity[0];
+    const count = globalScene.gameData.starterData[species].pity[0];
 
     if (count <= BASE_SAME_SPECIES_SHINY_INCREASE_COUNT) {
       return baseRate;
@@ -581,13 +581,13 @@ export class Egg {
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
       const missingVariants = this.getMissingVariants(species);
       if (missingVariants.length > 0) {
-        globalScene.gameData.dexData[species].pity[1] += 1;
+        globalScene.gameData.starterData[species].pity[1] += 1;
         pityVariant = this.getVariantFromPity(species);
       }
     }
     if (pityVariant !== null) {
       // Return early if a variant is determined by pity
-      globalScene.gameData.dexData[species!].pity[1] = 0;
+      globalScene.gameData.starterData[species!].pity[1] = 0;
       return pityVariant;
     }
     const rand = randSeedInt(10);
@@ -602,13 +602,13 @@ export class Egg {
 
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
       // reset the pity if a variant was obtained by a normal same-species egg
-      const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
+      const caughtAttr = globalScene.gameData.dexData[species].caughtAttr;
       const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
       if (
         (variantTier === VariantTier.RARE && missingVariants.includes(DexAttr.VARIANT_2))
         || (variantTier === VariantTier.EPIC && missingVariants.includes(DexAttr.VARIANT_3))
       ) {
-        globalScene.gameData.dexData[species].pity[1] = 0;
+        globalScene.gameData.starterData[species].pity[1] = 0;
       }
     }
 
@@ -622,7 +622,7 @@ export class Egg {
    */
   private getVariantFromPity(speciesId: SpeciesId): VariantTier | null {
     const missingVariants = this.getMissingVariants(speciesId);
-    const count = globalScene.gameData.dexData[speciesId].pity[1];
+    const count = globalScene.gameData.starterData[speciesId].pity[1];
     if (count < MISSING_VARIANT_PITY_GUARANTEE) {
       // Roll normally
       return null;

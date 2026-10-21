@@ -43,6 +43,7 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
     passiveAttr: 0,
     valueReduction: 0,
     classicWinCount: 0,
+    pity: [0, 0],
   };
 
   const froakieDexData = data.dexData[SpeciesId.FROAKIE];
@@ -57,7 +58,6 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
     hatchedCount: 0,
     ivs: [0, 0, 0, 0, 0, 0],
     ribbons: RibbonData.fromJSON("0"),
-    pity: [0, 0],
   };
 
   // If the battle bond form data already exists....
@@ -103,6 +103,7 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
     passiveAttr: 0,
     valueReduction: 0,
     classicWinCount: 0,
+    pity: [0, 0],
   };
 
   const basculinDexData = data.dexData[SpeciesId.BASCULIN];
@@ -117,7 +118,6 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
     hatchedCount: 0,
     ivs: [0, 0, 0, 0, 0, 0],
     ribbons: RibbonData.fromJSON("0"),
-    pity: [0, 0],
   };
 
   // If the white stripe form data already exists....

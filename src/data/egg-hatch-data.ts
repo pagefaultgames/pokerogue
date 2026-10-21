@@ -50,7 +50,6 @@ export class EggHatchData {
       hatchedCount: currDexEntry.hatchedCount,
       ivs: [...currDexEntry.ivs],
       ribbons: currDexEntry.ribbons,
-      pity: currDexEntry.pity,
     };
     this.starterDataEntryBeforeUpdate = {
       moveset: currStarterDataEntry.moveset,
@@ -61,6 +60,7 @@ export class EggHatchData {
       passiveAttr: currStarterDataEntry.passiveAttr,
       valueReduction: currStarterDataEntry.valueReduction,
       classicWinCount: currStarterDataEntry.classicWinCount,
+      pity: currStarterDataEntry.pity,
     };
   }
 

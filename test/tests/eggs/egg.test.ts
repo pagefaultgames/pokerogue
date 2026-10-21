@@ -463,7 +463,7 @@ describe("Egg Generation Tests", () => {
     let diffShiny = false;
     let diffAbility = false;
     for (let i = 0; i < EGG_HATCH_COUNT; i++) {
-      scene.gameData.dexData[SpeciesId.BULBASAUR].pity = [0, 0];
+      scene.gameData.starterData[SpeciesId.BULBASAUR].pity = [0, 0];
       scene.setSeed("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       scene.resetSeed(); // Make sure that eggs are unpredictable even if using same seed
 
