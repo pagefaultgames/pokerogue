@@ -19,7 +19,7 @@ const addPityTracker: SystemSaveMigrator = {
   name: "addPityTracker",
   version: "1.12.2.0",
   migrate: (data): void => {
-    for (const { speciesId } of speciesDataRegistry.getAllSpecies()) {
+    for (const speciesId of speciesDataRegistry.getAllStarters()) {
       if (data.starterData[speciesId].pity == null) {
         data.starterData[speciesId].pity = [0, 0];
       }
