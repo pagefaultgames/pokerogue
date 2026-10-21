@@ -617,12 +617,12 @@ export class Egg {
 
   /**
    * Get the variant tier for a same species egg based on the pity counter.
-   * @param species - The speciesId for which to get the variant tier based on the pity counter
+   * @param speciesId - The `SpeciesId` for which to get the variant tier based on the pity counter
    * @returns The variant tier or `null` if no variant is determined by pity.
    */
-  private getVariantFromPity(species: SpeciesId): VariantTier | null {
-    const missingVariants = this.getMissingVariants(species);
-    const count = globalScene.gameData.dexData[species].pity[1];
+  private getVariantFromPity(speciesId: SpeciesId): VariantTier | null {
+    const missingVariants = this.getMissingVariants(speciesId);
+    const count = globalScene.gameData.dexData[speciesId].pity[1];
     if (count < MISSING_VARIANT_PITY_GUARANTEE) {
       // Roll normally
       return null;
@@ -640,19 +640,21 @@ export class Egg {
   }
 
   /**
-   * Get the missing variant tiers for a given species. Including unhatched variants currently in eggs.
-   * @param species - The speciesId for which to get missing variants
-   * @returns An array of VariantTiers.
+   * Get the missing variant tiers for a given species. Includes unhatched variants currently in eggs.
+   * @param speciesId - The `SpeciesId` for which to get missing variants
+   * @returns An array of `VariantTiers`.
    * @remarks
    * Does not account for {@linkcode VariantTier.STANDARD}.
    * Species without variants will return an empty array.
    */
-  private getMissingVariants(species: SpeciesId): VariantTier[] {
-    if (!speciesDataRegistry.getSpecies(species).hasVariants()) {
+  private getMissingVariants(speciesId: SpeciesId): VariantTier[] {
+    if (!speciesDataRegistry.getSpecies(speciesId).hasVariants()) {
       return [];
     }
-    const variantsInEggs = globalScene.gameData.eggs.filter(egg => egg.species === species).map(egg => egg.variantTier);
-    const caughtAttr = globalScene.gameData.dexData[species]?.caughtAttr ?? 0n;
+    const variantsInEggs = globalScene.gameData.eggs
+      .filter(egg => egg.species === speciesId)
+      .map(egg => egg.variantTier);
+    const caughtAttr = globalScene.gameData.dexData[speciesId]?.caughtAttr ?? 0n;
     const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
 
     const ret: VariantTier[] = [];

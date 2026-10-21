@@ -13,7 +13,7 @@ const eggCostReductionThresholds = {
   8: [10, 20, 40], // 8 Cost
   9: [10, 20, 40], // 9 Cost
   10: [8, 16, 32], // 10 Cost
-};
+} as const;
 
 const addPityTracker: SystemSaveMigrator = {
   name: "addPityTracker",
