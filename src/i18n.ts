@@ -2,6 +2,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { namespaceMap } from "#app/i18n-namespace-map";
 import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { getCachedUrl } from "#utils/fetch-utils";
+import { FrenchElisionProcessor } from "#utils/french-elision";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -154,6 +155,7 @@ await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
   .use(new KoreanPostpositionProcessor())
+  .use(new FrenchElisionProcessor())
   .init(
     {
       fallbackLng: {
@@ -195,7 +197,7 @@ await i18next
         // which will be important once we get said strong typing set up correctly.
         skipOnVariables: true,
       },
-      postProcess: ["korean-postposition"],
+      postProcess: ["korean-postposition", "french-elision"],
     },
     async () => {
       i18next.services.formatter?.add("money", i18nMoneyFormatter);
