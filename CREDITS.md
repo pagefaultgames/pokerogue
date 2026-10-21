@@ -39,10 +39,10 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 ### Composers
 - Andr06
 - “Big” bird_obsession
+- Faces in the Clouds (aka Caleb C.)
 - MattCello
 - Leavannite
 - Lmz
-- thetelescope
 - unveiler
 - Vanstesan
 
