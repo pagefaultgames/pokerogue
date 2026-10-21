@@ -22,6 +22,7 @@
     "test:create": "vite-node scripts/create-test/create-test.ts",
     "decrypt-save": "vite-node scripts/decrypt-save.ts",
     "eggMoves:parse": "vite-node scripts/parse-egg-moves/main.ts",
+    "french-grammar:missing": "vite-node scripts/french-grammar/list-missing.ts",
     "scrape-trainers": "vite-node scripts/scrape-trainer-names/main.ts",
     "dailySeed:create": "vite-node scripts/daily-seed/main.ts",
     "changelog": "node .github/scripts/changelog-reader/main.mts",

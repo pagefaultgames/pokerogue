@@ -65,6 +65,7 @@
       ],
       "#data/*": ["../src/data/daily-seed/*.ts", "../src/data/*.ts"],
       "#utils/*": ["../src/utils/*.ts"],
+      "#grammar/*": ["../src/grammar/*.ts"],
 
       // new subpath imports for script folders
       "#script-utils/*": ["./utils/*.ts"],

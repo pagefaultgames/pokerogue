@@ -1,8 +1,8 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { namespaceMap } from "#app/i18n-namespace-map";
+import { createFrenchArticleFormatter, FRENCH_ARTICLE_FORMATS, FrenchElisionProcessor } from "#grammar/fr";
 import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { getCachedUrl } from "#utils/fetch-utils";
-import { FrenchElisionProcessor } from "#utils/french-elision";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -201,6 +201,9 @@ await i18next
     },
     async () => {
       i18next.services.formatter?.add("money", i18nMoneyFormatter);
+      for (const [name, form] of Object.entries(FRENCH_ARTICLE_FORMATS)) {
+        i18next.services.formatter?.add(name, createFrenchArticleFormatter(form));
+      }
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
