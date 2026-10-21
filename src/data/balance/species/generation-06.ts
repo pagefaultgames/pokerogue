@@ -8144,7 +8144,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
@@ -8168,7 +8168,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
@@ -8192,7 +8192,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
       ],
@@ -8372,7 +8372,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
@@ -8396,7 +8396,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
@@ -8420,7 +8420,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
       ],
