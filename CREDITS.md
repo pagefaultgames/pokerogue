@@ -712,7 +712,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 ## Current and Former Wiki Contributors
 - Quill
 - Akuma
-- Blitzy (aka Kazapp>le)
+- Blitzy (aka Kazapple)
 - BlueVaron
 - Brain Frog
 - Ceimir
