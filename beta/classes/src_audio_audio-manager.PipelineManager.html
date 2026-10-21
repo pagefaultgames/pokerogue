@@ -343,11 +343,11 @@ in this class. Do not modify directly.</p>
 <p>The name of the instance must be unique within this manager.</p>
 <p>Make sure to pass an instance to this method, not a base class.</p>
 <p>For example, you should pass it like this:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-6">add</span><span class="hl-5">(</span><span class="hl-8">&#39;yourName&#39;</span><span class="hl-5">, </span><span class="hl-2">new</span><span class="hl-5"> </span><span class="hl-6">CustomPipeline</span><span class="hl-5">(</span><span class="hl-3">game</span><span class="hl-5">));</span><span class="hl-8">`</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-0">add</span><span class="hl-1">(</span><span class="hl-2">&#39;yourName&#39;</span><span class="hl-1">, </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">CustomPipeline</span><span class="hl-1">(</span><span class="hl-4">game</span><span class="hl-1">));</span><span class="hl-2">`</span>
 </code><button type="button">Copy</button></pre>
 
 <p>and <strong>not</strong> like this:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-6">add</span><span class="hl-5">(</span><span class="hl-8">&#39;yourName&#39;</span><span class="hl-5">, </span><span class="hl-3">CustomPipeline</span><span class="hl-5">);</span><span class="hl-8">`</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-0">add</span><span class="hl-1">(</span><span class="hl-2">&#39;yourName&#39;</span><span class="hl-1">, </span><span class="hl-4">CustomPipeline</span><span class="hl-1">);</span><span class="hl-2">`</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To add a <strong>Post Pipeline</strong>, see <code>addPostPipeline</code> instead.</p>
@@ -373,11 +373,11 @@ in this class. Do not modify directly.</p>
 <div class="tsd-comment tsd-typography"><p>Adds a Post Pipeline to this Pipeline Manager.</p>
 <p>Make sure to pass a base class to this method, not an instance.</p>
 <p>For example, you should pass it like this:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-6">addPostPipeline</span><span class="hl-5">(</span><span class="hl-8">&#39;yourName&#39;</span><span class="hl-5">, </span><span class="hl-3">CustomPipeline</span><span class="hl-5">);</span><span class="hl-8">`</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-0">addPostPipeline</span><span class="hl-1">(</span><span class="hl-2">&#39;yourName&#39;</span><span class="hl-1">, </span><span class="hl-4">CustomPipeline</span><span class="hl-1">);</span><span class="hl-2">`</span>
 </code><button type="button">Copy</button></pre>
 
 <p>and <strong>not</strong> like this:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-6">addPostPipeline</span><span class="hl-5">(</span><span class="hl-8">&#39;yourName&#39;</span><span class="hl-5">, </span><span class="hl-2">new</span><span class="hl-5"> </span><span class="hl-6">CustomPipeline</span><span class="hl-5">());</span><span class="hl-8">`</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-0">addPostPipeline</span><span class="hl-1">(</span><span class="hl-2">&#39;yourName&#39;</span><span class="hl-1">, </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-0">CustomPipeline</span><span class="hl-1">());</span><span class="hl-2">`</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To add a regular pipeline, see the <code>add</code> method instead.</p>

@@ -20,7 +20,7 @@ and animated.</p>
 As such, Sprites take a fraction longer to process and have a larger API footprint due to the Animation
 Component. If you do not require animation then you can safely use Images to replace Sprites in all cases.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="292456">
+<section class="tsd-panel tsd-hierarchy" data-refl="292496">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-signature-type">Sprite</span>
@@ -740,7 +740,7 @@ Set this value with <code>setOrigin()</code>.</p>
 <p>This component allows you to apply a variety of built-in effects to this Game Object, such
 as glow, blur, bloom, displacements, vignettes and more. You access them via this property,
 for example:</p>
-<pre><code class="js"><span class="hl-2">const</span><span class="hl-5"> </span><span class="hl-10">player</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">();</span><br/><span class="hl-3">player</span><span class="hl-5">.</span><span class="hl-3">postFX</span><span class="hl-5">.</span><span class="hl-6">addBloom</span><span class="hl-5">();</span>
+<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">player</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">();</span><br/><span class="hl-4">player</span><span class="hl-1">.</span><span class="hl-4">postFX</span><span class="hl-1">.</span><span class="hl-0">addBloom</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>All FX are WebGL only and do not have Canvas counterparts.</p>
@@ -779,7 +779,7 @@ for example:</p>
 <p>This component allows you to apply a variety of built-in effects to this Game Object, such
 as glow, blur, bloom, displacements, vignettes and more. You access them via this property,
 for example:</p>
-<pre><code class="js"><span class="hl-2">const</span><span class="hl-5"> </span><span class="hl-10">player</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">();</span><br/><span class="hl-3">player</span><span class="hl-5">.</span><span class="hl-3">preFX</span><span class="hl-5">.</span><span class="hl-6">addBloom</span><span class="hl-5">();</span>
+<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">player</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">();</span><br/><span class="hl-4">player</span><span class="hl-1">.</span><span class="hl-4">preFX</span><span class="hl-1">.</span><span class="hl-0">addBloom</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Only the following Game Objects support Pre FX:</p>
@@ -1636,15 +1636,15 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Retrieves the value for the given key in this Game Objects Data Manager, or undefined if it doesn't exist.</p>
 <p>You can also access values via the <code>values</code> object. For example, if you had a key called <code>gold</code> you can do either:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">getData</span><span class="hl-5">(</span><span class="hl-8">&#39;gold&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">getData</span><span class="hl-1">(</span><span class="hl-2">&#39;gold&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Or access the value directly:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-3">data</span><span class="hl-5">.</span><span class="hl-3">values</span><span class="hl-5">.</span><span class="hl-3">gold</span><span class="hl-5">;</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-4">data</span><span class="hl-1">.</span><span class="hl-4">values</span><span class="hl-1">.</span><span class="hl-4">gold</span><span class="hl-1">;</span>
 </code><button type="button">Copy</button></pre>
 
 <p>You can also pass in an array of keys, in which case an array of values will be returned:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">getData</span><span class="hl-5">([ </span><span class="hl-8">&#39;gold&#39;</span><span class="hl-5">, </span><span class="hl-8">&#39;armor&#39;</span><span class="hl-5">, </span><span class="hl-8">&#39;health&#39;</span><span class="hl-5"> ]);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">getData</span><span class="hl-1">([ </span><span class="hl-2">&#39;gold&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;armor&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;health&#39;</span><span class="hl-1"> ]);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>This approach is useful for destructuring arrays in ES6.</p>
@@ -2204,19 +2204,19 @@ calling again.</p>
 having to duplicate the data. You can just create it once and then play it on any Sprite.</p>
 <p>The following code shows how to create a global repeating animation. The animation will be created
 from all of the frames within the sprite sheet that was loaded with the key 'muybridge':</p>
-<pre><code class="javascript"><span class="hl-2">var</span><span class="hl-5"> </span><span class="hl-3">config</span><span class="hl-5"> = {</span><br/><span class="hl-5">    </span><span class="hl-3">key:</span><span class="hl-5"> </span><span class="hl-8">&#39;run&#39;</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-3">frames:</span><span class="hl-5"> </span><span class="hl-8">&#39;muybridge&#39;</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-3">frameRate:</span><span class="hl-5"> </span><span class="hl-7">15</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-3">repeat:</span><span class="hl-5"> -</span><span class="hl-7">1</span><br/><span class="hl-5">};</span><br/><br/><span class="hl-0">//  This code should be run from within a Scene:</span><br/><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">anims</span><span class="hl-5">.</span><span class="hl-6">create</span><span class="hl-5">(</span><span class="hl-3">config</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">var</span><span class="hl-1"> </span><span class="hl-4">config</span><span class="hl-1"> = {</span><br/><span class="hl-1">    </span><span class="hl-4">key:</span><span class="hl-1"> </span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-4">frames:</span><span class="hl-1"> </span><span class="hl-2">&#39;muybridge&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-4">frameRate:</span><span class="hl-1"> </span><span class="hl-8">15</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-4">repeat:</span><span class="hl-1"> -</span><span class="hl-8">1</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-5">//  This code should be run from within a Scene:</span><br/><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">anims</span><span class="hl-1">.</span><span class="hl-0">create</span><span class="hl-1">(</span><span class="hl-4">config</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>However, if you wish to create an animation that is unique to this Sprite, and this Sprite alone,
 you can call the <code>Animation.create</code> method instead. It accepts the exact same parameters as when
 creating a global animation, however the resulting data is kept locally in this Sprite.</p>
 <p>With the animation created, either globally or locally, you can now play it on this Sprite:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">).</span><span class="hl-6">play</span><span class="hl-5">(</span><span class="hl-8">&#39;run&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">).</span><span class="hl-0">play</span><span class="hl-1">(</span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Alternatively, if you wish to run it at a different frame rate, for example, you can pass a config
 object instead:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">).</span><span class="hl-6">play</span><span class="hl-5">({ </span><span class="hl-3">key:</span><span class="hl-5"> </span><span class="hl-8">&#39;run&#39;</span><span class="hl-5">, </span><span class="hl-3">frameRate:</span><span class="hl-5"> </span><span class="hl-7">24</span><span class="hl-5"> });</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">).</span><span class="hl-0">play</span><span class="hl-1">({ </span><span class="hl-4">key:</span><span class="hl-1"> </span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">, </span><span class="hl-4">frameRate:</span><span class="hl-1"> </span><span class="hl-8">24</span><span class="hl-1"> });</span>
 </code><button type="button">Copy</button></pre>
 
 <p>When playing an animation on a Sprite it will first check to see if it can find a matching key
@@ -2309,19 +2309,19 @@ search the global Animation Manager and look for it there.</p>
 having to duplicate the data. You can just create it once and then play it on any Sprite.</p>
 <p>The following code shows how to create a global repeating animation. The animation will be created
 from all of the frames within the sprite sheet that was loaded with the key 'muybridge':</p>
-<pre><code class="javascript"><span class="hl-2">var</span><span class="hl-5"> </span><span class="hl-3">config</span><span class="hl-5"> = {</span><br/><span class="hl-5">    </span><span class="hl-3">key:</span><span class="hl-5"> </span><span class="hl-8">&#39;run&#39;</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-3">frames:</span><span class="hl-5"> </span><span class="hl-8">&#39;muybridge&#39;</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-3">frameRate:</span><span class="hl-5"> </span><span class="hl-7">15</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-3">repeat:</span><span class="hl-5"> -</span><span class="hl-7">1</span><br/><span class="hl-5">};</span><br/><br/><span class="hl-0">//  This code should be run from within a Scene:</span><br/><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">anims</span><span class="hl-5">.</span><span class="hl-6">create</span><span class="hl-5">(</span><span class="hl-3">config</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">var</span><span class="hl-1"> </span><span class="hl-4">config</span><span class="hl-1"> = {</span><br/><span class="hl-1">    </span><span class="hl-4">key:</span><span class="hl-1"> </span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-4">frames:</span><span class="hl-1"> </span><span class="hl-2">&#39;muybridge&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-4">frameRate:</span><span class="hl-1"> </span><span class="hl-8">15</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-4">repeat:</span><span class="hl-1"> -</span><span class="hl-8">1</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-5">//  This code should be run from within a Scene:</span><br/><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">anims</span><span class="hl-1">.</span><span class="hl-0">create</span><span class="hl-1">(</span><span class="hl-4">config</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>However, if you wish to create an animation that is unique to this Sprite, and this Sprite alone,
 you can call the <code>Animation.create</code> method instead. It accepts the exact same parameters as when
 creating a global animation, however the resulting data is kept locally in this Sprite.</p>
 <p>With the animation created, either globally or locally, you can now play it on this Sprite:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">).</span><span class="hl-6">playReverse</span><span class="hl-5">(</span><span class="hl-8">&#39;run&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">).</span><span class="hl-0">playReverse</span><span class="hl-1">(</span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Alternatively, if you wish to run it at a different frame rate, for example, you can pass a config
 object instead:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">).</span><span class="hl-6">playReverse</span><span class="hl-5">({ </span><span class="hl-3">key:</span><span class="hl-5"> </span><span class="hl-8">&#39;run&#39;</span><span class="hl-5">, </span><span class="hl-3">frameRate:</span><span class="hl-5"> </span><span class="hl-7">24</span><span class="hl-5"> });</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">).</span><span class="hl-0">playReverse</span><span class="hl-1">({ </span><span class="hl-4">key:</span><span class="hl-1"> </span><span class="hl-2">&#39;run&#39;</span><span class="hl-1">, </span><span class="hl-4">frameRate:</span><span class="hl-1"> </span><span class="hl-8">24</span><span class="hl-1"> });</span>
 </code><button type="button">Copy</button></pre>
 
 <p>When playing an animation on a Sprite it will first check to see if it can find a matching key
@@ -2935,19 +2935,19 @@ the renderer to skip several internal calculations.</p>
 <p>If the Game Object has not been enabled for data (via <code>setDataEnabled</code>) then it will be enabled
 before setting the value.</p>
 <p>If the key doesn't already exist in the Data Manager then it is created.</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">setData</span><span class="hl-5">(</span><span class="hl-8">&#39;name&#39;</span><span class="hl-5">, </span><span class="hl-8">&#39;Red Gem Stone&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">setData</span><span class="hl-1">(</span><span class="hl-2">&#39;name&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;Red Gem Stone&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>You can also pass in an object of key value pairs as the first argument:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">setData</span><span class="hl-5">({ </span><span class="hl-3">name:</span><span class="hl-5"> </span><span class="hl-8">&#39;Red Gem Stone&#39;</span><span class="hl-5">, </span><span class="hl-3">level:</span><span class="hl-5"> </span><span class="hl-7">2</span><span class="hl-5">, </span><span class="hl-3">owner:</span><span class="hl-5"> </span><span class="hl-8">&#39;Link&#39;</span><span class="hl-5">, </span><span class="hl-3">gold:</span><span class="hl-5"> </span><span class="hl-7">50</span><span class="hl-5"> });</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">setData</span><span class="hl-1">({ </span><span class="hl-4">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;Red Gem Stone&#39;</span><span class="hl-1">, </span><span class="hl-4">level:</span><span class="hl-1"> </span><span class="hl-8">2</span><span class="hl-1">, </span><span class="hl-4">owner:</span><span class="hl-1"> </span><span class="hl-2">&#39;Link&#39;</span><span class="hl-1">, </span><span class="hl-4">gold:</span><span class="hl-1"> </span><span class="hl-8">50</span><span class="hl-1"> });</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To get a value back again you can call <code>getData</code>:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">getData</span><span class="hl-5">(</span><span class="hl-8">&#39;gold&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">getData</span><span class="hl-1">(</span><span class="hl-2">&#39;gold&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Or you can access the value directly via the <code>values</code> property, where it works like any other variable:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-3">data</span><span class="hl-5">.</span><span class="hl-3">values</span><span class="hl-5">.</span><span class="hl-3">gold</span><span class="hl-5"> += </span><span class="hl-7">50</span><span class="hl-5">;</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-4">data</span><span class="hl-1">.</span><span class="hl-4">values</span><span class="hl-1">.</span><span class="hl-4">gold</span><span class="hl-1"> += </span><span class="hl-8">50</span><span class="hl-1">;</span>
 </code><button type="button">Copy</button></pre>
 
 <p>When the value is first set, a <code>setdata</code> event is emitted from this Game Object.</p>

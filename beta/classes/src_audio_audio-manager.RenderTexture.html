@@ -38,7 +38,7 @@ This means that when drawing objects such as Shapes or Graphics instances to thi
 to be drawn with no aliasing around the edges. This is a technical limitation of WebGL1. To get around it,
 create your shape as a texture in an art package, then draw that to this texture.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="247622">
+<section class="tsd-panel tsd-hierarchy" data-refl="247662">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-signature-type">Image</span>
@@ -653,7 +653,7 @@ Set this value with <code>setOrigin()</code>.</p>
 <p>This component allows you to apply a variety of built-in effects to this Game Object, such
 as glow, blur, bloom, displacements, vignettes and more. You access them via this property,
 for example:</p>
-<pre><code class="js"><span class="hl-2">const</span><span class="hl-5"> </span><span class="hl-10">player</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">();</span><br/><span class="hl-3">player</span><span class="hl-5">.</span><span class="hl-3">postFX</span><span class="hl-5">.</span><span class="hl-6">addBloom</span><span class="hl-5">();</span>
+<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">player</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">();</span><br/><span class="hl-4">player</span><span class="hl-1">.</span><span class="hl-4">postFX</span><span class="hl-1">.</span><span class="hl-0">addBloom</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>All FX are WebGL only and do not have Canvas counterparts.</p>
@@ -689,7 +689,7 @@ for example:</p>
 <p>This component allows you to apply a variety of built-in effects to this Game Object, such
 as glow, blur, bloom, displacements, vignettes and more. You access them via this property,
 for example:</p>
-<pre><code class="js"><span class="hl-2">const</span><span class="hl-5"> </span><span class="hl-10">player</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">();</span><br/><span class="hl-3">player</span><span class="hl-5">.</span><span class="hl-3">preFX</span><span class="hl-5">.</span><span class="hl-6">addBloom</span><span class="hl-5">();</span>
+<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">player</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">();</span><br/><span class="hl-4">player</span><span class="hl-1">.</span><span class="hl-4">preFX</span><span class="hl-1">.</span><span class="hl-0">addBloom</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Only the following Game Objects support Pre FX:</p>
@@ -1061,7 +1061,7 @@ without causing a WebGL bind or batch flush for each one.</p>
 flow of code and remember to call <code>endDraw()</code>. If you don't need to draw large
 numbers of objects it's much safer and easier to use the <code>draw</code> method instead.</p>
 <p>The flow should be:</p>
-<pre><code class="javascript"><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">beginDraw</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// repeat n times:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDraw</span><span class="hl-5">();</span><br/><span class="hl-0">// or</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDrawFrame</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">endDraw</span><span class="hl-5">();</span>
+<pre><code class="javascript"><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">beginDraw</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// repeat n times:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDraw</span><span class="hl-1">();</span><br/><span class="hl-5">// or</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDrawFrame</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">endDraw</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Do not call any methods other than <code>batchDraw</code>, <code>batchDrawFrame</code>, or <code>endDraw</code> once you
@@ -1131,7 +1131,7 @@ without causing a WebGL bind or batch flush for each one.</p>
 flow of code and remember to call <code>endDraw()</code>. If you don't need to draw large
 numbers of frames it's much safer and easier to use the <code>drawFrame</code> method instead.</p>
 <p>The flow should be:</p>
-<pre><code class="javascript"><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">beginDraw</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// repeat n times:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDraw</span><span class="hl-5">();</span><br/><span class="hl-0">// or</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDrawFrame</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">endDraw</span><span class="hl-5">();</span>
+<pre><code class="javascript"><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">beginDraw</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// repeat n times:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDraw</span><span class="hl-1">();</span><br/><span class="hl-5">// or</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDrawFrame</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">endDraw</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Do not call any methods other than <code>batchDraw</code>, <code>batchDrawFrame</code>, or <code>endDraw</code> once you
@@ -1183,7 +1183,7 @@ to manage the flow of code and remember to call <code>endDraw()</code> when you'
 <p>If you don't need to draw large numbers of objects it's much safer and easier
 to use the <code>draw</code> method instead.</p>
 <p>The flow should be:</p>
-<pre><code class="javascript"><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">beginDraw</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// repeat n times:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDraw</span><span class="hl-5">();</span><br/><span class="hl-0">// or</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDrawFrame</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">endDraw</span><span class="hl-5">();</span>
+<pre><code class="javascript"><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">beginDraw</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// repeat n times:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDraw</span><span class="hl-1">();</span><br/><span class="hl-5">// or</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDrawFrame</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">endDraw</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Do not call any methods other than <code>batchDraw</code>, <code>batchDrawFrame</code>, or <code>endDraw</code> once you
@@ -1472,7 +1472,7 @@ separate calls.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Draws the Texture Frame to the Render Texture at the given position.</p>
 <p>Textures are referenced by their string-based keys, as stored in the Texture Manager.</p>
-<pre><code class="javascript"><span class="hl-2">var</span><span class="hl-5"> </span><span class="hl-3">rt</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">renderTexture</span><span class="hl-5">(</span><span class="hl-7">0</span><span class="hl-5">, </span><span class="hl-7">0</span><span class="hl-5">, </span><span class="hl-7">800</span><span class="hl-5">, </span><span class="hl-7">600</span><span class="hl-5">);</span><br/><span class="hl-3">rt</span><span class="hl-5">.</span><span class="hl-6">drawFrame</span><span class="hl-5">(</span><span class="hl-3">key</span><span class="hl-5">, </span><span class="hl-3">frame</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">var</span><span class="hl-1"> </span><span class="hl-4">rt</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">renderTexture</span><span class="hl-1">(</span><span class="hl-8">0</span><span class="hl-1">, </span><span class="hl-8">0</span><span class="hl-1">, </span><span class="hl-8">800</span><span class="hl-1">, </span><span class="hl-8">600</span><span class="hl-1">);</span><br/><span class="hl-4">rt</span><span class="hl-1">.</span><span class="hl-0">drawFrame</span><span class="hl-1">(</span><span class="hl-4">key</span><span class="hl-1">, </span><span class="hl-4">frame</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>You can optionally provide a position, alpha and tint value to apply to the frame
@@ -1541,7 +1541,7 @@ flow of code and remember to call <code>endDraw()</code> when you're finished.</
 <p>If you don't need to draw large numbers of objects it's much safer and easier
 to use the <code>draw</code> method instead.</p>
 <p>The flow should be:</p>
-<pre><code class="javascript"><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">beginDraw</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// repeat n times:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDraw</span><span class="hl-5">();</span><br/><span class="hl-0">// or</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">batchDrawFrame</span><span class="hl-5">();</span><br/><br/><span class="hl-0">// Call once:</span><br/><span class="hl-3">RenderTexture</span><span class="hl-5">.</span><span class="hl-6">endDraw</span><span class="hl-5">();</span>
+<pre><code class="javascript"><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">beginDraw</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// repeat n times:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDraw</span><span class="hl-1">();</span><br/><span class="hl-5">// or</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">batchDrawFrame</span><span class="hl-1">();</span><br/><br/><span class="hl-5">// Call once:</span><br/><span class="hl-4">RenderTexture</span><span class="hl-1">.</span><span class="hl-0">endDraw</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Do not call any methods other than <code>batchDraw</code>, <code>batchDrawFrame</code>, or <code>endDraw</code> once you
@@ -1797,15 +1797,15 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Retrieves the value for the given key in this Game Objects Data Manager, or undefined if it doesn't exist.</p>
 <p>You can also access values via the <code>values</code> object. For example, if you had a key called <code>gold</code> you can do either:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">getData</span><span class="hl-5">(</span><span class="hl-8">&#39;gold&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">getData</span><span class="hl-1">(</span><span class="hl-2">&#39;gold&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Or access the value directly:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-3">data</span><span class="hl-5">.</span><span class="hl-3">values</span><span class="hl-5">.</span><span class="hl-3">gold</span><span class="hl-5">;</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-4">data</span><span class="hl-1">.</span><span class="hl-4">values</span><span class="hl-1">.</span><span class="hl-4">gold</span><span class="hl-1">;</span>
 </code><button type="button">Copy</button></pre>
 
 <p>You can also pass in an array of keys, in which case an array of values will be returned:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">getData</span><span class="hl-5">([ </span><span class="hl-8">&#39;gold&#39;</span><span class="hl-5">, </span><span class="hl-8">&#39;armor&#39;</span><span class="hl-5">, </span><span class="hl-8">&#39;health&#39;</span><span class="hl-5"> ]);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">getData</span><span class="hl-1">([ </span><span class="hl-2">&#39;gold&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;armor&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;health&#39;</span><span class="hl-1"> ]);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>This approach is useful for destructuring arrays in ES6.</p>
@@ -2594,7 +2594,7 @@ to the values given to this method.</p>
 <div class="tsd-comment tsd-typography"><p>Stores a copy of this Render Texture in the Texture Manager using the given key.</p>
 <p>After doing this, any texture based Game Object, such as a Sprite, can use the contents of this
 Render Texture by using the texture key:</p>
-<pre><code class="javascript"><span class="hl-2">var</span><span class="hl-5"> </span><span class="hl-3">rt</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">renderTexture</span><span class="hl-5">(</span><span class="hl-7">0</span><span class="hl-5">, </span><span class="hl-7">0</span><span class="hl-5">, </span><span class="hl-7">128</span><span class="hl-5">, </span><span class="hl-7">128</span><span class="hl-5">);</span><br/><br/><span class="hl-0">// Draw something to the Render Texture</span><br/><br/><span class="hl-3">rt</span><span class="hl-5">.</span><span class="hl-6">saveTexture</span><span class="hl-5">(</span><span class="hl-8">&#39;doodle&#39;</span><span class="hl-5">);</span><br/><br/><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">image</span><span class="hl-5">(</span><span class="hl-7">400</span><span class="hl-5">, </span><span class="hl-7">300</span><span class="hl-5">, </span><span class="hl-8">&#39;doodle&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">var</span><span class="hl-1"> </span><span class="hl-4">rt</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">renderTexture</span><span class="hl-1">(</span><span class="hl-8">0</span><span class="hl-1">, </span><span class="hl-8">0</span><span class="hl-1">, </span><span class="hl-8">128</span><span class="hl-1">, </span><span class="hl-8">128</span><span class="hl-1">);</span><br/><br/><span class="hl-5">// Draw something to the Render Texture</span><br/><br/><span class="hl-4">rt</span><span class="hl-1">.</span><span class="hl-0">saveTexture</span><span class="hl-1">(</span><span class="hl-2">&#39;doodle&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">image</span><span class="hl-1">(</span><span class="hl-8">400</span><span class="hl-1">, </span><span class="hl-8">300</span><span class="hl-1">, </span><span class="hl-2">&#39;doodle&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Updating the contents of this Render Texture will automatically update <em>any</em> Game Object
@@ -2808,19 +2808,19 @@ the renderer to skip several internal calculations.</p>
 <p>If the Game Object has not been enabled for data (via <code>setDataEnabled</code>) then it will be enabled
 before setting the value.</p>
 <p>If the key doesn't already exist in the Data Manager then it is created.</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">setData</span><span class="hl-5">(</span><span class="hl-8">&#39;name&#39;</span><span class="hl-5">, </span><span class="hl-8">&#39;Red Gem Stone&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">setData</span><span class="hl-1">(</span><span class="hl-2">&#39;name&#39;</span><span class="hl-1">, </span><span class="hl-2">&#39;Red Gem Stone&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>You can also pass in an object of key value pairs as the first argument:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">setData</span><span class="hl-5">({ </span><span class="hl-3">name:</span><span class="hl-5"> </span><span class="hl-8">&#39;Red Gem Stone&#39;</span><span class="hl-5">, </span><span class="hl-3">level:</span><span class="hl-5"> </span><span class="hl-7">2</span><span class="hl-5">, </span><span class="hl-3">owner:</span><span class="hl-5"> </span><span class="hl-8">&#39;Link&#39;</span><span class="hl-5">, </span><span class="hl-3">gold:</span><span class="hl-5"> </span><span class="hl-7">50</span><span class="hl-5"> });</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">setData</span><span class="hl-1">({ </span><span class="hl-4">name:</span><span class="hl-1"> </span><span class="hl-2">&#39;Red Gem Stone&#39;</span><span class="hl-1">, </span><span class="hl-4">level:</span><span class="hl-1"> </span><span class="hl-8">2</span><span class="hl-1">, </span><span class="hl-4">owner:</span><span class="hl-1"> </span><span class="hl-2">&#39;Link&#39;</span><span class="hl-1">, </span><span class="hl-4">gold:</span><span class="hl-1"> </span><span class="hl-8">50</span><span class="hl-1"> });</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To get a value back again you can call <code>getData</code>:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">getData</span><span class="hl-5">(</span><span class="hl-8">&#39;gold&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">getData</span><span class="hl-1">(</span><span class="hl-2">&#39;gold&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Or you can access the value directly via the <code>values</code> property, where it works like any other variable:</p>
-<pre><code class="javascript"><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-3">data</span><span class="hl-5">.</span><span class="hl-3">values</span><span class="hl-5">.</span><span class="hl-3">gold</span><span class="hl-5"> += </span><span class="hl-7">50</span><span class="hl-5">;</span>
+<pre><code class="javascript"><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-4">data</span><span class="hl-1">.</span><span class="hl-4">values</span><span class="hl-1">.</span><span class="hl-4">gold</span><span class="hl-1"> += </span><span class="hl-8">50</span><span class="hl-1">;</span>
 </code><button type="button">Copy</button></pre>
 
 <p>When the value is first set, a <code>setdata</code> event is emitted from this Game Object.</p>

@@ -52,15 +52,15 @@ If you EVER run into issues with the <code>locales</code> submodule, try deletin
 <p>This project uses the <a href="https://www.i18next.com/">i18next library</a> to integrate translations from <code>locales</code> into the source code.
 The basic process for fetching translated text goes roughly as follows:</p>
 <ol>
-<li>The source code fetches text by a given key.<pre><code class="ts"><span class="hl-3">globalScene</span><span class="hl-5">.</span><span class="hl-3">phaseManager</span><span class="hl-5">.</span><span class="hl-6">queueMessage</span><span class="hl-5">(</span><br/><span class="hl-5">  </span><span class="hl-3">i18next</span><span class="hl-5">.</span><span class="hl-6">t</span><span class="hl-5">(</span><span class="hl-8">&quot;fileName:keyName&quot;</span><span class="hl-5">, { </span><span class="hl-3">arg1:</span><span class="hl-5"> </span><span class="hl-8">&quot;Hello&quot;</span><span class="hl-5">, </span><span class="hl-3">arg2:</span><span class="hl-5"> </span><span class="hl-8">&quot;an example&quot;</span><span class="hl-5">, ... })</span><br/><span class="hl-5">);</span>
+<li>The source code fetches text by a given key.<pre><code class="ts"><span class="hl-4">globalScene</span><span class="hl-1">.</span><span class="hl-4">phaseManager</span><span class="hl-1">.</span><span class="hl-0">queueMessage</span><span class="hl-1">(</span><br/><span class="hl-1">  </span><span class="hl-4">i18next</span><span class="hl-1">.</span><span class="hl-0">t</span><span class="hl-1">(</span><span class="hl-2">&quot;fileName:keyName&quot;</span><span class="hl-1">, { </span><span class="hl-4">arg1:</span><span class="hl-1"> </span><span class="hl-2">&quot;Hello&quot;</span><span class="hl-1">, </span><span class="hl-4">arg2:</span><span class="hl-1"> </span><span class="hl-2">&quot;an example&quot;</span><span class="hl-1">, ... })</span><br/><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 </li>
-<li>The game looks up the key in the corresponding JSON file for the user's language.<pre><code class="jsonc"><span class="hl-0">// from &quot;en/file-name.json&quot;...</span><br/><span class="hl-5">{</span><br/><span class="hl-5">  </span><span class="hl-9">&quot;keyName&quot;</span><span class="hl-5">: </span><span class="hl-8">&quot;{{arg1}}! This is {{arg2}} of translated text!&quot;</span><br/><span class="hl-5">}</span>
+<li>The game looks up the key in the corresponding JSON file for the user's language.<pre><code class="jsonc"><span class="hl-5">// from &quot;en/file-name.json&quot;...</span><br/><span class="hl-1">{</span><br/><span class="hl-1">  </span><span class="hl-9">&quot;keyName&quot;</span><span class="hl-1">: </span><span class="hl-2">&quot;{{arg1}}! This is {{arg2}} of translated text!&quot;</span><br/><span class="hl-1">}</span>
 </code><button type="button">Copy</button></pre>
 
 If the key doesn't exist for the given language, the game will default to an appropriate fallback (usually the corresponding English key).</li>
-<li>The game shows the translated text to the user.<pre><code class="ts"><span class="hl-8">&quot;Hello! This is an example of translated text!&quot;</span>
+<li>The game shows the translated text to the user.<pre><code class="ts"><span class="hl-2">&quot;Hello! This is an example of translated text!&quot;</span>
 </code><button type="button">Copy</button></pre>
 
 </li>
