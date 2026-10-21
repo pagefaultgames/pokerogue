@@ -651,9 +651,12 @@ export class Egg {
     if (!speciesDataRegistry.getSpecies(speciesId).hasVariants()) {
       return [];
     }
-    const variantsInEggs = globalScene.gameData.eggs
-      .filter(egg => egg.species === speciesId)
-      .map(egg => egg.variantTier);
+    const variantsInEggs: VariantTier[] = [];
+    for (const egg of globalScene.gameData.eggs) {
+      if (egg.species === speciesId) {
+        variantsInEggs.push(egg.variantTier);
+      }
+    }
     const caughtAttr = globalScene.gameData.dexData[speciesId]?.caughtAttr ?? 0n;
     const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
 
