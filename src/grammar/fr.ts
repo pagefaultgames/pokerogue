@@ -125,10 +125,10 @@ const NOUN_LISTS: Readonly<Record<FrenchNounCode, string>> = {
   `,
   f: `
     Poké Ball, Super Ball, Hyper Ball, Rogue Ball, Master Ball, Luxe Ball, Poké Ball Dorée,
-    Carte, Guérison, Résugraine, Lentilscope, Loupe, Bonbonnière, Protéine, Bel’Écaille, Obsidienne,
+    Carte, Esquive, Guérison, Résugraine, Lentilscope, Loupe, Bonbonnière, Protéine, Bel’Écaille, Obsidienne,
     Gracidée, Necroluna, Necrosol
   `,
-  mp: "Restes, Trésors, Maxi Champis",
+  mp: "Restes, Trésors, Maxi Champis, PV",
   fp: "Lunettes Noires, Rênes de l’Unité du Froid, Rênes de l’Unité d’Effroi",
   mh: "",
   // "Heatran" is pronounced with an aspirated h
