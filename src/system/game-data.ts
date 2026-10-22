@@ -1561,6 +1561,7 @@ export class GameData {
         passiveAttr: 0,
         valueReduction: 0,
         classicWinCount: 0,
+        pity: [0, 0],
       };
     }
 

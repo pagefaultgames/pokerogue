@@ -1679,15 +1679,16 @@ export class AbilityRandomizerChallenge extends Challenge {
     if (
       this.value > 2
       && [
-        AbilityId.SCHOOLING,
-        AbilityId.POWER_CONSTRUCT,
         AbilityId.BATTLE_BOND,
         AbilityId.DISGUISE,
         AbilityId.ICE_FACE,
-        AbilityId.ZERO_TO_HERO,
-        AbilityId.TERA_SHIFT,
-        AbilityId.TERA_SHELL,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.SCHOOLING,
+        AbilityId.SHIELDS_DOWN,
         AbilityId.TERAFORM_ZERO,
+        AbilityId.TERA_SHELL,
+        AbilityId.TERA_SHIFT,
+        AbilityId.ZERO_TO_HERO,
       ].includes(abilityId.value)
     ) {
       return false;
