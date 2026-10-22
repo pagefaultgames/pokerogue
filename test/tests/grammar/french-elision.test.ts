@@ -1,4 +1,4 @@
-import { applyFrenchElision } from "#grammar/fr";
+import { applyFrenchElision } from "#grammar/languages/fr";
 import { describe, expect, it } from "vitest";
 
 describe("Utils - French elision", () => {

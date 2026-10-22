@@ -1,3 +1,5 @@
+import type { PostProcessorModule } from "i18next";
+
 export type ProtectedSpan = readonly [start: number, end: number];
 
 export function findProtectedSpans(text: string, values: readonly string[]): ProtectedSpan[] {
@@ -38,6 +40,13 @@ export function capitalizeFirst(text: string): string {
 export const CAPITALIZE_LANGUAGES: Set<string> = new Set(["en", "fr"]);
 
 export type FormatterOptions = { capitalize?: boolean | string };
+
+export type GrammarFormatter = (value: unknown, lng?: string, options?: FormatterOptions) => string;
+
+export interface GrammarModule {
+  postProcessors: PostProcessorModule[];
+  formatters: Record<string, GrammarFormatter>;
+}
 
 export function withCapitalizeOption<T extends unknown[]>(
   language: string,

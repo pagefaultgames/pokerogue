@@ -20,6 +20,7 @@
   "compilerOptions": {
     // Note: make sure more specific paths appear before less specific paths
     "paths": {
+      "#grammar": ["../src/grammar/index.ts"],
       // all the main repo paths (tsc doesn't copy them over)
       "#abilities/*": ["../src/data/abilities/*.ts"],
       "#ai/*": ["../src/ai/*.ts"],

@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { getFrenchNounCode } from "../../src/grammar/fr";
+import { getFrenchNounCode } from "../languages/fr";
 
-const localeDir = resolve(import.meta.dirname, "../../locales/fr");
+const localeDir = resolve(import.meta.dirname, "../../../locales/fr");
 
 /** Recursively collect the localized item names from a locale file. */
 function collectNames(value: unknown, key = "", names: string[] = []): string[] {

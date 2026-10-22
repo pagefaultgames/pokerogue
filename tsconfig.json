@@ -56,6 +56,7 @@
     "noEmit": true,
     //! Note: make sure more specific paths appear before less specific paths
     "paths": {
+      "#grammar": ["./src/grammar/index.ts"],
       "#abilities/*": ["./src/data/abilities/*.ts"],
       "#ai/*": ["./src/ai/*.ts"],
       "#api/*": ["./src/api/*.ts"],

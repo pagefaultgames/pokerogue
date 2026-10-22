@@ -1,12 +1,14 @@
-import { createEnglishArticleFormatter, EnglishArticleProcessor } from "#grammar/en";
-import { createFrenchArticleFormatter, FrenchElisionProcessor } from "#grammar/fr";
+import { createEnglishArticleFormatter, GRAMMAR as ENGLISH_GRAMMAR } from "#grammar/languages/en";
+import { createFrenchArticleFormatter, GRAMMAR as FRENCH_GRAMMAR } from "#grammar/languages/fr";
 import i18next from "i18next";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 describe("Grammar post-processors with language fallback", () => {
   beforeAll(async () => {
     const instance = i18next.createInstance();
-    instance.use(new FrenchElisionProcessor()).use(new EnglishArticleProcessor());
+    for (const processor of [...FRENCH_GRAMMAR.postProcessors, ...ENGLISH_GRAMMAR.postProcessors]) {
+      instance.use(processor);
+    }
     await instance.init({
       lng: "fr",
       fallbackLng: "en",

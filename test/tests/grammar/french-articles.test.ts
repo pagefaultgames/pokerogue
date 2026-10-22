@@ -1,5 +1,5 @@
 import { CAPITALIZE_LANGUAGES } from "#grammar/common";
-import { createFrenchArticleFormatter, withFrenchArticle } from "#grammar/fr";
+import { createFrenchArticleFormatter, withFrenchArticle } from "#grammar/languages/fr";
 import { describe, expect, it } from "vitest";
 
 describe("Utils - French articles", () => {

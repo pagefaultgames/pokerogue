@@ -1,13 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { namespaceMap } from "#app/i18n-namespace-map";
-import {
-  createEnglishArticleFormatter,
-  createEnglishPossessiveFormatter,
-  ENGLISH_ARTICLE_FORMAT,
-  ENGLISH_POSSESSIVE_FORMAT,
-  EnglishArticleProcessor,
-} from "#grammar/en";
-import { createFrenchArticleFormatter, FRENCH_ARTICLE_FORMATS, FrenchElisionProcessor } from "#grammar/fr";
+import { GRAMMAR_POST_PROCESSORS, registerGrammarFormatters } from "#grammar";
 import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
@@ -160,12 +153,14 @@ const nsEn: string[] = [];
  *    If you want the namespace name to be different from the file name, configure it in `src/i18n-namespace-map.ts`.
  */
 
+for (const processor of GRAMMAR_POST_PROCESSORS) {
+  i18next.use(processor);
+}
+
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
   .use(new KoreanPostpositionProcessor())
-  .use(new FrenchElisionProcessor())
-  .use(new EnglishArticleProcessor())
   .init(
     {
       fallbackLng: {
@@ -207,16 +202,12 @@ await i18next
         // which will be important once we get said strong typing set up correctly.
         skipOnVariables: true,
       },
-      postProcess: ["korean-postposition", "french-elision", "english-article"],
+      postProcess: ["korean-postposition", ...GRAMMAR_POST_PROCESSORS.map(processor => processor.name)],
       postProcessPassResolved: true,
     },
     async () => {
       i18next.services.formatter?.add("money", i18nMoneyFormatter);
-      for (const [name, form] of Object.entries(FRENCH_ARTICLE_FORMATS)) {
-        i18next.services.formatter?.add(name, createFrenchArticleFormatter(form));
-      }
-      i18next.services.formatter?.add(ENGLISH_ARTICLE_FORMAT, createEnglishArticleFormatter());
-      i18next.services.formatter?.add(ENGLISH_POSSESSIVE_FORMAT, createEnglishPossessiveFormatter());
+      registerGrammarFormatters((name, formatter) => i18next.services.formatter?.add(name, formatter));
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );

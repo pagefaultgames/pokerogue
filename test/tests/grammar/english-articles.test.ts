@@ -5,7 +5,7 @@ import {
   startsWithEnglishVowelSound,
   withEnglishArticle,
   withEnglishPossessive,
-} from "#grammar/en";
+} from "#grammar/languages/en";
 import { describe, expect, it } from "vitest";
 
 describe("Utils - English articles", () => {

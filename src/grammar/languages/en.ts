@@ -1,3 +1,4 @@
+import type { GrammarModule } from "#grammar/common";
 import {
   capitalizeFirst,
   findProtectedSpans,
@@ -74,3 +75,11 @@ export function createEnglishArticleFormatter() {
 export function createEnglishPossessiveFormatter() {
   return withCapitalizeOption("en", (value: unknown) => withEnglishPossessive(String(value)));
 }
+
+export const GRAMMAR: GrammarModule = {
+  postProcessors: [new EnglishArticleProcessor()],
+  formatters: {
+    [ENGLISH_ARTICLE_FORMAT]: createEnglishArticleFormatter(),
+    [ENGLISH_POSSESSIVE_FORMAT]: createEnglishPossessiveFormatter(),
+  },
+};

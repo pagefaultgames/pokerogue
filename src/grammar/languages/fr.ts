@@ -1,3 +1,4 @@
+import type { GrammarModule } from "#grammar/common";
 import {
   findProtectedSpans,
   getSourceLanguage,
@@ -339,3 +340,15 @@ export const FRENCH_ARTICLE_FORMATS: Readonly<Record<string, FrenchArticleForm>>
 export function createFrenchArticleFormatter(form: FrenchArticleForm) {
   return withCapitalizeOption("fr", (value: unknown) => withFrenchArticle(String(value), form));
 }
+
+export const GRAMMAR: GrammarModule = {
+  postProcessors: [new FrenchElisionProcessor()],
+  formatters: {
+    fr_definite: createFrenchArticleFormatter("definite"),
+    fr_indefinite: createFrenchArticleFormatter("indefinite"),
+    fr_de: createFrenchArticleFormatter("de"),
+    fr_a: createFrenchArticleFormatter("a"),
+    fr_possessive: createFrenchArticleFormatter("possessive"),
+    fr_demonstrative: createFrenchArticleFormatter("demonstrative"),
+  },
+};
