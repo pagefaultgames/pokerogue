@@ -1,3 +1,4 @@
+import { CAPITALIZE_LANGUAGES } from "#grammar/common";
 import { createFrenchArticleFormatter, withFrenchArticle } from "#grammar/fr";
 import { describe, expect, it } from "vitest";
 
@@ -41,10 +42,25 @@ describe("Utils - French articles", () => {
     expect(withFrenchArticle("Restes", "demonstrative")).toBe("ces Restes");
   });
 
-  it("only applies in French", () => {
+  it("does not depend on the active language", () => {
     const formatter = createFrenchArticleFormatter("definite");
     expect(formatter("Poireau", "fr")).toBe("le Poireau");
-    expect(formatter("Poireau", "en")).toBe("Poireau");
-    expect(formatter("Poireau", undefined)).toBe("Poireau");
+    expect(formatter("Poireau", "de")).toBe("le Poireau");
+  });
+
+  it("capitalizes on request", () => {
+    const formatter = createFrenchArticleFormatter("definite");
+    expect(formatter("Poireau", "fr", { capitalize: true })).toBe("Le Poireau");
+    expect(formatter("Élixir", "fr", { capitalize: "true" })).toBe("L’Élixir");
+  });
+
+  it("honors the capitalization language list", () => {
+    const formatter = createFrenchArticleFormatter("definite");
+    CAPITALIZE_LANGUAGES.delete("fr");
+    try {
+      expect(formatter("Poireau", "fr", { capitalize: true })).toBe("le Poireau");
+    } finally {
+      CAPITALIZE_LANGUAGES.add("fr");
+    }
   });
 });

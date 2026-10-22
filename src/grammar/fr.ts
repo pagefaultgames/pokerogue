@@ -1,3 +1,11 @@
+import {
+  findProtectedSpans,
+  getSourceLanguage,
+  getStringVariables,
+  isProtected,
+  type ProcessorOptions,
+  withCapitalizeOption,
+} from "#grammar/common";
 import type { PostProcessorModule } from "i18next";
 
 const ELIDED_FORMS: Readonly<Record<string, string>> = {
@@ -12,33 +20,136 @@ const ELIDED_FORMS: Readonly<Record<string, string>> = {
   que: "qu",
 };
 
-export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
-  "hache",
-  "hachécateur",
-  "hanche",
-  "haricot",
-  "harceleur",
+export const NO_ELISION_STEMS: readonly string[] = [
+  "hâbl",
+  "hach",
+  "hagard",
+  "hai",
+  "haï",
+  "hâl",
+  "halbran",
+  "halle",
+  "hallebard",
+  "hallier",
+  "hamac",
+  "hamada",
+  "hameau",
+  "hammam",
+  "hamster",
+  "hamburger",
+  "han",
+  "happ",
+  "harang",
+  "harass",
+  "harcel",
+  "harde",
+  "hardi",
+  "harem",
+  "hareng",
+  "hargn",
+  "haric",
+  "harnach",
+  "harnais",
+  "harp",
+  "harfang",
+  "hart",
   "hasard",
-  "haut",
-  "hâte",
-  "hérisson",
-  "héros",
+  "hasch",
+  "hât",
+  "hau",
+  "hav",
+  "hay",
+  "haw",
+  "heaum",
+  "henn",
+  "héraut",
+  "hériss",
+  "héron",
+  "herse",
+  "hêtr",
+  "heurt",
   "hibou",
-  "homard",
-  "honte",
-  "hoothoot",
-  "housse",
+  "hideu",
+  "hiss",
+  "hobb",
+  "hoch",
+  "hockey",
+  "holland",
+  "homar",
+  "hongr",
+  "honni",
+  "hont",
+  "hoqu",
+  "hord",
+  "hott",
+  "houbl",
+  "houe",
+  "houill",
+  "houl",
+  "houp",
+  "hour",
+  "housp",
+  "houss",
+  "houx",
+  "hubl",
+  "huch",
+  "huard",
+  "hué",
+  "huer",
+  "hugu",
   "huit",
-  "hurle",
-  "hurlement",
-  "onze",
-  "oui",
+  "hun",
+  "hupp",
+  "hurl",
+  "hurlu",
+  "huss",
+  "husk",
+  "hutt",
+  "hyèn",
+  "onz",
   "uhlan",
-  "yacht",
-  "yaourt",
+  "ya",
+  "yé",
+  "yeoman",
+  "yeti",
+  "yi",
+  "yo",
+  "yu",
+];
+
+export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
+  "hachécateur",
+  "hall",
+  "halls",
+  "halo",
+  "halos",
+  "hariyama",
+  "haydaim",
+  "hep",
+  "héricendre",
+  "héros",
+  "hi",
+  "hic",
+  "hip",
+  "hippie",
+  "hippies",
+  "hold",
+  "hoopa",
+  "hot",
+  "ho-oh",
+  "hoothoot",
+  "heatran",
+  "heatranite",
+  "houndour",
+  "houndoom",
+  "hoopa",
+  "hotte-de-fer",
+  "hurle-queue",
+  "oui",
   "yen",
-  "yéti",
-  "yoga",
+  "yanma",
+  "yanméga",
+  "yuyu",
 ]);
 
 const VOWEL_START = /^[aeiouyàâäéèêëîïôöùûüœæh]/i;
@@ -56,31 +167,18 @@ export function startsWithVowelSound(word: string, ignoreExceptions = false): bo
     return true;
   }
   const firstPart = word.toLowerCase().split(/[-’']/)[0];
-  return !NO_ELISION_WORDS.has(firstPart);
+  return !NO_ELISION_WORDS.has(firstPart) && !NO_ELISION_STEMS.some(stem => firstPart.startsWith(stem));
 }
 
 export function applyFrenchElision(text: string, protectedValues: readonly string[] = []): string {
   const spans = findProtectedSpans(text, protectedValues);
   return text.replace(ELISION_PATTERN, (match, article: string, markup: string, next: string, offset: number) => {
-    if (!startsWithVowelSound(next) || spans.some(([start, end]) => offset >= start && offset < end)) {
+    if (!startsWithVowelSound(next) || isProtected(spans, offset)) {
       return match;
     }
     const base = ELIDED_FORMS[article.toLowerCase()];
     return `${article.slice(0, base.length)}’${markup}${next}`;
   });
-}
-
-function findProtectedSpans(text: string, values: readonly string[]): [number, number][] {
-  const spans: [number, number][] = [];
-  for (const value of values) {
-    if (!value.includes(" ")) {
-      continue;
-    }
-    for (let index = text.indexOf(value); index !== -1; index = text.indexOf(value, index + value.length)) {
-      spans.push([index, index + value.length]);
-    }
-  }
-  return spans;
 }
 
 export class FrenchElisionProcessor implements PostProcessorModule {
@@ -90,15 +188,12 @@ export class FrenchElisionProcessor implements PostProcessorModule {
   process(
     value: string,
     _key: string | string[],
-    options: { lng?: string; [variable: string]: unknown } | undefined,
+    options: ProcessorOptions | undefined,
     translator: { language?: string },
   ): string {
-    const language = options?.lng ?? translator.language ?? "";
-    if (!language.startsWith("fr")) {
-      return value;
-    }
-    const variables = Object.values(options ?? {}).filter((v): v is string => typeof v === "string");
-    return applyFrenchElision(value, variables);
+    return getSourceLanguage(options, translator).startsWith("fr")
+      ? applyFrenchElision(value, getStringVariables(options))
+      : value;
   }
 }
 
@@ -243,9 +338,6 @@ export const FRENCH_ARTICLE_FORMATS: Readonly<Record<string, FrenchArticleForm>>
   fr_demonstrative: "demonstrative",
 };
 
-export function createFrenchArticleFormatter(form: FrenchArticleForm): (value: unknown, lng?: string) => string {
-  return (value, lng) => {
-    const text = String(value);
-    return lng?.startsWith("fr") ? withFrenchArticle(text, form) : text;
-  };
+export function createFrenchArticleFormatter(form: FrenchArticleForm) {
+  return withCapitalizeOption("fr", (value: unknown) => withFrenchArticle(String(value), form));
 }
