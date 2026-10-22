@@ -18,8 +18,10 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.DECORATE,
   MoveId.DRAGON_CHEER,
   MoveId.EXPANDING_FORCE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
+  MoveId.FIRE_PLEDGE,
   MoveId.FLORAL_HEALING,
   MoveId.FOLLOW_ME,
+  MoveId.GRASS_PLEDGE,
   MoveId.HEAL_PULSE,
   MoveId.HELPING_HAND,
   MoveId.HOLD_HANDS,
@@ -33,6 +35,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.MAT_BLOCK,
   MoveId.QUICK_GUARD,
   MoveId.WIDE_GUARD,
+  MoveId.WATER_PLEDGE,
 ]);
 
 export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
