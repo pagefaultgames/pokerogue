@@ -43,6 +43,7 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
     passiveAttr: 0,
     valueReduction: 0,
     classicWinCount: 0,
+    pity: [0, 0],
   };
 
   const froakieDexData = data.dexData[SpeciesId.FROAKIE];
@@ -102,6 +103,7 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
     passiveAttr: 0,
     valueReduction: 0,
     classicWinCount: 0,
+    pity: [0, 0],
   };
 
   const basculinDexData = data.dexData[SpeciesId.BASCULIN];
