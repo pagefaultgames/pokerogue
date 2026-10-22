@@ -6373,7 +6373,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.MIENSHAO]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.HONCHKROW, SpeciesId.TALONFLAME]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        if (p.species.speciesId === SpeciesId.AEGISLASH) {
+          // Check if King's Shield is in Aegislash's moveset, if not, replace the fourth move with King's Shield.
+          p.addIfNotInMoveset(MoveId.KINGS_SHIELD, 3);
+        }
+      }),
+    )
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MALAMAR]))
     .setPartyMemberFunc(
       4,
@@ -6406,7 +6415,16 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MIENSHAO]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        if (p.species.speciesId === SpeciesId.AEGISLASH) {
+          // Check if King's Shield is in Aegislash's moveset, if not, replace the fourth move with King's Shield.
+          p.addIfNotInMoveset(MoveId.KINGS_SHIELD, 3);
+        }
+      }),
+    )
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.VOLCANION], TrainerSlot.TRAINER, true, p => {
