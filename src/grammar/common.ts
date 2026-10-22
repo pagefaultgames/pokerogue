@@ -39,7 +39,15 @@ export function capitalizeFirst(text: string): string {
 
 export const CAPITALIZE_LANGUAGES: Set<string> = new Set(["en", "fr"]);
 
-export type FormatterOptions = { capitalize?: boolean | string };
+export type FormatterOptions = {
+  adjective?: boolean | string;
+  animate?: boolean | string;
+  capitalize?: boolean | string;
+  declinable?: boolean | string;
+  gender?: string;
+  plural?: boolean | string;
+  stressedA?: boolean | string;
+};
 
 export type GrammarFormatter = (value: unknown, lng?: string, options?: FormatterOptions) => string;
 
