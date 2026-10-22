@@ -9,7 +9,7 @@ import {
 } from "#grammar/common";
 import type { PostProcessorModule } from "i18next";
 
-const VOWEL_LETTERS = /^[aeiou]/i;
+const VOWEL_START = /^[aeioué]/i;
 const ACRONYM = /^[A-Z]+$/;
 const VOWEL_SOUNDING_LETTER_NAMES = "AEFHILMNORSX";
 const CONSONANT_SOUND_PREFIXES = /^(uni(?![mnd])|unan|use|usu|uti|eu|one|once|ura|uk)/i;
@@ -25,7 +25,7 @@ export function startsWithEnglishVowelSound(word: string): boolean {
   if (SILENT_H_PREFIXES.test(word)) {
     return true;
   }
-  return VOWEL_LETTERS.test(word) && !CONSONANT_SOUND_PREFIXES.test(word);
+  return VOWEL_START.test(word) && !CONSONANT_SOUND_PREFIXES.test(word);
 }
 
 export function withEnglishArticle(noun: string): string {
@@ -60,8 +60,8 @@ export class EnglishArticleProcessor implements PostProcessorModule {
   }
 }
 
-export const ENGLISH_ARTICLE_FORMAT = "en_indefinite";
-export const ENGLISH_POSSESSIVE_FORMAT = "en_possessive";
+export const ENGLISH_ARTICLE_FORMAT = "en_indefinite"; // a; an
+export const ENGLISH_POSSESSIVE_FORMAT = "en_possessive"; //’s; ’
 
 export function withEnglishPossessive(noun: string): string {
   return /s$/i.test(noun) ? `${noun}’` : `${noun}’s`;

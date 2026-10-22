@@ -118,7 +118,6 @@ export const NO_ELISION_STEMS: readonly string[] = [
 ];
 
 export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
-  "hachécateur",
   "hall",
   "halls",
   "halo",
@@ -133,6 +132,8 @@ export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
   "hip",
   "hippie",
   "hippies",
+  "hisui",
+  "hoenn",
   "hold",
   "hoopa",
   "hot",
@@ -147,9 +148,6 @@ export const NO_ELISION_WORDS: ReadonlySet<string> = new Set([
   "hurle-queue",
   "oui",
   "yen",
-  "yanma",
-  "yanméga",
-  "yuyu",
 ]);
 
 const VOWEL_START = /^[aeiouyàâäéèêëîïôöùûüœæh]/i;
@@ -330,12 +328,12 @@ export function withFrenchArticle(noun: string, form: FrenchArticleForm): string
 }
 
 export const FRENCH_ARTICLE_FORMATS: Readonly<Record<string, FrenchArticleForm>> = {
-  fr_definite: "definite",
-  fr_indefinite: "indefinite",
-  fr_de: "de",
-  fr_a: "a",
-  fr_possessive: "possessive",
-  fr_demonstrative: "demonstrative",
+  fr_definite: "definite", //le; la; l’; les
+  fr_indefinite: "indefinite", //un; une; des
+  fr_de: "de", //du; de la; de l’; des
+  fr_a: "a", //au; à la; à l’; aux
+  fr_possessive: "possessive", //son; sa; son; ses
+  fr_demonstrative: "demonstrative", //ce; cette; cet; ces
 };
 
 export function createFrenchArticleFormatter(form: FrenchArticleForm) {
