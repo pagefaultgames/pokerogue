@@ -294,6 +294,9 @@ export class BattleScene extends SceneBase {
   public readonly animations: Animation = new Animation();
   declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
+  /** Species whose type has been revealed this run by defeating or owning one */
+  public revealedSpecies: Set<SpeciesId> = new Set();
+
   constructor() {
     super("battle");
 
@@ -881,6 +884,7 @@ export class BattleScene extends SceneBase {
     }
 
     pokemon.init();
+    this.revealedSpecies.add(species.speciesId);
     return pokemon;
   }
 
@@ -1112,6 +1116,7 @@ export class BattleScene extends SceneBase {
 
     this.score = 0;
     this.money = 0;
+    this.revealedSpecies = new Set();
 
     this.lockModifierTiers = false;
 
