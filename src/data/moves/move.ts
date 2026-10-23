@@ -6574,6 +6574,16 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 }
 
 /**
+ * Adds a tag to prevent the user from using held items.
+ * Used by {@link https://bulbapedia.bulbagarden.net/wiki/Embargo_(move) | Embargo}.
+ */
+export class EmbargoAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.EMBARGO);
+  }
+}
+
+/**
  * Attribute to add the `IGNORE_FLYING` BattlerTag to the target.
  *
  * Does nothing if the target was not already ungrounded.
@@ -10618,8 +10628,8 @@ export function initMoves() {
     new AttackMove(MoveId.ASSURANCE, PokemonType.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.turnData.damageTaken > 0 ? 2 : 1)),
     new StatusMove(MoveId.EMBARGO, PokemonType.DARK, 100, 15, -1, 0, 4) //
-      .reflectable()
-      .unimplemented(),
+      .attr(EmbargoAttr)
+      .reflectable(),
     new AttackMove(MoveId.FLING, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .makesContact(false)
       .unimplemented(),
@@ -10940,9 +10950,9 @@ export function initMoves() {
       .affectedByGravity()
       .reflectable(),
     new StatusMove(MoveId.MAGIC_ROOM, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
+      .attr(AddArenaTagAttr, ArenaTagType.MAGIC_ROOM, 5)
       .ignoresProtect()
-      .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
+      .target(MoveTarget.BOTH_SIDES),
     new AttackMove(MoveId.SMACK_DOWN, PokemonType.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, -1, 0, 5)
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
@@ -12119,9 +12129,9 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, attackedByItemMessageFunc)
       .makesContact(false),
     new StatusMove(MoveId.CORROSIVE_GAS, PokemonType.POISON, 100, 40, -1, 0, 8)
+      .attr(RemoveHeldItemAttr, false)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .reflectable()
-      .unimplemented(),
+      .reflectable(),
     new StatusMove(MoveId.COACHING, PokemonType.FIGHTING, -1, 10, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF], 1)
       .target(MoveTarget.NEAR_ALLY)
