@@ -1,3 +1,4 @@
+import type { HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type {
   AttackMove,
@@ -21,6 +22,20 @@ export type MoveMessageFunc =
    * @returns The message to be displayed as a localized string.
    */
   (user: Pokemon, target: Pokemon, move: Move) => string;
+
+/**
+ * A generic function producing a message during a Move's execution.
+ */
+export type MoveItemMessageFunc =
+  /**
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being used
+   * @param item - A {@linkcode HeldItemId} used by the move
+   * @param second_item - Another {@linkcode HeldItemId} possibly used by the move
+   * @returns The message to be displayed as a localized string.
+   */
+  (user: Pokemon, target: Pokemon, move: Move, item: HeldItemId, second_item?: HeldItemId) => string;
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
