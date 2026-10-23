@@ -303,13 +303,16 @@ export class UI extends Phaser.GameObjects.Container {
     prompt?: boolean | null,
     promptDelay?: number | null,
   ): void {
+    console.log("Showing text");
     const pokename: string[] = [];
     const repname = ["#POKEMON1", "#POKEMON2"];
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
       pokename.push(globalScene.getPlayerField()[p].getNameToRender());
       text = text.split(pokename[p]).join(repname[p]);
     }
+    console.log("Showing text 2");
     if (prompt && text.indexOf("$") > -1) {
+      console.log("Showing text 3");
       const messagePages = text.split(/\$/g).map(m => m.trim());
       let showMessageAndCallback = () => callback?.();
       for (let p = messagePages.length - 1; p >= 0; p--) {
@@ -320,9 +323,11 @@ export class UI extends Phaser.GameObjects.Container {
       }
       showMessageAndCallback();
     } else {
+      console.log("Showing text 4");
       for (let p = 0; p < globalScene.getPlayerField().length; p++) {
         text = text.split(repname[p]).join(pokename[p]);
       }
+      console.log(this.getCurrentMessageHandler());
       this.getCurrentMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     }
   }

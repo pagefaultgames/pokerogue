@@ -11,7 +11,6 @@ import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { FusePokemonReward } from "#items/fuse";
 import { tryTransferHeldItem } from "#items/item-utility";
-import { RememberMoveReward } from "#items/remember-move";
 import {
   type PokemonMoveRecallRewardParams,
   type PokemonMoveReward,
@@ -36,7 +35,6 @@ import {
   isRememberMoveReward,
   isTmReward,
 } from "#items/reward-utils";
-import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { PartyOption, PartyUiHandler, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
@@ -52,6 +50,7 @@ export class SelectRewardPhase extends BattlePhase {
   private readonly rarityTiers?: RarityTier[] | undefined;
   private readonly customRewardSettings?: CustomRewardSettings | undefined;
   private readonly isCopy: boolean;
+  private rewardSelectCallback: RewardSelectCallback;
 
   private typeOptions: RewardOption[];
 
@@ -141,6 +140,8 @@ export class SelectRewardPhase extends BattlePhase {
       }
     };
 
+    this.rewardSelectCallback = rewardSelectCallback;
+
     this.resetRewardSelect(rewardSelectCallback);
   }
 
@@ -186,7 +187,12 @@ export class SelectRewardPhase extends BattlePhase {
       if (reward instanceof FusePokemonReward) {
         this.openFusionMenu(reward, cost, rewardSelectCallback);
       } else {
-        this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
+        reward.openParty(
+          () => this.postApplyPokemonReward(reward, true, cost),
+          () => this.resetRewardSelect(rewardSelectCallback),
+          this,
+        );
+        //        this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else {
       applyReward(reward, {}, true);
@@ -322,6 +328,7 @@ export class SelectRewardPhase extends BattlePhase {
     if (isTmReward(reward)) {
       partyUiMode = PartyUiMode.TM_REWARD;
       tmMoveId = reward.moveId;
+      console.log("Reward's tm", tmMoveId);
     }
     if (isEvolutionItemReward(reward)) {
       partyUiMode = PartyUiMode.EVOLUTION_ITEM_REWARD;
@@ -339,20 +346,16 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            const params = getParams(slotIndex, option);
-            const result = applyReward(reward, params, true);
-            this.postApplyPokemonReward(reward, result, cost);
-          });
+          const params = getParams(slotIndex, option);
+          const result = applyReward(reward, params, true);
+          this.postApplyPokemonReward(reward, result, cost);
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
       },
       reward.selectFilter,
       moveSelectFilter,
-      tmMoveId,
-      isMove,
-      itemId,
+      { moveId: tmMoveId, showMovePp: isMove, itemId },
     );
   }
 
@@ -363,31 +366,34 @@ export class SelectRewardPhase extends BattlePhase {
    * @param cost - The cost of the reward if it was purchased, or -1 if selected as the reward reward
    * @param playSound - Whether the 'obtain reward' sound should be played when adding the reward.
    */
-  private postApplyPokemonReward(reward: Reward, result = false, cost = -1): void {
+  private postApplyPokemonReward(_reward: Reward, result = false, cost = -1): void {
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.
-    if (reward instanceof RememberMoveReward || reward instanceof TmReward) {
-      globalScene.phaseManager.unshiftPhase(this.copy());
-    }
-
-    if (cost !== -1 && !(reward instanceof RememberMoveReward)) {
-      if (result) {
-        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
-          globalScene.money -= cost;
-          globalScene.updateMoneyText();
-          globalScene.animateMoneyChanged(false);
+    globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
+      if (cost > -1) {
+        if (result) {
+          if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
+            console.log("We are paying");
+            globalScene.money -= cost;
+            globalScene.updateMoneyText();
+            globalScene.animateMoneyChanged(false);
+          }
+          audioManager.playSound("se/buy");
+          console.log("Are we paying?");
+          (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
+          console.log("UpdateCostText");
+          console.log("Has phase", globalScene.phaseManager.hasPhaseOfType("SelectRewardPhase"));
+          this.resetRewardSelect(this.rewardSelectCallback);
+        } else {
+          globalScene.ui.playError();
         }
-        audioManager.playSound("se/buy");
-        (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
       } else {
-        globalScene.ui.playError();
+        globalScene.ui.clearText();
+        globalScene.ui.setMode(UiMode.MESSAGE);
+        super.end();
       }
-    } else {
-      globalScene.ui.clearText();
-      globalScene.ui.setMode(UiMode.MESSAGE);
-      super.end();
-    }
+    });
   }
 
   // Function that determines how many reward slots are available

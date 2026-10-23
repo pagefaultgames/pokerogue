@@ -90,6 +90,12 @@ export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
 export type PokemonItemTransferSelectFilter = (pokemon: PlayerPokemon, item: HeldItemId) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
+export interface PartyRewardOptions {
+  moveId?: MoveId;
+  showMovePp?: boolean;
+  itemId?: EvolutionItemId | FormChangeItemId;
+}
+
 export class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
   private fieldIndex: number;
@@ -292,9 +298,12 @@ export class PartyUiHandler extends MessageUiHandler {
       args.length > 4 && args[4] instanceof Function
         ? (args[4] as PokemonMoveSelectFilter)
         : PartyUiHandler.FilterAllMoves;
-    this.tmMoveId = args.length > 5 && args[5] ? args[5] : MoveId.NONE;
-    this.showMovePp = args.length > 6 && args[6];
-    this.itemId = args.length > 7 ? (args[7] as EvolutionItemId | FormChangeItemId | undefined) : undefined;
+
+    console.log("args5", args[5]);
+    const { moveId, showMovePp, itemId }: PartyRewardOptions = args.length > 5 && args[5] ? args[5] : {};
+    this.tmMoveId = moveId ?? MoveId.NONE;
+    this.showMovePp = !!showMovePp;
+    this.itemId = itemId;
 
     this.partyContainer.setVisible(true);
     if (this.isItemManageMode()) {
@@ -676,6 +685,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear();
     const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
     if (filterResult === null) {
+      console.log("selectCallback", this.selectCallback);
       this.selectCallback?.(this.cursor, option);
       this.clearOptions();
     } else {
@@ -2224,6 +2234,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotHpText.setVisible(false);
       let slotTmText: string;
 
+      console.log("Tm move id: ", tmMoveId);
       if (this.pokemon.getMoveset().some(m => m.moveId === tmMoveId)) {
         slotTmText = i18next.t("partyUiHandler:learned");
       } else if (this.pokemon.isTmCompatible(tmMoveId)) {
