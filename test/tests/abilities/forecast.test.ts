@@ -228,7 +228,7 @@ describe("Abilities - Forecast", () => {
 
     // Damage phase should come first
     await game.phaseInterceptor.to("DamageAnimPhase");
-    expect(castform.hp).toBeLessThan(castform.getMaxHp());
+    expect(castform).not.toHaveFullHp();
 
     // Then change form
     await game.phaseInterceptor.to("QuietFormChangePhase");

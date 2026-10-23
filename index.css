@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileCopyrightText: 2024-2026 Pagefault Games
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -84,6 +84,19 @@ body {
   flex-direction: column;
   align-items: center;
   background: #484050;
+
+  /*
+    Keep the game canvas out of display cutouts (notches, punch-holes) while retaining
+    viewport-fit=cover in the meta viewport tag.
+    Phaser sizes the canvas to #app, which fills body's content box, so padding body shrinks the
+    space the canvas is fitted into. border-box keeps the padding inside body's 100% height.
+    Sides use the larger inset on both edges so a centered canvas only moves or shrinks when it
+    would actually overlap a cutout. Touch controls are position: fixed and are unaffected.
+  */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top);
+  padding-left: max(env(safe-area-inset-left), env(safe-area-inset-right));
+  padding-right: max(env(safe-area-inset-left), env(safe-area-inset-right));
 }
 
 @media (display-mode: fullscreen) {
@@ -257,7 +270,7 @@ input:-internal-autofill-selected {
   display: none;
 }
 
-/* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
+/* Show cycle buttons only on the UIs that use them (starter select, Pokedex, run info) and on touch configuration panel */
 #touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX"],
@@ -293,7 +306,8 @@ input:-internal-autofill-selected {
   #apadCycleGender,
 #touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
-    [data-ui-mode="POKEDEX"]
+    [data-ui-mode="POKEDEX"],
+    [data-ui-mode="POKEDEX_PAGE"]
   )
   #apadCycleTera {
   display: none;
@@ -304,7 +318,8 @@ input:-internal-autofill-selected {
 #configToolbar {
   width: 100%;
   position: fixed;
-  top: 1rem;
+  /* Fixed to the viewport, so it doesn't pick up body's safe-area padding */
+  top: calc(1rem + env(safe-area-inset-top));
   left: 0;
   z-index: 9;
   user-select: none;

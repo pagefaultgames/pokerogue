@@ -683,8 +683,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterPreferences.female !== undefined
       && !(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
     ) {
-      // requested gender wasn't unlocked, purging setting
-      starterPreferences.female = undefined;
+      // If preference is female and DexAttr.FEMALE is not unlocked, set the preference to male
+      // This can happen in mono-gen challenge, which removes DexAttr.FEMALE from Snorunt
+      if (starterPreferences.female && caughtAttr & DexAttr.MALE) {
+        starterPreferences.female = false;
+      } else if (!starterPreferences.female && caughtAttr & DexAttr.FEMALE) {
+        starterPreferences.female = true;
+      } else {
+        // requested gender wasn't unlocked, purging setting
+        starterPreferences.female = undefined;
+      }
     }
 
     if (starterPreferences.abilityIndex !== undefined) {
@@ -1996,11 +2004,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       // Same species egg menu option.
-      const hatchedCount = globalScene.gameData.dexData[this.lastStarterId].hatchedCount;
-      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
-        speciesDataRegistry.getStarterCost(this.lastStarterId),
-        hatchedCount,
-      );
+      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.lastStarterId));
       useCandiesOptions.push({
         label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
         handler: () => {
@@ -3297,6 +3301,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.partyStarterIds.length > 0) {
+      this.partyCursorObj.setVisible(false);
       this.popPartyStarter(this.partyStarterIds.length - 1);
     }
 

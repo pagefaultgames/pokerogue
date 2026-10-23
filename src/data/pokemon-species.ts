@@ -490,6 +490,8 @@ export abstract class PokemonSpeciesForm {
     switch (this.speciesId) {
       case SpeciesId.DODUO:
       case SpeciesId.DODRIO:
+      case SpeciesId.HYPNO:
+      case SpeciesId.OCTILLERY:
       case SpeciesId.TORCHIC:
       case SpeciesId.COMBUSKEN:
       case SpeciesId.GIBLE:
@@ -502,6 +504,7 @@ export abstract class PokemonSpeciesForm {
         ret += female ? "-f" : "";
         break;
       case SpeciesId.MEGANIUM:
+      case SpeciesId.STEELIX:
       case SpeciesId.BLAZIKEN:
       case SpeciesId.GARCHOMP:
       case SpeciesId.PYROAR: {
@@ -984,7 +987,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getFormKey(formIndex = this.formIndex): string {
-    return this.forms[formIndex].formKey ?? "";
+    return this.forms[formIndex]?.formKey ?? "";
   }
 
   /**
