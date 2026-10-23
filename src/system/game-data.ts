@@ -52,11 +52,12 @@ import { RibbonData } from "#system/ribbon-data";
 import { TrainerData } from "#system/trainer-data";
 import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-converter";
 import { vouchers } from "#system/voucher";
-import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
   AppliedMigrators,
   DexAttrProps,
+  DexData,
+  DexEntry,
   RunHistoryData,
   SeenDialogues,
   SessionSaveData,
