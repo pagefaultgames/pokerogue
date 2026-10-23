@@ -3301,6 +3301,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.partyStarterIds.length > 0) {
+      this.partyCursorObj.setVisible(false);
       this.popPartyStarter(this.partyStarterIds.length - 1);
     }
 
