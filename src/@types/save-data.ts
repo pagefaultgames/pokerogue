@@ -19,6 +19,7 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { RibbonData } from "#system/ribbon-data";
 import type { TrainerData } from "#system/trainer-data";
 import type { SerializedDailyRunConfig } from "#types/daily-run";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 
 // #region Server-backed fields
 
@@ -135,9 +136,7 @@ export interface StarterDataEntry {
   pity: [lastShiny: number, lastNewVariant: number];
 }
 
-export interface StarterData {
-  [key: number]: StarterDataEntry;
-}
+export type StarterData = Record<StarterSpeciesId, StarterDataEntry>;
 
 // TODO: Rework into a bitmask
 export type TutorialFlags = {

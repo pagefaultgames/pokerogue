@@ -127,7 +127,7 @@ export class GameData {
       this.trainerId = randInt(65536);
       this.secretId = randInt(65536);
     }
-    this.starterData = {};
+    this.starterData = {} as StarterData;
     this.gameStats = new GameStats();
     this.runHistory = {};
     this.unlocks = {
@@ -1546,7 +1546,7 @@ export class GameData {
   }
 
   private initStarterData(): void {
-    const starterData: StarterData = {};
+    const starterData = {} as StarterData;
 
     const starterSpeciesIds = speciesDataRegistry.getAllStarters();
     for (const speciesId of starterSpeciesIds) {
