@@ -11,7 +11,7 @@ import {
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -1262,7 +1262,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.VIKAVOLT,
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [40, 45, 45],
       }),
     ],
@@ -1385,7 +1385,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CRABOMINABLE,
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [35, 40, 40],
       }),
     ],
@@ -7825,13 +7825,13 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SOLGALEO,
         level: 13,
-        item: EvolutionItem.SUN_FLUTE,
+        item: EvolutionItemId.SUN_FLUTE,
         evoDelay: [53, 73, 79],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.LUNALA,
         level: 13,
-        item: EvolutionItem.MOON_FLUTE,
+        item: EvolutionItemId.MOON_FLUTE,
         evoDelay: [53, 73, 79],
       }),
     ],
@@ -10669,7 +10669,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ALOLA_SANDSLASH,
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [22, 22, 22],
       }),
     ],
@@ -10869,7 +10869,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ALOLA_NINETALES,
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -11575,7 +11575,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ALOLA_GOLEM,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [35, 45, 55],
       }),
     ],

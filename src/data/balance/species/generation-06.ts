@@ -15,7 +15,7 @@ import { SpeciesFormChange, SpeciesFormChangeCondition } from "#data/pokemon-for
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
@@ -3665,7 +3665,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.FLORGES,
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [29, 34, 39],
       }),
     ],
@@ -5094,7 +5094,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.AEGISLASH,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [50, 60, 70],
       }),
     ],
@@ -5279,7 +5279,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.AROMATISSE,
         level: 1,
-        item: EvolutionItem.SACHET,
+        item: EvolutionItemId.SACHET,
         evoDelay: [25, 30, 35],
       }),
     ],
@@ -5457,7 +5457,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SLURPUFF,
         level: 1,
-        item: EvolutionItem.WHIPPED_DREAM,
+        item: EvolutionItemId.WHIPPED_DREAM,
         evoDelay: [25, 30, 35],
       }),
     ],
@@ -6512,7 +6512,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HELIOLISK,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [32, 36, 36],
       }),
     ],
@@ -7915,7 +7915,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.TREVENANT,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -8101,7 +8101,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       canChangeForm: false,
       forms: [
         new PokemonForm({
-          formName: "Average Size",
+          formName: "Medium Variety",
           formKey: "",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8125,7 +8125,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Small Size",
+          formName: "Small Variety",
           formKey: "small",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8145,11 +8145,11 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Large Size",
+          formName: "Large Variety",
           formKey: "large",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8169,12 +8169,12 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Super Size",
-          formKey: "super",
+          formName: "Jumbo Variety",
+          formKey: "jumbo",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
           height: 0.8,
@@ -8193,7 +8193,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
       ],
@@ -8204,7 +8204,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GOURGEIST,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -8329,7 +8329,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       canChangeForm: false,
       forms: [
         new PokemonForm({
-          formName: "Average Size",
+          formName: "Medium Variety",
           formKey: "",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8353,7 +8353,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Small Size",
+          formName: "Small Variety",
           formKey: "small",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8373,11 +8373,11 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Large Size",
+          formName: "Large Variety",
           formKey: "large",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8397,12 +8397,12 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Super Size",
-          formKey: "super",
+          formName: "Jumbo Variety",
+          formKey: "jumbo",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
           height: 1.7,
@@ -8421,7 +8421,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
       ],

@@ -19,7 +19,7 @@ import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -2559,19 +2559,19 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.DIPPLIN,
         level: 1,
-        item: EvolutionItem.SYRUPY_APPLE,
+        item: EvolutionItemId.SYRUPY_APPLE,
         evoDelay: [24, 24, 28],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.FLAPPLE,
         level: 1,
-        item: EvolutionItem.TART_APPLE,
+        item: EvolutionItemId.TART_APPLE,
         evoDelay: [24, 24, 28],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.APPLETUN,
         level: 1,
-        item: EvolutionItem.SWEET_APPLE,
+        item: EvolutionItemId.SWEET_APPLE,
         evoDelay: [24, 24, 28],
       }),
     ],
@@ -4243,7 +4243,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "phony",
         evoFormKey: "phony",
         level: 1,
-        item: EvolutionItem.CRACKED_POT,
+        item: EvolutionItemId.CRACKED_POT,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesFormEvolution({
@@ -4251,7 +4251,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "antique",
         evoFormKey: "antique",
         level: 1,
-        item: EvolutionItem.CHIPPED_POT,
+        item: EvolutionItemId.CHIPPED_POT,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -5772,7 +5772,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "vanilla-cream",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
           biome: [BiomeId.TOWN, BiomeId.PLAINS, BiomeId.GRASS, BiomeId.TALL_GRASS, BiomeId.METROPOLIS],
@@ -5784,7 +5784,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "ruby-cream",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
           biome: [BiomeId.BADLANDS, BiomeId.VOLCANO, BiomeId.GRAVEYARD, BiomeId.FACTORY, BiomeId.SLUM],
@@ -5796,7 +5796,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "matcha-cream",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: { key: EvoCondKey.BIOME, biome: [BiomeId.FOREST, BiomeId.SWAMP, BiomeId.MEADOW, BiomeId.JUNGLE] },
         evoDelay: [20, 25, 25],
       }),
@@ -5805,7 +5805,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "mint-cream",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: { key: EvoCondKey.BIOME, biome: [BiomeId.SEA, BiomeId.BEACH, BiomeId.LAKE, BiomeId.SEABED] },
         evoDelay: [20, 25, 25],
       }),
@@ -5814,7 +5814,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "lemon-cream",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
           biome: [BiomeId.DESERT, BiomeId.POWER_PLANT, BiomeId.DOJO, BiomeId.RUINS, BiomeId.CONSTRUCTION_SITE],
@@ -5826,7 +5826,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "salted-cream",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
           biome: [BiomeId.MOUNTAIN, BiomeId.CAVE, BiomeId.ICE_CAVE, BiomeId.FAIRY_CAVE, BiomeId.SNOWY_FOREST],
@@ -5838,7 +5838,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "ruby-swirl",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: { key: EvoCondKey.BIOME, biome: [BiomeId.WASTELAND, BiomeId.LABORATORY] },
         evoDelay: [20, 25, 25],
       }),
@@ -5847,7 +5847,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "caramel-swirl",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: { key: EvoCondKey.BIOME, biome: [BiomeId.TEMPLE, BiomeId.ISLAND] },
         evoDelay: [20, 25, 25],
       }),
@@ -5856,7 +5856,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "rainbow-swirl",
         level: 1,
-        item: EvolutionItem.STRAWBERRY_SWEET,
+        item: EvolutionItemId.STRAWBERRY_SWEET,
         condition: { key: EvoCondKey.BIOME, biome: [BiomeId.ABYSS, BiomeId.SPACE, BiomeId.END] },
         evoDelay: [20, 25, 25],
       }),
@@ -8056,7 +8056,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.METAL_ALLOY,
+        item: EvolutionItemId.METAL_ALLOY,
         evoDelay: [65, 80, 95],
       }),
     ],
@@ -8927,7 +8927,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "single-strike",
         level: 1,
-        item: EvolutionItem.SCROLL_OF_DARKNESS,
+        item: EvolutionItemId.SCROLL_OF_DARKNESS,
         evoDelay: [50, 60, 70],
       }),
       new SpeciesFormEvolution({
@@ -8935,7 +8935,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "rapid-strike",
         level: 1,
-        item: EvolutionItem.SCROLL_OF_WATERS,
+        item: EvolutionItemId.SCROLL_OF_WATERS,
         evoDelay: [50, 60, 70],
       }),
     ],
@@ -11152,13 +11152,13 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GALAR_SLOWBRO,
         level: 1,
-        item: EvolutionItem.GALARICA_CUFF,
+        item: EvolutionItemId.GALARICA_CUFF,
         evoDelay: [37, 37, 37],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.GALAR_SLOWKING,
         level: 1,
-        item: EvolutionItem.GALARICA_WREATH,
+        item: EvolutionItemId.GALARICA_WREATH,
         evoDelay: [37, 37, 37],
       }),
     ],
@@ -12349,7 +12349,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GALAR_DARMANITAN,
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [35, 35, 35],
       }),
     ],
@@ -12818,7 +12818,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HISUI_ARCANINE,
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [35, 40, 45],
       }),
     ],
@@ -13004,7 +13004,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HISUI_ELECTRODE,
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [30, 30, 30],
       }),
     ],
@@ -13362,7 +13362,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SNEASLER,
         level: 1,
-        item: EvolutionItem.RAZOR_CLAW,
+        item: EvolutionItemId.RAZOR_CLAW,
         condition: { key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY] },
         evoDelay: [48, 54, 60],
       }),

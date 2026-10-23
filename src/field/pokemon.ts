@@ -14,7 +14,11 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
+import {
+  FusionSpeciesFormEvolution,
+  SpeciesFormEvolution,
+  validateShedinjaEvo,
+} from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -176,6 +180,7 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
+import type { EvolutionItemId } from "#enums/evolution-item";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
 
@@ -2090,6 +2095,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param useIllusion - (Default `false`) Whether to consider an active illusion
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
+   * @param forMoveGen - (Default `false`) Whether the typing is being requested for move generation purposes
    * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes({
@@ -2098,18 +2104,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     bypassSummonData = false,
     useIllusion = false,
     ignoreThirdType = false,
+    forMoveGen = false,
   }: {
     includeTeraType?: boolean;
     returnOriginalTypesIfStellar?: boolean;
     bypassSummonData?: boolean;
     useIllusion?: boolean;
     ignoreThirdType?: boolean;
+    forMoveGen?: boolean;
   } = {}): Writable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+    if (includeTeraType && (this.isTerastallized || forMoveGen) && shouldUseTeraStellar) {
       return [teraType];
     }
 
@@ -6121,6 +6129,42 @@ export class PlayerPokemon extends Pokemon {
    */
   public isTmCompatible(tm: MoveId, excludeKnown = false): boolean {
     return this.getCompatibleTms(excludeKnown).includes(tm);
+  }
+
+  /**
+   * Check if an evolution item is compatible with this Pokémon.
+   * @param item - The {@linkcode EvolutionItemId} to check
+   * @returns Whether this evolution item can trigger an evolution for this Pokémon (or its fusion component)
+   */
+  public isEvolutionItemCompatible(item: EvolutionItemId): boolean {
+    if (
+      speciesDataRegistry.hasEvolutions(this.species.speciesId)
+      && speciesDataRegistry.getEvolutions(this.species.speciesId).some(e => e.validate(this, false, item))
+      && this.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+    ) {
+      return true;
+    }
+    return (
+      this.isFusion()
+      && !!this.fusionSpecies
+      && speciesDataRegistry.hasEvolutions(this.fusionSpecies.speciesId)
+      && speciesDataRegistry.getEvolutions(this.fusionSpecies.speciesId).some(e => e.validate(this, true, item))
+      && this.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+    );
+  }
+
+  /**
+   * Check if a form-change item is compatible with this Pokémon's current form.
+   * @param item - The {@linkcode FormChangeItem} to check
+   * @returns Whether this form-change item can trigger a form change for this Pokémon
+   */
+  public isFormChangeItemCompatible(item: FormChangeItemId): boolean {
+    return speciesDataRegistry
+      .getFormChanges(this.species.speciesId)
+      .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === this.getFormKey())
+      .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+      .flatMap(fc => fc.item)
+      .includes(item);
   }
 
   /**

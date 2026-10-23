@@ -4,7 +4,7 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allHeldItems, allMoves } from "#data/data-lists";
 import { type Gender, getGenderSymbol } from "#data/gender";
 import type { BiomeId } from "#enums/biome-id";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
@@ -179,7 +179,7 @@ interface SpeciesFormEvolutionConstructor {
   preFormKey: string | null;
   evoFormKey: string | null;
   level: number;
-  item?: EvolutionItem;
+  item?: EvolutionItemId;
   condition?: EvolutionConditionData | EvolutionConditionData[] | undefined;
   evoDelay?: EvoLevelThreshold | undefined;
 }
@@ -190,7 +190,7 @@ export class SpeciesFormEvolution {
   public preFormKey: string | null;
   public evoFormKey: string | null;
   public level: number;
-  public item: EvolutionItem;
+  public item: EvolutionItemId;
   public condition: SpeciesEvolutionCondition | null; // TODO: default to `() => true`
   /**
    * A triple containing the level thresholds for evolutions based on the encounter sort
@@ -205,7 +205,7 @@ export class SpeciesFormEvolution {
     this.preFormKey = data.preFormKey;
     this.evoFormKey = data.evoFormKey;
     this.level = data.level;
-    this.item = data.item ?? EvolutionItem.NONE;
+    this.item = data.item ?? EvolutionItemId.NONE;
     if (data.condition != null) {
       this.condition = new SpeciesEvolutionCondition(...coerceArray(data.condition));
     }
@@ -225,7 +225,7 @@ export class SpeciesFormEvolution {
       strings.push(i18next.t("pokemonEvolutions:atLevel", { lv: this.level }));
     }
     if (this.item) {
-      const itemDescription = i18next.t(`item:${toCamelCase(EvolutionItem[this.item])}.name`);
+      const itemDescription = i18next.t(`item:${toCamelCase(EvolutionItemId[this.item])}.name`);
       const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
       strings.push(i18next.t("pokemonEvolutions:using", { item: itemDescription, tier: rarity }));
     }
@@ -259,10 +259,10 @@ export class SpeciesFormEvolution {
    * Checks if a Pokemon fulfills the requirements of this evolution.
    * @param pokemon - The {@linkcode Pokemon} to evolve
    * @param forFusion - (Default `false`) Whether this evolution is meant for the secondary fused mon.
-   * @param item - (Default `EvolutionItem.NONE`) The {@linkcode EvolutionItem} to check for, if applicable
+   * @param item - (Default `EvolutionItemId.NONE`) The {@linkcode EvolutionItemId} to check for, if applicable
    * @returns Whether this evolution can apply to the Pokemon
    */
-  public validate(pokemon: Pokemon, forFusion = false, item: EvolutionItem = EvolutionItem.NONE): boolean {
+  public validate(pokemon: Pokemon, forFusion = false, item: EvolutionItemId = EvolutionItemId.NONE): boolean {
     const correctForm =
       this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey;
 
@@ -296,7 +296,7 @@ export class SpeciesFormEvolution {
 interface SpeciesEvolutionConstructor {
   speciesId: SpeciesId;
   level: number;
-  item?: EvolutionItem;
+  item?: EvolutionItemId;
   condition?: EvolutionConditionData | EvolutionConditionData[];
   evoDelay?: EvoLevelThreshold;
 }

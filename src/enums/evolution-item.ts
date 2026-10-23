@@ -1,4 +1,4 @@
-export enum EvolutionItem {
+export enum EvolutionItemId {
   NONE,
 
   LINKING_CORD,

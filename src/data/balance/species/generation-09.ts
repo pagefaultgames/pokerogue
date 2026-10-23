@@ -12,7 +12,7 @@ import { SpeciesFormChange } from "#data/pokemon-forms";
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -2380,13 +2380,13 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ARMAROUGE,
         level: 1,
-        item: EvolutionItem.AUSPICIOUS_ARMOR,
+        item: EvolutionItemId.AUSPICIOUS_ARMOR,
         evoDelay: [30, 35, 35],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.CERULEDGE,
         level: 1,
-        item: EvolutionItem.MALICIOUS_ARMOR,
+        item: EvolutionItemId.MALICIOUS_ARMOR,
         evoDelay: [30, 35, 35],
       }),
     ],
@@ -2638,7 +2638,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.BELLIBOLT,
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [20, 28, 28],
       }),
     ],
@@ -3617,7 +3617,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SCOVILLAIN,
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [25, 30, 30],
       }),
     ],
@@ -5805,7 +5805,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CETITAN,
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [40, 44, 48],
       }),
     ],
@@ -9834,7 +9834,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         preFormKey: "counterfeit",
         evoFormKey: "unremarkable",
         level: 1,
-        item: EvolutionItem.UNREMARKABLE_TEACUP,
+        item: EvolutionItemId.UNREMARKABLE_TEACUP,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesFormEvolution({
@@ -9842,7 +9842,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         preFormKey: "artisan",
         evoFormKey: "masterpiece",
         level: 1,
-        item: EvolutionItem.MASTERPIECE_TEACUP,
+        item: EvolutionItemId.MASTERPIECE_TEACUP,
         evoDelay: [30, 35, 40],
       }),
     ],

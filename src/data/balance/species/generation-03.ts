@@ -12,7 +12,7 @@ import { SpeciesFormChange } from "#data/pokemon-forms";
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
@@ -1807,7 +1807,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.LUDICOLO,
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [35, 42, 49],
       }),
     ],
@@ -2059,7 +2059,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SHIFTRY,
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [35, 42, 49],
       }),
     ],
@@ -2680,7 +2680,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GALLADE,
         level: 1,
-        item: EvolutionItem.DAWN_STONE,
+        item: EvolutionItemId.DAWN_STONE,
         condition: { key: EvoCondKey.GENDER, gender: Gender.MALE },
         evoDelay: [30, 30, 30],
       }),
@@ -4226,7 +4226,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.PROBOPASS,
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [32, 36, 40],
       }),
     ],
@@ -4349,7 +4349,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.DELCATTY,
         level: 1,
-        item: EvolutionItem.MOON_STONE,
+        item: EvolutionItemId.MOON_STONE,
         evoDelay: [16, 20, 20],
       }),
     ],
@@ -6213,7 +6213,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ROSERADE,
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [32, 32, 36],
       }),
     ],
@@ -9720,7 +9720,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MILOTIC,
         level: 1,
-        item: EvolutionItem.PRISM_SCALE,
+        item: EvolutionItemId.PRISM_SCALE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -10729,7 +10729,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.DUSKNOIR,
         level: 1,
-        item: EvolutionItem.REAPER_CLOTH,
+        item: EvolutionItemId.REAPER_CLOTH,
         evoDelay: [47, 57, 67],
       }),
     ],
@@ -11348,7 +11348,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.FROSLASS,
         level: 1,
-        item: EvolutionItem.DAWN_STONE,
+        item: EvolutionItemId.DAWN_STONE,
         condition: { key: EvoCondKey.GENDER, gender: Gender.FEMALE },
         evoDelay: [42, 42, 42],
       }),
@@ -11797,14 +11797,14 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HUNTAIL,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         condition: { key: EvoCondKey.HELD_ITEM, itemKey: HeldItemId.DEEP_SEA_TOOTH },
         evoDelay: [40, 40, 50],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.GOREBYSS,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         condition: { key: EvoCondKey.HELD_ITEM, itemKey: HeldItemId.DEEP_SEA_SCALE },
         evoDelay: [40, 40, 50],
       }),

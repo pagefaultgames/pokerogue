@@ -12,7 +12,7 @@ import { SpeciesFormChange, SpeciesFormChangeCondition } from "#data/pokemon-for
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -5043,7 +5043,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CHANSEY,
         level: 1,
-        item: EvolutionItem.OVAL_STONE,
+        item: EvolutionItemId.OVAL_STONE,
         condition: { key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY] },
         evoDelay: [20, 25, 25],
       }),

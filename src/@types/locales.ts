@@ -33,7 +33,7 @@ export interface ItemTranslationEntry {
 export interface RewardTranslationEntries {
   Reward: { [key: string]: ItemTranslationEntry };
   Item: { [key: string]: ItemTranslationEntry };
-  EvolutionItem: SimpleTranslationEntries;
+  EvolutionItemId: SimpleTranslationEntries;
 }
 
 export interface PokemonInfoTranslationEntries {

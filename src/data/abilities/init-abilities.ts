@@ -168,6 +168,7 @@ import {
   StatStageChangeMultiplierAbAttr,
   StatusEffectImmunityAbAttr,
   SummonTerrainAiMovegenMoveStatsAbAttr,
+  SuppressHeldItemsAbAttr,
   SuppressWeatherEffectAbAttr,
   SyncEncounterNatureAbAttr,
   SynchronizeStatusAbAttr,
@@ -735,7 +736,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.KLUTZ, 4, 1) //
-      .unimplemented()
+      .attr(SuppressHeldItemsAbAttr)
       .build(),
     new AbBuilder(AbilityId.MOLD_BREAKER, 4) //
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
@@ -1455,7 +1456,9 @@ export function initAbilities() {
         () => 0,
       )
       .conditionalAttr(
-        p => !p.hasSpecies(SpeciesId.BATTLE_BOND_GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        p =>
+          ((p.species.speciesId !== SpeciesId.BATTLE_BOND_GRENINJA && !p.isFusion()) || p.isFusion())
+          && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
         PostVictoryStatStageChangeAbAttr,
         groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1),
       )
