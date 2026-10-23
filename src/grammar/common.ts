@@ -37,13 +37,13 @@ export function capitalizeFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-export const CAPITALIZE_LANGUAGES: Set<string> = new Set(["en", "fr"]);
-
 export type FormatterOptions = {
   adjective?: boolean | string;
   animate?: boolean | string;
+  case?: string;
   capitalize?: boolean | string;
   declinable?: boolean | string;
+  definite?: boolean | string;
   gender?: string;
   plural?: boolean | string;
   stressedA?: boolean | string;
@@ -51,18 +51,19 @@ export type FormatterOptions = {
 
 export type GrammarFormatter = (value: unknown, lng?: string, options?: FormatterOptions) => string;
 
+export const capitalizeFormatter: GrammarFormatter = value => capitalizeFirst(String(value));
+
 export interface GrammarModule {
   postProcessors: PostProcessorModule[];
   formatters: Record<string, GrammarFormatter>;
 }
 
 export function withCapitalizeOption<T extends unknown[]>(
-  language: string,
-  format: (value: unknown, ...rest: T) => string,
+  format: (value: unknown, options?: FormatterOptions, ...rest: T) => string,
 ): (value: unknown, lng?: string, options?: FormatterOptions, ...rest: T) => string {
   return (value, _lng, options, ...rest) => {
-    const result = format(value, ...rest);
+    const result = format(value, options, ...rest);
     const requested = options?.capitalize === true || options?.capitalize === "true";
-    return requested && CAPITALIZE_LANGUAGES.has(language) ? capitalizeFirst(result) : result;
+    return requested ? capitalizeFirst(result) : result;
   };
 }

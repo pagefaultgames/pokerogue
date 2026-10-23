@@ -338,7 +338,7 @@ export const FRENCH_ARTICLE_FORMATS: Readonly<Record<string, FrenchArticleForm>>
 };
 
 export function createFrenchArticleFormatter(form: FrenchArticleForm) {
-  return withCapitalizeOption("fr", (value: unknown) => withFrenchArticle(String(value), form));
+  return withCapitalizeOption((value: unknown) => withFrenchArticle(String(value), form));
 }
 
 export const GRAMMAR: GrammarModule = {

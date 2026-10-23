@@ -1,7 +1,8 @@
 import {
-  applyEnglishArticles,
+  applyEnglishPossessives,
   createEnglishArticleFormatter,
   createEnglishPossessiveFormatter,
+  EnglishPossessiveProcessor,
   startsWithEnglishVowelSound,
   withEnglishArticle,
   withEnglishPossessive,
@@ -39,22 +40,40 @@ describe("Utils - English articles", () => {
     expect(withEnglishArticle("Pikachu")).toBe("a Pikachu");
   });
 
-  it.each([
-    ["You see a Eevee", "You see an Eevee"],
-    ["You see an Pikachu", "You see a Pikachu"],
-    ["An Pikachu appeared!", "A Pikachu appeared!"],
-    ["A Eevee appeared!", "An Eevee appeared!"],
-    ["a @c{smile}Eevee", "an @c{smile}Eevee"],
-    ["Gain a HP Up", "Gain an HP Up"],
-    ["a 5% chance", "a 5% chance"],
-    ["Banana is not a word", "Banana is not a word"],
-    ["a unicorn", "a unicorn"],
-  ])("%j -> %j", (input, expected) => {
-    expect(applyEnglishArticles(input)).toBe(expected);
+  it("corrects possessive suffixes for interpolated names", () => {
+    expect(applyEnglishPossessives("Chris's Pokémon", ["Chris"])).toBe("Chris’ Pokémon");
+    expect(applyEnglishPossessives("Eevee's Pokémon", ["Eevee"])).toBe("Eevee’s Pokémon");
+    expect(applyEnglishPossessives("Chris’s Pokémon", ["Chris"])).toBe("Chris’ Pokémon");
+    expect(applyEnglishPossessives("Chris's and Chris's Pokémon", ["Chris"])).toBe("Chris’ and Chris’ Pokémon");
+    expect(applyEnglishPossessives("Chris's Pokémon", ["Other"])).toBe("Chris's Pokémon");
   });
 
-  it("leaves protected interpolated values untouched", () => {
-    expect(applyEnglishArticles("Hi a Eevee, you are a Eevee", ["a Eevee"])).toBe("Hi a Eevee, you are a Eevee");
+  it("applies automatic possessive correction only to English source text", () => {
+    const processor = new EnglishPossessiveProcessor();
+    expect(
+      processor.process(
+        "a Eevee and Chris's Pokémon",
+        "key",
+        {
+          lng: "fr",
+          i18nResolved: { usedLng: "en" },
+          name: "Chris",
+        },
+        {},
+      ),
+    ).toBe("a Eevee and Chris’ Pokémon");
+    expect(
+      processor.process(
+        "a Eevee and Chris's Pokémon",
+        "key",
+        {
+          lng: "en",
+          i18nResolved: { usedLng: "fr" },
+          name: "Chris",
+        },
+        {},
+      ),
+    ).toBe("a Eevee and Chris's Pokémon");
   });
 
   it("formats possessives", () => {

@@ -1,13 +1,5 @@
 import type { GrammarModule } from "#grammar/common";
-import {
-  capitalizeFirst,
-  findProtectedSpans,
-  getSourceLanguage,
-  getStringVariables,
-  isProtected,
-  type ProcessorOptions,
-  withCapitalizeOption,
-} from "#grammar/common";
+import { getSourceLanguage, getStringVariables, type ProcessorOptions, withCapitalizeOption } from "#grammar/common";
 import type { PostProcessorModule } from "i18next";
 
 const VOWEL_START = /^[aeioué]/i;
@@ -15,8 +7,6 @@ const ACRONYM = /^[A-Z]+$/;
 const VOWEL_SOUNDING_LETTER_NAMES = "AEFHILMNORSX";
 const CONSONANT_SOUND_PREFIXES = /^(uni(?![mnd])|unan|use|usu|uti|eu|one|once|ura|uk)/i;
 const SILENT_H_PREFIXES = /^(hour|honest|honou?r|heir)/i;
-
-const ARTICLE_PATTERN = /(?<![\p{L}\p{N}'’-])(an?)\s+((?:@\w\{[^}]*\})*)(\p{L}[\p{L}\p{N}'’-]*)/giu;
 
 export function startsWithEnglishVowelSound(word: string): boolean {
   const firstPart = word.split(/[-’']/)[0];
@@ -33,20 +23,30 @@ export function withEnglishArticle(noun: string): string {
   return `${startsWithEnglishVowelSound(noun) ? "an" : "a"} ${noun}`;
 }
 
-export function applyEnglishArticles(text: string, protectedValues: readonly string[] = []): string {
-  const spans = findProtectedSpans(text, protectedValues);
-  return text.replace(ARTICLE_PATTERN, (match, article: string, markup: string, next: string, offset: number) => {
-    if (isProtected(spans, offset)) {
-      return match;
+export function applyEnglishPossessives(text: string, interpolatedValues: readonly string[] = []): string {
+  let result = text;
+  for (const value of interpolatedValues) {
+    if (value === "") {
+      continue;
     }
-    const corrected = startsWithEnglishVowelSound(next) ? "an" : "a";
-    const result = article[0] === "A" ? capitalizeFirst(corrected) : corrected;
-    return `${result} ${markup}${next}`;
-  });
+    let index = result.indexOf(value);
+    while (index !== -1) {
+      const suffixIndex = index + value.length;
+      const suffix = result.slice(suffixIndex, suffixIndex + 2);
+      if (/^['’]s$/iu.test(suffix)) {
+        const possessive = withEnglishPossessive(value);
+        result = `${result.slice(0, index)}${possessive}${result.slice(suffixIndex + 2)}`;
+        index = result.indexOf(value, index + possessive.length);
+      } else {
+        index = result.indexOf(value, suffixIndex);
+      }
+    }
+  }
+  return result;
 }
 
-export class EnglishArticleProcessor implements PostProcessorModule {
-  public readonly name = "english-article";
+export class EnglishPossessiveProcessor implements PostProcessorModule {
+  public readonly name = "english-possessive";
   public readonly type = "postProcessor";
 
   process(
@@ -55,9 +55,11 @@ export class EnglishArticleProcessor implements PostProcessorModule {
     options: ProcessorOptions | undefined,
     translator: { language?: string },
   ): string {
-    return getSourceLanguage(options, translator).startsWith("en")
-      ? applyEnglishArticles(value, getStringVariables(options))
-      : value;
+    if (!getSourceLanguage(options, translator).startsWith("en")) {
+      return value;
+    }
+    const variables = getStringVariables(options);
+    return applyEnglishPossessives(value, variables);
   }
 }
 
@@ -69,15 +71,15 @@ export function withEnglishPossessive(noun: string): string {
 }
 
 export function createEnglishArticleFormatter() {
-  return withCapitalizeOption("en", (value: unknown) => withEnglishArticle(String(value)));
+  return withCapitalizeOption((value: unknown) => withEnglishArticle(String(value)));
 }
 
 export function createEnglishPossessiveFormatter() {
-  return withCapitalizeOption("en", (value: unknown) => withEnglishPossessive(String(value)));
+  return withCapitalizeOption((value: unknown) => withEnglishPossessive(String(value)));
 }
 
 export const GRAMMAR: GrammarModule = {
-  postProcessors: [new EnglishArticleProcessor()],
+  postProcessors: [new EnglishPossessiveProcessor()],
   formatters: {
     [ENGLISH_ARTICLE_FORMAT]: createEnglishArticleFormatter(),
     [ENGLISH_POSSESSIVE_FORMAT]: createEnglishPossessiveFormatter(),
