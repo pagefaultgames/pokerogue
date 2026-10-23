@@ -27,6 +27,10 @@ const EXCLUDE_PATTERNS = [
   "pnpm-workspace.yaml",
   "tsconfig.json",
   "biome.jsonc",
+  "lefthook.yml",
+  ".config.ts",
+  ".test.ts",
+  ".editorconfig",
 ];
 
 /**
