@@ -8,7 +8,7 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EvoCondKey } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { HeldItemNames } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -35,7 +35,7 @@ export async function generateEvolutionsData(): Promise<void> {
           prevoKey: evo.preFormKey || null,
           evoKey: evo.evoFormKey || null,
           levelNeeded: evo.level,
-          evoItems: evo.item ? EvolutionItem[evo.item] : null,
+          evoItems: evo.item ? EvolutionItemId[evo.item] : null,
           evoDelay: evo.evoLevelThreshold ? evo.evoLevelThreshold.join("|") : null,
           timeOfDayCond: null,
           biomeCond: null,

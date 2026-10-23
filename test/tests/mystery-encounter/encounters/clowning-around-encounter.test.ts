@@ -107,6 +107,8 @@ describe("Clowning Around - Mystery Encounter", () => {
       species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
+      shiny: true,
+      variant: 2,
       moveSet: [MoveId.TRICK, MoveId.HYPNOSIS, MoveId.SHADOW_BALL, MoveId.MIND_BLOWN],
     });
     expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);

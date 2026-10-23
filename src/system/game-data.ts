@@ -1527,6 +1527,7 @@ export class GameData {
         passiveAttr: 0,
         valueReduction: 0,
         classicWinCount: 0,
+        pity: [0, 0],
       };
     }
 
@@ -1895,7 +1896,14 @@ export class GameData {
     const dexAttr = this.dexData[speciesId].caughtAttr;
     // Default is female only for species where malePercent is not null but 0
     const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
-    const formIndex = 0;
+    // First caught form is set as the default
+    let formIndex = 0;
+    for (let attr = 128n, i = 0; attr <= dexAttr; attr <<= 1n, i++) {
+      if ((dexAttr & attr) !== 0n) {
+        formIndex = i;
+        break;
+      }
+    }
     let variant: Variant = 0;
     let shiny = false;
     // Set shiny to true if requested, OR if non-shiny version is uncaught

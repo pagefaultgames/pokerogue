@@ -9,6 +9,7 @@ import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { Command } from "#enums/command";
+import type { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
@@ -134,6 +135,7 @@ export class PartyUiHandler extends MessageUiHandler {
   private selectFilter: PokemonSelectFilter | PokemonItemTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: MoveId;
+  private itemId: EvolutionItemId | FormChangeItemId | undefined;
   private showMovePp: boolean;
 
   private iconAnimHandler: PokemonIconAnimHelper;
@@ -292,6 +294,7 @@ export class PartyUiHandler extends MessageUiHandler {
         : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : MoveId.NONE;
     this.showMovePp = args.length > 6 && args[6];
+    this.itemId = args.length > 7 ? (args[7] as EvolutionItemId | FormChangeItemId | undefined) : undefined;
 
     this.partyContainer.setVisible(true);
     if (this.isItemManageMode()) {
@@ -525,7 +528,7 @@ export class PartyUiHandler extends MessageUiHandler {
           ableToTransferText = "";
           // this skips adding the able/not able labels on the pokemon doing the transfer
         } else if (hasMatchingItem) {
-          // if matchingModifier exists then the item exists on the new pokemon
+          // if hasMatchingItem then the item exists on the new pokemon
           ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
           /**
            * The amount of items that can be transferred in the `All` option
@@ -533,7 +536,7 @@ export class PartyUiHandler extends MessageUiHandler {
           let ableAmount = 0;
           for (const item of matchingItems) {
             if (!newPokemon.heldItemManager.isMaxStack(item)) {
-              // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
+              // if the item doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
               ableToTransferText = i18next.t("partyUiHandler:able");
               ableAmount++;
             }
@@ -816,6 +819,8 @@ export class PartyUiHandler extends MessageUiHandler {
     // PartyUiMode.TM_REWARD (TEACH)
     // PartyUiMode.REMEMBER_MOVE_REWARD (no specific option, callback is invoked when selecting a move)
     // PartyUiMode.REWARD (APPLY option)
+    // PartyUiMode.EVOLUTION_ITEM_REWARD (APPLY option)
+    // PartyUiMode.FORM_CHANGE_ITEM_REWARD (APPLY option)
     // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
     // These are the options that need a callback
@@ -1170,7 +1175,14 @@ export class PartyUiHandler extends MessageUiHandler {
 
     for (const p in party) {
       const slotIndex = Number.parseInt(p);
-      const partySlot = new PartySlot(slotIndex, party[p], this.iconAnimHandler, this.partyUiMode, this.tmMoveId);
+      const partySlot = new PartySlot(
+        slotIndex,
+        party[p],
+        this.iconAnimHandler,
+        this.partyUiMode,
+        this.tmMoveId,
+        this.itemId,
+      );
       globalScene.add.existing(partySlot);
       this.partySlotsContainer.add(partySlot);
       this.partySlots.push(partySlot);
@@ -1475,6 +1487,8 @@ export class PartyUiHandler extends MessageUiHandler {
         this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.REWARD:
+      case PartyUiMode.EVOLUTION_ITEM_REWARD:
+      case PartyUiMode.FORM_CHANGE_ITEM_REWARD:
         this.options.push(PartyOption.APPLY);
         this.addCommonOptions(pokemon);
         break;
@@ -1962,6 +1976,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     iconAnimHandler: PokemonIconAnimHelper,
     partyUiMode: PartyUiMode,
     tmMoveId: MoveId,
+    itemId: EvolutionItemId | FormChangeItemId | undefined,
   ) {
     const isBenched = slotIndex >= globalScene.currentBattle.getBattlerCount();
     const isDoubleBattle = globalScene.currentBattle.double;
@@ -1994,14 +2009,14 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;
 
-    this.setup(partyUiMode, tmMoveId);
+    this.setup(partyUiMode, tmMoveId, itemId);
   }
 
   getPokemon(): PlayerPokemon {
     return this.pokemon;
   }
 
-  setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
+  setup(partyUiMode: PartyUiMode, tmMoveId: MoveId, itemId: EvolutionItemId | FormChangeItemId | undefined) {
     const isItemManageMode = partyUiMode === PartyUiMode.ITEM_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
     this.slotBgKey = this.isBenched
@@ -2218,6 +2233,32 @@ class PartySlot extends Phaser.GameObjects.Container {
       }
 
       this.slotDescriptionLabel.setText(slotTmText);
+      this.slotDescriptionLabel.setVisible(true);
+    } else if (partyUiMode === PartyUiMode.EVOLUTION_ITEM_REWARD) {
+      this.slotHpLabel.setVisible(false);
+      this.slotHpBar.setVisible(false);
+      this.slotHpOverlay.setVisible(false);
+      this.slotHpText.setVisible(false);
+      this.slotDescriptionLabel.setText(
+        i18next.t(
+          this.pokemon.isEvolutionItemCompatible(itemId as EvolutionItemId)
+            ? "partyUiHandler:able"
+            : "partyUiHandler:notAble",
+        ),
+      );
+      this.slotDescriptionLabel.setVisible(true);
+    } else if (partyUiMode === PartyUiMode.FORM_CHANGE_ITEM_REWARD) {
+      this.slotHpLabel.setVisible(false);
+      this.slotHpBar.setVisible(false);
+      this.slotHpOverlay.setVisible(false);
+      this.slotHpText.setVisible(false);
+      this.slotDescriptionLabel.setText(
+        i18next.t(
+          this.pokemon.isFormChangeItemCompatible(itemId as FormChangeItemId)
+            ? "partyUiHandler:able"
+            : "partyUiHandler:notAble",
+        ),
+      );
       this.slotDescriptionLabel.setVisible(true);
     } else {
       this.slotDescriptionLabel.setVisible(false);

@@ -1,6 +1,8 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
+import type { EvolutionItemId } from "#enums/evolution-item";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import type { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardPoolType } from "#enums/reward-pool-type";
@@ -28,6 +30,8 @@ import {
 import {
   applyReward,
   getPlayerShopRewardOptionsForWave,
+  isEvolutionItemReward,
+  isFormChangeItemReward,
   isMoveReward,
   isRememberMoveReward,
   isTmReward,
@@ -295,6 +299,7 @@ export class SelectRewardPhase extends BattlePhase {
     let moveSelectFilter: PokemonMoveSelectFilter | undefined;
     let tmMoveId: MoveId | undefined;
     let isMove = false;
+    let itemId: EvolutionItemId | FormChangeItemId | undefined;
     let getParams = (slotIndex: number, _option: PartyOption) => {
       return { pokemon: party[slotIndex] } as PokemonRewardParams;
     };
@@ -318,6 +323,14 @@ export class SelectRewardPhase extends BattlePhase {
       partyUiMode = PartyUiMode.TM_REWARD;
       tmMoveId = reward.moveId;
     }
+    if (isEvolutionItemReward(reward)) {
+      partyUiMode = PartyUiMode.EVOLUTION_ITEM_REWARD;
+      itemId = reward.evolutionItemId;
+    }
+    if (isFormChangeItemReward(reward)) {
+      partyUiMode = PartyUiMode.EVOLUTION_ITEM_REWARD;
+      itemId = reward.formChangeItemId;
+    }
 
     console.log(partyUiMode);
     globalScene.ui.setModeWithoutClear(
@@ -339,6 +352,7 @@ export class SelectRewardPhase extends BattlePhase {
       moveSelectFilter,
       tmMoveId,
       isMove,
+      itemId,
     );
   }
 

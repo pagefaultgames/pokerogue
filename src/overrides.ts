@@ -7,8 +7,9 @@ import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { Challenges } from "#enums/challenges";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -33,7 +34,7 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
- * {@linkcode EvolutionItem}, {@linkcode FormChangeItemId}
+ * {@linkcode HeldItemId}, {@linkcode EvolutionItemId}, {@linkcode FormChangeItemId}
  * {@linkcode Stat}, {@linkcode PokemonType} {@linkcode Challenges} {@linkcode BiomePoolTier}
  */
 

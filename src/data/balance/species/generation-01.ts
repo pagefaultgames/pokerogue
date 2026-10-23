@@ -6,7 +6,7 @@ import { SpeciesFormChange } from "#data/pokemon-forms";
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItemId } from "#enums/evolution-item";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -2555,7 +2555,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesFormEvolution({
@@ -2563,7 +2563,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesFormEvolution({
@@ -2571,7 +2571,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesFormEvolution({
@@ -2579,7 +2579,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -3179,7 +3179,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.NIDOQUEEN,
         level: 1,
-        item: EvolutionItem.MOON_STONE,
+        item: EvolutionItemId.MOON_STONE,
         evoDelay: [32, 36, 42],
       }),
     ],
@@ -3445,7 +3445,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.NIDOKING,
         level: 1,
-        item: EvolutionItem.MOON_STONE,
+        item: EvolutionItemId.MOON_STONE,
         evoDelay: [32, 36, 42],
       }),
     ],
@@ -3605,7 +3605,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CLEFABLE,
         level: 1,
-        item: EvolutionItem.MOON_STONE,
+        item: EvolutionItemId.MOON_STONE,
         evoDelay: [32, 32, 36],
       }),
     ],
@@ -3824,7 +3824,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.NINETALES,
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -4020,7 +4020,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.WIGGLYTUFF,
         level: 1,
-        item: EvolutionItem.MOON_STONE,
+        item: EvolutionItemId.MOON_STONE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -4453,13 +4453,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.VILEPLUME,
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.BELLOSSOM,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -5753,7 +5753,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ARCANINE,
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -6047,13 +6047,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.POLIWRATH,
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [30, 35, 40],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.POLITOED,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [30, 35, 40],
       }),
     ],
@@ -6317,7 +6317,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ALAKAZAM,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [40, 45, 50],
       }),
     ],
@@ -6635,7 +6635,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MACHAMP,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [38, 46, 54],
       }),
     ],
@@ -6926,7 +6926,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.VICTREEBEL,
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [31, 36, 41],
       }),
     ],
@@ -7396,7 +7396,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GOLEM,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [35, 45, 55],
       }),
     ],
@@ -7678,7 +7678,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SLOWKING,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [37, 37, 37],
       }),
     ],
@@ -8069,7 +8069,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MAGNEZONE,
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [50, 55, 60],
       }),
     ],
@@ -8797,7 +8797,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.CLOYSTER,
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [36, 40, 44],
       }),
     ],
@@ -9101,7 +9101,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GENGAR,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         evoDelay: [40, 45, 50],
       }),
     ],
@@ -9329,7 +9329,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.STEELIX,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         condition: { key: EvoCondKey.MOVE_TYPE, pkmnType: PokemonType.STEEL },
         evoDelay: [35, 40, 45],
       }),
@@ -10052,13 +10052,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ALOLA_EXEGGUTOR,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [35, 40, 40],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.EXEGGUTOR,
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [35, 40, 40],
       }),
     ],
@@ -11094,7 +11094,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.RHYPERIOR,
         level: 1,
-        item: EvolutionItem.PROTECTOR,
+        item: EvolutionItemId.PROTECTOR,
         evoDelay: [72, 82, 92],
       }),
     ],
@@ -11707,7 +11707,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.KINGDRA,
         level: 1,
-        item: EvolutionItem.DRAGON_SCALE,
+        item: EvolutionItemId.DRAGON_SCALE,
         evoDelay: [42, 52, 62],
       }),
     ],
@@ -11917,7 +11917,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.STARMIE,
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [20, 25, 30],
       }),
     ],
@@ -12268,14 +12268,14 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SCIZOR,
         level: 1,
-        item: EvolutionItem.LINKING_CORD,
+        item: EvolutionItemId.LINKING_CORD,
         condition: { key: EvoCondKey.MOVE_TYPE, pkmnType: PokemonType.STEEL },
         evoDelay: [40, 50, 60],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.KLEAVOR,
         level: 1,
-        item: EvolutionItem.BLACK_AUGURITE,
+        item: EvolutionItemId.BLACK_AUGURITE,
         evoDelay: [40, 50, 60],
       }),
     ],
@@ -12479,7 +12479,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.ELECTIVIRE,
         level: 1,
-        item: EvolutionItem.ELECTIRIZER,
+        item: EvolutionItemId.ELECTIRIZER,
         evoDelay: [50, 60, 70],
       }),
     ],
@@ -12546,7 +12546,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MAGMORTAR,
         level: 1,
-        item: EvolutionItem.MAGMARIZER,
+        item: EvolutionItemId.MAGMARIZER,
         evoDelay: [50, 60, 70],
       }),
     ],
@@ -13532,7 +13532,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13540,7 +13540,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.WATER_STONE,
+        item: EvolutionItemId.WATER_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13548,7 +13548,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13556,7 +13556,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.THUNDER_STONE,
+        item: EvolutionItemId.THUNDER_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13564,7 +13564,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13572,7 +13572,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.FIRE_STONE,
+        item: EvolutionItemId.FIRE_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13580,7 +13580,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13588,7 +13588,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.LEAF_STONE,
+        item: EvolutionItemId.LEAF_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13596,7 +13596,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [24, 28, 28],
       }),
       new SpeciesFormEvolution({
@@ -13604,7 +13604,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         preFormKey: "partner",
         evoFormKey: "",
         level: 1,
-        item: EvolutionItem.ICE_STONE,
+        item: EvolutionItemId.ICE_STONE,
         evoDelay: [24, 28, 28],
       }),
     ],
@@ -14007,7 +14007,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.PORYGON2,
         level: 1,
-        item: EvolutionItem.UPGRADE,
+        item: EvolutionItemId.UPGRADE,
         evoDelay: [32, 40, 48],
       }),
     ],
