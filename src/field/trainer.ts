@@ -326,6 +326,9 @@ export class Trainer extends Phaser.GameObjects.Container {
       if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
         if (Object.hasOwn(this.config.partyMemberFuncs, index)) {
           ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
+          this.representedSpecies[ret.species.speciesId] = speciesDataRegistry.getPrevolutionChain(
+            ret.species.speciesId,
+          );
           return;
         }
         if (Object.hasOwn(this.config.partyMemberFuncs, index - template.size)) {
@@ -333,6 +336,9 @@ export class Trainer extends Phaser.GameObjects.Container {
             level,
             template.getStrength(index),
             template.getEvoThresholdKind(index),
+          );
+          this.representedSpecies[ret.species.speciesId] = speciesDataRegistry.getPrevolutionChain(
+            ret.species.speciesId,
           );
           return;
         }
@@ -437,7 +443,6 @@ export class Trainer extends Phaser.GameObjects.Container {
         level,
         !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
       );
-
       this.representedSpecies[species.speciesId] = speciesDataRegistry.getPrevolutionChain(species.speciesId);
     };
     const seedOffset = this.config.hasStaticParty
