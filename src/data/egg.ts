@@ -600,12 +600,11 @@ export class Egg {
     }
 
     if (this._sourceType === EggSourceType.SAME_SPECIES_EGG && species) {
-      // reset the pity if a variant was obtained by a normal same-species egg
-      const caughtAttr = globalScene.gameData.dexData[species].caughtAttr;
-      const missingVariants = [DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !(caughtAttr & v));
+      // reset the pity if a new variant was obtained by a normal same-species egg
+      const missingVariants = this.getMissingVariants(species);
       if (
-        (variantTier === VariantTier.RARE && missingVariants.includes(DexAttr.VARIANT_2))
-        || (variantTier === VariantTier.EPIC && missingVariants.includes(DexAttr.VARIANT_3))
+        (variantTier === VariantTier.RARE && missingVariants.includes(VariantTier.RARE))
+        || (variantTier === VariantTier.EPIC && missingVariants.includes(VariantTier.EPIC))
       ) {
         globalScene.gameData.starterData[species].pity[1] = 0;
       }
@@ -635,6 +634,7 @@ export class Egg {
     if (missingVariants.includes(VariantTier.RARE)) {
       return VariantTier.RARE;
     }
+    // should never reach this point
     return null;
   }
 

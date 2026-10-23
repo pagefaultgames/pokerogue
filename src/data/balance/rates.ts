@@ -43,12 +43,12 @@ export const GACHA_SHINY_UP_SHINY_RATE = 64;
 export const SAME_SPECIES_EGG_SHINY_RATE = 12;
 export const SAME_SPECIES_EGG_HA_RATE = 8;
 export const MANAPHY_EGG_MANAPHY_RATE = 8;
-export const GACHA_EGG_HA_RATE = -192;
+export const GACHA_EGG_HA_RATE = 192;
 /** The amount of same-species eggs that need to be hatched **before** the shiny rate starts increasing */
 export const BASE_SAME_SPECIES_SHINY_INCREASE_COUNT = 15;
 /** The amount of same-species eggs that need to be hatched for it to become a guaranteed shiny */
 export const MAX_SAME_SPECIES_SHINY_INCREASE_COUNT = 21;
-/** The number of same-species shiny eggs that need to be hatched for it to guarantee a missing variant */
+/** The number of same-species **shiny** eggs that need to be hatched for it to guarantee a missing variant */
 export const MISSING_VARIANT_PITY_GUARANTEE = 11;
 
 // Odds are 1/x
