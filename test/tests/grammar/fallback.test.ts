@@ -49,6 +49,7 @@ describe("Grammar post-processors with language fallback", () => {
             onlyEnglish: "{{name}} gives {{item, en_indefinite}} to me about it",
             russianInline: "{{name, ru_genitive(gender: feminine)}}: {{forms, ru_agreement(gender: feminine)}}",
             russianIndeclinable: "{{name, ru_genitive(declinable: false)}}",
+            russianPast: "{{ability}} {{ability, ru_past(verb: защити)}}",
             swedishGenitiveFallback: "{{name}}s item",
           },
         },
@@ -172,6 +173,7 @@ describe("Grammar post-processors with language fallback", () => {
   it("lets translators set Russian grammar options inline", () => {
     expect(t("russianInline", "ru", { name: "Анна", forms: "победил|победила|победило" })).toBe("Анны: победила");
     expect(t("russianIndeclinable", "ru", { name: "Пикачу" })).toBe("Пикачу");
+    expect(t("russianPast", "ru", { ability: "Зловоние" })).toBe("Зловоние защитило");
   });
 
   it("applies Spanish contractions to Spanish source text only", () => {

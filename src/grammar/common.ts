@@ -40,13 +40,16 @@ export function capitalizeFirst(text: string): string {
 export type FormatterOptions = {
   adjective?: boolean | string;
   animate?: boolean | string;
+  apostrophe?: boolean | string;
   case?: string;
   capitalize?: boolean | string;
   declinable?: boolean | string;
   definite?: boolean | string;
   gender?: string;
+  harmony?: string;
   plural?: boolean | string;
   stressedA?: boolean | string;
+  verb?: string;
 };
 
 export type GrammarFormatter = (value: unknown, lng?: string, options?: FormatterOptions) => string;
