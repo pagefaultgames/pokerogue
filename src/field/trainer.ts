@@ -29,6 +29,7 @@ export class Trainer extends Phaser.GameObjects.Container {
   public nameKey: string;
   public partnerNameKey: string | undefined;
   public originalIndexes: { [key: number]: number } = {};
+  private representedSpecies: Partial<Record<SpeciesId, SpeciesId[]>> = {};
 
   /**
    * Create a new Trainer.
@@ -436,6 +437,8 @@ export class Trainer extends Phaser.GameObjects.Container {
         level,
         !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
       );
+
+      this.representedSpecies[species.speciesId] = speciesDataRegistry.getPrevolutionChain(species.speciesId);
     };
     const seedOffset = this.config.hasStaticParty
       ? this.config.getDerivedType() + ((index + 1) << 8)
@@ -503,10 +506,26 @@ export class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    // Prompts reroll of party member species if species already present in the enemy party
-    if (this.checkDuplicateSpecies(ret)) {
-      console.log("Duplicate species detected, prompting reroll...");
-      retry = true;
+    // Retry if a mon or its prevolution is already in party
+    if (!retry) {
+      let currentSpeciesId: SpeciesId | null = ret.speciesId;
+      while (currentSpeciesId !== null) {
+        if (currentSpeciesId in this.representedSpecies) {
+          retry = true;
+        }
+        currentSpeciesId = speciesDataRegistry.getPrevolution(currentSpeciesId);
+      }
+    }
+
+    // Retry if the evolution of the mon is already in party
+    if (!retry) {
+      const preEvolutionLines = Object.values(this.representedSpecies);
+      for (const line of preEvolutionLines) {
+        if (line.includes(ret.speciesId)) {
+          retry = true;
+          break;
+        }
+      }
     }
 
     if (retry && (attempt ?? 0) < 25) {
@@ -515,27 +534,6 @@ export class Trainer extends Phaser.GameObjects.Container {
     }
 
     return ret;
-  }
-
-  /**
-   * Checks if the enemy trainer already has the Pokemon species in their party
-   * @param species - The {@linkcode PokemonSpecies} of the current Pokemon
-   * @returns `true` if the species is already present in the party
-   */
-  checkDuplicateSpecies(species: PokemonSpecies): boolean {
-    const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
-      let root = s;
-      while (speciesDataRegistry.hasPrevolution(root)) {
-        root = speciesDataRegistry.getPrevolution(root)!;
-      }
-      return root;
-    });
-    const currentSpecies = globalScene.getEnemyParty().map(p => {
-      return p.species.getRootSpeciesId();
-    });
-    const rootSpecies = species.getRootSpeciesId();
-
-    return currentSpecies.includes(rootSpecies) || staticSpecies.includes(rootSpecies);
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch = false): [number, number][] {
