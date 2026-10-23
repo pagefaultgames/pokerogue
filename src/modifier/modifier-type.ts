@@ -1260,7 +1260,8 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         }
         for (const pokemonMove of p.getMoveset()) {
           const move = pokemonMove.getMove();
-          if (!move.is("AttackMove")) {
+          // Skip status moves and fixed-damage moves (e.g. Counter, Night Shade), which type-boosting items can't boost
+          if (!move.is("AttackMove") || move.hasAttr("FixedDamageAttr")) {
             continue;
           }
           // Account for variable type changing moves
