@@ -512,6 +512,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       while (currentSpeciesId !== null) {
         if (currentSpeciesId in this.representedSpecies) {
           retry = true;
+          break;
         }
         currentSpeciesId = speciesDataRegistry.getPrevolution(currentSpeciesId);
       }
