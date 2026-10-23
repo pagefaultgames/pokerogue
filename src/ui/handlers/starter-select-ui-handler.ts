@@ -683,8 +683,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterPreferences.female !== undefined
       && !(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
     ) {
-      // requested gender wasn't unlocked, purging setting
-      starterPreferences.female = undefined;
+      // If preference is female and DexAttr.FEMALE is not unlocked, set the preference to male
+      // This can happen in mono-gen challenge, which removes DexAttr.FEMALE from Snorunt
+      if (starterPreferences.female && caughtAttr & DexAttr.MALE) {
+        starterPreferences.female = false;
+      } else if (!starterPreferences.female && caughtAttr & DexAttr.FEMALE) {
+        starterPreferences.female = true;
+      } else {
+        // requested gender wasn't unlocked, purging setting
+        starterPreferences.female = undefined;
+      }
     }
 
     if (starterPreferences.abilityIndex !== undefined) {
