@@ -1301,6 +1301,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               error = true;
               break;
             }
+            if (this.eggMoves.length === 0) {
+              error = true;
+              this.showText(i18next.t("pokedexUiHandler:noEggMoves"));
+              break;
+            }
 
             this.blockInput = true;
 
