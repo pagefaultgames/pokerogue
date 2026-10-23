@@ -506,7 +506,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    // Retry if a mon or its prevolution is already in party
+    // Retry if a mon or its prevolution(s) is already in the party
     if (!retry) {
       let currentSpeciesId: SpeciesId | null = ret.speciesId;
       while (currentSpeciesId !== null) {
@@ -518,7 +518,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    // Retry if the evolution of the mon is already in party
+    // Retry if the evolution of the mon is already in the party
     if (!retry) {
       const preEvolutionLines = Object.values(this.representedSpecies);
       for (const line of preEvolutionLines) {
