@@ -14,23 +14,23 @@ import chalk from "chalk";
 import type { Logger, Plugin as VitePlugin } from "vite";
 
 const NAME = "minify-public-json-files";
-const VERSION = "3.1.1";
+const VERSION = "3.1.2";
 
 /** Patterns that should be excluded, meant to be excluded at any level */
 const EXCLUDE_PATTERNS = [
-  "REUSE.toml",
+  ".config.ts",
+  ".editorconfig",
   ".git",
+  ".test.ts",
   "LICENSE",
   "README.md",
+  "REUSE.toml",
+  "biome.jsonc",
+  "lefthook.yml",
   "package.json",
   "pnpm-lock.yaml",
   "pnpm-workspace.yaml",
   "tsconfig.json",
-  "biome.jsonc",
-  "lefthook.yml",
-  ".config.ts",
-  ".test.ts",
-  ".editorconfig",
 ];
 
 /**
