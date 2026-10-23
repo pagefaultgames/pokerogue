@@ -16,9 +16,13 @@ import type { EggData } from "#system/egg-data";
 import type { GameStats } from "#system/game-stats";
 import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
+import type { RibbonData } from "#system/ribbon-data";
 import type { TrainerData } from "#system/trainer-data";
-import type { SerializedDailyRunConfig } from "./daily-run";
-import type { DexData } from "./dex-data";
+import type { SerializedDailyRunConfig } from "#types/daily-run";
+
+// #region Server-backed fields
+
+//! IMPORTANT: Changes to these types require changes to rogueserver!
 
 export type AppliedMigrators = { [key: string]: number };
 
@@ -97,25 +101,6 @@ export interface StarterFormMoveData {
   [key: number]: StarterMoveset;
 }
 
-export interface StarterMoveData {
-  [key: number]: StarterMoveset | StarterFormMoveData;
-}
-
-/** The starter's current attributes (such as selected nature, nickname, etc). */
-export interface StarterPreferences {
-  abilityIndex?: number | undefined;
-  favorite?: boolean | undefined;
-  female?: boolean | undefined;
-  formIndex?: number | undefined;
-  nature?: number | undefined;
-  nickname?: string | undefined;
-  shiny?: boolean | undefined;
-  tera?: PokemonType | undefined;
-  variant?: Variant | undefined;
-}
-
-export type AllStarterPreferences = Partial<Record<SpeciesId, StarterPreferences | undefined>>;
-
 export interface DexAttrProps {
   shiny: boolean;
   female: boolean;
@@ -123,30 +108,19 @@ export interface DexAttrProps {
   formIndex: number;
 }
 
-export interface Starter {
-  speciesId: SpeciesId;
-  shiny: boolean;
-  variant: Variant;
-  formIndex: number;
-  female?: boolean | undefined;
-  abilityIndex: number;
-  passive: boolean;
-  nature: Nature;
-  moveset?: StarterMoveset | undefined;
-  pokerus: boolean;
-  nickname?: string | undefined;
-  teraType?: PokemonType | undefined;
-  ivs: number[];
+export interface DexData {
+  [key: number]: DexEntry;
 }
 
-// TODO: What type of number does this store?
-export type RunHistoryData = Record<number, RunEntry>;
-
-export interface RunEntry {
-  entry: SessionSaveData;
-  isVictory: boolean;
-  /** Automatically set to false at the moment - implementation TBD */
-  isFavorite: boolean;
+export interface DexEntry {
+  seenAttr: bigint;
+  caughtAttr: bigint;
+  natureAttr: number;
+  seenCount: number;
+  caughtCount: number;
+  hatchedCount: number;
+  ivs: number[];
+  ribbons: RibbonData;
 }
 
 export interface StarterDataEntry {
@@ -173,4 +147,47 @@ export type TutorialFlags = {
 // TODO: Rework into a bitmask
 export interface SeenDialogues {
   [key: string]: boolean;
+}
+
+// #endregion Server-backed fields
+
+/** The starter's current attributes (such as selected nature, nickname, etc). */
+export interface StarterPreferences {
+  abilityIndex?: number | undefined;
+  favorite?: boolean | undefined;
+  female?: boolean | undefined;
+  formIndex?: number | undefined;
+  nature?: number | undefined;
+  nickname?: string | undefined;
+  shiny?: boolean | undefined;
+  tera?: PokemonType | undefined;
+  variant?: Variant | undefined;
+}
+
+export type AllStarterPreferences = Partial<Record<SpeciesId, StarterPreferences | undefined>>;
+
+export type RunHistoryData = Record<number /* timestamp */, RunEntry>;
+
+export interface RunEntry {
+  entry: SessionSaveData;
+  isVictory: boolean;
+  /** Automatically set to false at the moment - implementation TBD */
+  isFavorite: boolean;
+}
+
+// TODO: find better file to place this in, it's not save data related
+export interface Starter {
+  speciesId: SpeciesId;
+  shiny: boolean;
+  variant: Variant;
+  formIndex: number;
+  female?: boolean | undefined;
+  abilityIndex: number;
+  passive: boolean;
+  nature: Nature;
+  moveset?: StarterMoveset | undefined;
+  pokerus: boolean;
+  nickname?: string | undefined;
+  teraType?: PokemonType | undefined;
+  ivs: number[];
 }
