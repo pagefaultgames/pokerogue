@@ -117,7 +117,12 @@ export class TurnStartPhase extends FieldPhase {
         this.handleFightCommand(turnCommand, pokemon);
         break;
       case Command.BALL:
-        globalScene.phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
+        // Type assertion (at least the `0 | 1` part) is safe due to modulus (TS doesn't model integer arithmetic)
+        globalScene.phaseManager.unshiftNew(
+          "AttemptCapturePhase",
+          (turnCommand.targets![0] % 2) as 0 | 1,
+          turnCommand.cursor!,
+        ); //TODO: is the bang correct here?
         break;
       case Command.POKEMON:
         globalScene.phaseManager.unshiftNew(
