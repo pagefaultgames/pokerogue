@@ -41,6 +41,8 @@ export const timedEvents: readonly TimedEvent[] = [
         ["pkmn__sub", "subcharx"],
         ["pkmn__back__sub", "subcharxback"],
         ["training_session_gear", "training_session_gearcharx"],
+        ["c_rival_m", "halloween_rival_m"],
+        ["c_rival_f", "halloween_rival_f"],
       ],
     },
     shinyEncounterMultiplier: 2,
