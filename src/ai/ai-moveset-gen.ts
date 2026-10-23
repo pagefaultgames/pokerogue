@@ -57,7 +57,12 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { targetSleptOrComatoseCondition, userSleptOrComatoseCondition } from "#moves/move-condition";
+import {
+  type MoveCondition,
+  RequireTypeCondition,
+  targetSleptOrComatoseCondition,
+  userSleptOrComatoseCondition,
+} from "#moves/move-condition";
 import { isWeatherInstantCharge } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { LevelMovesWithSource } from "#types/level-moves";
@@ -358,6 +363,7 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
  * @param isBoss - Whether the Pokémon is a boss
  * @param hasTrainer - Whether the Pokémon has a trainer
  * @param pokemon - The Pokémon having its moveset generated
+ * @param willTera - Whether the Pokémon will terastallize
  * @param ignoreSoftBlocklists - Whether to ignore movegen blocklists that are allowed as a fallback
  */
 function filterMovePool(
@@ -365,6 +371,7 @@ function filterMovePool(
   isBoss: boolean,
   hasTrainer: boolean,
   pokemon: Pokemon,
+  willTera: boolean,
   ignoreSoftBlocklists = false,
 ): void {
   const isSingles = !globalScene.currentBattle?.double;
@@ -376,6 +383,11 @@ function filterMovePool(
   // Block status moves if pokemon has Gorilla Tactics
   const hasGorillaTactics = pokemon.hasAbilityWithAttr("GorillaTacticsAbAttr");
   const worseOffensiveStatDenylist = getSpeciesDeniedOffensiveStat(pokemon.species.speciesId, pokemon.formIndex);
+  const typesForMoveConditions = pokemon.getTypes({
+    includeTeraType: willTera,
+    forMoveGen: true,
+    returnOriginalTypesIfStellar: true,
+  });
 
   for (const [moveId, weight] of pool) {
     const move = allMoves[moveId];
@@ -401,7 +413,12 @@ function filterMovePool(
         && (isSoftBlocked
           || (move.hasAttr("WeatherChangeAttr") && blockWeatherSettingMoves) // Forbid weather setting moves if the pokemon has a weather summoning or suppressing ability
           || (move.hasAttr("TerrainChangeAttr") && blockTerrainSettingMoves) // Forbid terrain setting moves if the pokemon has a terrain summoning ability
-          || (hasGorillaTactics && move.category === MoveCategory.STATUS))) // Forbid status moves if pokemon has Gorilla Tactics
+          || (hasGorillaTactics && move.category === MoveCategory.STATUS) // Forbid status moves if pokemon has Gorilla Tactics
+          || move.hasCondition(
+            // Forbid moves that have a type requirement that the pokemon does not have
+            (condition: MoveCondition) =>
+              condition instanceof RequireTypeCondition && !typesForMoveConditions.includes(condition.requiredType),
+          )))
     ) {
       pool.delete(moveId);
     }
@@ -656,7 +673,7 @@ function forceStabMove(
   willTera = false,
   forceAnyDamageIfNoStab = false,
 ): void {
-  const typesForStab = new Set(pokemon.getTypes());
+  const typesForStab = new Set(pokemon.getTypes({ forMoveGen: true }));
   // All Pokemon force a STAB move first
 
   const totalWeight = new ValueHolder(0);
@@ -1319,21 +1336,21 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
   // The pools are kept around so we know where the move was sourced from
   let movePool = new Map<MoveId, number>([...tmPool.entries(), ...eggMovePool.entries(), ...learnPool.entries()]);
 
+  /** Determine whether this pokemon will instantly tera */
+  const willTera = hasTrainer && willTerastallize(pokemon as EnemyPokemon);
+
   // Step 2: Filter out forbidden moves
   const unfilteredMovePool = new Map(movePool);
-  filterMovePool(movePool, isBoss, hasTrainer, pokemon);
+  filterMovePool(movePool, isBoss, hasTrainer, pokemon, willTera);
   if (movePool.size === 0 && unfilteredMovePool.size > 0) {
     movePool = unfilteredMovePool;
-    filterMovePool(movePool, isBoss, hasTrainer, pokemon, true);
+    filterMovePool(movePool, isBoss, hasTrainer, pokemon, willTera, true);
   }
 
   // Step 3: Adjust weights for trainers
   if (hasTrainer) {
     adjustWeightsForTrainer(movePool);
   }
-
-  /** Determine whether this pokemon will instantly tera */
-  const willTera = hasTrainer && willTerastallize(pokemon as EnemyPokemon);
 
   adjustDamageMoveWeights(movePool, pokemon, willTera);
 
