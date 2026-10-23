@@ -1,11 +1,15 @@
 import type { BattleScene } from "#app/battle-scene";
+import { Status } from "#data/status-effect";
 import { BiomeId } from "#enums/biome-id";
+import { Challenges } from "#enums/challenges";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as EncounterTransformationSequence from "#mystery-encounters/encounter-transformation-sequence";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -46,6 +50,13 @@ describe("Weird Dream - Mystery Encounter", () => {
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.WEIRD_DREAM]]]),
     );
   });
+
+  function faint(...pokemon: PlayerPokemon[]) {
+    for (const p of pokemon) {
+      p.hp = 0;
+      p.status = new Status(StatusEffect.FAINT);
+    }
+  }
 
   it("should have the correct properties", async () => {
     await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
@@ -155,6 +166,72 @@ describe("Weird Dream - Mystery Encounter", () => {
     });
   });
 
+  describe("Option 1 - Accept Transformation - passive reward", () => {
+    /**
+     * Start the encounter, then clear every passive in the player's party so that any passive found
+     * after the transformation was unlocked by the encounter.
+     * Transformed Pokemon keep their original's passive, and fainted Pokemon stay fainted.
+     * @returns The player's party before the transformation, in `defaultParty` order (Magby, Haunter, Abra)
+     */
+    async function startEncounterWithoutPassives() {
+      await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
+
+      const party = scene.getPlayerParty();
+      for (const pokemon of party) {
+        pokemon.passive = false;
+      }
+      return party;
+    }
+
+    /**
+     * Accept the transformation.
+     * @returns The transformed party, in the same order as before the transformation
+     */
+    async function acceptTransformation() {
+      await runMysteryEncounterToEnd(game, 1);
+      return scene.getPlayerParty();
+    }
+
+    // https://github.com/pagefaultgames/pokerogue/issues/7654
+    it("should not unlock the passive of a fainted Pokemon in Hardcore", async () => {
+      const [magby, haunter, abra] = await startEncounterWithoutPassives();
+      // Magby is the only Pokemon without a passive
+      faint(magby);
+      haunter.passive = true;
+      abra.passive = true;
+      game.challengeMode.overrideGameWithChallenges(Challenges.HARDCORE, 1, 1);
+
+      const [newMagby] = await acceptTransformation();
+
+      expect(newMagby.passive).toBe(false);
+    });
+
+    it("should be able to unlock the passive of a fainted Pokemon outside of Hardcore", async () => {
+      const [magby, haunter, abra] = await startEncounterWithoutPassives();
+      // Magby is the only Pokemon without a passive
+      faint(magby);
+      haunter.passive = true;
+      abra.passive = true;
+
+      const [newMagby] = await acceptTransformation();
+
+      expect(newMagby.passive).toBe(true);
+    });
+
+    it("should unlock the passive of a non-fainted Pokemon in Hardcore", async () => {
+      const [magby, haunter] = await startEncounterWithoutPassives();
+      // Abra is the only non-fainted Pokemon without a passive
+      faint(magby);
+      haunter.passive = true;
+      game.challengeMode.overrideGameWithChallenges(Challenges.HARDCORE, 1, 1);
+
+      const [newMagby, , newAbra] = await acceptTransformation();
+
+      expect(newMagby.passive).toBe(false);
+      expect(newAbra.passive).toBe(true);
+    });
+  });
+
   describe("Option 2 - Battle Future Self", () => {
     it("should have the correct properties", () => {
       const option = WeirdDreamEncounter.options[1];
@@ -218,6 +295,68 @@ describe("Weird Dream - Mystery Encounter", () => {
         modifierSelectHandler.options[5].modifierTypeOption.type.tier
           - modifierSelectHandler.options[5].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.GREAT);
+    });
+  });
+
+  describe("Option 2 - Battle Future Self - passive reward", () => {
+    /**
+     * Start the battle against the transformed team, then clear every passive in the player's party
+     * so that any passive found after the rewards was unlocked by the encounter.
+     * @returns The player's party, in `defaultParty` order (Magby, Haunter, Abra)
+     */
+    async function startBattleWithoutPassives() {
+      await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
+      await runMysteryEncounterToEnd(game, 2, undefined, true);
+
+      const party = scene.getPlayerParty();
+      for (const pokemon of party) {
+        pokemon.passive = false;
+      }
+      return party;
+    }
+
+    /** Win the battle and run the rewards phase, where the passive is unlocked */
+    async function collectRewards() {
+      await skipBattleRunMysteryEncounterRewardsPhase(game);
+    }
+
+    // https://github.com/pagefaultgames/pokerogue/issues/7654
+    it("should not unlock the passive of a fainted Pokemon in Hardcore", async () => {
+      const [magby, haunter, abra] = await startBattleWithoutPassives();
+      // Magby is the only Pokemon without a passive
+      faint(magby);
+      haunter.passive = true;
+      abra.passive = true;
+      game.challengeMode.overrideGameWithChallenges(Challenges.HARDCORE, 1, 1);
+
+      await collectRewards();
+
+      expect(magby.passive).toBe(false);
+    });
+
+    it("should be able to unlock the passive of a fainted Pokemon outside of Hardcore", async () => {
+      const [magby, haunter, abra] = await startBattleWithoutPassives();
+      // Magby is the only Pokemon without a passive
+      faint(magby);
+      haunter.passive = true;
+      abra.passive = true;
+
+      await collectRewards();
+
+      expect(magby.passive).toBe(true);
+    });
+
+    it("should unlock the passive of a non-fainted Pokemon in Hardcore", async () => {
+      const [magby, haunter, abra] = await startBattleWithoutPassives();
+      // Abra is the only non-fainted Pokemon without a passive
+      faint(magby);
+      haunter.passive = true;
+      game.challengeMode.overrideGameWithChallenges(Challenges.HARDCORE, 1, 1);
+
+      await collectRewards();
+
+      expect(magby.passive).toBe(false);
+      expect(abra.passive).toBe(true);
     });
   });
 
