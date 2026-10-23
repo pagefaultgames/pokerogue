@@ -182621,7 +182621,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 109,
     "move": "CONFUSE_RAY",
     "level": 1,
@@ -182630,7 +182630,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 271,
     "move": "TRICK",
     "level": 1,
@@ -182639,7 +182639,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 310,
     "move": "ASTONISH",
     "level": 1,
@@ -182648,7 +182648,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 670,
     "move": "LEAFAGE",
     "level": 4,
@@ -182657,7 +182657,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 425,
     "move": "SHADOW_SNEAK",
     "level": 6,
@@ -182666,7 +182666,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 567,
     "move": "TRICK_OR_TREAT",
     "level": 6,
@@ -182675,7 +182675,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 75,
     "move": "RAZOR_LEAF",
     "level": 11,
@@ -182684,7 +182684,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 73,
     "move": "LEECH_SEED",
     "level": 16,
@@ -182693,7 +182693,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 331,
     "move": "BULLET_SEED",
     "level": 20,
@@ -182702,7 +182702,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 184,
     "move": "SCARY_FACE",
     "level": 23,
@@ -182711,7 +182711,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 388,
     "move": "WORRY_SEED",
     "level": 26,
@@ -182720,7 +182720,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 402,
     "move": "SEED_BOMB",
     "level": 30,
@@ -182729,7 +182729,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 95,
     "move": "HYPNOSIS",
     "level": 33,
@@ -182738,7 +182738,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 247,
     "move": "SHADOW_BALL",
     "level": 36,
@@ -182747,7 +182747,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 220,
     "move": "PAIN_SPLIT",
     "level": 42,
@@ -182756,7 +182756,7 @@
   {
     "dexNum": 710,
     "id": "PUMPKABOO",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 438,
     "move": "POWER_WHIP",
     "level": 48,
@@ -183422,7 +183422,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 109,
     "move": "CONFUSE_RAY",
     "level": 1,
@@ -183431,7 +183431,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 153,
     "move": "EXPLOSION",
     "level": 1,
@@ -183440,7 +183440,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 271,
     "move": "TRICK",
     "level": 1,
@@ -183449,7 +183449,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 310,
     "move": "ASTONISH",
     "level": 1,
@@ -183458,7 +183458,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 670,
     "move": "LEAFAGE",
     "level": 4,
@@ -183467,7 +183467,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 425,
     "move": "SHADOW_SNEAK",
     "level": 6,
@@ -183476,7 +183476,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 567,
     "move": "TRICK_OR_TREAT",
     "level": 6,
@@ -183485,7 +183485,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 75,
     "move": "RAZOR_LEAF",
     "level": 11,
@@ -183494,7 +183494,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 73,
     "move": "LEECH_SEED",
     "level": 16,
@@ -183503,7 +183503,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 331,
     "move": "BULLET_SEED",
     "level": 20,
@@ -183512,7 +183512,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 184,
     "move": "SCARY_FACE",
     "level": 23,
@@ -183521,7 +183521,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 388,
     "move": "WORRY_SEED",
     "level": 26,
@@ -183530,7 +183530,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 402,
     "move": "SEED_BOMB",
     "level": 30,
@@ -183539,7 +183539,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 95,
     "move": "HYPNOSIS",
     "level": 33,
@@ -183548,7 +183548,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 247,
     "move": "SHADOW_BALL",
     "level": 36,
@@ -183557,7 +183557,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 220,
     "move": "PAIN_SPLIT",
     "level": 42,
@@ -183566,7 +183566,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 566,
     "move": "PHANTOM_FORCE",
     "level": 48,
@@ -183575,7 +183575,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 585,
     "move": "MOONBLAST",
     "level": 57,
@@ -183584,7 +183584,7 @@
   {
     "dexNum": 711,
     "id": "GOURGEIST",
-    "form": "super",
+    "form": "jumbo",
     "moveId": 438,
     "move": "POWER_WHIP",
     "level": 70,
