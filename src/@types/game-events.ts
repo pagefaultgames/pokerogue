@@ -55,6 +55,8 @@ export interface EventSpriteOptions {
    * An Array of tuples [source, target] for replacing images during events.
    * Source is the image key and target is the literal filename of the replacement image (without file extension).
    * The image has to be in the `events` folder for it to work.
+   * @remarks
+   * Atlas replacements will also need a `.json` to work
    */
   readonly imageReplacements?: readonly EventImageReplacement[];
   /**

@@ -1455,7 +1455,9 @@ export function initAbilities() {
         () => 0,
       )
       .conditionalAttr(
-        p => !p.hasSpecies(SpeciesId.BATTLE_BOND_GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        p =>
+          ((p.species.speciesId !== SpeciesId.BATTLE_BOND_GRENINJA && !p.isFusion()) || p.isFusion())
+          && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
         PostVictoryStatStageChangeAbAttr,
         groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1),
       )

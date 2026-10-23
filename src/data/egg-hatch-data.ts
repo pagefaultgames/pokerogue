@@ -60,6 +60,7 @@ export class EggHatchData {
       passiveAttr: currStarterDataEntry.passiveAttr,
       valueReduction: currStarterDataEntry.valueReduction,
       classicWinCount: currStarterDataEntry.classicWinCount,
+      pity: currStarterDataEntry.pity,
     };
   }
 
