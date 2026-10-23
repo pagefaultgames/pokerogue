@@ -37,6 +37,11 @@ export const timedEvents: readonly TimedEvent[] = [
     ],
     sprites: {
       trainerReplacements: [[TrainerType.RIVAL, "halloween_rival"]],
+      imageReplacements: [
+        ["pkmn__sub", "subcharx"],
+        ["pkmn__back__sub", "subcharxback"],
+        ["training_session_gear", "training_session_gearcharx"],
+      ],
     },
     shinyEncounterMultiplier: 2,
     shinyCatchMultiplier: 3,
