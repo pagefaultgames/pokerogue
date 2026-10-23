@@ -1,5 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { settings } from "#app/global-settings-manager";
+import { initSoundFadeOverride } from "#app/soundfade-override";
 import { FixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
@@ -143,48 +144,54 @@ export function initGameSpeed(scene: BattleScene): void {
 
   // TODO: TypeScript has comically terrible inference support for overwriting functions declared as callable interfaces
   // (hence why this code is so verbose and type-assertion heavy)
-  const originalFadeOut = SoundFade.fadeOut;
-  SoundFade.fadeOut = ((
-    ...args:
-      | [scene: Phaser.Scene, sound: string | Phaser.Sound.BaseSound, duration: number, destroy?: boolean | undefined]
-      | [sound: string | Phaser.Sound.BaseSound, duration: number, destroy?: boolean | undefined]
-  ): Phaser.Sound.BaseSound => {
-    if (typeof args[1] === "number") {
-      // no scene included; duration is at index 1
-      (args[1] as number) = applyGameSpeedMult(args[1] as number);
-    } else {
-      // scene included in parameter list; duration is at index 2
-      (args[2] as number) = applyGameSpeedMult(args[2] as number);
-    }
-    return originalFadeOut(...(args as Parameters<typeof originalFadeOut>));
-  }) satisfies typeof originalFadeOut;
-
-  const originalFadeIn = SoundFade.fadeIn;
-  SoundFade.fadeIn = ((
+  // TODO: can the params/etc situation be improved now that `SoundFade` is no longer directly modified?
+  const newFadeOut = ((
     ...args:
       | [
           scene: Phaser.Scene,
           sound: string | Phaser.Sound.BaseSound,
-          duration: number,
+          duration: number | FixedInt,
+          destroy?: boolean | undefined,
+        ]
+      | [sound: string | Phaser.Sound.BaseSound, duration: number | FixedInt, destroy?: boolean | undefined]
+  ): Phaser.Sound.BaseSound => {
+    if (typeof args[1] === "number" || args[1] instanceof FixedInt) {
+      // no scene included; duration is at index 1
+      args[1] = applyGameSpeedMult(args[1]);
+    } else {
+      // scene included in parameter list; duration is at index 2
+      args[2] = applyGameSpeedMult(args[2] as number);
+    }
+    return SoundFade.fadeOut(...(args as Parameters<typeof SoundFade.fadeOut>));
+  }) satisfies typeof SoundFade.fadeOut;
+
+  const newFadeIn = ((
+    ...args:
+      | [
+          scene: Phaser.Scene,
+          sound: string | Phaser.Sound.BaseSound,
+          duration: number | FixedInt,
           endVolume?: number | undefined,
           startVolume?: number | undefined,
         ]
       | [
           sound: string | Phaser.Sound.BaseSound,
-          duration: number,
+          duration: number | FixedInt,
           endVolume?: number | undefined,
           startVolume?: number | undefined,
         ]
   ): Phaser.Sound.BaseSound => {
-    if (typeof args[1] === "number") {
+    if (typeof args[1] === "number" || args[1] instanceof FixedInt) {
       // no scene included; duration is at index 1
-      (args[1] as number) = applyGameSpeedMult(args[1] as number);
+      args[1] = applyGameSpeedMult(args[1]);
     } else {
       // scene included in parameter list; duration is at index 2
-      (args[2] as number) = applyGameSpeedMult(args[2] as number);
+      args[2] = applyGameSpeedMult(args[2]!);
     }
-    return originalFadeIn(...(args as Parameters<typeof originalFadeIn>));
-  }) satisfies typeof originalFadeIn;
+    return SoundFade.fadeIn(...(args as Parameters<typeof SoundFade.fadeIn>));
+  }) satisfies typeof SoundFade.fadeIn;
+
+  initSoundFadeOverride(newFadeIn, newFadeOut);
 
   // #endregion SoundFade overrides
 
