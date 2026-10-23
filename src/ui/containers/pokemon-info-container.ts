@@ -266,18 +266,11 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     pokemon: Pokemon,
     showMoves = false,
     speedMultiplier = 1,
-    dexEntry?: DexEntry,
-    starterEntry?: StarterDataEntry,
+    dexEntry: DexEntry = globalScene.gameData.dexData[pokemon.species.speciesId],
+    starterEntry: StarterDataEntry = globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()],
     eggInfo = false,
   ): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!dexEntry) {
-        dexEntry = globalScene.gameData.dexData[pokemon.species.speciesId];
-      }
-      if (!starterEntry) {
-        starterEntry = globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()];
-      }
-
       const caughtAttr = BigInt(dexEntry.caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
