@@ -35,6 +35,9 @@ export const timedEvents: readonly TimedEvent[] = [
       "pl",
       "uk",
     ],
+    sprites: {
+      trainerReplacements: [[TrainerType.RIVAL, "halloween_rival"]],
+    },
     shinyEncounterMultiplier: 2,
     shinyCatchMultiplier: 3,
     extraCatchCandy: 1,
