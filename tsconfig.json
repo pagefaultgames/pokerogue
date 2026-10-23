@@ -114,5 +114,5 @@
   // We also don't add the `.github/scripts/` directory here as those files
   // need different settings to ensure they can be run by Node without issues.
   "include": ["*.ts", "src", "test", "scripts/**/*.boilerplate.ts"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["assets", "dist", "locales", "node_modules"]
 }
