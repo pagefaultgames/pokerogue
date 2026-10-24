@@ -1301,6 +1301,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               error = true;
               break;
             }
+            if (this.eggMoves.length === 0) {
+              error = true;
+              this.showText(i18next.t("pokedexUiHandler:noEggMoves"));
+              break;
+            }
 
             this.blockInput = true;
 
@@ -2009,11 +2014,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option.
-            const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
-              speciesDataRegistry.getStarterCost(this.starterId),
-              hatchCount,
-            );
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.starterId));
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
               handler: () => {

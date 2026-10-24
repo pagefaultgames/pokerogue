@@ -72,10 +72,9 @@ export function isValueReductionAvailable(speciesId: number, gameData = globalSc
  */
 export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   const starterId = speciesDataRegistry.getStarter(speciesId);
-  const hatchCount = gameData.dexData[starterId].hatchedCount;
   return (
     gameData.starterData[starterId].candyCount
-    >= getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(starterId), hatchCount)
+    >= getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(starterId))
   );
 }
 
