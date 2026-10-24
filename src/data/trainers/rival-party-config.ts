@@ -1,3 +1,5 @@
+import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
@@ -159,8 +161,12 @@ const SLOT_1_FINAL = [
  * @param bars - (default `0`) The number of boss bar segments to set. If `zero`, the pokemon will not be a boss
  * @param useRivalSignature - (default `false`) Whether to use the rival signature move when generating the moveset.
  */
-
-function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, useRivalSignature = false): void {
+function forceRivalBirdAbility(
+  pokemon: EnemyPokemon,
+  bars = 0,
+  useRivalSignature = false,
+  forceGutsFlameOrb = false,
+): void {
   switch (pokemon.species.speciesId) {
     // Keen Eye for Pidgey line
     case SpeciesId.PIDGEY:
@@ -202,6 +208,11 @@ function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, useRivalSignatur
     }
   }
 
+  // force swellow to spawn with flame orb if it has guts
+  if (forceGutsFlameOrb && pokemon.hasAbility(AbilityId.GUTS)) {
+    pokemon.heldItemManager.add(HeldItemId.FLAME_ORB);
+  }
+
   if (bars > 0) {
     pokemon.setBoss(true, bars);
   }
@@ -209,6 +220,7 @@ function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, useRivalSignatur
     pokemon.generateAndPopulateMoveset(useRivalSignature);
   }
 }
+
 /** Rival's slot 2 species pool for fight 1 */
 const SLOT_2_FIGHT_1 = [
   SpeciesId.PIDGEY,
@@ -411,6 +423,7 @@ function postProcessSlot4Fight3(pokemon: EnemyPokemon): void {
     }
   }
 }
+
 /** Rival's slot 4 species pool for fight 3 */
 const SLOT_4_FIGHT_3 = [
   SpeciesId.CLEFABLE,
@@ -709,7 +722,7 @@ export const RIVAL_5_POOL: RivalPoolConfig = [
 /** Pools for the sixth rival fight */
 export const RIVAL_6_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 3, true) },
-  { pool: SLOT_2_FINAL, postProcess: p => forceRivalBirdAbility(p, 2, true) },
+  { pool: SLOT_2_FINAL, postProcess: p => forceRivalBirdAbility(p, 2, true, true) },
   {
     pool: SLOT_3_FINAL,
     postProcess: p => (p.level = SLOT_3_FIGHT_6_LEVEL),

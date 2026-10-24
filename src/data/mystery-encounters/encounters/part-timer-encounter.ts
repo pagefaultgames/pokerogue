@@ -5,8 +5,8 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Stat } from "#enums/stat";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { MoneyMultiplierModifier } from "#modifiers/modifier";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
@@ -22,7 +22,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -346,7 +346,7 @@ function doSalesSfx() {
 
 function applyMoneyMultipliers(moneyMultiplier: number): number {
   const moneyChange = new NumberHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
-  globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyChange);
+  globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyChange });
   updatePlayerMoney(moneyChange.value, true, false);
 
   return moneyChange.value;

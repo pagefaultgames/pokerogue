@@ -77,7 +77,7 @@ export class MenuUiHandler extends OptionSelectUiHandler {
     this.excludedMenus = () =>
       [
         {
-          dimmed: globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase"),
+          dimmed: globalScene.phaseManager.getCurrentPhase().is("SelectRewardPhase"),
           options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
         },
         { excluded: bypassLogin, options: [MenuOptions.LOG_OUT] },
