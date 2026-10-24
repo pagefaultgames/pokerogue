@@ -6,7 +6,7 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import { TabMenu } from "#ui/tab-menu";
-import { addTextObject } from "#ui/text";
+import { addTextObject, enableTextCopyShadows } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getRibbonsToAward } from "#utils/challenge-utils";
@@ -122,8 +122,9 @@ export class GameChallengesUiHandler extends UiHandler {
     })
       .setName("text-desc")
       .setScale(1 / 6)
-      .setShadow(4, 5, ShadowColor.ORANGE)
+      .setShadow((4 * 84) / 96, (5 * 84) / 96, ShadowColor.ORANGE)
       .setOrigin(0);
+    enableTextCopyShadows(this.descriptionText);
     globalScene.add.existing(this.descriptionText);
     this.descriptionTextBaseY = this.descriptionText.y;
     this.descriptionTextMaxHeight = descriptionBg.height - 8;
@@ -234,7 +235,13 @@ export class GameChallengesUiHandler extends UiHandler {
    * @param text - The text to set
    */
   private setDescription(text: string): void {
-    this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${text}`);
+    const descriptionWithBaseStyleRestored = text.replaceAll(
+      "[/shadow][/color]",
+      `[/shadow][/color][color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]`,
+    );
+    this.descriptionText.setText(
+      `[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${descriptionWithBaseStyleRestored}`,
+    );
     this.updateDescriptionScroll();
   }
 
