@@ -1093,17 +1093,19 @@ export class SummaryUiHandler extends UiHandler {
         profileContainerMemoTitle.setOrigin(0, 0.5);
         profileContainer.add(profileContainerMemoTitle);
 
-        const memoString = i18next.t("pokemonSummary:memoString", {
-          metFragment: i18next.t(
-            `pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`,
-            {
-              biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
-              level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
-              wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${closeFragment}`,
-            },
-          ),
-          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature }),
-        });
+        const memoString =
+          closeFragment
+          + i18next.t("pokemonSummary:memoString", {
+            metFragment: i18next.t(
+              `pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`,
+              {
+                biome: `${getBBCodeFrag(getBiomeName(this.pokemon?.metBiome!), TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+                level: `${getBBCodeFrag(this.pokemon?.metLevel.toString()!, TextStyle.SUMMARY_RED)}${closeFragment}`, // TODO: is this bang correct?
+                wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${closeFragment}`,
+              },
+            ),
+            natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature }),
+          });
 
         const memoText = addBBCodeTextObject(7, 113, String(memoString), TextStyle.WINDOW_ALT);
         memoText.setOrigin(0, 0);
