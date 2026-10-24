@@ -50,7 +50,7 @@ export interface ExpBoostParams extends DefaultHeldItemParams {
   readonly expAmount: ValueHolder<number>;
 }
 
-export interface FieldEffectParams extends DefaultHeldItemParams {
+export interface FieldEffectExtendParams extends DefaultHeldItemParams {
   /** Holder for the field effect duration*/
   readonly fieldDuration: ValueHolder<number>;
 }
@@ -133,7 +133,7 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.ENDURE_CHANCE]: EndureChanceParams;
   [HeldItemEffect.BYPASS_SPEED_CHANCE]: BypassSpeedChanceParams;
   [HeldItemEffect.FLINCH_CHANCE]: FlinchChanceParams;
-  [HeldItemEffect.FIELD_EFFECT]: FieldEffectParams;
+  [HeldItemEffect.FIELD_EFFECT_EXTEND]: FieldEffectExtendParams;
   [HeldItemEffect.FRIENDSHIP_BOOSTER]: FriendshipBoostParams;
   [HeldItemEffect.NATURE_WEIGHT_BOOSTER]: NatureWeightBoostParams;
   [HeldItemEffect.ACCURACY_BOOSTER]: AccuracyBoostParams;

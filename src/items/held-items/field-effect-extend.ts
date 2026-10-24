@@ -1,15 +1,14 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemAttr } from "#items/held-item-attr";
-import type { FieldEffectParams } from "#types/held-item-parameter";
+import type { FieldEffectExtendParams } from "#types/held-item-parameter";
 
 /**
  * Attribute for held items that extend the duration of weather and terrain effects.
  * Used for Mystical Rock.
  * @sealed
  */
-// TODO: Rename this to be more descriptive
-export class FieldEffectHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.FIELD_EFFECT> {
-  public override readonly effect = HeldItemEffect.FIELD_EFFECT;
+export class FieldEffectExtendHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.FIELD_EFFECT_EXTEND> {
+  public override readonly effect = HeldItemEffect.FIELD_EFFECT_EXTEND;
 
   private readonly turns: number;
 
@@ -22,7 +21,7 @@ export class FieldEffectHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
    * Provides two more turns per stack to any weather or terrain effect caused
    * by the holder.
    */
-  public override apply({ pokemon, fieldDuration }: FieldEffectParams): void {
+  public override apply({ pokemon, fieldDuration }: FieldEffectExtendParams): void {
     fieldDuration.value += this.turns * pokemon.heldItemManager.getStack(this.type);
   }
 }

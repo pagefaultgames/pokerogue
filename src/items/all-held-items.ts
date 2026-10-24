@@ -29,7 +29,7 @@ import { DamageMoneyRewardHeldItemAttr } from "#items/damage-money-reward";
 import { EndureChanceHeldItemAttr } from "#items/endure-chance";
 import { GimmighoulEvoTrackerHeldItem } from "#items/evo-tracker";
 import { ExpBoosterHeldItemAttr } from "#items/exp-booster";
-import { FieldEffectHeldItemAttr } from "#items/field-effect";
+import { FieldEffectExtendHeldItemAttr } from "#items/field-effect-extend";
 import { FlinchChanceHeldItemAttr } from "#items/flinch-chance";
 import { FormChangeHeldItem } from "#items/form-change-item";
 import { FriendshipBoosterHeldItemAttr } from "#items/friendship-booster";
@@ -182,7 +182,7 @@ const heldItems = {
     .attr(FlinchChanceHeldItemAttr, 10)
     .build(),
   [HeldItemId.MYSTICAL_ROCK]: new HeldItemBuilder(HeldItemId.MYSTICAL_ROCK, 2) //
-    .attr(FieldEffectHeldItemAttr, 2)
+    .attr(FieldEffectExtendHeldItemAttr, 2)
     .build(),
   [HeldItemId.SOUL_DEW]: new HeldItemBuilder(HeldItemId.SOUL_DEW, 10) //
     .attr(NatureWeightBoosterHeldItemAttr)
