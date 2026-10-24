@@ -26,6 +26,7 @@ import { BerryHeldItemAttr } from "#items/berry";
 import { BypassSpeedChanceHeldItemAttr } from "#items/bypass-speed-chance";
 import { CritBoostHeldItemAttr, SpeciesCritBoostHeldItemAttr } from "#items/crit-booster";
 import { DamageMoneyRewardHeldItemAttr } from "#items/damage-money-reward";
+import { EndureChanceHeldItemAttr } from "#items/endure-chance";
 import { GimmighoulEvoTrackerHeldItem } from "#items/evo-tracker";
 import { ExpBoosterHeldItemAttr } from "#items/exp-booster";
 import { FieldEffectHeldItemAttr } from "#items/field-effect";
@@ -42,7 +43,6 @@ import { MultiHitCountHeldItemAttr, MultiHitDamageModifyHeldItemAttr } from "#it
 import { NatureWeightBoosterHeldItemAttr } from "#items/nature-weight-booster";
 import { ResetNegativeStatStageHeldItemAttr } from "#items/reset-negative-stat-stage";
 import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
-import { SurviveChanceHeldItemAttr } from "#items/survive-chance";
 import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
@@ -174,7 +174,7 @@ const heldItems = {
     .iconName("shell_bell")
     .build(),
 
-  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(), //
+  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(EndureChanceHeldItemAttr).build(), //
   [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
     .attr(BypassSpeedChanceHeldItemAttr, 10)
     .build(),

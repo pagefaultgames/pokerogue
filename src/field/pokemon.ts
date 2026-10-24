@@ -4103,7 +4103,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (!surviveDamage.value) {
-        applyHeldItems(HeldItemEffect.SURVIVE_CHANCE, { pokemon: this, surviveDamage });
+        applyHeldItems(HeldItemEffect.ENDURE_CHANCE, { pokemon: this, endure: surviveDamage });
       }
 
       if (surviveDamage.value) {

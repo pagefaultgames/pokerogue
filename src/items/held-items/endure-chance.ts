@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemAttr } from "#items/held-item-attr";
-import type { SurviveChanceParams } from "#types/held-item-parameter";
+import type { EndureChanceParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 /**
@@ -10,15 +10,14 @@ import i18next from "i18next";
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Focus_Band}
  * @sealed
  */
-// TODO: Rename to "endure chance" for clarity
-export class SurviveChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.SURVIVE_CHANCE> {
-  public override readonly effect = HeldItemEffect.SURVIVE_CHANCE;
+export class EndureChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.ENDURE_CHANCE> {
+  public override readonly effect = HeldItemEffect.ENDURE_CHANCE;
 
-  public override shouldApply({ pokemon, surviveDamage }: SurviveChanceParams): boolean {
+  public override shouldApply({ pokemon, endure: surviveDamage }: EndureChanceParams): boolean {
     return !surviveDamage.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getStack(this.type);
   }
 
-  public override apply({ pokemon, surviveDamage }: SurviveChanceParams): void {
+  public override apply({ pokemon, endure: surviveDamage }: EndureChanceParams): void {
     surviveDamage.value = true;
 
     globalScene.phaseManager.queueMessage(

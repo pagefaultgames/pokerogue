@@ -109,9 +109,9 @@ export interface StatBoostParams extends DefaultHeldItemParams {
   readonly statHolder: ValueHolder<number>;
 }
 
-export interface SurviveChanceParams extends DefaultHeldItemParams {
+export interface EndureChanceParams extends DefaultHeldItemParams {
   /** Whether damage is endured */
-  readonly surviveDamage: ValueHolder<boolean>;
+  readonly endure: ValueHolder<boolean>;
 }
 
 export interface TurnEndHealParams extends DefaultHeldItemParams {}
@@ -130,7 +130,7 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.STAT_MULTIPLY]: StatBoostParams;
   [HeldItemEffect.CRIT_BOOST]: CritBoostParams;
   [HeldItemEffect.TURN_END_STATUS]: TurnEndStatusParams;
-  [HeldItemEffect.SURVIVE_CHANCE]: SurviveChanceParams;
+  [HeldItemEffect.ENDURE_CHANCE]: EndureChanceParams;
   [HeldItemEffect.BYPASS_SPEED_CHANCE]: BypassSpeedChanceParams;
   [HeldItemEffect.FLINCH_CHANCE]: FlinchChanceParams;
   [HeldItemEffect.FIELD_EFFECT]: FieldEffectParams;
