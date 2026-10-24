@@ -49,8 +49,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private transferButtonWidth: number;
   private checkButtonWidth: number;
 
-  public options: ModifierOption[] = [];
-  public shopOptionsRows: ModifierOption[][] = [];
+  public options: RewardSelectOption[] = [];
+  public shopOptionsRows: RewardSelectOption[][] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
 
@@ -212,7 +212,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     for (let m = 0; m < typeOptions.length; m++) {
       const sliceWidth = globalScene.scaledCanvas.width / (typeOptions.length + 2);
-      const option = new ModifierOption(
+      const option = new RewardSelectOption(
         sliceWidth * (m + 1) + sliceWidth * 0.5,
         -globalScene.scaledCanvas.height / 2 + optionsYOffset,
         typeOptions[m],
@@ -236,7 +236,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         row ? undefined : SHOP_OPTIONS_ROW_LIMIT,
       );
       const sliceWidth = globalScene.scaledCanvas.width / (rowOptions.length + 2);
-      const option = new ModifierOption(
+      const option = new RewardSelectOption(
         sliceWidth * (col + 1) + sliceWidth * 0.5,
         -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - (42 - (28 * row - 1)),
         shopTypeOptions[m],
@@ -784,8 +784,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   }
 }
 
-// TODO: Rename
-class ModifierOption extends Phaser.GameObjects.Container {
+class RewardSelectOption extends Phaser.GameObjects.Container {
   public rewardOption: RewardOption;
   private pb: Phaser.GameObjects.Sprite;
   private pbTint: Phaser.GameObjects.Sprite;
