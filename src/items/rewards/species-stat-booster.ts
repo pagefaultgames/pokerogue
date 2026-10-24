@@ -1,11 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
+import type { SpeciesStatBoosterItemId } from "#enums/held-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { RewardGenerator } from "#items/reward";
-import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
+import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
 import { randSeedInt } from "#utils/common";
 import { HeldItemReward } from "./held-item-reward";
 

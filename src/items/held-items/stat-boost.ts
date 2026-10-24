@@ -1,6 +1,5 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import { HeldItemAttr } from "#items/held-item-attr";
@@ -70,15 +69,6 @@ export class EvolutionStatBoostHeldItemAttr extends StatMultiplyHeldItemAttr {
     statHolder.value *= 1 + boost;
   }
 }
-
-// TODO: Stop littering these types all over the codebase and move them to 1 file
-export type SpeciesStatBoosterItemId =
-  | typeof HeldItemId.LIGHT_BALL
-  | typeof HeldItemId.THICK_CLUB
-  | typeof HeldItemId.METAL_POWDER
-  | typeof HeldItemId.QUICK_POWDER
-  | typeof HeldItemId.DEEP_SEA_SCALE
-  | typeof HeldItemId.DEEP_SEA_TOOTH;
 
 export class SpeciesStatBoostHeldItemAttr extends StatMultiplyHeldItemAttr {
   /** The species that the held item's stat boost(s) apply to */

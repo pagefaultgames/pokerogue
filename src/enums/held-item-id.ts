@@ -220,6 +220,14 @@ export type TypeBoostItemId =
   | typeof HeldItemId.BLACK_GLASSES
   | typeof HeldItemId.FAIRY_FEATHER;
 
+export type SpeciesStatBoosterItemId =
+  | typeof HeldItemId.LIGHT_BALL
+  | typeof HeldItemId.THICK_CLUB
+  | typeof HeldItemId.METAL_POWDER
+  | typeof HeldItemId.QUICK_POWDER
+  | typeof HeldItemId.DEEP_SEA_SCALE
+  | typeof HeldItemId.DEEP_SEA_TOOTH;
+
 export const berryItemIds = [
   HeldItemId.SITRUS_BERRY,
   HeldItemId.LUM_BERRY,
