@@ -3,33 +3,30 @@ import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import type { BooleanHolder, NumberHolder } from "#utils/common";
 import type { ValueHolder } from "#utils/value-holder";
-
-// TODO: Make all these readonly
 
 /** Base interface for all held item parameter types. */
 export interface DefaultHeldItemParams {
   /** The pokemon with the item */
-  pokemon: Pokemon;
+  readonly pokemon: Pokemon;
 }
 
 export interface AccuracyBoostParams extends DefaultHeldItemParams {
   /** Holds the move's accuracy, which may be modified after item application */
-  moveAccuracy: NumberHolder;
+  readonly moveAccuracy: ValueHolder<number>;
 }
 
 export interface AttackTypeBoostParams extends DefaultHeldItemParams {
   /** The resolved type of the move */
-  moveType: PokemonType;
+  readonly moveType: PokemonType;
   /** Holder for the damage value */
   // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2119660807
-  movePower: NumberHolder;
+  readonly movePower: ValueHolder<number>;
 }
 
 export interface BaseStatParams extends DefaultHeldItemParams {
   /** Array of the pokemon's base stats; modified in place after item application */
-  baseStats: number[];
+  readonly baseStats: number[];
 }
 
 export interface BatonParams extends DefaultHeldItemParams {}
@@ -40,32 +37,32 @@ export interface BypassSpeedChanceParams extends DefaultHeldItemParams {}
 
 export interface CritBoostParams extends DefaultHeldItemParams {
   /** The critical hit stage */
-  critStage: NumberHolder;
+  readonly critStage: ValueHolder<number>;
 }
 
 export interface DamageMoneyRewardParams extends DefaultHeldItemParams {
   /** The damage, used to calculate the money reward */
-  damage: number;
+  readonly damage: number;
 }
 
 export interface ExpBoostParams extends DefaultHeldItemParams {
   /** Holds the amount of experience gained, which may be modified after item application */
-  expAmount: NumberHolder;
+  readonly expAmount: ValueHolder<number>;
 }
 
 export interface FieldEffectParams extends DefaultHeldItemParams {
   /** Holder for the field effect duration*/
-  fieldDuration: NumberHolder;
+  readonly fieldDuration: ValueHolder<number>;
 }
 
 export interface FlinchChanceParams extends DefaultHeldItemParams {
   /** Holds whether the attack will cause a flinch */
-  flinched: BooleanHolder;
+  readonly flinched: ValueHolder<boolean>;
 }
 
 export interface FriendshipBoostParams extends DefaultHeldItemParams {
   /** Holder for the friendship amount to be changed by the item */
-  friendship: NumberHolder;
+  readonly friendship: ValueHolder<number>;
 }
 
 export interface HitHealParams extends DefaultHeldItemParams {}
@@ -75,46 +72,46 @@ export interface InstantReviveParams extends DefaultHeldItemParams {
    * Set to `true` by applied attributes that queue a revive, allowing callers
    * (i.e. {@linkcode FaintPhase}) to skip faint handling.
    */
-  reviveApplied?: ValueHolder<boolean>;
+  readonly reviveApplied?: ValueHolder<boolean>;
 }
 
 export interface ItemStealParams extends DefaultHeldItemParams {
   /** The pokemon to steal from (optional) */
   // TODO: This should not be optional
-  target?: Pokemon;
+  readonly target?: Pokemon;
 }
 
 export interface MultiHitCountParams extends DefaultHeldItemParams {
   /** The move being used */
-  moveId: MoveId;
+  readonly moveId: MoveId;
   /** Holder for the move's hit count for the turn */
-  count: NumberHolder;
+  readonly count: ValueHolder<number>;
 }
 
 export interface MultiHitDamageParams extends DefaultHeldItemParams {
   /** The move being used */
-  moveId: MoveId;
+  readonly moveId: MoveId;
   /** Holder for the damage multiplier applied to a strike of the move */
-  damageMultiplier: NumberHolder;
+  readonly damageMultiplier: ValueHolder<number>;
 }
 
 export interface NatureWeightBoostParams extends DefaultHeldItemParams {
   /** Holder for the multiplier */
-  multiplier: NumberHolder;
+  readonly multiplier: ValueHolder<number>;
 }
 
 export interface ResetNegativeStatStageParams extends DefaultHeldItemParams {}
 
 export interface StatBoostParams extends DefaultHeldItemParams {
   /** The stat whose value is being impacted */
-  stat: Stat;
+  readonly stat: Stat;
   /** Holds the stat's value, which may be modified after item application */
-  statHolder: NumberHolder;
+  readonly statHolder: ValueHolder<number>;
 }
 
 export interface SurviveChanceParams extends DefaultHeldItemParams {
   /** Whether damage is endured */
-  surviveDamage: BooleanHolder;
+  readonly surviveDamage: ValueHolder<boolean>;
 }
 
 export interface TurnEndHealParams extends DefaultHeldItemParams {}
