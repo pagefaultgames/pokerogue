@@ -7,7 +7,7 @@ import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
-import { randSeedInt } from "#utils/common";
+import { weightedPick } from "#utils/random";
 import { HeldItemReward } from "./held-item-reward";
 
 /**
@@ -36,7 +36,7 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
       ? [HeldItemId.LIGHT_BALL, HeldItemId.THICK_CLUB, HeldItemId.METAL_POWDER, HeldItemId.QUICK_POWDER]
       : [HeldItemId.DEEP_SEA_SCALE, HeldItemId.DEEP_SEA_TOOTH];
 
-    const weights = new Array(tierItems.length).fill(0);
+    const itemWeights = new Map<SpeciesStatBoosterItemId, number>();
 
     for (const p of globalScene.getPlayerParty()) {
       const speciesId = p.getSpeciesForm(true).speciesId;
@@ -44,46 +44,29 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
       // TODO: Use commented boolean when Fling is implemented
       const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === MoveId.FLING) */
 
-      for (let i = 0; i < tierItems.length; i++) {
+      for (const item of tierItems) {
         // TODO: Handle this more gracefully with some semblance of encapsulation
         const checkedSpecies = (
-          allHeldItems[tierItems[i]].getAttrs(HeldItemEffect.STAT_MULTIPLY)[0] as SpeciesStatBoostHeldItemAttr
+          allHeldItems[item].getAttrs(HeldItemEffect.STAT_MULTIPLY)[0] as SpeciesStatBoostHeldItemAttr
         ).species;
 
         // If party member already has the item being weighted currently, skip to the next item
-        const hasItem = p.heldItemManager.hasItem(tierItems[i]);
+        const hasItem = p.heldItemManager.hasItem(item);
 
         if (!hasItem) {
           if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
             // Add weight if party member has a matching species or, if applicable, a matching fusion species
-            weights[i]++;
+            itemWeights.set(item, (itemWeights.get(item) ?? 0) + 1);
           } else if (checkedSpecies.includes(SpeciesId.PIKACHU) && hasFling) {
             // Add weight to Light Ball if party member has Fling
-            weights[i]++;
+            itemWeights.set(item, (itemWeights.get(item) ?? 0) + 1);
           }
         }
       }
     }
 
-    // TODO: Replace this with a helper function
-    let totalWeight = 0;
-    for (const weight of weights) {
-      totalWeight += weight;
-    }
-
-    if (totalWeight !== 0) {
-      const randInt = randSeedInt(totalWeight, 1);
-      let weight = 0;
-
-      for (const i in weights) {
-        if (weights[i] !== 0) {
-          const curWeight = weight + weights[i];
-          if (randInt <= weight + weights[i]) {
-            return new HeldItemReward(id, tierItems[i]);
-          }
-          weight = curWeight;
-        }
-      }
+    if (itemWeights.size > 0) {
+      return new HeldItemReward(id, weightedPick(itemWeights));
     }
 
     return null;
