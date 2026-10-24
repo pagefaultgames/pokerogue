@@ -8,8 +8,7 @@ import { tempStatToTrainerItem } from "#items/x-items";
 import { randSeedItem } from "#utils/common";
 
 export class TrainerItemReward extends Reward {
-  // TODO: This should not be public
-  public itemId: TrainerItemId;
+  public readonly itemId: TrainerItemId;
   constructor(id: RewardId, itemId: TrainerItemId, group?: string) {
     super(id, "", "", group, "se/restore");
     this.itemId = itemId;
