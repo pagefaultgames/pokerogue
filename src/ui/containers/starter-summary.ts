@@ -324,10 +324,9 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       .setScale(0.5)
       .setOrigin(0);
 
-    this.pokemonLuckLabelText = addTextObject(8, 89 + 5, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
-      fontSize: "56px",
-    }) //
-      .setOrigin(0);
+    this.pokemonLuckLabelText = //
+      addTextObject(8, 89 + 5, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, { fontSize: "56px" }) //
+        .setOrigin(0);
 
     this.pokemonLuckText = addTextObject(
       8 + this.pokemonLuckLabelText.displayWidth + 2,

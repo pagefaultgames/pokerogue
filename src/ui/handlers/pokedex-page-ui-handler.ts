@@ -404,10 +404,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setOrigin(0);
     this.starterSelectContainer.add(this.type2Icon);
 
-    this.pokemonLuckLabelText = addTextObject(8, 89 + 5, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
-      fontSize: "56px",
-    }) //
-      .setOrigin(0);
+    this.pokemonLuckLabelText = //
+      addTextObject(8, 89 + 5, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, { fontSize: "56px" }) //
+        .setOrigin(0);
     this.starterSelectContainer.add(this.pokemonLuckLabelText);
 
     this.pokemonLuckText = addTextObject(

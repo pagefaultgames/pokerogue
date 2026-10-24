@@ -25,15 +25,15 @@ const shortStats = ["HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD"];
 export class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
-  private statsLabels: Phaser.GameObjects.Text[] = [];
-  private statsRectangles: Phaser.GameObjects.Rectangle[] = [];
-  private statsShadows: Phaser.GameObjects.Rectangle[] = [];
-  private statsTotalLabel: Phaser.GameObjects.Text;
-  private weightText: Phaser.GameObjects.Text;
-  private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
-  private pokemonGrowthRateText: Phaser.GameObjects.Text;
+  private readonly statsLabels: Phaser.GameObjects.Text[] = [];
+  private readonly statsRectangles: Phaser.GameObjects.Rectangle[] = [];
+  private readonly statsShadows: Phaser.GameObjects.Rectangle[] = [];
+  private readonly statsTotalLabel: Phaser.GameObjects.Text;
+  private readonly weightText: Phaser.GameObjects.Text;
+  private readonly pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
+  private readonly pokemonGrowthRateText: Phaser.GameObjects.Text;
 
-  private statsBg: Phaser.GameObjects.NineSlice;
+  private readonly statsBg: Phaser.GameObjects.NineSlice;
 
   public scale: number;
   public width: number;
@@ -50,25 +50,15 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     this.add(this.statsBg);
 
     for (let i = 0; i < 6; i++) {
-      const shadow = globalScene.add.rectangle(
-        this.width - BORDER + 1,
-        BORDER + 3 + i * STATS_SPACING,
-        100,
-        5,
-        0x006860,
-      );
-      shadow.setOrigin(1, 0);
+      const shadow = globalScene.add
+        .rectangle(this.width - BORDER + 1, BORDER + 3 + i * STATS_SPACING, 100, 5, 0x006860)
+        .setOrigin(1, 0);
       this.statsShadows.push(shadow);
       this.add(shadow);
 
-      const rectangle = globalScene.add.rectangle(
-        this.width - BORDER,
-        BORDER + 2 + i * STATS_SPACING,
-        100,
-        5,
-        0x66aa99,
-      );
-      rectangle.setOrigin(1, 0);
+      const rectangle = globalScene.add
+        .rectangle(this.width - BORDER, BORDER + 2 + i * STATS_SPACING, 100, 5, 0x66aa99)
+        .setOrigin(1, 0);
       this.statsRectangles.push(rectangle);
       this.add(rectangle);
 
@@ -99,7 +89,6 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     );
     this.add(this.pokemonGrowthRateText);
 
-    // hide this component for now
     this.setVisible(false);
   }
 
@@ -122,7 +111,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     let growthReadable = toTitleCase(GrowthRate[growthRate]);
     const growthAux = toCamelCase(growthReadable);
     if (i18next.exists("growth:" + growthAux)) {
-      growthReadable = i18next.t(("growth:" + growthAux) as any);
+      growthReadable = i18next.t("growth:" + growthAux);
     }
     this.pokemonGrowthRateText.setText(growthReadable);
     this.pokemonGrowthRateText.setColor(getGrowthRateColor(growthRate));
