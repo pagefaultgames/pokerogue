@@ -291,11 +291,14 @@ export class PokemonBattleData {
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Harvest_(Ability)}
    */
   public berriesEaten: BerryType[] = [];
+  /** Move IDs that have been used against this Pokemon this battle, revealing their effectiveness. */
+  public revealedMoveEffectiveness: MoveId[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
     if (source != null) {
       this.hasEatenBerry = source.hasEatenBerry ?? false;
       this.berriesEaten = source.berriesEaten ?? [];
+      this.revealedMoveEffectiveness = source.revealedMoveEffectiveness ?? [];
     }
   }
 }

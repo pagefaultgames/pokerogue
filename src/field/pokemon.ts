@@ -2138,8 +2138,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const customTypes = this.customPokemonData.types;
 
-    const firstType = customTypes[0] ?? speciesForm.type1;
-    const secondCustomType = customTypes[1] ?? speciesForm.type2;
+    const speciesType1Holder = new ValueHolder(speciesForm.type1);
+    const speciesType2Holder = new ValueHolder(speciesForm.type2);
+    applyChallenges(ChallengeType.SPECIES_TYPE_MODIFY, speciesForm.speciesId, speciesType1Holder, speciesType2Holder);
+
+    const firstType = customTypes[0] ?? speciesType1Holder.value;
+    const secondCustomType = customTypes[1] ?? speciesType2Holder.value;
 
     // Second type
     let secondType: PokemonType | null = secondCustomType;
@@ -2148,8 +2152,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
       const fusionCustomTypes = this.fusionCustomPokemonData?.types ?? [];
 
-      const fusionType1 = fusionCustomTypes[0] ?? fusionSpeciesForm.type1;
-      const fusionType2 = fusionCustomTypes[1] ?? fusionSpeciesForm.type2;
+      const fusionType1Holder = new ValueHolder(fusionSpeciesForm.type1);
+      const fusionType2Holder = new ValueHolder(fusionSpeciesForm.type2);
+      applyChallenges(
+        ChallengeType.SPECIES_TYPE_MODIFY,
+        fusionSpeciesForm.speciesId,
+        fusionType1Holder,
+        fusionType2Holder,
+      );
+
+      const fusionType1 = fusionCustomTypes[0] ?? fusionType1Holder.value;
+      const fusionType2 = fusionCustomTypes[1] ?? fusionType2Holder.value;
 
       // Assign second type if the fusion can provide one
       if (fusionType2 !== null && fusionType2 !== firstType) {

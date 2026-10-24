@@ -35,7 +35,14 @@ import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem, randSeedShuffle } from "#utils/common";
+import {
+  type BooleanHolder,
+  isBetween,
+  type NumberHolder,
+  randSeedInt,
+  randSeedItem,
+  randSeedShuffle,
+} from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
@@ -564,6 +571,21 @@ export abstract class Challenge {
    * @returns Whether this modification was applied
    */
   public applyPassiveAbilityModify(speciesId: SpeciesId, abilityId: ValueHolder<AbilityId>) {
+    return false;
+  }
+
+  /**
+   * Modifies the innate type(s) of a species
+   * @param speciesId - The ID of the species whose type(s) are being modified
+   * @param type1 - A holder for the species' primary type
+   * @param type2 - A holder for the species' secondary type, or `null` if it has none
+   * @returns Whether this modification was applied
+   */
+  public applySpeciesTypeModify(
+    speciesId: SpeciesId,
+    type1: ValueHolder<PokemonType>,
+    type2: ValueHolder<PokemonType | null>,
+  ) {
     return false;
   }
 
@@ -1734,6 +1756,96 @@ export class AbilityRandomizerChallenge extends Challenge {
   }
 }
 
+/** Implements a type randomizer challenge. */
+export class TypeRandomizerChallenge extends Challenge {
+  // Challenge values:
+  // 1 - Same Shape: dual-type species stay dual-typed, mono-type species stay mono-typed
+  // 2 - Always Dual: every species becomes dual-typed
+  // 3 - Random Shape: whether a species is mono- or dual-typed is also randomized
+  constructor() {
+    super(Challenges.TYPE_RANDOMIZER, 3);
+  }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.RANDOMIZER;
+  }
+
+  private static _validTypes: RegularPokemonType[];
+
+  private get validTypes(): RegularPokemonType[] {
+    if (!TypeRandomizerChallenge._validTypes) {
+      TypeRandomizerChallenge._validTypes = getEnumValues(PokemonType).filter(
+        t => t !== PokemonType.UNKNOWN && t !== PokemonType.STELLAR,
+      ) as RegularPokemonType[];
+    }
+    return TypeRandomizerChallenge._validTypes;
+  }
+
+  public override applySpeciesTypeModify(
+    speciesId: SpeciesId,
+    type1: ValueHolder<PokemonType>,
+    type2: ValueHolder<PokemonType | null>,
+  ): boolean {
+    // Randomization is hidden during starter select and pokedex
+    // so the player can't "game the system"
+    const pokedexUiModes = [UiMode.POKEDEX, UiMode.POKEDEX_PAGE, UiMode.POKEDEX_SCAN];
+    const eggHatchUiModes = [UiMode.EGG_HATCH_SCENE, UiMode.EGG_HATCH_SUMMARY];
+    if (
+      [...pokedexUiModes, ...eggHatchUiModes].includes(globalScene.ui.mode)
+      || globalScene.phaseManager.getCurrentPhase().is("SelectStarterPhase")
+    ) {
+      return false;
+    }
+
+    const origType1 = type1.value;
+    const origType2 = type2.value;
+    const origTypes: PokemonType[] = origType2 === null ? [origType1] : [origType1, origType2];
+
+    const seedOffset = 500 * speciesId;
+
+    globalScene.executeWithSeedOffset(() => {
+      switch (this.value) {
+        case 1: // Same Shape
+          type1.value = randSeedItem(this.validTypes.filter(t => t !== origType1)) as RegularPokemonType;
+          type2.value =
+            origType2 === null
+              ? null
+              : (randSeedItem(this.validTypes.filter(t => t !== origType2 && t !== type1.value)) as RegularPokemonType);
+          break;
+        case 2: // Always Dual
+          type1.value = randSeedItem(this.validTypes.filter(t => !origTypes.includes(t))) as RegularPokemonType;
+          type2.value = randSeedItem(
+            this.validTypes.filter(t => !origTypes.includes(t) && t !== type1.value),
+          ) as RegularPokemonType;
+          break;
+        case 3: {
+          // Random Shape
+          const makeDual = !!randSeedInt(2);
+          type1.value = randSeedItem(this.validTypes.filter(t => !origTypes.includes(t))) as RegularPokemonType;
+          type2.value = makeDual
+            ? (randSeedItem(
+                this.validTypes.filter(t => !origTypes.includes(t) && t !== type1.value),
+              ) as RegularPokemonType)
+            : null;
+          break;
+        }
+      }
+    }, seedOffset);
+
+    return true;
+  }
+}
+
+export class HiddenTypesChallenge extends Challenge {
+  constructor() {
+    super(Challenges.HIDDEN_TYPES, 1);
+  }
+
+  public override get category(): ChallengeCategory {
+    return ChallengeCategory.RANDOMIZER;
+  }
+}
+
 /**
  * @param source - A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
  * @returns The challenge in question.
@@ -1768,6 +1880,10 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return MovesetRandomizerChallenge.loadChallenge(source);
     case Challenges.ABILITY_RANDOMIZER:
       return AbilityRandomizerChallenge.loadChallenge(source);
+    case Challenges.TYPE_RANDOMIZER:
+      return TypeRandomizerChallenge.loadChallenge(source);
+    case Challenges.HIDDEN_TYPES:
+      return HiddenTypesChallenge.loadChallenge(source);
     default:
       challengeId satisfies never;
       throw new Error("Unknown challenge copied");
@@ -1792,6 +1908,8 @@ export function initChallenges(): void {
     new PassivesChallenge(),
     new MovesetRandomizerChallenge(),
     new AbilityRandomizerChallenge(),
+    new TypeRandomizerChallenge(),
+    new HiddenTypesChallenge(),
   );
 }
 
@@ -1809,6 +1927,8 @@ const challengeMap: Record<Challenges, Constructor<Challenge>> = {
   [Challenges.PASSIVES]: PassivesChallenge,
   [Challenges.MOVESET_RANDOMIZER]: MovesetRandomizerChallenge,
   [Challenges.ABILITY_RANDOMIZER]: AbilityRandomizerChallenge,
+  [Challenges.TYPE_RANDOMIZER]: TypeRandomizerChallenge,
+  [Challenges.HIDDEN_TYPES]: HiddenTypesChallenge,
 };
 
 function getChallenge(challengeId: Challenges): Challenge {

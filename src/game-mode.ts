@@ -464,6 +464,15 @@ export class GameMode implements GameModeConfig {
         return i18next.t("gameMode:challenge");
     }
   }
+
+  /**
+   * Helper function to get the current value of a specific challenge
+   * @param challenge the Challenges to look up
+   * @returns the challenge's current value, or 0 if it is not active
+   */
+  getChallengeValue(challenge: Challenges): number {
+    return this.challenges.find(c => c.id === challenge)?.value ?? 0;
+  }
 }
 
 export function getGameMode(gameMode: GameModes): GameMode {
