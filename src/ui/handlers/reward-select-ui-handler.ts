@@ -837,12 +837,10 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(0, 35, this.rewardOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
+    this.itemText = addTextObject(0, 35, this.rewardOption.type.name, TextStyle.PARTY, { align: "center" });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
-    this.itemText.setTint(
-      this.rewardOption.type?.tier ? getRarityTierTextTint(this.rewardOption.type?.tier) : undefined,
-    );
+    this.itemText.setTint(this.rewardOption.type.tier ? getRarityTierTextTint(this.rewardOption.type.tier) : undefined);
     this.add(this.itemText);
 
     if (this.rewardOption.cost) {
@@ -1053,7 +1051,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset = 0) {
-    return getPokeballAtlasKey((this.rewardOption.type?.tier! + tierOffset) as number as PokeballType); // TODO: is this bang correct?
+    return getPokeballAtlasKey((this.rewardOption.type.tier + tierOffset) as number as PokeballType);
   }
 
   updateCostText(): void {
