@@ -127,7 +127,7 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.BERRY]: BerryParams;
   [HeldItemEffect.BASE_STAT_MULTIPLY]: BaseStatParams;
   [HeldItemEffect.INSTANT_REVIVE]: InstantReviveParams;
-  [HeldItemEffect.STAT_BOOST]: StatBoostParams;
+  [HeldItemEffect.STAT_MULTIPLY]: StatBoostParams;
   [HeldItemEffect.CRIT_BOOST]: CritBoostParams;
   [HeldItemEffect.TURN_END_STATUS]: TurnEndStatusParams;
   [HeldItemEffect.SURVIVE_CHANCE]: SurviveChanceParams;

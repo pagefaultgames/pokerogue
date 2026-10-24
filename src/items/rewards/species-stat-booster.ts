@@ -46,7 +46,7 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
       for (let i = 0; i < tierItems.length; i++) {
         // TODO: Handle this more gracefully with some semblance of encapsulation
         const checkedSpecies = (
-          allHeldItems[tierItems[i]].getAttrs(HeldItemEffect.STAT_BOOST)[0] as SpeciesStatBoostHeldItemAttr
+          allHeldItems[tierItems[i]].getAttrs(HeldItemEffect.STAT_MULTIPLY)[0] as SpeciesStatBoostHeldItemAttr
         ).species;
 
         // If party member already has the item being weighted currently, skip to the next item

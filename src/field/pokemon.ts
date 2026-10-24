@@ -14,11 +14,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import {
-  FusionSpeciesFormEvolution,
-  SpeciesFormEvolution,
-  validateShedinjaEvo,
-} from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -80,6 +76,7 @@ import type { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
+import type { EvolutionItemId } from "#enums/evolution-item";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
@@ -180,7 +177,6 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
-import type { EvolutionItemId } from "#enums/evolution-item";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
 
@@ -1492,7 +1488,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   ): number {
     const statVal = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
-      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: this, stat, statHolder: statVal });
+      applyHeldItems(HeldItemEffect.STAT_MULTIPLY, { pokemon: this, stat, statHolder: statVal });
     }
 
     // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway

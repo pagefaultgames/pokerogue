@@ -10,9 +10,8 @@ import type { NonEmptyTuple } from "type-fest";
 /**
  * Class used for held items that boost specific stats by a multiplicative amount.
  */
-// TODO: Rename class and effect to `StatMultiply`
-abstract class StatBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.STAT_BOOST> {
-  public override readonly effect = HeldItemEffect.STAT_BOOST;
+abstract class StatMultiplyHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.STAT_MULTIPLY> {
+  public override readonly effect = HeldItemEffect.STAT_MULTIPLY;
   /** The stats to multiply */
   protected readonly stats: readonly Stat[];
   /**
@@ -40,7 +39,7 @@ abstract class StatBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
 /**
  * Attribute used for held items that only boost stats of pre-evolved pokemon.
  */
-export class EvolutionStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
+export class EvolutionStatBoostHeldItemAttr extends StatMultiplyHeldItemAttr {
   public override shouldApply(params: StatBoostParams): boolean {
     if (!super.shouldApply(params)) {
       return false;
@@ -81,7 +80,7 @@ export type SpeciesStatBoosterItemId =
   | typeof HeldItemId.DEEP_SEA_SCALE
   | typeof HeldItemId.DEEP_SEA_TOOTH;
 
-export class SpeciesStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
+export class SpeciesStatBoostHeldItemAttr extends StatMultiplyHeldItemAttr {
   /** The species that the held item's stat boost(s) apply to */
   public readonly species: readonly SpeciesId[];
 
