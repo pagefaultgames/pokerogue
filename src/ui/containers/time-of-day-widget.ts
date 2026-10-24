@@ -3,6 +3,7 @@ import { settings } from "#app/global-settings-manager";
 import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
 import { BattleSceneEventType } from "#events/battle-scene";
+import type { TweenBuilderConfigFixedInt } from "#types/phaser.d";
 import { fixedInt } from "#utils/common";
 
 /** A small self contained UI element that displays the time of day as an icon */
@@ -72,7 +73,7 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
    * Creates a tween animation based on the 'Back' ease algorithm
    * @returns an array of all tweens in the animation
    */
-  private getBackTweens(): Phaser.Types.Tweens.TweenBuilderConfig[] {
+  private getBackTweens(): TweenBuilderConfigFixedInt[] {
     const rotate = {
       targets: [this.timeOfDayIconMgs[0], this.timeOfDayIconMgs[1]],
       angle: "+=90",
@@ -95,7 +96,7 @@ export class TimeOfDayWidget extends Phaser.GameObjects.Container {
    * Creates a tween animation based on the 'Bounce' ease algorithm
    * @returns an array of all tweens in the animation
    */
-  private getBounceTweens(): Phaser.Types.Tweens.TweenBuilderConfig[] {
+  private getBounceTweens(): TweenBuilderConfigFixedInt[] {
     const bounce = {
       targets: [this.timeOfDayIconMgs[0], this.timeOfDayIconMgs[1]],
       angle: "+=90",
