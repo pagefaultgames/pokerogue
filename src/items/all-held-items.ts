@@ -105,7 +105,7 @@ const vitaminItems = PERMANENT_STATS.reduce(
 // TODO: Do we want these in a separate object?
 const formChangeItems = Object.values(FormChangeItemId).reduce(
   (ret, id) => {
-    ret[id] = new FormChangeHeldItem(id, 1);
+    ret[id] = new FormChangeHeldItem(id);
     return ret;
   },
   {} as Record<FormChangeItemId, FormChangeHeldItem>,
