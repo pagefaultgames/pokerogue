@@ -8,7 +8,7 @@ import { allRewards } from "#items/all-rewards";
 import type { EvolutionItemReward } from "#items/evolution-item";
 import type { FormChangeItemReward } from "#items/form-change";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
-import { rewardRarities } from "#items/reward-defaults-tiers";
+import { getRewardTier } from "#items/reward-defaults-tiers";
 import { trainerItemRarities } from "#items/trainer-item-default-tiers";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
@@ -98,7 +98,7 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
   if (!reward) {
     reward = new EmptyReward();
   }
-  const tier = tierOverride ?? rewardRarities[id];
+  const tier = tierOverride ?? getRewardTier(id);
   return new RewardOption(reward, upgradeCount, tier, cost);
 }
 
