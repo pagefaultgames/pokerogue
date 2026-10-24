@@ -412,6 +412,56 @@ describe("Moves - Delayed Attacks", () => {
     expect(game).not.toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
   });
 
+  it.each<{ name: string; move: MoveId }>([
+    { name: "Future Sight", move: MoveId.FUTURE_SIGHT },
+    { name: "Doom Desire", move: MoveId.DOOM_DESIRE },
+  ])("$name should be removed when the next wave is a trainer battle", async ({ move }) => {
+    game.override.battleType(BattleType.WILD);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(move);
+    await game.toNextTurn();
+
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
+
+    game.override.battleType(BattleType.TRAINER);
+    game.move.use(MoveId.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(game.scene.currentBattle.battleType).toBe(BattleType.TRAINER);
+    expect(game).not.toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
+  });
+
+  it("should not hit the player in the next trainer battle after its user is caught", async () => {
+    game.override.battleType(BattleType.WILD).startingModifier([{ name: "MASTER_BALL", count: 1 }]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
+
+    game.override.battleType(BattleType.TRAINER);
+    game.doThrowPokeball(PokeballType.MASTER_BALL);
+    await game.toNextWave();
+
+    expect(game.scene.currentBattle.battleType).toBe(BattleType.TRAINER);
+    expect(game).not.toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
+
+    await passTurns(2);
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveFullHp();
+    expect(game).not.toHaveShownMessage(
+      i18next.t("moveTriggers:tookMoveAttack", {
+        pokemonName: getPokemonNameWithAffix(feebas),
+        moveName: allMoves[MoveId.FUTURE_SIGHT].name,
+      }),
+    );
+  });
+
   // TODO: Implement and move to a power spot's test file
   it.todo("should activate ally's power spot when switched in during single battles");
 });
