@@ -157,10 +157,10 @@ const heldItems = {
     .build(),
 
   [HeldItemId.LUCKY_EGG]: new HeldItemBuilder(HeldItemId.LUCKY_EGG, 99) //
-    .attr(ExpBoosterHeldItemAttr, 40)
+    .attr(ExpBoosterHeldItemAttr, 0.4)
     .build(),
   [HeldItemId.GOLDEN_EGG]: new HeldItemBuilder(HeldItemId.GOLDEN_EGG, 99) //
-    .attr(ExpBoosterHeldItemAttr, 100)
+    .attr(ExpBoosterHeldItemAttr, 1)
     .build(),
   [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3) //
     .attr(FriendshipBoosterHeldItemAttr)
