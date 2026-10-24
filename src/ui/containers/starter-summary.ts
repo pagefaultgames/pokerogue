@@ -3,7 +3,6 @@ import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { allAbilities, allMoves } from "#data/data-lists";
-import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -28,7 +27,6 @@ import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextS
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { getLocalizedSpriteKey, padInt, truncateString } from "#utils/common";
 import { getStarterColors } from "#utils/pokemon-utils";
-import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -38,8 +36,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   private readonly pokemonNumberText: Phaser.GameObjects.Text;
   private readonly shinyOverlay: Phaser.GameObjects.Image;
   private readonly pokemonNameText: Phaser.GameObjects.Text;
-  private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
-  private pokemonGrowthRateText: Phaser.GameObjects.Text;
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
   private pokemonLuckLabelText: Phaser.GameObjects.Text;
@@ -290,7 +286,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       .setOrigin(0);
 
     this.pokemonShinyIcon = globalScene.add //
-      .sprite(12, 0, "shiny_icons")
+      .sprite(12, 5, "shiny_icons")
       .setScale(0.5);
 
     this.teraIcon = globalScene.add //
@@ -320,40 +316,22 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     const pokemonPermanentInfoContainer = globalScene.add.container(0, 0);
 
     this.type1Icon = globalScene.add //
-      .sprite(8, 98, getLocalizedSpriteKey("types"))
+      .sprite(8, 98 + 5, getLocalizedSpriteKey("types"))
       .setScale(0.5)
       .setOrigin(0);
     this.type2Icon = globalScene.add //
-      .sprite(26, 98, getLocalizedSpriteKey("types"))
+      .sprite(26, 98 + 5, getLocalizedSpriteKey("types"))
       .setScale(0.5)
       .setOrigin(0);
 
-    this.pokemonGrowthRateLabelText = addTextObject(
-      8,
-      106,
-      i18next.t("starterSelectUiHandler:growthRate"),
-      TextStyle.WINDOW_ALT,
-      { fontSize: "36px" },
-    ) //
-      .setOrigin(0);
-
-    this.pokemonGrowthRateText = addTextObject(
-      8 + this.pokemonGrowthRateLabelText.displayWidth + 2,
-      106,
-      "",
-      TextStyle.GROWTH_RATE_TYPE,
-      { fontSize: "36px" },
-    ) //
-      .setOrigin(0);
-
-    this.pokemonLuckLabelText = addTextObject(8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
+    this.pokemonLuckLabelText = addTextObject(8, 89 + 5, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
       fontSize: "56px",
     }) //
       .setOrigin(0);
 
     this.pokemonLuckText = addTextObject(
       8 + this.pokemonLuckLabelText.displayWidth + 2,
-      89,
+      89 + 5,
       "0",
       TextStyle.LUCK_VALUE,
       { fontSize: "56px" },
@@ -363,8 +341,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     pokemonPermanentInfoContainer.add([
       this.type1Icon,
       this.type2Icon,
-      this.pokemonGrowthRateLabelText,
-      this.pokemonGrowthRateText,
       this.pokemonLuckLabelText,
       this.pokemonLuckText,
     ]);
@@ -546,16 +522,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
         .setTint(luckDisabled ? 0x808080 : getVariantTint(Phaser.Math.Clamp(luck - 1, 0, 2) as Variant));
       this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
-      let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-      const growthAux = toCamelCase(growthReadable);
-      if (i18next.exists("growth:" + growthAux)) {
-        growthReadable = i18next.t(("growth:" + growthAux) as any);
-      }
-      this.pokemonGrowthRateText
-        .setText(growthReadable)
-        .setColor(getGrowthRateColor(species.growthRate))
-        .setShadowColor(getGrowthRateColor(species.growthRate, true));
-
       this.pokemonCaughtCountText.setText(`${dexEntry.caughtCount}`);
       if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
         this.pokemonHatchedIcon.setFrame("manaphy");
@@ -567,12 +533,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       const defaultDexAttr = getDexAttrFromPreferences(starterId, starterPreferences);
 
       if (speciesDataRegistry.hasPrevolution(species.speciesId)) {
+        // TODO: Remove this after getting rid of Pikachu
         this.pokemonCaughtHatchedContainer.setVisible(false);
-        this.pokemonShinyIcon.setY(104);
+        this.pokemonShinyIcon.setY(86 + 5);
         this.pokemonFormText.setY(25);
       } else {
         this.pokemonCaughtHatchedContainer.setVisible(true);
-        this.pokemonShinyIcon.setY(86);
+        this.pokemonShinyIcon.setY(86 + 5);
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.updateCandyCount(globalScene.gameData.starterData[species.speciesId].candyCount);

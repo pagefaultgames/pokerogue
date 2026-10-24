@@ -1,10 +1,11 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 interface BaseStatsOverlaySettings {
@@ -15,8 +16,10 @@ interface BaseStatsOverlaySettings {
   width?: number;
 }
 
-const HEIGHT = 120;
 const BORDER = 8;
+const STATS_SPACING = 13;
+const MIDDLE_SPACING = 7;
+const HEIGHT = STATS_SPACING * 9 + MIDDLE_SPACING + 2 * BORDER;
 const shortStats = ["HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD"];
 
 export class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
@@ -26,6 +29,9 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   private statsRectangles: Phaser.GameObjects.Rectangle[] = [];
   private statsShadows: Phaser.GameObjects.Rectangle[] = [];
   private statsTotalLabel: Phaser.GameObjects.Text;
+  private weightText: Phaser.GameObjects.Text;
+  private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
+  private pokemonGrowthRateText: Phaser.GameObjects.Text;
 
   private statsBg: Phaser.GameObjects.NineSlice;
 
@@ -44,30 +50,61 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     this.add(this.statsBg);
 
     for (let i = 0; i < 6; i++) {
-      const shadow = globalScene.add.rectangle(this.width - BORDER + 1, BORDER + 3 + i * 15, 100, 5, 0x006860);
+      const shadow = globalScene.add.rectangle(
+        this.width - BORDER + 1,
+        BORDER + 3 + i * STATS_SPACING,
+        100,
+        5,
+        0x006860,
+      );
       shadow.setOrigin(1, 0);
       this.statsShadows.push(shadow);
       this.add(shadow);
 
-      const rectangle = globalScene.add.rectangle(this.width - BORDER, BORDER + 2 + i * 15, 100, 5, 0x66aa99);
+      const rectangle = globalScene.add.rectangle(
+        this.width - BORDER,
+        BORDER + 2 + i * STATS_SPACING,
+        100,
+        5,
+        0x66aa99,
+      );
       rectangle.setOrigin(1, 0);
       this.statsRectangles.push(rectangle);
       this.add(rectangle);
 
-      const label = addTextObject(BORDER, BORDER - 2 + i * 15, "A", TextStyle.BATTLE_INFO);
+      const label = addTextObject(BORDER, BORDER - 2 + i * STATS_SPACING, "A", TextStyle.BATTLE_INFO);
       this.statsLabels.push(label);
       this.add(label);
     }
 
-    this.statsTotalLabel = addTextObject(BORDER, BORDER + 6 * 15, "A", TextStyle.MONEY_WINDOW);
+    this.statsTotalLabel = addTextObject(BORDER, BORDER + 6 * STATS_SPACING, "A", TextStyle.MONEY_WINDOW);
     this.add(this.statsTotalLabel);
+
+    this.weightText = addTextObject(BORDER, BORDER + 7 * STATS_SPACING + MIDDLE_SPACING, "A", TextStyle.BATTLE_INFO);
+    this.add(this.weightText);
+
+    this.pokemonGrowthRateLabelText = addTextObject(
+      BORDER,
+      BORDER + 8 * STATS_SPACING + MIDDLE_SPACING,
+      i18next.t("pokedexUiHandler:growthRate"),
+      TextStyle.BATTLE_INFO,
+    );
+    this.add(this.pokemonGrowthRateLabelText);
+
+    this.pokemonGrowthRateText = addTextObject(
+      8 + this.pokemonGrowthRateLabelText.displayWidth + 2,
+      BORDER + 8 * STATS_SPACING + MIDDLE_SPACING,
+      "",
+      TextStyle.BATTLE_INFO,
+    );
+    this.add(this.pokemonGrowthRateText);
 
     // hide this component for now
     this.setVisible(false);
   }
 
   // show this component with infos for the specific move
-  show(values: number[], total: number): boolean {
+  show(values: number[], total: number, weight: number, growthRate: number): boolean {
     for (let i = 0; i < 6; i++) {
       this.statsLabels[i].setText(
         i18next.t(`pokemonInfo:stat.${toCamelCase(shortStats[i])}Shortened`) + `: ${values[i]}`,
@@ -79,6 +116,17 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     }
 
     this.statsTotalLabel.setText(`${i18next.t("pokedexUiHandler:baseTotal")}: ${total}`);
+
+    this.weightText.setText(i18next.t("pokedexUiHandler:weight", { weight }));
+
+    let growthReadable = toTitleCase(GrowthRate[growthRate]);
+    const growthAux = toCamelCase(growthReadable);
+    if (i18next.exists("growth:" + growthAux)) {
+      growthReadable = i18next.t(("growth:" + growthAux) as any);
+    }
+    this.pokemonGrowthRateText.setText(growthReadable);
+    this.pokemonGrowthRateText.setColor(getGrowthRateColor(growthRate));
+    this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(growthRate, true));
 
     this.setVisible(true);
     this.active = true;

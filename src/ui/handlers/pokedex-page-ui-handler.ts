@@ -15,7 +15,6 @@ import {
 import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allAbilities, allMoves, catchableSpecies } from "#data/data-lists";
 import { Egg } from "#data/egg";
-import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
@@ -216,8 +215,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
-  private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
-  private pokemonGrowthRateText: Phaser.GameObjects.Text;
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
   private pokemonLuckLabelText: Phaser.GameObjects.Text;
@@ -280,6 +277,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private biomes: readonly BiomeTierTimeOfDay[] = [];
   private baseStats: number[];
   private baseTotal: number;
+  private weight: number;
+  private growthRate: number;
   private evolutions: SpeciesFormEvolution[] = [];
   private battleForms: SpeciesFormChange[] = [];
   private preEvolutions: SpeciesFormEvolution[] = [];
@@ -373,27 +372,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setOrigin(0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonGrowthRateLabelText = addTextObject(
-      8,
-      106,
-      i18next.t("pokedexUiHandler:growthRate"),
-      TextStyle.WINDOW_ALT,
-      { fontSize: "36px" },
-    )
-      .setOrigin(0)
-      .setVisible(false);
-    this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
-
-    this.pokemonGrowthRateText = addTextObject(
-      8 + this.pokemonGrowthRateLabelText.displayWidth + 2,
-      106,
-      "",
-      TextStyle.GROWTH_RATE_TYPE,
-      { fontSize: "36px" },
-    ) //
-      .setOrigin(0);
-    this.starterSelectContainer.add(this.pokemonGrowthRateText);
-
     this.pokemonGenderText = addTextObject(96, 112, "", TextStyle.SUMMARY_ALT) //
       .setOrigin(0);
     this.starterSelectContainer.add(this.pokemonGenderText);
@@ -415,18 +393,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(starterBoxContainer);
 
     this.type1Icon = globalScene.add //
-      .sprite(8, 98, getLocalizedSpriteKey("types"))
+      .sprite(8, 98 + 5, getLocalizedSpriteKey("types"))
       .setScale(0.5)
       .setOrigin(0);
     this.starterSelectContainer.add(this.type1Icon);
 
     this.type2Icon = globalScene.add //
-      .sprite(26, 98, getLocalizedSpriteKey("types"))
+      .sprite(26, 98 + 5, getLocalizedSpriteKey("types"))
       .setScale(0.5)
       .setOrigin(0);
     this.starterSelectContainer.add(this.type2Icon);
 
-    this.pokemonLuckLabelText = addTextObject(8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
+    this.pokemonLuckLabelText = addTextObject(8, 89 + 5, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
       fontSize: "56px",
     }) //
       .setOrigin(0);
@@ -434,7 +412,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.pokemonLuckText = addTextObject(
       8 + this.pokemonLuckLabelText.displayWidth + 2,
-      89,
+      89 + 5,
       "0",
       TextStyle.LUCK_VALUE,
       { fontSize: "56px" },
@@ -852,6 +830,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.evolutions = allEvolutions.filter(e => e.preFormKey === form.formKey || e.preFormKey === null);
       this.baseStats = form.baseStats.slice();
       this.baseTotal = form.baseTotal;
+      this.weight = form.weight;
     } else {
       this.ability1 = species.ability1;
       this.ability2 = species.ability2 === species.ability1 ? undefined : species.ability2;
@@ -860,7 +839,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.evolutions = allEvolutions;
       this.baseStats = species.baseStats.slice();
       this.baseTotal = species.baseTotal;
+      this.weight = species.weight;
     }
+    this.growthRate = species.growthRate;
 
     this.eggMoves = speciesEggMoves[this.starterId] ?? [];
     this.hasEggMoves = Array.from(
@@ -1219,7 +1200,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
-                this.baseStatsOverlay.show(this.baseStats, this.baseTotal);
+                this.baseStatsOverlay.show(this.baseStats, this.baseTotal, this.weight, this.growthRate);
 
                 this.blockInput = false;
                 this.blockInputOverlay = true;
@@ -2359,8 +2340,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           variant: (props.variant as Variant) ?? 0,
         });
       } else {
-        this.pokemonGrowthRateText.setText("");
-        this.pokemonGrowthRateLabelText.setVisible(false);
         this.type1Icon.setVisible(true);
         this.type2Icon.setVisible(true);
         this.pokemonLuckLabelText.setVisible(false);
@@ -2387,8 +2366,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     } else {
       this.pokemonNumberText.setText(species ? padInt(getDexNumber(species.speciesId), 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
-      this.pokemonGrowthRateText.setText("");
-      this.pokemonGrowthRateLabelText.setVisible(false);
       this.type1Icon.setVisible(false);
       this.type2Icon.setVisible(false);
       this.pokemonLuckLabelText.setVisible(false);
@@ -2619,23 +2596,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       } else {
         this.pokemonLuckText.setVisible(false);
         this.pokemonLuckLabelText.setVisible(false);
-      }
-
-      // Setting growth rate text
-      if (isFormCaught) {
-        let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-        const growthAux = toCamelCase(growthReadable);
-        if (i18next.exists("growth:" + growthAux)) {
-          growthReadable = i18next.t(("growth:" + growthAux) as any);
-        }
-        this.pokemonGrowthRateText.setText(growthReadable);
-
-        this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
-        this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
-        this.pokemonGrowthRateLabelText.setVisible(true);
-      } else {
-        this.pokemonGrowthRateText.setText("");
-        this.pokemonGrowthRateLabelText.setVisible(false);
       }
 
       // Caught and hatched
