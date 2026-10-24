@@ -321,18 +321,14 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
           setPassiveUnlockDialogueTokens(enablePassiveMon);
           globalScene.phaseManager.unshiftNew(
-            "MessagePhase",
-            getEncounterText(`${namespace}:passiveUnlockNpc`) ?? "",
-            null,
-            true,
-            null,
-            getEncounterText(`${namespace}:speaker`) ?? "",
+            "MessagePhase", //
+            getEncounterText(`${namespace}:passiveUnlockNpc`),
+            { prompt: true, speaker: getEncounterText(`${namespace}:speaker`) },
           );
           globalScene.phaseManager.unshiftNew(
-            "MessagePhase",
-            getEncounterText(`${namespace}:passiveUnlockSystem`) ?? "",
-            null,
-            true,
+            "MessagePhase", //
+            getEncounterText(`${namespace}:passiveUnlockSystem`),
+            { prompt: true },
           );
         }
       };
@@ -353,7 +349,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         onBeforeRewards,
       );
 
-      await showEncounterText(`${namespace}:option.2.selected2`, null, undefined, true);
+      await showEncounterText(`${namespace}:option.2.selected2`);
       await initBattleWithEnemyConfig(enemyPartyConfig);
     },
   )

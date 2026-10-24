@@ -281,18 +281,16 @@ export class EvolutionPhase extends Phase {
    * Show the evolution text and then commence the evolution animation
    */
   doEvolution(): void {
-    globalScene.ui.showText(
-      i18next.t("menu:evolving", { pokemonName: this.preEvolvedPokemonName }),
-      null,
-      () => {
+    globalScene.ui.showText(i18next.t("menu:evolving", { pokemonName: this.preEvolvedPokemonName }), {
+      callback: () => {
         this.pokemon.cry();
         this.pokemon.getPossibleEvolution(this.evolution).then(evolvedPokemon => {
           this.updateEvolvedPokemonSprites(evolvedPokemon);
           this.playEvolutionAnimation(evolvedPokemon);
         });
       },
-      1000,
-    );
+      callbackDelay: 1000,
+    });
   }
 
   /** Used exclusively by {@linkcode handleFailedEvolution} to fade out the evolution sprites and music */
@@ -319,10 +317,8 @@ export class EvolutionPhase extends Phase {
         globalScene.ui.revertMode();
         this.pokemon.pauseEvolutions = true;
         globalScene.ui.showText(
-          i18next.t("menu:evolutionsPaused", { pokemonName: this.preEvolvedPokemonName }),
-          null,
-          endCallback,
-          3000,
+          i18next.t("menu:evolutionsPaused", { pokemonName: this.preEvolvedPokemonName }), //
+          { callback: endCallback, callbackDelay: 3000 },
         );
       },
       noHandler: () => {
@@ -339,30 +335,21 @@ export class EvolutionPhase extends Phase {
   private showFailedEvolutionUI(evolvedPokemon: Pokemon): void {
     globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
 
+    const end = () => {
+      globalScene.ui.showText("", { delay: 0 });
+      audioManager.playBgm();
+      evolvedPokemon.destroy();
+      this.end();
+    };
+    const stoppedEvolvingCallback = () =>
+      globalScene.ui.showText(
+        i18next.t("menu:pauseEvolutionsQuestion", { pokemonName: this.preEvolvedPokemonName }), //
+        { callback: () => this.showPauseEvolutionConfirmation(end) },
+      );
+
     globalScene.ui.showText(
-      i18next.t("menu:stoppedEvolving", {
-        pokemonName: this.preEvolvedPokemonName,
-      }),
-      null,
-      () => {
-        globalScene.ui.showText(
-          i18next.t("menu:pauseEvolutionsQuestion", {
-            pokemonName: this.preEvolvedPokemonName,
-          }),
-          null,
-          () => {
-            const end = () => {
-              globalScene.ui.showText("", 0);
-              audioManager.playBgm();
-              evolvedPokemon.destroy();
-              this.end();
-            };
-            this.showPauseEvolutionConfirmation(end);
-          },
-        );
-      },
-      null,
-      true,
+      i18next.t("menu:stoppedEvolving", { pokemonName: this.preEvolvedPokemonName }), //
+      { callback: stoppedEvolvingCallback, prompt: true },
     );
   }
 
@@ -382,25 +369,25 @@ export class EvolutionPhase extends Phase {
   /**
    * Fadeout evolution music, play the cry, show the evolution completed text, and end the phase
    */
-  private onEvolutionComplete(evolvedPokemon: Pokemon) {
+  private onEvolutionComplete(evolvedPokemon: Pokemon): void {
     this.evolutionBgm?.fadeOut(100);
+
     globalScene.time.delayedCall(250, () => {
       this.pokemon.cry();
+
       globalScene.time.delayedCall(1250, () => {
         audioManager.replaceBgmUntilEnd("bw/evolution_fanfare");
 
         evolvedPokemon.destroy();
+
         globalScene.ui.showText(
           i18next.t("menu:evolutionDone", {
             pokemonName: this.preEvolvedPokemonName,
             evolvedPokemonName: this.pokemon.name,
           }),
-          null,
-          () => this.end(),
-          null,
-          true,
-          fixedInt(4000),
+          { callback: () => this.end(), prompt: true, promptDelay: fixedInt(4000) },
         );
+
         globalScene.time.delayedCall(fixedInt(4250), () => audioManager.playBgm());
       });
     });

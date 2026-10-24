@@ -8,7 +8,8 @@ import i18next from "i18next";
 
 export class RibbonModifierRewardPhase extends ModifierRewardPhase {
   public readonly phaseName = "RibbonModifierRewardPhase";
-  private species: PokemonSpecies;
+
+  private readonly species: PokemonSpecies;
 
   constructor(modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {
     super(modifierTypeFunc);
@@ -16,26 +17,21 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
     this.species = species;
   }
 
-  doReward(): Promise<void> {
-    return new Promise<void>(resolve => {
-      const newModifier = this.modifierType.newModifier();
-      globalScene.addModifier(newModifier);
-      audioManager.playSound("se/level_up_fanfare");
-      globalScene.ui.setMode(UiMode.MESSAGE);
-      globalScene.ui.showText(
-        i18next.t("battle:beatModeFirstTime", {
-          speciesName: this.species.name,
-          gameMode: globalScene.gameMode.getName(),
-          newModifier: newModifier?.type.name,
-        }),
-        null,
-        () => {
-          resolve();
-        },
-        null,
-        true,
-        1500,
-      );
-    });
+  public override async doReward(): Promise<void> {
+    const newModifier = this.modifierType.newModifier();
+    globalScene.addModifier(newModifier);
+
+    audioManager.playSound("se/level_up_fanfare");
+
+    await globalScene.ui.setMode(UiMode.MESSAGE);
+
+    await globalScene.ui.showTextPromise(
+      i18next.t("battle:beatModeFirstTime", {
+        speciesName: this.species.name,
+        gameMode: globalScene.gameMode.getName(),
+        newModifier: newModifier?.type.name,
+      }),
+      { promptDelay: 1500 },
+    );
   }
 }

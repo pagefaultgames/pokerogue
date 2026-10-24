@@ -1,23 +1,19 @@
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { Phase } from "#app/phase";
+import type { MessagePhaseOptions } from "#types/ui-types";
 
 export class MessagePhase extends Phase {
   public readonly phaseName = "MessagePhase";
+
   private text: string;
-  // TODO: Remove null from signatures
-  private readonly callbackDelay?: number | null | undefined;
-  private readonly prompt?: boolean | null | undefined;
-  private readonly promptDelay?: number | null | undefined;
+
+  private readonly callbackDelay?: number | undefined;
+  private readonly prompt?: boolean | undefined;
+  private readonly promptDelay: number;
   private readonly speaker?: string | undefined;
 
-  constructor(
-    text: string,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-    speaker?: string,
-  ) {
+  constructor(text: string, { callbackDelay, prompt, promptDelay = 0, speaker }: MessagePhaseOptions = {}) {
     super();
 
     this.text = text;
@@ -34,13 +30,18 @@ export class MessagePhase extends Phase {
   public override start(): void {
     super.start();
 
-    if (this.text.indexOf("$") > -1) {
+    const { phaseManager, ui } = globalScene;
+    const { callbackDelay, prompt, promptDelay, speaker } = this;
+
+    if (this.text.includes("$")) {
       const pokename: string[] = [];
       const repname = ["#POKEMON1", "#POKEMON2"];
+
       for (let p = 0; p < globalScene.getPlayerField().length; p++) {
         pokename.push(globalScene.getPlayerField()[p].getNameToRender());
         this.text = this.text.split(pokename[p]).join(repname[p]);
       }
+
       const pageIndex = this.text.indexOf("$");
       if (pageIndex === -1) {
         for (let p = 0; p < globalScene.getPlayerField().length; p++) {
@@ -54,36 +55,16 @@ export class MessagePhase extends Phase {
           page0 = page0.split(repname[p]).join(pokename[p]);
           page1 = page1.split(repname[p]).join(pokename[p]);
         }
-        globalScene.phaseManager.unshiftNew(
-          "MessagePhase",
-          page1,
-          this.callbackDelay,
-          this.prompt,
-          this.promptDelay,
-          this.speaker,
-        );
+        phaseManager.unshiftNew("MessagePhase", page1, { callbackDelay, prompt, promptDelay, speaker });
         this.text = page0.trim();
       }
     }
 
-    if (this.speaker) {
-      globalScene.ui.showDialogue(
-        this.text,
-        this.speaker,
-        null,
-        () => this.end(),
-        this.callbackDelay || (this.prompt ? 0 : 1500),
-        this.promptDelay ?? 0,
-      );
+    const cbDelay = callbackDelay ?? (prompt ? 0 : 1500);
+    if (speaker) {
+      ui.showDialogue(this.text, speaker, () => this.end(), { callbackDelay: cbDelay, promptDelay });
     } else {
-      globalScene.ui.showText(
-        this.text,
-        null,
-        () => this.end(),
-        this.callbackDelay || (this.prompt ? 0 : 1500),
-        this.prompt,
-        this.promptDelay,
-      );
+      ui.showText(this.text, { callback: () => this.end(), callbackDelay: cbDelay, prompt, promptDelay });
     }
   }
 }
