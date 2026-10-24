@@ -463,6 +463,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param fieldSize - The {@linkcode FieldSizeOverride} to set, or `null` to disable the override
    * @returns `this`
    */
+  // TODO: rename to `fieldSize()`
   public battleStyle(fieldSize: FieldSizeOverride | null): this {
     vi.spyOn(activeOverrides, "FIELD_SIZE_OVERRIDE", "get").mockReturnValue(fieldSize);
     this.log(fieldSize === null ? "Field size override disabled!" : `Field size set to ${fieldSize}!`);
@@ -800,6 +801,18 @@ export class OverridesHelper extends GameManagerHelper {
   public mysteryEncounter(encounterType: MysteryEncounterType): this {
     vi.spyOn(activeOverrides, "MYSTERY_ENCOUNTER_OVERRIDE", "get").mockReturnValue(encounterType);
     this.log(`Mystery encounter override set to ${encounterType}!`);
+    return this;
+  }
+
+  public runSuccess(canRun: boolean | null): this {
+    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(canRun);
+    let state = "disabled";
+    if (canRun) {
+      state = "set to: always run";
+    } else if (canRun === false) {
+      state = "set to: never run";
+    }
+    this.log(`Run success override ${state}!`);
     return this;
   }
 
