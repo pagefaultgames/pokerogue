@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { legacyCompatibleImages } from "#app/scene-base";
 import type { UiWindowStyle } from "#enums/ui-window-style";
+import { addMask } from "#utils/mask-utils";
 
 export enum WindowVariant {
   NORMAL,
@@ -65,8 +66,10 @@ export function addWindow(
     )
       .setOrigin(0)
       .setScale(6);
-    const mask = maskRect.createGeometryMask();
-    window.setMask(mask);
+
+    addMask(window, maskRect);
+    // Destroy this once the window is destroyed to prevent memory leaks
+    window.once(Phaser.GameObjects.Events.DESTROY, () => maskRect.destroy());
   }
 
   return window;

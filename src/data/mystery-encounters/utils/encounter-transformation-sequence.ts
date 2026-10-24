@@ -49,10 +49,12 @@ export function doPokemonTransformationSequence(
         transformationBaseBg.displayHeight / 2 + yOffset,
         "pkmn__sub",
       );
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        ignoreTimeTint: true,
-      });
+      ret
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          ignoreTimeTint: true,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
@@ -63,30 +65,31 @@ export function doPokemonTransformationSequence(
 
     pokemonSprite.setAlpha(0);
     pokemonTintSprite.setAlpha(0);
-    pokemonTintSprite.setTintFill(0xffffff);
+    pokemonTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     pokemonEvoSprite.setVisible(false);
     pokemonEvoTintSprite.setVisible(false);
-    pokemonEvoTintSprite.setTintFill(0xffffff);
+    pokemonEvoTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
 
     [pokemonSprite, pokemonTintSprite, pokemonEvoSprite, pokemonEvoTintSprite].forEach(sprite => {
       const spriteKey = previousPokemon.getSpriteKey(true);
       sprite.play(spriteKey);
 
-      sprite.setPipeline(globalScene.spritePipeline, {
+      sprite.setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         hasShadow: false,
         teraColor: getTypeRgb(previousPokemon.getTeraType()),
         isTerastallized: previousPokemon.isTerastallized,
+        ignoreTimeTint: true,
+        spriteKey: previousPokemon.getSpriteKey(),
+        shiny: previousPokemon.shiny,
+        variant: previousPokemon.variant,
       });
-      sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", previousPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", previousPokemon.shiny);
-      sprite.setPipelineData("variant", previousPokemon.variant);
       ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (previousPokemon.summonData.speciesForm) {
           k += "Base";
         }
-        sprite.pipelineData[k] = previousPokemon.getSprite().pipelineData[k];
+        sprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+          previousPokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k];
       });
     });
 
@@ -94,15 +97,20 @@ export function doPokemonTransformationSequence(
       const spriteKey = transformPokemon.getSpriteKey(true);
       sprite.play(spriteKey);
 
-      sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", transformPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", transformPokemon.shiny);
-      sprite.setPipelineData("variant", transformPokemon.variant);
+      sprite
+        .setRenderNodeData(globalScene.spriteSubmitter, "ignoreTimeTint", true)
+        .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", transformPokemon.getSpriteKey())
+        .setRenderNodeData(globalScene.spriteSubmitter, "shiny", transformPokemon.shiny)
+        .setRenderNodeData(globalScene.spriteSubmitter, "variant", transformPokemon.variant);
       ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (transformPokemon.summonData.speciesForm) {
           k += "Base";
         }
-        sprite.pipelineData[k] = transformPokemon.getSprite().pipelineData[k];
+        sprite.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          k,
+          transformPokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k],
+        );
       });
     });
 
