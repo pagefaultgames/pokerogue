@@ -9,7 +9,7 @@ import type { EvolutionItemReward } from "#items/evolution-item";
 import type { FormChangeItemReward } from "#items/form-change";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { getRewardTier } from "#items/reward-defaults-tiers";
-import { trainerItemRarities } from "#items/trainer-item-default-tiers";
+import { getTrainerItemTier } from "#items/trainer-item-default-tiers";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -88,7 +88,7 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
 
   if (isTrainerItemId(id)) {
     const reward = new TrainerItemReward(RewardId.GENERIC_TRAINER_ITEM, id);
-    const tier = tierOverride ?? trainerItemRarities[id];
+    const tier = tierOverride ?? getTrainerItemTier(id);
     return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
