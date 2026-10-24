@@ -4,7 +4,6 @@ import { ItemManager } from "#items/item-manager";
 import type { TrainerItemData, TrainerItemSpecs } from "#types/trainer-item-data-types";
 import { isTrainerItemSpecs } from "#utils/item-utils";
 
-// TODO: Remove unused methods
 export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: TrainerItemId): number {
@@ -18,11 +17,6 @@ export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemDa
   // #endregion Abstract method implementations
 
   // #region TrainerItem-specific methods
-
-  public filterRequestedItems(requestedItems: TrainerItemId[], exclude = false) {
-    const currentItems = this.getItems();
-    return currentItems.filter(it => !exclude && requestedItems.some(entry => it === entry));
-  }
 
   /** Decrease the durations of all duration-based trainer items on turn end. */
   public decreaseDurations(): void {
