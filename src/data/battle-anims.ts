@@ -862,25 +862,29 @@ export abstract class BattleAnim {
     const spritePriorities: number[] = [];
 
     const cleanUpAndComplete = () => {
-      userSprite.setPosition(0, 0);
-      userSprite.setScale(1);
-      userSprite.setAlpha(1);
-      userSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]);
-      userSprite.setAngle(0);
+      userSprite
+        .setPosition(0, 0)
+        .setScale(1)
+        .setAlpha(1)
+        .setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0])
+        .setAngle(0);
       if (targetSubstitute) {
         targetSprite.setPosition(
           target.x - target.getSubstituteOffset()[0],
           target.y - target.getSubstituteOffset()[1],
         );
-        targetSprite.setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1));
-        targetSprite.setAlpha(1);
+        targetSprite //
+          .setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1))
+          .setAlpha(1);
       } else {
-        targetSprite.setPosition(0, 0);
-        targetSprite.setScale(1);
-        targetSprite.setAlpha(1);
+        targetSprite //
+          .setPosition(0, 0)
+          .setScale(1)
+          .setAlpha(1);
       }
-      targetSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]);
-      targetSprite.setAngle(0);
+      targetSprite
+        .setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]) //
+        .setAngle(0);
 
       // Remove animation event listeners to enable sprites to be freed.
       userSprite.off("animationupdate");
