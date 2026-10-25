@@ -42,7 +42,7 @@ import { MachoBraceHeldItemAttr } from "#items/macho-brace";
 import { MultiHitCountHeldItemAttr, MultiHitDamageModifyHeldItemAttr } from "#items/multi-hit";
 import { NatureWeightBoosterHeldItemAttr } from "#items/nature-weight-booster";
 import { ResetNegativeStatStageHeldItemAttr } from "#items/reset-negative-stat-stage";
-import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
+import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
 import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";

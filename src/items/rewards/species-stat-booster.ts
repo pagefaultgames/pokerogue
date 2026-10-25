@@ -6,7 +6,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { RewardGenerator } from "#items/reward";
-import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
+import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
 import { weightedPick } from "#utils/random";
 import { HeldItemReward } from "./held-item-reward";
 
