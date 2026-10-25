@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import type { PokeballType } from "#enums/pokeball";
+import { RewardCategoryId } from "#enums/reward-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import type { RewardPool, RewardPoolEntry, RewardPoolWeights, RewardSpecs } from "#types/rewards";
@@ -194,6 +195,44 @@ export function generatePlayerRewardOptions(
 }
 
 /**
+ * Check whether a candidate reward option duplicates any existing options.
+ * @param existingOptions - Currently selected reward options
+ * @param candidate - Newly rolled candidate option
+ * @returns Whether the candidate option should be considered a duplicate
+ */
+function isDuplicateRewardOption(existingOptions: readonly RewardOption[], candidate: RewardOption | null): boolean {
+  if (!candidate) {
+    return false;
+  }
+
+  return existingOptions.some(existing => {
+    if (existing.type.name === candidate.type.name) {
+      return true;
+    }
+
+    if (existing.type.category !== candidate.type.category) {
+      return false;
+    }
+
+    // OTHER holds various rewards which are only dupes when identical
+    if (candidate.type.category === RewardCategoryId.OTHER) {
+      return existing.type.id === candidate.type.id;
+    }
+
+    // Prevent duplicates from categories, except generic ones like held/form change items
+    switch (candidate.type.category) {
+      case RewardCategoryId.HELD_ITEM:
+      case RewardCategoryId.TRAINER_ITEM:
+      case RewardCategoryId.FORM_CHANGE_ITEM:
+      case RewardCategoryId.NONE:
+        return false;
+      default:
+        return true;
+    }
+  });
+}
+
+/**
  * Will generate a {@linkcode RewardOption} from the {@linkcode RewardPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
  * @param pool - {@linkcode RewardPool} to generate items from
  * @param weights - {@linkcode RewardPoolWeights} to use when generating items
@@ -214,17 +253,12 @@ function getRewardOptionWithRetry(
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewRewardOption(pool, weights, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
-  while (
-    existingOptions.length > 0
-    && ++r < retryCount //TODO: Improve this condition to refine what counts as a dupe
-    && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
-      .length > 0
-  ) {
+  while (++r < retryCount && isDuplicateRewardOption(existingOptions, candidate)) {
     console.log("Retry count:", r);
-    console.log(candidate?.type.group);
+    console.log(candidate?.type.category);
     console.log(candidate?.type.name);
     console.log(existingOptions.filter(o => o.type.name === candidate?.type.name).length);
-    console.log(existingOptions.filter(o => o.type.group === candidate?.type.group).length);
+    console.log(existingOptions.filter(o => o.type.category === candidate?.type.category).length);
     candidate = getNewRewardOption(
       pool,
       weights,

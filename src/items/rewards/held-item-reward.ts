@@ -14,7 +14,7 @@ import i18next from "i18next";
 
 export class HeldItemReward extends PokemonReward {
   public itemId: HeldItemId;
-  constructor(id: RewardId, itemId: HeldItemId, group?: string, soundName?: string) {
+  constructor(id: RewardId, itemId: HeldItemId, soundName?: string | undefined) {
     super(
       id,
       "",
@@ -34,7 +34,6 @@ export class HeldItemReward extends PokemonReward {
         }
         return null;
       },
-      group,
       soundName,
     );
     this.itemId = itemId;

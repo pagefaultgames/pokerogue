@@ -9,8 +9,8 @@ import { randSeedItem } from "#utils/common";
 
 export class TrainerItemReward extends Reward {
   public readonly itemId: TrainerItemId;
-  constructor(id: RewardId, itemId: TrainerItemId, group?: string) {
-    super(id, "", "", group, "se/restore");
+  constructor(id: RewardId, itemId: TrainerItemId) {
+    super(id, "", "", "se/restore");
     this.itemId = itemId;
   }
 

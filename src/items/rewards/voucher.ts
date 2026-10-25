@@ -10,7 +10,7 @@ export class AddVoucherReward extends Reward {
   private count: number;
 
   constructor(id: RewardId, voucherType: VoucherType, count: number) {
-    super(id, "", getVoucherTypeIcon(voucherType), "voucher");
+    super(id, "", getVoucherTypeIcon(voucherType));
     this.count = count;
     this.voucherType = voucherType;
   }

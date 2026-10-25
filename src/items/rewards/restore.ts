@@ -63,8 +63,7 @@ export class PokemonHpRestoreReward extends PokemonReward {
     restorePoints: number,
     restorePercent: number,
     healStatus = false,
-    selectFilter?: PokemonSelectFilter,
-    group?: string,
+    selectFilter?: PokemonSelectFilter | undefined,
   ) {
     super(
       id,
@@ -81,7 +80,6 @@ export class PokemonHpRestoreReward extends PokemonReward {
           }
           return null;
         }),
-      group || "potion",
     );
 
     this.restorePoints = restorePoints;
@@ -110,21 +108,12 @@ export class PokemonHpRestoreReward extends PokemonReward {
 
 export class PokemonReviveReward extends PokemonHpRestoreReward {
   constructor(id: RewardId, localeKey: string, iconImage: string, restorePercent: number) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      0,
-      restorePercent,
-      false,
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.isFainted()) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "revive",
-    );
+    super(id, localeKey, iconImage, 0, restorePercent, false, (pokemon: PlayerPokemon) => {
+      if (!pokemon.isFainted()) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      return null;
+    });
 
     this.selectFilter = (pokemon: PlayerPokemon) => {
       if (pokemon.hp) {
@@ -147,7 +136,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
 
 export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.SACRED_ASH, localeKey, iconImage, "reward:allPokemonFullRevive", "reward");
+    super(RewardId.SACRED_ASH, localeKey, iconImage);
   }
 
   apply(): boolean {

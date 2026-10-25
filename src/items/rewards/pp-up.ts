@@ -22,7 +22,6 @@ export class PokemonPpUpReward extends PokemonMoveReward {
         }
         return null;
       },
-      "ppUp",
     );
 
     this.upPoints = upPoints;

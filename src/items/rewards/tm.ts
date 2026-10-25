@@ -17,18 +17,12 @@ export class TmReward extends PokemonReward {
   public moveId: MoveId;
 
   constructor(id: RewardId, moveId: MoveId) {
-    super(
-      id,
-      "",
-      `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.isTmCompatible(moveId, true)) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "tm",
-    );
+    super(id, "", `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`, (pokemon: PlayerPokemon) => {
+      if (!pokemon.isTmCompatible(moveId, true)) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      return null;
+    });
 
     this.moveId = moveId;
   }

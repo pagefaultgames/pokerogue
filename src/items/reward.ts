@@ -44,7 +44,7 @@
  * @packageDocumentation
 */
 
-import type { RewardId } from "#enums/reward-id";
+import { getRewardCategory, type RewardCategoryId, type RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 // biome-ignore lint/correctness/noUnusedImports: used in TSDoc
@@ -57,23 +57,18 @@ export abstract class Reward {
   public id: RewardId;
   private readonly localeKey: string;
   private readonly _iconName: string;
-  public group: string; // TODO: Make a union type of all groups
   public readonly soundName: string;
   public tier: RarityTier;
 
-  // TODO: These bangs are emphatically NOT correct
-  constructor(
-    id: RewardId,
-    localeKey: string | null,
-    iconName: string | null,
-    group?: string,
-    soundName = "se/restore",
-  ) {
+  constructor(id: RewardId, localeKey: string, iconName: string, soundName = "se/restore") {
     this.id = id;
-    this.localeKey = localeKey!;
-    this._iconName = iconName!;
-    this.group = group!;
+    this.localeKey = localeKey;
+    this._iconName = iconName;
     this.soundName = soundName;
+  }
+
+  public get category(): RewardCategoryId {
+    return getRewardCategory(this.id);
   }
 
   public get name(): string {
@@ -132,10 +127,9 @@ export abstract class PokemonReward extends Reward {
     localeKey: string,
     iconName: string,
     selectFilter?: PokemonSelectFilter,
-    group?: string,
     soundName?: string,
   ) {
-    super(id, localeKey, iconName, group, soundName);
+    super(id, localeKey, iconName, soundName);
     this.selectFilter = selectFilter;
   }
 
@@ -152,9 +146,8 @@ export abstract class PokemonMoveReward extends PokemonReward {
     iconName: string,
     selectFilter?: PokemonSelectFilter,
     moveSelectFilter?: PokemonMoveSelectFilter,
-    group?: string,
   ) {
-    super(id, localeKey, iconName, selectFilter, group);
+    super(id, localeKey, iconName, selectFilter);
     this.moveSelectFilter = moveSelectFilter;
   }
 

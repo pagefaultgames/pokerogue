@@ -28,7 +28,6 @@ export class PokemonNatureChangeReward extends PokemonReward {
         }
         return null;
       },
-      "mint",
     );
 
     this.nature = nature;

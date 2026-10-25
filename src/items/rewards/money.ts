@@ -19,7 +19,7 @@ export class AddMoneyReward extends Reward {
     moneyMultiplier: number,
     moneyMultiplierDescriptorKey: string,
   ) {
-    super(id, localeKey, iconImage, "money", "se/buy");
+    super(id, localeKey, iconImage, "se/buy");
 
     this.moneyMultiplier = moneyMultiplier;
     this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;

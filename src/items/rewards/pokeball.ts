@@ -10,7 +10,7 @@ export class AddPokeballReward extends Reward {
   private count: number;
 
   constructor(id: RewardId, iconImage: string, count: number) {
-    super(id, "", iconImage, "pb", "se/pb_bounce_1");
+    super(id, "", iconImage, "se/pb_bounce_1");
     this.pokeballType = PokeballType.POKEBALL;
     switch (id) {
       case RewardId.GREAT_BALL:

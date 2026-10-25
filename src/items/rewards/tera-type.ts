@@ -15,22 +15,16 @@ export class ChangeTeraTypeReward extends PokemonReward {
   private teraType: PokemonType;
 
   constructor(teraType: PokemonType) {
-    super(
-      RewardId.TERA_SHARD,
-      "",
-      `${PokemonType[teraType].toLowerCase()}_tera_shard`,
-      (pokemon: PlayerPokemon) => {
-        if (
-          [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
-            s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
-          ).length > 0
-        ) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "tera_shard",
-    );
+    super(RewardId.TERA_SHARD, "", `${PokemonType[teraType].toLowerCase()}_tera_shard`, (pokemon: PlayerPokemon) => {
+      if (
+        [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
+          s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
+        ).length > 0
+      ) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      return null;
+    });
 
     this.teraType = teraType;
   }

@@ -27,7 +27,6 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
         }
         return null;
       },
-      "ether",
     );
 
     this.restorePoints = restorePoints;
@@ -61,18 +60,12 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
   protected restorePoints: number;
 
   constructor(id: RewardId, localeKey: string, iconImage: string, restorePoints: number) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      (pokemon: PlayerPokemon) => {
-        if (pokemon.getMoveset().filter(m => m.ppUsed).length === 0) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "elixir",
-    );
+    super(id, localeKey, iconImage, (pokemon: PlayerPokemon) => {
+      if (pokemon.getMoveset().filter(m => m.ppUsed).length === 0) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      return null;
+    });
 
     this.restorePoints = restorePoints;
   }
