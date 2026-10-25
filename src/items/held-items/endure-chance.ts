@@ -13,12 +13,12 @@ import i18next from "i18next";
 export class EndureChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.ENDURE_CHANCE> {
   public override readonly effect = HeldItemEffect.ENDURE_CHANCE;
 
-  public override shouldApply({ pokemon, endure: surviveDamage }: EndureChanceParams): boolean {
-    return !surviveDamage.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getStack(this.type);
+  public override shouldApply({ pokemon, endure }: EndureChanceParams): boolean {
+    return !endure.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getStack(this.type);
   }
 
-  public override apply({ pokemon, endure: surviveDamage }: EndureChanceParams): void {
-    surviveDamage.value = true;
+  public override apply({ pokemon, endure }: EndureChanceParams): void {
+    endure.value = true;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("itemApply:surviveDamageApply", {
