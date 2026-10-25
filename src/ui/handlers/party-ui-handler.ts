@@ -199,6 +199,7 @@ export class PartyUiHandler extends MessageUiHandler {
     PartyOption.PASS_BATON,
     PartyOption.RENAME,
     PartyOption.SELECT,
+    PartyOption.SWITCH,
   ];
 
   setup() {
