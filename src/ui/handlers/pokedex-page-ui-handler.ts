@@ -988,7 +988,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const species = otherSpecies ? otherSpecies : this.species;
 
     if (settings.general.dexForDevs) {
-      species.getFullUnlocksData();
+      return species.getFullUnlocksData();
     }
 
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
