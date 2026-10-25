@@ -2527,7 +2527,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       // If the dev option for the dex is selected, all forms can be cycled through
       this.canCycleForm = settings.general.dexForDevs
         ? species.forms.length > 1
-        : species.forms.filter(f => f.isStarterSelectable).filter(f => f).length > 1;
+        : species.forms.filter(f => f.isStarterSelectable).length > 1
+          && species.forms[this.formIndex].isStarterSelectable;
 
       if (caughtAttr && species.malePercent !== null) {
         const gender = female ? Gender.FEMALE : Gender.MALE;
