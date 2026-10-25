@@ -49,7 +49,7 @@ describe("Abilities - Battle Bond", () => {
       game.move.use(MoveId.SPLASH);
       await game.doKillOpponents();
       await game.phaseInterceptor.to("TurnEndPhase");
-      game.doSelectModifier();
+      game.doSelectReward();
       await game.phaseInterceptor.to("QuietFormChangePhase");
 
       expect(greninja.formIndex).toBe(baseForm);

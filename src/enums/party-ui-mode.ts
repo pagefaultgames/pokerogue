@@ -26,30 +26,30 @@ export const PartyUiMode = {
    */
   REVIVAL_BLESSING: 3,
   /**
-   * Indicates that the party UI is open to select a mon to apply a modifier to.
+   * Indicates that the party UI is open to select a mon to apply a REWARD to.
    * This type of selection can be cancelled.
    */
-  MODIFIER: 4,
+  REWARD: 4,
   /**
    * Indicates that the party UI is open to select a mon to apply a move
-   * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
+   * REWARD to (such as an Ether or PP Up).  This type of selection can be cancelled.
    */
-  MOVE_MODIFIER: 5,
+  MOVE_REWARD: 5,
   /**
    * Indicates that the party UI is open to select a mon to teach a TM.  This
    * type of selection can be cancelled.
    */
-  TM_MODIFIER: 6,
+  TM_REWARD: 6,
   /**
    * Indicates that the party UI is open to select a mon to remember a move.
    * This type of selection can be cancelled.
    */
-  REMEMBER_MOVE_MODIFIER: 7,
+  REMEMBER_MOVE_REWARD: 7,
   /**
    * Indicates that the party UI is open to transfer items between mons.  This
    * type of selection can be cancelled.
    */
-  MODIFIER_TRANSFER: 8,
+  ITEM_TRANSFER: 8,
   /**
    * Indicates that the party UI is open because of a DNA Splicer.  This
    * type of selection can be cancelled.
@@ -79,12 +79,12 @@ export const PartyUiMode = {
    * Indicates that the party UI is open to select a mon to use an evolution item on.
    * This type of selection can be cancelled.
    */
-  EVOLUTION_ITEM_MODIFIER: 14,
+  EVOLUTION_ITEM_REWARD: 14,
   /**
    * Indicates that the party UI is open to select a mon to use a form-change item on.
    * This type of selection can be cancelled.
    */
-  FORM_CHANGE_ITEM_MODIFIER: 15,
+  FORM_CHANGE_ITEM_REWARD: 15,
 } as const;
 
 export type PartyUiMode = ObjectValues<typeof PartyUiMode>;

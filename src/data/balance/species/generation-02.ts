@@ -1,12 +1,13 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
-import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChange } from "#data/pokemon-forms";
 import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
-import { FormChangeItem } from "#enums/form-change-item";
+import { EvolutionItemId } from "#enums/evolution-item";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -258,7 +259,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.MEGANIUM,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.MEGANIUMITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.MEGANIUMITE),
       }),
     ],
     passives: {
@@ -817,7 +818,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.FERALIGATR,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FERALIGITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.FERALIGITE),
       }),
     ],
     passives: {
@@ -2401,7 +2402,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.TOGEKISS,
         level: 1,
-        item: EvolutionItem.SHINY_STONE,
+        item: EvolutionItemId.SHINY_STONE,
         evoDelay: [40, 45, 50],
       }),
     ],
@@ -2875,7 +2876,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.AMPHAROS,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.AMPHAROSITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.AMPHAROSITE),
         conditions: [],
       }),
     ],
@@ -3660,7 +3661,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.SUNFLORA,
         level: 1,
-        item: EvolutionItem.SUN_STONE,
+        item: EvolutionItemId.SUN_STONE,
         evoDelay: [16, 18, 20],
       }),
     ],
@@ -4290,7 +4291,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.HONCHKROW,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [26, 32, 38],
       }),
     ],
@@ -4509,7 +4510,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.MISMAGIUS,
         level: 1,
-        item: EvolutionItem.DUSK_STONE,
+        item: EvolutionItemId.DUSK_STONE,
         evoDelay: [22, 26, 30],
       }),
     ],
@@ -5939,7 +5940,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.GLISCOR,
         level: 1,
-        item: EvolutionItem.RAZOR_FANG,
+        item: EvolutionItemId.RAZOR_FANG,
         condition: { key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT] },
         evoDelay: [48, 56, 64],
       }),
@@ -6142,7 +6143,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.STEELIX,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.STEELIXITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.STEELIXITE),
         conditions: [],
       }),
     ],
@@ -6622,7 +6623,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.SCIZOR,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SCIZORITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.SCIZORITE),
         conditions: [],
       }),
     ],
@@ -6863,7 +6864,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.HERACROSS,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.HERACRONITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.HERACRONITE),
         conditions: [],
       }),
     ],
@@ -7008,7 +7009,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.WEAVILE,
         level: 1,
-        item: EvolutionItem.RAZOR_CLAW,
+        item: EvolutionItemId.RAZOR_CLAW,
         condition: { key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT] },
         evoDelay: [48, 56, 64],
       }),
@@ -7284,7 +7285,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.URSALUNA,
         level: 1,
-        item: EvolutionItem.PEAT_BLOCK,
+        item: EvolutionItemId.PEAT_BLOCK,
         evoDelay: [70, 85, 100],
       }),
     ],
@@ -8236,7 +8237,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.SKARMORY,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SKARMORITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.SKARMORITE),
       }),
     ],
     eggTier: EggTier.RARE,
@@ -8551,7 +8552,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.HOUNDOOM,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.HOUNDOOMINITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.HOUNDOOMINITE),
         conditions: [],
       }),
     ],
@@ -8859,7 +8860,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       new SpeciesEvolution({
         speciesId: SpeciesId.PORYGON_Z,
         level: 1,
-        item: EvolutionItem.DUBIOUS_DISC,
+        item: EvolutionItemId.DUBIOUS_DISC,
         evoDelay: [64, 72, 80],
       }),
     ],
@@ -10414,7 +10415,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.TYRANITAR,
         preFormKey: "",
         evoFormKey: SpeciesFormKey.MEGA,
-        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.TYRANITARITE),
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItemId.TYRANITARITE),
         conditions: [],
       }),
     ],

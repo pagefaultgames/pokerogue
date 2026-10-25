@@ -1,9 +1,11 @@
 import type { determineEnemySpecies } from "#ai/ai-species-gen";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { allMoves } from "#data/data-lists";
+import { allHeldItems, allMoves } from "#data/data-lists";
 import { type Gender, getGenderSymbol } from "#data/gender";
 import type { BiomeId } from "#enums/biome-id";
+import { EvolutionItemId } from "#enums/evolution-item";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
@@ -12,63 +14,12 @@ import type { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
-import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
 import type { EvoLevelThreshold } from "#types/species-gen-types";
 import { coerceArray } from "#utils/array";
 import { randSeedInt } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-
-export enum EvolutionItem {
-  NONE,
-
-  LINKING_CORD,
-  SUN_STONE,
-  MOON_STONE,
-  LEAF_STONE,
-  FIRE_STONE,
-  WATER_STONE,
-  THUNDER_STONE,
-  ICE_STONE,
-  DUSK_STONE,
-  DAWN_STONE,
-  SHINY_STONE,
-  CRACKED_POT,
-  SWEET_APPLE,
-  TART_APPLE,
-  STRAWBERRY_SWEET,
-  UNREMARKABLE_TEACUP,
-  UPGRADE,
-  DUBIOUS_DISC,
-  DRAGON_SCALE,
-  PRISM_SCALE,
-  RAZOR_CLAW,
-  RAZOR_FANG,
-  OVAL_STONE,
-  REAPER_CLOTH,
-  ELECTIRIZER,
-  MAGMARIZER,
-  PROTECTOR,
-  SACHET,
-  WHIPPED_DREAM,
-  SYRUPY_APPLE,
-  CHIPPED_POT,
-  GALARICA_CUFF,
-  GALARICA_WREATH,
-  AUSPICIOUS_ARMOR,
-  MALICIOUS_ARMOR,
-  MASTERPIECE_TEACUP,
-  SUN_FLUTE,
-  MOON_FLUTE,
-
-  BLACK_AUGURITE = 51,
-  PEAT_BLOCK,
-  METAL_ALLOY,
-  SCROLL_OF_DARKNESS,
-  SCROLL_OF_WATERS,
-  LEADERS_CREST,
-}
 
 const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
 type TyrogueMove = (typeof tyrogueMoves)[number];
@@ -88,7 +39,7 @@ export const EvoCondKey = {
   SPECIES_CAUGHT: 12,
   GENDER: 13,
   NATURE: 14,
-  HELD_ITEM: 15, // Currently checks only for species stat booster items
+  HELD_ITEM: 15,
 } as const;
 
 export type EvolutionConditionData =
@@ -102,7 +53,7 @@ export type EvolutionConditionData =
   | { key: typeof EvoCondKey.GENDER; gender: Gender }
   | { key: typeof EvoCondKey.MOVE_TYPE | typeof EvoCondKey.PARTY_TYPE; pkmnType: PokemonType }
   | { key: typeof EvoCondKey.SPECIES_CAUGHT; speciesCaught: SpeciesId }
-  | { key: typeof EvoCondKey.HELD_ITEM; itemKey: SpeciesStatBoosterItem }
+  | { key: typeof EvoCondKey.HELD_ITEM; itemKey: HeldItemId }
   | { key: typeof EvoCondKey.NATURE; nature: Nature[] }
   | { key: typeof EvoCondKey.WEATHER; weather: WeatherType[] }
   | { key: typeof EvoCondKey.TYROGUE; move: TyrogueMove }
@@ -155,7 +106,7 @@ export class SpeciesEvolutionCondition {
             return i18next.t("pokemonEvolutions:caught", { species });
           }
           case EvoCondKey.HELD_ITEM:
-            return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
+            return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(allHeldItems[cond.itemKey].name)}`);
           case EvoCondKey.RANDOM_FORM:
             return null;
           default:
@@ -186,11 +137,7 @@ export class SpeciesEvolutionCondition {
               p.isOfType(cond.pkmnType, { includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }),
             );
         case EvoCondKey.EVO_TREASURE_TRACKER:
-          return pokemon
-            .getHeldItems()
-            .some(
-              m => m.is("EvoTrackerModifier") && m.getStackCount() + pokemon.getPersistentTreasureCount() >= cond.value,
-            );
+          return allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER].getStackCount(pokemon) >= cond.value;
         case EvoCondKey.GENDER:
           return cond.gender === (forFusion ? pokemon.fusionGender : pokemon.gender);
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
@@ -214,12 +161,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.HELD_ITEM:
-          return pokemon
-            .getHeldItems()
-            .some(
-              m =>
-                m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey,
-            );
+          return pokemon.heldItemManager.hasItem(cond.itemKey);
         default:
           cond satisfies never;
           return false;
@@ -237,7 +179,7 @@ interface SpeciesFormEvolutionConstructor {
   preFormKey: string | null;
   evoFormKey: string | null;
   level: number;
-  item?: EvolutionItem;
+  item?: EvolutionItemId;
   condition?: EvolutionConditionData | EvolutionConditionData[] | undefined;
   evoDelay?: EvoLevelThreshold | undefined;
 }
@@ -248,7 +190,7 @@ export class SpeciesFormEvolution {
   public preFormKey: string | null;
   public evoFormKey: string | null;
   public level: number;
-  public item: EvolutionItem;
+  public item: EvolutionItemId;
   public condition: SpeciesEvolutionCondition | null; // TODO: default to `() => true`
   /**
    * A triple containing the level thresholds for evolutions based on the encounter sort
@@ -263,7 +205,7 @@ export class SpeciesFormEvolution {
     this.preFormKey = data.preFormKey;
     this.evoFormKey = data.evoFormKey;
     this.level = data.level;
-    this.item = data.item ?? EvolutionItem.NONE;
+    this.item = data.item ?? EvolutionItemId.NONE;
     if (data.condition != null) {
       this.condition = new SpeciesEvolutionCondition(...coerceArray(data.condition));
     }
@@ -283,7 +225,7 @@ export class SpeciesFormEvolution {
       strings.push(i18next.t("pokemonEvolutions:atLevel", { lv: this.level }));
     }
     if (this.item) {
-      const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
+      const itemDescription = i18next.t(`item:${toCamelCase(EvolutionItemId[this.item])}.name`);
       const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
       strings.push(i18next.t("pokemonEvolutions:using", { item: itemDescription, tier: rarity }));
     }
@@ -317,10 +259,10 @@ export class SpeciesFormEvolution {
    * Checks if a Pokemon fulfills the requirements of this evolution.
    * @param pokemon - The {@linkcode Pokemon} to evolve
    * @param forFusion - (Default `false`) Whether this evolution is meant for the secondary fused mon.
-   * @param item - (Default `EvolutionItem.NONE`) The {@linkcode EvolutionItem} to check for, if applicable
+   * @param item - (Default `EvolutionItemId.NONE`) The {@linkcode EvolutionItemId} to check for, if applicable
    * @returns Whether this evolution can apply to the Pokemon
    */
-  public validate(pokemon: Pokemon, forFusion = false, item: EvolutionItem = EvolutionItem.NONE): boolean {
+  public validate(pokemon: Pokemon, forFusion = false, item: EvolutionItemId = EvolutionItemId.NONE): boolean {
     const correctForm =
       this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey;
 
@@ -354,7 +296,7 @@ export class SpeciesFormEvolution {
 interface SpeciesEvolutionConstructor {
   speciesId: SpeciesId;
   level: number;
-  item?: EvolutionItem;
+  item?: EvolutionItemId;
   condition?: EvolutionConditionData | EvolutionConditionData[];
   evoDelay?: EvoLevelThreshold;
 }

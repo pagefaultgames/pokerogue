@@ -38,7 +38,6 @@ import { LoginFormUiHandler } from "#ui/login-form-ui-handler";
 import { LoginOrRegisterUiHandler } from "#ui/login-or-register-ui-handler";
 import { MenuUiHandler } from "#ui/menu-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -48,6 +47,7 @@ import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RegistrationFormUiHandler } from "#ui/registration-form-ui-handler";
 import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import { RenameRunFormUiHandler } from "#ui/rename-run-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
@@ -139,7 +139,7 @@ export class UI extends Phaser.GameObjects.Container {
       new FightUiHandler(),
       new BallUiHandler(),
       new TargetSelectUiHandler(),
-      new ModifierSelectUiHandler(),
+      new RewardSelectUiHandler(),
       new SaveSlotSelectUiHandler(),
       new PartyUiHandler(),
       new SummaryUiHandler(),
