@@ -15,8 +15,8 @@ export class EvolutionItemReward extends PokemonReward {
   public evolutionItemId: EvolutionItemId;
 
   constructor(id: RewardId, evolutionItemId: EvolutionItemId) {
-    super(id, "", EvolutionItemId[evolutionItemId].toLowerCase(), (pokemon: PlayerPokemon) => 
-      pokemon.isEvolutionItemCompatible(this.evolutionItemId) ? null : PartyUiHandler.NoEffectMessage
+    super(id, "", EvolutionItemId[evolutionItemId].toLowerCase(), (pokemon: PlayerPokemon) =>
+      pokemon.isEvolutionItemCompatible(this.evolutionItemId) ? null : PartyUiHandler.NoEffectMessage,
     );
 
     this.evolutionItemId = evolutionItemId;

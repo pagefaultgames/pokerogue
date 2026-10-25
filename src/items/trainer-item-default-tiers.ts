@@ -1,8 +1,7 @@
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
-// TODO: should this be exported? why?
-export const trainerItemRarities = {
+const trainerItemRarities = {
   [TrainerItemId.MAP]: RarityTier.COMMON,
   [TrainerItemId.IV_SCANNER]: RarityTier.ULTRA,
   [TrainerItemId.LOCK_CAPSULE]: RarityTier.ROGUE,

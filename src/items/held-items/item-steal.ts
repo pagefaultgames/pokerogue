@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import { Pokemon } from "#field/pokemon";
+import type { Pokemon } from "#field/pokemon";
 import { HeldItemAttr } from "#items/held-item-attr";
 import { tryStealHeldItem } from "#items/item-utility";
 import type { ItemStealParams } from "#types/held-item-parameter";
@@ -80,8 +80,7 @@ export class TurnEndItemStealHeldItemAttr extends ItemTransferHeldItemAttr<typeo
    * @returns the opponents of the source {@linkcode Pokemon}
    */
   protected override getTargets(params: ItemStealParams): Pokemon[] {
-    // TODO: this will always be defined, might be placeholder?
-    return params.pokemon instanceof Pokemon ? params.pokemon.getOpponents() : [];
+    return params.pokemon.getOpponents();
   }
 
   protected override getTransferredItemCount(): number {

@@ -10,9 +10,9 @@ import { describe, expectTypeOf, it } from "vitest";
 
 // Dummy classes
 
-class NonConsumableAttr extends HeldItemAttr<typeof HeldItemEffect.FIELD_EFFECT> {
+class NonConsumableAttr extends HeldItemAttr<typeof HeldItemEffect.FIELD_EFFECT_EXTEND> {
   declare private readonly _: never;
-  public override readonly effect = HeldItemEffect.FIELD_EFFECT;
+  public override readonly effect = HeldItemEffect.FIELD_EFFECT_EXTEND;
   public override apply(): void {}
 }
 class ConsumableAttr extends ConsumableHeldItemAttr<typeof HeldItemEffect.EXP_BOOSTER> {

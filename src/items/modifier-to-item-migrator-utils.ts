@@ -1,11 +1,11 @@
 import type { FormChangeItemId } from "#enums/form-change-item-id";
+import type { SpeciesStatBoosterItemId } from "#enums/held-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import type { SpeciesStatBoosterItemId } from "#items/stat-boost";
 import type { HeldItemSpecs } from "#types/held-item-data-types";
 import type { TrainerItemSpecs } from "#types/trainer-item-data-types";
 

@@ -18,37 +18,34 @@ type AllRewardsRewardType = {
 /**
  * Dynamically generate a {@linkcode Reward} from a given RewardSpecs.
  * @param specs - The {@linkcode RewardSpecs} used to generate the reward
- * @returns The generated {@linkcode Reward}, or `null` if no reward could be generated
- * @todo Remove `null` from signature eventually
+ * @returns The generated {@linkcode Reward}
  * @example
  * ```ts
  * const reward = generateRewardForTest({id: RewardId.BERRY, args: HeldItemId.SITRUS_BERRY});
  * ```
  */
-export function generateRewardForTest<T extends RewardId>(specs: RewardSpecs<T>): AllRewardsRewardType[T] | null;
+export function generateRewardForTest<T extends RewardId>(specs: RewardSpecs<T>): AllRewardsRewardType[T];
 /**
  * Dynamically generate a {@linkcode Reward} from a given HeldItemId.
  * @param id - The {@linkcode HeldItemId | ID} of the Held item to generate
- * @returns The generated {@linkcode HeldItemReward}, or `null` if no reward could be generated
- * @todo Remove `null` from signature eventually
+ * @returns The generated {@linkcode HeldItemReward}
  * @example
  * ```ts
  * const reward = generateRewardForTest(HeldItemId.REVIVER_SEED);
  * ```
  */
-export function generateRewardForTest<T extends HeldItemId>(id: RewardSpecs<T>): HeldItemReward | null;
+export function generateRewardForTest<T extends HeldItemId>(id: RewardSpecs<T>): HeldItemReward;
 /**
  * Dynamically generate a {@linkcode Reward} from a given TrainerItemId.
  * @param id - The {@linkcode TrainerItemId | ID} of the Trainer item to generate
- * @returns The generated {@linkcode TrainerItemReward}, or `null` if no reward could be generated
- * @todo Remove `null` from signature eventually
+ * @returns The generated {@linkcode TrainerItemReward}
  * @example
  * ```ts
  * const reward = generateRewardForTest(TrainerItemId.HEALING_CHARM);
  * ```
  */
-export function generateRewardForTest<T extends TrainerItemId>(specs: RewardSpecs<T>): TrainerItemReward | null;
-export function generateRewardForTest(specs: RewardSpecs): Reward | null {
+export function generateRewardForTest<T extends TrainerItemId>(specs: RewardSpecs<T>): TrainerItemReward;
+export function generateRewardForTest(specs: RewardSpecs): Reward {
   // Destructure specs into individual parameters
   const pregenArgs = typeof specs === "object" ? specs.args : undefined;
   const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;

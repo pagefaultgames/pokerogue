@@ -21,7 +21,7 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     globalScene.phaseManager.unshiftNew("MoneyRewardPhase", globalScene.currentBattle.trainer?.config.moneyMultiplier!); // TODO: is this bang correct?
 
-    const silentRewards = globalScene.currentBattle.trainer?.config.silentRewards; // TODO: is this bang correct?
+    const silentRewards = globalScene.currentBattle.trainer?.config.silentRewards;
     if (silentRewards) {
       for (const id of silentRewards) {
         globalScene.phaseManager.unshiftNew("RewardPhase", id);
