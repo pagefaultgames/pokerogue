@@ -46,7 +46,7 @@ describe("{{description}}", () => {
 
     const feebas = game.field.getPlayerPokemon();
 
-    const reward = generateRewardForTest(RewardId.BERRY)!;
+    const reward = generateRewardForTest(RewardId.BERRY);
     expect(reward).toBeInstanceOf(HeldItemReward); // Replace with actual reward instance
     expect(getHeldItemCategory(reward["itemId"])).toBe(HeldItemCategoryId.BERRY);
     applyReward(reward, { pokemon: feebas });

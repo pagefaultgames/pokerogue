@@ -1,9 +1,13 @@
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemNames } from "#enums/held-item-id";
 import { CosmeticHeldItem } from "#items/held-item";
 import i18next from "i18next";
 
-// TODO: All form change items have max stack counts of 1 - we should edit the constructor to not store it
 export class FormChangeHeldItem extends CosmeticHeldItem {
+  constructor(type: FormChangeItemId) {
+    super(type, 1);
+  }
+
   public override get description(): string {
     return i18next.t("item:formChange.description");
   }

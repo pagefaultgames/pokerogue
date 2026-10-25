@@ -22,7 +22,7 @@ export class FormChangeItemReward extends PokemonReward {
   public formChangeItemId: FormChangeItemId;
 
   constructor(id: RewardId, formChangeItemId: FormChangeItemId) {
-    super(id, "", allHeldItems[formChangeItemId].iconName, (pokemon: PlayerPokemon) => 
+    super(id, "", allHeldItems[formChangeItemId].iconName, (pokemon: PlayerPokemon) =>
       pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage,
     );
 

@@ -17,13 +17,9 @@ export class OldGateauHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.BA
   public override readonly effect = HeldItemEffect.BASE_STAT_ADD;
 
   public override apply({ pokemon, baseStats }: BaseStatParams): void {
-    const stats = this.getStats(pokemon);
-    // TODO: This is inefficient and clunky
-    baseStats.forEach((v, i) => {
-      if (stats.includes(i)) {
-        baseStats[i] = Phaser.Math.Clamp(v + OLD_GATEAU_STAT_MODIFIER, 1, 999999);
-      }
-    });
+    for (const stat of this.getStats(pokemon)) {
+      baseStats[stat] = Phaser.Math.Clamp(baseStats[stat] + OLD_GATEAU_STAT_MODIFIER, 1, 999999);
+    }
   }
 
   /**
