@@ -1,9 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
-import type { EvolutionItemId } from "#enums/evolution-item";
-import type { FormChangeItemId } from "#enums/form-change-item-id";
-import type { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
@@ -11,33 +8,17 @@ import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { FusePokemonReward } from "#items/fuse";
 import { tryTransferHeldItem } from "#items/item-utility";
-import {
-  type PokemonMoveRecallRewardParams,
-  type PokemonMoveReward,
-  type PokemonMoveRewardParams,
-  PokemonReward,
-  type PokemonRewardParams,
-  type Reward,
-  type RewardOption,
-} from "#items/reward";
+import { PokemonReward, type Reward, type RewardOption } from "#items/reward";
 import {
   type CustomRewardSettings,
   generatePlayerRewardOptions,
   generateRewardPoolWeights,
   getRewardPoolForType,
 } from "#items/reward-pool-utils";
-import {
-  applyReward,
-  getPlayerShopRewardOptionsForWave,
-  isEvolutionItemReward,
-  isFormChangeItemReward,
-  isMoveReward,
-  isRememberMoveReward,
-  isTmReward,
-} from "#items/reward-utils";
+import { applyReward, getPlayerShopRewardOptionsForWave } from "#items/reward-utils";
 import { BattlePhase } from "#phases/battle-phase";
 import type { ConfirmModeConfig } from "#types/ui-types";
-import { PartyOption, PartyUiHandler, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
@@ -293,69 +274,6 @@ export class SelectRewardPhase extends BattlePhase {
         }
       },
       reward.selectFilter,
-    );
-  }
-
-  // Opens the party menu to apply one of various Pokemon rewards. We pass the reward's filter to decide which Pokemon can be selected.
-  // For MoveReward (e.g. PP UP or Ether) we also pass a filter to decide which moves can be selected.
-  private openPokemonRewardMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
-    const party = globalScene.getPlayerParty();
-
-    let partyUiMode: PartyUiMode = PartyUiMode.REWARD;
-    let moveSelectFilter: PokemonMoveSelectFilter | undefined;
-    let tmMoveId: MoveId | undefined;
-    let isMove = false;
-    let itemId: EvolutionItemId | FormChangeItemId | undefined;
-    let getParams = (slotIndex: number, _option: PartyOption) => {
-      return { pokemon: party[slotIndex] } as PokemonRewardParams;
-    };
-
-    console.log(reward);
-    if (isMoveReward(reward)) {
-      partyUiMode = PartyUiMode.MOVE_REWARD;
-      moveSelectFilter = (reward as PokemonMoveReward).moveSelectFilter;
-      isMove = true;
-      getParams = (slotIndex: number, option: PartyOption) => {
-        return { pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams;
-      };
-    }
-    if (isRememberMoveReward(reward)) {
-      partyUiMode = PartyUiMode.REMEMBER_MOVE_REWARD;
-      getParams = (slotIndex: number, option: PartyOption) => {
-        return { pokemon: party[slotIndex], moveIndex: option, cost } as PokemonMoveRecallRewardParams;
-      };
-    }
-    if (isTmReward(reward)) {
-      partyUiMode = PartyUiMode.TM_REWARD;
-      tmMoveId = reward.moveId;
-      console.log("Reward's tm", tmMoveId);
-    }
-    if (isEvolutionItemReward(reward)) {
-      partyUiMode = PartyUiMode.EVOLUTION_ITEM_REWARD;
-      itemId = reward.evolutionItemId;
-    }
-    if (isFormChangeItemReward(reward)) {
-      partyUiMode = PartyUiMode.EVOLUTION_ITEM_REWARD;
-      itemId = reward.formChangeItemId;
-    }
-
-    console.log(partyUiMode);
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      partyUiMode,
-      -1,
-      (slotIndex: number, option: PartyOption) => {
-        if (slotIndex < 6) {
-          const params = getParams(slotIndex, option);
-          const result = applyReward(reward, params, true);
-          this.postApplyPokemonReward(reward, result, cost);
-        } else {
-          this.resetRewardSelect(rewardSelectCallback);
-        }
-      },
-      reward.selectFilter,
-      moveSelectFilter,
-      { moveId: tmMoveId, showMovePp: isMove, itemId },
     );
   }
 
