@@ -174,7 +174,9 @@ const heldItems = {
     .iconName("shell_bell")
     .build(),
 
-  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(EndureChanceHeldItemAttr).build(), //
+  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5) //
+    .attr(EndureChanceHeldItemAttr)
+    .build(),
   [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
     .attr(BypassSpeedChanceHeldItemAttr, 10)
     .build(),
