@@ -26,9 +26,10 @@ import { BerryHeldItemAttr } from "#items/berry";
 import { BypassSpeedChanceHeldItemAttr } from "#items/bypass-speed-chance";
 import { CritBoostHeldItemAttr, SpeciesCritBoostHeldItemAttr } from "#items/crit-booster";
 import { DamageMoneyRewardHeldItemAttr } from "#items/damage-money-reward";
+import { EndureChanceHeldItemAttr } from "#items/endure-chance";
 import { GimmighoulEvoTrackerHeldItem } from "#items/evo-tracker";
 import { ExpBoosterHeldItemAttr } from "#items/exp-booster";
-import { FieldEffectHeldItemAttr } from "#items/field-effect";
+import { FieldEffectExtendHeldItemAttr } from "#items/field-effect-extend";
 import { FlinchChanceHeldItemAttr } from "#items/flinch-chance";
 import { FormChangeHeldItem } from "#items/form-change-item";
 import { FriendshipBoosterHeldItemAttr } from "#items/friendship-booster";
@@ -41,8 +42,7 @@ import { MachoBraceHeldItemAttr } from "#items/macho-brace";
 import { MultiHitCountHeldItemAttr, MultiHitDamageModifyHeldItemAttr } from "#items/multi-hit";
 import { NatureWeightBoosterHeldItemAttr } from "#items/nature-weight-booster";
 import { ResetNegativeStatStageHeldItemAttr } from "#items/reset-negative-stat-stage";
-import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
-import { SurviveChanceHeldItemAttr } from "#items/survive-chance";
+import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
 import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
@@ -105,7 +105,7 @@ const vitaminItems = PERMANENT_STATS.reduce(
 // TODO: Do we want these in a separate object?
 const formChangeItems = Object.values(FormChangeItemId).reduce(
   (ret, id) => {
-    ret[id] = new FormChangeHeldItem(id, 1);
+    ret[id] = new FormChangeHeldItem(id);
     return ret;
   },
   {} as Record<FormChangeItemId, FormChangeHeldItem>,
@@ -157,10 +157,10 @@ const heldItems = {
     .build(),
 
   [HeldItemId.LUCKY_EGG]: new HeldItemBuilder(HeldItemId.LUCKY_EGG, 99) //
-    .attr(ExpBoosterHeldItemAttr, 40)
+    .attr(ExpBoosterHeldItemAttr, 0.4)
     .build(),
   [HeldItemId.GOLDEN_EGG]: new HeldItemBuilder(HeldItemId.GOLDEN_EGG, 99) //
-    .attr(ExpBoosterHeldItemAttr, 100)
+    .attr(ExpBoosterHeldItemAttr, 1)
     .build(),
   [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3) //
     .attr(FriendshipBoosterHeldItemAttr)
@@ -174,7 +174,9 @@ const heldItems = {
     .iconName("shell_bell")
     .build(),
 
-  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(), //
+  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5) //
+    .attr(EndureChanceHeldItemAttr)
+    .build(),
   [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
     .attr(BypassSpeedChanceHeldItemAttr, 10)
     .build(),
@@ -182,7 +184,7 @@ const heldItems = {
     .attr(FlinchChanceHeldItemAttr, 10)
     .build(),
   [HeldItemId.MYSTICAL_ROCK]: new HeldItemBuilder(HeldItemId.MYSTICAL_ROCK, 2) //
-    .attr(FieldEffectHeldItemAttr, 2)
+    .attr(FieldEffectExtendHeldItemAttr, 2)
     .build(),
   [HeldItemId.SOUL_DEW]: new HeldItemBuilder(HeldItemId.SOUL_DEW, 10) //
     .attr(NatureWeightBoosterHeldItemAttr)

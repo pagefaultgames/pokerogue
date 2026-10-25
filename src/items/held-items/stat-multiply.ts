@@ -1,6 +1,5 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import { HeldItemAttr } from "#items/held-item-attr";
@@ -10,9 +9,8 @@ import type { NonEmptyTuple } from "type-fest";
 /**
  * Class used for held items that boost specific stats by a multiplicative amount.
  */
-// TODO: Rename class and effect to `StatMultiply`
-abstract class StatBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.STAT_BOOST> {
-  public override readonly effect = HeldItemEffect.STAT_BOOST;
+abstract class StatMultiplyHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.STAT_MULTIPLY> {
+  public override readonly effect = HeldItemEffect.STAT_MULTIPLY;
   /** The stats to multiply */
   protected readonly stats: readonly Stat[];
   /**
@@ -40,7 +38,7 @@ abstract class StatBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.
 /**
  * Attribute used for held items that only boost stats of pre-evolved pokemon.
  */
-export class EvolutionStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
+export class EvolutionStatBoostHeldItemAttr extends StatMultiplyHeldItemAttr {
   public override shouldApply(params: StatBoostParams): boolean {
     if (!super.shouldApply(params)) {
       return false;
@@ -72,16 +70,7 @@ export class EvolutionStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
   }
 }
 
-// TODO: Stop littering these types all over the codebase and move them to 1 file
-export type SpeciesStatBoosterItemId =
-  | typeof HeldItemId.LIGHT_BALL
-  | typeof HeldItemId.THICK_CLUB
-  | typeof HeldItemId.METAL_POWDER
-  | typeof HeldItemId.QUICK_POWDER
-  | typeof HeldItemId.DEEP_SEA_SCALE
-  | typeof HeldItemId.DEEP_SEA_TOOTH;
-
-export class SpeciesStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
+export class SpeciesStatBoostHeldItemAttr extends StatMultiplyHeldItemAttr {
   /** The species that the held item's stat boost(s) apply to */
   public readonly species: readonly SpeciesId[];
 

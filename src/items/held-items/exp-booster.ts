@@ -9,17 +9,16 @@ import type { ExpBoostParams } from "#types/held-item-parameter";
  */
 export class ExpBoosterHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.EXP_BOOSTER> {
   public override readonly effect = HeldItemEffect.EXP_BOOSTER;
-  /** The percentage boost to experience gained. */
-  // TODO: This should arguably be stored as a decimal instead of % for consistency with other similar effects
-  private readonly boostPercent: number;
+  /** The decimal boost to experience gained. */
+  private readonly boost: number;
 
-  constructor(boostPercent: number) {
+  constructor(boost: number) {
     super();
-    this.boostPercent = boostPercent;
+    this.boost = boost;
   }
 
   public override apply({ pokemon, expAmount }: ExpBoostParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    expAmount.value = Math.floor(expAmount.value * (1 + (stackCount * this.boostPercent) / 100));
+    expAmount.value = Math.floor(expAmount.value * (1 + stackCount * this.boost));
   }
 }

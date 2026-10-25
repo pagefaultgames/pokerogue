@@ -58,7 +58,7 @@ export class HeldItemReward extends PokemonReward {
 }
 
 export class BerryRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: BerryItemId): HeldItemReward | null {
+  override generateReward(pregenArgs?: BerryItemId): HeldItemReward {
     if (pregenArgs !== undefined) {
       const item = pregenArgs;
       return new HeldItemReward(RewardId.BERRY, item);

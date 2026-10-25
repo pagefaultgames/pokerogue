@@ -14,11 +14,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import {
-  FusionSpeciesFormEvolution,
-  SpeciesFormEvolution,
-  validateShedinjaEvo,
-} from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -80,6 +76,7 @@ import type { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
+import type { EvolutionItemId } from "#enums/evolution-item";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
@@ -180,7 +177,6 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
-import type { EvolutionItemId } from "#enums/evolution-item";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
 
@@ -1492,7 +1488,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   ): number {
     const statVal = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
-      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: this, stat, statHolder: statVal });
+      applyHeldItems(HeldItemEffect.STAT_MULTIPLY, { pokemon: this, stat, statHolder: statVal });
     }
 
     // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway
@@ -2095,6 +2091,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param useIllusion - (Default `false`) Whether to consider an active illusion
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
+   * @param forMoveGen - (Default `false`) Whether the typing is being requested for move generation purposes
    * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes({
@@ -2103,18 +2100,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     bypassSummonData = false,
     useIllusion = false,
     ignoreThirdType = false,
+    forMoveGen = false,
   }: {
     includeTeraType?: boolean;
     returnOriginalTypesIfStellar?: boolean;
     bypassSummonData?: boolean;
     useIllusion?: boolean;
     ignoreThirdType?: boolean;
+    forMoveGen?: boolean;
   } = {}): Writable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+    if (includeTeraType && (this.isTerastallized || forMoveGen) && shouldUseTeraStellar) {
       return [teraType];
     }
 
@@ -4104,7 +4103,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (!surviveDamage.value) {
-        applyHeldItems(HeldItemEffect.SURVIVE_CHANCE, { pokemon: this, surviveDamage });
+        applyHeldItems(HeldItemEffect.ENDURE_CHANCE, { pokemon: this, endure: surviveDamage });
       }
 
       if (surviveDamage.value) {
