@@ -223,7 +223,6 @@ export interface PokemonMoveRewardParams {
 export interface PokemonMoveRecallRewardParams {
   pokemon: PlayerPokemon;
   moveIndex: number;
-  postApply: () => void;
 }
 
 export interface PokemonFusionRewardParams {

@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
-import type { Phase } from "#app/phase";
 import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allMoves } from "#data/data-lists";
 import { LearnMoveType } from "#enums/learn-move-type";
@@ -12,11 +11,13 @@ import { RarityTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import type { SelectRewardPhase } from "#phases/select-reward-phase";
 import { type PartyOption, PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {
+  private postApply: () => void;
   public moveId: MoveId;
 
   constructor(id: RewardId, moveId: MoveId) {
@@ -64,14 +65,16 @@ export class TmReward extends PokemonReward {
         if (!pokemon.usedTMs.includes(this.moveId)) {
           pokemon.usedTMs.push(this.moveId);
         }
-        globalScene.phaseManager.tryRemovePhase("SelectRewardPhase");
+        this.postApply;
       },
     );
 
     return true;
   }
 
-  openParty(postApply: () => void, onCancel: () => void, callingPhase: Phase): void {
+  openParty(postApply: () => void, onCancel: () => void, callingPhase: SelectRewardPhase): void {
+    this.postApply = postApply;
+
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       PartyUiMode.TM_REWARD,
@@ -81,8 +84,10 @@ export class TmReward extends PokemonReward {
           // TODO: improve this check here
           const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
           this.apply(params);
-          postApply();
-          globalScene.phaseManager.unshiftPhase(callingPhase);
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            globalScene.phaseManager.unshiftPhase(callingPhase.copy());
+            callingPhase.end();
+          });
         } else {
           onCancel();
         }
