@@ -52,7 +52,7 @@ export interface ExpBoostParams extends DefaultHeldItemParams {
 
 export interface FieldEffectExtendParams extends DefaultHeldItemParams {
   /** Holder for the field effect duration*/
-  readonly fieldDuration: ValueHolder<number>;
+  readonly fieldEffectDuration: ValueHolder<number>;
 }
 
 export interface FlinchChanceParams extends DefaultHeldItemParams {

@@ -297,7 +297,7 @@ export class Arena {
 
     if (user != null) {
       weatherDuration.value = 5;
-      applyHeldItems(HeldItemEffect.FIELD_EFFECT_EXTEND, { pokemon: user, fieldDuration: weatherDuration });
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT_EXTEND, { pokemon: user, fieldEffectDuration: weatherDuration });
     }
 
     if (weather === WeatherType.NONE) {
@@ -426,7 +426,7 @@ export class Arena {
 
     if (user != null) {
       terrainDuration.value = 5;
-      applyHeldItems(HeldItemEffect.FIELD_EFFECT_EXTEND, { pokemon: user, fieldDuration: terrainDuration });
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT_EXTEND, { pokemon: user, fieldEffectDuration: terrainDuration });
     }
 
     if (terrain === TerrainType.NONE) {

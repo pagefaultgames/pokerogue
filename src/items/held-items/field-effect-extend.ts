@@ -21,7 +21,7 @@ export class FieldEffectExtendHeldItemAttr extends HeldItemAttr<typeof HeldItemE
    * Provides two more turns per stack to any weather or terrain effect caused
    * by the holder.
    */
-  public override apply({ pokemon, fieldDuration }: FieldEffectExtendParams): void {
-    fieldDuration.value += this.turns * pokemon.heldItemManager.getStack(this.type);
+  public override apply({ pokemon, fieldEffectDuration }: FieldEffectExtendParams): void {
+    fieldEffectDuration.value += this.turns * pokemon.heldItemManager.getStack(this.type);
   }
 }
