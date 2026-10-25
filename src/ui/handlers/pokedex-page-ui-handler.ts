@@ -5,7 +5,7 @@ import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/egg-moves";
-import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, type SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
@@ -861,6 +861,17 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.baseStats = species.baseStats.slice();
       this.baseTotal = species.baseTotal;
     }
+    // Filter out gender-based evolutions if the current gender is wrong
+    this.evolutions = this.evolutions.filter(
+      e =>
+        !e.condition
+        || e.condition.data.filter(
+          condition =>
+            condition.key === EvoCondKey.GENDER
+            && ((this.savedStarterPreferences.female === true && condition.gender === Gender.MALE)
+              || (this.savedStarterPreferences.female === false && condition.gender === Gender.FEMALE)),
+        ).length === 0,
+    );
 
     this.eggMoves = speciesEggMoves[this.starterId] ?? [];
     this.hasEggMoves = Array.from(
