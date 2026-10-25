@@ -465,7 +465,7 @@ export function getTextStyleOptions(
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;
-          styleOptions.padding = { left: 12 };
+          styleOptions.padding = { left: 12, bottom: 6 };
           break;
       }
       styleOptions.fontFamily = "pkmnems";
