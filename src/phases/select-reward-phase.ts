@@ -6,7 +6,6 @@ import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
-import { FusePokemonReward } from "#items/fuse";
 import { tryTransferHeldItem } from "#items/item-utility";
 import { PokemonReward, type Reward, type RewardOption } from "#items/reward";
 import {
@@ -165,16 +164,11 @@ export class SelectRewardPhase extends BattlePhase {
   // Apply a chosen reward: do an effect or open the party menu
   private applyReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (reward instanceof PokemonReward) {
-      if (reward instanceof FusePokemonReward) {
-        this.openFusionMenu(reward, cost, rewardSelectCallback);
-      } else {
-        reward.openParty(
-          () => this.postApplyPokemonReward(reward, true, cost),
-          () => this.resetRewardSelect(rewardSelectCallback),
-          this,
-        );
-        //        this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
-      }
+      reward.openParty(
+        () => this.postApplyPokemonReward(reward, true, cost),
+        () => this.resetRewardSelect(rewardSelectCallback),
+        this,
+      );
     } else {
       applyReward(reward, {}, true);
       globalScene.updateItemBar(true);
@@ -252,31 +246,6 @@ export class SelectRewardPhase extends BattlePhase {
     return false;
   }
 
-  // Opens the party menu specifically for fusions
-  private openFusionMenu(reward: FusePokemonReward, _cost: number, rewardSelectCallback: RewardSelectCallback): void {
-    const party = globalScene.getPlayerParty();
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      PartyUiMode.SPLICE,
-      -1,
-      (fromSlotIndex: number, spliceSlotIndex: number) => {
-        if (
-          spliceSlotIndex !== undefined
-          && fromSlotIndex < 6
-          && spliceSlotIndex < 6
-          && fromSlotIndex !== spliceSlotIndex
-        ) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
-          });
-        } else {
-          this.resetRewardSelect(rewardSelectCallback);
-        }
-      },
-      reward.selectFilter,
-    );
-  }
-
   // TODO: Rework this to work properly with rewards
   /**
    * Apply the effects of the chosen reward
@@ -292,16 +261,16 @@ export class SelectRewardPhase extends BattlePhase {
       if (cost > -1) {
         if (result) {
           if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
-            console.log("We are paying");
             globalScene.money -= cost;
             globalScene.updateMoneyText();
             globalScene.animateMoneyChanged(false);
           }
           audioManager.playSound("se/buy");
-          console.log("Are we paying?");
+
           (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
-          console.log("UpdateCostText");
-          console.log("Has phase", globalScene.phaseManager.hasPhaseOfType("SelectRewardPhase"));
+
+          // Changing the UI mode here is necessary to force the reset
+          globalScene.ui.setMode(UiMode.MESSAGE);
           this.resetRewardSelect(this.rewardSelectCallback);
         } else {
           globalScene.ui.playError();

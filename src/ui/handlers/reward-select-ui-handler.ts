@@ -153,6 +153,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   show(args: any[]): boolean {
     globalScene.disableMenu = false;
 
+    console.log("UI Handler 0");
+
     if (this.active) {
       if (args.length >= 3) {
         this.awaitingActionInput = true;
@@ -162,9 +164,13 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
+    console.log("UI Handler 0.5");
+
     if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
       return false;
     }
+
+    console.log("UI Handler 1");
 
     super.show(args);
 
@@ -393,6 +399,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     });
 
     // #endregion animation
+
+    console.log("UI Handler 2");
 
     return true;
   }

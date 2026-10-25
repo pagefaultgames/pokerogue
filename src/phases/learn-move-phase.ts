@@ -40,7 +40,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public override start(): void {
     super.start();
 
-    console.log("It started");
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
@@ -62,7 +61,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (currentMoveset.length < 4) {
       this.learnMove(currentMoveset.length, move, pokemon);
     } else {
-      console.log("Replace");
       this.replaceMoveCheck(move, pokemon);
     }
   }
@@ -87,9 +85,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     const preQText = [learnMovePrompt, moveLimitReached].join("$");
 
-    console.log("1");
     await ui.showTextPromise(preQText);
-    console.log("2");
     await ui.showTextPromise(shouldReplaceQ, undefined, false);
 
     const options: ConfirmModeConfig = {
@@ -99,7 +95,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         this.rejectMoveAndEnd(move, pokemon);
       },
     };
-    console.log("3");
     await ui.setModeWithoutClear(UiMode.CONFIRM, options);
   }
 
@@ -213,14 +208,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       null,
       () => {
         globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+        if (this.onLearnMove) {
+          this.onLearnMove();
+        }
         this.end();
       },
       this.messageMode === UiMode.EVOLUTION_SCENE ? 1000 : undefined,
       true,
     );
-    if (this.onLearnMove) {
-      this.onLearnMove();
-      this.end();
-    }
   }
 }
