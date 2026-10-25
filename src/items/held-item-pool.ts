@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import {
   type BerryItemId,
   berryItemIds,
@@ -6,13 +7,19 @@ import {
   HeldItemCategoryId,
   HeldItemId,
 } from "#enums/held-item-id";
-import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
+import {
+  MAX_REGULAR_POKEMON_TYPE,
+  MIN_REGULAR_POKEMON_TYPE,
+  PokemonType,
+  type RegularPokemonType,
+} from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
+import type { DataMap } from "#types/common";
 import type {
   AnyHeldItemRoll,
   HeldItemConfiguration,
@@ -24,6 +31,7 @@ import type {
   HeldItemWeight,
 } from "#types/held-item-data-types";
 import { randSeedInt } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { isCategoryId, isHeldItemPool, isItemInCategory, isItemInRequested } from "#utils/item-utils";
 import { weightedPick } from "#utils/random";
 import type { NonEmptyTuple } from "type-fest";
@@ -486,46 +494,62 @@ export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {},
  * Generate a new type-boosting held item based on the attack types in a party's movesets.
  * @param target - The pokemon receiving the item (boosters already at max stack have weight 0)
  * @param party - The party of the side receiving the item, whose attack move types are considered
- * @param customWeights - Custom weights to use when generating the item
+ * @param customWeights - (Optional) Custom weights to use when generating the item
  * @returns The {@linkcode HeldItemId} of the chosen type booster
  *
  * @remarks
- * Each type's default weight is the number of matching attack moves in the party, capped at `3`.
- * {@linkcode PokemonType.UNKNOWN | UNKNOWN} and {@linkcode PokemonType.STELLAR | STELLAR} moves are ignored.
- * If the party has no eligible attack moves, the {@linkcode PokemonType.NORMAL | NORMAL} booster is returned.
+ * Each type's default weight is the number of matching attack moves in the party, capped at `3`. \
+ * Moves that aren't of a {@linkcode RegularPokemonType} are ignored. \
+ * If the party has no eligible attack moves, the Normal-type booster is returned.
  */
 export function getNewAttackTypeBoosterHeldItem(
   target?: Pokemon,
   party: Pokemon[] = [],
   customWeights: HeldItemResolvedWeights = {},
 ): HeldItemId {
-  const attackMoveTypes = party
-    .values()
-    .flatMap(p =>
-      p
-        .getMoveset()
-        .filter(pm => pm.getMove().is("AttackMove"))
-        .map(pm => p.getMoveType(pm.getMove()))
-        .filter((type): type is RegularPokemonType => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-    )
-    .toArray();
+  // TODO: this should be a utility function somewhere globally accessible
+  const regularPokemonTypeFilter = (type: PokemonType): type is RegularPokemonType =>
+    type >= MIN_REGULAR_POKEMON_TYPE && type <= MAX_REGULAR_POKEMON_TYPE;
 
-  const attackMoveTypeWeights = new Map<RegularPokemonType, number>();
-  for (const type of attackMoveTypes) {
-    attackMoveTypeWeights.set(type, Math.min((attackMoveTypeWeights.get(type) ?? 0) + 1, 3));
+  const attackMoveTypeWeights: DataMap<RegularPokemonType, number> = new Map();
+  for (const type of getEnumValues(PokemonType).filter(regularPokemonTypeFilter)) {
+    attackMoveTypeWeights.set(type, 0);
   }
 
-  if (attackMoveTypeWeights.size === 0) {
-    // Fallback to avoid bubbling `null` through the entire item generation chain
-    return attackTypeToHeldItem[PokemonType.NORMAL];
+  for (const pkmn of party) {
+    for (const pm of pkmn.getMoveset()) {
+      const move = pm.getMove();
+      if (!move.is("AttackMove")) {
+        continue;
+      }
+
+      const variableTypeAttr = move.getAttrs("VariableMoveTypeAttr")[0];
+      let types: PokemonType[];
+      if (variableTypeAttr) {
+        types = variableTypeAttr.getTypesForItemSpawn(pkmn, move);
+      } else {
+        types = pkmn.getMoveTypeForItemSpawn(move);
+      }
+
+      for (const type of types) {
+        // TODO: `getTypesForItemSpawn` and `getMoveTypeForItemSpawn` should return a `RegularPokemonType`
+        if (!regularPokemonTypeFilter(type)) {
+          console.log(
+            `Move "${move.name}" for "${getPokemonNameWithAffix(pkmn)}" resolved to type "${PokemonType[type]}",`
+              + " skipping attack type booster reward generator weighting for this move.",
+          );
+          continue;
+        }
+        attackMoveTypeWeights.set(type, Math.min(attackMoveTypeWeights.get(type) + 1, 3));
+      }
+    }
   }
 
-  const typeMap = new Map<RegularPokemonType, number>();
   for (const [type, count] of attackMoveTypeWeights) {
     const item = attackTypeToHeldItem[type];
-    typeMap.set(type, target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? count));
+    attackMoveTypeWeights.set(type, target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? count));
   }
-  return attackTypeToHeldItem[weightedPick(typeMap)];
+  return attackTypeToHeldItem[weightedPick(attackMoveTypeWeights)];
 }
 
 /**
