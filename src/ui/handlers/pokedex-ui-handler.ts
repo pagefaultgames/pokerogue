@@ -1223,7 +1223,7 @@ export class PokedexUiHandler extends MessageUiHandler {
           }
           break;
         case Button.DOWN:
-          if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredPokemonData.length) {
+          if (currentRow < numOfRows - 1 && this.scrollCursor * 9 + this.cursor + 9 < this.filteredPokemonData.length) {
             // not last row
             if (currentRow - this.scrollCursor === 8) {
               // last row of visible pokemon
