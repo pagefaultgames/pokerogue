@@ -449,8 +449,8 @@ export function getTextStyleOptions(
     case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 54;
-          styleOptions.padding = { top: 4, bottom: 2 };
+          styleOptions.fontSize = defaultFontSize - 56;
+          styleOptions.padding = { top: 6, bottom: 2 };
           break;
         case "ko":
           styleOptions.fontSize = defaultFontSize - 52;
