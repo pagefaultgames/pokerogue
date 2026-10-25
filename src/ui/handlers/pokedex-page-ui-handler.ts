@@ -2759,7 +2759,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    * @returns the dex props
    */
   private getCurrentDexProps(speciesId: SpeciesId): DexAttrProps {
-    const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(speciesId, false);
+    const props: DexAttrProps = settings.general.dexForDevs
+      ? { female: speciesDataRegistry.getSpecies(speciesId).malePercent === 0, formIndex: 0, shiny: false, variant: 0 }
+      : globalScene.gameData.getSpeciesDefaultDexAttrProps(speciesId, false);
 
     if (this.starterPreferences.female !== undefined) {
       props.female = this.starterPreferences.female;
