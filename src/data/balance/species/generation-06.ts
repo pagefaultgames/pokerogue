@@ -4659,7 +4659,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesFormEvolution({
         speciesId: SpeciesId.MEOWSTIC,
         preFormKey: "",
-        evoFormKey: "",
+        evoFormKey: "male",
         level: 25,
         condition: {
           key: EvoCondKey.GENDER,
