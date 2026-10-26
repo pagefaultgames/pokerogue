@@ -349,6 +349,7 @@ export class UI extends Phaser.GameObjects.Container {
 
       // Skip dialogue if the player has enabled the option and the dialogue has been already seen
       if (this.shouldSkipDialogue(i18nKey)) {
+        console.log(`Dialogue ${i18nKey} skipped`);
         callback();
         return;
       }
