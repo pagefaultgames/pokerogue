@@ -1,17 +1,17 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import type { RewardId } from "#enums/reward-id";
 import { UiMode } from "#enums/ui-mode";
 import type { Reward } from "#items/reward";
 import { RewardPhase } from "#phases/reward-phase";
+import type { SilentReward } from "#types/rewards";
 import i18next from "i18next";
 
 export class RibbonRewardPhase extends RewardPhase {
   public readonly phaseName = "RibbonRewardPhase";
   private species: PokemonSpecies;
 
-  constructor(reward: RewardId | Reward, species: PokemonSpecies) {
+  constructor(reward: SilentReward | Reward, species: PokemonSpecies) {
     super(reward);
 
     this.species = species;

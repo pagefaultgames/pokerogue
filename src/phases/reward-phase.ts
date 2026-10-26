@@ -1,10 +1,10 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import type { RewardId } from "#enums/reward-id";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonReward, Reward } from "#items/reward";
 import { generateRewardOptionFromId } from "#items/reward-utils";
 import { BattlePhase } from "#phases/battle-phase";
+import type { SilentReward } from "#types/rewards";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import i18next from "i18next";
 
@@ -14,7 +14,7 @@ export class RewardPhase extends BattlePhase {
   public readonly phaseName: "RewardPhase" | "RibbonRewardPhase" | "GameOverRewardPhase" = "RewardPhase";
   protected reward: Reward;
 
-  constructor(reward: RewardId | Reward) {
+  constructor(reward: SilentReward | Reward) {
     super();
 
     this.reward = reward instanceof Reward ? reward : generateRewardOptionFromId(reward)?.type;
