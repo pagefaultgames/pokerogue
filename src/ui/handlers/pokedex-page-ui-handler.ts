@@ -864,13 +864,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     // Filter out gender-based evolutions if the current gender is wrong
     this.evolutions = this.evolutions.filter(
       e =>
-        !e.condition
-        || e.condition.data.filter(
+        !e.condition?.data.some(
           condition =>
             condition.key === EvoCondKey.GENDER
             && ((this.savedStarterPreferences.female === true && condition.gender === Gender.MALE)
               || (this.savedStarterPreferences.female === false && condition.gender === Gender.FEMALE)),
-        ).length === 0,
+        ),
     );
 
     this.eggMoves = speciesEggMoves[this.starterId] ?? [];
