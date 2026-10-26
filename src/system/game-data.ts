@@ -1925,8 +1925,10 @@ export class GameData {
 
   getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
     const dexAttr = this.dexData[speciesId].caughtAttr;
-    // Default is female only for species where malePercent is not null but 0
-    const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
+    // Default is female for species where malePercent is not null but 0, or if the male is not caught
+    const female =
+      speciesDataRegistry.getSpecies(speciesId).malePercent === 0
+      || (!!speciesDataRegistry.getSpecies(speciesId).malePercent && (dexAttr & DexAttr.MALE) === 0n);
     // First caught form is set as the default
     let formIndex = 0;
     for (let attr = 128n, i = 0; attr <= dexAttr; attr <<= 1n, i++) {
