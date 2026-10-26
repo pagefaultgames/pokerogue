@@ -7,27 +7,25 @@ import i18next from "i18next";
 
 export class GameOverRewardPhase extends RewardPhase {
   public readonly phaseName = "GameOverRewardPhase";
-  doReward(): Promise<void> {
-    return new Promise<void>(resolve => {
-      applyReward(this.reward, {});
-      // Sound loaded into game as is
-      audioManager.playSound("se/level_up_fanfare");
-      globalScene.ui.setMode(UiMode.MESSAGE);
-      globalScene.ui.fadeIn(250).then(() => {
-        globalScene.ui.showText(
-          i18next.t("battle:rewardGain", {
-            modifierName: this.reward.name,
-          }),
-          null,
-          () => {
-            globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
-            resolve();
-          },
-          null,
-          true,
-          1500,
-        );
-      });
+  doReward(): void {
+    applyReward(this.reward, {});
+    // Sound loaded into game as is
+    audioManager.playSound("se/level_up_fanfare");
+    globalScene.ui.setMode(UiMode.MESSAGE);
+    globalScene.ui.fadeIn(250).then(() => {
+      globalScene.ui.showText(
+        i18next.t("battle:rewardGain", {
+          modifierName: this.reward.name,
+        }),
+        null,
+        () => {
+          globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
+          super.doReward();
+        },
+        null,
+        true,
+        1500,
+      );
     });
   }
 }
