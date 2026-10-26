@@ -46,6 +46,21 @@ export class BattleEndPhase extends BattlePhase {
       phaseManager.unshiftNew("GameOverPhase", true);
     }
 
+    /*
+    Required for Pickup to function correctly due to `BattleScene#canTransferHeldItemModifier`,
+    because that method returns `false` if all of the following is true:
+    - the last item in a stack would be taken
+    - the item has a pokemon source
+    - the item no longer exists in the list of items attached to `BattleScene`
+
+    By setting the `pokemonId` field to `-1`, the id won't resolve to a pokemon,
+    making the item no longer have a pokemon source, allowing `canTransferHeldItemModifier` to return `true`.
+    */
+    // TODO: this probably isn't relevant post-item rework, double check after merging
+    for (const item of currentBattle.postBattleLoot) {
+      item.pokemonId = -1;
+    }
+
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
       applyAbAttrs("PostBattleAbAttr", { pokemon, victory: this.isVictory });
     }
