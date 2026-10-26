@@ -3789,7 +3789,14 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [56, MoveId.HEALING_WISH],
       [58, MoveId.AFTER_YOU],
     ],
-    tms: [MoveId.HYPER_BEAM, MoveId.FUTURE_SIGHT, MoveId.AIR_SLASH, MoveId.FOCUS_BLAST, MoveId.GIGA_IMPACT],
+    tms: [
+      MoveId.HYPER_BEAM, 
+      MoveId.FUTURE_SIGHT, 
+      MoveId.AIR_SLASH, 
+      MoveId.FOCUS_BLAST, 
+      MoveId.GIGA_IMPACT,
+      MoveId.AIR_SLASH,
+    ],
   };
   generationOneSpeciesData[SpeciesId.VULPIX] = {
     species: new PokemonSpecies({
