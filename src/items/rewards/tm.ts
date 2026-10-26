@@ -4,16 +4,20 @@ import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allMoves } from "#data/data-lists";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
+import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import { PartyUiHandler } from "#ui/party-ui-handler";
+import type { SelectRewardPhase } from "#phases/select-reward-phase";
+import { type PartyOption, PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {
+  private postApply: () => void;
   public moveId: MoveId;
 
   constructor(id: RewardId, moveId: MoveId) {
@@ -57,9 +61,41 @@ export class TmReward extends PokemonReward {
       globalScene.getPlayerParty().indexOf(pokemon),
       this.moveId,
       LearnMoveType.TM,
+      () => {
+        if (!pokemon.usedTMs.includes(this.moveId)) {
+          pokemon.usedTMs.push(this.moveId);
+        }
+        this.postApply;
+      },
     );
 
     return true;
+  }
+
+  openParty(postApply: () => void, onCancel: () => void, callingPhase: SelectRewardPhase): void {
+    this.postApply = postApply;
+
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.TM_REWARD,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          // TODO: improve this check here
+          const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
+          this.apply(params);
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            globalScene.phaseManager.unshiftPhase(callingPhase.copy());
+            callingPhase.end();
+          });
+        } else {
+          onCancel();
+        }
+      },
+      this.selectFilter,
+      undefined,
+      { moveId: this.moveId },
+    );
   }
 }
 

@@ -2,7 +2,6 @@ import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { activeOverrides } from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
@@ -22,20 +21,20 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
   private readonly moveId: MoveId;
   private messageMode: UiMode;
-  private readonly learnMoveType: LearnMoveType;
-  private readonly cost: number;
+  private readonly learnMoveType: LearnMoveType; // TODO: This is now unused, remove
+  private readonly onLearnMove: (() => void) | undefined;
 
   constructor(
     partyMemberIndex: number,
     moveId: MoveId,
     learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE,
-    cost = -1,
+    onLearnMove?: () => void,
   ) {
     super(partyMemberIndex);
 
     this.moveId = moveId;
     this.learnMoveType = learnMoveType;
-    this.cost = cost;
+    this.onLearnMove = onLearnMove;
   }
 
   public override start(): void {
@@ -191,23 +190,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon - The Pokemon learning the move
    */
   private async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string): Promise<void> {
-    if (this.learnMoveType === LearnMoveType.TM) {
-      if (!pokemon.usedTMs.includes(this.moveId)) {
-        pokemon.usedTMs.push(this.moveId);
-      }
-      globalScene.phaseManager.tryRemovePhase("SelectRewardPhase");
-    } else if (this.learnMoveType === LearnMoveType.MEMORY) {
-      if (this.cost === -1) {
-        globalScene.phaseManager.tryRemovePhase("SelectRewardPhase");
-      } else {
-        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
-          globalScene.money -= this.cost;
-          globalScene.updateMoneyText();
-          globalScene.animateMoneyChanged(false);
-        }
-        audioManager.playSound("se/buy");
-      }
-    }
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.moveId).then(() => {
       loadMoveAnimAssets([this.moveId], true);
@@ -226,6 +208,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       null,
       () => {
         globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+        if (this.onLearnMove) {
+          this.onLearnMove();
+        }
         this.end();
       },
       this.messageMode === UiMode.EVOLUTION_SCENE ? 1000 : undefined,
