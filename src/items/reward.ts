@@ -199,7 +199,6 @@ export abstract class PokemonMoveReward extends PokemonReward {
             pokemon: globalScene.getPlayerParty()[slotIndex],
             moveIndex: option - PartyOption.MOVE_1,
           };
-          // TODO: this is a bad way of doing it, directly return the moveIndex instead\
           this.apply(params);
           globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
             postApply();
