@@ -1722,7 +1722,7 @@ export class GameData {
         // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
         const shinyBonus = pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant ?? 0) : 1;
         const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
-        const eventBonus = timedEventManager.getExtraCatchCandy();
+        const eventBonus = fromEgg ? 0 : timedEventManager.getExtraCatchCandy();
         const totalCandy = shinyBonus * eggOrBossBonus + eventBonus;
         this.addStarterCandy(species.speciesId, totalCandy);
       }
