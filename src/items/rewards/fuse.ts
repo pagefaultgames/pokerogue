@@ -47,7 +47,9 @@ export class FusePokemonReward extends PokemonReward {
         ) {
           const party = globalScene.getPlayerParty();
           this.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
-          postApply();
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            postApply();
+          });
         } else {
           onCancel();
         }

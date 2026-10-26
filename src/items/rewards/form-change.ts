@@ -64,7 +64,9 @@ export class FormChangeItemReward extends PokemonReward {
           // TODO: improve this check here
           const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
           this.apply(params);
-          postApply();
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            postApply();
+          });
         } else {
           onCancel();
         }

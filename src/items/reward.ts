@@ -155,7 +155,9 @@ export abstract class PokemonReward extends Reward {
           // TODO: improve this check here
           const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
           this.apply(params);
-          postApply();
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            postApply();
+          });
         } else {
           onCancel();
         }
@@ -199,7 +201,9 @@ export abstract class PokemonMoveReward extends PokemonReward {
           };
           // TODO: this is a bad way of doing it, directly return the moveIndex instead\
           this.apply(params);
-          postApply();
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            postApply();
+          });
         } else {
           onCancel();
         }
