@@ -103989,6 +103989,33 @@
     "dexNum": 429,
     "id": "MISMAGIUS",
     "form": null,
+    "moveId": 345,
+    "move": "MAGICAL_LEAF",
+    "level": "RELEARN_MOVE",
+    "source": "RELEARN"
+  },
+  {
+    "dexNum": 429,
+    "id": "MISMAGIUS",
+    "form": null,
+    "moveId": 566,
+    "move": "PHANTOM_FORCE",
+    "level": "RELEARN_MOVE",
+    "source": "RELEARN"
+  },
+  {
+    "dexNum": 429,
+    "id": "MISMAGIUS",
+    "form": null,
+    "moveId": 595,
+    "move": "MYSTICAL_FIRE",
+    "level": "RELEARN_MOVE",
+    "source": "RELEARN"
+  },
+  {
+    "dexNum": 429,
+    "id": "MISMAGIUS",
+    "form": null,
     "moveId": 45,
     "move": "GROWL",
     "level": 1,
@@ -104016,35 +104043,8 @@
     "dexNum": 429,
     "id": "MISMAGIUS",
     "form": null,
-    "moveId": 345,
-    "move": "MAGICAL_LEAF",
-    "level": 1,
-    "source": "LEVEL"
-  },
-  {
-    "dexNum": 429,
-    "id": "MISMAGIUS",
-    "form": null,
     "moveId": 381,
     "move": "LUCKY_CHANT",
-    "level": 1,
-    "source": "LEVEL"
-  },
-  {
-    "dexNum": 429,
-    "id": "MISMAGIUS",
-    "form": null,
-    "moveId": 566,
-    "move": "PHANTOM_FORCE",
-    "level": 1,
-    "source": "LEVEL"
-  },
-  {
-    "dexNum": 429,
-    "id": "MISMAGIUS",
-    "form": null,
-    "moveId": 595,
-    "move": "MYSTICAL_FIRE",
     "level": 1,
     "source": "LEVEL"
   },
