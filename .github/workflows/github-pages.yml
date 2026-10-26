@@ -66,6 +66,9 @@ jobs:
         with:
           path: pokerogue_docs
 
+      - name: Checkout locales submodule
+        run: git -C pokerogue_docs submodule update --init locales
+
       - name: Get submodule ref
         id: asset-submodule-ref
         run: |
