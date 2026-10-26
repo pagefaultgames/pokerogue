@@ -336735,6 +336735,12 @@
     "dexNum": 863,
     "id": "PERRSERKER",
     "form": null,
+    "move": "OUTRAGE"
+  },
+  {
+    "dexNum": 863,
+    "id": "PERRSERKER",
+    "form": null,
     "move": "AERIAL_ACE"
   },
   {
@@ -371604,6 +371610,12 @@
     "move": "DRAGON_CHEER"
   },
   {
+    "dexNum": 978,
+    "id": "TATSUGIRI",
+    "form": null,
+    "move": "MUD_SHOT"
+  },
+  {
     "dexNum": 979,
     "id": "ANNIHILAPE",
     "form": null,
@@ -396514,6 +396526,12 @@
     "id": "GALAR_MEOWTH",
     "form": null,
     "move": "NIGHT_SLASH"
+  },
+  {
+    "dexNum": 4052,
+    "id": "GALAR_MEOWTH",
+    "form": null,
+    "move": "OUTRAGE"
   },
   {
     "dexNum": 4077,
