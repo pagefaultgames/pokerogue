@@ -1,14 +1,12 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
-import { applyReward } from "#items/reward-utils";
 import { RewardPhase } from "#phases/reward-phase";
 import i18next from "i18next";
 
 export class GameOverRewardPhase extends RewardPhase {
   public readonly phaseName = "GameOverRewardPhase";
   doReward(): void {
-    applyReward(this.reward, {});
     // Sound loaded into game as is
     audioManager.playSound("se/level_up_fanfare");
     globalScene.ui.setMode(UiMode.MESSAGE);

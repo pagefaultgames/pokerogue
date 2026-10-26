@@ -43,6 +43,7 @@ export function isFormChangeItemReward(reward: Reward): reward is FormChangeItem
   return categoryId === RewardCategoryId.FORM_CHANGE_ITEM;
 }
 
+// TODO: this is likely obsolete now and can be removed
 export function applyReward<T extends Reward>(
   reward: T,
   params: Exact<Parameters<T["apply"]>[0]>,
