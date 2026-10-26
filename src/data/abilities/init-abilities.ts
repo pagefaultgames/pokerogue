@@ -514,7 +514,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.STICKY_HOLD, 3) //
       .attr(BlockItemTheftAbAttr)
-      .bypassFaint()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SHED_SKIN, 3) //
