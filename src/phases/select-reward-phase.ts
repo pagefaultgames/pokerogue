@@ -246,7 +246,6 @@ export class SelectRewardPhase extends BattlePhase {
     return false;
   }
 
-  // TODO: Rework this to work properly with rewards
   /**
    * Apply the effects of the chosen reward
    * @param reward - The reward to apply
