@@ -26,8 +26,7 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-export interface ModifierSelectUiHandlerParams {
-  player?: boolean;
+export interface RewardSelectUiHandlerParams {
   typeOptions?: RewardOption[];
   onActionInput?: RewardSelectCallback;
   rerollCost?: number;
@@ -48,7 +47,6 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   declare protected onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
-  private player: boolean;
   /**
    * If reroll cost is negative, it is assumed there are 0 items in the shop.
    * It will cause reroll button to be disabled, and a "Continue" button to show in the place of shop items
@@ -163,7 +161,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   show(args: any[]): boolean {
     globalScene.disableMenu = false;
 
-    const params = args[0] as ModifierSelectUiHandlerParams;
+    const params = args[0] as RewardSelectUiHandlerParams;
 
     if (this.active) {
       if (params.onActionInput) {
@@ -182,7 +180,6 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.getUi().clearText();
 
-    this.player = !!params.player;
     this.hideShop = !!params.hideShop;
 
     const partyHasHeldItem =
@@ -441,18 +438,16 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         }
       }
     } else if (button === Button.CANCEL) {
-      if (this.player) {
-        success = true;
-        if (this.onActionInput) {
-          const originalOnActionInput = this.onActionInput;
-          this.awaitingActionInput = false;
-          this.onActionInput = null;
-          // TODO: What is a good fallback to pass to this?
-          originalOnActionInput(-1, -1);
-          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
-          this.moveInfoOverlay.setVisible(false);
-          this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
-        }
+      success = true;
+      if (this.onActionInput) {
+        const originalOnActionInput = this.onActionInput;
+        this.awaitingActionInput = false;
+        this.onActionInput = null;
+        // TODO: What is a good fallback to pass to this?
+        originalOnActionInput(-1, -1);
+        this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+        this.moveInfoOverlay.setVisible(false);
+        this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
       }
     } else {
       switch (button) {

@@ -65,10 +65,6 @@ export class SelectRewardPhase extends BattlePhase {
   start() {
     super.start();
 
-    if (!this.isPlayer()) {
-      return false;
-    }
-
     // Reset all temporary stacks
     for (const p of globalScene.getPlayerParty()) {
       p.heldItemManager.clearTempStacks();
@@ -272,11 +268,9 @@ export class SelectRewardPhase extends BattlePhase {
           && spliceSlotIndex < 6
           && fromSlotIndex !== spliceSlotIndex
         ) {
-          globalScene.ui
-            .setMode(UiMode.REWARD_SELECT, { isPlayer: this.isPlayer(), hideShop: this.hideShop })
-            .then(() => {
-              reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
-            });
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, { hideShop: this.hideShop }).then(() => {
+            reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
+          });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
@@ -325,13 +319,11 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui
-            .setMode(UiMode.REWARD_SELECT, { isPlayer: this.isPlayer(), hideShop: this.hideShop })
-            .then(() => {
-              const params = getParams(slotIndex, option);
-              const result = globalScene.applyReward(reward, params, true);
-              this.postApplyPokemonReward(reward, result, cost);
-            });
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, { hideShop: this.hideShop }).then(() => {
+            const params = getParams(slotIndex, option);
+            const result = globalScene.applyReward(reward, params, true);
+            this.postApplyPokemonReward(reward, result, cost);
+          });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
@@ -403,7 +395,6 @@ export class SelectRewardPhase extends BattlePhase {
   // e.g. after pressing cancel in the party ui or while learning a move
   private resetRewardSelect(rewardSelectCallback: RewardSelectCallback) {
     globalScene.ui.setMode(UiMode.REWARD_SELECT, {
-      isPlayer: this.isPlayer(),
       typeOptions: this.typeOptions,
       onActionInput: rewardSelectCallback,
       rerollCost: this.getRerollCost(globalScene.lockRarityTiers),
@@ -413,10 +404,6 @@ export class SelectRewardPhase extends BattlePhase {
 
   updateSeed(): void {
     globalScene.resetSeed();
-  }
-
-  isPlayer(): boolean {
-    return true;
   }
 
   getRerollCost(lockRarities: boolean): number {
