@@ -694,7 +694,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       new SpeciesFormEvolution({
         speciesId: SpeciesId.OINKOLOGNE,
         preFormKey: "",
-        evoFormKey: "",
+        evoFormKey: "male",
         level: 18,
         condition: { key: EvoCondKey.GENDER, gender: Gender.MALE },
       }),
