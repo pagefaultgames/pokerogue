@@ -336,7 +336,7 @@ const SKULL: TrainerTierPools = {
 const MACRO_COSMOS: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
     SpeciesId.MAWILE,
-    SpeciesId.LOPUNNY,
+    SpeciesId.BUNEARY,
     SpeciesId.FROSLASS,
     SpeciesId.GOTHITA,
     SpeciesId.FLABEBE,
