@@ -7246,13 +7246,12 @@ export class EnemyPokemon extends Pokemon {
   }
 
   /**
-   * Go through a boss' health segments and give stats boosts for each newly cleared segment
-   *
+   * Go through a boss' health segments and give stat stage boosts for each newly cleared segment.
    * @remarks
-   * The base boost is 1 to a random stat that's not already maxed out per broken shield
-   * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead
-   * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
-   * @param segmentIndex - index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
+   * The base boost is 1 to a random stat that's not already maxed out per broken shield. \
+   * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead. \
+   * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each.
+   * @param segmentIndex - Index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
   private handleBossSegmentCleared(segmentIndex: number): void {
     let doStatBoost = !this.hasTrainer();
@@ -7265,28 +7264,31 @@ export class EnemyPokemon extends Pokemon {
       if (!doStatBoost) {
         continue;
       }
-      // Filter out already maxed out stat stages and weigh the rest based on existing stats
-      const leftoverStats = EFFECTIVE_STATS.filter(
-        (s: EffectiveStat) => this.getStatStage(s) + (changes.find(c => c.stat === s)?.stages ?? 0) < 6,
-      );
-      const boostedStat = weightedPick(new Map(leftoverStats.map(s => [s, this.getStat(s, false)])));
 
-      if (boostedStat === undefined) {
+      // Filter out already maxed out stat stages and weigh the rest based on existing stats
+      const leftoverStats = new Map<EffectiveStat, number>();
+      for (const stat of EFFECTIVE_STATS) {
+        if (this.getStatStage(stat) + (changes.find(c => c.stat === stat)?.stages ?? 0) < 6) {
+          leftoverStats.set(stat, this.getStat(stat, false));
+        } else {
+          leftoverStats.set(stat, 0);
+        }
+      }
+
+      if (leftoverStats.values().reduce((total, cur) => total + cur, 0) === 0) {
         doStatBoost = false;
         continue;
       }
 
       let stages = 1;
-
-      // increase the boost if the boss has at least 3 segments and we passed last shield
       if (this.bossSegments >= 3 && this.bossSegmentIndex === 0) {
         stages++;
       }
-      // increase the boost if the boss has at least 5 segments and we passed the second to last shield
       if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
-      changes.push({ stat: boostedStat, stages });
+
+      changes.push({ stat: weightedPick(leftoverStats), stages });
     }
 
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
