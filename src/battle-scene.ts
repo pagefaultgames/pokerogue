@@ -139,6 +139,7 @@ import { addUiThemeOverrides, updateWindowType } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
 import {
   BooleanHolder,
+  type FixedInt,
   fixedInt,
   formatMoney,
   getBiomeName,
@@ -2123,7 +2124,7 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  public async showShopOverlay(duration: number): Promise<void> {
+  public async showShopOverlay(duration: number | FixedInt): Promise<void> {
     this.shopOverlayShown = true;
 
     await playTween({
@@ -2134,7 +2135,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  public async hideShopOverlay(duration: number): Promise<void> {
+  public async hideShopOverlay(duration: number | FixedInt): Promise<void> {
     this.shopOverlayShown = false;
 
     await playTween({ targets: this.shopOverlay, alpha: 0, duration, ease: "Cubic.easeIn" });

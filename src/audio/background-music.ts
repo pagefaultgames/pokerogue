@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { fadeOut } from "#app/soundfade-override";
 import type { AnySound } from "#audio/audio-manager";
-import { fixedInt } from "#utils/common";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { type FixedInt, fixedInt } from "#utils/common";
 
 /**
  * Class representing a single background music track.
@@ -96,7 +96,7 @@ export class BackgroundMusic {
    * @param delay - The delay before play in milliseconds (speed-sensitive unless `FixedInt` is passed)
    * @param volume - Volume to play at
    */
-  public playAfterDelay(delay: number, volume?: number): void {
+  public playAfterDelay(delay: number | FixedInt, volume?: number): void {
     globalScene.time.delayedCall(delay, () => {
       if (!this.destroyed) {
         this.play(volume);
@@ -190,11 +190,8 @@ export class BackgroundMusic {
    * @param destroy - (Default `true`) Whether to destroy the bgm after fading out, or just pause it
    */
   public fadeOut(duration: number, fixed = false, destroy = true): void {
-    const realDuration = fixed ? fixedInt(duration) : duration;
-    this.withSound(sound => {
-      SoundFade.fadeOut(globalScene, sound, realDuration, false);
-    });
-    globalScene.time.delayedCall(realDuration + 100, () => {
+    this.withSound(sound => fadeOut(globalScene, sound, fixed ? fixedInt(duration) : duration, false));
+    globalScene.time.delayedCall(fixed ? fixedInt(duration + 100) : duration + 100, () => {
       if (this.destroyed) {
         return;
       }

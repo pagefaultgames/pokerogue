@@ -24,6 +24,7 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
+import type { TweenChainBuilderConfigFixedInt } from "#types/phaser.d";
 import type { AllStarterPreferences, DexAttrProps, StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
 import type { ConfirmModeConfig } from "#types/ui-types";
@@ -891,7 +892,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     icon.y = 2;
 
-    const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
+    const tweenChain: TweenChainBuilderConfigFixedInt = {
       targets: icon,
       loop: -1,
       paused: startPaused,

@@ -225,9 +225,8 @@
           "level": "error",
           "options": {
             "paths": {
-              "node:test": {
-                "message": "Do not import from `node:test`, use `vitest`"
-              }
+              "node:test": "Do not import from `node:test`, use `vitest` instead.",
+              "phaser3-rex-plugins/plugins/soundfade": "Do not use `SoundFade` directly, use `fadeIn` and `fadeOut` from `#app/soundfade-overrides`."
             }
           }
         },

@@ -12,6 +12,7 @@ import { settings } from "#app/global-settings-manager";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
+import { fadeIn, fadeOut } from "#app/soundfade-override";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
 import {
@@ -115,6 +116,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
+import { getBaseLearnableMoveSource, getLevelMoves } from "#field/learnsets";
 import {
   BaseStatModifier,
   CritBoosterModifier,
@@ -155,7 +157,7 @@ import type {
   GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { LevelMovesWithSource } from "#types/level-moves";
+import type { LevelMoveContext, LevelMovesWithSource } from "#types/level-moves";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
@@ -191,10 +193,7 @@ import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple, Writable } from "type-fest";
-import type { LevelMoveContext } from "../@types/level-moves";
-import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
 
@@ -4685,27 +4684,34 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound | null {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
-    const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
+
+    const speciesForm = this.getSpeciesForm(undefined, true);
+    const fusionSpeciesForm = this.fusionSpecies && this.getFusionSpeciesForm(undefined, true);
+
+    const cry = speciesForm.cry(soundConfig);
     if (!cry || audioManager.getVolume(VolumeSetting.FIELD) === 0) {
       return cry;
     }
+
     let duration = cry.totalDuration * 1000;
-    if (this.fusionSpecies && this.getSpeciesForm(undefined, true) !== this.getFusionSpeciesForm(undefined, true)) {
-      const fusionCry = this.getFusionSpeciesForm(undefined, true).cry(soundConfig, true);
-      if (!fusionCry) {
+    if (fusionSpeciesForm && speciesForm !== fusionSpeciesForm) {
+      const fusionCry = fusionSpeciesForm.cry(soundConfig, true);
+      if (!fusionCry || fusionCry === cry) {
         return cry;
       }
-      duration = Math.min(duration, fusionCry.totalDuration * 1000);
+
+      const fusionCryDuration = fusionCry.totalDuration;
+      duration = Math.min(duration, fusionCryDuration * 1000);
+
+      // TODO: is there a point to this? why destroy it when it's just going to be recreated below in `fusionCryInner`?
       fusionCry.destroy();
+
       scene.time.delayedCall(fixedInt(Math.ceil(duration * 0.4)), () => {
         try {
-          SoundFade.fadeOut(scene, cry, fixedInt(Math.ceil(duration * 0.2)));
-          const fusionCryInner = this.getFusionSpeciesForm(undefined, true).cry({
-            seek: Math.max(fusionCry.totalDuration * 0.4, 0),
-            ...soundConfig,
-          });
+          const fusionCryInner = fusionSpeciesForm.cry({ ...soundConfig, seek: Math.max(fusionCryDuration * 0.4, 0) });
           if (fusionCryInner) {
-            SoundFade.fadeIn(
+            fadeOut(scene, cry, fixedInt(Math.ceil(duration * 0.2)));
+            fadeIn(
               scene,
               fusionCryInner,
               fixedInt(Math.ceil(duration * 0.2)),
@@ -4861,7 +4867,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           frameProgress -= frameThreshold;
         }
         if (i === transitionIndex && fusionCryKey) {
-          SoundFade.fadeOut(globalScene, cry, fixedInt(Math.ceil((duration / rate) * 0.2)));
+          fadeOut(globalScene, cry, fixedInt(Math.ceil((duration / rate) * 0.2)));
           fusionCry = audioManager.playSound(fusionCryKey, {
             // TODO: This bang is correct as this callback can only be called once, but
             // this whole block with conditionally reassigning fusionCry needs a second lock.
@@ -4869,7 +4875,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             rate,
           });
           if (fusionCry) {
-            SoundFade.fadeIn(
+            fadeIn(
               globalScene,
               fusionCry,
               fixedInt(Math.ceil((duration / rate) * 0.2)),
