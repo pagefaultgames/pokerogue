@@ -47,6 +47,7 @@ import {
   GorillaTacticsAbAttr,
   getWeatherCondition,
   HealFromBerryUseAbAttr,
+  HiddenItemChanceAbAttr,
   IceFaceFormChangeAbAttr,
   IgnoreContactAbAttr,
   IgnoreMoveEffectsAbAttr,
@@ -80,7 +81,6 @@ import {
   PostAttackContactApplyStatusEffectAbAttr,
   PostAttackStealHeldItemAbAttr,
   PostBattleInitFormChangeAbAttr,
-  PostBattleLootAbAttr,
   PostBiomeChangeTerrainChangeAbAttr,
   PostBiomeChangeWeatherChangeAbAttr,
   PostDamageForceSwitchAbAttr,
@@ -462,7 +462,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.PICKUP, 3) //
-      .attr(PostBattleLootAbAttr)
+      .attr(HiddenItemChanceAbAttr, 0.05)
       .unsuppressable()
       .build(),
     new AbBuilder(AbilityId.TRUANT, 3) //

@@ -7,7 +7,7 @@ import type { RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { tryTransferHeldItem } from "#items/item-utility";
-import { PokemonReward, type Reward, type RewardOption } from "#items/reward";
+import { PokemonReward, type RewardOption } from "#items/reward";
 import {
   type CustomRewardSettings,
   generatePlayerRewardOptions,
@@ -30,6 +30,7 @@ export class SelectRewardPhase extends BattlePhase {
   private readonly rarityTiers?: RarityTier[] | undefined;
   private readonly customRewardSettings?: CustomRewardSettings | undefined;
   private readonly isCopy: boolean;
+  private readonly hiddenItems: boolean;
   private rewardSelectCallback: RewardSelectCallback;
 
   private typeOptions: RewardOption[];
@@ -39,6 +40,7 @@ export class SelectRewardPhase extends BattlePhase {
     rarityTiers?: RarityTier[],
     customRewardSettings?: CustomRewardSettings,
     isCopy = false,
+    hiddenItems = false,
   ) {
     super();
 
@@ -46,14 +48,11 @@ export class SelectRewardPhase extends BattlePhase {
     this.rarityTiers = rarityTiers;
     this.customRewardSettings = customRewardSettings;
     this.isCopy = isCopy;
+    this.hiddenItems = hiddenItems;
   }
 
   start() {
     super.start();
-
-    if (!this.isPlayer()) {
-      return false;
-    }
 
     // Reset all temporary stacks
     for (const p of globalScene.getPlayerParty()) {
@@ -133,8 +132,7 @@ export class SelectRewardPhase extends BattlePhase {
       super.end();
       return true;
     }
-    const reward = this.typeOptions[cursor].type;
-    return this.applyReward(reward, -1, rewardSelectCallback);
+    return this.applyReward(this.typeOptions[cursor], -1, rewardSelectCallback);
   }
 
   // Pick a reward from the shop and apply it
@@ -147,7 +145,6 @@ export class SelectRewardPhase extends BattlePhase {
       shopOptions[
         rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT
       ];
-    const reward = shopOption.type;
     // Apply Black Sludge to healing item cost
     const healingItemCost = new NumberHolder(shopOption.cost);
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: healingItemCost });
@@ -158,23 +155,20 @@ export class SelectRewardPhase extends BattlePhase {
       return false;
     }
 
-    return this.applyReward(reward, cost, rewardSelectCallback);
+    return this.applyReward(shopOption, cost, rewardSelectCallback);
   }
 
   // Apply a chosen reward: do an effect or open the party menu
-  private applyReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
-    if (reward instanceof PokemonReward) {
-      reward.openParty(
-        () => this.postApplyPokemonReward(reward, true, cost),
+  private applyReward(rewardOption: RewardOption, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
+    if (rewardOption.type instanceof PokemonReward) {
+      rewardOption.type.openParty(
+        () => this.postApplyPokemonReward(rewardOption, true, cost),
         () => this.resetRewardSelect(rewardSelectCallback),
         this,
       );
     } else {
-      applyReward(reward, {}, true);
-      globalScene.updateItemBar(true);
-      globalScene.ui.clearText();
-      globalScene.ui.setMode(UiMode.MESSAGE);
-      super.end();
+      applyReward(rewardOption.type, {}, true);
+      this.postApplyPokemonReward(rewardOption, true, cost);
     }
     return cost === -1;
   }
@@ -252,11 +246,11 @@ export class SelectRewardPhase extends BattlePhase {
    * @param cost - The cost of the reward if it was purchased, or -1 if selected as the reward reward
    * @param playSound - Whether the 'obtain reward' sound should be played when adding the reward.
    */
-  private postApplyPokemonReward(_reward: Reward, result = false, cost = -1): void {
+  private postApplyPokemonReward(reward: RewardOption, result = false, cost = -1): void {
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.
-    globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
+    globalScene.ui.setMode(UiMode.REWARD_SELECT, { hideShop: this.hiddenItems }).then(() => {
       if (cost > -1) {
         if (result) {
           if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -267,6 +261,19 @@ export class SelectRewardPhase extends BattlePhase {
           audioManager.playSound("se/buy");
 
           (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
+
+          // Changing the UI mode here is necessary to force the reset
+          globalScene.ui.setMode(UiMode.MESSAGE);
+          this.resetRewardSelect(this.rewardSelectCallback);
+        } else {
+          globalScene.ui.playError();
+        }
+      } else if (this.hiddenItems && this.typeOptions.length > 1) {
+        if (result) {
+          const index = this.typeOptions.indexOf(reward);
+          if (index !== -1) {
+            this.typeOptions.splice(index, 1);
+          }
 
           // Changing the UI mode here is necessary to force the reset
           globalScene.ui.setMode(UiMode.MESSAGE);
@@ -307,21 +314,16 @@ export class SelectRewardPhase extends BattlePhase {
   // Function that resets the reward selection screen,
   // e.g. after pressing cancel in the party ui or while learning a move
   private resetRewardSelect(rewardSelectCallback: RewardSelectCallback) {
-    globalScene.ui.setMode(
-      UiMode.REWARD_SELECT,
-      this.isPlayer(),
-      this.typeOptions,
-      rewardSelectCallback,
-      this.getRerollCost(globalScene.lockRarityTiers),
-    );
+    globalScene.ui.setMode(UiMode.REWARD_SELECT, {
+      typeOptions: this.typeOptions,
+      onActionInput: rewardSelectCallback,
+      rerollCost: this.getRerollCost(globalScene.lockRarityTiers),
+      hideShop: this.hiddenItems,
+    });
   }
 
   updateSeed(): void {
     globalScene.resetSeed();
-  }
-
-  isPlayer(): boolean {
-    return true;
   }
 
   getRerollCost(lockRarities: boolean): number {

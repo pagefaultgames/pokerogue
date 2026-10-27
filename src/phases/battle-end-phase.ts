@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { findHiddenItems } from "#items/hidden-items";
 import { BattlePhase } from "#phases/battle-phase";
 
 export class BattleEndPhase extends BattlePhase {
@@ -64,17 +65,19 @@ export class BattleEndPhase extends BattlePhase {
     globalScene.trainerItems.decreaseDurations();
 
     globalScene.updateItemBar();
-    if (!this.isVictory && !globalScene.phaseManager.hasPhaseOfType("SelectRewardPhase")) {
-      if (globalScene.currentBattle.enemyFaints > 0) {
-        globalScene.phaseManager.unshiftNew("SelectRewardPhase");
-      } else if (!globalScene.currentBattle.successfulRun) {
-        globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, {
-          fillRemaining: false,
-          rerollMultiplier: -1,
-        });
-      }
-    }
 
-    this.end();
+    findHiddenItems().then(() => {
+      if (!this.isVictory && !globalScene.phaseManager.hasPhaseOfType("SelectRewardPhase")) {
+        if (globalScene.currentBattle.enemyFaints > 0) {
+          globalScene.phaseManager.unshiftNew("SelectRewardPhase");
+        } else if (!globalScene.currentBattle.successfulRun) {
+          globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, {
+            fillRemaining: false,
+            rerollMultiplier: -1,
+          });
+        }
+      }
+      this.end();
+    });
   }
 }

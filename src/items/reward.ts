@@ -239,12 +239,14 @@ export class RewardOption {
   public upgradeCount: number;
   public tier: RarityTier;
   public cost: number;
+  public source: PlayerPokemon | undefined;
 
-  constructor(type: Reward, upgradeCount: number, tier: RarityTier, cost = 0) {
+  constructor(type: Reward, upgradeCount: number, tier: RarityTier, cost = 0, source?: PlayerPokemon) {
     this.type = type;
     this.upgradeCount = upgradeCount;
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
+    this.source = source;
   }
 }
 
