@@ -65,7 +65,7 @@ export function weightedPick<T>(items: Map<T, number>): T {
 
   const totalWeight = items.values().reduce((total, cur) => total + cur, 0);
   if (totalWeight <= 0) {
-    console.error("Total weight of all items in the input to `weightedPick` was less than or equal to 0!\n", items);
+    console.warn("Total weight of all items in the input to `weightedPick` was less than or equal to 0!\n", items);
     return items.keys().next().value!; // returns the first key in the map
   }
 
