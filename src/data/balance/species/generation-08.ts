@@ -5244,6 +5244,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.SPIKES,
       MoveId.THUNDER_WAVE,
+      MoveId.OUTRAGE,
     ],
   };
   generationEightSpeciesData[SpeciesId.CURSOLA] = {
@@ -10959,6 +10960,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.NIGHT_SLASH,
+      MoveId.OUTRAGE,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_PONYTA] = {
