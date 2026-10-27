@@ -43,7 +43,7 @@ describe("Spec - Pokemon", () => {
 
     it("should append a new pokemon by default", async () => {
       const zubat = game.field.getEnemyPokemon();
-      zubat.addToParty(PokeballType.LUXURY_BALL);
+      zubat.addToParty(PokeballType.MASTER_BALL);
 
       const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
@@ -55,7 +55,7 @@ describe("Spec - Pokemon", () => {
     it("should put a new pokemon into the passed slotIndex", async () => {
       const slotIndex = 1;
       const zubat = game.field.getEnemyPokemon();
-      zubat.addToParty(PokeballType.LUXURY_BALL, slotIndex);
+      zubat.addToParty(PokeballType.MASTER_BALL, slotIndex);
 
       const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
