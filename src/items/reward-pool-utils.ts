@@ -2,19 +2,21 @@ import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import type { PokeballType } from "#enums/pokeball";
-import { RewardCategoryId } from "#enums/reward-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
-import type { RewardPool, RewardPoolEntry, RewardPoolWeights, RewardSpecs } from "#types/rewards";
-import { randSeedInt } from "#utils/common";
+import { allRewards } from "#items/all-rewards";
+import type { RewardPool, RewardPoolEntry, RewardPoolId, RewardPoolWeights, RewardSpecs } from "#types/rewards";
+import { randSeedInt, randSeedItem } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
 import { weightedPick } from "#utils/random";
-import type { RewardOption } from "./reward";
+import { EmptyReward, Reward, RewardGenerator, RewardOption } from "./reward";
 import { rewardPool, rewardPoolWeights } from "./reward-pools";
-import { generateRewardOptionFromId, isTrainerItemId } from "./reward-utils";
+import { generateRewardOptionFromId, isHeldItemId, isRewardId, isTrainerItemId } from "./reward-utils";
+import { HeldItemReward } from "./rewards/held-item-reward";
+import { TrainerItemReward } from "./rewards/trainer-item-reward";
 
 /*
-This file still contains several functions to generate rewards from pools. The hierarchy of these functions is explained here.
+This file contains functions to generate rewards from pools.
 
 At the top of the food chain is `generatePlayerRewardOptions`, which is responsible for creating item rewards for the player.
 It can take a `CustomRewardSettings` to fix any number of rewards or tiers, then fills the remaining spots randomly.
@@ -22,16 +24,7 @@ Note that this function generates `RewardOption` instances, not yet `Reward`s.
 Currently, there is only one reward pool, but in the future we will want to allow for custom pools.
 
 The function `getNewRewardOption` is responsible for generating a single RewardOption from a given pool and set of weights.
-Note that, in the previous system, this function could in principle generate rewards for enemies, which was used in some
-cases to assign modifiers. This usage is now deprecated, as we have separate pools for held items and trainer items for enemies.
-
-However, `getNewRewardOption` is not called directly by `generatePlayerRewardOptions`. Instead, it is filtered
-by `getRewardOptionWithRetry`, which also checks existing rewards to minimize the chance of duplicates.
-
-This will allow more customization in creating pools for challenges, MEs etc.
 */
-
-// TODO: These still overwhelmingly need cleaning up (such as by removing retries, etc etc)
 
 export interface CustomRewardSettings {
   guaranteedRarityTiers?: RarityTier[];
@@ -73,6 +66,9 @@ export function generateRewardPoolWeights(pool: RewardPool, rerollCount = 0) {
       if (isTrainerItemId(w.id) && globalScene.trainerItems.isMaxStack(w.id)) {
         return 0;
       }
+      if (!isPoolEntryAvailable(w.id)) {
+        return 0;
+      }
       if (typeof w.weight === "number") {
         return w.weight;
       }
@@ -80,6 +76,29 @@ export function generateRewardPoolWeights(pool: RewardPool, rerollCount = 0) {
     });
     rewardPoolWeights[tier] = poolWeights;
   }
+}
+
+/**
+ * Check if a reward pool entry is available for selection given active exclusions.
+ * @param id - Pool entry ID
+ * @param exclusions - Optional set of match keys to exclude
+ * @returns True if available, false if excluded or exhausted
+ */
+function isPoolEntryAvailable(id: RewardPoolId, exclusions?: ReadonlySet<string>): boolean {
+  if (isRewardId(id)) {
+    const rewardOrGen = allRewards[id];
+    if (rewardOrGen instanceof RewardGenerator) {
+      return rewardOrGen.getCapacity(exclusions) > 0;
+    }
+    return !exclusions?.has(Reward.getMatchKey(id));
+  }
+  if (isHeldItemId(id)) {
+    return !exclusions?.has(HeldItemReward.getItemMatchKey(id));
+  }
+  if (isTrainerItemId(id)) {
+    return !exclusions?.has(TrainerItemReward.getItemMatchKey(id));
+  }
+  return false;
 }
 
 /**
@@ -125,7 +144,11 @@ function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier): RarityTi
   let upgradeCount = 0;
   const partyLuckValue = getPartyLuckValue();
   const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-  while (Object.hasOwn(pool, baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
+  while (
+    Object.hasOwn(pool, baseTier + upgradeCount + 1)
+    && pool[baseTier + upgradeCount + 1].length > 0
+    && (rewardPoolWeights[baseTier + upgradeCount + 1]?.some(w => w > 0) ?? true)
+  ) {
     if (randSeedInt(upgradeOdds) < 4) {
       upgradeCount++;
     } else {
@@ -136,9 +159,36 @@ function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier): RarityTi
 }
 
 /**
+ * Filter pool entries for a given tier against exclusions and non-positive weights.
+ * @param pool - The reward pool
+ * @param weights - The reward weights
+ * @param exclusions - Match keys to exclude
+ * @param tier - Rarity tier to filter
+ * @returns Map of valid pool entries to their weights
+ */
+function getRewardMapForTier(
+  pool: RewardPool,
+  weights: RewardPoolWeights,
+  exclusions: ReadonlySet<string>,
+  tier: RarityTier,
+): Map<RewardPoolEntry, number> {
+  const map = new Map<RewardPoolEntry, number>();
+  for (const [index, entry] of pool[tier].entries()) {
+    const weight = weights[tier][index];
+    if (weight <= 0) {
+      continue;
+    }
+    if (!isPoolEntryAvailable(entry.id, exclusions)) {
+      continue;
+    }
+    map.set(entry, weight);
+  }
+  return map;
+}
+
+/**
  * Generates reward options for a {@linkcode SelectRewardPhase}
  * @param count - Determines the number of items to generate
- * @param party - Party is required for generating proper reward pools
  * @param rarityTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
  * @param customRewardSettings - (Optional) See {@linkcode CustomRewardSettings}
  */
@@ -148,173 +198,156 @@ export function generatePlayerRewardOptions(
   customRewardSettings?: CustomRewardSettings,
 ): RewardOption[] {
   const options: RewardOption[] = [];
-  const retryCount = Math.min(count * 5, 50);
-  // TODO: Change this to allow for custom reward pools
   const pool = getRewardPoolForType(RewardPoolType.PLAYER);
   const weights = getRewardWeightsForType(RewardPoolType.PLAYER);
-  if (customRewardSettings) {
-    // Guaranteed reward options first
-    if (customRewardSettings?.guaranteedRewardOptions && customRewardSettings.guaranteedRewardOptions.length > 0) {
-      options.push(...customRewardSettings.guaranteedRewardOptions!);
-    }
+  const exclusions = new Set<string>();
 
-    if (customRewardSettings?.guaranteedRewardSpecs && customRewardSettings.guaranteedRewardSpecs.length > 0) {
-      for (const specs of customRewardSettings.guaranteedRewardSpecs) {
-        const rewardOption = generateRewardOptionFromId(specs);
-        if (rewardOption) {
-          options.push(rewardOption);
+  if (customRewardSettings?.guaranteedRewardOptions) {
+    for (const option of customRewardSettings.guaranteedRewardOptions) {
+      options.push(option);
+      exclusions.add(option.type.matchKey);
+    }
+  }
+
+  if (customRewardSettings?.guaranteedRewardSpecs) {
+    for (const specs of customRewardSettings.guaranteedRewardSpecs) {
+      const rewardOption = generateRewardOptionFromId(specs);
+      if (rewardOption) {
+        options.push(rewardOption);
+        exclusions.add(rewardOption.type.matchKey);
+      }
+    }
+  }
+
+  if (customRewardSettings) {
+    if (customRewardSettings.guaranteedRarityTiers) {
+      const allowLuckUpgrades = customRewardSettings.allowLuckUpgrades ?? true;
+      for (const tier of customRewardSettings.guaranteedRarityTiers) {
+        const option = getNewRewardOption(pool, weights, exclusions, tier, allowLuckUpgrades);
+        if (option) {
+          options.push(option);
         }
       }
     }
 
-    // Guaranteed tiers third
-    if (customRewardSettings.guaranteedRarityTiers && customRewardSettings.guaranteedRarityTiers.length > 0) {
-      const allowLuckUpgrades = customRewardSettings.allowLuckUpgrades ?? true;
-      for (const tier of customRewardSettings.guaranteedRarityTiers) {
-        options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, tier, allowLuckUpgrades));
-      }
-    }
-
-    // Fill remaining
     if (options.length < count && customRewardSettings.fillRemaining) {
       while (options.length < count) {
-        options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, undefined));
+        const option = getNewRewardOption(pool, weights, exclusions);
+        if (!option) {
+          break;
+        }
+        options.push(option);
       }
     }
   } else {
     for (let i = 0; i < count; i++) {
       const tier = rarityTiers && rarityTiers.length > i ? rarityTiers[i] : undefined;
-      options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, tier));
+      const option = getNewRewardOption(pool, weights, exclusions, tier);
+      if (!option) {
+        break;
+      }
+      options.push(option);
     }
   }
 
-  // Applies overrides for testing
   overridePlayerRewardOptions(options);
 
   return options;
 }
 
 /**
- * Check whether a candidate reward option duplicates any existing options.
- * @param existingOptions - Currently selected reward options
- * @param candidate - Newly rolled candidate option
- * @returns Whether the candidate option should be considered a duplicate
+ * Create a {@linkcode RewardOption} for a selected pool entry.
+ * @param id - Pool entry ID
+ * @param tier - Current rarity tier
+ * @param upgradeCount - Tier upgrades having occurred
+ * @param exclusions - Match keys to exclude for generator variants
+ * @returns Generated reward option
  */
-function isDuplicateRewardOption(existingOptions: readonly RewardOption[], candidate: RewardOption | null): boolean {
-  if (!candidate) {
-    return false;
+function createOptionFromPoolEntry(
+  id: RewardPoolId,
+  tier: RarityTier,
+  upgradeCount: number,
+  exclusions: ReadonlySet<string>,
+): RewardOption {
+  if (isRewardId(id)) {
+    const rewardOrGenerator = allRewards[id];
+    if (rewardOrGenerator instanceof RewardGenerator) {
+      const generator: RewardGenerator = rewardOrGenerator;
+      const variants = generator.getAvailableItems(exclusions);
+      const pickedVariant = randSeedItem(variants);
+      const reward = generator.generateReward(pickedVariant) ?? new EmptyReward();
+      return new RewardOption(reward, upgradeCount, tier, 0);
+    }
   }
 
-  return existingOptions.some(existing => {
-    if (existing.type.name === candidate.type.name) {
-      return true;
-    }
-
-    if (existing.type.category !== candidate.type.category) {
-      return false;
-    }
-
-    // OTHER holds various rewards which are only dupes when identical
-    if (candidate.type.category === RewardCategoryId.OTHER) {
-      return existing.type.id === candidate.type.id;
-    }
-
-    // Prevent duplicates from categories, except generic ones like held/form change items
-    switch (candidate.type.category) {
-      case RewardCategoryId.HELD_ITEM:
-      case RewardCategoryId.TRAINER_ITEM:
-      case RewardCategoryId.FORM_CHANGE_ITEM:
-      case RewardCategoryId.NONE:
-        return false;
-      default:
-        return true;
-    }
-  });
+  return generateRewardOptionFromId(id, 0, tier, upgradeCount);
 }
 
 /**
- * Will generate a {@linkcode RewardOption} from the {@linkcode RewardPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
- * @param pool - {@linkcode RewardPool} to generate items from
- * @param weights - {@linkcode RewardPoolWeights} to use when generating items
- * @param existingOptions Currently generated options
- * @param retryCount How many times to retry before allowing a dupe item
- * @param party Current player party, used to calculate items in the pool
- * @param tier If specified will generate item of tier
- * @param allowLuckUpgrades `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
+ * Pick a reward option from a specific rarity tier.
+ * @param pool - The reward pool
+ * @param weights - The reward weights
+ * @param exclusions - Match keys to exclude
+ * @param tier - Rarity tier to roll from
+ * @param upgradeCount - Tier upgrades having occurred
+ * @returns Generated reward option, or null if the tier has no valid entries
  */
-function getRewardOptionWithRetry(
+function tryPickOptionFromTier(
   pool: RewardPool,
   weights: RewardPoolWeights,
-  existingOptions: RewardOption[],
-  retryCount: number,
-  tier?: RarityTier,
-  allowLuckUpgrades?: boolean,
-): RewardOption {
-  allowLuckUpgrades = allowLuckUpgrades ?? true;
-  let candidate = getNewRewardOption(pool, weights, tier, undefined, 0, allowLuckUpgrades);
-  let r = 0;
-  while (++r < retryCount && isDuplicateRewardOption(existingOptions, candidate)) {
-    console.log("Retry count:", r);
-    console.log(candidate?.type.category);
-    console.log(candidate?.type.name);
-    console.log(existingOptions.filter(o => o.type.name === candidate?.type.name).length);
-    console.log(existingOptions.filter(o => o.type.category === candidate?.type.category).length);
-    candidate = getNewRewardOption(
-      pool,
-      weights,
-      candidate?.type.tier ?? tier,
-      candidate?.upgradeCount,
-      0,
-      allowLuckUpgrades,
-    );
+  exclusions: Set<string>,
+  tier: RarityTier,
+  upgradeCount: number,
+): RewardOption | null {
+  const rewardMap = getRewardMapForTier(pool, weights, exclusions, tier);
+  if (rewardMap.size === 0) {
+    return null;
   }
-  return candidate!;
+
+  const pickedEntry = weightedPick(rewardMap);
+  const option = createOptionFromPoolEntry(pickedEntry.id, tier, upgradeCount, exclusions);
+  exclusions.add(option.type.matchKey);
+  return option;
 }
 
 /**
- * Generates a Reward from the specified pool
- * @param pool - {@linkcode RewardPool} to generate items from
- * @param weights - {@linkcode RewardPoolWeights} to use when generating items
- * @param party - party of the trainer using the item
- * @param baseTier - If specified, will override the initial tier of an item (can still upgrade with luck)
- * @param upgradeCount - If defined, means that this is a new Reward being generated to override another via luck upgrade. Used for recursive logic
- * @param retryCount - Max allowed tries before the next tier down is checked for a valid Reward
- * @param allowLuckUpgrades - Default true. If false, will not allow Reward to randomly upgrade to next tier
+ * Generate a reward option from the pool, excluding already-selected items.
+ * @param pool - Reward pool by rarity tier
+ * @param weights - Precalculated weights by rarity tier
+ * @param exclusions - Match keys to exclude from rolling
+ * @param baseTier - Initial tier override
+ * @param allowLuckUpgrades - Whether the item can upgrade tiers via luck
+ * @returns The generated reward option, or null if no valid entries remain
  */
 function getNewRewardOption(
   pool: RewardPool,
   weights: RewardPoolWeights,
+  exclusions: Set<string>,
   baseTier?: RarityTier,
-  upgradeCount?: number,
-  retryCount = 0,
   allowLuckUpgrades = true,
 ): RewardOption | null {
-  let tier = 0;
   if (baseTier == null) {
     baseTier = randomBaseTier();
   }
-  if (upgradeCount == null) {
-    upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(pool, baseTier) : 0;
-    tier = baseTier + upgradeCount;
-  } else {
-    tier = baseTier;
+  const upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(rewardPool, baseTier) : 0;
+  const initialTier = baseTier + upgradeCount;
+
+  const tiers: RarityTier[] = [];
+  for (let tier = initialTier; tier >= RarityTier.COMMON; tier--) {
+    tiers.push(tier);
+  }
+  for (let tier = initialTier + 1; tier <= RarityTier.MASTER; tier++) {
+    tiers.push(tier);
   }
 
-  const rewardMap = new Map<RewardPoolEntry, number>();
-  for (const [index, entry] of pool[tier].entries()) {
-    rewardMap.set(entry, weights[tier][index]);
-  }
-  const pickedPoolEntry = weightedPick(rewardMap);
-
-  const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, tier, upgradeCount);
-  if (rewardOption === null) {
-    console.log(RarityTier[tier], upgradeCount);
-    return getNewRewardOption(pool, weights, tier, upgradeCount, ++retryCount);
+  for (const tier of tiers) {
+    const option = tryPickOptionFromTier(pool, weights, exclusions, tier, tier === initialTier ? upgradeCount : 0);
+    if (option) {
+      return option;
+    }
   }
 
-  console.log(rewardOption);
-
-  return rewardOption;
+  return null;
 }
 
 /**

@@ -30,6 +30,10 @@ export class FormChangeItemReward extends PokemonReward {
     this.id = RewardId.FORM_CHANGE_ITEM;
   }
 
+  override get matchKey(): string {
+    return `form_change:${this.formChangeItemId}`;
+  }
+
   get name(): string {
     return allHeldItems[this.formChangeItemId].name;
   }
@@ -52,21 +56,15 @@ export class FormChangeItemReward extends PokemonReward {
   }
 }
 
-export class FormChangeItemRewardGenerator extends RewardGenerator {
-  private isRareFormChangeItem: boolean;
+export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeItemId> {
+  private readonly isRareFormChangeItem: boolean;
 
   constructor(isRareFormChangeItem: boolean) {
     super();
     this.isRareFormChangeItem = isRareFormChangeItem;
   }
 
-  override generateReward(pregenArgs?: FormChangeItemId) {
-    if (pregenArgs !== undefined) {
-      return new FormChangeItemReward(
-        this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM,
-        pregenArgs,
-      );
-    }
+  override getAvailableItems(exclusions?: ReadonlySet<string>): FormChangeItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: REFACTOR THIS FUCKERY PLEASE
@@ -123,21 +121,28 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
     ]
       .flat()
       .flatMap(fc => fc.item)
-      .filter(i =>
-        isItemInCategory(
-          i,
-          this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
-        ),
+      .filter(
+        i =>
+          isItemInCategory(
+            i,
+            this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
+          ) && !exclusions?.has(`form_change:${i}`),
       );
-    // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
-    if (formChangeItemPool.length === 0) {
+    return formChangeItemPool;
+  }
+
+  override generateReward(pregenArgs?: FormChangeItemId): FormChangeItemReward | null {
+    const id = this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM;
+    if (pregenArgs !== undefined) {
+      return new FormChangeItemReward(id, pregenArgs);
+    }
+
+    const variants = this.getAvailableItems();
+    if (variants.length === 0) {
       return null;
     }
 
-    return new FormChangeItemReward(
-      this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM,
-      randSeedItem(formChangeItemPool),
-    );
+    return new FormChangeItemReward(id, randSeedItem(variants));
   }
 }

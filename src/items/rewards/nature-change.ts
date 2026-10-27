@@ -33,6 +33,10 @@ export class PokemonNatureChangeReward extends PokemonReward {
     this.nature = nature;
   }
 
+  override get matchKey(): string {
+    return `mint:${this.nature}`;
+  }
+
   get name(): string {
     return i18next.t("reward:pokemonNatureChange.name", {
       natureName: getNatureName(this.nature),
@@ -58,11 +62,16 @@ export class PokemonNatureChangeReward extends PokemonReward {
   }
 }
 
-export class MintRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: Nature) {
+export class MintRewardGenerator extends RewardGenerator<Nature> {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): Nature[] {
+    return getEnumValues(Nature).filter(nature => !exclusions?.has(`mint:${nature}`));
+  }
+
+  override generateReward(pregenArgs?: Nature): PokemonNatureChangeReward {
     if (pregenArgs !== undefined) {
       return new PokemonNatureChangeReward(pregenArgs);
     }
-    return new PokemonNatureChangeReward(randSeedItem(getEnumValues(Nature)));
+    const variants = this.getAvailableItems();
+    return new PokemonNatureChangeReward(randSeedItem(variants.length > 0 ? variants : getEnumValues(Nature)));
   }
 }

@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
-import type { BerryItemId, HeldItemId } from "#enums/held-item-id";
-import type { PokemonType } from "#enums/pokemon-type";
+import { type BerryItemId, berryItemIds, HeldItemId } from "#enums/held-item-id";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
-import type { PermanentStat } from "#enums/stat";
+import { PERMANENT_STATS, type PermanentStat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
@@ -39,6 +39,19 @@ export class HeldItemReward extends PokemonReward {
     this.itemId = itemId;
   }
 
+  /**
+   * Return the deduplication match key for a held item ID.
+   * @param itemId - Held item ID
+   * @returns Match key string
+   */
+  public static getItemMatchKey(itemId: HeldItemId): string {
+    return `held:${itemId}`;
+  }
+
+  override get matchKey(): string {
+    return HeldItemReward.getItemMatchKey(this.itemId);
+  }
+
   get name(): string {
     return allHeldItems[this.itemId].name;
   }
@@ -56,31 +69,73 @@ export class HeldItemReward extends PokemonReward {
   }
 }
 
-export class BerryRewardGenerator extends RewardGenerator {
+export class BerryRewardGenerator extends RewardGenerator<BerryItemId> {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): BerryItemId[] {
+    const party = globalScene.getPlayerParty();
+    return berryItemIds.filter(item => {
+      if (exclusions?.has(`held:${item}`)) {
+        return false;
+      }
+      return party.some(p => !p.heldItemManager.isMaxStack(item));
+    });
+  }
+
   override generateReward(pregenArgs?: BerryItemId): HeldItemReward {
     if (pregenArgs !== undefined) {
-      const item = pregenArgs;
-      return new HeldItemReward(RewardId.BERRY, item);
+      return new HeldItemReward(RewardId.BERRY, pregenArgs);
     }
-    return new HeldItemReward(RewardId.BERRY, getNewBerryHeldItem());
+    const variants = this.getAvailableItems();
+    const customWeights: Record<number, number> = {};
+    for (const item of variants) {
+      const isPreferred =
+        item === HeldItemId.SITRUS_BERRY || item === HeldItemId.LUM_BERRY || item === HeldItemId.LEPPA_BERRY;
+      customWeights[item] = isPreferred ? 2 : 1;
+    }
+    return new HeldItemReward(RewardId.BERRY, getNewBerryHeldItem(customWeights));
   }
 }
 
-export class AttackTypeBoosterRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: PokemonType) {
+export class AttackTypeBoosterRewardGenerator extends RewardGenerator<PokemonType> {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): PokemonType[] {
+    const party = globalScene.getPlayerParty();
+    const attackMoveTypes = party
+      .values()
+      .flatMap(p =>
+        p
+          .getMoveset()
+          .filter(pm => pm.getMove().is("AttackMove"))
+          .map(pm => p.getMoveType(pm.getMove()))
+          .filter((type): type is RegularPokemonType => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
+      )
+      .toArray();
+
+    const uniqueTypes = [...new Set(attackMoveTypes.length > 0 ? attackMoveTypes : [PokemonType.NORMAL])];
+    return uniqueTypes.filter(type => {
+      const item = attackTypeToHeldItem[type];
+      return !exclusions?.has(`held:${item}`) && party.some(p => !p.heldItemManager.isMaxStack(item));
+    });
+  }
+
+  override generateReward(pregenArgs?: PokemonType): HeldItemReward {
     if (pregenArgs !== undefined) {
       const item = attackTypeToHeldItem[pregenArgs];
       return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
     }
-    return new HeldItemReward(
-      RewardId.ATTACK_TYPE_BOOSTER,
-      getNewAttackTypeBoosterHeldItem(undefined, globalScene.getPlayerParty()),
-    );
+    const item = getNewAttackTypeBoosterHeldItem(undefined, globalScene.getPlayerParty());
+    return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
   }
 }
 
-export class BaseStatBoosterRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: PermanentStat) {
+export class BaseStatBoosterRewardGenerator extends RewardGenerator<PermanentStat> {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): PermanentStat[] {
+    const party = globalScene.getPlayerParty();
+    return PERMANENT_STATS.filter(stat => {
+      const item = permanentStatToHeldItem[stat];
+      return !exclusions?.has(`held:${item}`) && party.some(p => !p.heldItemManager.isMaxStack(item));
+    });
+  }
+
+  override generateReward(pregenArgs?: PermanentStat): HeldItemReward {
     if (pregenArgs !== undefined) {
       const item = permanentStatToHeldItem[pregenArgs];
       return new HeldItemReward(RewardId.VITAMIN, item);

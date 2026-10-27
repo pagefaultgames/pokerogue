@@ -12,7 +12,7 @@ import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class ChangeTeraTypeReward extends PokemonReward {
-  private teraType: PokemonType;
+  public readonly teraType: PokemonType;
 
   constructor(teraType: PokemonType) {
     super(RewardId.TERA_SHARD, "", `${PokemonType[teraType].toLowerCase()}_tera_shard`, (pokemon: PlayerPokemon) => {
@@ -27,6 +27,10 @@ export class ChangeTeraTypeReward extends PokemonReward {
     });
 
     this.teraType = teraType;
+  }
+
+  override get matchKey(): string {
+    return `tera:${this.teraType}`;
   }
 
   get name(): string {
@@ -64,35 +68,33 @@ export class ChangeTeraTypeReward extends PokemonReward {
   }
 }
 
-export class TeraTypeRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: PokemonType) {
-    if (pregenArgs !== undefined) {
-      return new ChangeTeraTypeReward(pregenArgs[0]);
-    }
+export class TeraTypeRewardGenerator extends RewardGenerator<PokemonType> {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): PokemonType[] {
     if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
-      return null;
+      return [];
     }
 
-    const shardType = this.getTeraType();
-    return new ChangeTeraTypeReward(shardType);
-  }
-
-  private getTeraType(): PokemonType {
-    // If all party members have a given Tera Type, omit it from the pool
     const excludedType = globalScene.getPlayerParty().reduce((prevType, p) => {
-      if (
-        // Ignore Pokemon with fixed Tera Types
-        p.hasSpecies(SpeciesId.TERAPAGOS)
-        || p.hasSpecies(SpeciesId.OGERPON)
-        || p.hasSpecies(SpeciesId.SHEDINJA)
-      ) {
+      if (p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA)) {
         return prevType;
       }
       return prevType === p.teraType ? prevType : PokemonType.UNKNOWN;
     }, PokemonType.UNKNOWN);
 
-    const validTypes = getEnumValues(PokemonType).filter(t => t !== excludedType);
-    // 1/64 chance for tera stellar
-    return randSeedInt(64) ? randSeedItem(validTypes) : PokemonType.STELLAR;
+    return getEnumValues(PokemonType).filter(t => t !== excludedType && !exclusions?.has(`tera:${t}`));
+  }
+
+  override generateReward(pregenArgs?: PokemonType): ChangeTeraTypeReward | null {
+    if (pregenArgs !== undefined) {
+      return new ChangeTeraTypeReward(pregenArgs);
+    }
+    const variants = this.getAvailableItems();
+    if (variants.length === 0) {
+      return null;
+    }
+
+    const shardType =
+      randSeedInt(64) || !variants.includes(PokemonType.STELLAR) ? randSeedItem(variants) : PokemonType.STELLAR;
+    return new ChangeTeraTypeReward(shardType);
   }
 }

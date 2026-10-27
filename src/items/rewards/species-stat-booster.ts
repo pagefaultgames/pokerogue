@@ -16,21 +16,14 @@ import { HeldItemReward } from "./held-item-reward";
  * the current list of {@linkcode items}.
  * @extends RewardGenerator
  */
-export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
-  /** Object comprised of the currently available species-based stat boosting held items */
-
-  private rare: boolean;
+export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesStatBoosterItemId> {
+  private readonly rare: boolean;
   constructor(rare: boolean) {
     super();
     this.rare = rare;
   }
-  override generateReward(pregenArgs?: SpeciesStatBoosterItemId) {
-    const id = this.rare ? RewardId.RARE_SPECIES_STAT_BOOSTER : RewardId.SPECIES_STAT_BOOSTER;
 
-    if (pregenArgs !== undefined) {
-      return new HeldItemReward(id, pregenArgs);
-    }
-
+  private getItemWeights(exclusions?: ReadonlySet<string>): Map<SpeciesStatBoosterItemId, number> {
     // Get a pool of items based on the rarity.
     const tierItems = this.rare
       ? [HeldItemId.LIGHT_BALL, HeldItemId.THICK_CLUB, HeldItemId.METAL_POWDER, HeldItemId.QUICK_POWDER]
@@ -45,6 +38,10 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
       const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === MoveId.FLING) */
 
       for (const item of tierItems) {
+        if (exclusions?.has(`held:${item}`)) {
+          continue;
+        }
+
         // TODO: Handle this more gracefully with some semblance of encapsulation
         const checkedSpecies = (
           allHeldItems[item].getAttrs(HeldItemEffect.STAT_MULTIPLY)[0] as SpeciesStatBoostHeldItemAttr
@@ -65,6 +62,21 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
       }
     }
 
+    return itemWeights;
+  }
+
+  override getAvailableItems(exclusions?: ReadonlySet<string>): SpeciesStatBoosterItemId[] {
+    return [...this.getItemWeights(exclusions).keys()];
+  }
+
+  override generateReward(pregenArgs?: SpeciesStatBoosterItemId): HeldItemReward | null {
+    const id = this.rare ? RewardId.RARE_SPECIES_STAT_BOOSTER : RewardId.SPECIES_STAT_BOOSTER;
+
+    if (pregenArgs !== undefined) {
+      return new HeldItemReward(id, pregenArgs);
+    }
+
+    const itemWeights = this.getItemWeights();
     if (itemWeights.size > 0) {
       return new HeldItemReward(id, weightedPick(itemWeights));
     }

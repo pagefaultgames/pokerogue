@@ -22,6 +22,10 @@ export class EvolutionItemReward extends PokemonReward {
     this.evolutionItemId = evolutionItemId;
   }
 
+  override get matchKey(): string {
+    return `evolution:${this.evolutionItemId}`;
+  }
+
   get name(): string {
     return i18next.t(`item:${toCamelCase(EvolutionItemId[this.evolutionItemId])}.name`);
   }
@@ -60,18 +64,14 @@ export class EvolutionItemReward extends PokemonReward {
   }
 }
 
-export class EvolutionItemRewardGenerator extends RewardGenerator {
-  private rare: boolean;
+export class EvolutionItemRewardGenerator extends RewardGenerator<EvolutionItemId> {
+  private readonly rare: boolean;
   constructor(rare: boolean) {
     super();
     this.rare = rare;
   }
 
-  override generateReward(pregenArgs?: EvolutionItemId) {
-    if (pregenArgs !== undefined) {
-      return new EvolutionItemReward(this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM, pregenArgs);
-    }
-
+  override getAvailableItems(exclusions?: ReadonlySet<string>): EvolutionItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: refactor once species code isn't a horrible burning mess
@@ -109,15 +109,22 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
     ]
       .flat()
       .flatMap(e => e.item)
-      .filter(i => !!i && i > 50 === this.rare);
+      .filter((i): i is EvolutionItemId => !!i && i > 50 === this.rare && !exclusions?.has(`evolution:${i}`));
 
-    if (evolutionItemPool.length === 0) {
+    return [...new Set(evolutionItemPool)];
+  }
+
+  override generateReward(pregenArgs?: EvolutionItemId): EvolutionItemReward | null {
+    const id = this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM;
+    if (pregenArgs !== undefined) {
+      return new EvolutionItemReward(id, pregenArgs);
+    }
+
+    const variants = this.getAvailableItems();
+    if (variants.length === 0) {
       return null;
     }
 
-    return new EvolutionItemReward(
-      this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM,
-      randSeedItem(evolutionItemPool),
-    );
+    return new EvolutionItemReward(id, randSeedItem(variants));
   }
 }

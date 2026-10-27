@@ -27,6 +27,10 @@ export class TmReward extends PokemonReward {
     this.moveId = moveId;
   }
 
+  override get matchKey(): string {
+    return `tm:${this.moveId}`;
+  }
+
   get name(): string {
     return i18next.t("reward:tm.name", {
       moveId: getTmNumber(this.moveId),
@@ -57,14 +61,25 @@ export class TmReward extends PokemonReward {
   }
 }
 
-export class TmRewardGenerator extends RewardGenerator {
-  private tier: RarityTier;
+export class TmRewardGenerator extends RewardGenerator<MoveId> {
+  private readonly tier: RarityTier;
   constructor(tier: RarityTier) {
     super();
     this.tier = tier;
   }
 
-  override generateReward(pregenArgs?: MoveId) {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): MoveId[] {
+    const party = globalScene.getPlayerParty();
+    const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
+    return partyMemberCompatibleTms
+      .flat()
+      .filter(tm => tmPoolTiers[tm] === this.tier)
+      .filter(tm => !allMoves[tm].isUnimplemented)
+      .filter((tm, i, array) => array.indexOf(tm) === i)
+      .filter(tm => !exclusions?.has(`tm:${tm}`));
+  }
+
+  override generateReward(pregenArgs?: MoveId): TmReward | null {
     let id: RewardId = RewardId.TM_COMMON;
     if (this.tier === RarityTier.GREAT) {
       id = RewardId.TM_GREAT;
@@ -76,18 +91,12 @@ export class TmRewardGenerator extends RewardGenerator {
       return new TmReward(id, pregenArgs);
     }
 
-    const party = globalScene.getPlayerParty();
-    const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
-    const tierUniqueCompatibleTms = partyMemberCompatibleTms
-      .flat()
-      .filter(tm => tmPoolTiers[tm] === this.tier)
-      .filter(tm => !allMoves[tm].isUnimplemented)
-      .filter((tm, i, array) => array.indexOf(tm) === i);
-    if (tierUniqueCompatibleTms.length === 0) {
+    const variants = this.getAvailableItems();
+    if (variants.length === 0) {
       return null;
     }
 
-    const randTmIndex = randSeedItem(tierUniqueCompatibleTms);
+    const randTmIndex = randSeedItem(variants);
     return new TmReward(id, randTmIndex);
   }
 }

@@ -14,6 +14,19 @@ export class TrainerItemReward extends Reward {
     this.itemId = itemId;
   }
 
+  /**
+   * Return the deduplication match key for a trainer item ID.
+   * @param itemId - Trainer item ID
+   * @returns Match key string
+   */
+  public static getItemMatchKey(itemId: TrainerItemId): string {
+    return `trainer:${itemId}`;
+  }
+
+  override get matchKey(): string {
+    return TrainerItemReward.getItemMatchKey(this.itemId);
+  }
+
   get name(): string {
     return allTrainerItems[this.itemId].name;
   }
@@ -38,7 +51,7 @@ export class LapsingTrainerItemReward extends TrainerItemReward {
   }
 }
 
-export class TempStatStageBoosterRewardGenerator extends RewardGenerator {
+export class TempStatStageBoosterRewardGenerator extends RewardGenerator<TempBattleStat> {
   public static readonly items: Record<TempBattleStat, string> = {
     [Stat.ATK]: "x_attack",
     [Stat.DEF]: "x_defense",
@@ -48,10 +61,19 @@ export class TempStatStageBoosterRewardGenerator extends RewardGenerator {
     [Stat.ACC]: "x_accuracy",
   };
 
-  override generateReward(pregenArgs?: TempBattleStat) {
-    return new LapsingTrainerItemReward(
-      RewardId.TEMP_STAT_STAGE_BOOSTER,
-      tempStatToTrainerItem[pregenArgs ?? randSeedItem(TEMP_BATTLE_STATS)],
-    );
+  override getAvailableItems(exclusions?: ReadonlySet<string>): TempBattleStat[] {
+    return TEMP_BATTLE_STATS.filter(stat => {
+      const item = tempStatToTrainerItem[stat];
+      return !exclusions?.has(`trainer:${item}`) && !globalScene.trainerItems.isMaxStack(item);
+    });
+  }
+
+  override generateReward(pregenArgs?: TempBattleStat): LapsingTrainerItemReward {
+    if (pregenArgs !== undefined) {
+      return new LapsingTrainerItemReward(RewardId.TEMP_STAT_STAGE_BOOSTER, tempStatToTrainerItem[pregenArgs]);
+    }
+    const variants = this.getAvailableItems();
+    const stat = variants.length > 0 ? randSeedItem(variants) : randSeedItem(TEMP_BATTLE_STATS);
+    return new LapsingTrainerItemReward(RewardId.TEMP_STAT_STAGE_BOOSTER, tempStatToTrainerItem[stat]);
   }
 }

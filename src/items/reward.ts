@@ -67,6 +67,19 @@ export abstract class Reward {
     this.soundName = soundName;
   }
 
+  /**
+   * Return the deduplication match key for a reward ID.
+   * @param id - Reward ID
+   * @returns Match key string
+   */
+  public static getMatchKey(id: RewardId): string {
+    return `reward:${id}`;
+  }
+
+  public get matchKey(): string {
+    return Reward.getMatchKey(this.id);
+  }
+
   public get category(): RewardCategoryId {
     return getRewardCategory(this.id);
   }
@@ -106,15 +119,28 @@ export abstract class Reward {
  * A {@linkcode RewardGenerator} represents a dynamic generator for a given type of reward.
  * These can be customized by lieu of {@linkcode RewardGenerator.generateReward | RewardGenerator} to alter the generation result.
  */
-// TODO: Make generic over the type of reward generated
-export abstract class RewardGenerator {
+export abstract class RewardGenerator<TVariant = unknown> {
+  /**
+   * Return all valid items currently available for this run or party.
+   * @param exclusions - Optional set of match keys to exclude
+   */
+  public abstract getAvailableItems(exclusions?: ReadonlySet<string>): TVariant[];
+
+  /**
+   * Return the count of distinct items this generator can currently produce.
+   * @param exclusions - Optional set of match keys to exclude
+   */
+  public getCapacity(exclusions?: ReadonlySet<string>): number {
+    return this.getAvailableItems(exclusions).length;
+  }
+
   /**
    * Dynamically generate a new reward.
    * @param pregenArgs - An optional argument taken by super classes to customize the reward generated.
    * @returns The generated reward, or `null` if none are able to be produced
    */
   // TODO: Remove null from signature in favor of adding a condition or similar (reduces bangs needed)
-  public abstract generateReward(pregenArgs?: unknown): Reward | null;
+  public abstract generateReward(pregenArgs?: TVariant): Reward | null;
 }
 
 /** Rewards that are applied to individual Pokemon. */
