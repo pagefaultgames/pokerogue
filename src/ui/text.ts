@@ -187,8 +187,8 @@ export function getTextStyleOptions(
   extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle | BBCodeText.TextStyle,
 ): TextStyleOptions {
   const lang = i18next.resolvedLanguage;
-  let shadowXpos = 6;
-  let shadowYpos = 6;
+  // Overrides the default shadow size, which depends on the font family
+  let shadowSize: number | undefined;
   const scale = 0.1666666667;
   const defaultFontSize = 96;
 
@@ -207,9 +207,6 @@ export function getTextStyleOptions(
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-    // shadowXpos = 5;
-    // shadowYpos = 5;
-    // break;
     case TextStyle.SUMMARY_HEADER: {
       let fontSizeLabel = "96px";
       switch (lang) {
@@ -223,9 +220,6 @@ export function getTextStyleOptions(
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-    // shadowXpos = 5;
-    // shadowYpos = 5;
-    // break;
     case TextStyle.SUMMARY_DEX_NUM: {
       const fontSizeLabel = "96px";
       switch (lang) {
@@ -237,8 +231,6 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     }
     case TextStyle.SUMMARY_DEX_NUM_GOLD: {
@@ -249,8 +241,7 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-      shadowXpos = 5;
-      shadowYpos = 5;
+      shadowSize = 5;
       break;
     }
     case TextStyle.SUMMARY_STATS:
@@ -267,8 +258,6 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     }
     case TextStyle.SUMMARY_ALT:
@@ -282,8 +271,6 @@ export function getTextStyleOptions(
     case TextStyle.WINDOW_ALT:
     case TextStyle.ME_OPTION_DEFAULT:
     case TextStyle.ME_OPTION_SPECIAL:
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     case TextStyle.LUCK_VALUE: {
       const fontSizeLabel = "96px";
@@ -293,14 +280,10 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     }
     case TextStyle.GROWTH_RATE_TYPE: {
       styleOptions.fontSize = defaultFontSize - 30;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     }
     case TextStyle.WINDOW_BATTLE_COMMAND: {
@@ -317,15 +300,10 @@ export function getTextStyleOptions(
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-    // shadowXpos = 5;
-    // shadowYpos = 5;
-    // break;
     case TextStyle.STATS_LABEL: {
       let fontSizeLabel = "96px";
       switch (lang) {
         case "de":
-          shadowXpos = 6;
-          shadowYpos = 6;
           fontSizeLabel = "80px";
           break;
         default:
@@ -336,8 +314,6 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.STATS_VALUE: {
-      shadowXpos = 6;
-      shadowYpos = 6;
       let fontSizeValue = "96px";
       switch (lang) {
         case "de":
@@ -363,8 +339,6 @@ export function getTextStyleOptions(
     }
     case TextStyle.SETTINGS_VALUE:
     case TextStyle.SETTINGS_LABEL: {
-      shadowXpos = 6;
-      shadowYpos = 6;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -381,8 +355,6 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.SETTINGS_LABEL_NAVBAR: {
-      shadowXpos = 6;
-      shadowYpos = 6;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -396,8 +368,6 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.SETTINGS_LOCKED: {
-      shadowXpos = 6;
-      shadowYpos = 6;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -413,8 +383,6 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.SETTINGS_SELECTED: {
-      shadowXpos = 6;
-      shadowYpos = 6;
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
@@ -434,8 +402,6 @@ export function getTextStyleOptions(
     case TextStyle.MONEY_WINDOW:
     case TextStyle.TOOLTIP_TITLE:
       styleOptions.fontSize = defaultFontSize - 24;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED:
@@ -443,11 +409,8 @@ export function getTextStyleOptions(
       styleOptions.padding = { top: 2, bottom: 16 };
       styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
-      shadowXpos = 12;
-      shadowYpos = 12;
       if (style === TextStyle.PARTY && (lang === "zh-Hans" || lang === "zh-Hant")) {
-        shadowXpos = 6;
-        shadowYpos = 6;
+        shadowSize = 6;
       }
       break;
     }
@@ -465,8 +428,7 @@ export function getTextStyleOptions(
         case "zh-Hant":
           styleOptions.fontSize = defaultFontSize - 48;
           styleOptions.padding = { top: -4, bottom: 12 };
-          shadowXpos = 6;
-          shadowYpos = 6;
+          shadowSize = 6;
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;
@@ -474,10 +436,6 @@ export function getTextStyleOptions(
           break;
       }
       styleOptions.fontFamily = "pkmnems";
-      if (!(lang === "zh-Hans" || lang === "zh-Hant")) {
-        shadowXpos = 12;
-        shadowYpos = 12;
-      }
       break;
     }
     case TextStyle.INSTRUCTIONS_TEXT: {
@@ -488,11 +446,8 @@ export function getTextStyleOptions(
       }
       styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
-      shadowXpos = 12;
-      shadowYpos = 12;
       if (lang === "zh-Hans" || lang === "zh-Hant") {
-        shadowXpos = 6;
-        shadowYpos = 6;
+        shadowSize = 6;
       }
       break;
     }
@@ -509,18 +464,13 @@ export function getTextStyleOptions(
         case "zh-Hant":
           styleOptions.fontSize = defaultFontSize - 32;
           styleOptions.padding = { top: -18, bottom: 10 };
-          shadowXpos = 6;
-          shadowYpos = 6;
+          shadowSize = 6;
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;
           break;
       }
       styleOptions.fontFamily = "pkmnems";
-      if (!(lang === "zh-Hans" || lang === "zh-Hant")) {
-        shadowXpos = 12;
-        shadowYpos = 12;
-      }
       break;
     }
     case TextStyle.EGG_LIST:
@@ -544,8 +494,6 @@ export function getTextStyleOptions(
     }
     case TextStyle.STARTER_VALUE_LIMIT:
       styleOptions.fontSize = defaultFontSize - 36;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     case TextStyle.TOOLTIP_CONTENT: {
       switch (lang) {
@@ -557,8 +505,6 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 32;
           break;
       }
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     }
     case TextStyle.FILTER_BAR_MAIN: {
@@ -571,29 +517,19 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 32;
           break;
       }
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     }
     case TextStyle.STATS_HEXAGON:
       styleOptions.fontSize = defaultFontSize - 32;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     case TextStyle.MOVE_INFO_CONTENT:
       styleOptions.fontSize = defaultFontSize - 40;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     case TextStyle.SMALLER_WINDOW_ALT:
       styleOptions.fontSize = defaultFontSize - 36;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
     case TextStyle.BGM_BAR:
       styleOptions.fontSize = defaultFontSize - 24;
-      shadowXpos = 6;
-      shadowYpos = 6;
       break;
   }
 
@@ -603,6 +539,7 @@ export function getTextStyleOptions(
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
   }
 
+  const baseShadowSize = shadowSize ?? (styleOptions.fontFamily === "pkmnems" ? 12 : 6);
   const fontSize = Number.parseFloat(String(styleOptions.fontSize ?? defaultFontSize));
   const shadowSizeRatio = Number.isFinite(fontSize) && fontSize > 0 ? fontSize / defaultFontSize : 1;
   const shadowTypeRatio = settings.display.shadowType === ShadowType.LITE ? 0.5 : 1;
@@ -611,8 +548,8 @@ export function getTextStyleOptions(
     scale,
     styleOptions,
     shadowColor,
-    shadowXpos: shadowXpos * shadowSizeRatio * shadowTypeRatio,
-    shadowYpos: shadowYpos * shadowSizeRatio * shadowTypeRatio,
+    shadowXpos: baseShadowSize * shadowSizeRatio * shadowTypeRatio,
+    shadowYpos: baseShadowSize * shadowSizeRatio * shadowTypeRatio,
   };
 }
 
