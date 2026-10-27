@@ -3,6 +3,7 @@ import { settings } from "#app/global-settings-manager";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
+import { ShadowType } from "#enums/shadow-type";
 import { TextStyle } from "#enums/text-style";
 import type { TextStyleOptions } from "#types/ui-types";
 import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
@@ -51,9 +52,13 @@ function installTextCopyShadows(context: CanvasRenderingContext2D, onDestroy: (l
       context.shadowOffsetY = 0;
       context.shadowBlur = 0;
       context[paintStyleProperty] = shadowColor;
-      drawText(x + shadowX, y + shadowY);
-      drawText(x + shadowX, y);
-      drawText(x, y + shadowY);
+      if (settings.display.shadowType === ShadowType.LITE) {
+        drawText(x + shadowX, y + shadowY);
+      } else {
+        drawText(x + shadowX, y + shadowY);
+        drawText(x + shadowX, y);
+        drawText(x, y + shadowY);
+      }
       context[paintStyleProperty] = paintStyle;
       drawText(x, y);
     } finally {
@@ -600,13 +605,14 @@ export function getTextStyleOptions(
 
   const fontSize = Number.parseFloat(String(styleOptions.fontSize ?? defaultFontSize));
   const shadowSizeRatio = Number.isFinite(fontSize) && fontSize > 0 ? fontSize / defaultFontSize : 1;
+  const shadowTypeRatio = settings.display.shadowType === ShadowType.LITE ? 0.5 : 1;
 
   return {
     scale,
     styleOptions,
     shadowColor,
-    shadowXpos: shadowXpos * shadowSizeRatio,
-    shadowYpos: shadowYpos * shadowSizeRatio,
+    shadowXpos: shadowXpos * shadowSizeRatio * shadowTypeRatio,
+    shadowYpos: shadowYpos * shadowSizeRatio * shadowTypeRatio,
   };
 }
 
