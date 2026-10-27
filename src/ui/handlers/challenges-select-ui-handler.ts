@@ -1,9 +1,11 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
 import type { Challenge } from "#data/challenge";
 import { Button } from "#enums/buttons";
 import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
+import { ShadowType } from "#enums/shadow-type";
 import { TextStyle } from "#enums/text-style";
 import { TabMenu } from "#ui/tab-menu";
 import { addTextObject, enableTextCopyShadows } from "#ui/text";
@@ -113,6 +115,7 @@ export class GameChallengesUiHandler extends UiHandler {
       .setOrigin(0)
       .setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
+    const shadowTypeRatio = settings.display.shadowType === ShadowType.LITE ? 0.5 : 1;
     this.descriptionText = new BBCodeText(globalScene, descriptionBg.x + 6, descriptionBg.y + 4, "", {
       fontFamily: "emerald",
       fontSize: 84,
@@ -122,7 +125,7 @@ export class GameChallengesUiHandler extends UiHandler {
     })
       .setName("text-desc")
       .setScale(1 / 6)
-      .setShadow((4 * 84) / 96, (5 * 84) / 96, ShadowColor.ORANGE)
+      .setShadow((6 * 84 * shadowTypeRatio) / 96, (6 * 84 * shadowTypeRatio) / 96, ShadowColor.ORANGE)
       .setOrigin(0);
     enableTextCopyShadows(this.descriptionText);
     globalScene.add.existing(this.descriptionText);
