@@ -312,6 +312,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
                 Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount,
                 -(maxUpgradeCount - typeOptions[i].upgradeCount),
                 rewardAnimAllSettledPromises,
+                !this.hideShop,
               ),
             );
           }
@@ -826,7 +827,6 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
         pb.setScale(2);
         return pb;
       };
-
       this.pb = getPb();
       this.add(this.pb);
 
@@ -836,8 +836,11 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     }
 
     this.itemContainer = globalScene.add.container(0, 0);
-    this.itemContainer.setScale(0.5);
-    this.itemContainer.setAlpha(0);
+    this.itemContainer.setScale(2);
+    if (!this.rewardOption.source) {
+      this.itemContainer.setAlpha(0);
+      this.itemContainer.setScale(0.5);
+    }
     this.add(this.itemContainer);
 
     const getItem = () => {
@@ -848,7 +851,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     this.item = getItem();
     this.itemContainer.add(this.item);
 
-    if (!this.rewardOption.cost) {
+    if (!this.rewardOption.cost && !this.rewardOption.source) {
       this.itemTint = getItem();
       this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
       this.itemContainer.add(this.itemTint);
@@ -856,7 +859,9 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
 
     this.itemText = addTextObject(0, 35, this.rewardOption.type.name, TextStyle.PARTY, { align: "center" });
     this.itemText.setOrigin(0.5, 0);
-    this.itemText.setAlpha(0);
+    if (!this.rewardOption.source) {
+      this.itemText.setAlpha(0);
+    }
     this.itemText.setTint(this.rewardOption.type.tier ? getRarityTierTextTint(this.rewardOption.type.tier) : undefined);
     this.add(this.itemText);
 
@@ -888,7 +893,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
       this.add(this.pokemonIcon);
       this.pokemonIcon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       this.pokemonIcon.setFrame(species.getIconId(female, formIndex, false, variant));
-      this.pokemonIcon.setVisible(false);
+      this.bringToTop(this.pokemonIcon);
     }
   }
 
@@ -1023,19 +1028,21 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
       /** Delay for the rest of the tweens to ensure they show after the pokeball animation begins to appear */
       const delay = isReward ? 250 : 0;
 
-      const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
-      globalScene.tweens.add({
-        targets: this.itemContainer,
-        delay,
-        duration: 500,
-        ease: "Elastic.Out",
-        scale: 2,
-        alpha: 1,
-        onComplete: () => {
-          itemResolve();
-        },
-      });
-      finalPromises.push(itemPromise);
+      if (!this.rewardOption.source) {
+        const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
+        globalScene.tweens.add({
+          targets: this.itemContainer,
+          delay,
+          duration: 500,
+          ease: "Elastic.Out",
+          scale: 2,
+          alpha: 1,
+          onComplete: () => {
+            itemResolve();
+          },
+        });
+        finalPromises.push(itemPromise);
+      }
 
       if (isReward) {
         const { resolve: itemTintResolve, promise: itemTintPromise } = Promise.withResolvers<void>();
@@ -1053,17 +1060,19 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
         finalPromises.push(itemTintPromise);
       }
 
-      const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
-      globalScene.tweens.add({
-        targets: this.itemText,
-        delay,
-        duration: 500,
-        alpha: 1,
-        y: 25,
-        ease: "Cubic.easeInOut",
-        onComplete: () => itemTextResolve(),
-      });
-      finalPromises.push(itemTextPromise);
+      if (!this.rewardOption.source) {
+        const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
+        globalScene.tweens.add({
+          targets: this.itemText,
+          delay,
+          duration: 500,
+          alpha: 1,
+          y: 25,
+          ease: "Cubic.easeInOut",
+          onComplete: () => itemTextResolve(),
+        });
+        finalPromises.push(itemTextPromise);
+      }
 
       if (this.itemCostText) {
         const { resolve: itemCostResolve, promise: itemCostPromise } = Promise.withResolvers<void>();
@@ -1084,11 +1093,6 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     promiseHolder.push(Promise.allSettled([...animPromises, ...finalPromises]).then());
 
     await Promise.allSettled(animPromises);
-
-    if (this.pokemonIcon) {
-      this.bringToTop(this.pokemonIcon);
-      this.pokemonIcon.setVisible(true);
-    }
   }
 
   getPbAtlasKey(tierOffset = 0) {
