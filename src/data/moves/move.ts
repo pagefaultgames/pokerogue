@@ -157,7 +157,7 @@ type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSid
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
  */
-export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
+export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move, simulated?: boolean) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
 export abstract class Move implements Localizable {
@@ -951,7 +951,7 @@ export abstract class Move implements Localizable {
    * @remarks
    * Only applies conditions intrinsic to the particular move being used.
    */
-  public applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4): boolean {
+  public applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4, simulated = false): boolean {
     let conditionsArray: MoveCondition[];
     switch (sequence) {
       case -1:
@@ -967,7 +967,7 @@ export abstract class Move implements Localizable {
       default:
         conditionsArray = this.conditions;
     }
-    return conditionsArray.every(cond => cond.apply(user, target, this));
+    return conditionsArray.every(cond => cond.apply(user, target, this, simulated));
   }
 
   /**
@@ -3644,9 +3644,9 @@ export class OneHitKOAttr extends MoveAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, _move) => {
+    return (user, target, _move, simulated) => {
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockOneHitKOAbAttr", { pokemon: target, cancelled });
+      applyAbAttrs("BlockOneHitKOAbAttr", { pokemon: target, cancelled, simulated });
       return !cancelled.value && user.level >= target.level;
     };
   }

@@ -37,8 +37,8 @@ export class MoveCondition {
     this.func = func;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    return this.func(user, target, move);
+  apply(user: Pokemon, target: Pokemon, move: Move, simulated = false): boolean {
+    return this.func(user, target, move, simulated);
   }
 
   getUserBenefitScore(_user: Pokemon, _target: Pokemon, _move: Move): number {
