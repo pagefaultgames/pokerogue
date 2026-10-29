@@ -271,13 +271,10 @@ export class SelectRewardPhase extends BattlePhase {
       } else if (this.hiddenItems && this.typeOptions.length > 1) {
         if (result) {
           const index = this.typeOptions.indexOf(reward);
-          if (index !== -1) {
-            this.typeOptions.splice(index, 1);
-          }
 
           // Changing the UI mode here is necessary to force the reset
           globalScene.ui.setMode(UiMode.MESSAGE);
-          this.resetRewardSelect(this.rewardSelectCallback);
+          this.resetRewardSelect(this.rewardSelectCallback, index);
         } else {
           globalScene.ui.playError();
         }
@@ -313,13 +310,17 @@ export class SelectRewardPhase extends BattlePhase {
 
   // Function that resets the reward selection screen,
   // e.g. after pressing cancel in the party ui or while learning a move
-  private resetRewardSelect(rewardSelectCallback: RewardSelectCallback) {
+  private resetRewardSelect(rewardSelectCallback: RewardSelectCallback, removeIndex = -1) {
     globalScene.ui.setMode(UiMode.REWARD_SELECT, {
       typeOptions: this.typeOptions,
       onActionInput: rewardSelectCallback,
       rerollCost: this.getRerollCost(globalScene.lockRarityTiers),
       hideShop: this.hiddenItems,
+      removeIndex,
     });
+    if (removeIndex > -1) {
+      this.typeOptions.splice(removeIndex, 1);
+    }
   }
 
   updateSeed(): void {

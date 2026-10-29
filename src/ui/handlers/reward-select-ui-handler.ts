@@ -32,6 +32,7 @@ export interface RewardSelectUiHandlerParams {
   onActionInput?: RewardSelectCallback;
   rerollCost?: number;
   hideShop?: boolean;
+  removeIndex?: number;
 }
 
 export class RewardSelectUiHandler extends AwaitableUiHandler {
@@ -335,6 +336,63 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       }
     });
 
+    const removeIndex = params.removeIndex;
+
+    /** Holds promises that resolve once each removal animation has finished */
+    const removeRewardPromises: Promise<void>[] = [];
+
+    /** Holds promises that resolve once each repositioning animation has finished */
+    const repositionRewardPromises: Promise<void>[] = [];
+
+    if (removeIndex !== undefined && removeIndex > -1 && removeIndex < this.options.length) {
+      const removedOption = this.options[removeIndex];
+
+      if (removedOption) {
+        removeRewardPromises.push(
+          new Promise<void>(resolve => {
+            globalScene.tweens.add({
+              targets: [removedOption],
+              alpha: 0,
+              duration: 300,
+              onComplete: () => {
+                removedOption.destroy();
+                this.options.splice(removeIndex, 1);
+                resolve();
+              },
+            });
+          }),
+        );
+      }
+
+      for (let index = 0; index < this.options.length; index++) {
+        if (index === removeIndex) {
+          continue;
+        }
+
+        const option = this.options[index];
+
+        if (!option) {
+          continue;
+        }
+
+        // Same as above but reducing length by 1
+        const sliceWidth = globalScene.scaledCanvas.width / (typeOptions.length + 1);
+        const targetX = sliceWidth * 0.5 + (index < removeIndex ? sliceWidth * (index + 1) : sliceWidth * index);
+
+        repositionRewardPromises.push(
+          new Promise<void>(resolve => {
+            globalScene.tweens.add({
+              targets: [option],
+              x: targetX,
+              duration: 300,
+              ease: "Sine.easeInOut",
+              onComplete: () => resolve(),
+            });
+          }),
+        );
+      }
+    }
+
     tweenPromise.then(() => {
       globalScene.time.delayedCall(500, () => {
         if (partyHasHeldItem) {
@@ -376,7 +434,12 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         // Required to ensure that the user cannot interact with the UI before the animations
         // have completed, (which, among other things, would allow the GameObjects to be destroyed
         // before the animations have completed, causing errors).
-        Promise.allSettled([...shopAnimPromises, ...rewardAnimAllSettledPromises]).then(() => {
+        Promise.allSettled([
+          ...shopAnimPromises,
+          ...rewardAnimAllSettledPromises,
+          ...removeRewardPromises,
+          ...repositionRewardPromises,
+        ]).then(() => {
           const updateCursorTarget = () => {
             if (settings.display.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
