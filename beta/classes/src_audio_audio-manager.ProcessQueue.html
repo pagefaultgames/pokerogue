@@ -17,15 +17,21 @@
 The <code>active</code> list is a selection of items which are considered active and should be updated.
 The <code>destroy</code> list is a selection of items that were active and are awaiting being destroyed in the next update.</p>
 <p>When new items are added to a Process Queue they are put in the pending list, rather than being added
-immediately the active list. Equally, items that are removed are put into the destroy list, rather than
+immediately to the active list. Equally, items that are removed are put into the destroy list, rather than
 being destroyed immediately. This allows the Process Queue to carefully process each item at a specific, fixed
 time, rather than at the time of the request from the API.</p>
+<p>Process Queue is used extensively within Phaser to safely manage collections of objects such as Cameras,
+Plugins, and Scene Systems, where items may be added or removed during an active update loop. By deferring
+additions and removals to a controlled point between updates, it avoids the bugs that would result from
+modifying a list while it is being iterated over.</p>
+<p>The queue extends EventEmitter and fires <code>Phaser.Structs.Events#PROCESS_QUEUE_ADD</code> when an item becomes
+active and <code>Phaser.Structs.Events#PROCESS_QUEUE_REMOVE</code> when an item is removed.</p>
 </div></section>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
 <li><span id="t"><span class="tsd-kind-type-parameter">T</span></span></li></ul></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="281418">
+<section class="tsd-panel tsd-hierarchy" data-refl="279122">
 <h4>Hierarchy (<a href="../hierarchy.html#src/audio/audio-manager.ProcessQueue">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.EventEmitter.html" class="tsd-signature-type tsd-kind-class">EventEmitter</a>
@@ -34,7 +40,7 @@ time, rather than at the time of the request from the API.</p>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.UpdateList.html" class="tsd-signature-type tsd-kind-class">UpdateList</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106219</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133237</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -93,17 +99,17 @@ time, rather than at the time of the request from the API.</p>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="checkqueue"><span>check<wbr/>Queue</span><a href="#checkqueue" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">checkQueue</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-<div class="tsd-comment tsd-typography"><p>If <code>true</code> only unique objects will be allowed in the queue.</p>
+<div class="tsd-comment tsd-typography"><p>If <code>true</code> only unique objects will be allowed in the queue, preventing the same item from being added more than once.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106223</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133241</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="length"><code class="tsd-tag">Readonly</code><span>length</span><a href="#length" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">length</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The number of entries in the active list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106285</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133311</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -122,9 +128,10 @@ time, rather than at the time of the request from the API.</p>
 <li><span><span class="tsd-kind-parameter">item</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to add to the queue.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p>The item that was added.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106249</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133271</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="addlistener"><span>add<wbr/>Listener</span><a href="#addlistener" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -145,10 +152,11 @@ time, rather than at the time of the request from the API.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The context to invoke the listener with. Default this.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#addlistener">addListener</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9971</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11007</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -160,7 +168,7 @@ time, rather than at the time of the request from the API.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#destroy">destroy</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106290</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133316</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="emit"><span>emit</span><a href="#emit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -178,22 +186,24 @@ time, rather than at the time of the request from the API.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>Additional arguments that will be passed to the event handler.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the event had listeners, else <code>false</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#emit">emit</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9955</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10989</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="eventnames"><span>event<wbr/>Names</span><a href="#eventnames" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="eventnames-1"><span class="tsd-kind-call-signature">eventNames</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span>)<span class="tsd-signature-symbol">[]</span><a href="#eventnames-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Return an array listing the events for which the emitter has registered listeners.</p>
+<div class="tsd-comment tsd-typography"><p>Return an array listing the events for which the emitter has registered listeners.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns (<span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span>)<span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns (<span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span>)<span class="tsd-signature-symbol">[]</span></h4><p>undefined</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#eventnames">eventNames</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9936</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10967</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getactive"><span>get<wbr/>Active</span><a href="#getactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -202,11 +212,12 @@ time, rather than at the time of the request from the API.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns the current list of active items.</p>
 <p>This method returns a reference to the active list array, not a copy of it.
-Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
+Therefore, be careful to not modify this array outside of the ProcessQueue.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><p>A list of active items.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106280</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133306</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="isactive"><span>is<wbr/>Active</span><a href="#isactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -221,9 +232,10 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><span class="tsd-kind-parameter">item</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to check.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p><code>true</code> if the item is active, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106229</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133248</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="isdestroying"><span>is<wbr/>Destroying</span><a href="#isdestroying" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -238,9 +250,10 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><span class="tsd-kind-parameter">item</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to check.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p><code>true</code> if the item is pending destruction, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106241</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133262</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="ispending"><span>is<wbr/>Pending</span><a href="#ispending" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -255,9 +268,10 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><span class="tsd-kind-parameter">item</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to check.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p><code>true</code> if the item is pending insertion, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106235</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133255</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="listenercount"><span>listener<wbr/>Count</span><a href="#listenercount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -272,10 +286,11 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><span class="tsd-kind-parameter">event</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span>
 <div class="tsd-comment tsd-typography"><p>The event name.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The number of listeners.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#listenercount">listenerCount</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9948</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10981</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="listeners"><span>listeners</span><a href="#listeners" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -290,10 +305,11 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><span class="tsd-kind-parameter">event</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span>
 <div class="tsd-comment tsd-typography"><p>The event name.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">[]</span></h4><p>The registered listeners.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#listeners">listeners</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9942</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10974</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="off"><span>off</span><a href="#off" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -317,10 +333,11 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">once</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Only remove one-time listeners.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#off">off</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9997</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11037</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="on"><span>on</span><a href="#on" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -341,17 +358,19 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The context to invoke the listener with. Default this.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#on">on</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9963</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10998</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="once"><span>once</span><a href="#once" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="once-1"><span class="tsd-kind-call-signature">once</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#once-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Add a one-time listener for a given event.</p>
+<div class="tsd-comment tsd-typography"><p>Add a one-time listener for a given event. The listener is automatically removed
+the first time the event is emitted, so it will never be called more than once.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -365,10 +384,11 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The context to invoke the listener with. Default this.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#once">once</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9979</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11017</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="remove"><span>remove</span><a href="#remove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -384,9 +404,10 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><span class="tsd-kind-parameter">item</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to be removed from the queue.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ProcessQueue</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p>The item that was removed.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106257</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133280</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removeall"><span>remove<wbr/>All</span><a href="#removeall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -394,11 +415,12 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <div class="tsd-signature tsd-anchor-link" id="removeall-1"><span class="tsd-kind-call-signature">removeAll</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#removeall-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Removes all active items from this Process Queue.</p>
-<p>All the items are marked as 'pending destroy' and fully removed in the next update.</p>
+<p>All the items are marked as 'pending destroy' and fully removed in the next update.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Process Queue object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106264</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133288</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="removealllisteners"><span>remove<wbr/>All<wbr/>Listeners</span><a href="#removealllisteners" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -413,10 +435,11 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">event</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span>
 <div class="tsd-comment tsd-typography"><p>The event name.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#removealllisteners">removeAllListeners</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:10003</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11044</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="removelistener"><span>remove<wbr/>Listener</span><a href="#removelistener" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -440,22 +463,25 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">once</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Only remove one-time listeners.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#removelistener">removeListener</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9988</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11027</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="shutdown"><span>shutdown</span><a href="#shutdown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="shutdown-1"><span class="tsd-kind-call-signature">shutdown</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#shutdown-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Removes all listeners.</p>
+<div class="tsd-comment tsd-typography"><p>Removes all listeners from this EventEmitter. This method is called automatically
+by the Scene Systems when the parent Scene shuts down, ensuring that all event
+bindings are cleared and no stale references remain.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.EventEmitter.html">EventEmitter</a>.<a href="src_audio_audio-manager.EventEmitter.html#shutdown">shutdown</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9926</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10954</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="update"><span>update</span><a href="#update" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -464,11 +490,12 @@ Therefore, be careful to not modify this array outside of the ProcessQueue.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Update this queue. First it will process any items awaiting destruction, and remove them.</p>
 <p>Then it will check to see if there are any items pending insertion, and move them to an
-active state. Finally, it will return a list of active items for further processing.</p>
+active state. Finally, it will return a list of active items for further processing.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><p>A list of active items.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106272</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133297</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

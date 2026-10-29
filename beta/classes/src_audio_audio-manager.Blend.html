@@ -1,0 +1,351 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Blend | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a>
+<div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main">Switch to Main</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/src_audio_audio-manager.html">src/audio/audio-manager</a></li>
+<li><a href="" aria-current="page">Blend</a></li></ul>
+<h1>Class Blend</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>The Blend Filter Controller.</p>
+<p>This filter controller manages the blend effect for a Camera.
+A blend effect allows you to apply another texture to the view
+using a specific blend mode.
+This supports blend modes not otherwise available in WebGL.</p>
+<p>A Blend effect is added to a Camera via the FilterList component:</p>
+<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">camera</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">cameras</span><span class="hl-1">.</span><span class="hl-4">main</span><span class="hl-1">;</span><br/><span class="hl-4">camera</span><span class="hl-1">.</span><span class="hl-4">filters</span><span class="hl-1">.</span><span class="hl-4">internal</span><span class="hl-1">.</span><span class="hl-0">addBlend</span><span class="hl-1">();</span><br/><span class="hl-4">camera</span><span class="hl-1">.</span><span class="hl-4">filters</span><span class="hl-1">.</span><span class="hl-4">external</span><span class="hl-1">.</span><span class="hl-0">addBlend</span><span class="hl-1">();</span>
+</code><button type="button">Copy</button></pre>
+
+</div></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="277796">
+<h4>Hierarchy (<a href="../hierarchy.html#src/audio/audio-manager.Blend">View Summary</a>)</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">Blend</span></li></ul></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11102</li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#active" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a>
+<a href="#allowbasedraw" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>allow<wbr/>Base<wbr/>Draw</span></a>
+<a href="#amount" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>amount</span></a>
+<a href="#blendmode" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>blend<wbr/>Mode</span></a>
+<a href="#camera" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>camera</span></a>
+<a href="#color" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>color</span></a>
+<a href="#currentpadding" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>current<wbr/>Padding</span></a>
+<a href="#gltexture" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>gl<wbr/>Texture</span></a>
+<a href="#ignoredestroy" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>ignore<wbr/>Destroy</span></a>
+<a href="#paddingoverride" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>padding<wbr/>Override</span></a>
+<a href="#rendernode" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>render<wbr/>Node</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#destroy" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a>
+<a href="#getpadding" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Padding</span></a>
+<a href="#getpaddingceil" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Padding<wbr/>Ceil</span></a>
+<a href="#setactive" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Active</span></a>
+<a href="#setpaddingoverride" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Padding<wbr/>Override</span></a>
+<a href="#settexture" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Texture</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="constructorblend"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">Blend</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">camera</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">blendMode</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Blend</a><a href="#constructorblend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">camera</span>: <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a></span>
+<div class="tsd-comment tsd-typography"><p>The camera that owns this filter.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">texture</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The texture to apply to the view. Default '__WHITE'.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">blendMode</span>: <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a></span>
+<div class="tsd-comment tsd-typography"><p>The blend mode to apply to the view. Default Phaser.BlendModes.NORMAL.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">amount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of the blend effect to apply to the view. At 0, the original image is preserved. At 1, the blend texture is fully applied. The expected range is 0 to 1, but you can go outside that range for different effects. Default 1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">color</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The color to apply to the blend texture. Each value corresponds to a color channel in RGBA. The expected range is 0 to 1, but you can go outside that range for different effects. Default [1, 1, 1, 1].</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Blend</a></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#constructor">constructor</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11111</li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="active"><span>active</span><a href="#active" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">active</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Toggle this boolean to enable or disable this filter,
+without removing it from and re-adding it to the Camera's filter list.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#active">active</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11580</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="allowbasedraw"><code class="tsd-tag">Readonly</code><span>allow<wbr/>Base<wbr/>Draw</span><a href="#allowbasedraw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">allowBaseDraw</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>If <code>true</code>, this filter will be permitted to draw to the base texture.
+This can be unwanted if, for example, the filter doesn't actually
+draw anything.</p>
+<p>This is an internal flag used by the renderer.
+You should not modify this value directly.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#allowbasedraw">allowBaseDraw</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11615</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="amount"><span>amount</span><a href="#amount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">amount</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The amount of the blend effect to apply to the view.
+At 0, the original image is preserved. At 1, the blend texture is fully applied.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11128</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="blendmode"><span>blend<wbr/>Mode</span><a href="#blendmode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">blendMode</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a></div>
+<div class="tsd-comment tsd-typography"><p>The blend mode to apply to the view.
+This supports blend modes not otherwise available in WebGL.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11122</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="camera"><span>camera</span><a href="#camera" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">camera</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a></div>
+<div class="tsd-comment tsd-typography"><p>A reference to the Camera that owns this filter.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#camera">camera</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11585</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="color"><span>color</span><a href="#color" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">color</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>The color to apply to the blend texture.
+Each value corresponds to a color channel in RGBA.
+The expected range is 0 to 1, but you can go outside that range for different effects.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11135</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="currentpadding"><span>current<wbr/>Padding</span><a href="#currentpadding" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">currentPadding</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a></div>
+<div class="tsd-comment tsd-typography"><p>The padding currently being used by this filter.
+This is read during rendering via <code>getPadding</code>, and may be updated by subclass implementations.
+It is necessary for filters being used in an external list.
+You should not modify this value directly.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#currentpadding">currentPadding</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11605</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="gltexture"><span>gl<wbr/>Texture</span><a href="#gltexture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">glTexture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a></div>
+<div class="tsd-comment tsd-typography"><p>The underlying texture used for the blend.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11116</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="ignoredestroy"><span>ignore<wbr/>Destroy</span><a href="#ignoredestroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">ignoreDestroy</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Whether this filter controller will be destroyed when the FilterList
+that owns it is destroyed. If you enable this, you must ensure that
+you clean up the filter controller at an appropriate time.
+This allows you to reuse a controller for multiple objects;
+this is not recommended unless you know what you're doing.
+It tends to work best with external filters.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#ignoredestroy">ignoreDestroy</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11625</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="paddingoverride"><span>padding<wbr/>Override</span><a href="#paddingoverride" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">paddingOverride</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a></div>
+<div class="tsd-comment tsd-typography"><p>Padding override. This is on by default. If this is set,
+the filter will use this padding instead of calculating it.
+Prefer using <code>setPaddingOverride</code> instead of modifying this directly.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#paddingoverride">paddingOverride</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11597</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="rendernode"><span>render<wbr/>Node</span><a href="#rendernode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">renderNode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The ID of the RenderNode that this filter uses.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#rendernode">renderNode</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11590</li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="destroy-1"><span class="tsd-kind-call-signature">destroy</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#destroy-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Destroys this Controller and nulls any references it holds.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#destroy">destroy</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11679</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getpadding"><span>get<wbr/>Padding</span><a href="#getpadding" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getpadding-1"><span class="tsd-kind-call-signature">getPadding</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a><a href="#getpadding-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the raw padding required for this filter.
+This is typically not what you want to call; use <code>getPaddingCeil</code> instead.
+Values from this method are not rounded, which can cause quality loss.</p>
+<p>Override this method when creating a Filter that requires extra room,
+e.g. a blur or glow effect.undefined</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a></h4><p>The padding required by this filter.</p>
+<aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#getpadding">getPadding</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11636</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getpaddingceil"><span>get<wbr/>Padding<wbr/>Ceil</span><a href="#getpaddingceil" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getpaddingceil-1"><span class="tsd-kind-call-signature">getPaddingCeil</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a><a href="#getpaddingceil-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the rounded padding required for this filter.</p>
+<p>Most filters don't need extra padding,
+but some may sample beyond the texture boundaries, such as a blur or glow effect.</p>
+<p>The bounds are encoded as a Rectangle.
+To enlarge the bounds, the top and left values should be negative,
+and the bottom and right values should be positive.</p>
+<p>This method calls <code>getPadding()</code> to get the raw padding values,
+and uses <code>Math.ceil()</code> to set the values of <code>paddingOverride</code>
+and <code>currentPadding</code>.undefined</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a></h4><p>The rounded padding required by this filter.</p>
+<aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#getpaddingceil">getPaddingCeil</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11653</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="setactive"><span>set<wbr/>Active</span><a href="#setactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="setactive-1"><span class="tsd-kind-call-signature">setActive</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setactive-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets the active state of this filter.</p>
+<p>A disabled filter will not be used.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p><code>true</code> to enable this filter, or <code>false</code> to disable it.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This filter instance.</p>
+<aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#setactive">setActive</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11674</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="setpaddingoverride"><span>set<wbr/>Padding<wbr/>Override</span><a href="#setpaddingoverride" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="setpaddingoverride-1"><span class="tsd-kind-call-signature">setPaddingOverride</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">left</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">top</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">right</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">bottom</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setpaddingoverride-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets the padding override.
+If this is set, the filter will use this padding instead of calculating it.
+Call <code>setPaddingOverride(null)</code> to clear the override.
+Call <code>setPaddingOverride()</code> to set the padding to 0.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">left</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span>
+<div class="tsd-comment tsd-typography"><p>The left padding. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">top</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The top padding. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">right</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The right padding. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">bottom</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The bottom padding. Default 0.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_audio-manager.Controller.html">Controller</a>.<a href="src_audio_audio-manager.Controller.html#setpaddingoverride">setPaddingOverride</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11665</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="settexture"><span>set<wbr/>Texture</span><a href="#settexture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="settexture-1"><span class="tsd-kind-call-signature">setTexture</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#settexture-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets the texture used for the blend.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">texture</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique string-based key of the texture to use for the blend, which must exist in the Texture Manager. Default '__WHITE'.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Filter Controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11142</li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#active" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>active</span></a><a href="#allowbasedraw" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>allow<wbr/>Base<wbr/>Draw</span></a><a href="#amount" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>amount</span></a><a href="#blendmode" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>blend<wbr/>Mode</span></a><a href="#camera" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>camera</span></a><a href="#color" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>color</span></a><a href="#currentpadding" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>current<wbr/>Padding</span></a><a href="#gltexture" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>gl<wbr/>Texture</span></a><a href="#ignoredestroy" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>ignore<wbr/>Destroy</span></a><a href="#paddingoverride" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>padding<wbr/>Override</span></a><a href="#rendernode" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>render<wbr/>Node</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#destroy" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#getpadding" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Padding</span></a><a href="#getpaddingceil" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Padding<wbr/>Ceil</span></a><a href="#setactive" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Active</span></a><a href="#setpaddingoverride" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Padding<wbr/>Override</span></a><a href="#settexture" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Texture</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer>
+<div class="overlay"></div></body></html>

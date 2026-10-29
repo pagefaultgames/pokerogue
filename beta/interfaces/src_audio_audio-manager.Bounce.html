@@ -21,7 +21,7 @@
 <li><a href="../classes/src_audio_audio-manager.Image.html" class="tsd-signature-type tsd-kind-class">Image</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:85536</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:110969</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -56,16 +56,19 @@ A value of 1 means that it will retain its full velocity after the rebound. A va
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The amount of vertical bounce to apply on collision. A float, typically between 0 and 1. Default x.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:85545</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:110979</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setbouncex"><span>set<wbr/>Bounce<wbr/>X</span><a href="#setbouncex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setbouncex-1"><span class="tsd-kind-call-signature">setBounceX</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setbouncex-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Sets the horizontal bounce value for this body.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the horizontal bounce value for this body. This is the amount of restitution applied
+on the x-axis when the body collides with another object. A value of 1 retains full horizontal
+velocity after the rebound. A value of 0 means no horizontal bounce at all.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -73,16 +76,19 @@ A value of 1 means that it will retain its full velocity after the rebound. A va
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The amount of horizontal bounce to apply on collision. A float, typically between 0 and 1.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:85550</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:110987</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setbouncey"><span>set<wbr/>Bounce<wbr/>Y</span><a href="#setbouncey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setbouncey-1"><span class="tsd-kind-call-signature">setBounceY</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setbouncey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Sets the vertical bounce value for this body.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the vertical bounce value for this body. This is the amount of restitution applied
+on the y-axis when the body collides with another object. A value of 1 retains full vertical
+velocity after the rebound. A value of 0 means no vertical bounce at all.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -90,9 +96,10 @@ A value of 1 means that it will retain its full velocity after the rebound. A va
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The amount of vertical bounce to apply on collision. A float, typically between 0 and 1.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:85555</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:110995</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setcollideworldbounds"><span>set<wbr/>Collide<wbr/>World<wbr/>Bounds</span><a href="#setcollideworldbounds" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -109,17 +116,18 @@ A value of 1 means that it will retain its full velocity after the rebound. A va
 <div class="tsd-comment tsd-typography"><p><code>true</code> if this body should collide with the world bounds, otherwise <code>false</code>. Default true.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">bounceX</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>If given this will be replace the <code>worldBounce.x</code> value.</p>
+<div class="tsd-comment tsd-typography"><p>If given, this will replace the <code>worldBounce.x</code> value.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">bounceY</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>If given this will be replace the <code>worldBounce.y</code> value.</p>
+<div class="tsd-comment tsd-typography"><p>If given, this will replace the <code>worldBounce.y</code> value.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">onWorldBounds</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If given this replaces the Body's <code>onWorldBounds</code> value.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:85565</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:111006</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -1,0 +1,1024 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>FilterList | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a>
+<div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main">Switch to Main</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/src_audio_audio-manager.html">src/audio/audio-manager</a></li>
+<li><a href="" aria-current="page">FilterList</a></li></ul>
+<h1>Class FilterList</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>A list of filters being applied to a <a href="src_audio_audio-manager.Camera.html" class="tsd-kind-class">Phaser.Cameras.Scene2D.Camera</a>.</p>
+<p>Filters can apply special effects and masks.
+They are only available in WebGL.
+Use <code>gameObject.enableFilters()</code> to apply them to Game Objects.</p>
+<p>Filters include the following:</p>
+<ul>
+<li>Barrel Distortion</li>
+<li>Blend</li>
+<li>Blocky</li>
+<li>Blur</li>
+<li>Bokeh / Tilt Shift</li>
+<li>Color Matrix</li>
+<li>Displacement</li>
+<li>Glow</li>
+<li>Key</li>
+<li>Mask</li>
+<li>Parallel Filters</li>
+<li>Pixelate</li>
+<li>Sampler</li>
+<li>Shadow</li>
+<li>Threshold</li>
+</ul>
+<p>This list is either 'internal' or 'external'.
+Internal filters apply to things within the camera.
+External filters apply to the camera itself, in its rendering context.
+A complete list of rendering steps for a Camera goes:</p>
+<ol>
+<li>Objects render to a texture the size of the camera.</li>
+<li>Internal filters draw that texture to new textures, applying effects.
+These are usually the same size, but may expand to accommodate blur.</li>
+<li>The texture is drawn to a texture the size of the context where the camera
+will be drawn, accounting for transformation of the camera itself.</li>
+<li>External filters draw that texture to new textures,
+again applying effects and expanding where necessary.</li>
+<li>The final texture draws the filtered camera contents to the context.</li>
+</ol>
+<p>For example, consider a game object which is rotated 45 degrees.
+Apply a horizontal blur filter.
+If the filter is internal, the blur will appear at 45 degrees,
+because it is applied before the object is rotated.
+If the filter is external, the blur will appear horizontal,
+because it is applied after the object is rotated.</p>
+<p>You should use internal filters wherever possible,
+because they apply only to the region of the camera/game object.
+External filters are full-screen and can be more expensive.</p>
+<p>Filters can be stacked. The order of the list is the order of application.</p>
+<p>As you can appreciate, some effects are more expensive than others. For example, a bloom effect is going to be more
+expensive than a simple color matrix effect, so please consider using them wisely and performance test your target
+platforms early on in production.</p>
+<p>This FilterList is created internally and does not need to be instantiated directly.</p>
+<p>In Phaser 3, Filters were known as FX.</p>
+</div></section><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18526</li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#camera" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>camera</span></a>
+<a href="#list" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>list</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#add" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add</span></a>
+<a href="#addbarrel" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Barrel</span></a>
+<a href="#addblend" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Blend</span></a>
+<a href="#addblocky" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Blocky</span></a>
+<a href="#addblur" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Blur</span></a>
+<a href="#addbokeh" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Bokeh</span></a>
+<a href="#addcolormatrix" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Color<wbr/>Matrix</span></a>
+<a href="#addcombinecolormatrix" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Combine<wbr/>Color<wbr/>Matrix</span></a>
+<a href="#adddisplacement" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Displacement</span></a>
+<a href="#addglow" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Glow</span></a>
+<a href="#addgradientmap" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Gradient<wbr/>Map</span></a>
+<a href="#addimagelight" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Image<wbr/>Light</span></a>
+<a href="#addkey" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Key</span></a>
+<a href="#addmask" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Mask</span></a>
+<a href="#addnormaltools" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Normal<wbr/>Tools</span></a>
+<a href="#addpanoramablur" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Panorama<wbr/>Blur</span></a>
+<a href="#addparallelfilters" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Parallel<wbr/>Filters</span></a>
+<a href="#addpixelate" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Pixelate</span></a>
+<a href="#addquantize" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Quantize</span></a>
+<a href="#addsampler" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Sampler</span></a>
+<a href="#addshadow" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Shadow</span></a>
+<a href="#addthreshold" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Threshold</span></a>
+<a href="#addtiltshift" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Tilt<wbr/>Shift</span></a>
+<a href="#addvignette" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Vignette</span></a>
+<a href="#addwipe" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Wipe</span></a>
+<a href="#clear" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear</span></a>
+<a href="#destroy" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a>
+<a href="#getactive" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Active</span></a>
+<a href="#remove" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>remove</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="constructorfilterlist"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">FilterList</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">camera</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">FilterList</a><a href="#constructorfilterlist" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">camera</span>: <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a></span>
+<div class="tsd-comment tsd-typography"><p>The Camera that owns this list.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">FilterList</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18531</li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="camera"><span>camera</span><a href="#camera" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">camera</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a></div>
+<div class="tsd-comment tsd-typography"><p>The Camera that owns this list.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18562</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="list"><span>list</span><a href="#list" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">list</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>The list of filters.</p>
+<p>This list can be manipulated directly.
+If you want to add or remove filters,
+please use the appropriate methods to ensure they are handled correctly.
+Moving filters around in the list is safe.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18572</li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="add"><span>add</span><a href="#add" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="add-1"><span class="tsd-kind-call-signature">add</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">filter</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a><a href="#add-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a filter to this list.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">filter</span>: <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a></span>
+<div class="tsd-comment tsd-typography"><p>The filter to add.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The index to insert the filter at. If not given, the filter is added to the end of the list. If negative, it is inserted from the end.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a></h4><p>The filter that was added.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18586</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addbarrel"><span>add<wbr/>Barrel</span><a href="#addbarrel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addbarrel-1"><span class="tsd-kind-call-signature">addBarrel</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Barrel.html" class="tsd-signature-type tsd-kind-class">Barrel</a><a href="#addbarrel-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Barrel effect.</p>
+<p>A barrel effect allows you to apply either a 'pinch' or 'expand' distortion to
+a Game Object. The amount of the effect can be modified in real-time.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">amount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of distortion applied to the barrel effect. A value of 1 is no distortion. Typically keep this within +- 1. Default 1.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Barrel.html" class="tsd-signature-type tsd-kind-class">Barrel</a></h4><p>The new Barrel filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18610</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addblend"><span>add<wbr/>Blend</span><a href="#addblend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addblend-1"><span class="tsd-kind-call-signature">addBlend</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">blendMode</span><span class="tsd-signature-symbol">?:</span> <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Blend.html" class="tsd-signature-type tsd-kind-class">Blend</a><a href="#addblend-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Blend effect.</p>
+<p>A blend effect allows you to apply another texture to the view
+using a specific blend mode.
+This supports blend modes not otherwise available in WebGL.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">texture</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The texture to apply to the view. Default '__WHITE'.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">blendMode</span>: <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a></span>
+<div class="tsd-comment tsd-typography"><p>The blend mode to apply to the view. Default Phaser.BlendModes.NORMAL.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">amount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of the blend effect to apply to the view. At 0, the original image is preserved. At 1, the blend texture is fully applied. The expected range is 0 to 1, but you can go outside that range for different effects. Default 1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">color</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The color to apply to the blend texture. Each value corresponds to a color channel in RGBA. The expected range is 0 to 1, but you can go outside that range for different effects. Default [1, 1, 1, 1].</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Blend.html" class="tsd-signature-type tsd-kind-class">Blend</a></h4><p>The new Blend filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18624</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addblocky"><span>add<wbr/>Blocky</span><a href="#addblocky" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addblocky-1"><span class="tsd-kind-call-signature">addBlocky</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.BlockyConfig.html" class="tsd-signature-type tsd-kind-type-alias">BlockyConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Blocky.html" class="tsd-signature-type tsd-kind-class">Blocky</a><a href="#addblocky-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Blocky effect.</p>
+<p>This filter controller manages a blocky effect.</p>
+<p>The blocky effect works by taking the central pixel of a block of pixels
+and using it to fill the entire block, creating a pixelated effect.</p>
+<p>It reduces the resolution of an image,
+creating a pixelated or blocky appearance.
+This is often used for stylistic purposes, such as pixel art.
+One technique is to render the game at a higher resolution,
+scaled up by a factor of N,
+and then apply the blocky effect at size N.
+This creates large, visible pixels, suitable for further stylization.
+The effect can also be used to obscure certain elements within the game,
+such as during a transition or to censor specific content.</p>
+<p>Blocky works best on games with no anti-aliasing,
+so it can read unfiltered pixel colors from the original image.
+It preserves the colors of the original art, instead of blending them
+like the Pixelate filter.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.BlockyConfig.html" class="tsd-signature-type tsd-kind-type-alias">BlockyConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the Blocky effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Blocky.html" class="tsd-signature-type tsd-kind-class">Blocky</a></h4><p>The new Blocky filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18651</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addblur"><span>add<wbr/>Blur</span><a href="#addblur" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addblur-1"><span class="tsd-kind-call-signature">addBlur</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">quality</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">strength</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">steps</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Blur.html" class="tsd-signature-type tsd-kind-class">Blur</a><a href="#addblur-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Blur effect.</p>
+<p>A Gaussian blur is the result of blurring an image by a Gaussian function. It is a widely used effect,
+typically to reduce image noise and reduce detail. The visual effect of this blurring technique is a
+smooth blur resembling that of viewing the image through a translucent screen, distinctly different
+from the bokeh effect produced by an out-of-focus lens or the shadow of an object under usual illumination.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">quality</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The quality of the blur effect. Can be either 0 for Low Quality, 1 for Medium Quality or 2 for High Quality. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The horizontal offset of the blur effect. Default 2.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The vertical offset of the blur effect. Default 2.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">strength</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The strength of the blur effect. Default 1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">color</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The color of the blur, as a hex value. Default 0xffffff.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">steps</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The number of steps to run the blur effect for. This value should always be an integer. Default 4.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Blur.html" class="tsd-signature-type tsd-kind-class">Blur</a></h4><p>The new Blur filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18668</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addbokeh"><span>add<wbr/>Bokeh</span><a href="#addbokeh" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addbokeh-1"><span class="tsd-kind-call-signature">addBokeh</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">radius</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">contrast</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Bokeh.html" class="tsd-signature-type tsd-kind-class">Bokeh</a><a href="#addbokeh-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Bokeh effect.</p>
+<p>Bokeh refers to a visual effect that mimics the photographic technique of creating a shallow depth of field.
+This effect is used to emphasize the game's main subject or action, by blurring the background or foreground
+elements, resulting in a more immersive and visually appealing experience. It is achieved through rendering
+techniques that simulate the out-of-focus areas, giving a sense of depth and realism to the game's graphics.</p>
+<p>See also Tilt Shift.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">radius</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The radius of the bokeh effect. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">amount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of the bokeh effect. Default 1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">contrast</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The color contrast of the bokeh effect. Default 0.2.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Bokeh.html" class="tsd-signature-type tsd-kind-class">Bokeh</a></h4><p>The new Bokeh filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18684</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addcolormatrix"><span>add<wbr/>Color<wbr/>Matrix</span><a href="#addcolormatrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addcolormatrix-1"><span class="tsd-kind-call-signature">addColorMatrix</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ColorMatrix.html" class="tsd-signature-type tsd-kind-class">ColorMatrix</a><a href="#addcolormatrix-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Color Matrix effect.</p>
+<p>The color matrix effect is a visual technique that involves manipulating the colors of an image
+or scene using a mathematical matrix. This process can adjust hue, saturation, brightness, and contrast,
+allowing developers to create various stylistic appearances or mood settings within the game.
+Common applications include simulating different lighting conditions, applying color filters,
+or achieving a specific visual style.undefined</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.ColorMatrix.html" class="tsd-signature-type tsd-kind-class">ColorMatrix</a></h4><p>The new ColorMatrix filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18696</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addcombinecolormatrix"><span>add<wbr/>Combine<wbr/>Color<wbr/>Matrix</span><a href="#addcombinecolormatrix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addcombinecolormatrix-1"><span class="tsd-kind-call-signature">addCombineColorMatrix</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.CombineColorMatrix.html" class="tsd-signature-type tsd-kind-class">CombineColorMatrix</a><a href="#addcombinecolormatrix-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Combine Color Matrix effect.</p>
+<p>This filter combines channels from two textures.
+There are many possibilities with this.
+However, a significant purpose is to manipulate alpha channels.
+Use <code>setupAlphaTransfer</code> to configure common options,
+or set the <code>colorMatrixSelf</code> and <code>colorMatrixTransfer</code> properties
+directly.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">texture</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a></span>
+<div class="tsd-comment tsd-typography"><p>The texture or texture key to use for the transfer texture. Default '__WHITE'.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.CombineColorMatrix.html" class="tsd-signature-type tsd-kind-class">CombineColorMatrix</a></h4><p>The new CombineColorMatrix filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18710</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="adddisplacement"><span>add<wbr/>Displacement</span><a href="#adddisplacement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="adddisplacement-1"><span class="tsd-kind-call-signature">addDisplacement</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Displacement.html" class="tsd-signature-type tsd-kind-class">Displacement</a><a href="#adddisplacement-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Displacement effect.</p>
+<p>The displacement effect is a visual technique that alters the position of pixels in an image
+or texture based on the values of a displacement map. This effect is used to create the illusion
+of depth, surface irregularities, or distortion in otherwise flat elements. It can be applied to
+characters, objects, or backgrounds to enhance realism, convey movement, or achieve various
+stylistic appearances.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">texture</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The unique string-based key of the texture to use for displacement, which must exist in the Texture Manager. Default '__WHITE'.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of horizontal displacement to apply. A very small float number, such as 0.005. Default 0.005.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of vertical displacement to apply. A very small float number, such as 0.005. Default 0.005.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Displacement.html" class="tsd-signature-type tsd-kind-class">Displacement</a></h4><p>The new Displacement filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18725</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addglow"><span>add<wbr/>Glow</span><a href="#addglow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addglow-1"><span class="tsd-kind-call-signature">addGlow</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">outerStrength</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">innerStrength</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scale</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">knockout</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quality</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">distance</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Glow.html" class="tsd-signature-type tsd-kind-class">Glow</a><a href="#addglow-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Glow effect.</p>
+<p>The glow effect is a visual technique that creates a soft, luminous halo around game objects,
+characters, or UI elements. This effect is used to emphasize importance, enhance visual appeal,
+or convey a sense of energy, magic, or otherworldly presence. The effect can also be set on
+the inside of the edge. The color and strength of the glow can be modified.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">color</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The color of the glow effect as a number value. Default 0xffffff.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">outerStrength</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The strength of the glow outward from the edge of textures. Default 4.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">innerStrength</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The strength of the glow inward from the edge of textures. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scale</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The scale of the glow effect. This multiplies the fixed distance. Default 1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">knockout</span>: <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p>If <code>true</code> only the glow is drawn, not the texture itself. Default false.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">quality</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The quality of the glow effect. This cannot be changed after the filter has been created. Default 10.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">distance</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The distance of the glow effect. This cannot be changed after the filter has been created. Default 10.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Glow.html" class="tsd-signature-type tsd-kind-class">Glow</a></h4><p>The new Glow filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18743</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addgradientmap"><span>add<wbr/>Gradient<wbr/>Map</span><a href="#addgradientmap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addgradientmap-1"><span class="tsd-kind-call-signature">addGradientMap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.GradientMapConfig.html" class="tsd-signature-type tsd-kind-type-alias">GradientMapConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.GradientMap.html" class="tsd-signature-type tsd-kind-class">GradientMap</a><a href="#addgradientmap-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a GradientMap effect.</p>
+<p>GradientMap recolors an image using a ColorRamp.
+The image is converted to a progress value at each point,
+and that progress is evaluated as a color along the ramp.</p>
+<p>The progress value is normally the brightness of the image.
+You can use the <code>colorFactor</code> and <code>color</code> properties to customize it.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.GradientMapConfig.html" class="tsd-signature-type tsd-kind-type-alias">GradientMapConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the GradientMap effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.GradientMap.html" class="tsd-signature-type tsd-kind-class">GradientMap</a></h4><p>The new GradientMap filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18757</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addimagelight"><span>add<wbr/>Image<wbr/>Light</span><a href="#addimagelight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addimagelight-1"><span class="tsd-kind-call-signature">addImageLight</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.ImageLightConfig.html" class="tsd-signature-type tsd-kind-type-alias">ImageLightConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ImageLight.html" class="tsd-signature-type tsd-kind-class">ImageLight</a><a href="#addimagelight-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds an ImageLight effect.</p>
+<p>ImageLight is a filter for image based lighting (IBL).
+It is used to simulate the lighting of an image
+using an environment map and a normal map.</p>
+<p>The environment map is an image that describes the lighting of the scene.
+This filter uses a single panorama image as the environment map.
+The top of the image is the sky, the bottom is the ground,
+and the X axis covers a full rotation.
+This kind of image is distorted towards the top and bottom,
+as the X axis is stretched wider and wider,
+so be careful if you're creating your own environment maps.</p>
+<p>Cube maps are not supported by Phaser at the time of writing.</p>
+<p>The effect is basically a reflection of the environment at infinite range.
+A sharp environment map will produce a sharp reflection,
+while a blurry environment map will produce a diffuse reflection.
+Use the PanoramaBlur filter to create correctly blurred environment maps.
+Use the NormalTools filter to manipulate the normal map if necessary,
+using a DynamicTexture to capture the output.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.ImageLightConfig.html" class="tsd-signature-type tsd-kind-type-alias">ImageLightConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the ImageLight effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.ImageLight.html" class="tsd-signature-type tsd-kind-class">ImageLight</a></h4><p>The new ImageLight filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18785</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addkey"><span>add<wbr/>Key</span><a href="#addkey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addkey-1"><span class="tsd-kind-call-signature">addKey</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.KeyConfig.html" class="tsd-signature-type tsd-kind-type-alias">KeyConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Key.html" class="tsd-signature-type tsd-kind-class">Key</a><a href="#addkey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Key effect.</p>
+<p>The Key effect removes or isolates a specific color from an image.
+It can be used to remove a background color from an image,
+or to isolate a specific color for further processing.</p>
+<p>By default, Key will remove pixels that match the key color.
+You can instead keep only the matching pixels by setting <code>isolate</code>.</p>
+<p>The threshold and feather settings control how closely the key color matches.
+A match is measured by &quot;distance between color vectors&quot;;
+that is, how close the RGB values of the pixel are to the RGB values of the key color.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.KeyConfig.html" class="tsd-signature-type tsd-kind-type-alias">KeyConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the Key effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Key.html" class="tsd-signature-type tsd-kind-class">Key</a></h4><p>The new Key filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18803</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addmask"><span>add<wbr/>Mask</span><a href="#addmask" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addmask-1"><span class="tsd-kind-call-signature">addMask</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">mask</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.GameObject.html" class="tsd-signature-type tsd-kind-class">GameObject</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">invert</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">viewCamera</span><span class="tsd-signature-symbol">?:</span> <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">viewTransform</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">&quot;local&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;world&quot;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">scaleFactor</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Mask.html" class="tsd-signature-type tsd-kind-class">Mask</a><a href="#addmask-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Mask effect.</p>
+<p>A mask uses a texture to hide parts of an input.
+It multiplies the color and alpha of the input
+by the alpha of the mask in the corresponding texel.</p>
+<p>Masks can be inverted, which switches what they hide and what they show.</p>
+<p>Masks can use either a texture or a GameObject.
+If a GameObject is used, the mask will render the GameObject
+to a DynamicTexture and use that.
+The mask will automatically update when the GameObject changes,
+unless the <code>autoUpdate</code> flag is set to <code>false</code>.</p>
+<p>When the mask filter is used as an internal filter,
+the mask will match the object/view being filtered.
+This is useful for creating effects that follow the object,
+such as effects intended to match an animated sprite.</p>
+<p>When the mask filter is used as an external filter,
+the mask will match the context of the camera.
+This is useful for creating effects that cover the entire view.</p>
+<p>An optional <code>viewCamera</code> can be specified when creating the mask.
+If not used, mask objects will be viewed through a default camera.
+Set the <code>viewCamera</code> to the scene's main camera (<code>this.cameras.main</code>)
+to view the mask through the main camera.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">mask</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.GameObject.html" class="tsd-signature-type tsd-kind-class">GameObject</a></span>
+<div class="tsd-comment tsd-typography"><p>The source of the mask. This can be a unique string-based key of the texture to use for the mask, which must exist in the Texture Manager. Or it can be a GameObject, in which case the mask will render the GameObject to a DynamicTexture and use that. Default '__WHITE'.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">invert</span>: <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p>Whether to invert the mask. Default false.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">viewCamera</span>: <a href="src_audio_audio-manager.Camera.html" class="tsd-signature-type tsd-kind-class">Camera</a></span>
+<div class="tsd-comment tsd-typography"><p>The Camera to use when rendering the mask with a GameObject. If not specified, uses the scene's <code>main</code> camera.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">viewTransform</span>: <span class="tsd-signature-type">&quot;local&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;world&quot;</span></span>
+<div class="tsd-comment tsd-typography"><p>The transform to use when rendering the mask with a GameObject. 'local' uses the GameObject's own properties. 'world' uses the GameObject's <code>parentContainer</code> value to compute a world position. Default 'world'.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">scaleFactor</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The scale factor to apply to the underlying mask texture. Can be used to balance memory usage and needed mask precision. This just adjusts the size of the texture; you must also adjust mask size to match, e.g. if scaleFactor is 0.5, your mask might be a Container with scale 0.5. It's easy to make things complicated when combining scale factor, object transform, and camera transform, so try to be precise when using this option. Default 1.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Mask.html" class="tsd-signature-type tsd-kind-class">Mask</a></h4><p>The new Mask filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18840</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addnormaltools"><span>add<wbr/>Normal<wbr/>Tools</span><a href="#addnormaltools" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addnormaltools-1"><span class="tsd-kind-call-signature">addNormalTools</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.NormalToolsConfig.html" class="tsd-signature-type tsd-kind-type-alias">NormalToolsConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.NormalTools.html" class="tsd-signature-type tsd-kind-class">NormalTools</a><a href="#addnormaltools-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a NormalTools effect.</p>
+<p>NormalTools is a filter for manipulating the normals of a normal map.
+It has several functions:</p>
+<ul>
+<li>Rotate or reorient the normal map.</li>
+<li>Change how strongly the normals face the camera.</li>
+<li>Output a grayscale texture showing how strongly the normals face the camera, or some other vector.</li>
+</ul>
+<p>The output can be used for various purposes, such as:</p>
+<ul>
+<li>Editing a normal map for special applications.</li>
+<li>Altering the apparent visual depth of a normal map by manipulating the facing power.</li>
+<li>Creating a base for other effects, such as a mask for a gradient or other effect.</li>
+</ul>
+<p>You can even use the output as a normal map for regular lighting.
+Ordinarily, normal maps are loaded alongside the main texture,
+but you can edit this.</p>
+<pre><code class="js"><span class="hl-5">// Given a dynamic texture `dyn` where the filter output is drawn,</span><br/><span class="hl-5">// and a texture `spiderTex` with lighting enabled,</span><br/><span class="hl-5">// we can inject the WebGL texture straight into the scene lighting as a normal map.</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">dynTex</span><span class="hl-1"> = </span><span class="hl-4">dyn</span><span class="hl-1">.</span><span class="hl-0">getWebGLTexture</span><span class="hl-1">();</span><br/><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">dynSource</span><span class="hl-1"> = </span><span class="hl-3">new</span><span class="hl-1"> </span><span class="hl-4">Phaser</span><span class="hl-1">.</span><span class="hl-4">Textures</span><span class="hl-1">.</span><span class="hl-0">TextureSource</span><span class="hl-1">(</span><span class="hl-4">spiderTex</span><span class="hl-1">, </span><span class="hl-4">dynTex</span><span class="hl-1">);</span><br/><span class="hl-4">spiderTex</span><span class="hl-1">.</span><span class="hl-4">dataSource</span><span class="hl-1">[</span><span class="hl-8">0</span><span class="hl-1">] = </span><span class="hl-4">dynSource</span><span class="hl-1">; </span><span class="hl-5">// This is where the normal map is located.</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.NormalToolsConfig.html" class="tsd-signature-type tsd-kind-type-alias">NormalToolsConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the NormalTools effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.NormalTools.html" class="tsd-signature-type tsd-kind-class">NormalTools</a></h4><p>The new NormalTools filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18873</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addpanoramablur"><span>add<wbr/>Panorama<wbr/>Blur</span><a href="#addpanoramablur" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addpanoramablur-1"><span class="tsd-kind-call-signature">addPanoramaBlur</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.PanoramaBlurConfig.html" class="tsd-signature-type tsd-kind-type-alias">PanoramaBlurConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.PanoramaBlur.html" class="tsd-signature-type tsd-kind-class">PanoramaBlur</a><a href="#addpanoramablur-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a PanoramaBlur effect.</p>
+<p>PanoramaBlur is a filter for blurring a panorama image.
+This is intended for use with filters like ImageLight that use a panorama image as the environment map.
+The blur treats a rectangular map as a sphere,
+and applies heavy distortion close to the poles to get a correct result.
+You should not use it for general purpose blurring.</p>
+<p>The effect can be very slow, as it uses a grid of samples.
+Total samples equals samplesX * samplesY. This can get very high,
+very quickly, so be careful when increasing these values.
+They don't need to be too high for good results.</p>
+<p>By default, the blur is fully diffuse, sampling an entire hemisphere per point.
+If you reduce the radius, the effect will be more focused.
+Use this to control different levels of glossiness in objects using environment maps.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.PanoramaBlurConfig.html" class="tsd-signature-type tsd-kind-type-alias">PanoramaBlurConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the PanoramaBlur effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.PanoramaBlur.html" class="tsd-signature-type tsd-kind-class">PanoramaBlur</a></h4><p>The new PanoramaBlur filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18895</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addparallelfilters"><span>add<wbr/>Parallel<wbr/>Filters</span><a href="#addparallelfilters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addparallelfilters-1"><span class="tsd-kind-call-signature">addParallelFilters</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ParallelFilters.html" class="tsd-signature-type tsd-kind-class">ParallelFilters</a><a href="#addparallelfilters-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Parallel Filters effect.</p>
+<p>This filter controller splits the input into two lists of filters,
+runs each list separately, and then blends the results together.</p>
+<p>The Parallel Filters effect is useful for reusing an input.
+Ordinarily, a filter modifies the input and passes it to the next filter.
+This effect allows you to split the input and re-use it elsewhere.
+It does not gain performance benefits from parallel processing;
+it is a convenience for reusing the input.</p>
+<p>The Parallel Filters effect is not a filter itself.
+It is a controller that manages two FilterLists,
+and the final Blend filter that combines the results.
+The FilterLists are named 'top' and 'bottom'.
+The 'top' output is applied as a blend texture to the 'bottom' output.</p>
+<p>You do not have to populate both lists. If only one is populated,
+it will be blended with the original input at the end.
+This is useful when you want to retain image data that would be lost
+in the filter process.undefined</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.ParallelFilters.html" class="tsd-signature-type tsd-kind-class">ParallelFilters</a></h4><p>The new Parallel Filters filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18557</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addpixelate"><span>add<wbr/>Pixelate</span><a href="#addpixelate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addpixelate-1"><span class="tsd-kind-call-signature">addPixelate</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Pixelate.html" class="tsd-signature-type tsd-kind-class">Pixelate</a><a href="#addpixelate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Pixelate effect.</p>
+<p>The pixelate effect is a visual technique that deliberately reduces the resolution or detail of an image,
+creating a blocky or mosaic appearance composed of large, visible pixels. This effect can be used for stylistic
+purposes, as a homage to retro gaming, or as a means to obscure certain elements within the game, such as
+during a transition or to censor specific content.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">amount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of pixelation. A higher value creates a more pronounced effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Pixelate.html" class="tsd-signature-type tsd-kind-class">Pixelate</a></h4><p>The new Pixelate filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18907</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addquantize"><span>add<wbr/>Quantize</span><a href="#addquantize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addquantize-1"><span class="tsd-kind-call-signature">addQuantize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.QuantizeConfig.html" class="tsd-signature-type tsd-kind-type-alias">QuantizeConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#addquantize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Quantize effect.</p>
+<p>Quantization reduces the unique number of colors in an image,
+based on some limited number of steps per color channel.
+This is good for creating a retro or stylized effect.</p>
+<p>Basic quantization breaks each channel up into a number of <code>steps</code>.
+These steps are normally regular. You can bias them towards the top or bottom
+by changing that channel's <code>gamma</code> value.
+You can adjust the lowest step, thus all subsequent steps, with the <code>offset</code>.</p>
+<p>Quantization is done in either RGBA or HSVA space.
+The steps, gamma, and offset always apply in the same order,
+but depending on color mode, they are either applied to
+<code>[ red, green, blue, alpha ]</code> or <code>[ hue, saturation, value, alpha ]</code>.</p>
+<p>The output may optionally be dithered, to eliminate banding
+and create the illusion that there are many more colors in use.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.QuantizeConfig.html" class="tsd-signature-type tsd-kind-type-alias">QuantizeConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for the Quantize effect.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>The new Quantize filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18931</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addsampler"><span>add<wbr/>Sampler</span><a href="#addsampler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addsampler-1"><span class="tsd-kind-call-signature">addSampler</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">callback</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.SnapshotCallback.html" class="tsd-signature-type tsd-kind-type-alias">SnapshotCallback</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">region</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Sampler.html" class="tsd-signature-type tsd-kind-class">Sampler</a><a href="#addsampler-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Sampler effect.</p>
+<p>This controller manages a sampler.
+It doesn't actually render anything, and leaves the image unaltered.
+It is used to sample a region of the camera view, and pass the results to a callback.
+This is useful for extracting data from the camera view.</p>
+<p>This operation is expensive, so use sparingly.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">callback</span>: <a href="../types/src_audio_audio-manager.SnapshotCallback.html" class="tsd-signature-type tsd-kind-type-alias">SnapshotCallback</a></span>
+<div class="tsd-comment tsd-typography"><p>The callback to call with the results of the sampler.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">region</span>: <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></span>
+<div class="tsd-comment tsd-typography"><p>The region to sample. If <code>null</code>, the entire camera view is sampled. If a <code>Phaser.Types.Math.Vector2Like</code>, a point is sampled. If a <code>Phaser.Geom.Rectangle</code>, the region is sampled. Default null.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Sampler.html" class="tsd-signature-type tsd-kind-class">Sampler</a></h4><p>The new Sampler filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18946</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addshadow"><span>add<wbr/>Shadow</span><a href="#addshadow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addshadow-1"><span class="tsd-kind-call-signature">addShadow</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">decay</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">power</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">samples</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">intensity</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Shadow.html" class="tsd-signature-type tsd-kind-class">Shadow</a><a href="#addshadow-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Shadow effect.</p>
+<p>The shadow effect is a visual technique used to create the illusion of depth and realism by adding darker,
+offset silhouettes or shapes beneath game objects, characters, or environments. These simulated shadows
+help to enhance the visual appeal and immersion, making the 2D game world appear more dynamic and three-dimensional.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The horizontal offset of the shadow effect. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The vertical offset of the shadow effect. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">decay</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of decay for the shadow effect. Default 0.1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">power</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The power of the shadow effect. Default 1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">color</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The color of the shadow, as a hex value. Default 0x000000.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">samples</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The number of samples that the shadow effect will run for. Default 6.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">intensity</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The intensity of the shadow effect. Default 1.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Shadow.html" class="tsd-signature-type tsd-kind-class">Shadow</a></h4><p>The new Shadow filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18963</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addthreshold"><span>add<wbr/>Threshold</span><a href="#addthreshold" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addthreshold-1"><span class="tsd-kind-call-signature">addThreshold</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">edge1</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">edge2</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">invert</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Threshold.html" class="tsd-signature-type tsd-kind-class">Threshold</a><a href="#addthreshold-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Threshold effect.</p>
+<p>Input values are compared to a threshold value or range.
+Values below the threshold are set to 0, and values above the threshold are set to 1.
+Values within the range are linearly interpolated between 0 and 1.</p>
+<p>This is useful for creating effects such as sharp edges from gradients,
+or for creating binary effects.</p>
+<p>The threshold is stored as a range, with two edges.
+Each edge has a value for each channel, between 0 and 1.
+If the two edges are the same, the threshold has no interpolation,
+and will output either 0 or 1.
+Each channel can also be inverted.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">edge1</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The first edge of the threshold. This may be an array of the RGBA channels, or a single number for all 4 channels. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">edge2</span>: <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The second edge of the threshold. This may be an array of the RGBA channels, or a single number for all 4 channels. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">invert</span>: <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>Whether each channel is inverted. This may be an array of the RGBA channels, or a single boolean for all 4 channels. Default false.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Threshold.html" class="tsd-signature-type tsd-kind-class">Threshold</a></h4><p>The new Threshold filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18985</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addtiltshift"><span>add<wbr/>Tilt<wbr/>Shift</span><a href="#addtiltshift" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addtiltshift-1"><span class="tsd-kind-call-signature">addTiltShift</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">radius</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">amount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">contrast</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">blurX</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">blurY</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">strength</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Bokeh.html" class="tsd-signature-type tsd-kind-class">Bokeh</a><a href="#addtiltshift-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Tilt Shift effect.</p>
+<p>This Bokeh effect can also be used to generate a Tilt Shift effect, which is a technique used to create a miniature
+effect by blurring everything except a small area of the image. This effect is achieved by blurring the
+top and bottom elements, while keeping the center area in focus.</p>
+<p>See also Bokeh.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">radius</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The radius of the bokeh effect.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">amount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of the bokeh effect.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">contrast</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The color contrast of the bokeh effect.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">blurX</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of horizontal blur.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">blurY</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The amount of vertical blur.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">strength</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The strength of the blur.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Bokeh.html" class="tsd-signature-type tsd-kind-class">Bokeh</a></h4><p>The new Bokeh filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19003</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addvignette"><span>add<wbr/>Vignette</span><a href="#addvignette" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addvignette-1"><span class="tsd-kind-call-signature">addVignette</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">radius</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">strength</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Color.html" class="tsd-signature-type tsd-kind-class">Color</a> <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.InputColorObject.html" class="tsd-signature-type tsd-kind-type-alias">InputColorObject</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">blendMode</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vignette.html" class="tsd-signature-type tsd-kind-class">Vignette</a><a href="#addvignette-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Vignette effect.</p>
+<p>The vignette effect is a visual technique where the edges of the screen,
+or a Game Object, gradually darken or blur,
+creating a frame-like appearance. This effect is used to draw the player's
+focus towards the central action or subject, enhance immersion,
+and provide a cinematic or artistic quality to the game's visuals.</p>
+<p>This filter supports colored borders, and a limited set of blend modes,
+to increase its stylistic power.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The horizontal offset of the vignette effect. This value is normalized to the range 0 to 1. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The vertical offset of the vignette effect. This value is normalized to the range 0 to 1. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">radius</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The radius of the vignette effect. This value is normalized to the range 0 to 1. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">strength</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The strength of the vignette effect. Default 0.5.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">color</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Color.html" class="tsd-signature-type tsd-kind-class">Color</a> <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.InputColorObject.html" class="tsd-signature-type tsd-kind-type-alias">InputColorObject</a></span>
+<div class="tsd-comment tsd-typography"><p>The color of the vignette effect, as a hex code or Color object. Default 0x000000.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">blendMode</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The blend mode to use with the vignette. Only NORMAL, ADD, MULTIPLY, and SCREEN are supported. Default Phaser.BlendModes.NORMAL.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Vignette.html" class="tsd-signature-type tsd-kind-class">Vignette</a></h4><p>The new Vignette filter controller.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19024</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="addwipe"><span>add<wbr/>Wipe</span><a href="#addwipe" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="addwipe-1"><span class="tsd-kind-call-signature">addWipe</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">wipeWidth</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">direction</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">axis</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">reveal</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">wipeTexture</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Wipe.html" class="tsd-signature-type tsd-kind-class">Wipe</a><a href="#addwipe-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds a Wipe effect.</p>
+<p>The wipe or reveal effect is a visual technique that gradually uncovers or conceals elements
+in the game, such as images, text, or scene transitions. This effect is often used to create
+a sense of progression, reveal hidden content, or provide a smooth and visually appealing transition
+between game states.</p>
+<p>You can set both the direction and the axis of the wipe effect. The following combinations are possible:</p>
+<ul>
+<li>left to right: direction 0, axis 0</li>
+<li>right to left: direction 1, axis 0</li>
+<li>top to bottom: direction 0, axis 1</li>
+<li>bottom to top: direction 1, axis 1</li>
+</ul>
+<p>It is up to you to set the <code>progress</code> value yourself, e.g. via a Tween, in order to transition the effect.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">wipeWidth</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The width of the wipe effect. This value is normalized in the range 0 to 1. Default 0.1.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">direction</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The direction of the wipe effect. Either 0 (left to right, or top to bottom) or 1 (right to left, or bottom to top). Set in conjunction with the axis property. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">axis</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The axis of the wipe effect. Either 0 (X) or 1 (Y). Set in conjunction with the direction property. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">reveal</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>Is this a reveal (1) or a fade (0) effect? Reveal shows the input in wiped areas; fade shows the input in unwiped areas. Default 0.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">wipeTexture</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a></span>
+<div class="tsd-comment tsd-typography"><p>Texture or texture key to use where the input texture is not shown. The default texture is blank. Use another texture for a wipe transition. Default '__DEFAULT'.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Wipe.html" class="tsd-signature-type tsd-kind-class">Wipe</a></h4><ul>
+<li>The new Wipe filter instance.</li>
+</ul>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19049</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="clear"><span>clear</span><a href="#clear" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="clear-1"><span class="tsd-kind-call-signature">clear</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#clear-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Destroys and removes all filters in this list.undefined</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This FilterList instance.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18578</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="destroy-1"><span class="tsd-kind-call-signature">destroy</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#destroy-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Destroys this FilterList.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19054</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getactive"><span>get<wbr/>Active</span><a href="#getactive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getactive-1"><span class="tsd-kind-call-signature">getActive</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a><span class="tsd-signature-symbol">[]</span><a href="#getactive-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns all active filters in this list.undefined</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a><span class="tsd-signature-symbol">[]</span></h4><p>The active filters in this list.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18600</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="remove"><span>remove</span><a href="#remove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="remove-1"><span class="tsd-kind-call-signature">remove</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">filter</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">forceDestroy</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#remove-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Removes a filter from this list, then destroys it.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">filter</span>: <a href="src_audio_audio-manager.Controller.html" class="tsd-signature-type tsd-kind-class">Controller</a></span>
+<div class="tsd-comment tsd-typography"><p>The filter to remove.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">forceDestroy</span>: <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p>If <code>true</code>, the filter will be destroyed even if it has the <code>ignoreDestroy</code> flag set. Default false.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This FilterList instance.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18594</li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#camera" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>camera</span></a><a href="#list" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>list</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#add" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add</span></a><a href="#addbarrel" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Barrel</span></a><a href="#addblend" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Blend</span></a><a href="#addblocky" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Blocky</span></a><a href="#addblur" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Blur</span></a><a href="#addbokeh" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Bokeh</span></a><a href="#addcolormatrix" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Color<wbr/>Matrix</span></a><a href="#addcombinecolormatrix" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Combine<wbr/>Color<wbr/>Matrix</span></a><a href="#adddisplacement" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Displacement</span></a><a href="#addglow" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Glow</span></a><a href="#addgradientmap" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Gradient<wbr/>Map</span></a><a href="#addimagelight" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Image<wbr/>Light</span></a><a href="#addkey" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Key</span></a><a href="#addmask" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Mask</span></a><a href="#addnormaltools" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Normal<wbr/>Tools</span></a><a href="#addpanoramablur" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Panorama<wbr/>Blur</span></a><a href="#addparallelfilters" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Parallel<wbr/>Filters</span></a><a href="#addpixelate" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Pixelate</span></a><a href="#addquantize" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Quantize</span></a><a href="#addsampler" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Sampler</span></a><a href="#addshadow" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Shadow</span></a><a href="#addthreshold" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Threshold</span></a><a href="#addtiltshift" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Tilt<wbr/>Shift</span></a><a href="#addvignette" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Vignette</span></a><a href="#addwipe" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Wipe</span></a><a href="#clear" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>clear</span></a><a href="#destroy" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#getactive" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Active</span></a><a href="#remove" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>remove</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer>
+<div class="overlay"></div></body></html>

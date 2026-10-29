@@ -13,6 +13,10 @@
 <h1>Interface Visible</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Provides methods used for setting the visibility of a Game Object.
+The Visible component is mixed into Game Objects to give them a <code>visible</code> boolean property
+and a <code>setVisible</code> method. Visibility is tracked via a bitmask flag on <code>renderFlags</code>, so
+toggling it is a fast bitwise operation. An invisible Game Object is excluded from the
+render pass entirely, but its <code>update</code> logic continues to run normally each frame.
 Should be applied as a mixin and not used directly.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">Visible</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#visible">visible</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setvisible-1">setVisible</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
@@ -31,12 +35,13 @@ Should be applied as a mixin and not used directly.</p>
 <li><a href="../classes/src_audio_audio-manager.Shape.html" class="tsd-signature-type tsd-kind-class">Shape</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.Stamp.html" class="tsd-signature-type tsd-kind-class">Stamp</a></li>
 <li><a href="../classes/src_audio_audio-manager.Tile.html" class="tsd-signature-type tsd-kind-class">Tile</a></li>
-<li><a href="../classes/src_ui_handlers_title-ui-handler.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.TilemapLayer.html" class="tsd-signature-type tsd-kind-class">TilemapLayer</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TilemapLayerBase.html" class="tsd-signature-type tsd-kind-class">TilemapLayerBase</a></li>
 <li><a href="../classes/src_phases_form-change-phase.Video.html" class="tsd-signature-type tsd-kind-class">Video</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16756</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20931</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -60,7 +65,7 @@ Should be applied as a mixin and not used directly.</p>
 <p>An invisible Game Object will skip rendering, but will still process update logic.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16762</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20937</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -79,9 +84,10 @@ Should be applied as a mixin and not used directly.</p>
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>The visible state of the Game Object.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16769</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20945</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

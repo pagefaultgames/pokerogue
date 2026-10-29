@@ -12,21 +12,26 @@
 <li><a href="" aria-current="page">List</a></li></ul>
 <h1>Class List&lt;T&gt;</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>List is a generic implementation of an ordered list which contains utility methods for retrieving, manipulating, and iterating items.</p>
+<div class="tsd-comment tsd-typography"><p>A List is a generic, ordered collection of items that provides a rich set of utility methods for
+adding, removing, sorting, searching, and iterating its contents. Unlike a plain array, a List
+supports optional add and remove callbacks, stable sorting, named item lookup, positional
+traversal via the <code>first</code>, <code>last</code>, <code>next</code>, and <code>previous</code> properties, and safe in-place
+manipulation (swap, move, replace, shuffle). It is used throughout Phaser as the backing
+structure for display lists, camera lists, and other ordered collections where items must
+remain unique and ordered.</p>
 </div></section>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
 <li><span id="t"><span class="tsd-kind-type-parameter">T</span></span></li></ul></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="276978">
+<section class="tsd-panel tsd-hierarchy" data-refl="274929">
 <h4>Hierarchy (<a href="../hierarchy.html#src/audio/audio-manager.List">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">List</span>
 <ul class="tsd-hierarchy">
-<li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.DisplayList.html" class="tsd-signature-type tsd-kind-class">DisplayList</a></li>
-<li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.Layer.html" class="tsd-signature-type tsd-kind-class">Layer</a></li></ul></li></ul></section><aside class="tsd-sources">
+<li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.DisplayList.html" class="tsd-signature-type tsd-kind-class">DisplayList</a></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105802</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132774</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -104,7 +109,7 @@
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105807</li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132779</li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -114,42 +119,42 @@
 <div class="tsd-comment tsd-typography"><p>The property key to sort by.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105839</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132811</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="addcallback"><span>add<wbr/>Callback</span><a href="#addcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">addCallback</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a></div>
 <div class="tsd-comment tsd-typography"><p>A callback that is invoked every time a child is added to this list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105829</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132801</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="first"><code class="tsd-tag">Readonly</code><span>first</span><a href="#first" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">first</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></div>
 <div class="tsd-comment tsd-typography"><p>The first item in the List or <code>null</code> for an empty List.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106070</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133065</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="last"><code class="tsd-tag">Readonly</code><span>last</span><a href="#last" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">last</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></div>
 <div class="tsd-comment tsd-typography"><p>The last item in the List, or <code>null</code> for an empty List.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106075</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133070</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="length"><code class="tsd-tag">Readonly</code><span>length</span><a href="#length" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">length</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The number of items inside the List.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106065</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133060</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="list"><span>list</span><a href="#list" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">list</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></div>
 <div class="tsd-comment tsd-typography"><p>The objects that belong to this collection.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105817</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132789</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="next"><code class="tsd-tag">Readonly</code><span>next</span><a href="#next" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">next</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></div>
@@ -157,22 +162,22 @@
 <p>This property can be read successively after reading #first or manually setting the #position to iterate the List.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106082</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133077</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="parent"><span>parent</span><a href="#parent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">parent</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 <div class="tsd-comment tsd-typography"><p>The parent of this list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105812</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132784</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="position"><span>position</span><a href="#position" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The index of the current element.</p>
-<p>This is used internally when iterating through the list with the #first, #last, #get, and #previous properties.</p>
+<p>This is used internally when iterating through the list with the #first, #last, #next, and #previous properties.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105824</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132796</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="previous"><code class="tsd-tag">Readonly</code><span>previous</span><a href="#previous" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">previous</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></div>
@@ -180,14 +185,14 @@
 <p>This property can be read successively after reading #last or manually setting the #position to iterate the List backwards.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106089</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133084</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removecallback"><span>remove<wbr/>Callback</span><a href="#removecallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">removeCallback</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a></div>
 <div class="tsd-comment tsd-typography"><p>A callback that is invoked every time a child is removed from this list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105834</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132806</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -208,9 +213,10 @@
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">skipCallback</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Skip calling the List.addCallback if this child is added successfully. Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4><p>The list's underlying array.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105846</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132819</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="addat"><span>add<wbr/>At</span><a href="#addat" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -231,9 +237,10 @@
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">skipCallback</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Skip calling the List.addCallback if this child is added successfully. Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><p>The List's underlying array.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105854</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132828</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="bringtotop"><span>bring<wbr/>To<wbr/>Top</span><a href="#bringtotop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -248,9 +255,10 @@
 <li><span><span class="tsd-kind-parameter">child</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to bring to the top of the List.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The item which was moved.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105992</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132980</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="count"><span>count</span><a href="#count" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -268,9 +276,10 @@
 <li><span><span class="tsd-kind-parameter">value</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The value to test the property against.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The total number of matching elements.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105926</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132908</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -281,7 +290,7 @@
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106060</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133055</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="each"><span>each</span><a href="#each" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -304,7 +313,7 @@
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106050</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133045</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="exists"><span>exists</span><a href="#exists" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -319,9 +328,10 @@
 <li><span><span class="tsd-kind-parameter">child</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to check for the existence of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the item is found in the list, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106033</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133028</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getall"><span>get<wbr/>All</span><a href="#getall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -352,9 +362,10 @@ the first 50 children in the List.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">endIndex</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The last child index to search up until.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><p>All items of the List which match the given criterion, if any.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105919</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132900</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getat"><span>get<wbr/>At</span><a href="#getat" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -369,9 +380,10 @@ the first 50 children in the List.</p>
 <li><span><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The index of the item.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The retrieved item, or <code>undefined</code> if it's outside the List's bounds.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105860</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132835</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getbyname"><span>get<wbr/>By<wbr/>Name</span><a href="#getbyname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -388,9 +400,10 @@ the same name only the first is returned.</p>
 <li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span>
 <div class="tsd-comment tsd-typography"><p>The name to search for.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><p>The first child with a matching name, or null if none were found.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105882</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132860</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getfirst"><span>get<wbr/>First</span><a href="#getfirst" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -414,9 +427,10 @@ the same name only the first is returned.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">endIndex</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The position in the List to optionally stop the search at. It won't be checked.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><p>The first item which matches the given criterion, or <code>null</code> if no such item exists.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105898</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132878</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getindex"><span>get<wbr/>Index</span><a href="#getindex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -431,29 +445,31 @@ the same name only the first is returned.</p>
 <li><span><span class="tsd-kind-parameter">child</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to locate.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The index of the item within the List, or -1 if it's not in the List.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105866</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132842</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getrandom"><span>get<wbr/>Random</span><a href="#getrandom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="getrandom-1"><span class="tsd-kind-call-signature">getRandom</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">startIndex</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">length</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#getrandom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Returns a random child from the group.</p>
+<div class="tsd-comment tsd-typography"><p>Returns a random child from the list.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">startIndex</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>Offset from the front of the group (lowest child). Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>Offset from the front of the list (lowest child). Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">length</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Restriction on the number of values you want to randomly select from. Default (to top).</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><p>A random child of this List.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105889</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132868</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="moveabove"><span>move<wbr/>Above</span><a href="#moveabove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -475,7 +491,7 @@ Above means toward the end of the List.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105949</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132932</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="movebelow"><span>move<wbr/>Below</span><a href="#movebelow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -497,14 +513,14 @@ Below means toward the start of the List.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105958</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132941</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="movedown"><span>move<wbr/>Down</span><a href="#movedown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="movedown-1"><span class="tsd-kind-call-signature">moveDown</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">child</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><a href="#movedown-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Moves the given child down one place in this group unless it's already at the bottom.</p>
+<div class="tsd-comment tsd-typography"><p>Moves the given child down one place in this List unless it's already at the bottom.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -512,9 +528,10 @@ Below means toward the start of the List.</p>
 <li><span><span class="tsd-kind-parameter">child</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to move down.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The item which was moved.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106010</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133001</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="moveto"><span>move<wbr/>To</span><a href="#moveto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -530,18 +547,19 @@ Below means toward the start of the List.</p>
 <div class="tsd-comment tsd-typography"><p>The item to move.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>Moves an item in the List to a new position.</p>
+<div class="tsd-comment tsd-typography"><p>The new position to move the item to.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The item that was moved.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105940</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132923</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="moveup"><span>move<wbr/>Up</span><a href="#moveup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="moveup-1"><span class="tsd-kind-call-signature">moveUp</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">child</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><a href="#moveup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Moves the given child up one place in this group unless it's already at the top.</p>
+<div class="tsd-comment tsd-typography"><p>Moves the given child up one place in this List unless it's already at the top.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -549,9 +567,10 @@ Below means toward the start of the List.</p>
 <li><span><span class="tsd-kind-parameter">child</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to move up.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The item which was moved.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106004</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132994</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="remove"><span>remove</span><a href="#remove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -569,9 +588,10 @@ Below means toward the start of the List.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">skipCallback</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Skip calling the List.removeCallback. Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4><p>The item, or array of items, which were successfully removed from the List.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105965</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132949</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removeall"><span>remove<wbr/>All</span><a href="#removeall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -586,9 +606,10 @@ Below means toward the start of the List.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">skipCallback</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Skip calling the List.removeCallback. Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This List object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105986</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132973</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removeat"><span>remove<wbr/>At</span><a href="#removeat" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -606,9 +627,10 @@ Below means toward the start of the List.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">skipCallback</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Skip calling the List.removeCallback. Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The item that was removed.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105972</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132957</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removebetween"><span>remove<wbr/>Between</span><a href="#removebetween" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -629,9 +651,10 @@ Below means toward the start of the List.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">skipCallback</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Skip calling the List.removeCallback. Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><p>An array of the items which were removed.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105980</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132966</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="replace"><span>replace</span><a href="#replace" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -649,20 +672,22 @@ Below means toward the start of the List.</p>
 <li><span><span class="tsd-kind-parameter">newChild</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The child to be inserted into this List.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>Returns the oldChild that was replaced within this List.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106027</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133021</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="reverse"><span>reverse</span><a href="#reverse" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="reverse-1"><span class="tsd-kind-call-signature">reverse</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span><a href="#reverse-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Reverses the order of all children in this List.</p>
+<div class="tsd-comment tsd-typography"><p>Reverses the order of all children in this List.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p>This List object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106015</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133007</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="sendtoback"><span>send<wbr/>To<wbr/>Back</span><a href="#sendtoback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -677,9 +702,10 @@ Below means toward the start of the List.</p>
 <li><span><span class="tsd-kind-parameter">child</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></span>
 <div class="tsd-comment tsd-typography"><p>The item to send to the back of the list.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a></h4><p>The item which was moved.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105998</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132987</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setall"><span>set<wbr/>All</span><a href="#setall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -705,18 +731,19 @@ Below means toward the start of the List.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106042</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133037</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="shuffle"><span>shuffle</span><a href="#shuffle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="shuffle-1"><span class="tsd-kind-call-signature">shuffle</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span><a href="#shuffle-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Shuffles the items in the list.</p>
+<div class="tsd-comment tsd-typography"><p>Shuffles the items in the list.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">List</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p>This List object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106020</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133013</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="shutdown"><span>shutdown</span><a href="#shutdown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -727,7 +754,7 @@ Below means toward the start of the List.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:106055</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:133050</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="sort"><span>sort</span><a href="#sort" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -744,11 +771,12 @@ For example, <code>sort('alpha')</code> would sort the List contents based on th
 <div class="tsd-comment tsd-typography"><p>The property to lexically sort by.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">handler</span>: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a></span>
-<div class="tsd-comment tsd-typography"><p>Provide your own custom handler function. Will receive 2 children which it should compare and return a boolean.</p>
+<div class="tsd-comment tsd-typography"><p>Provide your own custom handler function. Will receive 2 children which it should compare and return a number (negative if the first should come before the second, positive if after, zero if equal).</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">[]</span></h4><p>This List object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105874</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132851</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="swap"><span>swap</span><a href="#swap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -768,7 +796,7 @@ For example, <code>sort('alpha')</code> would sort the List contents based on th
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105933</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132915</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

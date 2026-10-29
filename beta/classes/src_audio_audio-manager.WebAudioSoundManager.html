@@ -12,18 +12,25 @@
 <li><a href="" aria-current="page">WebAudioSoundManager</a></li></ul>
 <h1>Class WebAudioSoundManager</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Web Audio API implementation of the Sound Manager.</p>
+<div class="tsd-comment tsd-typography"><p>The Web Audio API implementation of the Phaser Sound Manager.</p>
+<p>This is the default Sound Manager used in Phaser when the browser supports the Web Audio API.
+It creates and manages an <code>AudioContext</code>, routes all sounds through a master gain node chain
+for global mute and volume control, and handles the browser autoplay policy by unlocking
+audio on the first user interaction.</p>
+<p>Use this manager to add, play, and control sounds in your game. It is accessed via
+<code>this.sound</code> from within a Scene. If the browser does not support the Web Audio API,
+Phaser will fall back to the <code>HTML5AudioSoundManager</code> instead.</p>
 <p>Not all browsers can play all audio formats.</p>
 <p>There is a good guide to what's supported: <a href="https://developer.mozilla.org/en-US/Apps/Fundamentals/Audio_and_video_delivery/Cross-browser_audio_basics#Audio_Codec_Support">Cross-browser audio basics: Audio codec support</a>.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="90761">
+<section class="tsd-panel tsd-hierarchy" data-refl="90880">
 <h4>Hierarchy (<a href="../hierarchy.html#src/audio/audio-manager.WebAudioSoundManager">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.BaseSoundManager.html" class="tsd-signature-type tsd-kind-class">BaseSoundManager</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">WebAudioSoundManager</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105634</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132595</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -110,7 +117,7 @@
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105639</li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132600</li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -120,23 +127,23 @@
 <div class="tsd-comment tsd-typography"><p>The AudioContext being used for playback.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105644</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132605</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="destination"><span>destination</span><a href="#destination" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">destination</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_audio_audio-manager.AudioNode.html" class="tsd-signature-type tsd-kind-interface">AudioNode</a></div>
 <div class="tsd-comment tsd-typography"><p>Destination node for connecting individual sounds to.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105659</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132620</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="detune"><span>detune</span><a href="#detune" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">detune</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>Global detuning of all sounds in <a href="https://en.wikipedia.org/wiki/Cent_%28music%29">cents</a>.
-The range of the value is -1200 to 1200, but we recommend setting it to <a href="https://en.wikipedia.org/wiki/50_Cent">50</a>.</p>
+The range of the value is -1200 to 1200, but we recommend keeping it within a reasonable range for musical purposes.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#detune">detune</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104241</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:131037</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="game"><code class="tsd-tag">Readonly</code><span>game</span><a href="#game" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">game</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Game.html" class="tsd-signature-type tsd-kind-class">Game</a></div>
@@ -144,7 +151,7 @@ The range of the value is -1200 to 1200, but we recommend setting it to <a href=
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#game">game</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104015</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130798</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="gamelostfocus"><span>game<wbr/>Lost<wbr/>Focus</span><a href="#gamelostfocus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">gameLostFocus</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -152,7 +159,7 @@ The range of the value is -1200 to 1200, but we recommend setting it to <a href=
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#gamelostfocus">gameLostFocus</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104048</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130831</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="jsoncache"><code class="tsd-tag">Readonly</code><span>json<wbr/>Cache</span><a href="#jsoncache" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">jsonCache</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.BaseCache.html" class="tsd-signature-type tsd-kind-class">BaseCache</a></div>
@@ -160,7 +167,7 @@ The range of the value is -1200 to 1200, but we recommend setting it to <a href=
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#jsoncache">jsonCache</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104020</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130803</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="listenerposition"><span>listener<wbr/>Position</span><a href="#listenerposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">listenerPosition</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></div>
@@ -171,7 +178,7 @@ adjust the listener position within the game world.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#listenerposition">listenerPosition</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104058</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130841</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="locked"><code class="tsd-tag">Readonly</code><span>locked</span><a href="#locked" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">locked</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -181,21 +188,21 @@ Set to true if the audio system is currently locked awaiting user interaction.</
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#locked">locked</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104043</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130826</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="mastermutenode"><span>master<wbr/>Mute<wbr/>Node</span><a href="#mastermutenode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">masterMuteNode</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_audio_audio-manager.GainNode.html" class="tsd-signature-type tsd-kind-interface">GainNode</a></div>
 <div class="tsd-comment tsd-typography"><p>Gain node responsible for controlling global muting.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105649</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132610</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="mastervolumenode"><span>master<wbr/>Volume<wbr/>Node</span><a href="#mastervolumenode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">masterVolumeNode</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/src_audio_audio-manager.GainNode.html" class="tsd-signature-type tsd-kind-interface">GainNode</a></div>
 <div class="tsd-comment tsd-typography"><p>Gain node responsible for controlling global volume.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105654</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132615</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="mute"><span>mute</span><a href="#mute" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">mute</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -203,16 +210,16 @@ Set to true if the audio system is currently locked awaiting user interaction.</
 </div><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#mute">mute</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105759</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132724</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="pauseonblur"><span>pause<wbr/>On<wbr/>Blur</span><a href="#pauseonblur" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">pauseOnBlur</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-<div class="tsd-comment tsd-typography"><p>Flag indicating if sounds should be paused when game looses focus,
+<div class="tsd-comment tsd-typography"><p>Flag indicating if sounds should be paused when game loses focus,
 for instance when user switches to another tab/program/app.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#pauseonblur">pauseOnBlur</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104036</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130819</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="rate"><span>rate</span><a href="#rate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">rate</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -222,7 +229,7 @@ and 2.0 doubles the audio's playback speed.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#rate">rate</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104228</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:131023</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="volume"><span>volume</span><a href="#volume" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">volume</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -230,7 +237,7 @@ and 2.0 doubles the audio's playback speed.</p>
 </div><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#volume">volume</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105767</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132733</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -251,10 +258,11 @@ and 2.0 doubles the audio's playback speed.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.SoundConfig.html" class="tsd-signature-type tsd-kind-type-alias">SoundConfig</a></span>
 <div class="tsd-comment tsd-typography"><p>An optional config object containing default sound settings.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.WebAudioSound.html" class="tsd-signature-type tsd-kind-class">WebAudioSound</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.WebAudioSound.html" class="tsd-signature-type tsd-kind-class">WebAudioSound</a></h4><p>The new sound instance.</p>
+<aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#add">add</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105686</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132650</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="addaudiosprite"><span>add<wbr/>Audio<wbr/>Sprite</span><a href="#addaudiosprite" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -274,10 +282,11 @@ The JSON follows the format of that created by <a href="https://github.com/tonis
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.SoundConfig.html" class="tsd-signature-type tsd-kind-type-alias">SoundConfig</a></span>
 <div class="tsd-comment tsd-typography"><p>An optional config object containing default sound settings.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.WebAudioSound.html" class="tsd-signature-type tsd-kind-class">WebAudioSound</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.HTML5AudioSound.html" class="tsd-signature-type tsd-kind-class">HTML5AudioSound</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.NoAudioSound.html" class="tsd-signature-type tsd-kind-class">NoAudioSound</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.WebAudioSound.html" class="tsd-signature-type tsd-kind-class">WebAudioSound</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.HTML5AudioSound.html" class="tsd-signature-type tsd-kind-class">HTML5AudioSound</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.NoAudioSound.html" class="tsd-signature-type tsd-kind-class">NoAudioSound</a></h4><p>The new audio sprite sound instance.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#addaudiosprite">addAudioSprite</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104074</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130859</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="addlistener"><span>add<wbr/>Listener</span><a href="#addlistener" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -298,10 +307,11 @@ The JSON follows the format of that created by <a href="https://github.com/tonis
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The context to invoke the listener with. Default this.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#addlistener">addListener</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9971</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11007</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="createaudiocontext"><span>create<wbr/>Audio<wbr/>Context</span><a href="#createaudiocontext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -320,9 +330,10 @@ and you want to reuse already instantiated AudioContext.</p>
 <li><span><span class="tsd-kind-parameter">game</span>: <a href="src_audio_audio-manager.Game.html" class="tsd-signature-type tsd-kind-class">Game</a></span>
 <div class="tsd-comment tsd-typography"><p>Reference to the current game instance.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../interfaces/src_audio_audio-manager.AudioContext.html" class="tsd-signature-type tsd-kind-interface">AudioContext</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/src_audio_audio-manager.AudioContext.html" class="tsd-signature-type tsd-kind-interface">AudioContext</a></h4><p>The AudioContext instance to be used for playback.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105669</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132631</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="decodeaudio"><span>decode<wbr/>Audio</span><a href="#decodeaudio" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -348,7 +359,7 @@ objects as the first and only argument.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105704</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132668</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="destroy"><span>destroy</span><a href="#destroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -356,12 +367,12 @@ objects as the first and only argument.</p>
 <div class="tsd-signature tsd-anchor-link" id="destroy-1"><span class="tsd-kind-call-signature">destroy</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#destroy-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Calls Phaser.Sound.BaseSoundManager#destroy method
-and cleans up all Web Audio API related stuff.</p>
+and cleans up all Web Audio API related resources.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#destroy">destroy</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105751</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132715</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="emit"><span>emit</span><a href="#emit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -379,22 +390,24 @@ and cleans up all Web Audio API related stuff.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>Additional arguments that will be passed to the event handler.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the event had listeners, else <code>false</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#emit">emit</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9955</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10989</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="eventnames"><span>event<wbr/>Names</span><a href="#eventnames" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="eventnames-1"><span class="tsd-kind-call-signature">eventNames</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span>)<span class="tsd-signature-symbol">[]</span><a href="#eventnames-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Return an array listing the events for which the emitter has registered listeners.</p>
+<div class="tsd-comment tsd-typography"><p>Return an array listing the events for which the emitter has registered listeners.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns (<span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span>)<span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns (<span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span>)<span class="tsd-signature-symbol">[]</span></h4><p>undefined</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#eventnames">eventNames</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9936</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10967</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="get"><span>get</span><a href="#get" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -414,10 +427,13 @@ If none can be found it returns <code>null</code>.</p>
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">string</span></span>
 <div class="tsd-comment tsd-typography"><p>Sound asset key.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="src_audio_audio-manager.HTML5AudioSoundManager.html#gett">T</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="src_audio_audio-manager.HTML5AudioSoundManager.html#gett">T</a></h4><ul>
+<li>The sound, or null.</li>
+</ul>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#get">get</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104081</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130867</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="getall"><span>get<wbr/>All</span><a href="#getall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -438,10 +454,13 @@ will be returned.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">string</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional asset key. If given, only Sound instances with this key will be returned.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="src_audio_audio-manager.HTML5AudioSoundManager.html#getallt">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="src_audio_audio-manager.HTML5AudioSoundManager.html#getallt">T</a><span class="tsd-signature-symbol">[]</span></h4><ul>
+<li>The sounds, or an empty array.</li>
+</ul>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#getall">getAll</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104090</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130877</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="getallplaying"><span>get<wbr/>All<wbr/>Playing</span><a href="#getallplaying" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -450,16 +469,19 @@ will be returned.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns all sounds from this Sound Manager that are currently
 playing. That is, Sound instances that have their <code>isPlaying</code>
-property set to <code>true</code>.</p>
+property set to <code>true</code>.undefined</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
 <li><span id="getallplayingt"><span class="tsd-kind-type-parameter">T</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.BaseSound.html" class="tsd-signature-type tsd-kind-class">BaseSound</a></span></li></ul></section>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="src_audio_audio-manager.NoAudioSoundManager.html#getallplayingt">T</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="src_audio_audio-manager.NoAudioSoundManager.html#getallplayingt">T</a><span class="tsd-signature-symbol">[]</span></h4><ul>
+<li>All currently playing sounds, or an empty array.</li>
+</ul>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#getallplaying">getAllPlaying</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104097</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130885</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="isplaying"><span>is<wbr/>Playing</span><a href="#isplaying" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -475,10 +497,13 @@ property set to <code>true</code>.</p>
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></span>
 <div class="tsd-comment tsd-typography"><p>Sound asset key.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><ul>
+<li>Per the key argument, true if any matching sound is playing, otherwise false.</li>
+</ul>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#isplaying">isPlaying</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104179</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130973</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="listenercount"><span>listener<wbr/>Count</span><a href="#listenercount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -493,10 +518,11 @@ property set to <code>true</code>.</p>
 <li><span><span class="tsd-kind-parameter">event</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span>
 <div class="tsd-comment tsd-typography"><p>The event name.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The number of listeners.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#listenercount">listenerCount</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9948</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10981</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="listeners"><span>listeners</span><a href="#listeners" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -511,10 +537,11 @@ property set to <code>true</code>.</p>
 <li><span><span class="tsd-kind-parameter">event</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span>
 <div class="tsd-comment tsd-typography"><p>The event name.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">[]</span></h4><p>The registered listeners.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#listeners">listeners</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9942</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10974</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="off"><span>off</span><a href="#off" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -538,10 +565,11 @@ property set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">once</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Only remove one-time listeners.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#off">off</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9997</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11037</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="on"><span>on</span><a href="#on" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -562,10 +590,11 @@ property set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The context to invoke the listener with. Default this.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#on">on</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9963</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10998</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-external">
 <h3 class="tsd-anchor-link" id="onblur"><code class="tsd-tag">Protected</code><span>on<wbr/>Blur</span><a href="#onblur" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-external">
@@ -578,14 +607,15 @@ Phaser.Sound.WebAudioSoundManager#pauseOnBlur is set to true.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#onblur">onBlur</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105730</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132694</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="once"><span>once</span><a href="#once" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="once-1"><span class="tsd-kind-call-signature">once</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">event</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#once-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Add a one-time listener for a given event.</p>
+<div class="tsd-comment tsd-typography"><p>Add a one-time listener for a given event. The listener is automatically removed
+the first time the event is emitted, so it will never be called more than once.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -599,10 +629,11 @@ Phaser.Sound.WebAudioSoundManager#pauseOnBlur is set to true.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The context to invoke the listener with. Default this.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#once">once</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9979</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11017</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-external">
 <h3 class="tsd-anchor-link" id="onfocus"><code class="tsd-tag">Protected</code><span>on<wbr/>Focus</span><a href="#onfocus" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-external">
@@ -615,7 +646,7 @@ Phaser.Sound.WebAudioSoundManager#pauseOnBlur is set to true.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#onfocus">onFocus</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105736</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132700</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="pauseall"><span>pause<wbr/>All</span><a href="#pauseall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -627,7 +658,7 @@ Phaser.Sound.WebAudioSoundManager#pauseOnBlur is set to true.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#pauseall">pauseAll</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104142</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130934</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="play"><span>play</span><a href="#play" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -647,10 +678,11 @@ Phaser.Sound.WebAudioSoundManager#pauseOnBlur is set to true.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">extra</span>: <a href="../types/src_audio_audio-manager.SoundConfig.html" class="tsd-signature-type tsd-kind-type-alias">SoundConfig</a> <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.SoundMarker.html" class="tsd-signature-type tsd-kind-type-alias">SoundMarker</a></span>
 <div class="tsd-comment tsd-typography"><p>An optional additional object containing settings to be applied to the sound. It could be either config or marker object.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>Whether the sound started playing successfully.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#play">play</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104108</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130897</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="playaudiosprite"><span>play<wbr/>Audio<wbr/>Sprite</span><a href="#playaudiosprite" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -673,10 +705,11 @@ This lets you play a new sound on the fly without the need to keep a reference t
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.SoundConfig.html" class="tsd-signature-type tsd-kind-type-alias">SoundConfig</a></span>
 <div class="tsd-comment tsd-typography"><p>An optional config object containing default sound settings.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>Whether the audio sprite sound started playing successfully.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#playaudiosprite">playAudioSprite</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104118</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130908</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="remove"><span>remove</span><a href="#remove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -692,10 +725,11 @@ The removed sound is destroyed before removal.</p>
 <li><span><span class="tsd-kind-parameter">sound</span>: <a href="src_audio_audio-manager.BaseSound.html" class="tsd-signature-type tsd-kind-class">BaseSound</a></span>
 <div class="tsd-comment tsd-typography"><p>The sound object to remove.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True if the sound was removed successfully, otherwise false.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#remove">remove</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104125</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130916</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="removeall"><span>remove<wbr/>All</span><a href="#removeall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -707,7 +741,7 @@ The removed sound is destroyed before removal.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#removeall">removeAll</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104130</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130921</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="removealllisteners"><span>remove<wbr/>All<wbr/>Listeners</span><a href="#removealllisteners" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -722,10 +756,11 @@ The removed sound is destroyed before removal.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">event</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">symbol</span></span>
 <div class="tsd-comment tsd-typography"><p>The event name.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#removealllisteners">removeAllListeners</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:10003</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11044</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="removebykey"><span>remove<wbr/>By<wbr/>Key</span><a href="#removebykey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -741,10 +776,11 @@ The removed sounds are destroyed before removal.</p>
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">string</span></span>
 <div class="tsd-comment tsd-typography"><p>The key to match when removing sound objects.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The number of matching sound objects that were removed.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#removebykey">removeByKey</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104137</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130929</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="removelistener"><span>remove<wbr/>Listener</span><a href="#removelistener" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -768,10 +804,11 @@ The removed sounds are destroyed before removal.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">once</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Only remove one-time listeners.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p><code>this</code>.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#removelistener">removeListener</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9988</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:11027</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="resumeall"><span>resume<wbr/>All</span><a href="#resumeall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -783,7 +820,7 @@ The removed sounds are destroyed before removal.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#resumeall">resumeAll</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104147</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130939</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setaudiocontext"><span>set<wbr/>Audio<wbr/>Context</span><a href="#setaudiocontext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -801,9 +838,10 @@ nodes and then re-creates them on the new given context.</p>
 <li><span><span class="tsd-kind-parameter">context</span>: <a href="../interfaces/src_audio_audio-manager.AudioContext.html" class="tsd-signature-type tsd-kind-interface">AudioContext</a></span>
 <div class="tsd-comment tsd-typography"><p>Reference to an already created AudioContext instance.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>The WebAudioSoundManager instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105679</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132642</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="setdetune"><span>set<wbr/>Detune</span><a href="#setdetune" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -811,25 +849,26 @@ nodes and then re-creates them on the new given context.</p>
 <div class="tsd-signature tsd-anchor-link" id="setdetune-1"><span class="tsd-kind-call-signature">setDetune</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setdetune-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Sets the global detuning of all sounds in <a href="https://en.wikipedia.org/wiki/Cent_%28music%29">cents</a>.
-The range of the value is -1200 to 1200, but we recommend setting it to <a href="https://en.wikipedia.org/wiki/50_Cent">50</a>.</p>
+The range of the value is -1200 to 1200, but we recommend keeping it within a reasonable range for musical purposes.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The range of the value is -1200 to 1200, but we recommend setting it to <a href="https://en.wikipedia.org/wiki/50_Cent">50</a>.</p>
+<div class="tsd-comment tsd-typography"><p>The detuning value in cents. The range is -1200 to 1200, but we recommend keeping it within a reasonable range for musical purposes.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Sound Manager.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#setdetune">setDetune</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104235</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:131031</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setlistenerposition"><span>set<wbr/>Listener<wbr/>Position</span><a href="#setlistenerposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setlistenerposition-1"><span class="tsd-kind-call-signature">setListenerPosition</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setlistenerposition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Sets the X and Y position of the Spatial Audio listener on this Web Audios context.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the X and Y position of the Spatial Audio listener on this Web Audio context.</p>
 <p>If you call this method with no parameters it will default to the center-point of
 the game canvas. Depending on the type of game you're making, you may need to call
 this method constantly to reset the listener position as the camera scrolls.</p>
@@ -847,14 +886,14 @@ this method constantly to reset the listener position as the camera scrolls.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#setlistenerposition">setListenerPosition</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105717</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132681</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setmute"><span>set<wbr/>Mute</span><a href="#setmute" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setmute-1"><span class="tsd-kind-call-signature">setMute</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a><a href="#setmute-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Sets the muted state of all this Sound Manager.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the muted state of this Sound Manager.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -862,9 +901,10 @@ this method constantly to reset the listener position as the camera scrolls.</p>
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p><code>true</code> to mute all sounds, <code>false</code> to unmute them.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a></h4><p>This Sound Manager.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105757</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132722</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="setrate"><span>set<wbr/>Rate</span><a href="#setrate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -881,10 +921,11 @@ and 2.0 doubles the audios playback speed.</p>
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Global playback rate at which all the sounds will be played.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Sound Manager.</p>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#setrate">setRate</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104221</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:131016</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setvolume"><span>set<wbr/>Volume</span><a href="#setvolume" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -899,21 +940,24 @@ and 2.0 doubles the audios playback speed.</p>
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The global volume of this Sound Manager.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a></h4><p>This Sound Manager.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105765</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132731</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="shutdown"><span>shutdown</span><a href="#shutdown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="shutdown-1"><span class="tsd-kind-call-signature">shutdown</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#shutdown-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Removes all listeners.</p>
+<div class="tsd-comment tsd-typography"><p>Removes all listeners from this EventEmitter. This method is called automatically
+by the Scene Systems when the parent Scene shuts down, ensuring that all event
+bindings are cleared and no stale references remain.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#shutdown">shutdown</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:9926</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:10954</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="stopall"><span>stop<wbr/>All</span><a href="#stopall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -925,7 +969,7 @@ and 2.0 doubles the audios playback speed.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#stopall">stopAll</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104165</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130957</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="stopbykey"><span>stop<wbr/>By<wbr/>Key</span><a href="#stopbykey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -940,10 +984,13 @@ and 2.0 doubles the audios playback speed.</p>
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">string</span></span>
 <div class="tsd-comment tsd-typography"><p>Sound asset key.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><ul>
+<li>How many sounds were stopped.</li>
+</ul>
+<aside class="tsd-sources">
 <p>Inherited from <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#stopbykey">stopByKey</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:104171</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130964</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="unlock"><span>unlock</span><a href="#unlock" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -956,7 +1003,7 @@ and 2.0 doubles the audios playback speed.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#unlock">unlock</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105724</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132688</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-external">
 <h3 class="tsd-anchor-link" id="update"><code class="tsd-tag">Protected</code><span>update</span><a href="#update" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-external">
@@ -978,7 +1025,7 @@ and 2.0 doubles the audios playback speed.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_audio_audio-manager.BaseSoundManager.html">BaseSoundManager</a>.<a href="src_audio_audio-manager.BaseSoundManager.html#update">update</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:105745</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:132709</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

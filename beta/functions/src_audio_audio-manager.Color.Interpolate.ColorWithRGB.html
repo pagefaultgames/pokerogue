@@ -16,24 +16,24 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="colorwithrgb"><span class="tsd-kind-call-signature">ColorWithRGB</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">color1</span><span class="tsd-signature-symbol">:</span> <a href="../classes/src_audio_audio-manager.Color.html" class="tsd-signature-type tsd-kind-class">Color</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">r</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">g</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">b</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">length</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.ColorObject.html" class="tsd-signature-type tsd-kind-type-alias">ColorObject</a><a href="#colorwithrgb" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="colorwithrgb"><span class="tsd-kind-call-signature">ColorWithRGB</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">color</span><span class="tsd-signature-symbol">:</span> <a href="../classes/src_audio_audio-manager.Color.html" class="tsd-signature-type tsd-kind-class">Color</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">r</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">g</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">b</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">length</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.ColorObject.html" class="tsd-signature-type tsd-kind-type-alias">ColorObject</a><a href="#colorwithrgb" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Interpolates between the Color object and color values over the length supplied.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">color1</span>: <a href="../classes/src_audio_audio-manager.Color.html" class="tsd-signature-type tsd-kind-class">Color</a></span>
-<div class="tsd-comment tsd-typography"><p>The first Color object.</p>
+<li><span><span class="tsd-kind-parameter">color</span>: <a href="../classes/src_audio_audio-manager.Color.html" class="tsd-signature-type tsd-kind-class">Color</a></span>
+<div class="tsd-comment tsd-typography"><p>The Color object.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">r</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Red value.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">g</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>Blue value.</p>
+<div class="tsd-comment tsd-typography"><p>Green value.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">b</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>Green value.</p>
+<div class="tsd-comment tsd-typography"><p>Blue value.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">length</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Distance to interpolate over. Default 100.</p>
@@ -41,9 +41,10 @@
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Index to start from. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../types/src_audio_audio-manager.ColorObject.html" class="tsd-signature-type tsd-kind-type-alias">ColorObject</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="../types/src_audio_audio-manager.ColorObject.html" class="tsd-signature-type tsd-kind-type-alias">ColorObject</a></h4><p>An object containing the interpolated color values.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:8885</li></ul></aside></div></li></ul></section></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:9537</li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -29,11 +29,12 @@ Should be applied as a mixin and not used directly.</p>
 <li><a href="../classes/src_audio_audio-manager.Shape.html" class="tsd-signature-type tsd-kind-class">Shape</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
-<li><a href="../classes/src_ui_handlers_title-ui-handler.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.TilemapLayer.html" class="tsd-signature-type tsd-kind-class">TilemapLayer</a></li>
+<li><a href="../classes/src_audio_audio-manager.Stamp.html" class="tsd-signature-type tsd-kind-class">Stamp</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TilemapLayerBase.html" class="tsd-signature-type tsd-kind-class">TilemapLayerBase</a></li>
 <li><a href="../classes/src_phases_form-change-phase.Video.html" class="tsd-signature-type tsd-kind-class">Video</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15606</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19586</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -59,23 +60,25 @@ Should be applied as a mixin and not used directly.</p>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="displayoriginx"><span>display<wbr/>Origin<wbr/>X</span><a href="#displayoriginx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">displayOriginX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The horizontal display origin of this Game Object.
-The origin is a normalized value between 0 and 1.
-The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.</p>
+<div class="tsd-comment tsd-typography"><p>The horizontal display origin of this Game Object, expressed in pixels.
+Unlike <code>originX</code>, which is a normalized value between 0 and 1, the display origin is the
+calculated pixel offset derived from the Game Object's width multiplied by its <code>originX</code> value.
+Setting this property updates <code>originX</code> accordingly.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15628</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19609</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="displayoriginy"><span>display<wbr/>Origin<wbr/>Y</span><a href="#displayoriginy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">displayOriginY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The vertical display origin of this Game Object.
-The origin is a normalized value between 0 and 1.
-The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.</p>
+<div class="tsd-comment tsd-typography"><p>The vertical display origin of this Game Object, expressed in pixels.
+Unlike <code>originY</code>, which is a normalized value between 0 and 1, the display origin is the
+calculated pixel offset derived from the Game Object's height multiplied by its <code>originY</code> value.
+Setting this property updates <code>originY</code> accordingly.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15634</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19616</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
-<h3 class="tsd-anchor-link" id="originx"><code class="tsd-tag">Readonly</code><span>origin<wbr/>X</span><a href="#originx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="originx"><span>origin<wbr/>X</span><a href="#originx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">originX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The horizontal origin of this Game Object.
 The origin maps the relationship between the size and position of the Game Object.
@@ -84,9 +87,9 @@ Setting the value to 0 means the position now relates to the left of the Game Ob
 Set this value with <code>setOrigin()</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15614</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19594</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
-<h3 class="tsd-anchor-link" id="originy"><code class="tsd-tag">Readonly</code><span>origin<wbr/>Y</span><a href="#originy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="originy"><span>origin<wbr/>Y</span><a href="#originy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">originY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The vertical origin of this Game Object.
 The origin maps the relationship between the size and position of the Game Object.
@@ -95,7 +98,7 @@ Setting the value to 0 means the position now relates to the top of the Game Obj
 Set this value with <code>setOrigin()</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15622</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19602</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -117,9 +120,10 @@ The difference between this and setting the origin is that you can use pixel val
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The vertical display origin value. If not defined it will be set to the value of <code>x</code>. Default x.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15653</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19641</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setorigin"><span>set<wbr/>Origin</span><a href="#setorigin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -138,20 +142,25 @@ The difference between this and setting the origin is that you can use pixel val
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The vertical origin value. If not defined it will be set to the value of <code>x</code>. Default x.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15642</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19625</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setoriginfromframe"><span>set<wbr/>Origin<wbr/>From<wbr/>Frame</span><a href="#setoriginfromframe" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setoriginfromframe-1"><span class="tsd-kind-call-signature">setOriginFromFrame</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setoriginfromframe-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Sets the origin of this Game Object based on the Pivot values in its Frame.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the origin of this Game Object based on the Pivot values in its Frame.
+If the Frame has a custom pivot point defined, the origin is set to match it.
+If the Frame does not have a custom pivot, this method falls back to <code>setOrigin()</code>,
+resetting the origin to the default value of 0.5 for both axes.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15646</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19633</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="updatedisplayorigin"><span>update<wbr/>Display<wbr/>Origin</span><a href="#updatedisplayorigin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -159,11 +168,12 @@ The difference between this and setting the origin is that you can use pixel val
 <div class="tsd-signature tsd-anchor-link" id="updatedisplayorigin-1"><span class="tsd-kind-call-signature">updateDisplayOrigin</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#updatedisplayorigin-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Updates the Display Origin cached values internally stored on this Game Object.
-You don't usually call this directly, but it is exposed for edge-cases where you may.</p>
+You don't usually call this directly, but it is exposed for edge-cases where you may.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15658</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19647</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

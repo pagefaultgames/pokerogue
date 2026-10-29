@@ -13,7 +13,12 @@
 <h1>Interface BlendMode</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Provides methods used for setting the blend mode of a Game Object.
-Should be applied as a mixin and not used directly.</p>
+Blend modes control how a Game Object is composited onto the display when rendered.
+They determine how the pixels of the object are blended with the pixels already on screen,
+enabling effects such as additive lighting, screen blending, and erasing.</p>
+<p>This component is designed to be applied as a mixin to Game Objects and should not be
+used directly. Any Game Object that mixes in this component gains the <code>blendMode</code> property
+and the <code>setBlendMode</code> method.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">BlendMode</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#blendmode">blendMode</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setblendmode-1">setBlendMode</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
 <section class="tsd-panel">
@@ -29,11 +34,12 @@ Should be applied as a mixin and not used directly.</p>
 <li><a href="../classes/src_audio_audio-manager.Shape.html" class="tsd-signature-type tsd-kind-class">Shape</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
-<li><a href="../classes/src_ui_handlers_title-ui-handler.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.TilemapLayer.html" class="tsd-signature-type tsd-kind-class">TilemapLayer</a></li>
+<li><a href="../classes/src_audio_audio-manager.Stamp.html" class="tsd-signature-type tsd-kind-class">Stamp</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TilemapLayerBase.html" class="tsd-signature-type tsd-kind-class">TilemapLayerBase</a></li>
 <li><a href="../classes/src_phases_form-change-phase.Video.html" class="tsd-signature-type tsd-kind-class">Video</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14790</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18130</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -67,11 +73,11 @@ Should be applied as a mixin and not used directly.</p>
 <p>You can also create your own custom Blend Modes in WebGL.</p>
 <p>Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
 on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
-reasons try to be careful about the construction of your Scene and the frequency of which blend modes
+reasons try to be careful about the construction of your Scene and the frequency with which blend modes
 are used.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14813</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18153</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -95,7 +101,7 @@ are used.</p>
 <p>You can also create your own custom Blend Modes in WebGL.</p>
 <p>Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
 on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
-reasons try to be careful about the construction of your Scene and the frequency in which blend modes
+reasons try to be careful about the construction of your Scene and the frequency with which blend modes
 are used.</p>
 </div>
 <div class="tsd-parameters">
@@ -104,9 +110,10 @@ are used.</p>
 <li><span><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="../enums/src_audio_audio-manager.BlendModes.html" class="tsd-signature-type tsd-kind-enum">BlendModes</a></span>
 <div class="tsd-comment tsd-typography"><p>The BlendMode value. Either a string, a CONST or a number.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14837</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18178</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

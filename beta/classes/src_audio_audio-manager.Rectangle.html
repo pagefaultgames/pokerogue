@@ -12,10 +12,16 @@
 <li><a href="" aria-current="page">Rectangle</a></li></ul>
 <h1>Class Rectangle</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Encapsulates a 2D rectangle defined by its corner point in the top-left and its extends in x (width) and y (height)</p>
+<div class="tsd-comment tsd-typography"><p>A Rectangle is an axis-aligned region of 2D space defined by its top-left corner position (<code>x</code>, <code>y</code>) and its
+dimensions (<code>width</code>, <code>height</code>). It is one of the core geometric primitives in Phaser and is used extensively
+throughout the framework for bounds checking, camera viewports, hit areas, culling regions, and UI layout.</p>
+<p>Rectangles support containment tests, perimeter point sampling, and many other geometric operations available
+via the <code>Phaser.Geom.Rectangle</code> static methods. The <code>left</code>, <code>right</code>, <code>top</code>, <code>bottom</code>, <code>centerX</code>, and <code>centerY</code>
+properties provide convenient access to derived positional values and can be set directly to reposition or
+resize the Rectangle.</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58841</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80696</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -119,7 +125,7 @@
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58849</li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80704</li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -130,28 +136,28 @@
 Changing the bottom property of a Rectangle object has no effect on the x, y and width properties, but does change the height property.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59272</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81187</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="centerx"><span>center<wbr/>X</span><a href="#centerx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">centerX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The x coordinate of the center of the Rectangle.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59277</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81192</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="centery"><span>center<wbr/>Y</span><a href="#centery" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">centerY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The y coordinate of the center of the Rectangle.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59282</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81197</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="height"><span>height</span><a href="#height" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The height of the Rectangle, i.e. the distance between its top side (defined by <code>y</code>) and its bottom side.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59159</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81061</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="left"><span>left</span><a href="#left" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">left</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -159,7 +165,7 @@ Changing the bottom property of a Rectangle object has no effect on the x, y and
 Changing the left property of a Rectangle object has no effect on the y and height properties. However it does affect the width property, whereas changing the x value does not affect the width property.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59254</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81169</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="right"><span>right</span><a href="#right" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">right</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -167,7 +173,7 @@ Changing the left property of a Rectangle object has no effect on the y and heig
 Changing the right property of a Rectangle object has no effect on the x, y and height properties, however it does affect the width property.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59260</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81175</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="top"><span>top</span><a href="#top" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">top</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -175,7 +181,7 @@ Changing the right property of a Rectangle object has no effect on the x, y and 
 However it does affect the height property, whereas changing the y value does not affect the height property.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59266</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81181</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="type"><code class="tsd-tag">Readonly</code><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -183,28 +189,28 @@ However it does affect the height property, whereas changing the y value does no
 Used for fast type comparisons.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59139</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81041</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="width"><span>width</span><a href="#width" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The width of the Rectangle, i.e. the distance between its left side (defined by <code>x</code>) and its right side.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59154</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81056</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="x"><span>x</span><a href="#x" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The X coordinate of the top left corner of the Rectangle.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59144</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81046</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="y"><span>y</span><a href="#y" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">y</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The Y coordinate of the top left corner of the Rectangle.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59149</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81051</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -225,9 +231,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The Y coordinate of the point to check.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the point is within the Rectangle's bounds, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59166</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81069</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getlinea"><span>get<wbr/>Line<wbr/>A</span><a href="#getlinea" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -246,9 +253,10 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">line</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlineao">O</a></span>
 <div class="tsd-comment tsd-typography"><p>A Line object to set the results in. If <code>undefined</code> a new Line will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlineao">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlineao">O</a></h4><p>A Line object that corresponds to the top of this Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59230</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81142</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getlineb"><span>get<wbr/>Line<wbr/>B</span><a href="#getlineb" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -267,9 +275,10 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">line</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlinebo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>A Line object to set the results in. If <code>undefined</code> a new Line will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlinebo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlinebo">O</a></h4><p>A Line object that corresponds to the right of this Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59236</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81149</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getlinec"><span>get<wbr/>Line<wbr/>C</span><a href="#getlinec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -288,9 +297,10 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">line</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlineco">O</a></span>
 <div class="tsd-comment tsd-typography"><p>A Line object to set the results in. If <code>undefined</code> a new Line will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlineco">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlineco">O</a></h4><p>A Line object that corresponds to the bottom of this Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59242</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81156</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getlined"><span>get<wbr/>Line<wbr/>D</span><a href="#getlined" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -309,14 +319,15 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">line</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlinedo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>A Line object to set the results in. If <code>undefined</code> a new Line will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlinedo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getlinedo">O</a></h4><p>A Line object that corresponds to the left of this Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59248</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81163</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoint"><span>get<wbr/>Point</span><a href="#getpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoint-1"><span class="tsd-kind-call-signature">getPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><a href="#getpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoint-1"><span class="tsd-kind-call-signature">getPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><a href="#getpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Calculates the coordinates of a point at a certain <code>position</code> on the Rectangle's perimeter.</p>
 <p>The <code>position</code> is a fraction between 0 and 1 which defines how far into the perimeter the point is.</p>
@@ -325,7 +336,7 @@ Used for fast type comparisons.</p>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -333,23 +344,24 @@ Used for fast type comparisons.</p>
 <div class="tsd-comment tsd-typography"><p>The normalized distance into the Rectangle's perimeter to return.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">output</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An object to update with the <code>x</code> and <code>y</code> coordinates of the point.</p>
+<div class="tsd-comment tsd-typography"><p>A Vector2 instance to update with the <code>x</code> and <code>y</code> coordinates of the point.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a></h4><p>The updated <code>output</code> object, or a new Vector2 if no <code>output</code> object was given.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59177</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81081</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoints"><span>get<wbr/>Points</span><a href="#getpoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoints-1"><span class="tsd-kind-call-signature">getPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><a href="#getpoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoints-1"><span class="tsd-kind-call-signature">getPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><a href="#getpoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns an array of points from the perimeter of the Rectangle, each spaced out based on the quantity or step required.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
+<li><span id="getpointso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -362,52 +374,56 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">output</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a></span>
 <div class="tsd-comment tsd-typography"><p>An array to which to append the points.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a></h4><p>The modified <code>output</code> array, or a new array if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59185</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81090</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getrandompoint"><span>get<wbr/>Random<wbr/>Point</span><a href="#getrandompoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getrandompoint-1"><span class="tsd-kind-call-signature">getRandomPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><a href="#getrandompoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getrandompoint-1"><span class="tsd-kind-call-signature">getRandomPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">vec</span><span class="tsd-signature-symbol">?:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><a href="#getrandompoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns a random point within the Rectangle's bounds.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getrandompointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getrandompointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">point</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a></span>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">vec</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span>
 <div class="tsd-comment tsd-typography"><p>The object in which to store the <code>x</code> and <code>y</code> coordinates of the point.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a></h4><p>The updated <code>vec</code>, or a new Vector2 if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59191</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81097</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="isempty"><span>is<wbr/>Empty</span><a href="#isempty" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="isempty-1"><span class="tsd-kind-call-signature">isEmpty</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#isempty-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Determines if the Rectangle is empty. A Rectangle is empty if its width or height is less than or equal to 0.</p>
+<div class="tsd-comment tsd-typography"><p>Determines if the Rectangle is empty. A Rectangle is empty if its width or height is less than or equal to 0.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the Rectangle is empty, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59224</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81135</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setempty"><span>set<wbr/>Empty</span><a href="#setempty" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setempty-1"><span class="tsd-kind-call-signature">setEmpty</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setempty-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Resets the position, width, and height of the Rectangle to 0.</p>
+<div class="tsd-comment tsd-typography"><p>Resets the position, width, and height of the Rectangle to 0.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Rectangle object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59205</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81113</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setposition"><span>set<wbr/>Position</span><a href="#setposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -425,9 +441,10 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The Y coordinate of the top left corner of the Rectangle. Default x.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Rectangle object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59212</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81121</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setsize"><span>set<wbr/>Size</span><a href="#setsize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -445,9 +462,10 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">height</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The height to set the Rectangle to. Default width.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Rectangle object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59219</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81129</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setto"><span>set<wbr/>To</span><a href="#setto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -471,9 +489,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">height</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The height of the Rectangle.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Rectangle object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59200</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81107</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="area"><code class="tsd-tag">Static</code><span>Area</span><a href="#area" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -488,9 +507,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The rectangle to calculate the area of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The area of the Rectangle object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58855</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80711</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="ceil"><code class="tsd-tag">Static</code><span>Ceil</span><a href="#ceil" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -509,9 +529,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#ceilo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to adjust.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#ceilo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#ceilo">O</a></h4><p>The adjusted Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58861</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80718</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="ceilall"><code class="tsd-tag">Static</code><span>Ceil<wbr/>All</span><a href="#ceilall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -530,9 +551,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#ceilallo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to modify.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#ceilallo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#ceilallo">O</a></h4><p>The modified Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58867</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80725</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="centeron"><code class="tsd-tag">Static</code><span>Center<wbr/>On</span><a href="#centeron" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -557,9 +579,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The Y coordinate of the Rectangle's center.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#centerono">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#centerono">O</a></h4><p>The centered rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58875</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80734</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="clone"><code class="tsd-tag">Static</code><span>Clone</span><a href="#clone" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -574,9 +597,10 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">source</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to clone.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></h4><p>The newly created Rectangle, which is separate from the given one.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58881</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80741</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="contains-2"><code class="tsd-tag">Static</code><span>Contains</span><a href="#contains-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -597,14 +621,15 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The Y coordinate of the point to check.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the point is within the Rectangle's bounds, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58889</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80750</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="containspoint"><code class="tsd-tag">Static</code><span>Contains<wbr/>Point</span><a href="#containspoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="containspoint-1"><span class="tsd-kind-call-signature">ContainsPoint</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#containspoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="containspoint-1"><span class="tsd-kind-call-signature">ContainsPoint</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">vec</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#containspoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Determines whether the specified point is contained within the rectangular region defined by this Rectangle object.</p>
 </div>
@@ -614,32 +639,36 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle object.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">point</span>: <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span>
-<div class="tsd-comment tsd-typography"><p>The point object to be checked. Can be a Phaser Point object or any object with x and y values.</p>
+<li><span><span class="tsd-kind-parameter">vec</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span>
+<div class="tsd-comment tsd-typography"><p>The Vector2 object to check the coordinates of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>A value of true if the Rectangle object contains the specified point, otherwise false.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58896</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80758</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="containsrect"><code class="tsd-tag">Static</code><span>Contains<wbr/>Rect</span><a href="#containsrect" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="containsrect-1"><span class="tsd-kind-call-signature">ContainsRect</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rectA</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">rectB</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#containsrect-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Tests if one rectangle fully contains another.</p>
+<div class="tsd-comment tsd-typography"><p>Tests if one rectangle fully contains another. A rectangle is considered fully contained
+if all four of its edges (left, right, top, and bottom) lie strictly within the bounds
+of the outer rectangle. Rectangles that merely touch or overlap are not considered contained.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">rectA</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
-<div class="tsd-comment tsd-typography"><p>The first rectangle.</p>
+<div class="tsd-comment tsd-typography"><p>The outer rectangle to test as the container.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">rectB</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
-<div class="tsd-comment tsd-typography"><p>The second rectangle.</p>
+<div class="tsd-comment tsd-typography"><p>The inner rectangle to test for full containment within rectA.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True only if rectA fully contains rectB.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58903</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80768</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="copyfrom"><code class="tsd-tag">Static</code><span>Copy<wbr/>From</span><a href="#copyfrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -661,17 +690,18 @@ Used for fast type comparisons.</p>
 <li><span><span class="tsd-kind-parameter">dest</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#copyfromo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The destination Rectangle to copy the values to.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#copyfromo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#copyfromo">O</a></h4><p>The destination Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58910</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80776</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="decompose"><code class="tsd-tag">Static</code><span>Decompose</span><a href="#decompose" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="decompose-1"><span class="tsd-kind-call-signature">Decompose</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><a href="#decompose-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Create an array of points for each corner of a Rectangle
-If an array is specified, each point object will be added to the end of the array, otherwise a new array will be created.</p>
+<div class="tsd-comment tsd-typography"><p>Creates an array of plain <code>{x, y}</code> point objects for each of the four corners of a Rectangle, in the order: top-left, top-right, bottom-right, bottom-left.
+If an output array is provided, each point object will be pushed to the end of it, otherwise a new array will be created and returned.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -682,29 +712,34 @@ If an array is specified, each point object will be added to the end of the arra
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>If provided, each point will be added to this array.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4><p>Will return the array you specified or a new array containing the points of the Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58918</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80785</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="equals"><code class="tsd-tag">Static</code><span>Equals</span><a href="#equals" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="equals-1"><span class="tsd-kind-call-signature">Equals</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">toCompare</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#equals-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Compares the <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code> properties of two rectangles.</p>
+<div class="tsd-comment tsd-typography"><p>Compares the <code>x</code>, <code>y</code>, <code>width</code> and <code>height</code> properties of two rectangles.
+Returns <code>true</code> only if all four values match exactly using strict equality.
+This function does not consider rectangles with the same area but different
+positions or dimensions to be equal.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">rect</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
-<div class="tsd-comment tsd-typography"><p>Rectangle A</p>
+<div class="tsd-comment tsd-typography"><p>The first rectangle to compare.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">toCompare</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
-<div class="tsd-comment tsd-typography"><p>Rectangle B</p>
+<div class="tsd-comment tsd-typography"><p>The second rectangle to compare against.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the rectangles' properties are an exact match, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58925</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80796</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="fitinside"><code class="tsd-tag">Static</code><span>Fit<wbr/>Inside</span><a href="#fitinside" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -729,9 +764,10 @@ aspect ratio.</p>
 <li><span><span class="tsd-kind-parameter">source</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The source rectangle to envelop the target in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#fitinsideo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#fitinsideo">O</a></h4><p>The modified target rectangle instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58936</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80808</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="fitoutside"><code class="tsd-tag">Static</code><span>Fit<wbr/>Outside</span><a href="#fitoutside" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -756,9 +792,10 @@ aspect ratio.</p>
 <li><span><span class="tsd-kind-parameter">source</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The source rectangle to envelope the target in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#fitoutsideo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#fitoutsideo">O</a></h4><p>The modified target rectangle instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58947</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80820</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="floor"><code class="tsd-tag">Static</code><span>Floor</span><a href="#floor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -777,9 +814,10 @@ aspect ratio.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#flooro">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The rectangle to floor the top left X and Y coordinates of</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#flooro">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#flooro">O</a></h4><p>The rectangle that was passed to this function with its coordinates floored.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58953</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80827</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="floorall"><code class="tsd-tag">Static</code><span>Floor<wbr/>All</span><a href="#floorall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -798,16 +836,17 @@ aspect ratio.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#floorallo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to adjust.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#floorallo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#floorallo">O</a></h4><p>The adjusted Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58959</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80834</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="frompoints"><code class="tsd-tag">Static</code><span>From<wbr/>Points</span><a href="#frompoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="frompoints-1"><span class="tsd-kind-call-signature">FromPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#frompointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">points</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#frompointso">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#frompointso">O</a><a href="#frompoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Constructs new Rectangle or repositions and resizes an existing Rectangle so that all of the given points are on or within its bounds.</p>
+<div class="tsd-comment tsd-typography"><p>Constructs a new Rectangle or repositions and resizes an existing Rectangle so that all of the given points are on or within its bounds.</p>
 <p>The <code>points</code> parameter is an array of Point-like objects:</p>
 <pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">points</span><span class="hl-1"> = [</span><br/><span class="hl-1">    [</span><span class="hl-8">100</span><span class="hl-1">, </span><span class="hl-8">200</span><span class="hl-1">],</span><br/><span class="hl-1">    [</span><span class="hl-8">200</span><span class="hl-1">, </span><span class="hl-8">400</span><span class="hl-1">],</span><br/><span class="hl-1">    { </span><span class="hl-4">x:</span><span class="hl-1"> </span><span class="hl-8">30</span><span class="hl-1">, </span><span class="hl-4">y:</span><span class="hl-1"> </span><span class="hl-8">60</span><span class="hl-1"> }</span><br/><span class="hl-1">]</span>
 </code><button type="button">Copy</button></pre>
@@ -826,9 +865,10 @@ aspect ratio.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#frompointso">O</a></span>
 <div class="tsd-comment tsd-typography"><p>Optional Rectangle to adjust.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#frompointso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#frompointso">O</a></h4><p>The adjusted <code>out</code> Rectangle, or a new Rectangle if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58976</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80852</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="fromxy"><code class="tsd-tag">Static</code><span>From<wbr/>XY</span><a href="#fromxy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -859,9 +899,10 @@ aspect ratio.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#fromxyo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>Optional Rectangle to adjust.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#fromxyo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#fromxyo">O</a></h4><p>The adjusted <code>out</code> Rectangle, or a new Rectangle if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58986</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80863</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getaspectratio"><code class="tsd-tag">Static</code><span>Get<wbr/>Aspect<wbr/>Ratio</span><a href="#getaspectratio" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -876,21 +917,22 @@ aspect ratio.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The rectangle.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The width/height ratio of the rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58992</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80870</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getcenter"><code class="tsd-tag">Static</code><span>Get<wbr/>Center</span><a href="#getcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getcenter-1"><span class="tsd-kind-call-signature">GetCenter</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a><a href="#getcenter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getcenter-1"><span class="tsd-kind-call-signature">GetCenter</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a><a href="#getcenter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns the center of a Rectangle as a Point.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getcentero"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getcentero"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -898,16 +940,17 @@ aspect ratio.</p>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to get the center of.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a></span>
-<div class="tsd-comment tsd-typography"><p>Optional point-like object to update with the center coordinates.</p>
+<div class="tsd-comment tsd-typography"><p>Optional Vector2 object to update with the center coordinates.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a></h4><p>The modified <code>out</code> object, or a new Vector2 if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:58999</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80878</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoint-2"><code class="tsd-tag">Static</code><span>Get<wbr/>Point</span><a href="#getpoint-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoint-3"><span class="tsd-kind-call-signature">GetPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rectangle</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><a href="#getpoint-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoint-3"><span class="tsd-kind-call-signature">GetPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rectangle</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><a href="#getpoint-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Calculates the coordinates of a point at a certain <code>position</code> on the Rectangle's perimeter.</p>
 <p>The <code>position</code> is a fraction between 0 and 1 which defines how far into the perimeter the point is.</p>
@@ -916,7 +959,7 @@ aspect ratio.</p>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointo-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getpointo-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -927,54 +970,56 @@ aspect ratio.</p>
 <div class="tsd-comment tsd-typography"><p>The normalized distance into the Rectangle's perimeter to return.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An object to update with the <code>x</code> and <code>y</code> coordinates of the point.</p>
+<div class="tsd-comment tsd-typography"><p>A Vector2 object to update with the <code>x</code> and <code>y</code> coordinates of the point.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a></h4><p>The updated <code>out</code> object, or a new Vector2 if no <code>out</code> object was given.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59011</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80891</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoints-2"><code class="tsd-tag">Static</code><span>Get<wbr/>Points</span><a href="#getpoints-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoints-3"><span class="tsd-kind-call-signature">GetPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">rectangle</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">step</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><a href="#getpoints-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoints-3"><span class="tsd-kind-call-signature">GetPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">rectangle</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><a href="#getpoints-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Return an array of points from the perimeter of the rectangle, each spaced out based on the quantity or step required.</p>
+<div class="tsd-comment tsd-typography"><p>Return an array of Vector2 points from the perimeter of the rectangle, each spaced out based on the quantity or step required.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointso-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
+<li><span id="getpointso-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">rectangle</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle object to get the points from.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">step</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>Step between points. Used to calculate the number of points to return when quantity is falsey. Ignored if quantity is positive.</p>
-</div></li>
 <li><span><span class="tsd-kind-parameter">quantity</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The number of evenly spaced points from the rectangles perimeter to return. If falsey, step param will be used to calculate the number of points.</p>
+<div class="tsd-comment tsd-typography"><p>The number of evenly spaced points from the rectangle's perimeter to return. If falsey, stepRate param will be used to calculate the number of points.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">stepRate</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>Step between points. Used to calculate the number of points to return when quantity is falsey. Ignored if quantity is positive.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a></span>
 <div class="tsd-comment tsd-typography"><p>An optional array to store the points in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a></h4><p>An array of Vector2 points from the perimeter of the rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59020</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80901</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getsize"><code class="tsd-tag">Static</code><span>Get<wbr/>Size</span><a href="#getsize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getsize-1"><span class="tsd-kind-call-signature">GetSize</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a><a href="#getsize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getsize-1"><span class="tsd-kind-call-signature">GetSize</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a><a href="#getsize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Returns the size of the Rectangle, expressed as a Point object.
+<div class="tsd-comment tsd-typography"><p>Returns the size of the Rectangle, expressed as a Vector2 object.
 With the value of the <code>width</code> as the <code>x</code> property and the <code>height</code> as the <code>y</code> property.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getsizeo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getsizeo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -982,11 +1027,12 @@ With the value of the <code>width</code> as the <code>x</code> property and the 
 <div class="tsd-comment tsd-typography"><p>The Rectangle to get the size from.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>The Point object to store the size in. If not given, a new Point instance is created.</p>
+<div class="tsd-comment tsd-typography"><p>The Vector2 object to store the size in. If not given, a new Vector2 instance is created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getsizeo">O</a></h4><p>A Vector2 object where <code>x</code> holds the width and <code>y</code> holds the height of the Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59028</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80910</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="inflate"><code class="tsd-tag">Static</code><span>Inflate</span><a href="#inflate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1012,9 +1058,10 @@ With the value of the <code>width</code> as the <code>x</code> property and the 
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>How many pixels the top and the bottom side should be moved by vertically.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#inflateo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#inflateo">O</a></h4><p>The inflated Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59038</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80921</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="intersection"><code class="tsd-tag">Static</code><span>Intersection</span><a href="#intersection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1041,22 +1088,28 @@ If they do not intersect, the <code>out</code> Rectangle will have a width and h
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>A Rectangle to store the intersection results in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#intersectiono">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#intersectiono">O</a></h4><p>The intersection result. If the width and height are zero, no intersection occurred.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59048</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80932</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="marchingants"><code class="tsd-tag">Static</code><span>Marching<wbr/>Ants</span><a href="#marchingants" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="marchingants-1"><span class="tsd-kind-call-signature">MarchingAnts</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">step</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a><a href="#marchingants-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="marchingants-1"><span class="tsd-kind-call-signature">MarchingAnts</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">step</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a><a href="#marchingants-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Returns an array of points from the perimeter of the Rectangle, where each point is spaced out based
-on either the <code>step</code> value, or the <code>quantity</code>.</p>
+<div class="tsd-comment tsd-typography"><p>Returns an array of Vector2 points evenly distributed around the perimeter of the Rectangle. This is
+commonly used to create a &quot;marching ants&quot; selection effect, where the returned points are used to
+animate a dashed outline that appears to march around the border of the rectangle.</p>
+<p>You can control the spacing of the points either by providing a pixel <code>step</code> distance between each
+point, or by specifying the total <code>quantity</code> of points to distribute evenly around the full perimeter.
+If both are omitted, an empty array is returned. If <code>step</code> is provided, <code>quantity</code> is derived from
+the perimeter length divided by the step. If only <code>quantity</code> is provided, the step is derived instead.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="marchingantso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
+<li><span id="marchingantso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -1072,14 +1125,15 @@ on either the <code>step</code> value, or the <code>quantity</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a></span>
 <div class="tsd-comment tsd-typography"><p>An array in which the perimeter points will be stored. If not given, a new array instance is created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#marchingantso">O</a></h4><p>An array containing the perimeter points from the Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59058</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80949</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="mergepoints"><code class="tsd-tag">Static</code><span>Merge<wbr/>Points</span><a href="#mergepoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="mergepoints-1"><span class="tsd-kind-call-signature">MergePoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">target</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">points</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a><a href="#mergepoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="mergepoints-1"><span class="tsd-kind-call-signature">MergePoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">target</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">points</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a><a href="#mergepoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Merges a Rectangle with a list of points by repositioning and/or resizing it such that all points are located on or within its bounds.</p>
 </div>
@@ -1093,12 +1147,13 @@ on either the <code>step</code> value, or the <code>quantity</code>.</p>
 <li><span><span class="tsd-kind-parameter">target</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle which should be merged.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">points</span>: <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span>
-<div class="tsd-comment tsd-typography"><p>An array of Points (or any object with public <code>x</code> and <code>y</code> properties) which should be merged with the Rectangle.</p>
+<li><span><span class="tsd-kind-parameter">points</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>An array of Vector2 objects which should be merged with the Rectangle.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergepointso">O</a></h4><p>The modified Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59065</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80957</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="mergerect"><code class="tsd-tag">Static</code><span>Merge<wbr/>Rect</span><a href="#mergerect" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1121,9 +1176,10 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">source</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>Rectangle that will be merged into target rectangle.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergerecto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergerecto">O</a></h4><p>Modified target rectangle that contains source rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59073</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80966</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="mergexy"><code class="tsd-tag">Static</code><span>Merge<wbr/>XY</span><a href="#mergexy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1148,16 +1204,17 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The Y coordinate of the point which should be merged.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergexyo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#mergexyo">O</a></h4><p>The modified <code>target</code> Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59081</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80975</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="offset"><code class="tsd-tag">Static</code><span>Offset</span><a href="#offset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="offset-1"><span class="tsd-kind-call-signature">Offset</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a><a href="#offset-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Nudges (translates) the top left corner of a Rectangle by a given offset.</p>
+<div class="tsd-comment tsd-typography"><p>Translates a Rectangle by the given horizontal and vertical amounts, moving its position while preserving its size.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
@@ -1175,16 +1232,17 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The distance to move the Rectangle vertically.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a></h4><p>The adjusted Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59089</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80984</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="offsetpoint"><code class="tsd-tag">Static</code><span>Offset<wbr/>Point</span><a href="#offsetpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="offsetpoint-1"><span class="tsd-kind-call-signature">OffsetPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a><a href="#offsetpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="offsetpoint-1"><span class="tsd-kind-call-signature">OffsetPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">vec</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a><a href="#offsetpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Nudges (translates) the top-left corner of a Rectangle by the coordinates of a point (translation vector).</p>
+<div class="tsd-comment tsd-typography"><p>Translates the top-left corner of a Rectangle by the coordinates of a translation vector.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
@@ -1196,12 +1254,13 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to adjust.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">point</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span>
-<div class="tsd-comment tsd-typography"><p>The point whose coordinates should be used as an offset.</p>
+<li><span><span class="tsd-kind-parameter">vec</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span>
+<div class="tsd-comment tsd-typography"><p>The Vector2 point whose coordinates should be used as an offset.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#offsetpointo">O</a></h4><p>The adjusted Rectangle.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59096</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80992</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="overlaps"><code class="tsd-tag">Static</code><span>Overlaps</span><a href="#overlaps" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1219,9 +1278,10 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">rectB</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The second Rectangle to check.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the two Rectangles overlap, <code>false</code> otherwise.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59103</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81000</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="perimeter"><code class="tsd-tag">Static</code><span>Perimeter</span><a href="#perimeter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1236,21 +1296,22 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">rect</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to use.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The perimeter of the Rectangle, equal to <code>(width * 2) + (height * 2)</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59109</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81007</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="perimeterpoint"><code class="tsd-tag">Static</code><span>Perimeter<wbr/>Point</span><a href="#perimeterpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="perimeterpoint-1"><span class="tsd-kind-call-signature">PerimeterPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rectangle</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">angle</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a><a href="#perimeterpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="perimeterpoint-1"><span class="tsd-kind-call-signature">PerimeterPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">rectangle</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">angle</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a><a href="#perimeterpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Returns a Point from the perimeter of a Rectangle based on the given angle.</p>
+<div class="tsd-comment tsd-typography"><p>Returns a point from the perimeter of a Rectangle based on the given angle, measured in degrees from the center of the Rectangle.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="perimeterpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="perimeterpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -1261,23 +1322,24 @@ Neither rectangle should have a negative width or height.</p>
 <div class="tsd-comment tsd-typography"><p>The angle of the point, in degrees.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>The Point object to store the position in. If not given, a new Point instance is created.</p>
+<div class="tsd-comment tsd-typography"><p>The Vector2 object to store the position in. If not given, a new Vector2 instance is created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#perimeterpointo">O</a></h4><p>A Vector2 object holding the coordinates of the point on the Rectangle's perimeter.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59117</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81016</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="random"><code class="tsd-tag">Static</code><span>Random</span><a href="#random" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="random-1"><span class="tsd-kind-call-signature">Random</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><a href="#random-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="random-1"><span class="tsd-kind-call-signature">Random</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><a href="#random-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns a random point within a Rectangle.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="randomo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="randomo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -1287,22 +1349,24 @@ Neither rectangle should have a negative width or height.</p>
 <li><span><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The object to update with the point's coordinates.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a></h4><p>The modified <code>out</code> object, or a new Point if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59124</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81024</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="randomoutside"><code class="tsd-tag">Static</code><span>Random<wbr/>Outside</span><a href="#randomoutside" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="randomoutside-1"><span class="tsd-kind-call-signature">RandomOutside</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">outer</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">inner</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a><a href="#randomoutside-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="randomoutside-1"><span class="tsd-kind-call-signature">RandomOutside</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">outer</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">inner</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a><a href="#randomoutside-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Calculates a random point that lies within the <code>outer</code> Rectangle, but outside of the <code>inner</code> Rectangle.
-The inner Rectangle must be fully contained within the outer rectangle.</p>
+The inner Rectangle must be fully contained within the outer rectangle for a point to be generated.
+If <code>inner</code> is not fully contained within <code>outer</code>, the function returns the <code>out</code> vector unchanged.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="randomoutsideo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="randomoutsideo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -1313,11 +1377,12 @@ The inner Rectangle must be fully contained within the outer rectangle.</p>
 <div class="tsd-comment tsd-typography"><p>The inner Rectangle to exclude from the returned point.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>A Point, or Point-like object to store the result in. If not specified, a new Point will be created.</p>
+<div class="tsd-comment tsd-typography"><p>A Vector2 object to store the result in. If not specified, a new Vector2 will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomoutsideo">O</a></h4><p>A Vector2 object containing the random values in its <code>x</code> and <code>y</code> properties.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59133</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81035</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="samedimensions"><code class="tsd-tag">Static</code><span>Same<wbr/>Dimensions</span><a href="#samedimensions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1335,16 +1400,17 @@ The inner Rectangle must be fully contained within the outer rectangle.</p>
 <li><span><span class="tsd-kind-parameter">toCompare</span>: <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a></span>
 <div class="tsd-comment tsd-typography"><p>The second Rectangle object.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the objects have equivalent values for the <code>width</code> and <code>height</code> properties, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59289</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81205</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="scale"><code class="tsd-tag">Static</code><span>Scale</span><a href="#scale" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="scale-1"><span class="tsd-kind-call-signature">Scale</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#scaleo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">rect</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#scaleo">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#scaleo">O</a><a href="#scale-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Scales the width and height of this Rectangle by the given amounts.</p>
+<div class="tsd-comment tsd-typography"><p>Scales the width and height of the given Rectangle by the given factors.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
@@ -1360,11 +1426,12 @@ The inner Rectangle must be fully contained within the outer rectangle.</p>
 <div class="tsd-comment tsd-typography"><p>The factor by which to scale the rectangle horizontally.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The amount by which to scale the rectangle vertically. If this is not specified, the rectangle will be scaled by the factor <code>x</code> in both directions.</p>
+<div class="tsd-comment tsd-typography"><p>The factor by which to scale the rectangle vertically. If this is not specified, the rectangle will be scaled by the factor <code>x</code> in both directions.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#scaleo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#scaleo">O</a></h4><p>The rectangle object with updated <code>width</code> and <code>height</code> properties as calculated from the scaling factor(s).</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59297</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81214</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="union"><code class="tsd-tag">Static</code><span>Union</span><a href="#union" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -1389,9 +1456,10 @@ The inner Rectangle must be fully contained within the outer rectangle.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#uniono">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The Rectangle to store the union in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#uniono">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#uniono">O</a></h4><p>The modified <code>out</code> Rectangle, or a new Rectangle if none was provided.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:59305</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:81223</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

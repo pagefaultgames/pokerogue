@@ -12,10 +12,17 @@
 <li><a href="" aria-current="page">Line</a></li></ul>
 <h1>Class Line</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Defines a Line segment, a part of a line between two endpoints.</p>
+<div class="tsd-comment tsd-typography"><p>Defines a Line segment: a finite portion of a line described by a start point (<code>x1</code>, <code>y1</code>)
+and an end point (<code>x2</code>, <code>y2</code>). Unlike an infinite mathematical line, a Line segment has a
+fixed length and direction.</p>
+<p>Line segments are used throughout Phaser for collision detection, geometry calculations,
+path and boundary definitions, and placement utilities. You can retrieve a point at any
+percentage along the line via <code>getPoint</code>, get an array of evenly-spaced points via
+<code>getPoints</code>, or query the bounding extents through the <code>left</code>, <code>right</code>, <code>top</code>, and <code>bottom</code>
+accessors.</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57576</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80041</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -89,51 +96,55 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x1</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The x coordinate of the lines starting point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the line's starting point. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y1</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The y coordinate of the lines starting point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the line's starting point. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x2</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The x coordinate of the lines ending point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the line's ending point. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y2</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The y coordinate of the lines ending point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the line's ending point. Default 0.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57584</li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80049</li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="bottom"><span>bottom</span><a href="#bottom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">bottom</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The bottom position of the Line.</p>
+<div class="tsd-comment tsd-typography"><p>The bottom-most y coordinate of this Line, i.e. the greater of <code>y1</code> and <code>y2</code>.
+When set, the endpoint that currently holds the larger y value is moved to the new position.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57839</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80339</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="left"><span>left</span><a href="#left" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">left</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The left position of the Line.</p>
+<div class="tsd-comment tsd-typography"><p>The left-most x coordinate of this Line, i.e. the lesser of <code>x1</code> and <code>x2</code>.
+When set, the endpoint that currently holds the smaller x value is moved to the new position.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57824</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80321</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="right"><span>right</span><a href="#right" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">right</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The right position of the Line.</p>
+<div class="tsd-comment tsd-typography"><p>The right-most x coordinate of this Line, i.e. the greater of <code>x1</code> and <code>x2</code>.
+When set, the endpoint that currently holds the larger x value is moved to the new position.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57829</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80327</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="top"><span>top</span><a href="#top" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">top</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The top position of the Line.</p>
+<div class="tsd-comment tsd-typography"><p>The top-most y coordinate of this Line, i.e. the lesser of <code>y1</code> and <code>y2</code>.
+When set, the endpoint that currently holds the smaller y value is moved to the new position.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57834</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80333</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="type"><code class="tsd-tag">Readonly</code><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -141,35 +152,35 @@
 Used for fast type comparisons.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57745</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80233</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="x1"><span>x1</span><a href="#x1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">x1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The x coordinate of the lines starting point.</p>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the line's starting point.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57750</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80238</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="x2"><span>x2</span><a href="#x2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">x2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The x coordinate of the lines ending point.</p>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the line's ending point.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57760</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80248</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="y1"><span>y1</span><a href="#y1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">y1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The y coordinate of the lines starting point.</p>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the line's starting point.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57755</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80243</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="y2"><span>y2</span><a href="#y2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">y2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The y coordinate of the lines ending point.</p>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the line's ending point.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57765</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80253</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -177,14 +188,14 @@ Used for fast type comparisons.</p>
 <h3 class="tsd-anchor-link" id="getpoint"><span>get<wbr/>Point</span><a href="#getpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoint-1"><span class="tsd-kind-call-signature">getPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><a href="#getpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoint-1"><span class="tsd-kind-call-signature">getPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a><a href="#getpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Get a point on a line that's a given percentage along its length.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -192,11 +203,12 @@ Used for fast type comparisons.</p>
 <div class="tsd-comment tsd-typography"><p>A value between 0 and 1, where 0 is the start, 0.5 is the middle and 1 is the end of the line.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">output</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional point, or point-like object, to store the coordinates of the point on the line.</p>
+<div class="tsd-comment tsd-typography"><p>An optional Vector2 object to store the coordinates of the point on the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo">O</a></h4><p>A Vector2 object containing the coordinates of the point on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57772</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80261</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpointa"><span>get<wbr/>Point<wbr/>A</span><a href="#getpointa" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -215,9 +227,10 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">vec2</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointao">O</a></span>
 <div class="tsd-comment tsd-typography"><p>A Vector2 object to set the results in. If <code>undefined</code> a new Vector2 will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointao">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointao">O</a></h4><p>A Vector2 object that corresponds to the start of this Line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57813</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80308</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpointb"><span>get<wbr/>Point<wbr/>B</span><a href="#getpointb" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -236,14 +249,15 @@ Used for fast type comparisons.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">vec2</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointbo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>A Vector2 object to set the results in. If <code>undefined</code> a new Vector2 will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointbo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointbo">O</a></h4><p>A Vector2 object that corresponds to the end of this Line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57819</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80315</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoints"><span>get<wbr/>Points</span><a href="#getpoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoints-1"><span class="tsd-kind-call-signature">getPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><a href="#getpoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoints-1"><span class="tsd-kind-call-signature">getPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a><a href="#getpoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Get a number of points along a line's length.</p>
 <p>Provide a <code>quantity</code> to get an exact number of points along the line.</p>
@@ -253,7 +267,7 @@ providing a <code>stepRate</code>.</p>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
+<li><span id="getpointso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -264,32 +278,35 @@ providing a <code>stepRate</code>.</p>
 <div class="tsd-comment tsd-typography"><p>The distance between each point on the line. When set, <code>quantity</code> is implied and should be set to <code>0</code>.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">output</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional array of Points, or point-like objects, to store the coordinates of the points on the line.</p>
+<div class="tsd-comment tsd-typography"><p>An optional array of Vector2 objects to store the coordinates of the points on the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso">O</a></h4><p>An array of Vector2 objects containing the coordinates of the points on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57785</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80275</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getrandompoint"><span>get<wbr/>Random<wbr/>Point</span><a href="#getrandompoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getrandompoint-1"><span class="tsd-kind-call-signature">getRandomPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><a href="#getrandompoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getrandompoint-1"><span class="tsd-kind-call-signature">getRandomPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a><a href="#getrandompoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get a random Point on the Line.</p>
+<div class="tsd-comment tsd-typography"><p>Returns a randomly chosen point on this Line, selected with uniform distribution along its length.
+If a Vector2 is provided it will be populated with the result and returned; otherwise a new Vector2 is created.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getrandompointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getrandompointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">point</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An instance of a Point to be modified.</p>
+<div class="tsd-comment tsd-typography"><p>An instance of a Vector2 to be modified.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrandompointo">O</a></h4><p>A random point on the Line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57791</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80283</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setfromobjects"><span>set<wbr/>From<wbr/>Objects</span><a href="#setfromobjects" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -307,9 +324,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">end</span>: <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a></span>
 <div class="tsd-comment tsd-typography"><p>Any object with public <code>x</code> and <code>y</code> properties, whose values will be assigned to the x2/y2 components of this Line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Line object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57807</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80301</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setto"><span>set<wbr/>To</span><a href="#setto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -322,20 +340,21 @@ providing a <code>stepRate</code>.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x1</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The x coordinate of the lines starting point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the line's starting point. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y1</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The y coordinate of the lines starting point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the line's starting point. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">x2</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The x coordinate of the lines ending point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the line's ending point. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y2</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The y coordinate of the lines ending point. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the line's ending point. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Line object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57800</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80293</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="angle"><code class="tsd-tag">Static</code><span>Angle</span><a href="#angle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -350,16 +369,17 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the angle of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The angle of the line, in radians.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57590</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80056</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="bresenhampoints"><code class="tsd-tag">Static</code><span>Bresenham<wbr/>Points</span><a href="#bresenhampoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="bresenhampoints-1"><span class="tsd-kind-call-signature">BresenhamPoints</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">results</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">[]</span><a href="#bresenhampoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Using Bresenham's line algorithm this will return an array of all coordinates on this line.</p>
+<div class="tsd-comment tsd-typography"><p>Using Bresenham's line algorithm this will return an array of all coordinates on the given line.</p>
 <p>The <code>start</code> and <code>end</code> points are rounded before this runs as the algorithm works on integers.</p>
 </div>
 <div class="tsd-parameters">
@@ -369,14 +389,15 @@ providing a <code>stepRate</code>.</p>
 <div class="tsd-comment tsd-typography"><p>The line.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">stepRate</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The optional step rate for the points on the line. Default 1.</p>
+<div class="tsd-comment tsd-typography"><p>Controls how densely the points are sampled along the line. A value of 1 returns every integer coordinate; a value of 2 returns every other coordinate, and so on. Default 1.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">results</span>: <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>An optional array to push the resulting coordinates into.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">[]</span></h4><p>The array of coordinates on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57600</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80067</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="centeron"><code class="tsd-tag">Static</code><span>Center<wbr/>On</span><a href="#centeron" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -397,9 +418,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The vertical coordinate to center the line on.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><p>The centered line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57608</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80076</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="clone"><code class="tsd-tag">Static</code><span>Clone</span><a href="#clone" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -414,9 +436,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">source</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The source line to clone.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><p>The cloned line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57614</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80083</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="copyfrom"><code class="tsd-tag">Static</code><span>Copy<wbr/>From</span><a href="#copyfrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -438,16 +461,18 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">dest</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#copyfromo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The destination line to copy the values to.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#copyfromo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#copyfromo">O</a></h4><p>The destination line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57621</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80091</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="equals"><code class="tsd-tag">Static</code><span>Equals</span><a href="#equals" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="equals-1"><span class="tsd-kind-call-signature">Equals</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">toCompare</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#equals-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Compare two lines for strict equality.</p>
+<div class="tsd-comment tsd-typography"><p>Compares two lines for strict equality. Two lines are considered equal if their start
+and end point coordinates all match exactly: <code>x1</code>, <code>y1</code>, <code>x2</code>, and <code>y2</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,9 +483,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">toCompare</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The second line to compare.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if the two lines have identical start and end point coordinates, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57628</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80100</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="extend"><code class="tsd-tag">Static</code><span>Extend</span><a href="#extend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -468,10 +494,11 @@ providing a <code>stepRate</code>.</p>
 <div class="tsd-signature tsd-anchor-link" id="extend-1"><span class="tsd-kind-call-signature">Extend</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">left</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">right</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><a href="#extend-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Extends the start and end points of a Line by the given amounts.</p>
-<p>The amounts can be positive or negative. Positive points will increase the length of the line,
+<p>The amounts can be positive or negative. Positive values will increase the length of the line,
 while negative ones will decrease it.</p>
 <p>If no <code>right</code> value is provided it will extend the length of the line equally in both directions.</p>
 <p>Pass a value of zero to leave the start or end point unchanged.</p>
+<p>The <code>left</code> value extends outward from the start point (x1, y1) along the line's direction, and the <code>right</code> value extends outward from the end point (x2, y2).</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -485,14 +512,15 @@ while negative ones will decrease it.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">right</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The amount to extend the end of the line by. If not given it will be set to the <code>left</code> value.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Line</a></h4><p>The modified Line instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57643</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80118</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="geteasedpoints"><code class="tsd-tag">Static</code><span>Get<wbr/>Eased<wbr/>Points</span><a href="#geteasedpoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="geteasedpoints-1"><span class="tsd-kind-call-signature">GetEasedPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#geteasedpointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">ease</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">collinearThreshold</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">easeParams</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#geteasedpointso">O</a><a href="#geteasedpoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="geteasedpoints-1"><span class="tsd-kind-call-signature">GetEasedPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#geteasedpointso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">ease</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Function" class="tsd-signature-type external" target="_blank">Function</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">collinearThreshold</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">easeParams</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#geteasedpointso">O</a><a href="#geteasedpoints-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns an array of <code>quantity</code> Points where each point is taken from the given Line,
 spaced out according to the ease function specified.</p>
@@ -513,7 +541,7 @@ contain <code>quantity</code> points.</p>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="geteasedpointso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
+<li><span id="geteasedpointso"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -527,26 +555,27 @@ contain <code>quantity</code> points.</p>
 <div class="tsd-comment tsd-typography"><p>The number of points to return. Note that if you provide a <code>collinearThreshold</code>, the resulting array may not always contain this number of points.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">collinearThreshold</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>An optional threshold. The final array is reduced so that each point is spaced out at least this distance apart. This helps reduce clustering in noisey eases. Default 0.</p>
+<div class="tsd-comment tsd-typography"><p>An optional threshold. The final array is reduced so that each point is spaced out at least this distance apart. This helps reduce clustering in noisy eases. Default 0.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">easeParams</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>An optional array of ease parameters to go with the ease.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#geteasedpointso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#geteasedpointso">O</a></h4><p>An array of Math.Vector2s containing the coordinates of the points on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57672</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80148</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getmidpoint"><code class="tsd-tag">Static</code><span>Get<wbr/>Mid<wbr/>Point</span><a href="#getmidpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getmidpoint-1"><span class="tsd-kind-call-signature">GetMidPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a><a href="#getmidpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getmidpoint-1"><span class="tsd-kind-call-signature">GetMidPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a><a href="#getmidpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Get the midpoint of the given line.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getmidpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getmidpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -554,43 +583,46 @@ contain <code>quantity</code> points.</p>
 <div class="tsd-comment tsd-typography"><p>The line to get the midpoint of.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional point object to store the midpoint in.</p>
+<div class="tsd-comment tsd-typography"><p>An optional Vector2 object to store the midpoint in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getmidpointo">O</a></h4><p>The midpoint of the Line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57679</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80156</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getnearestpoint"><code class="tsd-tag">Static</code><span>Get<wbr/>Nearest<wbr/>Point</span><a href="#getnearestpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getnearestpoint-1"><span class="tsd-kind-call-signature">GetNearestPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a><a href="#getnearestpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getnearestpoint-1"><span class="tsd-kind-call-signature">GetNearestPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">vec</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a><a href="#getnearestpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get the nearest point on a line perpendicular to the given point.</p>
+<div class="tsd-comment tsd-typography"><p>Gets the nearest point on the infinite line defined by the given Line segment to the specified point.
+Note that the returned point is projected onto the full line, not clamped to the segment endpoints.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getnearestpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getnearestpointo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to get the nearest point on.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">point</span>: <span class="tsd-signature-type">object</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span>
-<div class="tsd-comment tsd-typography"><p>The point to get the nearest point to.</p>
+<li><span><span class="tsd-kind-parameter">vec</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span>
+<div class="tsd-comment tsd-typography"><p>The Vector2 to get the nearest point to.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional point, or point-like object, to store the coordinates of the nearest point on the line.</p>
+<div class="tsd-comment tsd-typography"><p>An optional Vector2 object, to store the coordinates of the nearest point on the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnearestpointo">O</a></h4><p>The nearest point on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57687</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80166</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getnormal"><code class="tsd-tag">Static</code><span>Get<wbr/>Normal</span><a href="#getnormal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getnormal-1"><span class="tsd-kind-call-signature">GetNormal</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a><a href="#getnormal-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getnormal-1"><span class="tsd-kind-call-signature">GetNormal</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a><a href="#getnormal-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Calculate the normal of the given line.</p>
 <p>The normal of a line is a vector that points perpendicular from it.</p>
@@ -598,7 +630,7 @@ contain <code>quantity</code> points.</p>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getnormalo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getnormalo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -606,23 +638,24 @@ contain <code>quantity</code> points.</p>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the normal of.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional point object to store the normal in.</p>
+<div class="tsd-comment tsd-typography"><p>An optional Vector2 object to store the normal in.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getnormalo">O</a></h4><p>The normal of the Line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57696</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80176</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoint-2"><code class="tsd-tag">Static</code><span>Get<wbr/>Point</span><a href="#getpoint-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoint-3"><span class="tsd-kind-call-signature">GetPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><a href="#getpoint-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoint-3"><span class="tsd-kind-call-signature">GetPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a><a href="#getpoint-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Get a point on a line that's a given percentage along its length.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointo-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="getpointo-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -633,18 +666,20 @@ contain <code>quantity</code> points.</p>
 <div class="tsd-comment tsd-typography"><p>A value between 0 and 1, where 0 is the start, 0.5 is the middle and 1 is the end of the line.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional point, or point-like object, to store the coordinates of the point on the line.</p>
+<div class="tsd-comment tsd-typography"><p>An optional Vector2 object to store the coordinates of the point on the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointo-1">O</a></h4><p>The point on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57704</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80185</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getpoints-2"><code class="tsd-tag">Static</code><span>Get<wbr/>Points</span><a href="#getpoints-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="getpoints-3"><span class="tsd-kind-call-signature">GetPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><a href="#getpoints-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getpoints-3"><span class="tsd-kind-call-signature">GetPoints</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">quantity</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">stepRate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a><a href="#getpoints-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get a number of points along a line's length.</p>
+<div class="tsd-comment tsd-typography"><p>Get a number of evenly-spaced points along a line, starting from the first endpoint (x1, y1).
+The last endpoint (x2, y2) is not included in the returned points.</p>
 <p>Provide a <code>quantity</code> to get an exact number of points along the line.</p>
 <p>Provide a <code>stepRate</code> to ensure a specific distance between each point on the line. Set <code>quantity</code> to <code>0</code> when
 providing a <code>stepRate</code>.</p>
@@ -653,7 +688,7 @@ providing a <code>stepRate</code>.</p>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="getpointso-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
+<li><span id="getpointso-1"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">[]</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -664,21 +699,24 @@ providing a <code>stepRate</code>.</p>
 <div class="tsd-comment tsd-typography"><p>The number of points to place on the line. Set to <code>0</code> to use <code>stepRate</code> instead.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">stepRate</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The distance between each point on the line. When set, <code>quantity</code> is implied and should be set to <code>0</code>.</p>
+<div class="tsd-comment tsd-typography"><p>The distance between each point on the line. When set, <code>quantity</code> is calculated as the line length divided by this value; <code>quantity</code> should be set to <code>0</code>.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An optional array of Points, or point-like objects, to store the coordinates of the points on the line.</p>
+<div class="tsd-comment tsd-typography"><p>An optional array of Vector2 objects to store the coordinates of the points on the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getpointso-1">O</a></h4><p>An array of Vector2 objects containing the coordinates of the points on the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57720</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80203</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getshortestdistance"><code class="tsd-tag">Static</code><span>Get<wbr/>Shortest<wbr/>Distance</span><a href="#getshortestdistance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="getshortestdistance-1"><span class="tsd-kind-call-signature">GetShortestDistance</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span><a href="#getshortestdistance-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get the shortest distance from a Line to the given Point.</p>
+<div class="tsd-comment tsd-typography"><p>Calculates the shortest (perpendicular) distance from an infinite line, defined by the two
+endpoints of the given Line object, to the given Point. If the line has zero length (both
+endpoints are identical), this function returns <code>false</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -689,9 +727,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">point</span>: <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a></span>
 <div class="tsd-comment tsd-typography"><p>The point to get the shortest distance to.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span></h4><p>The shortest perpendicular distance from the line to the point, or <code>false</code> if the line has zero length.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57727</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80213</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="height"><code class="tsd-tag">Static</code><span>Height</span><a href="#height" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -706,9 +745,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the height of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The height of the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57733</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80220</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="length"><code class="tsd-tag">Static</code><span>Length</span><a href="#length" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -723,9 +763,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the length of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The length of the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57739</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80227</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="normalangle"><code class="tsd-tag">Static</code><span>Normal<wbr/>Angle</span><a href="#normalangle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -740,9 +781,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the angle of the normal of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The angle of the normal of the line in radians.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57845</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80346</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="normalx"><code class="tsd-tag">Static</code><span>Normal<wbr/>X</span><a href="#normalx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -757,9 +799,10 @@ providing a <code>stepRate</code>.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The Line object to get the normal value from.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The x component of the normal vector of the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57851</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80353</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="normaly"><code class="tsd-tag">Static</code><span>Normal<wbr/>Y</span><a href="#normaly" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -775,16 +818,17 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the normal of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The Y value of the normal of the Line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57858</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80361</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="offset"><code class="tsd-tag">Static</code><span>Offset</span><a href="#offset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="offset-1"><span class="tsd-kind-call-signature">Offset</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a><a href="#offset-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Offset a line by the given amount.</p>
+<div class="tsd-comment tsd-typography"><p>Translates both endpoints of the given Line by the specified horizontal and vertical amounts, effectively moving the line to a new position in 2D space while preserving its length and angle.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
@@ -802,9 +846,10 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The vertical offset to add to the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#offseto">O</a></h4><p>The modified Line object, with both endpoints moved by the given offset.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57866</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80370</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="perpslope"><code class="tsd-tag">Static</code><span>Perp<wbr/>Slope</span><a href="#perpslope" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -819,54 +864,56 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the perpendicular slope of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The perpendicular slope of the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57872</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80377</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="random"><code class="tsd-tag">Static</code><span>Random</span><a href="#random" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="random-1"><span class="tsd-kind-call-signature">Random</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><a href="#random-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="random-1"><span class="tsd-kind-call-signature">Random</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">out</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a><a href="#random-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns a random point on a given Line.</p>
 </div>
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
-<li><span id="randomo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span></li></ul></section>
+<li><span id="randomo"><span class="tsd-kind-type-parameter">O</span> <span class="tsd-signature-keyword">extends</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
-<div class="tsd-comment tsd-typography"><p>The Line to calculate the random Point on.</p>
+<div class="tsd-comment tsd-typography"><p>The Line to calculate the random point on.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">out</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a></span>
-<div class="tsd-comment tsd-typography"><p>An instance of a Point to be modified.</p>
+<div class="tsd-comment tsd-typography"><p>An instance of a Vector2 to be modified.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#randomo">O</a></h4><p>A random point on the Line stored in a Vector2.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57879</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80385</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="reflectangle"><code class="tsd-tag">Static</code><span>Reflect<wbr/>Angle</span><a href="#reflectangle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="reflectangle-1"><span class="tsd-kind-call-signature">ReflectAngle</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lineA</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">lineB</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#reflectangle-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Calculate the reflected angle between two lines.</p>
-<p>This is the outgoing angle based on the angle of Line 1 and the normalAngle of Line 2.</p>
+<div class="tsd-comment tsd-typography"><p>Calculates the reflected angle of Line A off the surface represented by Line B. This is the outgoing angle based on the angle of incidence (Line A) and the surface normal of Line B. The result is in radians.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">lineA</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
-<div class="tsd-comment tsd-typography"><p>The first line.</p>
+<div class="tsd-comment tsd-typography"><p>The incident line whose angle of incidence is used.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">lineB</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
-<div class="tsd-comment tsd-typography"><p>The second line.</p>
+<div class="tsd-comment tsd-typography"><p>The surface line, used to calculate the normal angle of reflection.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The reflected angle of Line A off the surface of Line B, in radians.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57888</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80393</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="rotate"><code class="tsd-tag">Static</code><span>Rotate</span><a href="#rotate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -888,14 +935,15 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">angle</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The angle of rotation in radians.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotateo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotateo">O</a></h4><p>The rotated line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57895</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80401</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="rotatearoundpoint"><code class="tsd-tag">Static</code><span>Rotate<wbr/>Around<wbr/>Point</span><a href="#rotatearoundpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="rotatearoundpoint-1"><span class="tsd-kind-call-signature">RotateAroundPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">angle</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a><a href="#rotatearoundpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="rotatearoundpoint-1"><span class="tsd-kind-call-signature">RotateAroundPoint</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a> <span class="tsd-signature-keyword">extends</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">point</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">angle</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a><a href="#rotatearoundpoint-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Rotate a line around a point by the given angle in radians.</p>
 </div>
@@ -909,15 +957,16 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to rotate.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">point</span>: <span class="tsd-signature-type">object</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Point.html" class="tsd-signature-type tsd-kind-class">Point</a></span>
+<li><span><span class="tsd-kind-parameter">point</span>: <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></span>
 <div class="tsd-comment tsd-typography"><p>The point to rotate the line around.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">angle</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The angle of rotation in radians.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundpointo">O</a></h4><p>The rotated line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57903</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80410</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="rotatearoundxy"><code class="tsd-tag">Static</code><span>Rotate<wbr/>Around<wbr/>XY</span><a href="#rotatearoundxy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -945,9 +994,10 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">angle</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The angle of rotation in radians.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundxyo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#rotatearoundxyo">O</a></h4><p>The rotated line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57912</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80420</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="settoangle"><code class="tsd-tag">Static</code><span>Set<wbr/>To<wbr/>Angle</span><a href="#settoangle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -978,9 +1028,10 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">length</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The length of the line.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#settoangleo">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#settoangleo">O</a></h4><p>The updated line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57922</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80431</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="slope"><code class="tsd-tag">Static</code><span>Slope</span><a href="#slope" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -995,16 +1046,20 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the slope of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The slope of the line.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57928</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80438</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="width"><code class="tsd-tag">Static</code><span>Width</span><a href="#width" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="width-1"><span class="tsd-kind-call-signature">Width</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">line</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Line</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#width-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Calculate the width of the given line.</p>
+<div class="tsd-comment tsd-typography"><p>Calculates the width of the given line, defined as the absolute difference between
+the x-coordinates of its two endpoints (<code>x1</code> and <code>x2</code>). This represents the
+horizontal extent of the line, not its geometric length. To get the true length
+of the line, use <code>Phaser.Geom.Line.Length</code> instead.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -1012,9 +1067,10 @@ The normal of a line is a vector that points perpendicular from it.</p>
 <li><span><span class="tsd-kind-parameter">line</span>: <a href="" class="tsd-signature-type tsd-kind-class">Line</a></span>
 <div class="tsd-comment tsd-typography"><p>The line to calculate the width of.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The width of the line, i.e. the absolute difference between its x1 and x2 coordinates.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:57934</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:80448</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

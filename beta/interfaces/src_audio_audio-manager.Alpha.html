@@ -12,24 +12,29 @@
 <li><a href="" aria-current="page">Alpha</a></li></ul>
 <h1>Interface Alpha</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Provides methods used for setting the alpha properties of a Game Object.
-Should be applied as a mixin and not used directly.</p>
+<div class="tsd-comment tsd-typography"><p>Provides methods and properties for managing the alpha (opacity) of a Game Object.
+Alpha values range from 0 (fully transparent) to 1 (fully opaque).</p>
+<p>Under WebGL, alpha can be set independently for each of the four corners of the
+Game Object, allowing gradient transparency effects. Under Canvas, only a single
+global alpha value is used.</p>
+<p>This component is designed to be applied as a mixin to Game Objects and should
+not be used directly.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">Alpha</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#alpha">alpha</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#alphabottomleft">alphaBottomLeft</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#alphabottomright">alphaBottomRight</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#alphatopleft">alphaTopLeft</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#alphatopright">alphaTopRight</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#clearalpha-1">clearAlpha</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setalpha-1">setAlpha</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">topLeft</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">topRight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">bottomLeft</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">bottomRight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
 <section class="tsd-panel">
 <h4>Implemented by</h4>
 <ul class="tsd-hierarchy">
-<li><a href="../classes/src_audio_audio-manager.BaseCamera.html" class="tsd-signature-type tsd-kind-class">BaseCamera</a></li>
 <li><a href="../classes/src_modifier_modifier.BitmapText.html" class="tsd-signature-type tsd-kind-class">BitmapText</a></li>
 <li><a href="../classes/src_audio_audio-manager.Image.html" class="tsd-signature-type tsd-kind-class">Image</a></li>
 <li><a href="../classes/src_audio_audio-manager.Image-1.html" class="tsd-signature-type tsd-kind-class">Image</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
-<li><a href="../classes/src_ui_handlers_title-ui-handler.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.TilemapLayer.html" class="tsd-signature-type tsd-kind-class">TilemapLayer</a></li>
+<li><a href="../classes/src_audio_audio-manager.Stamp.html" class="tsd-signature-type tsd-kind-class">Stamp</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TilemapLayerBase.html" class="tsd-signature-type tsd-kind-class">TilemapLayerBase</a></li>
 <li><a href="../classes/src_phases_form-change-phase.Video.html" class="tsd-signature-type tsd-kind-class">Video</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14714</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18038</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -54,11 +59,13 @@ Should be applied as a mixin and not used directly.</p>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="alpha"><span>alpha</span><a href="#alpha" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">alpha</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The alpha value of the Game Object.</p>
-<p>This is a global value, impacting the entire Game Object, not just a region of it.</p>
+<div class="tsd-comment tsd-typography"><p>The alpha value of the Game Object, between 0 (fully transparent) and 1 (fully opaque).</p>
+<p>This is a global value that impacts the entire Game Object. Setting it also updates
+all four corner alpha values (<code>alphaTopLeft</code>, <code>alphaTopRight</code>, <code>alphaBottomLeft</code>,
+<code>alphaBottomRight</code>) to the same value. The input is clamped to the range [0, 1].</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14738</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18066</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="alphabottomleft"><span>alpha<wbr/>Bottom<wbr/>Left</span><a href="#alphabottomleft" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">alphaBottomLeft</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -66,7 +73,7 @@ Should be applied as a mixin and not used directly.</p>
 This value is interpolated from the corner to the center of the Game Object.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14753</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18081</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="alphabottomright"><span>alpha<wbr/>Bottom<wbr/>Right</span><a href="#alphabottomright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">alphaBottomRight</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -74,7 +81,7 @@ This value is interpolated from the corner to the center of the Game Object.</p>
 This value is interpolated from the corner to the center of the Game Object.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14758</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18086</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="alphatopleft"><span>alpha<wbr/>Top<wbr/>Left</span><a href="#alphatopleft" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">alphaTopLeft</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -82,7 +89,7 @@ This value is interpolated from the corner to the center of the Game Object.</p>
 This value is interpolated from the corner to the center of the Game Object.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14743</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18071</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="alphatopright"><span>alpha<wbr/>Top<wbr/>Right</span><a href="#alphatopright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">alphaTopRight</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -90,7 +97,7 @@ This value is interpolated from the corner to the center of the Game Object.</p>
 This value is interpolated from the corner to the center of the Game Object.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14748</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18076</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -101,11 +108,12 @@ This value is interpolated from the corner to the center of the Game Object.</p>
 <div class="tsd-signature tsd-anchor-link" id="clearalpha-1"><span class="tsd-kind-call-signature">clearAlpha</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#clearalpha-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Clears all alpha values associated with this Game Object.</p>
-<p>Immediately sets the alpha levels back to 1 (fully opaque).</p>
+<p>Immediately sets the alpha levels back to 1 (fully opaque).undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14720</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18045</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setalpha"><span>set<wbr/>Alpha</span><a href="#setalpha" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -132,9 +140,10 @@ correspond to the four corners of the Game Object. Under Canvas only the <code>t
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">bottomRight</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The alpha value used for the bottom-right of the Game Object. WebGL only.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:14732</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:18058</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

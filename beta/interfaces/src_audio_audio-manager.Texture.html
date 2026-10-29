@@ -12,7 +12,12 @@
 <li><a href="" aria-current="page">Texture</a></li></ul>
 <h1>Interface Texture</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Provides methods used for getting and setting the texture of a Game Object.</p>
+<div class="tsd-comment tsd-typography"><p>Provides methods used for setting the texture and frame of a Game Object.</p>
+<p>This component is mixed in to Game Objects that support texture-based rendering,
+such as Sprites and Images. It allows a Game Object to reference a texture stored
+in the Texture Manager by key, and optionally a specific frame within that texture,
+as used with texture atlases and sprite sheets. Changing the texture or frame will
+automatically update the Game Object's size and origin to match.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">Texture</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#frame">frame</a><span class="tsd-signature-symbol">:</span> <a href="../classes/src_audio_audio-manager.Frame.html" class="tsd-signature-type tsd-kind-class">Frame</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#texture">texture</a><span class="tsd-signature-symbol">:</span> <a href="../classes/src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a> <span class="tsd-signature-symbol">|</span> <a href="../classes/src_audio_audio-manager.CanvasTexture.html" class="tsd-signature-type tsd-kind-class">CanvasTexture</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setframe-1">setFrame</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">frame</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="../classes/src_audio_audio-manager.Frame.html" class="tsd-signature-type tsd-kind-class">Frame</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">updateSize</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">updateOrigin</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#settexture-1">setTexture</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <a href="../classes/src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">frame</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">updateSize</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">updateOrigin</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
 <section class="tsd-panel">
@@ -22,9 +27,10 @@
 <li><a href="../classes/src_audio_audio-manager.Image.html" class="tsd-signature-type tsd-kind-class">Image</a></li>
 <li><a href="../classes/src_audio_audio-manager.Image-1.html" class="tsd-signature-type tsd-kind-class">Image</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li></ul></section><aside class="tsd-sources">
+<li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16052</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20109</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -49,14 +55,14 @@
 <div class="tsd-comment tsd-typography"><p>The Texture Frame this Game Object is using to render with.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16060</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20117</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="texture"><span>texture</span><a href="#texture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">texture</span><span class="tsd-signature-symbol">:</span> <a href="../classes/src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a> <span class="tsd-signature-symbol">|</span> <a href="../classes/src_audio_audio-manager.CanvasTexture.html" class="tsd-signature-type tsd-kind-class">CanvasTexture</a></div>
 <div class="tsd-comment tsd-typography"><p>The Texture this Game Object is using to render with.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16056</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20113</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -85,9 +91,10 @@ by this Game Object.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">updateOrigin</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Should this call adjust the origin of the Game Object? Default true.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16090</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20149</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="settexture"><span>set<wbr/>Texture</span><a href="#settexture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -114,9 +121,10 @@ by this Game Object.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">updateOrigin</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>Should this call change the origin of the Game Object? Default true.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:16074</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:20132</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

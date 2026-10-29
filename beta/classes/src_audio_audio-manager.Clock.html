@@ -12,10 +12,19 @@
 <li><a href="" aria-current="page">Clock</a></li></ul>
 <h1>Class Clock</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>The Clock is a Scene plugin which creates and updates Timer Events for its Scene.</p>
+<div class="tsd-comment tsd-typography"><p>The Clock is a Scene plugin that manages time and schedules Timer Events for its parent Scene.</p>
+<p>You can use it to run callbacks after a delay, on a repeating interval, or in a loop, all
+governed by the Scene's time rather than the system clock. This means the Clock respects
+Scene pausing, time scaling, and shutdown lifecycle automatically.</p>
+<p>Access it via <code>this.time</code> inside a Scene. For example:</p>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">time</span><span class="hl-1">.</span><span class="hl-0">delayedCall</span><span class="hl-1">(</span><span class="hl-8">1000</span><span class="hl-1">, </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">onTimer</span><span class="hl-1">, [], </span><span class="hl-3">this</span><span class="hl-1">);</span>
+</code><button type="button">Copy</button></pre>
+
+<p>The Clock's <code>timeScale</code> property allows you to speed up or slow down all Timer Events
+belonging to it independently of the rest of the game.</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:113999</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144501</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -61,7 +70,7 @@
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Clock</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114004</li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144506</li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -72,7 +81,7 @@
 <p>If accessed externally, this is equivalent to the <code>time</code> parameter normally passed to a Scene's <code>update</code> method.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114021</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144523</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="paused"><span>paused</span><a href="#paused" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">paused</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -80,14 +89,14 @@
 <p>When paused, the Clock will not update any of its Timer Events, thus freezing time.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114042</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144544</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="scene"><span>scene</span><a href="#scene" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scene</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Scene.html" class="tsd-signature-type tsd-kind-class">Scene</a></div>
 <div class="tsd-comment tsd-typography"><p>The Scene which owns this Clock.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114009</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144511</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="starttime"><span>start<wbr/>Time</span><a href="#starttime" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">startTime</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -95,14 +104,14 @@
 <p>This can be compared to the <code>time</code> parameter passed to a Scene's <code>update</code> method.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114028</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144530</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="systems"><span>systems</span><a href="#systems" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">systems</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Systems.html" class="tsd-signature-type tsd-kind-class">Systems</a></div>
 <div class="tsd-comment tsd-typography"><p>The Scene Systems object of the Scene which owns this Clock.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114014</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144516</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="timescale"><span>time<wbr/>Scale</span><a href="#timescale" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">timeScale</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -110,7 +119,7 @@
 <p>The time delta is the time elapsed between two consecutive frames and influences the speed of time for this Clock and anything which uses it, such as its Timer Events. Values higher than 1 increase the speed of time, while values smaller than 1 decrease it. A value of 0 freezes time and is effectively equivalent to pausing the Clock.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114035</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144537</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -121,7 +130,7 @@
 <div class="tsd-signature tsd-anchor-link" id="addevent-1"><span class="tsd-kind-call-signature">addEvent</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a> <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.TimerEventConfig.html" class="tsd-signature-type tsd-kind-type-alias">TimerEventConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a><a href="#addevent-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Creates a Timer Event and adds it to this Clock at the start of the next frame.</p>
-<p>You can pass in either a <code>TimerEventConfig</code> object, from with a new <code>TimerEvent</code> will
+<p>You can pass in either a <code>TimerEventConfig</code> object, from which a new <code>TimerEvent</code> will
 be created, or you can pass in a <code>TimerEvent</code> instance.</p>
 <p>If passing an instance please make sure that this instance hasn't been used before.
 If it has ever entered a 'completed' state then it will no longer be suitable to
@@ -135,20 +144,24 @@ it will still be updated by that Clock as well, so be careful when using this fe
 <li><span><span class="tsd-kind-parameter">config</span>: <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a> <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.TimerEventConfig.html" class="tsd-signature-type tsd-kind-type-alias">TimerEventConfig</a></span>
 <div class="tsd-comment tsd-typography"><p>The configuration for the Timer Event, or an existing Timer Event object.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a></h4><p>The Timer Event which was created, or passed in.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114058</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144561</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="clearpendingevents"><span>clear<wbr/>Pending<wbr/>Events</span><a href="#clearpendingevents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="clearpendingevents-1"><span class="tsd-kind-call-signature">clearPendingEvents</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#clearpendingevents-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Clears and recreates the array of pending Timer Events.</p>
+<div class="tsd-comment tsd-typography"><p>Clears and recreates the array of pending Timer Events.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><ul>
+<li>This Clock instance.</li>
+</ul>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114074</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144579</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="delayedcall"><span>delayed<wbr/>Call</span><a href="#delayedcall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -173,40 +186,35 @@ it will still be updated by that Clock as well, so be careful when using this fe
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">callbackScope</span>: <span class="tsd-signature-type">any</span></span>
 <div class="tsd-comment tsd-typography"><p>The scope (<code>this</code> object) to call the function with.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a></h4><p>The Timer Event which was created.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114069</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144573</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="preupdate"><span>pre<wbr/>Update</span><a href="#preupdate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="preupdate-1"><span class="tsd-kind-call-signature">preUpdate</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">time</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">delta</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#preupdate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="preupdate-1"><span class="tsd-kind-call-signature">preUpdate</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#preupdate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Updates the arrays of active and pending Timer Events. Called at the start of the frame.</p>
 </div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">time</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The current time. Either a High Resolution Timer value if it comes from Request Animation Frame, or Date.now if using SetTimeout.</p>
-</div></li>
-<li><span><span class="tsd-kind-parameter">delta</span>: <span class="tsd-signature-type">number</span></span>
-<div class="tsd-comment tsd-typography"><p>The delta time in ms since the last frame. This is a smoothed and capped value based on the FPS rate.</p>
-</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114095</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144600</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removeallevents"><span>remove<wbr/>All<wbr/>Events</span><a href="#removeallevents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="removeallevents-1"><span class="tsd-kind-call-signature">removeAllEvents</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#removeallevents-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Schedules all active Timer Events for removal at the start of the frame.</p>
+<div class="tsd-comment tsd-typography"><p>Schedules all active Timer Events for removal at the start of the frame.undefined</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><ul>
+<li>This Clock instance.</li>
+</ul>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114088</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144595</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="removeevent"><span>remove<wbr/>Event</span><a href="#removeevent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -223,9 +231,12 @@ freeing the event up to be re-used.</p>
 <li><span><span class="tsd-kind-parameter">events</span>: <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.TimerEvent.html" class="tsd-signature-type tsd-kind-class">TimerEvent</a><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>The Timer Event, or an array of Timer Events, to remove from this Clock.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><ul>
+<li>This Clock instance.</li>
+</ul>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114083</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144589</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="update"><span>update</span><a href="#update" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -245,7 +256,7 @@ freeing the event up to be re-used.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:114102</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:144607</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

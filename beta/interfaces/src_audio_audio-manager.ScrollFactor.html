@@ -12,7 +12,7 @@
 <li><a href="" aria-current="page">ScrollFactor</a></li></ul>
 <h1>Interface ScrollFactor</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Provides methods used for getting and setting the Scroll Factor of a Game Object.</p>
+<div class="tsd-comment tsd-typography"><p>Provides methods used for setting the Scroll Factor of a Game Object.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">ScrollFactor</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#scrollfactorx">scrollFactorX</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#scrollfactory">scrollFactorY</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#setscrollfactor-1">setScrollFactor</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
 <section class="tsd-panel">
@@ -28,11 +28,12 @@
 <li><a href="../classes/src_audio_audio-manager.Shape.html" class="tsd-signature-type tsd-kind-class">Shape</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
-<li><a href="../classes/src_ui_handlers_title-ui-handler.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.TilemapLayer.html" class="tsd-signature-type tsd-kind-class">TilemapLayer</a></li>
+<li><a href="../classes/src_audio_audio-manager.Stamp.html" class="tsd-signature-type tsd-kind-class">Stamp</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TilemapLayerBase.html" class="tsd-signature-type tsd-kind-class">TilemapLayerBase</a></li>
 <li><a href="../classes/src_phases_form-change-phase.Video.html" class="tsd-signature-type tsd-kind-class">Video</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15917</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19836</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -60,13 +61,13 @@ It does not change the Game Objects actual position values.</p>
 <p>A value of 1 means it will move exactly in sync with a camera.
 A value of 0 means it will not move at all, even if the camera moves.
 Other values control the degree to which the camera movement is mapped to this Game Object.</p>
-<p>Please be aware that scroll factor values other than 1 are not taken in to consideration when
+<p>Please be aware that scroll factor values other than 1 are not taken into consideration when
 calculating physics collisions. Bodies always collide based on their world position, but changing
 the scroll factor is a visual adjustment to where the textures are rendered, which can offset
 them from physics bodies if not accounted for in your code.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15935</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19854</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="scrollfactory"><span>scroll<wbr/>Factor<wbr/>Y</span><a href="#scrollfactory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scrollFactorY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -77,13 +78,13 @@ It does not change the Game Objects actual position values.</p>
 <p>A value of 1 means it will move exactly in sync with a camera.
 A value of 0 means it will not move at all, even if the camera moves.
 Other values control the degree to which the camera movement is mapped to this Game Object.</p>
-<p>Please be aware that scroll factor values other than 1 are not taken in to consideration when
+<p>Please be aware that scroll factor values other than 1 are not taken into consideration when
 calculating physics collisions. Bodies always collide based on their world position, but changing
 the scroll factor is a visual adjustment to where the textures are rendered, which can offset
 them from physics bodies if not accounted for in your code.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15953</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19872</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -93,14 +94,16 @@ them from physics bodies if not accounted for in your code.</p>
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="setscrollfactor-1"><span class="tsd-kind-call-signature">setScrollFactor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">x</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">y</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setscrollfactor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Sets the scroll factor of this Game Object.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the horizontal and vertical scroll factor of this Game Object. If only the <code>x</code> value is
+provided, it is applied to both axes. This is a convenience method for setting <code>scrollFactorX</code>
+and <code>scrollFactorY</code> in a single call.</p>
 <p>The scroll factor controls the influence of the movement of a Camera upon this Game Object.</p>
 <p>When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
 It does not change the Game Objects actual position values.</p>
 <p>A value of 1 means it will move exactly in sync with a camera.
 A value of 0 means it will not move at all, even if the camera moves.
 Other values control the degree to which the camera movement is mapped to this Game Object.</p>
-<p>Please be aware that scroll factor values other than 1 are not taken in to consideration when
+<p>Please be aware that scroll factor values other than 1 are not taken into consideration when
 calculating physics collisions. Bodies always collide based on their world position, but changing
 the scroll factor is a visual adjustment to where the textures are rendered, which can offset
 them from physics bodies if not accounted for in your code.</p>
@@ -114,9 +117,10 @@ them from physics bodies if not accounted for in your code.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The vertical scroll factor of this Game Object. If not set it will use the <code>x</code> value. Default x.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This Game Object instance.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15973</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19895</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -12,7 +12,10 @@
 <li><a href="" aria-current="page">GetBounds</a></li></ul>
 <h1>Interface GetBounds</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Provides methods used for obtaining the bounds of a Game Object.
+<div class="tsd-comment tsd-typography"><p>Provides methods used for obtaining the bounds of a Game Object, including
+its corners, edge midpoints, center point, and overall axis-aligned bounding
+rectangle. All methods account for the Game Object's rotation and display
+size, and can optionally factor in any parent Container transforms.
 Should be applied as a mixin and not used directly.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">GetBounds</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-call-signature" href="#getbottomcenter-1">getBottomCenter</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomcentero">O</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomcentero">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getbottomleft-1">getBottomLeft</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomlefto">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomlefto">O</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomlefto">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getbottomright-1">getBottomRight</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomrighto">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomrighto">O</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomrighto">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getbounds-1">getBounds</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../classes/src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getcenter-1">getCenter</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getleftcenter-1">getLeftCenter</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getleftcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getleftcentero">O</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getleftcentero">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#getrightcenter-1">getRightCenter</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getrightcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrightcentero">O</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrightcentero">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#gettopcenter-1">getTopCenter</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#gettopcentero">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettopcentero">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettopcentero">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#gettopleft-1">getTopLeft</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoplefto">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoplefto">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoplefto">O</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#gettopright-1">getTopRight</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoprighto">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src_audio_audio-manager.Vector2Like.html" class="tsd-signature-type tsd-kind-type-alias">Vector2Like</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoprighto">O</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">includeParent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoprighto">O</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
@@ -26,11 +29,12 @@ Should be applied as a mixin and not used directly.</p>
 <li><a href="../classes/src_audio_audio-manager.Shape.html" class="tsd-signature-type tsd-kind-class">Shape</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
 <li><a href="../classes/src_audio_audio-manager.Sprite-1.html" class="tsd-signature-type tsd-kind-class">Sprite</a></li>
-<li><a href="../classes/src_ui_handlers_title-ui-handler.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
-<li><a href="../classes/src_audio_audio-manager.TilemapLayer.html" class="tsd-signature-type tsd-kind-class">TilemapLayer</a></li>
+<li><a href="../classes/src_audio_audio-manager.Stamp.html" class="tsd-signature-type tsd-kind-class">Stamp</a></li>
+<li><a href="../classes/src_audio_audio-manager.TileSprite.html" class="tsd-signature-type tsd-kind-class">TileSprite</a></li>
+<li><a href="../classes/src_audio_audio-manager.TilemapLayerBase.html" class="tsd-signature-type tsd-kind-class">TilemapLayerBase</a></li>
 <li><a href="../classes/src_phases_form-change-phase.Video.html" class="tsd-signature-type tsd-kind-class">Video</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15445</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19357</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -75,9 +79,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomcentero">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomcentero">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15517</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19437</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getbottomleft"><span>get<wbr/>Bottom<wbr/>Left</span><a href="#getbottomleft" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -101,9 +106,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomlefto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomlefto">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15508</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19427</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getbottomright"><span>get<wbr/>Bottom<wbr/>Right</span><a href="#getbottomright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -127,16 +133,21 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomrighto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getbottomrighto">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15526</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19447</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getbounds"><span>get<wbr/>Bounds</span><a href="#getbounds" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="getbounds-1"><span class="tsd-kind-call-signature">getBounds</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a> <span class="tsd-signature-keyword">extends</span> <a href="../classes/src_audio_audio-manager.Rectangle.html" class="tsd-signature-type tsd-kind-class">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">output</span><span class="tsd-signature-symbol">?:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a><a href="#getbounds-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Gets the bounds of this Game Object, regardless of origin.</p>
+<div class="tsd-comment tsd-typography"><p>Gets the axis-aligned bounding rectangle of this Game Object, regardless of origin.</p>
+<p>The bounding rectangle is computed by retrieving all four corner positions of the
+Game Object (top-left, top-right, bottom-left, bottom-right), applying any rotation
+and parent Container transforms, and then calculating the smallest axis-aligned
+rectangle that fully encloses all four points.</p>
 <p>The values are stored and returned in a Rectangle, or Rectangle-like, object.</p>
 </div>
 <section class="tsd-panel">
@@ -149,9 +160,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">output</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a></span>
 <div class="tsd-comment tsd-typography"><p>An object to store the values in. If not provided a new Rectangle will be created.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getboundso">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15533</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19460</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getcenter"><span>get<wbr/>Center</span><a href="#getcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -175,9 +187,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getcentero">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15454</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19367</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getleftcenter"><span>get<wbr/>Left<wbr/>Center</span><a href="#getleftcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -201,9 +214,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getleftcentero">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getleftcentero">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15490</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19407</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getrightcenter"><span>get<wbr/>Right<wbr/>Center</span><a href="#getrightcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -227,9 +241,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrightcentero">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#getrightcentero">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15499</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19417</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gettopcenter"><span>get<wbr/>Top<wbr/>Center</span><a href="#gettopcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -253,9 +268,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettopcentero">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettopcentero">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15472</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19387</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gettopleft"><span>get<wbr/>Top<wbr/>Left</span><a href="#gettopleft" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -279,9 +295,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoplefto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoplefto">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15463</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19377</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gettopright"><span>get<wbr/>Top<wbr/>Right</span><a href="#gettopright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -305,9 +322,10 @@ unless the <code>includeParent</code> argument is set to <code>true</code>.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">includeParent</span>: <span class="tsd-signature-type">boolean</span></span>
 <div class="tsd-comment tsd-typography"><p>If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoprighto">O</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a class="tsd-signature-type tsd-kind-type-parameter" href="#gettoprighto">O</a></h4><p>The values stored in the output object.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:15481</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:19397</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -1,0 +1,801 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>BatchHandlerQuadSingle | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a>
+<div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main">Switch to Main</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/src_render-nodes_field-sprite.html">src/render-nodes/field-sprite</a></li>
+<li><a href="" aria-current="page">BatchHandlerQuadSingle</a></li></ul>
+<h1>Class BatchHandlerQuadSingle</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>BatchHandlerQuadSingle is a specialized batch handler for rendering quads
+with a single instance per batch.
+It extends the BatchHandlerQuad class and provides a specific configuration
+for single-instance rendering.
+It is used to efficiently render operations that require only a single quad,
+specifically filters.
+Because mobile devices often struggle with large buffer sizes,
+this class is designed to handle the case where only one quad is needed.</p>
+<p>If no configuration is provided, the default values are:</p>
+<ul>
+<li><code>name</code>: 'BatchHandlerQuadSingle'</li>
+<li><code>shaderName</code>: 'STANDARD_SINGLE'</li>
+<li><code>instancesPerBatch</code>: 1</li>
+</ul>
+</div></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="295469">
+<h4>Hierarchy (<a href="../hierarchy.html#src/render-nodes/field-sprite.BatchHandlerQuadSingle">View Summary</a>)</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="src_render-nodes_field-sprite.BatchHandlerQuad.html" class="tsd-signature-type tsd-kind-class">BatchHandlerQuad</a>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">BatchHandlerQuadSingle</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="src_render-nodes_field-sprite.FieldSpriteBatchHandler.html" class="tsd-signature-type tsd-kind-class">FieldSpriteBatchHandler</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122604</li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#batchentries" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>batch<wbr/>Entries</span></a>
+<a href="#bytesperindexperinstance" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bytes<wbr/>Per<wbr/>Index<wbr/>Per<wbr/>Instance</span></a>
+<a href="#bytesperinstance" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bytes<wbr/>Per<wbr/>Instance</span></a>
+<a href="#currentbatchentry" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>current<wbr/>Batch<wbr/>Entry</span></a>
+<a href="#defaultconfig" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Config</span></a>
+<a href="#floatsperinstance" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>floats<wbr/>Per<wbr/>Instance</span></a>
+<a href="#indexbuffer" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>index<wbr/>Buffer</span></a>
+<a href="#indicesperinstance" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>indices<wbr/>Per<wbr/>Instance</span></a>
+<a href="#instancecount" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>instance<wbr/>Count</span></a>
+<a href="#instancesperbatch" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>instances<wbr/>Per<wbr/>Batch</span></a>
+<a href="#manager" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>manager</span></a>
+<a href="#maxtexturesperbatch" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Textures<wbr/>Per<wbr/>Batch</span></a>
+<a href="#name" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a>
+<a href="#nextrenderoptions" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>next<wbr/>Render<wbr/>Options</span></a>
+<a href="#programmanager" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>program<wbr/>Manager</span></a>
+<a href="#renderoptions" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>render<wbr/>Options</span></a>
+<a href="#topology" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>topology</span></a>
+<a href="#vertexbufferlayout" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>vertex<wbr/>Buffer<wbr/>Layout</span></a>
+<a href="#verticesperinstance" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>vertices<wbr/>Per<wbr/>Instance</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#batch" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>batch</span></a>
+<a href="#batchtextures" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>batch<wbr/>Textures</span></a>
+<a href="#batchwithuv" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>batch<wbr/>With<wbr/>UV</span></a>
+<a href="#finalizetexturecount" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>finalize<wbr/>Texture<wbr/>Count</span></a>
+<a href="#onrunbegin" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Run<wbr/>Begin</span></a>
+<a href="#onrunend" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Run<wbr/>End</span></a>
+<a href="#pushcurrentbatchentry" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>push<wbr/>Current<wbr/>Batch<wbr/>Entry</span></a>
+<a href="#resize" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>resize</span></a>
+<a href="#run" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run</span></a>
+<a href="#setdebug" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Debug</span></a>
+<a href="#setuptextureuniforms" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup<wbr/>Texture<wbr/>Uniforms</span></a>
+<a href="#setupuniforms" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup<wbr/>Uniforms</span></a>
+<a href="#updaterenderoptions" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Render<wbr/>Options</span></a>
+<a href="#updateshaderconfig" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Shader<wbr/>Config</span></a>
+<a href="#updatetexturecount" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Texture<wbr/>Count</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="constructorbatchhandlerquadsingle"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">BatchHandlerQuadSingle</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">manager</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.RenderNodeManager.html" class="tsd-signature-type tsd-kind-class">RenderNodeManager</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_audio-manager.BatchHandlerConfig.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerConfig</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">BatchHandlerQuadSingle</a><a href="#constructorbatchhandlerquadsingle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">manager</span>: <a href="src_audio_audio-manager.RenderNodeManager.html" class="tsd-signature-type tsd-kind-class">RenderNodeManager</a></span>
+<div class="tsd-comment tsd-typography"><p>The manager that owns this RenderNode.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/src_audio_audio-manager.BatchHandlerConfig.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object for this handler.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">BatchHandlerQuadSingle</a></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#constructor">constructor</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122610</li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="batchentries"><span>batch<wbr/>Entries</span><a href="#batchentries" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">batchEntries</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.WebGLBatchEntry.html" class="tsd-signature-type tsd-kind-type-alias">WebGLBatchEntry</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>The entries in the batch.
+Each entry represents a &quot;sub-batch&quot; of quads which use the same
+pool of textures. This allows the renderer to continue to buffer
+quads into the same batch without needing to upload the vertex
+buffer. When the batch flushes, there will be one vertex buffer
+upload, and one draw call per batch entry.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#batchentries">batchEntries</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122269</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="bytesperindexperinstance"><span>bytes<wbr/>Per<wbr/>Index<wbr/>Per<wbr/>Instance</span><a href="#bytesperindexperinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">bytesPerIndexPerInstance</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of bytes per index per instance.
+This is used to advance the index buffer, and accounts for the
+size of a Uint16Array element.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#bytesperindexperinstance">bytesPerIndexPerInstance</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122213</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="bytesperinstance"><span>bytes<wbr/>Per<wbr/>Instance</span><a href="#bytesperinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">bytesPerInstance</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of bytes per instance, used to determine how much of the vertex buffer to upload.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#bytesperinstance">bytesPerInstance</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122249</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="currentbatchentry"><span>current<wbr/>Batch<wbr/>Entry</span><a href="#currentbatchentry" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">currentBatchEntry</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.WebGLBatchEntry.html" class="tsd-signature-type tsd-kind-type-alias">WebGLBatchEntry</a></div>
+<div class="tsd-comment tsd-typography"><p>The current batch entry being filled with textures.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#currentbatchentry">currentBatchEntry</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122259</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="defaultconfig"><span>default<wbr/>Config</span><a href="#defaultconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">defaultConfig</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.BatchHandlerConfig.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerConfig</a></div>
+<div class="tsd-comment tsd-typography"><p>The default configuration object for this handler.
+This is merged with the <code>config</code> object passed in the constructor.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#defaultconfig">defaultConfig</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122411</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="floatsperinstance"><span>floats<wbr/>Per<wbr/>Instance</span><a href="#floatsperinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">floatsPerInstance</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of floats per instance, used to determine how much of the vertex buffer to update.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#floatsperinstance">floatsPerInstance</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122254</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="indexbuffer"><span>index<wbr/>Buffer</span><a href="#indexbuffer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">indexBuffer</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLBufferWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLBufferWrapper</a></div>
+<div class="tsd-comment tsd-typography"><p>The index buffer defining vertex order.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#indexbuffer">indexBuffer</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122230</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="indicesperinstance"><span>indices<wbr/>Per<wbr/>Instance</span><a href="#indicesperinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">indicesPerInstance</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of indices per instance.
+This is usually 6 for a quad.
+Each index corresponds to a vertex in the vertex buffer.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#indicesperinstance">indicesPerInstance</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122206</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="instancecount"><span>instance<wbr/>Count</span><a href="#instancecount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">instanceCount</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of instances currently in the batch.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#instancecount">instanceCount</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122274</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="instancesperbatch"><span>instances<wbr/>Per<wbr/>Batch</span><a href="#instancesperbatch" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">instancesPerBatch</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of instances per batch, used to determine the size of the
+vertex buffer, and the number of instances to render.</p>
+<p>This is usually limited by the maximum number of vertices that can be
+distinguished with a 16-bit UNSIGNED_INT index buffer,
+which is 65536. This is set in the game render config as <code>batchSize</code>.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#instancesperbatch">instancesPerBatch</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122190</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="manager"><span>manager</span><a href="#manager" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">manager</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.RenderNodeManager.html" class="tsd-signature-type tsd-kind-class">RenderNodeManager</a></div>
+<div class="tsd-comment tsd-typography"><p>The manager that owns this RenderNode.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#manager">manager</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:124450</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="maxtexturesperbatch"><span>max<wbr/>Textures<wbr/>Per<wbr/>Batch</span><a href="#maxtexturesperbatch" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maxTexturesPerBatch</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The maximum number of textures per batch entry.
+This is usually set to the maximum number of texture units available,
+but it might be smaller for some uses.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#maxtexturesperbatch">maxTexturesPerBatch</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122220</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="name"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The name of the RenderNode.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#name">name</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:124445</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="nextrenderoptions"><span>next<wbr/>Render<wbr/>Options</span><a href="#nextrenderoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">nextRenderOptions</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a></div>
+<div class="tsd-comment tsd-typography"><p>The render options currently being built.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#nextrenderoptions">nextRenderOptions</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122405</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="programmanager"><span>program<wbr/>Manager</span><a href="#programmanager" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">programManager</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ProgramManager.html" class="tsd-signature-type tsd-kind-class">ProgramManager</a></div>
+<div class="tsd-comment tsd-typography"><p>The program manager used to create and manage shader programs.
+This contains shader variants.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#programmanager">programManager</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122244</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="renderoptions"><span>render<wbr/>Options</span><a href="#renderoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">renderOptions</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a></div>
+<div class="tsd-comment tsd-typography"><p>The current render options to which the batch is built.
+These help define the shader.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#renderoptions">renderOptions</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122400</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="topology"><span>topology</span><a href="#topology" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">topology</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The topology to use for the batch handler. This is the GL topology to use for the draw call.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#topology">topology</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122225</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="vertexbufferlayout"><span>vertex<wbr/>Buffer<wbr/>Layout</span><a href="#vertexbufferlayout" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">vertexBufferLayout</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLVertexBufferLayoutWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLVertexBufferLayoutWrapper</a></div>
+<div class="tsd-comment tsd-typography"><p>The layout, data, and vertex buffer used to store the vertex data.</p>
+<p>The default layout is for a quad with position, texture coordinate,
+texture ID, tint effect, and tint color on each vertex.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#vertexbufferlayout">vertexBufferLayout</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122238</li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="verticesperinstance"><span>vertices<wbr/>Per<wbr/>Instance</span><a href="#verticesperinstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">verticesPerInstance</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The number of vertices per instance.</p>
+<p>This is usually 4 for a quad.</p>
+<p>Each vertex corresponds to an index in the element buffer.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#verticesperinstance">verticesPerInstance</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122199</li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="batch"><span>batch</span><a href="#batch" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="batch-1"><span class="tsd-kind-call-signature">batch</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">currentContext</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">glTexture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x0</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y0</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x3</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y3</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">texX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">texY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">texWidth</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">texHeight</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintMode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintTL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintBL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintTR</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintBR</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">renderOptions</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2TL</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2BL</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2TR</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2BR</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#batch-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Add a quad to the batch.</p>
+<p>For compatibility with TRIANGLE_STRIP rendering,
+the vertices are written into the buffer in the order:</p>
+<ul>
+<li>Bottom-left</li>
+<li>Top-left</li>
+<li>Bottom-right</li>
+<li>Top-right</li>
+</ul>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">currentContext</span>: <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a></span>
+<div class="tsd-comment tsd-typography"><p>The current drawing context.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">glTexture</span>: <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a></span>
+<div class="tsd-comment tsd-typography"><p>The texture to render.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x0</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y0</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x1</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y1</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x2</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y2</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x3</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y3</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">texX</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The left u coordinate (0-1).</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">texY</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The top v coordinate (0-1).</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">texWidth</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The width of the texture (0-1).</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">texHeight</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The height of the texture (0-1).</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintMode</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The tint mode to use.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintTL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The top-left tint color.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintBL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The bottom-left tint color.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintTR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The top-right tint color.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintBR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The bottom-right tint color.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">renderOptions</span>: <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a></span>
+<div class="tsd-comment tsd-typography"><p>Optional render features.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2TL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the top-left corner.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2BL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the bottom-left corner.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2TR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the top-right corner.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2BR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>Additional arguments for subclasses.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#batch">batch</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122523</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="batchtextures"><span>batch<wbr/>Textures</span><a href="#batchtextures" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="batchtextures-1"><span class="tsd-kind-call-signature">batchTextures</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">glTexture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">renderOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#batchtextures-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Process textures for batching.
+This method is called automatically by the <code>batch</code> method.
+It returns a piece of data used for various texture tasks,
+depending on the render options.</p>
+<p>The texture datum may be used for texture ID or normal map rotation.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">glTexture</span>: <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a></span>
+<div class="tsd-comment tsd-typography"><p>The texture to render.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">renderOptions</span>: <span class="tsd-signature-type">object</span></span>
+<div class="tsd-comment tsd-typography"><p>The current render options.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The texture datum.</p>
+<aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#batchtextures">batchTextures</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122579</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="batchwithuv"><span>batch<wbr/>With<wbr/>UV</span><a href="#batchwithuv" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="batchwithuv-1"><span class="tsd-kind-call-signature">batchWithUV</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">currentContext</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">glTexture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x0</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y0</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">x3</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">y3</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">u0</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">v0</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">u1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">v1</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">u2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">v2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">u3</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">v3</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintMode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintTL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintBL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintTR</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tintBR</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">renderOptions</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2TL</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2BL</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2TR</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">tint2BR</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#batchwithuv-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Add a quad to the batch, using explicit UV coordinates.
+This is intended for compatibility with mesh rendering.</p>
+<p>For compatibility with TRIANGLE_STRIP rendering,
+the vertices are written into the buffer in the order:</p>
+<ul>
+<li>Bottom-left</li>
+<li>Top-left</li>
+<li>Bottom-right</li>
+<li>Top-right</li>
+</ul>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">currentContext</span>: <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a></span>
+<div class="tsd-comment tsd-typography"><p>The current drawing context.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">glTexture</span>: <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a></span>
+<div class="tsd-comment tsd-typography"><p>The texture to render.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x0</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y0</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x1</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y1</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x2</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y2</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">x3</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The x coordinate of the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">y3</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The y coordinate of the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">u0</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The u coordinate of the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">v0</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The v coordinate of the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">u1</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The u coordinate of the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">v1</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The v coordinate of the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">u2</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The u coordinate of the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">v2</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The v coordinate of the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">u3</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The u coordinate of the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">v3</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The v coordinate of the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintMode</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The tint mode to use.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintTL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The tint color for the top-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintBL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The tint color for the bottom-left corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintTR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The tint color for the top-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">tintBR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The tint color for the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">renderOptions</span>: <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a></span>
+<div class="tsd-comment tsd-typography"><p>Optional render features.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2TL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the top-left corner.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2BL</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the bottom-left corner.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2TR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the top-right corner.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">tint2BR</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The secondary tint color for the bottom-right corner.</p>
+</div></li>
+<li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>Additional arguments for subclasses.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#batchwithuv">batchWithUV</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122566</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="finalizetexturecount"><span>finalize<wbr/>Texture<wbr/>Count</span><a href="#finalizetexturecount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="finalizetexturecount-1"><span class="tsd-kind-call-signature">finalizeTextureCount</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">count</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#finalizetexturecount-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Finalize the texture count for the current sub-batch.
+This is called automatically when the render is run.
+It requests a shader program with the necessary number of textures,
+if that is less than the maximum allowed.
+This reduces the number of textures the GPU must handle,
+which can improve performance.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">count</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The total number of textures in the batch.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#finalizetexturecount">finalizeTextureCount</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122460</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="onrunbegin"><span>on<wbr/>Run<wbr/>Begin</span><a href="#onrunbegin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="onrunbegin-1"><span class="tsd-kind-call-signature">onRunBegin</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">drawingContext</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#onrunbegin-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>By default this is an empty method hook that you can override and use in your own custom render nodes.</p>
+<p>This method is called at the start of the <code>run</code> method.
+Don't forget to call it in your custom method.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">drawingContext</span>: <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a></span>
+<div class="tsd-comment tsd-typography"><p>The context currently in use.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#onrunbegin">onRunBegin</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:124469</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="onrunend"><span>on<wbr/>Run<wbr/>End</span><a href="#onrunend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="onrunend-1"><span class="tsd-kind-call-signature">onRunEnd</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">drawingContext</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#onrunend-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>By default this is an empty method hook that you can override and use in your own custom render nodes.</p>
+<p>This method is called at the end of the <code>run</code> method.
+Don't forget to call it in your custom method.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">drawingContext</span>: <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a></span>
+<div class="tsd-comment tsd-typography"><p>The context currently in use.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#onrunend">onRunEnd</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:124478</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="pushcurrentbatchentry"><span>push<wbr/>Current<wbr/>Batch<wbr/>Entry</span><a href="#pushcurrentbatchentry" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="pushcurrentbatchentry-1"><span class="tsd-kind-call-signature">pushCurrentBatchEntry</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#pushcurrentbatchentry-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Push the current batch entry to the batch entry list,
+and create a new batch entry for future use.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#pushcurrentbatchentry">pushCurrentBatchEntry</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122585</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="resize"><span>resize</span><a href="#resize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="resize-1"><span class="tsd-kind-call-signature">resize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#resize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set new dimensions for the renderer.
+This should be overridden by subclasses.</p>
+<p>This is called automatically when the renderer is resized.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">width</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The new width of the renderer.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">height</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The new height of the renderer.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#resize">resize</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122284</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="run"><span>run</span><a href="#run" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="run-1"><span class="tsd-kind-call-signature">run</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">drawingContext</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#run-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Draw then empty the current batch.</p>
+<p>This method is called automatically, by either this node or the manager,
+when the batch is full, or when something else needs to be rendered.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">drawingContext</span>: <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a></span>
+<div class="tsd-comment tsd-typography"><p>The current drawing context.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#run">run</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122485</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="setdebug"><span>set<wbr/>Debug</span><a href="#setdebug" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="setdebug-1"><span class="tsd-kind-call-signature">setDebug</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">debug</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setdebug-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Enables or disables debug reporting for this node.</p>
+<p>When enabled, the <code>run</code> method is replaced with a wrapper that pushes
+the node's name onto the manager's debug stack before execution and pops
+it afterwards, allowing the renderer to track which nodes are active.
+The original <code>run</code> implementation is preserved in <code>_run</code>.</p>
+<p>When disabled, the original <code>run</code> method is restored and <code>_run</code> is cleared.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">debug</span>: <span class="tsd-signature-type">boolean</span></span>
+<div class="tsd-comment tsd-typography"><p>Whether to report debug information.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#setdebug">setDebug</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:124491</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="setuptextureuniforms"><span>setup<wbr/>Texture<wbr/>Uniforms</span><a href="#setuptextureuniforms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="setuptextureuniforms-1"><span class="tsd-kind-call-signature">setupTextureUniforms</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">textures</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setuptextureuniforms-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Set the texture resolution uniforms for the current shader program.
+Specifically, this sets the <code>uMainResolution</code> uniform with the pixel
+dimensions of each bound texture. This information is required by shader
+features such as smooth pixel art rendering.</p>
+<p>This method is called automatically when the batch is run and the
+<code>texRes</code> render option is enabled.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">textures</span>: <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The textures to render.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#setuptextureuniforms">setupTextureUniforms</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122449</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="setupuniforms"><span>setup<wbr/>Uniforms</span><a href="#setupuniforms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="setupuniforms-1"><span class="tsd-kind-call-signature">setupUniforms</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">drawingContext</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setupuniforms-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Update the uniforms for the current shader program.</p>
+<p>This method is called automatically when the batch is run.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">drawingContext</span>: <a href="src_audio_audio-manager.DrawingContext.html" class="tsd-signature-type tsd-kind-class">DrawingContext</a></span>
+<div class="tsd-comment tsd-typography"><p>The current drawing context.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#setupuniforms">setupUniforms</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122437</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="updaterenderoptions"><span>update<wbr/>Render<wbr/>Options</span><a href="#updaterenderoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="updaterenderoptions-1"><span class="tsd-kind-call-signature">updateRenderOptions</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">renderOptions</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updaterenderoptions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Compare the incoming render options against the currently active options
+and stage any differences into <code>nextRenderOptions</code>. Sets
+<code>_renderOptionsChanged</code> to <code>true</code> if any option has changed, signalling
+that the current batch should be flushed and the shader rebuilt via
+<code>updateShaderConfig</code> before the next draw.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">renderOptions</span>: <a href="../types/src_render-nodes_field-sprite.BatchHandlerQuadRenderOptions.html" class="tsd-signature-type tsd-kind-type-alias">BatchHandlerQuadRenderOptions</a></span>
+<div class="tsd-comment tsd-typography"><p>The new render options.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#updaterenderoptions">updateRenderOptions</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122470</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="updateshaderconfig"><span>update<wbr/>Shader<wbr/>Config</span><a href="#updateshaderconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="updateshaderconfig-1"><span class="tsd-kind-call-signature">updateShaderConfig</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updateshaderconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Update the shader configuration based on render options.
+This is called automatically when the render options change.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#updateshaderconfig">updateShaderConfig</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122476</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="updatetexturecount"><span>update<wbr/>Texture<wbr/>Count</span><a href="#updatetexturecount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="updatetexturecount-1"><span class="tsd-kind-call-signature">updateTextureCount</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">count</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updatetexturecount-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Update the maximum number of textures per batch.
+This rebuilds the shader program with the new texture count.
+The minimum number of textures is 1, and the maximum is the number of
+texture units defined in the renderer.
+Rebuilding the shader may be expensive, so use this sparingly.</p>
+<p>If this runs during a batch, and the new count is less than the number of
+textures in the current batch entry, the batch will be flushed before the
+shader program is rebuilt, so none of the textures are skipped.</p>
+<p>This is usually called automatically by a listener
+for the <code>Phaser.Renderer.Events.SET_PARALLEL_TEXTURE_UNITS</code> event,
+triggered by the RenderNodeManager.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">count</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The new maximum number of textures per batch. If undefined, the maximum number of texture units is used.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_render-nodes_field-sprite.BatchHandlerQuad.html">BatchHandlerQuad</a>.<a href="src_render-nodes_field-sprite.BatchHandlerQuad.html#updatetexturecount">updateTextureCount</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:122429</li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#batchentries" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>batch<wbr/>Entries</span></a><a href="#bytesperindexperinstance" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bytes<wbr/>Per<wbr/>Index<wbr/>Per<wbr/>Instance</span></a><a href="#bytesperinstance" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bytes<wbr/>Per<wbr/>Instance</span></a><a href="#currentbatchentry" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>current<wbr/>Batch<wbr/>Entry</span></a><a href="#defaultconfig" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>default<wbr/>Config</span></a><a href="#floatsperinstance" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>floats<wbr/>Per<wbr/>Instance</span></a><a href="#indexbuffer" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>index<wbr/>Buffer</span></a><a href="#indicesperinstance" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>indices<wbr/>Per<wbr/>Instance</span></a><a href="#instancecount" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>instance<wbr/>Count</span></a><a href="#instancesperbatch" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>instances<wbr/>Per<wbr/>Batch</span></a><a href="#manager" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>manager</span></a><a href="#maxtexturesperbatch" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Textures<wbr/>Per<wbr/>Batch</span></a><a href="#name" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#nextrenderoptions" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>next<wbr/>Render<wbr/>Options</span></a><a href="#programmanager" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>program<wbr/>Manager</span></a><a href="#renderoptions" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>render<wbr/>Options</span></a><a href="#topology" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>topology</span></a><a href="#vertexbufferlayout" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>vertex<wbr/>Buffer<wbr/>Layout</span></a><a href="#verticesperinstance" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>vertices<wbr/>Per<wbr/>Instance</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#batch" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>batch</span></a><a href="#batchtextures" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>batch<wbr/>Textures</span></a><a href="#batchwithuv" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>batch<wbr/>With<wbr/>UV</span></a><a href="#finalizetexturecount" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>finalize<wbr/>Texture<wbr/>Count</span></a><a href="#onrunbegin" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Run<wbr/>Begin</span></a><a href="#onrunend" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Run<wbr/>End</span></a><a href="#pushcurrentbatchentry" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>push<wbr/>Current<wbr/>Batch<wbr/>Entry</span></a><a href="#resize" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>resize</span></a><a href="#run" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run</span></a><a href="#setdebug" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Debug</span></a><a href="#setuptextureuniforms" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup<wbr/>Texture<wbr/>Uniforms</span></a><a href="#setupuniforms" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>setup<wbr/>Uniforms</span></a><a href="#updaterenderoptions" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Render<wbr/>Options</span></a><a href="#updateshaderconfig" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Shader<wbr/>Config</span></a><a href="#updatetexturecount" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Texture<wbr/>Count</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer>
+<div class="overlay"></div></body></html>

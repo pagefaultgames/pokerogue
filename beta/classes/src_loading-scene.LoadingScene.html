@@ -13,16 +13,20 @@
 <h1>Class LoadingScene</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A base Phaser.Scene class which can be extended for your own use.</p>
+<p>A Scene is the fundamental organizational unit in Phaser. Each Scene has its own
+display list, update loop, cameras, input handling, and loader. Multiple Scenes
+can run simultaneously (e.g., a game scene with a UI overlay scene). Scenes are
+managed by the SceneManager and communicate with each other via the ScenePlugin.</p>
 <p>You can also define the optional methods <a href="../types/src_audio_audio-manager.SceneInitCallback.html" class="tsd-kind-type-alias">init()</a>, <a href="../types/src_audio_audio-manager.ScenePreloadCallback.html" class="tsd-kind-type-alias">preload()</a>, and <a href="../types/src_audio_audio-manager.SceneCreateCallback.html" class="tsd-kind-type-alias">create()</a>.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="47969">
+<section class="tsd-panel tsd-hierarchy" data-refl="48133">
 <h4>Hierarchy (<a href="../hierarchy.html#src/loading-scene.LoadingScene">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_scene-base.SceneBase.html" class="tsd-signature-type tsd-kind-class">SceneBase</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">LoadingScene</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L17">src/loading-scene.ts:17</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L18">src/loading-scene.ts:18</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -41,7 +45,6 @@
 <a href="#children" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>children</span></a>
 <a href="#data" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>data</span></a>
 <a href="#events" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>events</span></a>
-<a href="#facebook" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>facebook</span></a>
 <a href="#game" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>game</span></a>
 <a href="#input" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>input</span></a>
 <a href="#lights" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>lights</span></a>
@@ -94,7 +97,7 @@
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">LoadingScene</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L22">src/loading-scene.ts:22</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L23">src/loading-scene.ts:23</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -106,7 +109,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#add">add</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103739</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130513</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="anims"><span>anims</span><a href="#anims" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">anims</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.AnimationManager.html" class="tsd-signature-type tsd-kind-class">AnimationManager</a></div>
@@ -115,7 +118,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#anims">anims</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103690</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130464</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="cache"><span>cache</span><a href="#cache" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">cache</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.CacheManager.html" class="tsd-signature-type tsd-kind-class">CacheManager</a></div>
@@ -124,7 +127,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#cache">cache</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103697</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130471</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="cameras"><span>cameras</span><a href="#cameras" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">cameras</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.CameraManager.html" class="tsd-signature-type tsd-kind-class">CameraManager</a></div>
@@ -133,7 +136,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#cameras">cameras</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103732</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130506</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="children"><span>children</span><a href="#children" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">children</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DisplayList.html" class="tsd-signature-type tsd-kind-class">DisplayList</a></div>
@@ -142,7 +145,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#children">children</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103760</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130534</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="data"><span>data</span><a href="#data" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">data</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DataManager.html" class="tsd-signature-type tsd-kind-class">DataManager</a></div>
@@ -152,7 +155,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#data">data</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103776</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130550</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="events"><span>events</span><a href="#events" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">events</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.EventEmitter.html" class="tsd-signature-type tsd-kind-class">EventEmitter</a></div>
@@ -161,16 +164,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#events">events</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103725</li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
-<h3 class="tsd-anchor-link" id="facebook"><span>facebook</span><a href="#facebook" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">facebook</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.FacebookInstantGamesPlugin.html" class="tsd-signature-type tsd-kind-class">FacebookInstantGamesPlugin</a></div>
-<div class="tsd-comment tsd-typography"><p>The Facebook Instant Games Plugin.</p>
-<p>This property will only be available if defined in the Scene Injection Map, the plugin is installed and configured.</p>
-</div><aside class="tsd-sources">
-<p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#facebook">facebook</a></p>
-<ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103825</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130499</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="game"><span>game</span><a href="#game" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">game</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Game.html" class="tsd-signature-type tsd-kind-class">Game</a></div>
@@ -179,7 +173,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#game">game</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103683</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130457</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="input"><span>input</span><a href="#input" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">input</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.InputPlugin.html" class="tsd-signature-type tsd-kind-class">InputPlugin</a></div>
@@ -188,7 +182,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#input">input</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103783</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130557</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="lights"><span>lights</span><a href="#lights" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">lights</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.LightsManager.html" class="tsd-signature-type tsd-kind-class">LightsManager</a></div>
@@ -197,7 +191,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#lights">lights</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103767</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130541</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="load"><span>load</span><a href="#load" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">load</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.LoaderPlugin.html" class="tsd-signature-type tsd-kind-class">LoaderPlugin</a></div>
@@ -206,12 +200,12 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#load">load</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103790</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130564</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="load_events"><code class="tsd-tag">Readonly</code><span>LOAD_<wbr/>EVENTS</span><a href="#load_events" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">LOAD_EVENTS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <a href="../modules/src_loading-scene.Events.html" class="tsd-signature-type tsd-kind-namespace">Events</a><span class="tsd-signature-symbol"> = Phaser.Loader.Events</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L20">src/loading-scene.ts:20</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L21">src/loading-scene.ts:21</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="make"><span>make</span><a href="#make" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">make</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">GameObjectCreator</span></div>
@@ -220,7 +214,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#make">make</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103746</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130520</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="matter"><span>matter</span><a href="#matter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">matter</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.MatterPhysics.html" class="tsd-signature-type tsd-kind-class">MatterPhysics</a></div>
@@ -229,7 +223,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#matter">matter</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103818</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130592</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="physics"><span>physics</span><a href="#physics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">physics</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ArcadePhysics.html" class="tsd-signature-type tsd-kind-class">ArcadePhysics</a></div>
@@ -238,7 +232,7 @@
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#physics">physics</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103811</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130585</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="plugins"><span>plugins</span><a href="#plugins" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">plugins</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.PluginManager.html" class="tsd-signature-type tsd-kind-class">PluginManager</a></div>
@@ -248,7 +242,7 @@ those plugins into Scenes as required.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#plugins">plugins</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103840</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130607</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="registry"><span>registry</span><a href="#registry" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">registry</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.DataManager.html" class="tsd-signature-type tsd-kind-class">DataManager</a></div>
@@ -257,7 +251,7 @@ those plugins into Scenes as required.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#registry">registry</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103704</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130478</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="renderer"><span>renderer</span><a href="#renderer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">renderer</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.CanvasRenderer.html" class="tsd-signature-type tsd-kind-class">CanvasRenderer</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.WebGLRenderer.html" class="tsd-signature-type tsd-kind-class">WebGLRenderer</a></div>
@@ -265,7 +259,7 @@ those plugins into Scenes as required.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#renderer">renderer</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103845</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130612</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="scale"><span>scale</span><a href="#scale" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scale</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ScaleManager.html" class="tsd-signature-type tsd-kind-class">ScaleManager</a></div>
@@ -274,7 +268,7 @@ those plugins into Scenes as required.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#scale">scale</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103832</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130599</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="scaledcanvas"><code class="tsd-tag">Readonly</code><span>scaled<wbr/>Canvas</span><a href="#scaledcanvas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scaledCanvas</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">180</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">320</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = ...</span></div>
@@ -289,7 +283,7 @@ height: <code>180</code></p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#scaledcanvas">scaledCanvas</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L18">src/scene-base.ts:18</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L19">src/scene-base.ts:19</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="scene"><span>scene</span><a href="#scene" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scene</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.ScenePlugin.html" class="tsd-signature-type tsd-kind-class">ScenePlugin</a></div>
@@ -298,7 +292,7 @@ height: <code>180</code></p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#scene">scene</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103753</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130527</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="sound"><span>sound</span><a href="#sound" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sound</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.NoAudioSoundManager.html" class="tsd-signature-type tsd-kind-class">NoAudioSoundManager</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.HTML5AudioSoundManager.html" class="tsd-signature-type tsd-kind-class">HTML5AudioSoundManager</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.WebAudioSoundManager.html" class="tsd-signature-type tsd-kind-class">WebAudioSoundManager</a></div>
@@ -307,7 +301,7 @@ height: <code>180</code></p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#sound">sound</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103711</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130485</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="sys"><span>sys</span><a href="#sys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sys</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Systems.html" class="tsd-signature-type tsd-kind-class">Systems</a></div>
@@ -315,7 +309,7 @@ height: <code>180</code></p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#sys">sys</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103676</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130450</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="textures"><span>textures</span><a href="#textures" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">textures</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.TextureManager.html" class="tsd-signature-type tsd-kind-class">TextureManager</a></div>
@@ -324,7 +318,7 @@ height: <code>180</code></p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#textures">textures</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103718</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130492</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="time"><span>time</span><a href="#time" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">time</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Clock.html" class="tsd-signature-type tsd-kind-class">Clock</a></div>
@@ -333,7 +327,7 @@ height: <code>180</code></p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#time">time</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103797</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130571</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="tweens"><span>tweens</span><a href="#tweens" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">tweens</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.TweenManager.html" class="tsd-signature-type tsd-kind-class">TweenManager</a></div>
@@ -342,12 +336,12 @@ height: <code>180</code></p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#tweens">tweens</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103804</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130578</li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="key"><code class="tsd-tag">Static</code> <code class="tsd-tag">Readonly</code><span>KEY</span><a href="#key" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">KEY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;loading&quot;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L18">src/loading-scene.ts:18</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L19">src/loading-scene.ts:19</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -359,7 +353,7 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L536">src/loading-scene.ts:536</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L537">src/loading-scene.ts:537</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="handledestroy"><span>handle<wbr/>Destroy</span><a href="#handledestroy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -368,7 +362,7 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L541">src/loading-scene.ts:541</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L542">src/loading-scene.ts:542</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="init"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -378,7 +372,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#init">init</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L23">src/scene-base.ts:23</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L24">src/scene-base.ts:24</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="loadatlas"><span>load<wbr/>Atlas</span><a href="#loadatlas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -394,7 +388,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#loadatlas">loadAtlas</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L61">src/scene-base.ts:61</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L62">src/scene-base.ts:62</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="loadbgm"><span>load<wbr/>Bgm</span><a href="#loadbgm" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -408,7 +402,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#loadbgm">loadBgm</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L101">src/scene-base.ts:101</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L102">src/scene-base.ts:102</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="loadbiomeimages"><code class="tsd-tag">Private</code><span>load<wbr/>Biome<wbr/>Images</span><a href="#loadbiomeimages" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -421,7 +415,7 @@ height: <code>180</code></p>
 <li><span><span class="tsd-kind-parameter">startingBiome</span>: <a href="../types/src_enums_biome-id.BiomeId.html" class="tsd-signature-type tsd-kind-type-alias">BiomeId</a><span class="tsd-signature-symbol"> = BiomeId.TOWN</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L552">src/loading-scene.ts:552</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L553">src/loading-scene.ts:553</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="loadegggachaimages"><code class="tsd-tag">Private</code><span>load<wbr/>Egg<wbr/>Gacha<wbr/>Images</span><a href="#loadegggachaimages" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -430,7 +424,7 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L606">src/loading-scene.ts:606</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L607">src/loading-scene.ts:607</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="loadeventimages"><code class="tsd-tag">Private</code><span>load<wbr/>Event<wbr/>Images</span><a href="#loadeventimages" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -443,7 +437,7 @@ height: <code>180</code></p>
 <li><span><span class="tsd-kind-parameter">lang</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L591">src/loading-scene.ts:591</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L592">src/loading-scene.ts:592</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="loadimage"><span>load<wbr/>Image</span><a href="#loadimage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -459,7 +453,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#loadimage">loadImage</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L32">src/scene-base.ts:32</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L33">src/scene-base.ts:33</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="loadloadingscreen"><code class="tsd-tag">Private</code><span>load<wbr/>Loading<wbr/>Screen</span><a href="#loadloadingscreen" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -468,7 +462,7 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L376">src/loading-scene.ts:376</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L377">src/loading-scene.ts:377</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="loadpokemonicons"><code class="tsd-tag">Private</code><span>load<wbr/>Pokemon<wbr/>Icons</span><a href="#loadpokemonicons" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -477,7 +471,7 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L614">src/loading-scene.ts:614</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L615">src/loading-scene.ts:615</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="loadse"><span>load<wbr/>Se</span><a href="#loadse" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -493,7 +487,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#loadse">loadSe</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L86">src/scene-base.ts:86</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L87">src/scene-base.ts:87</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="loadspritesheet"><span>load<wbr/>Spritesheet</span><a href="#loadspritesheet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -510,7 +504,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#loadspritesheet">loadSpritesheet</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/scene-base.ts#L46">src/scene-base.ts:46</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/scene-base.ts#L47">src/scene-base.ts:47</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private">
 <h3 class="tsd-anchor-link" id="loadwindowvariants"><code class="tsd-tag">Private</code><span>load<wbr/>Window<wbr/>Variants</span><a href="#loadwindowvariants" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -519,7 +513,7 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L582">src/loading-scene.ts:582</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L583">src/loading-scene.ts:583</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="preload"><span>preload</span><a href="#preload" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -528,15 +522,17 @@ height: <code>180</code></p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/7e504db358b6367990a720e0af68bfdca6d5c6e6/src/loading-scene.ts#L28">src/loading-scene.ts:28</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/11794c5f43694e8591e233395a56eef62a567c54/src/loading-scene.ts#L29">src/loading-scene.ts:29</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="update"><span>update</span><a href="#update" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
 <li class="tsd-is-inherited tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="update-1"><span class="tsd-kind-call-signature">update</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">time</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">delta</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#update-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>This method should be overridden by your own Scenes.</p>
-<p>This method is called once per game step while the scene is running.</p>
+<div class="tsd-comment tsd-typography"><p>Override this method in your own Scene subclass to implement per-frame game logic.</p>
+<p>This method is called automatically once per game step while the scene is running.
+It is empty by default and is the primary place to put logic that needs to run every frame,
+such as updating game object positions, checking collisions, or reading input state.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -550,7 +546,7 @@ height: <code>180</code></p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="src_scene-base.SceneBase.html">SceneBase</a>.<a href="src_scene-base.SceneBase.html#update">update</a></p>
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:103854</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:130623</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -570,7 +566,7 @@ height: <code>180</code></p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#add" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>add</span></a><a href="#anims" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>anims</span></a><a href="#cache" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cache</span></a><a href="#cameras" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cameras</span></a><a href="#children" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>children</span></a><a href="#data" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>data</span></a><a href="#events" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>events</span></a><a href="#facebook" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>facebook</span></a><a href="#game" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>game</span></a><a href="#input" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>input</span></a><a href="#lights" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>lights</span></a><a href="#load" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>load</span></a><a href="#load_events"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>LOAD_<wbr/>EVENTS</span></a><a href="#make" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>make</span></a><a href="#matter" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>matter</span></a><a href="#physics" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>physics</span></a><a href="#plugins" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>plugins</span></a><a href="#registry" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>registry</span></a><a href="#renderer" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>renderer</span></a><a href="#scale" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scale</span></a><a href="#scaledcanvas" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scaled<wbr/>Canvas</span></a><a href="#scene" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scene</span></a><a href="#sound" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sound</span></a><a href="#sys" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sys</span></a><a href="#textures" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>textures</span></a><a href="#time" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>time</span></a><a href="#tweens" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tweens</span></a><a href="#key"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>KEY</span></a></div></details>
+<div><a href="#add" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>add</span></a><a href="#anims" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>anims</span></a><a href="#cache" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cache</span></a><a href="#cameras" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>cameras</span></a><a href="#children" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>children</span></a><a href="#data" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>data</span></a><a href="#events" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>events</span></a><a href="#game" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>game</span></a><a href="#input" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>input</span></a><a href="#lights" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>lights</span></a><a href="#load" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>load</span></a><a href="#load_events"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>LOAD_<wbr/>EVENTS</span></a><a href="#make" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>make</span></a><a href="#matter" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>matter</span></a><a href="#physics" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>physics</span></a><a href="#plugins" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>plugins</span></a><a href="#registry" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>registry</span></a><a href="#renderer" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>renderer</span></a><a href="#scale" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scale</span></a><a href="#scaledcanvas" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scaled<wbr/>Canvas</span></a><a href="#scene" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scene</span></a><a href="#sound" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sound</span></a><a href="#sys" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sys</span></a><a href="#textures" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>textures</span></a><a href="#time" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>time</span></a><a href="#tweens" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tweens</span></a><a href="#key"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>KEY</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
 <div><a href="#create"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create</span></a><a href="#handledestroy"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Destroy</span></a><a href="#init" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init</span></a><a href="#loadatlas" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Atlas</span></a><a href="#loadbgm" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Bgm</span></a><a href="#loadbiomeimages" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Biome<wbr/>Images</span></a><a href="#loadegggachaimages" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Egg<wbr/>Gacha<wbr/>Images</span></a><a href="#loadeventimages" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Event<wbr/>Images</span></a><a href="#loadimage" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Image</span></a><a href="#loadloadingscreen" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Loading<wbr/>Screen</span></a><a href="#loadpokemonicons" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Pokemon<wbr/>Icons</span></a><a href="#loadse" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Se</span></a><a href="#loadspritesheet" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Spritesheet</span></a><a href="#loadwindowvariants" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>load<wbr/>Window<wbr/>Variants</span></a><a href="#preload"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>preload</span></a><a href="#update" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update</span></a></div></details></div></details></div>
 <div class="site-menu">

@@ -22,7 +22,7 @@ dimension based center, you often need to get the bounds coordinates in order to
 <p>See also the <code>MatterPhysics.alignBody</code> method.</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87746</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113392</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -69,14 +69,14 @@ dimension based center, you often need to get the bounds coordinates in order to
 <div class="tsd-comment tsd-typography"><p>A Vector2 that stores the temporary bounds center value during calculations by methods in this class.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87750</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113396</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="centerdiff"><span>center<wbr/>Diff</span><a href="#centerdiff" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">centerDiff</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></div>
 <div class="tsd-comment tsd-typography"><p>A Vector2 that stores the temporary center diff values during calculations by methods in this class.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87755</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113401</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -88,7 +88,7 @@ dimension based center, you often need to get the bounds coordinates in order to
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the bottom-center of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -102,9 +102,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87853</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113508</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getbottomleft"><span>get<wbr/>Bottom<wbr/>Left</span><a href="#getbottomleft" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -113,7 +114,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the bottom-left of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -127,9 +128,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87842</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113496</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getbottomright"><span>get<wbr/>Bottom<wbr/>Right</span><a href="#getbottomright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -138,7 +140,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the bottom-right of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -152,9 +154,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87864</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113520</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getcenter"><span>get<wbr/>Center</span><a href="#getcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -163,7 +166,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the center of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -177,9 +180,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87820</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113472</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getleftcenter"><span>get<wbr/>Left<wbr/>Center</span><a href="#getleftcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -188,7 +192,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the left-center of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -202,9 +206,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87809</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113460</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="getrightcenter"><span>get<wbr/>Right<wbr/>Center</span><a href="#getrightcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -213,7 +218,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the right-center of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -227,9 +232,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87831</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113484</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gettopcenter"><span>get<wbr/>Top<wbr/>Center</span><a href="#gettopcenter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -238,7 +244,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the top-center of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -252,9 +258,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87787</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113436</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gettopleft"><span>get<wbr/>Top<wbr/>Left</span><a href="#gettopleft" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -263,7 +270,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the top-left of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -277,9 +284,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87776</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113424</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gettopright"><span>get<wbr/>Top<wbr/>Right</span><a href="#gettopright" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -288,7 +296,7 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Takes a Body and returns the world coordinates of the top-right of its <em>bounds</em>.</p>
 <p>Body bounds are updated by Matter each step and factor in scale and rotation.
-This will return the world coordinate based on the bodies <em>current</em> position and bounds.</p>
+This will return the world coordinate based on the body's <em>current</em> position and bounds.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -302,9 +310,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">y</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Optional vertical offset to add to the returned coordinates. Default 0.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.Vector2.html" class="tsd-signature-type tsd-kind-class">Vector2</a></h4><p>A Vector2 containing the coordinates, or <code>false</code> if it was unable to parse the body.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87798</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113448</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="parsebody"><span>parse<wbr/>Body</span><a href="#parsebody" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -321,9 +330,10 @@ This will return the world coordinate based on the bodies <em>current</em> posit
 <li><span><span class="tsd-kind-parameter">body</span>: <a href="../types/src_audio_audio-manager.MatterBody.html" class="tsd-signature-type tsd-kind-type-alias">MatterBody</a></span>
 <div class="tsd-comment tsd-typography"><p>The Body to get the bounds position from.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p><code>true</code> if it was able to get the bounds, otherwise <code>false</code>.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:87765</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:113412</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -13,11 +13,18 @@
 <h1>Class TextureSource</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A Texture Source is the encapsulation of the actual source data for a Texture.</p>
-<p>This is typically an Image Element, loaded from the file system or network, a Canvas Element or a Video Element.</p>
+<p>It wraps the raw pixel data — typically an Image Element loaded from the file system or
+network, a Canvas Element, or a Video Element — and manages the corresponding WebGL
+texture object used by the renderer. In WebGL mode, the TextureSource creates and owns
+the <code>WebGLTextureWrapper</code> that is uploaded to the GPU.</p>
+<p>You will not usually create a TextureSource directly. Instead, it is created automatically
+when a Texture is added to the Texture Manager. You can access it via <code>Texture.source</code>,
+which is an array of TextureSource instances. Most textures have a single source, but
+multi-atlas textures can have several.</p>
 <p>A Texture can contain multiple Texture Sources, which only happens when a multi-atlas is loaded.</p>
 </div></section><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108748</li></ul></aside>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135789</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -52,7 +59,10 @@
 <a href="#init" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init</span></a>
 <a href="#setfilter" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Filter</span></a>
 <a href="#setflipy" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Flip<wbr/>Y</span></a>
+<a href="#setwrap" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Wrap</span></a>
 <a href="#update" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update</span></a>
+<a href="#updatesize" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Size</span></a>
+<a href="#updatesource" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Source</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -61,7 +71,7 @@
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
-<div class="tsd-signature tsd-anchor-link" id="constructortexturesource"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">TextureSource</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">:</span><br/>        <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLCanvasElement.html" class="tsd-signature-type tsd-kind-interface">HTMLCanvasElement</a><br/>        <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.DynamicTexture.html" class="tsd-signature-type tsd-kind-class">DynamicTexture</a><br/>        <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><br/>        <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLVideoElement.html" class="tsd-signature-type tsd-kind-interface">HTMLVideoElement</a><br/>        <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLImageElement.html" class="tsd-signature-type tsd-kind-interface">HTMLImageElement</a><br/>        <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.RenderTexture.html" class="tsd-signature-type tsd-kind-class">RenderTexture</a><br/>        <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.CompressedTextureData.html" class="tsd-signature-type tsd-kind-type-alias">CompressedTextureData</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">width</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">height</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">flipY</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">TextureSource</a><a href="#constructortexturesource" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructortexturesource"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">TextureSource</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">texture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.TextureSource.html" class="tsd-signature-type tsd-kind-type-alias">TextureSource</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">width</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">height</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">flipY</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">TextureSource</a><a href="#constructortexturesource" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -69,7 +79,7 @@
 <li><span><span class="tsd-kind-parameter">texture</span>: <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a></span>
 <div class="tsd-comment tsd-typography"><p>The Texture this TextureSource belongs to.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">source</span>: <br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLCanvasElement.html" class="tsd-signature-type tsd-kind-interface">HTMLCanvasElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.DynamicTexture.html" class="tsd-signature-type tsd-kind-class">DynamicTexture</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLVideoElement.html" class="tsd-signature-type tsd-kind-interface">HTMLVideoElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLImageElement.html" class="tsd-signature-type tsd-kind-interface">HTMLImageElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.RenderTexture.html" class="tsd-signature-type tsd-kind-class">RenderTexture</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.CompressedTextureData.html" class="tsd-signature-type tsd-kind-type-alias">CompressedTextureData</a></span>
+<li><span><span class="tsd-kind-parameter">source</span>: <a href="../types/src_audio_audio-manager.TextureSource.html" class="tsd-signature-type tsd-kind-type-alias">TextureSource</a></span>
 <div class="tsd-comment tsd-typography"><p>The source image data.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">width</span>: <span class="tsd-signature-type">number</span></span>
@@ -79,29 +89,30 @@
 <div class="tsd-comment tsd-typography"><p>Optional height of the source image. If not given it's derived from the source itself.</p>
 </div></li>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">flipY</span>: <span class="tsd-signature-type">boolean</span></span>
-<div class="tsd-comment tsd-typography"><p>Sets the <code>UNPACK_FLIP_Y_WEBGL</code> flag the WebGL Texture uses during upload. Default false.</p>
+<div class="tsd-comment tsd-typography"><p>Sets the <code>UNPACK_FLIP_Y_WEBGL</code> flag the WebGL Texture uses during upload. Default true.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">TextureSource</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108757</li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135798</li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="compressionalgorithm"><span>compression<wbr/>Algorithm</span><a href="#compressionalgorithm" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">compressionAlgorithm</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>Holds the compressed textured algorithm, or <code>null</code> if it's not a compressed texture.</p>
+<div class="tsd-comment tsd-typography"><p>Holds the compressed texture algorithm, or <code>null</code> if it's not a compressed texture.</p>
 <p>Prior to Phaser 3.60 this value always held <code>null</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108790</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135834</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="flipy"><span>flip<wbr/>Y</span><a href="#flipy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">flipY</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-<div class="tsd-comment tsd-typography"><p>Sets the <code>UNPACK_FLIP_Y_WEBGL</code> flag the WebGL Texture uses during upload.</p>
+<div class="tsd-comment tsd-typography"><p>Whether the <code>UNPACK_FLIP_Y_WEBGL</code> flag is set on this WebGL Texture during upload.
+When <code>true</code>, the texture data is flipped vertically as it is uploaded to the GPU.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108850</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135895</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="gltexture"><span>gl<wbr/>Texture</span><a href="#gltexture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">glTexture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
@@ -110,72 +121,75 @@ If this TextureSource is driven from a WebGLTexture already,
 then this wrapper contains a reference to that WebGLTexture.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108845</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135889</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="height"><span>height</span><a href="#height" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The height of the source image. If not specified in the constructor it will check
-the <code>naturalHeight</code> and then <code>height</code> properties of the source image.</p>
+the <code>naturalHeight</code>, <code>videoHeight</code>, and then <code>height</code> properties of the source image.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108807</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135851</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="image"><span>image</span><a href="#image" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">image</span><span class="tsd-signature-symbol">:</span><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLCanvasElement.html" class="tsd-signature-type tsd-kind-interface">HTMLCanvasElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" class="tsd-signature-type external" target="_blank">Uint8Array</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src__types_typed-arrays.ArrayBufferLike.html" class="tsd-signature-type tsd-kind-type-alias">ArrayBufferLike</a><span class="tsd-signature-symbol">&gt;</span><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLVideoElement.html" class="tsd-signature-type tsd-kind-interface">HTMLVideoElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLImageElement.html" class="tsd-signature-type tsd-kind-interface">HTMLImageElement</a></div>
+<div class="tsd-signature"><span class="tsd-kind-property">image</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.TextureSourceElement.html" class="tsd-signature-type tsd-kind-type-alias">TextureSourceElement</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
 <div class="tsd-comment tsd-typography"><p>The image data.</p>
-<p>This is either an Image element, Canvas element, Video Element, or Uint8Array.</p>
+<p>This is either an Image element, Canvas element, Video Element,
+or null if the <code>source</code> is not an HTMLElement.
+Non-HTMLElement sources include compressed textures, data arrays,
+and references to other WebGL textures.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108783</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135827</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="iscanvas"><span>is<wbr/>Canvas</span><a href="#iscanvas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isCanvas</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Is the source image a Canvas Element?</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108818</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135862</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="isgltexture"><span>is<wbr/>GL<wbr/>Texture</span><a href="#isgltexture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isGLTexture</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Is the source image a WebGLTextureWrapper?</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108833</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135877</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="ispowerof2"><span>is<wbr/>Power<wbr/>Of2</span><a href="#ispowerof2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isPowerOf2</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Are the source image dimensions a power of two?</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108838</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135882</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="isrendertexture"><span>is<wbr/>Render<wbr/>Texture</span><a href="#isrendertexture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isRenderTexture</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Is the source image a Render Texture?</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108828</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135872</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="isvideo"><span>is<wbr/>Video</span><a href="#isvideo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isVideo</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Is the source image a Video Element?</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108823</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135867</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="renderer"><span>renderer</span><a href="#renderer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">renderer</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.CanvasRenderer.html" class="tsd-signature-type tsd-kind-class">CanvasRenderer</a> <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.WebGLRenderer.html" class="tsd-signature-type tsd-kind-class">WebGLRenderer</a></div>
 <div class="tsd-comment tsd-typography"><p>A reference to the Canvas or WebGL Renderer.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108762</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135803</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="resolution"><span>resolution</span><a href="#resolution" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">resolution</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The resolution of the source image.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108795</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135839</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="scalemode"><span>scale<wbr/>Mode</span><a href="#scalemode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scaleMode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -183,31 +197,31 @@ the <code>naturalHeight</code> and then <code>height</code> properties of the so
 Either Linear or Nearest.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108813</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135857</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="source"><span>source</span><a href="#source" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">source</span><span class="tsd-signature-symbol">:</span><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLCanvasElement.html" class="tsd-signature-type tsd-kind-interface">HTMLCanvasElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.DynamicTexture.html" class="tsd-signature-type tsd-kind-class">DynamicTexture</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.WebGLTextureWrapper.html" class="tsd-signature-type tsd-kind-class">WebGLTextureWrapper</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLVideoElement.html" class="tsd-signature-type tsd-kind-interface">HTMLVideoElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../interfaces/src_audio_audio-manager.HTMLImageElement.html" class="tsd-signature-type tsd-kind-interface">HTMLImageElement</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="src_audio_audio-manager.RenderTexture.html" class="tsd-signature-type tsd-kind-class">RenderTexture</a><br/>    <span class="tsd-signature-symbol">|</span> <a href="../types/src_audio_audio-manager.CompressedTextureData.html" class="tsd-signature-type tsd-kind-type-alias">CompressedTextureData</a></div>
+<div class="tsd-signature"><span class="tsd-kind-property">source</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.TextureSource.html" class="tsd-signature-type tsd-kind-type-alias">TextureSource</a></div>
 <div class="tsd-comment tsd-typography"><p>The source of the image data.</p>
 <p>This is either an Image Element, a Canvas Element, a Video Element, a RenderTexture or a WebGLTextureWrapper.</p>
 <p>In Phaser 3.60 and above it can also be a Compressed Texture data object.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108776</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135817</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="texture"><span>texture</span><a href="#texture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">texture</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_audio-manager.Texture.html" class="tsd-signature-type tsd-kind-class">Texture</a></div>
 <div class="tsd-comment tsd-typography"><p>The Texture this TextureSource instance belongs to.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108767</li></ul></aside></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135808</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="width"><span>width</span><a href="#width" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The width of the source image. If not specified in the constructor it will check
-the <code>naturalWidth</code> and then <code>width</code> properties of the source image.</p>
+the <code>naturalWidth</code>, <code>videoWidth</code>, and then <code>width</code> properties of the source image.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108801</li></ul></aside></section></section></details>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135845</li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -217,11 +231,14 @@ the <code>naturalWidth</code> and then <code>width</code> properties of the sour
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="destroy-1"><span class="tsd-kind-call-signature">destroy</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#destroy-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Destroys this Texture Source and nulls the references.</p>
+<div class="tsd-comment tsd-typography"><p>Destroys this Texture Source and frees associated resources.</p>
+<p>In WebGL mode, the underlying WebGL texture is deleted from the GPU via the renderer.
+If the source is a canvas, it is returned to the CanvasPool. All internal references
+are then set to <code>null</code>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108883</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135974</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="init"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -238,7 +255,7 @@ the <code>naturalWidth</code> and then <code>width</code> properties of the sour
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108856</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135901</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setfilter"><span>set<wbr/>Filter</span><a href="#setfilter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -257,7 +274,7 @@ the <code>naturalWidth</code> and then <code>width</code> properties of the sour
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108866</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135911</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="setflipy"><span>set<wbr/>Flip<wbr/>Y</span><a href="#setflipy" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
@@ -274,19 +291,96 @@ the <code>naturalWidth</code> and then <code>width</code> properties of the sour
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108872</li></ul></aside></div></li></ul></section>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135917</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="setwrap"><span>set<wbr/>Wrap</span><a href="#setwrap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="setwrap-1"><span class="tsd-kind-call-signature">setWrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">wrapModeS</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_audio_audio-manager.WrapMode.html" class="tsd-signature-type tsd-kind-enum">WrapMode</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">wrapModeT</span><span class="tsd-signature-symbol">:</span> <a href="../enums/src_audio_audio-manager.WrapMode.html" class="tsd-signature-type tsd-kind-enum">WrapMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#setwrap-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Sets the wrap mode for this TextureSource.
+This is only available for WebGL.</p>
+<p>The wrap mode can be one of the following:</p>
+<ul>
+<li>Phaser.Textures.WrapMode.CLAMP_TO_EDGE</li>
+<li>Phaser.Textures.WrapMode.REPEAT</li>
+<li>Phaser.Textures.WrapMode.MIRRORED_REPEAT</li>
+</ul>
+<p>Note that only CLAMP_TO_EDGE is supported for non-power of two textures.
+If another wrap mode is specified for such a texture, it will be ignored.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">wrapModeS</span>: <a href="../enums/src_audio_audio-manager.WrapMode.html" class="tsd-signature-type tsd-kind-enum">WrapMode</a></span>
+<div class="tsd-comment tsd-typography"><p>The wrap mode for the S (horizontal) axis.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">wrapModeT</span>: <a href="../enums/src_audio_audio-manager.WrapMode.html" class="tsd-signature-type tsd-kind-enum">WrapMode</a></span>
+<div class="tsd-comment tsd-typography"><p>The wrap mode for the T (vertical) axis.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><p>This TextureSource instance.</p>
+<aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135935</li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-external">
 <h3 class="tsd-anchor-link" id="update"><span>update</span><a href="#update" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-external">
 <li class="tsd-is-external">
 <div class="tsd-signature tsd-anchor-link" id="update-1"><span class="tsd-kind-call-signature">update</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#update-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>If this TextureSource is backed by a Canvas and is running under WebGL,
-it updates the WebGLTexture using the canvas data.</p>
+<div class="tsd-comment tsd-typography"><p>Update the underlying WebGLTexture with the current source data.
+This is called automatically by game systems which manage textures,
+such as Text or Video, or on internal data changes.
+You should not need to call this method manually unless you are
+manually updating the source data.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in node_modules/.pnpm/phaser@3.90.0/node_modules/phaser/types/phaser.d.ts:108878</li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135944</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="updatesize"><span>update<wbr/>Size</span><a href="#updatesize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="updatesize-1"><span class="tsd-kind-call-signature">updateSize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updatesize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Updates the dimensions of this Texture Source.
+This is called automatically by game systems which manage textures,
+such as Text, which renders to a dedicated canvas that changes size.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">width</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The new width of the source image.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">height</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>The new height of the source image.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135953</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="updatesource"><span>update<wbr/>Source</span><a href="#updatesource" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="updatesource-1"><span class="tsd-kind-call-signature">updateSource</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">source</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_audio-manager.TextureSource.html" class="tsd-signature-type tsd-kind-type-alias">TextureSource</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updatesource-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Change the source data of this TextureSource.
+This will update the underlying WebGLTexture with the new source data.</p>
+<p>Note that this will not update any consumers of the texture.
+Frames and game objects with the <code>Size</code> component
+will automatically cache width and height on creation, so you will need
+to update them if you change the resolution of the texture this way.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">source</span>: <a href="../types/src_audio_audio-manager.TextureSource.html" class="tsd-signature-type tsd-kind-type-alias">TextureSource</a></span>
+<div class="tsd-comment tsd-typography"><p>The new source data.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/phaser@4.2.1/node_modules/phaser/types/phaser.d.ts:135965</li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -308,7 +402,7 @@ it updates the WebGLTexture using the canvas data.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#compressionalgorithm" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>compression<wbr/>Algorithm</span></a><a href="#flipy" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>flip<wbr/>Y</span></a><a href="#gltexture" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>gl<wbr/>Texture</span></a><a href="#height" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>height</span></a><a href="#image" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>image</span></a><a href="#iscanvas" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Canvas</span></a><a href="#isgltexture" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>GL<wbr/>Texture</span></a><a href="#ispowerof2" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Power<wbr/>Of2</span></a><a href="#isrendertexture" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Render<wbr/>Texture</span></a><a href="#isvideo" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Video</span></a><a href="#renderer" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>renderer</span></a><a href="#resolution" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>resolution</span></a><a href="#scalemode" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>scale<wbr/>Mode</span></a><a href="#source" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>source</span></a><a href="#texture" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>texture</span></a><a href="#width" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>width</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#destroy" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#init" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init</span></a><a href="#setfilter" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Filter</span></a><a href="#setflipy" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Flip<wbr/>Y</span></a><a href="#update" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update</span></a></div></details></div></details></div>
+<div><a href="#destroy" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>destroy</span></a><a href="#init" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init</span></a><a href="#setfilter" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Filter</span></a><a href="#setflipy" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Flip<wbr/>Y</span></a><a href="#setwrap" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Wrap</span></a><a href="#update" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update</span></a><a href="#updatesize" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Size</span></a><a href="#updatesource" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Source</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
 <nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
