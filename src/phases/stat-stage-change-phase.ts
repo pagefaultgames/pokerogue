@@ -19,6 +19,7 @@ import { deepCopy } from "#utils/data";
 import { addMask } from "#utils/mask-utils";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 /**

@@ -90,6 +90,7 @@ import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils
 import { getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 const COLUMNS = 9;
 const ROWS = 9;

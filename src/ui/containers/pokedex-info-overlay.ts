@@ -6,6 +6,7 @@ import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { addMask } from "#utils/mask-utils";
+import Phaser from "phaser";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.

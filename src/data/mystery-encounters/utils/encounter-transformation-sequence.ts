@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getTypeRgb } from "#data/type";
 import type { PlayerPokemon } from "#field/pokemon";
+import Phaser from "phaser";
 
 export enum TransformationScreenPosition {
   CENTER,

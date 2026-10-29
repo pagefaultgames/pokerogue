@@ -3,6 +3,7 @@ import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type BBCodeText from "phaser4-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 const ivChartSize = 24;

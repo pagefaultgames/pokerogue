@@ -35,6 +35,7 @@ import { toCamelCase, toPascalCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { If, IsNumericLiteral } from "type-fest";
 
 export enum Region {

@@ -43,6 +43,7 @@ import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";

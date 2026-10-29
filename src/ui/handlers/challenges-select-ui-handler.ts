@@ -14,6 +14,7 @@ import { getLocalizedSpriteKey } from "#utils/common";
 import { addMask } from "#utils/mask-utils";
 import { getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 type ChallengeLabel = {

@@ -13,6 +13,7 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const Page = {
   ACHIEVEMENTS: 0,

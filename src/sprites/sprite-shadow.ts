@@ -1,5 +1,6 @@
 // e.g. #sprites/sprite-shadow.ts
 import { globalScene } from "#app/global-scene";
+import Phaser from "phaser";
 
 type Frame = Phaser.Textures.Frame;
 type Image = Phaser.GameObjects.Image;

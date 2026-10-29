@@ -13,6 +13,7 @@ import { hasAllLocalizedSprites, localPing } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";

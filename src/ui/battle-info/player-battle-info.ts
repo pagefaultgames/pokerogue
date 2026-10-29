@@ -8,6 +8,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { getLocalizedSpriteKey } from "#utils/common";
+import Phaser from "phaser";
 
 const EXP_BAR_WIDTH = 510;
 

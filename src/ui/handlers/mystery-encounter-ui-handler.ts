@@ -16,6 +16,7 @@ import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { addMask } from "#utils/mask-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 export class MysteryEncounterUiHandler extends UiHandler {

@@ -34,6 +34,7 @@ import { addMask } from "#utils/mask-utils";
 import { getDexNumber, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 enum Page {
   PROFILE,

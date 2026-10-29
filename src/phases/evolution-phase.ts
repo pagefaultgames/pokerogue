@@ -14,6 +14,7 @@ import type { ConfirmModeConfig } from "#types/ui-types";
 import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class EvolutionPhase extends Phase {
   // FormChangePhase inherits from this, but EvolutionPhase is not abstract.

@@ -10,6 +10,7 @@ import { addWindow } from "#ui/ui-theme";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import { addMask } from "#utils/mask-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export interface MoveInfoOverlaySettings {
   /**

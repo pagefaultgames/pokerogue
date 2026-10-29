@@ -39,6 +39,7 @@ import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;

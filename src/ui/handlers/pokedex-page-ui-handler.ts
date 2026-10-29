@@ -74,6 +74,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 import type BBCodeText from "phaser4-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 interface LanguageSetting {

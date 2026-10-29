@@ -29,6 +29,7 @@ import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 // TODO: Refactor and split up to allow for overriding capture chance
 export class AttemptCapturePhase extends PokemonPhase {

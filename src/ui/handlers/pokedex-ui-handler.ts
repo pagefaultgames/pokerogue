@@ -44,6 +44,7 @@ import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 interface LanguageSetting {
   starterInfoTextSize: string;

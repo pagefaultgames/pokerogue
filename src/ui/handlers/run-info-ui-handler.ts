@@ -27,6 +27,7 @@ import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 import RoundRectangle from "phaser4-rex-plugins/plugins/roundrectangle";
 
 /**

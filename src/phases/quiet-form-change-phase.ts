@@ -9,6 +9,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import { playTween } from "#utils/anim-utils";
+import Phaser from "phaser";
 
 /**
  * Phase handling mid-battle form changes that do not occur in the Party modal

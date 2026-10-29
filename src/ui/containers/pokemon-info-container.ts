@@ -13,6 +13,7 @@ import { addWindow } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
 import { fixedInt, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 import { StatsContainer } from "./stats-container";
 

@@ -12,6 +12,7 @@ import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /**
  * Parameters influencing the position of elements within the battle info container

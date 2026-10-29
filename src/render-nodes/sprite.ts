@@ -11,6 +11,7 @@ import { Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { variantColorCache } from "#sprites/variant";
 import { rgbHexToRgba } from "#utils/color-utils";
+import Phaser from "phaser";
 import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 

@@ -6,6 +6,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { getVariantTint } from "#sprites/variant";
 import type { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
+import Phaser from "phaser";
 
 /**
  * A container for a Pokemon's sprite and icons to get displayed in the egg summary screen

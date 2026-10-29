@@ -5,6 +5,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
+import Phaser from "phaser";
 
 export class PokemonAnimPhase extends BattlePhase {
   public readonly phaseName = "PokemonAnimPhase";

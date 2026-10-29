@@ -20,6 +20,7 @@ import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;

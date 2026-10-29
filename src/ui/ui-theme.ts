@@ -3,6 +3,7 @@ import { settings } from "#app/global-settings-manager";
 import { legacyCompatibleImages } from "#app/scene-base";
 import type { UiWindowStyle } from "#enums/ui-window-style";
 import { addMask } from "#utils/mask-utils";
+import Phaser from "phaser";
 
 export enum WindowVariant {
   NORMAL,
