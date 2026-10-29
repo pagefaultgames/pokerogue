@@ -431,7 +431,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
       // Sets up the mask that hides the option text to give an illusion of scrolling
       const nonScrollWidth = 90;
-      // TODO: Replace this mask with a crop on optionText
+      // TODO: Replace masks with crops
       const optionTextMaskRect = globalScene.make
         .graphics({})
         .setScale(6)
