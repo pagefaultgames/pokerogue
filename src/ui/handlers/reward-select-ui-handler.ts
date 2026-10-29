@@ -826,6 +826,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.getUi().getMessageHandler().hideNameText();
     this.eraseCursor();
+    this.titleText.setText("");
 
     // Reset cursor positions
     this.cursor = 0;

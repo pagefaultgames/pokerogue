@@ -86,12 +86,13 @@ export function findHiddenItems(): Promise<void> {
 
     if (rewardOptions.length === 0) {
       resolve();
+      return;
     }
 
     doTrainerExclamation();
 
-    const pokemonString = rewardOptions
-      .map(ro => ro.source!.getNameToRender({ useIllusion: false, prependFormName: false }))
+    const pokemonString = [...new Set(rewardOptions.map(ro => ro.source!))]
+      .map(source => source.getNameToRender({ useIllusion: false, prependFormName: false }))
       .join(", ");
 
     globalScene.ui.showText(
@@ -109,11 +110,11 @@ export function findHiddenItems(): Promise<void> {
 }
 
 const ballFetchPool: RewardPoolEntry[] = [
-  { id: RewardId.NUGGET, weight: 50 },
-  { id: RewardId.BIG_NUGGET, weight: 30 },
-  { id: RewardId.RARER_CANDY, weight: 15 },
-  { id: TrainerItemId.BERRY_POUCH, weight: 4 },
-  { id: RewardId.DNA_SPLICERS, weight: 1 },
+  { id: RewardId.POKEBALL, weight: 50 },
+  { id: RewardId.GREAT_BALL, weight: 30 },
+  { id: RewardId.ULTRA_BALL, weight: 15 },
+  { id: RewardId.ROGUE_BALL, weight: 4 },
+  { id: RewardId.MASTER_BALL, weight: 1 },
 ];
 
 const hiddenItemsPool: Record<BiomeId, RewardPool> = {

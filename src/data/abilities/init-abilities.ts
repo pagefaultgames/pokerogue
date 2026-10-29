@@ -34,7 +34,7 @@ import {
   DoubleBerryEffectAbAttr,
   DownloadAbAttr,
   EffectSporeAbAttr,
-  FetchBallAbAttr,
+  //  FetchBallAbAttr,
   FieldMoveTypePowerBoostAbAttr,
   FieldMultiplyStatAbAttr,
   FieldPreventExplosiveMovesAbAttr,
@@ -62,7 +62,7 @@ import {
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
-  MoneyAbAttr,
+  //  MoneyAbAttr,
   MoodyAbAttr,
   MoveAbilityBypassAbAttr,
   MoveDamageBoostAbAttr,
@@ -291,6 +291,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COMPOUND_EYES, 3) //
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3)
+      .attr(HiddenItemChanceAbAttr, 0.25)
       .attr(AiMovegenMoveStatsAbAttr, ({ accMult }) => {
         accMult.value *= 1.3;
       })
@@ -747,6 +748,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr)
       .build(),
     new AbBuilder(AbilityId.SUPER_LUCK, 4) //
+      .attr(HiddenItemChanceAbAttr, 0.25)
       .attr(BonusCritAbAttr)
       .build(),
     new AbBuilder(AbilityId.AFTERMATH, 4) //
@@ -824,7 +826,7 @@ export function initAbilities() {
       })
       .build(),
     new AbBuilder(AbilityId.HONEY_GATHER, 4) //
-      .attr(MoneyAbAttr)
+      //      .attr(MoneyAbAttr)
       .attr(HoneyGatherChanceAbAttr, 0.5)
       .unsuppressable()
       .build(),
@@ -1656,7 +1658,7 @@ export function initAbilities() {
       .edgeCase()
       .build(),
     new AbBuilder(AbilityId.BALL_FETCH, 8) //
-      .attr(FetchBallAbAttr)
+      //      .attr(FetchBallAbAttr)
       .attr(BallFetchChanceAbAttr, 0.5)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH))
       .build(),
