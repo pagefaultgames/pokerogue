@@ -15,6 +15,7 @@ import { EnemyPokemon } from "#field/pokemon";
 import { type MoveCondition, RequireTypeCondition } from "#moves/move-condition";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**

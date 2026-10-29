@@ -1,7 +1,8 @@
 import type { BattleScene } from "#app/battle-scene";
 import { settings } from "#app/global-settings-manager";
 import { FixedInt } from "#utils/common";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import Phaser from "phaser";
+import SoundFade from "phaser4-rex-plugins/plugins/soundfade";
 
 /** Array containing all time-related properties to be mutated. */
 const TIME_RELATED_PROPERTIES = [

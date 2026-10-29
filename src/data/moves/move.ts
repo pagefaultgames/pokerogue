@@ -144,6 +144,7 @@ import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 // TODO: Make these (and all condition functions actually)

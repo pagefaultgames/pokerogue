@@ -9,8 +9,8 @@ import type { TextStyleOptions } from "#types/ui-types";
 import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import i18next from "i18next";
 import type Phaser from "phaser";
-import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import type InputText from "phaser4-rex-plugins/plugins/inputtext";
 
 interface TextCopyShadowHook {
   originalFillText: CanvasRenderingContext2D["fillText"];

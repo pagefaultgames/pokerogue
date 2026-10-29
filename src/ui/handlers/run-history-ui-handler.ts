@@ -15,6 +15,7 @@ import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export const RUN_HISTORY_LIMIT: number = 25;
 

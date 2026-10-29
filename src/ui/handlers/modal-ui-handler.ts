@@ -5,6 +5,7 @@ import type { ModalConfig } from "#types/ui-types";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import Phaser from "phaser";
 
 export abstract class ModalUiHandler extends UiHandler {
   protected modalContainer: Phaser.GameObjects.Container;

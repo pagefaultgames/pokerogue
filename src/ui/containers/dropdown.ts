@@ -4,6 +4,7 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export enum DropDownState {
   ON = 0,

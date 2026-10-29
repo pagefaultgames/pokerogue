@@ -7,6 +7,7 @@ import { getStarterSelectTextSettings } from "#ui/starter-select-ui-utils";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Container {
   private shinyIconElement: Phaser.GameObjects.Sprite;

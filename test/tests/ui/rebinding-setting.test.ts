@@ -7,6 +7,7 @@ import { InGameManip } from "#test/setting-menu/in-game-manip";
 import { MenuManip } from "#test/setting-menu/menu-manip";
 import type { InterfaceConfig, SelectedDevice } from "#types/inputs";
 import { deepCopy } from "#utils/data";
+import Phaser from "phaser";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Rebinding", () => {

@@ -73,6 +73,7 @@ import { type NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { willTerastallize } from "#utils/pokemon-utils";
 import { ValueHolder } from "#utils/value-holder";
+import Phaser from "phaser";
 
 /**
  * Compute and assign a weight to the level-up moves currently available to the Pokémon

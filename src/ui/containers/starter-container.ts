@@ -5,6 +5,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { DexAttrProps } from "#types/save-data";
 import { addTextObject } from "#ui/text";
+import Phaser from "phaser";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
