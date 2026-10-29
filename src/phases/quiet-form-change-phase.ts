@@ -183,8 +183,9 @@ export class QuietFormChangePhase extends BattlePhase {
     );
     sprite.setOrigin(0.5, 1);
     const spriteKey = this.pokemon.getBattleSpriteKey();
-    sprite.play(spriteKey).stop();
     sprite
+      .play(spriteKey)
+      .stop()
       .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         hasShadow: false,

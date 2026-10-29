@@ -1238,8 +1238,9 @@ export class SummaryUiHandler extends UiHandler {
         this.statsContainer.add(nextLvExpText);
 
         const expOverlay = globalScene.add.image(140, 153, "summary_stats_overlay_exp");
-        expOverlay.setOrigin(0, 0);
-        expOverlay.setCrop(0, 0, Math.floor(expRatio * 64), expOverlay.height);
+        expOverlay //
+          .setOrigin(0, 0)
+          .setCrop(0, 0, Math.floor(expRatio * 64), expOverlay.height);
         this.statsContainer.add(expOverlay);
 
         this.abilityPrompt = globalScene.add.image(
@@ -1360,9 +1361,7 @@ export class SummaryUiHandler extends UiHandler {
           .fillRect(112, 121, 205, 59);
         addMask(this.moveDescriptionText, moveDescriptionTextMaskRect);
         // Destroy this once the moveDescriptionText is destroyed to prevent memory leaks
-        this.moveDescriptionText.once(Phaser.GameObjects.Events.DESTROY, () => {
-          moveDescriptionTextMaskRect.destroy();
-        });
+        this.moveDescriptionText.once(Phaser.GameObjects.Events.DESTROY, () => moveDescriptionTextMaskRect.destroy());
         break;
       }
     }

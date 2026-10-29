@@ -461,7 +461,9 @@ export class AchvsUiHandler extends MessageUiHandler {
 
       icon.setVisible(true);
       if (tinted) {
-        icon.setTint(0).setTintMode(Phaser.TintModes.FILL);
+        icon //
+          .setTint(0)
+          .setTintMode(Phaser.TintModes.FILL);
       } else {
         icon.clearTint();
       }

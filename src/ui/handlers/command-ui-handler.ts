@@ -37,11 +37,11 @@ export class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(false);
     ui.add(this.commandsContainer);
 
-    this.teraButton = globalScene.add.sprite(-32, 15, "button_tera");
-    this.teraButton.setName("terastallize-button");
-    this.teraButton.setScale(1.3);
-    this.teraButton.setFrame("fire");
-    this.teraButton
+    this.teraButton = globalScene.add
+      .sprite(-32, 15, "button_tera")
+      .setName("terastallize-button")
+      .setScale(1.3)
+      .setFrame("fire")
       .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         ignoreTimeTint: true,

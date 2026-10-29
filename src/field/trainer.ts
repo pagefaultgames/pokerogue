@@ -106,8 +106,8 @@ export class Trainer extends Phaser.GameObjects.Container {
         break;
     }
 
-    const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = globalScene
+    const getSprite = (hasShadow?: boolean, forceFemale?: boolean): Phaser.GameObjects.Sprite =>
+      globalScene
         .addFieldSprite(
           0,
           0,
@@ -119,8 +119,6 @@ export class Trainer extends Phaser.GameObjects.Container {
           hasShadow: !!hasShadow,
         })
         .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
-      return ret;
-    };
 
     const sprite = getSprite(true);
     const tintSprite = getSprite();
@@ -733,8 +731,10 @@ export class Trainer extends Phaser.GameObjects.Container {
   tint(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
     tintSprites.forEach(tintSprite => {
-      tintSprite.setTint(color).setTintMode(Phaser.TintModes.FILL);
-      tintSprite.setVisible(true);
+      tintSprite //
+        .setTint(color)
+        .setTintMode(Phaser.TintModes.FILL)
+        .setVisible(true);
 
       if (duration) {
         tintSprite.setAlpha(0);

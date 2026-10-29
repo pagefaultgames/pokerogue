@@ -71,8 +71,13 @@ export class PokemonAnimPhase extends BattlePhase {
     const [subSprite, subTintSprite] = [getSprite(), getSprite()];
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
 
-    subSprite.setVisible(false).setScale(subScale);
-    subTintSprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL).setScale(0.01);
+    subSprite //
+      .setVisible(false)
+      .setScale(subScale);
+    subTintSprite //
+      .setTint(0xffffff)
+      .setTintMode(Phaser.TintModes.FILL)
+      .setScale(0.01);
 
     if (this.pokemon.isPlayer()) {
       globalScene.field.bringToTop(this.pokemon);
@@ -273,7 +278,7 @@ export class PokemonAnimPhase extends BattlePhase {
         this.pokemon.getSprite()!.frame.name,
         true,
       );
-      ["spriteColors", "fusionSpriteColors"].map(k =>
+      ["spriteColors", "fusionSpriteColors"].forEach(k =>
         sprite.setRenderNodeData(
           globalScene.spriteSubmitter,
           k,
@@ -284,8 +289,8 @@ export class PokemonAnimPhase extends BattlePhase {
         .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", this.pokemon.getBattleSpriteKey())
         .setRenderNodeData(globalScene.spriteSubmitter, "shiny", this.pokemon.shiny)
         .setRenderNodeData(globalScene.spriteSubmitter, "variant", this.pokemon.variant)
-        .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
-      sprite.setOrigin(0.5, 1);
+        .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true)
+        .setOrigin(0.5, 1);
       this.pokemon.getSprite().on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
       globalScene.field.add(sprite);
       return sprite;

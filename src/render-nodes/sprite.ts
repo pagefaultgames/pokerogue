@@ -14,8 +14,16 @@ import { rgbHexToRgba } from "#utils/color-utils";
 import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
+type Container = Phaser.GameObjects.Container;
+type GameObject = Phaser.GameObjects.GameObject;
+type Sprite = Phaser.GameObjects.Sprite;
+
 type RenderNodeManager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
+type BatchHandlerQuadSingle = Phaser.Renderer.WebGL.RenderNodes.BatchHandlerQuadSingle;
+
 type WebGLTextureWrapper = Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper;
+
+type SubmitterQuadConfig = Phaser.Types.Renderer.WebGL.RenderNodes.SubmitterQuadConfig;
 
 /** Fields that sprites can set in their renderNodeData */
 export interface SpriteRenderData extends FieldSpriteRenderData {
@@ -60,6 +68,8 @@ interface SpriteDrawData extends FieldSpriteDrawData {
 
 // #region Palettes
 
+type VariantPalette = { base: Float32Array; variant: Float32Array };
+
 const PALETTE_SIZE = 32;
 const EMPTY_PALETTE_F = new Float32Array(PALETTE_SIZE * 4);
 const EMPTY_PALETTE_I = new Int32Array(PALETTE_SIZE * 4);
@@ -70,7 +80,7 @@ const ZERO4 = [0, 0, 0, 0];
 // array object, so the same object always means the same contents.
 const scaledPaletteCache = new WeakMap<number[][], Float32Array>();
 const intPaletteCache = new WeakMap<number[][], Int32Array>();
-const variantPaletteCache = new Map<string, { base: Float32Array; variant: Float32Array }>();
+const variantPaletteCache = new Map<string, VariantPalette>();
 
 /** Convert a list of color values to a 32-element Float32Array */
 function toScaledPalette(colors: number[][] | undefined): Float32Array {
@@ -109,7 +119,7 @@ function toIntPalette(colors: number[][] | undefined): Int32Array {
 }
 
 /** Get the base and variant color palettes for a given key and variant */
-function getVariantPalettes(key: string | undefined, variant: number) {
+function getVariantPalettes(key: string | undefined, variant: number): VariantPalette | null {
   if (!key) {
     return null;
   }
@@ -141,9 +151,9 @@ function getVariantPalettes(key: string | undefined, variant: number) {
 // #endregion
 
 function computeRelPosition(
-  sprite: Phaser.GameObjects.Sprite,
+  sprite: Sprite,
   isEntityObj: boolean,
-  field: Phaser.GameObjects.Container | null,
+  field: Container | null,
   ignoreFieldPos: boolean,
 ): number[] {
   const parent = sprite.parentContainer;
@@ -162,7 +172,7 @@ function computeRelPosition(
   return position;
 }
 
-function createSpriteDrawData(): SpriteDrawData {
+function initSpriteDrawData(): SpriteDrawData {
   return {
     ignoreTimeTint: false,
     terrainColorRatio: 0,
@@ -187,11 +197,11 @@ function createSpriteDrawData(): SpriteDrawData {
 }
 
 export class SpriteSubmitter extends FieldSpriteSubmitter {
-  static override readonly NAME: string = "SpriteSubmitter";
+  public static override readonly NAME: string = "SpriteSubmitter";
 
-  protected override readonly out: SpriteDrawData = createSpriteDrawData();
+  protected override readonly out: SpriteDrawData = initSpriteDrawData();
 
-  constructor(manager: RenderNodeManager, config?: Phaser.Types.Renderer.WebGL.RenderNodes.SubmitterQuadConfig) {
+  constructor(manager: RenderNodeManager, config?: SubmitterQuadConfig) {
     super(manager, { name: SpriteSubmitter.NAME, ...config });
   }
 
@@ -202,15 +212,11 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
   // but the batch handler does need to set uniforms.
   // Since our shaders include per-uniform data for the sprite,
   // we need to pass data from the submitter to the batch handler.
-  override setRenderOptions(
-    gameObject: Phaser.GameObjects.GameObject,
-    normalMap?: any,
-    normalMapRotation?: number,
-  ): void {
+  public override setRenderOptions(gameObject: GameObject, normalMap?: any, normalMapRotation?: number): void {
     // Field part (ignoreTimeTint, terrainColorRatio), like v3's super.onBind
     super.setRenderOptions(gameObject, normalMap, normalMapRotation);
 
-    const sprite = gameObject as Phaser.GameObjects.Sprite;
+    const sprite = gameObject as Sprite;
     const data = (sprite.renderNodeData[this.name] ?? {}) as SpriteRenderData;
     const out = this.out;
 
@@ -258,7 +264,7 @@ export class SpriteSubmitter extends FieldSpriteSubmitter {
       out.frameHeightScaled = sprite.frame.height * entityScale;
     }
 
-    (this as any)._renderOptions.spriteData = out;
+    this["_renderOptions"].spriteData = out;
   }
 }
 
@@ -272,9 +278,9 @@ const ARG_TEX_H = 13;
 const ARG_RENDER_OPTIONS = 19;
 
 export class SpriteBatchHandler extends FieldSpriteBatchHandler {
-  static override readonly NAME: string = "SpriteBatchHandler";
+  public static override readonly NAME: string = "SpriteBatchHandler";
 
-  private sprite: SpriteDrawData = createSpriteDrawData();
+  private sprite: SpriteDrawData = initSpriteDrawData();
   private texFrameUv = [0, 0];
   private vCutoff = 0;
   private vSign = 1;
@@ -295,7 +301,7 @@ export class SpriteBatchHandler extends FieldSpriteBatchHandler {
     );
   }
 
-  override batch(...args: Parameters<Phaser.Renderer.WebGL.RenderNodes.BatchHandlerQuadSingle["batch"]>): void {
+  public override batch(...args: Parameters<BatchHandlerQuadSingle["batch"]>): void {
     // The submitter added a custom field to `renderOptions` so it won't be in the type signature.
     const s = (args[ARG_RENDER_OPTIONS] as any).spriteData as SpriteDrawData;
     this.sprite = s;
@@ -317,7 +323,7 @@ export class SpriteBatchHandler extends FieldSpriteBatchHandler {
     super.batch(...args); // field data, then Phaser's batch, which draws immediately
   }
 
-  override batchTextures(glTexture: WebGLTextureWrapper, renderOptions: any): number {
+  public override batchTextures(glTexture: WebGLTextureWrapper, renderOptions: any): number {
     // Put the tera pattern in texture unit 1 of every batch entry.
     const datum = super.batchTextures(glTexture, renderOptions);
     const tera = this.getTeraTexture();
@@ -337,7 +343,7 @@ export class SpriteBatchHandler extends FieldSpriteBatchHandler {
     return this.teraTexture;
   }
 
-  override setupUniforms(drawingContext: Phaser.Renderer.WebGL.DrawingContext): void {
+  public override setupUniforms(drawingContext: Phaser.Renderer.WebGL.DrawingContext): void {
     // Phaser's uniforms + the field globals and ignoreTimeTint.
     // (The terrain uniforms don't exist in this shader; setting them does nothing.)
     super.setupUniforms(drawingContext);

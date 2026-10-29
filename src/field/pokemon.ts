@@ -519,17 +519,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     globalScene.fieldUI.addAt(this.battleInfo, 0);
 
-    const getSprite = (hasShadow?: boolean) => {
-      const ret = globalScene.addPokemonSprite(
-        this,
-        0,
-        0,
-        `pkmn__${this.isPlayer() ? "back__" : ""}sub`,
-        undefined,
-        true,
-      );
-      ret.setOrigin(0.5, 1);
-      ret
+    const getSprite = (hasShadow?: boolean): Phaser.GameObjects.Sprite =>
+      globalScene
+        .addPokemonSprite(this, 0, 0, `pkmn__${this.isPlayer() ? "back__" : ""}sub`, undefined, true)
+        .setOrigin(0.5, 1)
         .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
           tone: [0.0, 0.0, 0.0, 0.0],
           hasShadow: !!hasShadow,
@@ -537,8 +530,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           isTerastallized: this.isTerastallized,
         })
         .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
-      return ret;
-    };
 
     this.setScale(this.getSpriteScale());
 
@@ -5448,7 +5439,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string) {
     const tintSprite = this.getTintSprite();
-    tintSprite?.setTint(color).setTintMode(Phaser.TintModes.FILL).setVisible(true);
+    tintSprite //
+      ?.setTint(color)
+      .setTintMode(Phaser.TintModes.FILL)
+      .setVisible(true);
 
     if (duration) {
       tintSprite?.setAlpha(0);
@@ -5815,12 +5809,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           globalScene.spriteSubmitter,
           `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
           spriteColors,
-        );
-        s.setRenderNodeData(
-          globalScene.spriteSubmitter,
-          `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
-          fusionSpriteColors,
-        );
+        ) //
+          .setRenderNodeData(
+            globalScene.spriteSubmitter,
+            `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+            fusionSpriteColors,
+          );
       });
 
     canvas.remove();

@@ -151,19 +151,18 @@ export class EvolutionPhase extends Phase {
   }
 
   private getPokemonSprite(): Phaser.GameObjects.Sprite {
-    const sprite = globalScene.addPokemonSprite(
-      this.pokemon,
-      this.evolutionBaseBg.displayWidth / 2,
-      this.evolutionBaseBg.displayHeight / 2,
-      "pkmn__sub",
-    );
-    sprite
+    return globalScene
+      .addPokemonSprite(
+        this.pokemon,
+        this.evolutionBaseBg.displayWidth / 2,
+        this.evolutionBaseBg.displayHeight / 2,
+        "pkmn__sub",
+      )
       .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         ignoreTimeTint: true,
       })
       .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
-    return sprite;
   }
 
   /**

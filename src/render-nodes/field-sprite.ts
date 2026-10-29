@@ -8,60 +8,62 @@ import Phaser from "phaser";
 import fieldSpriteHeader from "./glsl/field-sprite-header.glsl?raw";
 import fieldSpriteProcess from "./glsl/field-sprite-process.glsl?raw";
 
-const toUnit = (rgb: RGBArray): number[] => rgb.map(c => c / 255);
+type GameObject = Phaser.GameObjects.GameObject;
+type Sprite = Phaser.GameObjects.Sprite;
+
+type DrawingContext = Phaser.Renderer.WebGL.DrawingContext;
+type RenderNodeManager = Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager;
+type BatchHandlerQuadSingle = Phaser.Renderer.WebGL.RenderNodes.BatchHandlerQuadSingle;
+
+type SubmitterQuadConfig = Phaser.Types.Renderer.WebGL.RenderNodes.SubmitterQuadConfig;
+type BatchHandlerConfig = Phaser.Types.Renderer.WebGL.RenderNodes.BatchHandlerConfig;
+type BatchHandlerQuadRenderOptions = Phaser.Types.Renderer.WebGL.RenderNodes.BatchHandlerQuadRenderOptions;
+
 export interface FieldSpriteRenderData {
   ignoreTimeTint?: boolean;
   terrainColorRatio?: number;
 }
-
 export type FieldSpriteDrawData = Required<FieldSpriteRenderData>;
 
 /** The index of the render option in Phaser's batch function */
 const ARG_RENDER_OPTIONS = 19;
 
+const toUnit = (rgb: RGBArray): number[] => rgb.map(c => c / 255);
+
 export class FieldSpriteSubmitter extends Phaser.Renderer.WebGL.RenderNodes.SubmitterQuad {
   // This field exists because the same string needs to be used by both the name
   // field in the constructor and the first parameter to `addNode` (battle-scene.ts).
   // This way, there is one source of truth instead of two.
-  static readonly NAME: string = "FieldSpriteSubmitter";
+  public static readonly NAME: string = "FieldSpriteSubmitter";
 
   protected readonly out: FieldSpriteDrawData = { ignoreTimeTint: false, terrainColorRatio: 0 };
 
-  constructor(
-    manager: Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager,
-    config?: Phaser.Types.Renderer.WebGL.RenderNodes.SubmitterQuadConfig,
-  ) {
+  constructor(manager: RenderNodeManager, config?: SubmitterQuadConfig) {
     super(manager, { name: FieldSpriteSubmitter.NAME, ...config });
   }
-  override setRenderOptions(
-    gameObject: Phaser.GameObjects.GameObject,
-    normalMap?: any,
-    normalMapRotation?: number,
-  ): void {
+
+  public override setRenderOptions(gameObject: GameObject, normalMap?: any, normalMapRotation?: number): void {
     super.setRenderOptions(gameObject, normalMap, normalMapRotation);
+
     // Port of the per-object part of v3 onBind
-    const data = (gameObject as Phaser.GameObjects.Sprite).renderNodeData[this.name] as
-      | FieldSpriteRenderData
-      | undefined;
+    const data = (gameObject as Sprite).renderNodeData[this.name] as FieldSpriteRenderData | undefined;
+
     this.out.ignoreTimeTint = !!data?.ignoreTimeTint;
     this.out.terrainColorRatio = data?.terrainColorRatio ?? 0;
-    // _renderOptions exists but is "hidden", so we have the cast to any to avoid a TS error.
-    // Setting fieldSprite in _renderOptions prevents us having to override the call to `batch` simply
+
+    // `_renderOptions` exists but is "hidden", so we use bracket notation to avoid a TS error.
+    // Setting fieldSprite in `_renderOptions` prevents us having to override the call to `batch` simply
     // to pass the data to the batch handler.
-    (this as any)._renderOptions.fieldSprite = this.out;
+    this["_renderOptions"].fieldSprite = this.out;
   }
 }
 
 export class FieldSpriteBatchHandler extends Phaser.Renderer.WebGL.RenderNodes.BatchHandlerQuadSingle {
-  static readonly NAME: string = "FieldSpriteBatchHandler";
+  public static readonly NAME: string = "FieldSpriteBatchHandler";
 
   private current: FieldSpriteDrawData = { ignoreTimeTint: false, terrainColorRatio: 0 };
 
-  constructor(
-    manager: Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager,
-    config?: Phaser.Types.Renderer.WebGL.RenderNodes.BatchHandlerConfig,
-    fromChild = false,
-  ) {
+  constructor(manager: RenderNodeManager, config?: BatchHandlerConfig, fromChild = false) {
     super(manager, {
       name: FieldSpriteBatchHandler.NAME,
       shaderName: "PKR_FIELD_SPRITE_SINGLE",
@@ -79,18 +81,17 @@ export class FieldSpriteBatchHandler extends Phaser.Renderer.WebGL.RenderNodes.B
     }
   }
 
-  override batch(...args: Parameters<Phaser.Renderer.WebGL.RenderNodes.BatchHandlerQuadSingle["batch"]>): void {
+  public override batch(...args: Parameters<BatchHandlerQuadSingle["batch"]>): void {
     // Using type statement for better formatting
-    type RenderOptions = Phaser.Types.Renderer.WebGL.RenderNodes.BatchHandlerQuadRenderOptions & {
-      fieldSprite?: FieldSpriteDrawData;
-    };
+    type RenderOptions = BatchHandlerQuadRenderOptions & { fieldSprite?: FieldSpriteDrawData };
     // Cast is safe as we set fieldSprite in the submitter's setRenderOptions, which is always called before this batch call.
-    this.current = (args[ARG_RENDER_OPTIONS] as RenderOptions).fieldSprite! ?? this.current; // renderOptions is argument 19
+    this.current = (args[ARG_RENDER_OPTIONS] as RenderOptions).fieldSprite ?? this.current;
     super.batch(...args); // draws immediately, since instancesPerBatch is 1
   }
 
-  override setupUniforms(drawingContext: Phaser.Renderer.WebGL.DrawingContext): void {
+  public override setupUniforms(drawingContext: DrawingContext): void {
     super.setupUniforms(drawingContext);
+
     const pm = this.programManager;
     const arena = globalScene.arena;
 

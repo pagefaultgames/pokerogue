@@ -128,22 +128,17 @@ export class EggHatchPhase extends Phase {
       this.eggCounterContainer = new EggCounterContainer(this.eggsToHatchCount);
       this.eggHatchContainer.add(this.eggCounterContainer);
 
-      const getPokemonSprite = () => {
-        const ret = globalScene.add.sprite(
-          this.eggHatchBg.displayWidth / 2,
-          this.eggHatchBg.displayHeight / 2,
-          "pkmn__sub",
-        );
-        ret
+      const getPokemonSprite = (): Phaser.GameObjects.Sprite =>
+        globalScene.add
+          .sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, "pkmn__sub")
           .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
             tone: [0.0, 0.0, 0.0, 0.0],
             ignoreTimeTint: true,
           })
           .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
-        return ret;
-      };
 
-      this.eggHatchContainer.add((this.pokemonSprite = getPokemonSprite()));
+      this.pokemonSprite = getPokemonSprite();
+      this.eggHatchContainer.add(this.pokemonSprite);
 
       this.pokemonShinySparkle = globalScene.add.sprite(this.pokemonSprite.x, this.pokemonSprite.y, "shiny");
       this.pokemonShinySparkle.setVisible(false);

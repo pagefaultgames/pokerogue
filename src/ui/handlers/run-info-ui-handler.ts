@@ -1026,8 +1026,8 @@ export class RunInfoUiHandler extends UiHandler {
       const formIndex = pkmn.formIndex;
       const variant = pkmn.variant;
       const species = pkmn.getSpeciesForm();
-      const pokemonSprite: Phaser.GameObjects.Sprite = globalScene.add.sprite(60 + 40 * i, 40 + row * 80, "pkmn__sub");
-      pokemonSprite
+      const pokemonSprite: Phaser.GameObjects.Sprite = globalScene.add
+        .sprite(60 + 40 * i, 40 + row * 80, "pkmn__sub")
         .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
           tone: [0.0, 0.0, 0.0, 0.0],
           ignoreTimeTint: true,
@@ -1040,16 +1040,13 @@ export class RunInfoUiHandler extends UiHandler {
       const female = pkmn.gender === 1;
       species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
-        pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
+        const spriteKey = species.getSpriteKey(female, formIndex, shiny, variant);
         pokemonSprite
+          .play(spriteKey)
           .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
           .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
-          .setRenderNodeData(
-            globalScene.spriteSubmitter,
-            "spriteKey",
-            species.getSpriteKey(female, formIndex, shiny, variant),
-          );
-        pokemonSprite.setVisible(true);
+          .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+          .setVisible(true);
       });
       if (pkmn.isFusion()) {
         const fusionIcon = globalScene.add.sprite(80 + 40 * i, 50 + row * 80, pkmn.getFusionIconAtlasKey());

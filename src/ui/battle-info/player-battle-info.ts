@@ -33,6 +33,7 @@ export class PlayerBattleInfo extends BattleInfo {
     const cropWidth = (value / EXP_BAR_WIDTH) * frameWidth;
     this.expBar.setCrop(0, 0, cropWidth, this.expBar.frame.height);
   }
+
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
   }

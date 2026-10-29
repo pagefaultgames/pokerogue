@@ -360,9 +360,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
-    this.pokemonSprite = globalScene.add //
-      .sprite(53, 63, "pkmn__sub");
-    this.pokemonSprite
+    this.pokemonSprite = globalScene.add
+      .sprite(53, 63, "pkmn__sub")
       .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         ignoreTimeTint: true,

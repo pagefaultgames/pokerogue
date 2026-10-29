@@ -565,8 +565,8 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(starterBoxContainer);
 
-    this.pokemonSprite = globalScene.add.sprite(96, 143, "pkmn__sub");
-    this.pokemonSprite
+    this.pokemonSprite = globalScene.add
+      .sprite(96, 143, "pkmn__sub")
       .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
         tone: [0.0, 0.0, 0.0, 0.0],
         ignoreTimeTint: true,
@@ -2220,17 +2220,13 @@ export class PokedexUiHandler extends MessageUiHandler {
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
+          const spriteKey = species.getSpriteKey(female!, formIndex, shiny, variant); // TODO: is this bang correct?
           this.pokemonSprite
+            .play(spriteKey)
             .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
             .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
-            .setRenderNodeData(
-              globalScene.spriteSubmitter,
-              "spriteKey",
-              // TODO: is this bang correct?
-              species.getSpriteKey(female!, formIndex, shiny, variant),
-            );
-          this.pokemonSprite.setVisible(true);
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+            .setVisible(true);
         });
       } else {
         this.pokemonSprite.setVisible(!(this.filterMode || this.filterTextMode));

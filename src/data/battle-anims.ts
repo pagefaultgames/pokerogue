@@ -882,8 +882,8 @@ export abstract class BattleAnim {
           .setScale(1)
           .setAlpha(1);
       }
-      targetSprite
-        .setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]) //
+      targetSprite //
+        .setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0])
         .setAngle(0);
 
       // Remove animation event listeners to enable sprites to be freed.
@@ -1046,12 +1046,12 @@ export abstract class BattleAnim {
                   ),
                 );
 
-                sprite.setRenderNodeData(
-                  globalScene.spriteSubmitter,
-                  "spriteKey",
-                  (isUser ? user! : target).getBattleSpriteKey(),
-                );
                 sprite
+                  .setRenderNodeData(
+                    globalScene.spriteSubmitter,
+                    "spriteKey",
+                    (isUser ? user : target).getBattleSpriteKey(),
+                  )
                   .setRenderNodeData(globalScene.spriteSubmitter, "shiny", (isUser ? user : target).shiny)
                   .setRenderNodeData(globalScene.spriteSubmitter, "variant", (isUser ? user : target).variant)
                   .setRenderNodeData(globalScene.spriteSubmitter, "ignoreFieldPos", true);
@@ -1073,29 +1073,23 @@ export abstract class BattleAnim {
               isUser || !targetSubstitute
                 ? spriteSource.parentContainer.scale
                 : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
-            pokemonSprite.setPosition(
-              graphicFrameData.x,
-              graphicFrameData.y - (spriteSource.height / 2) * (spriteSourceScale - 1),
-            );
 
-            pokemonSprite.setAngle(graphicFrameData.angle);
-            pokemonSprite.setScale(
-              graphicFrameData.scaleX * spriteSourceScale,
-              graphicFrameData.scaleY * spriteSourceScale,
-            );
+            let blendMode = Phaser.BlendModes.DIFFERENCE;
+            if (frame.blendType === AnimBlendType.NORMAL) {
+              blendMode = Phaser.BlendModes.NORMAL;
+            } else if (frame.blendType === AnimBlendType.ADD) {
+              blendMode = Phaser.BlendModes.ADD;
+            }
 
-            pokemonSprite.setData("locked", frame.locked);
-
-            pokemonSprite.setAlpha(frame.opacity / 255);
-            pokemonSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", frame.tone);
-            pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
-            pokemonSprite.setBlendMode(
-              frame.blendType === AnimBlendType.NORMAL
-                ? Phaser.BlendModes.NORMAL
-                : frame.blendType === AnimBlendType.ADD
-                  ? Phaser.BlendModes.ADD
-                  : Phaser.BlendModes.DIFFERENCE,
-            );
+            pokemonSprite
+              .setPosition(graphicFrameData.x, graphicFrameData.y - (spriteSource.height / 2) * (spriteSourceScale - 1))
+              .setAngle(graphicFrameData.angle)
+              .setScale(graphicFrameData.scaleX * spriteSourceScale, graphicFrameData.scaleY * spriteSourceScale)
+              .setData("locked", frame.locked)
+              .setAlpha(frame.opacity / 255)
+              .setRenderNodeData(globalScene.spriteSubmitter, "tone", frame.tone)
+              .setVisible(frame.visible && (isUser ? user.visible : target.visible))
+              .setBlendMode(blendMode);
           }
         }
         if (anim?.frameTimedEvents.has(f)) {

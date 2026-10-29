@@ -1,13 +1,19 @@
 // e.g. #sprites/sprite-shadow.ts
 import { globalScene } from "#app/global-scene";
 
+type Frame = Phaser.Textures.Frame;
+type Image = Phaser.GameObjects.Image;
+type Sprite = Phaser.GameObjects.Sprite;
+
+type GameObjectConfig = Phaser.Types.GameObjects.GameObjectConfig;
+
 interface ShadowState {
-  shadow: Phaser.GameObjects.Image;
+  shadow: Image;
   offsetY: number;
-  sizedFor: Phaser.Textures.Frame | null;
+  sizedFor: Frame | null;
 }
 
-const shadows = new Map<Phaser.GameObjects.Sprite, ShadowState>();
+const shadows = new Map<Sprite, ShadowState>();
 let listening = false;
 
 function getShadowTextureKey(w: number, h: number): string {
@@ -31,7 +37,7 @@ function getShadowTextureKey(w: number, h: number): string {
   return key;
 }
 
-export function setSpriteShadow(sprite: Phaser.GameObjects.Sprite, enabled: boolean, offsetY = 0): void {
+export function setSpriteShadow(sprite: Sprite, enabled: boolean, offsetY = 0): void {
   const state = shadows.get(sprite);
   if (!enabled) {
     if (state) {
@@ -46,9 +52,9 @@ export function setSpriteShadow(sprite: Phaser.GameObjects.Sprite, enabled: bool
   }
 
   const shadow = globalScene.make
-    // See <https://github.com/phaserjs/phaser/issues/7390> for why we need the cast
-    .image({ key: getShadowTextureKey(1, 1) } as Phaser.Types.GameObjects.GameObjectConfig, false)
-    .setOrigin(0, 0);
+    // See https://github.com/phaserjs/phaser/issues/7390 for why we need the cast (since: Phaser 4.2.1)
+    .image({ key: getShadowTextureKey(1, 1) } as GameObjectConfig, false)
+    .setOrigin(0);
   shadows.set(sprite, { shadow, offsetY, sizedFor: null });
   sprite.once(Phaser.GameObjects.Events.DESTROY, () => {
     const s = shadows.get(sprite);
@@ -63,12 +69,12 @@ export function setSpriteShadow(sprite: Phaser.GameObjects.Sprite, enabled: bool
   }
 }
 
-function removeShadow(sprite: Phaser.GameObjects.Sprite, state: ShadowState): void {
+function removeShadow(sprite: Sprite, state: ShadowState): void {
   state.shadow.destroy();
   shadows.delete(sprite);
 }
 
-function placeBehind(sprite: Phaser.GameObjects.Sprite, shadow: Phaser.GameObjects.Image): void {
+function placeBehind(sprite: Sprite, shadow: Image): void {
   const parent = sprite.parentContainer ?? sprite.displayList;
   if (!parent) {
     return;

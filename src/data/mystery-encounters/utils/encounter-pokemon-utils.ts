@@ -530,10 +530,12 @@ export function trainerThrowPokeball(
                       audioManager.playSound("se/pb_lock");
                       globalScene.animations.addPokeballCaptureStars(pokeball);
 
-                      const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
-                      pbTint.setOrigin(pokeball.originX, pokeball.originY);
-                      pbTint.setTint(0).setTintMode(Phaser.TintModes.FILL);
-                      pbTint.setAlpha(0);
+                      const pbTint = globalScene.add
+                        .sprite(pokeball.x, pokeball.y, "pb", "pb")
+                        .setOrigin(pokeball.originX, pokeball.originY)
+                        .setTint(0)
+                        .setTintMode(Phaser.TintModes.FILL)
+                        .setAlpha(0);
                       globalScene.field.add(pbTint);
                       globalScene.tweens.add({
                         targets: pbTint,

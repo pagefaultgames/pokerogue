@@ -637,11 +637,13 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
     ]);
 
     tradedPokemonSprite.setAlpha(0);
-    tradedPokemonTintSprite.setAlpha(0);
-    tradedPokemonTintSprite.setTint(getPokeballTintColor(tradedPokemon.pokeball)).setTintMode(Phaser.TintModes.FILL);
+    tradedPokemonTintSprite
+      .setAlpha(0)
+      .setTint(getPokeballTintColor(tradedPokemon.pokeball))
+      .setTintMode(Phaser.TintModes.FILL);
     receivedPokemonSprite.setVisible(false);
-    receivedPokemonTintSprite.setVisible(false);
     receivedPokemonTintSprite
+      .setVisible(false)
       .setTint(getPokeballTintColor(receivedPokemon.pokeball))
       .setTintMode(Phaser.TintModes.FILL);
 
