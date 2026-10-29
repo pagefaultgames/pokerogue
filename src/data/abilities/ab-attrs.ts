@@ -260,8 +260,36 @@ export interface HiddenItemChanceAbAttrParams extends AbAttrBaseParams {
   chance: NumberHolder;
 }
 
-/** Attribute for abilities that increase the chance of a double battle occurring. */
+/** Attribute for abilities that increase the chance of finding hidden items. */
 export class HiddenItemChanceAbAttr extends AbAttr {
+  private readonly extraChance: number;
+  constructor(extraChance: number) {
+    super(false);
+
+    this.extraChance = extraChance;
+  }
+
+  override apply({ chance }: HiddenItemChanceAbAttrParams): void {
+    chance.value += this.extraChance;
+  }
+}
+
+/** Attribute for abilities that increase the chance of finding hidden items. */
+export class HoneyGatherChanceAbAttr extends AbAttr {
+  private readonly extraChance: number;
+  constructor(extraChance: number) {
+    super(false);
+
+    this.extraChance = extraChance;
+  }
+
+  override apply({ chance }: HiddenItemChanceAbAttrParams): void {
+    chance.value += this.extraChance;
+  }
+}
+
+/** Attribute for abilities that increase the chance of finding hidden items. */
+export class BallFetchChanceAbAttr extends AbAttr {
   private readonly extraChance: number;
   constructor(extraChance: number) {
     super(false);
@@ -6140,6 +6168,8 @@ export const AbilityAttrs = Object.freeze({
   CudChewRecordBerryAbAttr,
   DoubleBattleChanceAbAttr,
   HiddenItemChanceAbAttr,
+  HoneyGatherChanceAbAttr,
+  BallFetchChanceAbAttr,
   DoubleBerryEffectAbAttr,
   DownloadAbAttr,
   EffectSporeAbAttr,

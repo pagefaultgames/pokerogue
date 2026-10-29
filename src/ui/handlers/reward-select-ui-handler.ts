@@ -46,10 +46,10 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
+  private titleText: Phaser.GameObjects.Text;
   declare protected onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
-  private player: boolean;
   /**
    * If reroll cost is negative, it is assumed there are 0 items in the shop.
    * It will cause reroll button to be disabled, and a "Continue" button to show in the place of shop items
@@ -146,6 +146,19 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     );
     continueButtonText.setName("text-continue-btn");
     this.continueButtonContainer.add(continueButtonText);
+
+    // Create title text
+    this.titleText = addTextObject(
+      globalScene.scaledCanvas.width / 2,
+      -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - 22,
+      i18next.t(""),
+      TextStyle.HEADER_LABEL,
+    );
+    this.titleText.setName("title");
+    this.titleText.setVisible(false);
+    this.titleText.setAlign("center");
+    this.titleText.setOrigin(0.5, 0);
+    ui.add(this.titleText);
 
     // prepare move overlay
     this.moveInfoOverlay = new MoveInfoOverlay({
@@ -251,7 +264,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       const sliceWidth = globalScene.scaledCanvas.width / (rowOptions.length + 2);
       const option = new RewardSelectOption(
         sliceWidth * (col + 1) + sliceWidth * 0.5,
-        -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - (42 - (28 * row - 1)),
+        -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - 42,
         shopTypeOptions[m],
       );
       option.setScale(0.375);
@@ -271,6 +284,15 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     /* Force updateItems without pokemon held items */
     globalScene.updateItemBar(true, false);
 
+    if (this.hideShop) {
+      if (this.options.length > 1) {
+        this.titleText.setText("Your Pokémon found some hidden items.\nPick as many as you want!");
+        this.titleText.setY(-globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - 36);
+      } else {
+        this.titleText.setText("Your Pokémon found a hidden item!");
+      }
+      this.titleText.setVisible(true);
+    }
     globalScene.showShopOverlay(fixedInt(750));
     globalScene.updateAndShowText(750);
     globalScene.updateBiomeWaveText();

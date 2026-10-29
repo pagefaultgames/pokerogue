@@ -6,6 +6,7 @@ import {
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
+  BallFetchChanceAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -48,6 +49,7 @@ import {
   getWeatherCondition,
   HealFromBerryUseAbAttr,
   HiddenItemChanceAbAttr,
+  HoneyGatherChanceAbAttr,
   IceFaceFormChangeAbAttr,
   IgnoreContactAbAttr,
   IgnoreMoveEffectsAbAttr,
@@ -823,6 +825,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.HONEY_GATHER, 4) //
       .attr(MoneyAbAttr)
+      .attr(HoneyGatherChanceAbAttr, 1)
       .unsuppressable()
       .build(),
     new AbBuilder(AbilityId.FRISK, 4) //
@@ -1654,6 +1657,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BALL_FETCH, 8) //
       .attr(FetchBallAbAttr)
+      .attr(BallFetchChanceAbAttr, 1)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH))
       .build(),
     new AbBuilder(AbilityId.COTTON_DOWN, 8) //

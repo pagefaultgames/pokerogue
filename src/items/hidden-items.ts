@@ -6,12 +6,14 @@ import { RarityTier } from "#enums/reward-tier";
 import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils";
 import type { RewardPoolEntry } from "#types/rewards";
 import { randSeedFloat } from "#utils/common";
+import { getPartyLuckValue } from "#utils/party";
 import { weightedPick } from "#utils/random";
 import { NumberHolder } from "#utils/value-holder";
 import type { RewardOption } from "./reward";
 import { generateRewardOptionFromId } from "./reward-utils";
 
 const BASE_CHANCE_ON_FIELD = 1; // 0.05
+const BASE_CHANCE_ON_FIELD_DOUBLE = 0.5; // 0.03
 const BASE_CHANCE_IN_PARTY = 1; // 0
 const LUCK_MULTIPLIER = 0.01;
 
@@ -22,24 +24,51 @@ export function findHiddenItems(): Promise<void> {
     const biomeId = globalScene.arena.biomeId;
 
     for (const pokemon of globalScene.getPlayerParty()) {
-      const chance = new NumberHolder(pokemon.isOnField() ? BASE_CHANCE_ON_FIELD : BASE_CHANCE_IN_PARTY);
-      chance.value += pokemon.luck * LUCK_MULTIPLIER;
+      const baseChanceOnField =
+        (globalScene.getPlayerField().length > 1 ? BASE_CHANCE_ON_FIELD_DOUBLE : BASE_CHANCE_ON_FIELD)
+        + getPartyLuckValue() * LUCK_MULTIPLIER;
+      const chance = new NumberHolder(pokemon.isOnField() ? baseChanceOnField : BASE_CHANCE_IN_PARTY);
       applyAbAttrs("HiddenItemChanceAbAttr", { pokemon, chance });
-      if (randSeedFloat() > chance.value) {
-        continue;
+      if (randSeedFloat() < chance.value) {
+        const rewardMap = new Map<RewardPoolEntry, number>();
+
+        for (const entry of hiddenItemsPool[biomeId]) {
+          rewardMap.set(entry, typeof entry.weight === "number" ? entry.weight : entry.weight());
+        }
+        const pickedPoolEntry = weightedPick(rewardMap);
+
+        const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, RarityTier.COMMON, 0);
+        rewardOption.source = pokemon;
+
+        rewardOptions.push(rewardOption);
       }
 
-      const rewardMap = new Map<RewardPoolEntry, number>();
+      // Apply Honey Gather
+      const honeyGatherChance = new NumberHolder(0);
+      applyAbAttrs("HoneyGatherChanceAbAttr", { pokemon, chance: honeyGatherChance });
 
-      for (const entry of hiddenItemsPool[biomeId]) {
-        rewardMap.set(entry, typeof entry.weight === "number" ? entry.weight : 0);
+      if (randSeedFloat() < honeyGatherChance.value) {
+        const rewardOption = generateRewardOptionFromId(RewardId.RELIC_GOLD, 0, RarityTier.LUXURY, 0);
+        rewardOption.source = pokemon;
+        rewardOptions.push(rewardOption);
       }
-      const pickedPoolEntry = weightedPick(rewardMap);
 
-      const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, RarityTier.COMMON, 0);
-      rewardOption.source = pokemon;
+      // Apply Ball Fetch
+      const ballFetchChance = new NumberHolder(0);
+      applyAbAttrs("BallFetchChanceAbAttr", { pokemon, chance: ballFetchChance });
 
-      rewardOptions.push(rewardOption);
+      if (randSeedFloat() < ballFetchChance.value) {
+        const rewardMap = new Map<RewardPoolEntry, number>();
+
+        for (const entry of ballFetchPool) {
+          rewardMap.set(entry, typeof entry.weight === "number" ? entry.weight : entry.weight());
+        }
+        const pickedPoolEntry = weightedPick(rewardMap);
+
+        const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, RarityTier.LUXURY, 0);
+        rewardOption.source = pokemon;
+        rewardOptions.push(rewardOption);
+      }
     }
 
     if (rewardOptions.length === 0) {
@@ -65,6 +94,14 @@ export function findHiddenItems(): Promise<void> {
     );
   });
 }
+
+const ballFetchPool: RewardPoolEntry[] = [
+  { id: RewardId.POKEBALL, weight: 50 },
+  { id: RewardId.GREAT_BALL, weight: 30 },
+  { id: RewardId.ULTRA_BALL, weight: 15 },
+  { id: RewardId.ROGUE_BALL, weight: 4 },
+  { id: RewardId.MASTER_BALL, weight: 1 },
+];
 
 const hiddenItemsPool: Record<BiomeId, RewardPoolEntry[]> = {
   [BiomeId.TOWN]: [
