@@ -204,10 +204,10 @@ function filterAndSortLevelMoves(
    * in levelMoves multiple times all but the lowest level one will be skipped.
    * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
    */
-  if (levelMoves && !context.includeDuplicates) {
-    getUniqueMoves(levelMoves, ret);
-  } else {
+  if (context.includeDuplicates) {
     ret.push(...levelMoves);
+  } else {
+    getUniqueMoves(levelMoves, ret);
   }
 
   return ret;
