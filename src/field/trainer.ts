@@ -20,6 +20,7 @@ import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
@@ -106,19 +107,19 @@ export class Trainer extends Phaser.GameObjects.Container {
         break;
     }
 
-    const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = globalScene.addFieldSprite(
-        0,
-        0,
-        this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
-      );
-      ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-      });
-      return ret;
-    };
+    const getSprite = (hasShadow?: boolean, forceFemale?: boolean): Phaser.GameObjects.Sprite =>
+      globalScene
+        .addFieldSprite(
+          0,
+          0,
+          this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
+        )
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
     const sprite = getSprite(true);
     const tintSprite = getSprite();
@@ -730,9 +731,11 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
-    tintSprites.map(tintSprite => {
-      tintSprite.setTintFill(color);
-      tintSprite.setVisible(true);
+    tintSprites.forEach(tintSprite => {
+      tintSprite //
+        .setTint(color)
+        .setTintMode(Phaser.TintModes.FILL)
+        .setVisible(true);
 
       if (duration) {
         tintSprite.setAlpha(0);

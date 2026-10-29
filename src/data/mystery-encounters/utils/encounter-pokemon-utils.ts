@@ -39,6 +39,7 @@ import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -530,10 +531,12 @@ export function trainerThrowPokeball(
                       audioManager.playSound("se/pb_lock");
                       globalScene.animations.addPokeballCaptureStars(pokeball);
 
-                      const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
-                      pbTint.setOrigin(pokeball.originX, pokeball.originY);
-                      pbTint.setTintFill(0);
-                      pbTint.setAlpha(0);
+                      const pbTint = globalScene.add
+                        .sprite(pokeball.x, pokeball.y, "pb", "pb")
+                        .setOrigin(pokeball.originX, pokeball.originY)
+                        .setTint(0)
+                        .setTintMode(Phaser.TintModes.FILL)
+                        .setAlpha(0);
                       globalScene.field.add(pbTint);
                       globalScene.tweens.add({
                         targets: pbTint,
