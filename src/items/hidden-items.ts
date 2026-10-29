@@ -13,9 +13,9 @@ import { NumberHolder } from "#utils/value-holder";
 import type { RewardOption } from "./reward";
 import { generateRewardOptionFromId } from "./reward-utils";
 
-const BASE_CHANCE_ON_FIELD = 1; // 0.05
-const BASE_CHANCE_ON_FIELD_DOUBLE = 0.5; // 0.03
-const BASE_CHANCE_IN_PARTY = 1; // 0
+const BASE_CHANCE_ON_FIELD = 0.5; // 0.05
+const BASE_CHANCE_ON_FIELD_DOUBLE = 0.3; // 0.03
+const BASE_CHANCE_IN_PARTY = 0; // 0
 const LUCK_MULTIPLIER = 0.01;
 
 export function findHiddenItems(): Promise<void> {

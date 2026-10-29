@@ -464,7 +464,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.PICKUP, 3) //
-      .attr(HiddenItemChanceAbAttr, 0.05)
+      .attr(HiddenItemChanceAbAttr, 0.5)
       .unsuppressable()
       .build(),
     new AbBuilder(AbilityId.TRUANT, 3) //
@@ -825,7 +825,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.HONEY_GATHER, 4) //
       .attr(MoneyAbAttr)
-      .attr(HoneyGatherChanceAbAttr, 1)
+      .attr(HoneyGatherChanceAbAttr, 0.5)
       .unsuppressable()
       .build(),
     new AbBuilder(AbilityId.FRISK, 4) //
@@ -1657,7 +1657,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BALL_FETCH, 8) //
       .attr(FetchBallAbAttr)
-      .attr(BallFetchChanceAbAttr, 1)
+      .attr(BallFetchChanceAbAttr, 0.5)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH))
       .build(),
     new AbBuilder(AbilityId.COTTON_DOWN, 8) //
