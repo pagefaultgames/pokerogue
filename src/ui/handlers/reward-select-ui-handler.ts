@@ -884,7 +884,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    if (!this.rewardOption.cost) {
+    if (!this.rewardOption.cost && !this.rewardOption.source) {
       const getPb = (): Phaser.GameObjects.Sprite => {
         const pb = globalScene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.rewardOption.upgradeCount));
         pb.setScale(2);
