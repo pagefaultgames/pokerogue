@@ -443,6 +443,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * Accuracy and semi-invulnerability can be bypassed by:
    * - An ability like {@linkcode AbilityId.NO_GUARD | No Guard}
    * - A poison type using {@linkcode MoveId.TOXIC | Toxic}
+   * - {@linkcode MoveId.HELPING_HAND | Helping Hand}, which can target a semi-invulnerable ally
    * - A move like {@linkcode MoveId.LOCK_ON | Lock-On} or {@linkcode MoveId.MIND_READER | Mind Reader}.
    * - A field-targeted move like spikes
    *
@@ -458,6 +459,9 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
     }
     if (this.move.hasAttr("ToxicAccuracyAttr") && user.isOfType(PokemonType.POISON)) {
+      return true;
+    }
+    if (this.move.id === MoveId.HELPING_HAND) {
       return true;
     }
     // TODO: Fix lock on / mind reader check to belong to the battler tag - this is really ugly
