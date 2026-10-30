@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { BiomeId } from "#enums/biome-id";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
+import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils";
 import type { RewardPool, RewardPoolEntry } from "#types/rewards";
@@ -45,9 +46,11 @@ export function findHiddenItems(): Promise<void> {
                   ? RarityTier.GREAT
                   : RarityTier.COMMON;
 
-        for (const entry of hiddenItemsPool[biomeId][tier]) {
+        for (const entry of baseHiddenItemsPool[tier]) {
           rewardMap.set(entry, typeof entry.weight === "number" ? entry.weight : entry.weight());
         }
+        editHiddenItemMapBiome(rewardMap, biomeId, tier);
+        editHiddenItemMapPokemon(rewardMap, pokemon.species.speciesId, tier);
         const pickedPoolEntry = weightedPick(rewardMap);
 
         const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, RarityTier.COMMON, 0);
@@ -117,739 +120,393 @@ const ballFetchPool: RewardPoolEntry[] = [
   { id: RewardId.MASTER_BALL, weight: 1 },
 ];
 
-const hiddenItemsPool: Record<BiomeId, RewardPool> = {
+const baseHiddenItemsPool: RewardPool = {
+  [RarityTier.COMMON]: [
+    { id: RewardId.NUGGET, weight: 1 },
+    { id: RewardId.BERRY, weight: 1 },
+  ],
+  [RarityTier.GREAT]: [
+    { id: RewardId.VITAMIN, weight: 1 },
+    { id: RewardId.BIG_NUGGET, weight: 1 },
+  ],
+  [RarityTier.ULTRA]: [
+    { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
+    { id: RewardId.RARER_CANDY, weight: 1 },
+  ],
+  [RarityTier.ROGUE]: [
+    { id: RewardId.RARER_CANDY, weight: 1 },
+    { id: TrainerItemId.BERRY_POUCH, weight: 1 },
+  ],
+  [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+  [RarityTier.LUXURY]: [],
+};
+
+function editHiddenItemMapPokemon(
+  rewardMap: Map<RewardPoolEntry, number>,
+  speciesId: SpeciesId,
+  tier: RarityTier,
+): void {
+  if (!hiddenItemsPokemonPools[speciesId]) {
+    return;
+  }
+  const newEntries = hiddenItemsPokemonPools[speciesId][tier];
+
+  for (const entry of newEntries) {
+    const newWeight = typeof entry.weight === "number" ? entry.weight : entry.weight();
+
+    const existingEntry = [...rewardMap.keys()].find(existing => existing.id === entry.id);
+
+    if (existingEntry) {
+      rewardMap.set(existingEntry, newWeight);
+    } else {
+      rewardMap.set(entry, newWeight);
+    }
+  }
+}
+
+const hiddenItemsPokemonPools: Partial<Record<SpeciesId, RewardPool>> = {
+  [SpeciesId.ZYGARDE]: {
+    [RarityTier.COMMON]: [{ id: RewardId.HYPER_POTION, weight: 10 }],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
+    [RarityTier.LUXURY]: [],
+  },
+};
+
+function editHiddenItemMapBiome(rewardMap: Map<RewardPoolEntry, number>, biomeId: BiomeId, tier: RarityTier): void {
+  const newEntries = hiddenItemsBiomePools[biomeId][tier];
+
+  for (const entry of newEntries) {
+    const newWeight = typeof entry.weight === "number" ? entry.weight : entry.weight();
+
+    const existingEntry = [...rewardMap.keys()].find(existing => existing.id === entry.id);
+
+    if (existingEntry) {
+      rewardMap.set(existingEntry, newWeight);
+    } else {
+      rewardMap.set(entry, newWeight);
+    }
+  }
+}
+
+const hiddenItemsBiomePools: Record<BiomeId, RewardPool> = {
   [BiomeId.TOWN]: {
     [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
+      { id: RewardId.POTION, weight: 1 },
+      { id: RewardId.BERRY, weight: 0 },
     ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.PLAINS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.GRASS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.TALL_GRASS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.METROPOLIS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.FOREST]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.SEA]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.SWAMP]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.BEACH]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.LAKE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.SEABED]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.MOUNTAIN]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.BADLANDS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.CAVE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.DESERT]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.ICE_CAVE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.MEADOW]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.POWER_PLANT]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.VOLCANO]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.GRAVEYARD]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.DOJO]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.FACTORY]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.RUINS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.WASTELAND]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.ABYSS]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.SPACE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.CONSTRUCTION_SITE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.JUNGLE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.FAIRY_CAVE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.TEMPLE]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.SLUM]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.SNOWY_FOREST]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.ISLAND]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.LABORATORY]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 
   [BiomeId.END]: {
-    [RarityTier.COMMON]: [
-      { id: RewardId.NUGGET, weight: 1 },
-      { id: RewardId.BERRY, weight: 1 },
-    ],
-    [RarityTier.GREAT]: [
-      { id: RewardId.VITAMIN, weight: 1 },
-      { id: RewardId.BIG_NUGGET, weight: 1 },
-    ],
-    [RarityTier.ULTRA]: [
-      { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 1 },
-      { id: RewardId.RARER_CANDY, weight: 1 },
-    ],
-    [RarityTier.ROGUE]: [
-      { id: RewardId.RARER_CANDY, weight: 1 },
-      { id: TrainerItemId.BERRY_POUCH, weight: 1 },
-    ],
-    [RarityTier.MASTER]: [{ id: RewardId.DNA_SPLICERS, weight: 1 }],
+    [RarityTier.COMMON]: [],
+    [RarityTier.GREAT]: [],
+    [RarityTier.ULTRA]: [],
+    [RarityTier.ROGUE]: [],
+    [RarityTier.MASTER]: [],
     [RarityTier.LUXURY]: [],
   },
 };
