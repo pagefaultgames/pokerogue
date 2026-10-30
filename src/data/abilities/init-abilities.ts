@@ -6,6 +6,7 @@ import {
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
+  BallFetchChanceAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -33,7 +34,7 @@ import {
   DoubleBerryEffectAbAttr,
   DownloadAbAttr,
   EffectSporeAbAttr,
-  FetchBallAbAttr,
+  //  FetchBallAbAttr,
   FieldMoveTypePowerBoostAbAttr,
   FieldMultiplyStatAbAttr,
   FieldPreventExplosiveMovesAbAttr,
@@ -47,6 +48,8 @@ import {
   GorillaTacticsAbAttr,
   getWeatherCondition,
   HealFromBerryUseAbAttr,
+  HiddenItemChanceAbAttr,
+  HoneyGatherChanceAbAttr,
   IceFaceFormChangeAbAttr,
   IgnoreContactAbAttr,
   IgnoreMoveEffectsAbAttr,
@@ -59,7 +62,7 @@ import {
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
-  MoneyAbAttr,
+  //  MoneyAbAttr,
   MoodyAbAttr,
   MoveAbilityBypassAbAttr,
   MoveDamageBoostAbAttr,
@@ -80,7 +83,6 @@ import {
   PostAttackContactApplyStatusEffectAbAttr,
   PostAttackStealHeldItemAbAttr,
   PostBattleInitFormChangeAbAttr,
-  PostBattleLootAbAttr,
   PostBiomeChangeTerrainChangeAbAttr,
   PostBiomeChangeWeatherChangeAbAttr,
   PostDamageForceSwitchAbAttr,
@@ -289,6 +291,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COMPOUND_EYES, 3) //
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3)
+      .attr(HiddenItemChanceAbAttr, 0.25)
       .attr(AiMovegenMoveStatsAbAttr, ({ accMult }) => {
         accMult.value *= 1.3;
       })
@@ -455,6 +458,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.KEEN_EYE, 3) //
       .attr(ProtectStatAbAttr, Stat.ACC)
       .attr(IgnoreOpponentStatStagesAbAttr, [Stat.EVA])
+      .attr(HiddenItemChanceAbAttr, 0.25)
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.HYPER_CUTTER, 3) //
@@ -462,7 +466,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.PICKUP, 3) //
-      .attr(PostBattleLootAbAttr)
+      .attr(HiddenItemChanceAbAttr, 0.5)
       .unsuppressable()
       .build(),
     new AbBuilder(AbilityId.TRUANT, 3) //
@@ -745,6 +749,7 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr)
       .build(),
     new AbBuilder(AbilityId.SUPER_LUCK, 4) //
+      .attr(HiddenItemChanceAbAttr, 0.25)
       .attr(BonusCritAbAttr)
       .build(),
     new AbBuilder(AbilityId.AFTERMATH, 4) //
@@ -822,7 +827,8 @@ export function initAbilities() {
       })
       .build(),
     new AbBuilder(AbilityId.HONEY_GATHER, 4) //
-      .attr(MoneyAbAttr)
+      //      .attr(MoneyAbAttr)
+      .attr(HoneyGatherChanceAbAttr, 0.5)
       .unsuppressable()
       .build(),
     new AbBuilder(AbilityId.FRISK, 4) //
@@ -1653,7 +1659,8 @@ export function initAbilities() {
       .edgeCase()
       .build(),
     new AbBuilder(AbilityId.BALL_FETCH, 8) //
-      .attr(FetchBallAbAttr)
+      //      .attr(FetchBallAbAttr)
+      .attr(BallFetchChanceAbAttr, 0.5)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH))
       .build(),
     new AbBuilder(AbilityId.COTTON_DOWN, 8) //

@@ -255,6 +255,53 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
   }
 }
 
+export interface HiddenItemChanceAbAttrParams extends AbAttrBaseParams {
+  /** Holder for the chance of a double battle that may be modified by the ability */
+  chance: NumberHolder;
+}
+
+/** Attribute for abilities that increase the chance of finding hidden items. */
+export class HiddenItemChanceAbAttr extends AbAttr {
+  private readonly extraChance: number;
+  constructor(extraChance: number) {
+    super(false);
+
+    this.extraChance = extraChance;
+  }
+
+  override apply({ chance }: HiddenItemChanceAbAttrParams): void {
+    chance.value += this.extraChance;
+  }
+}
+
+/** Attribute for abilities that increase the chance of finding hidden items. */
+export class HoneyGatherChanceAbAttr extends AbAttr {
+  private readonly extraChance: number;
+  constructor(extraChance: number) {
+    super(false);
+
+    this.extraChance = extraChance;
+  }
+
+  override apply({ chance }: HiddenItemChanceAbAttrParams): void {
+    chance.value += this.extraChance;
+  }
+}
+
+/** Attribute for abilities that increase the chance of finding hidden items. */
+export class BallFetchChanceAbAttr extends AbAttr {
+  private readonly extraChance: number;
+  constructor(extraChance: number) {
+    super(false);
+
+    this.extraChance = extraChance;
+  }
+
+  override apply({ chance }: HiddenItemChanceAbAttrParams): void {
+    chance.value += this.extraChance;
+  }
+}
+
 export class PostBattleInitAbAttr extends AbAttr {
   declare private readonly _: never;
 }
@@ -4823,37 +4870,6 @@ export abstract class PostBattleAbAttr extends AbAttr {
   apply(_params: Closed<PostBattleAbAttrParams>): void {}
 }
 
-export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  private randItem?: HeldItemId | undefined;
-
-  override canApply({ simulated, victory, pokemon }: PostBattleAbAttrParams): boolean {
-    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length > 0 && victory) {
-      this.randItem = randSeedItem(postBattleLoot);
-      return pokemon.heldItemManager.getStack(this.randItem) < allHeldItems[this.randItem].maxStackCount;
-    }
-    return false;
-  }
-
-  override apply({ pokemon }: PostBattleAbAttrParams): void {
-    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!this.randItem) {
-      this.randItem = randSeedItem(postBattleLoot);
-    }
-
-    if (pokemon.heldItemManager.add(this.randItem)) {
-      postBattleLoot.splice(postBattleLoot.indexOf(this.randItem), 1);
-      globalScene.phaseManager.queueMessage(
-        i18next.t("abilityTriggers:postBattleLoot", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          itemName: allHeldItems[this.randItem].name,
-        }),
-      );
-    }
-    this.randItem = undefined;
-  }
-}
-
 /** Shared parameters for ability attributes that trigger after the user faints. */
 export interface PostFaintAbAttrParams extends AbAttrBaseParams {
   /** The pokemon that caused the user to faint, or `undefined` if not caused by a Pokemon */
@@ -6151,6 +6167,9 @@ export const AbilityAttrs = Object.freeze({
   CudChewConsumeBerryAbAttr,
   CudChewRecordBerryAbAttr,
   DoubleBattleChanceAbAttr,
+  HiddenItemChanceAbAttr,
+  HoneyGatherChanceAbAttr,
+  BallFetchChanceAbAttr,
   DoubleBerryEffectAbAttr,
   DownloadAbAttr,
   EffectSporeAbAttr,
@@ -6208,7 +6227,6 @@ export const AbilityAttrs = Object.freeze({
   PostBattleAbAttr,
   PostBattleInitAbAttr,
   PostBattleInitFormChangeAbAttr,
-  PostBattleLootAbAttr,
   PostBiomeChangeAbAttr,
   PostBiomeChangeTerrainChangeAbAttr,
   PostBiomeChangeWeatherChangeAbAttr,

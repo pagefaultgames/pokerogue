@@ -4,6 +4,7 @@ import { settings } from "#app/global-settings-manager";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
+import { Gender } from "#data/gender";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import type { PokeballType } from "#enums/pokeball";
@@ -26,6 +27,14 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
+export interface RewardSelectUiHandlerParams {
+  typeOptions?: RewardOption[];
+  onActionInput?: RewardSelectCallback;
+  rerollCost?: number;
+  hideShop?: boolean;
+  removeIndex?: number;
+}
+
 export class RewardSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
@@ -37,10 +46,10 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
+  private titleText: Phaser.GameObjects.Text;
   declare protected onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
-  private player: boolean;
   /**
    * If reroll cost is negative, it is assumed there are 0 items in the shop.
    * It will cause reroll button to be disabled, and a "Continue" button to show in the place of shop items
@@ -53,6 +62,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   public shopOptionsRows: RewardSelectOption[][] = [];
 
   private cursorObj: Phaser.GameObjects.Image | null;
+
+  private hideShop: boolean;
 
   setup() {
     const ui = this.getUi();
@@ -136,6 +147,19 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     continueButtonText.setName("text-continue-btn");
     this.continueButtonContainer.add(continueButtonText);
 
+    // Create title text
+    this.titleText = addTextObject(
+      globalScene.scaledCanvas.width / 2,
+      -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - 22,
+      i18next.t(""),
+      TextStyle.HEADER_LABEL,
+    );
+    this.titleText.setName("title");
+    this.titleText.setVisible(false);
+    this.titleText.setAlign("center");
+    this.titleText.setOrigin(0.5, 0);
+    ui.add(this.titleText);
+
     // prepare move overlay
     this.moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: true,
@@ -153,16 +177,18 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   show(args: any[]): boolean {
     globalScene.disableMenu = false;
 
+    const params = args[0] as RewardSelectUiHandlerParams;
+
     if (this.active) {
-      if (args.length >= 3) {
+      if (params.onActionInput) {
         this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        this.onActionInput = params.onActionInput;
       }
       this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
-    if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
+    if (params.rerollCost == null || params.onActionInput == null) {
       return false;
     }
 
@@ -170,7 +196,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.getUi().clearText();
 
-    this.player = args[0];
+    this.hideShop = !!params.hideShop;
 
     const partyHasHeldItem =
       globalScene
@@ -196,12 +222,12 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
-    this.rerollCost = args[3] as number;
+    this.rerollCost = params.rerollCost as number;
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1] as RewardOption[];
-    const hasShop = globalScene.gameMode.getShopStatus();
+    const typeOptions = params.typeOptions as RewardOption[];
+    const hasShop = globalScene.gameMode.getShopStatus() && !this.hideShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: baseShopCost });
     const shopTypeOptions = hasShop
@@ -238,7 +264,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       const sliceWidth = globalScene.scaledCanvas.width / (rowOptions.length + 2);
       const option = new RewardSelectOption(
         sliceWidth * (col + 1) + sliceWidth * 0.5,
-        -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - (42 - (28 * row - 1)),
+        -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - 42,
         shopTypeOptions[m],
       );
       option.setScale(0.375);
@@ -258,6 +284,15 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     /* Force updateItems without pokemon held items */
     globalScene.updateItemBar(true, false);
 
+    if (this.hideShop) {
+      if (this.options.length > 1) {
+        this.titleText.setText("Your Pokémon found some hidden items.\nPick as many as you want!");
+        this.titleText.setY(-globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - 36);
+      } else {
+        this.titleText.setText("Your Pokémon found a hidden item!");
+      }
+      this.titleText.setVisible(true);
+    }
     globalScene.showShopOverlay(fixedInt(750));
     globalScene.updateAndShowText(750);
     globalScene.updateBiomeWaveText();
@@ -300,6 +335,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
                 Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount,
                 -(maxUpgradeCount - typeOptions[i].upgradeCount),
                 rewardAnimAllSettledPromises,
+                !this.hideShop,
               ),
             );
           }
@@ -322,6 +358,63 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       }
     });
 
+    const removeIndex = params.removeIndex;
+
+    /** Holds promises that resolve once each removal animation has finished */
+    const removeRewardPromises: Promise<void>[] = [];
+
+    /** Holds promises that resolve once each repositioning animation has finished */
+    const repositionRewardPromises: Promise<void>[] = [];
+
+    if (removeIndex !== undefined && removeIndex > -1 && removeIndex < this.options.length) {
+      const removedOption = this.options[removeIndex];
+
+      if (removedOption) {
+        removeRewardPromises.push(
+          new Promise<void>(resolve => {
+            globalScene.tweens.add({
+              targets: [removedOption],
+              alpha: 0,
+              duration: 300,
+              onComplete: () => {
+                removedOption.destroy();
+                this.options.splice(removeIndex, 1);
+                resolve();
+              },
+            });
+          }),
+        );
+      }
+
+      for (let index = 0; index < this.options.length; index++) {
+        if (index === removeIndex) {
+          continue;
+        }
+
+        const option = this.options[index];
+
+        if (!option) {
+          continue;
+        }
+
+        // Same as above but reducing length by 1
+        const sliceWidth = globalScene.scaledCanvas.width / (typeOptions.length + 1);
+        const targetX = sliceWidth * 0.5 + (index < removeIndex ? sliceWidth * (index + 1) : sliceWidth * index);
+
+        repositionRewardPromises.push(
+          new Promise<void>(resolve => {
+            globalScene.tweens.add({
+              targets: [option],
+              x: targetX,
+              duration: 300,
+              ease: "Sine.easeInOut",
+              onComplete: () => resolve(),
+            });
+          }),
+        );
+      }
+    }
+
     tweenPromise.then(() => {
       globalScene.time.delayedCall(500, () => {
         if (partyHasHeldItem) {
@@ -338,10 +431,12 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         this.checkButtonContainer.setAlpha(0);
         this.lockRarityButtonContainer.setAlpha(0);
         this.continueButtonContainer.setAlpha(0);
-        this.rerollButtonContainer.setVisible(true);
+        if (!this.hideShop) {
+          this.rerollButtonContainer.setVisible(true);
+          this.lockRarityButtonContainer.setVisible(canLockRarities);
+        }
         this.checkButtonContainer.setVisible(true);
         this.continueButtonContainer.setVisible(this.rerollCost < 0);
-        this.lockRarityButtonContainer.setVisible(canLockRarities);
 
         globalScene.tweens.add({
           targets: [this.checkButtonContainer, this.continueButtonContainer],
@@ -349,17 +444,24 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
           duration: 250,
         });
 
-        globalScene.tweens.add({
-          targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
-          alpha: this.rerollCost < 0 ? 0.5 : 1,
-          duration: 250,
-        });
+        if (!this.hideShop) {
+          globalScene.tweens.add({
+            targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+            alpha: this.rerollCost < 0 ? 0.5 : 1,
+            duration: 250,
+          });
+        }
 
         // Ensure that the reward animations have completed before allowing input to proceed.
         // Required to ensure that the user cannot interact with the UI before the animations
         // have completed, (which, among other things, would allow the GameObjects to be destroyed
         // before the animations have completed, causing errors).
-        Promise.allSettled([...shopAnimPromises, ...rewardAnimAllSettledPromises]).then(() => {
+        Promise.allSettled([
+          ...shopAnimPromises,
+          ...rewardAnimAllSettledPromises,
+          ...removeRewardPromises,
+          ...repositionRewardPromises,
+        ]).then(() => {
           const updateCursorTarget = () => {
             if (settings.display.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
@@ -385,8 +487,10 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
             if (res) {
               updateCursorTarget();
             }
-            this.awaitingActionInput = true;
-            this.onActionInput = args[2];
+            if (params.onActionInput) {
+              this.awaitingActionInput = true;
+              this.onActionInput = params.onActionInput;
+            }
           });
         });
       });
@@ -422,18 +526,16 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         }
       }
     } else if (button === Button.CANCEL) {
-      if (this.player) {
-        success = true;
-        if (this.onActionInput) {
-          const originalOnActionInput = this.onActionInput;
-          this.awaitingActionInput = false;
-          this.onActionInput = null;
-          // TODO: What is a good fallback to pass to this?
-          originalOnActionInput(-1, -1);
-          this.moveInfoOverlayActive = this.moveInfoOverlay.active;
-          this.moveInfoOverlay.setVisible(false);
-          this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
-        }
+      success = true;
+      if (this.onActionInput) {
+        const originalOnActionInput = this.onActionInput;
+        this.awaitingActionInput = false;
+        this.onActionInput = null;
+        // TODO: What is a good fallback to pass to this?
+        originalOnActionInput(-1, -1);
+        this.moveInfoOverlayActive = this.moveInfoOverlay.active;
+        this.moveInfoOverlay.setVisible(false);
+        this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action
       }
     } else {
       switch (button) {
@@ -724,6 +826,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.getUi().getMessageHandler().hideNameText();
     this.eraseCursor();
+    this.titleText.setText("");
 
     // Reset cursor positions
     this.cursor = 0;
@@ -793,6 +896,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
   private itemTint: Phaser.GameObjects.Sprite;
   private itemText: Phaser.GameObjects.Text;
   private itemCostText: Phaser.GameObjects.Text;
+  private pokemonIcon: Phaser.GameObjects.Sprite;
 
   constructor(x: number, y: number, rewardOption: RewardOption) {
     super(globalScene, x, y);
@@ -803,13 +907,12 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    if (!this.rewardOption.cost) {
+    if (!this.rewardOption.cost && !this.rewardOption.source) {
       const getPb = (): Phaser.GameObjects.Sprite => {
         const pb = globalScene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.rewardOption.upgradeCount));
         pb.setScale(2);
         return pb;
       };
-
       this.pb = getPb();
       this.add(this.pb);
 
@@ -819,8 +922,11 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     }
 
     this.itemContainer = globalScene.add.container(0, 0);
-    this.itemContainer.setScale(0.5);
-    this.itemContainer.setAlpha(0);
+    this.itemContainer.setScale(2);
+    if (!this.rewardOption.source) {
+      this.itemContainer.setAlpha(0);
+      this.itemContainer.setScale(0.5);
+    }
     this.add(this.itemContainer);
 
     const getItem = () => {
@@ -831,7 +937,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     this.item = getItem();
     this.itemContainer.add(this.item);
 
-    if (!this.rewardOption.cost) {
+    if (!this.rewardOption.cost && !this.rewardOption.source) {
       this.itemTint = getItem();
       this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
       this.itemContainer.add(this.itemTint);
@@ -839,7 +945,9 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
 
     this.itemText = addTextObject(0, 35, this.rewardOption.type.name, TextStyle.PARTY, { align: "center" });
     this.itemText.setOrigin(0.5, 0);
-    this.itemText.setAlpha(0);
+    if (!this.rewardOption.source) {
+      this.itemText.setAlpha(0);
+    }
     this.itemText.setTint(this.rewardOption.type.tier ? getRarityTierTextTint(this.rewardOption.type.tier) : undefined);
     this.add(this.itemText);
 
@@ -853,6 +961,25 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
       this.add(this.itemCostText);
 
       this.updateCostText();
+    }
+
+    if (this.rewardOption.source) {
+      const pokemon = this.rewardOption.source;
+      const species = pokemon.species;
+      const female = pokemon.gender === Gender.FEMALE;
+      const formIndex = pokemon.formIndex;
+      const shiny = pokemon.shiny;
+      const variant = pokemon.variant;
+      this.pokemonIcon = globalScene.add
+        .sprite(-2, 2, species.getIconAtlasKey(formIndex, shiny, variant))
+        .setScale(1)
+        .setOrigin(0)
+        .setFrame(species.getIconId(female, formIndex, shiny, variant))
+        .setTint(0xffffff);
+      this.add(this.pokemonIcon);
+      this.pokemonIcon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
+      this.pokemonIcon.setFrame(species.getIconId(female, formIndex, false, variant));
+      this.bringToTop(this.pokemonIcon);
     }
   }
 
@@ -987,19 +1114,21 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
       /** Delay for the rest of the tweens to ensure they show after the pokeball animation begins to appear */
       const delay = isReward ? 250 : 0;
 
-      const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
-      globalScene.tweens.add({
-        targets: this.itemContainer,
-        delay,
-        duration: 500,
-        ease: "Elastic.Out",
-        scale: 2,
-        alpha: 1,
-        onComplete: () => {
-          itemResolve();
-        },
-      });
-      finalPromises.push(itemPromise);
+      if (!this.rewardOption.source) {
+        const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
+        globalScene.tweens.add({
+          targets: this.itemContainer,
+          delay,
+          duration: 500,
+          ease: "Elastic.Out",
+          scale: 2,
+          alpha: 1,
+          onComplete: () => {
+            itemResolve();
+          },
+        });
+        finalPromises.push(itemPromise);
+      }
 
       if (isReward) {
         const { resolve: itemTintResolve, promise: itemTintPromise } = Promise.withResolvers<void>();
@@ -1017,17 +1146,19 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
         finalPromises.push(itemTintPromise);
       }
 
-      const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
-      globalScene.tweens.add({
-        targets: this.itemText,
-        delay,
-        duration: 500,
-        alpha: 1,
-        y: 25,
-        ease: "Cubic.easeInOut",
-        onComplete: () => itemTextResolve(),
-      });
-      finalPromises.push(itemTextPromise);
+      if (!this.rewardOption.source) {
+        const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
+        globalScene.tweens.add({
+          targets: this.itemText,
+          delay,
+          duration: 500,
+          alpha: 1,
+          y: 25,
+          ease: "Cubic.easeInOut",
+          onComplete: () => itemTextResolve(),
+        });
+        finalPromises.push(itemTextPromise);
+      }
 
       if (this.itemCostText) {
         const { resolve: itemCostResolve, promise: itemCostPromise } = Promise.withResolvers<void>();
