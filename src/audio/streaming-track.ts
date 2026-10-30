@@ -9,6 +9,7 @@ import { globalScene } from "#app/global-scene";
 import type { BackgroundMusic } from "#audio/background-music";
 import { applyGameSpeedMult } from "#system/game-speed";
 import type { FixedInt } from "#utils/common";
+import { sleep } from "#utils/common";
 import { AudioBufferSink, BufferSource, Input, MP3, MP4, OGG } from "mediabunny";
 import Phaser from "phaser";
 
@@ -21,9 +22,9 @@ const MIN_POLL_MS = 50;
 /** Passes kept for position lookups; only the current and adjacent passes are ever needed. */
 const MAX_TRACKED_PASSES = 3;
 
-const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
-
+/** How a {@linkcode StreamingTrack} plays, set when it is created. */
 interface StreamingTrackOptions {
+  /** Whether to restart from {@linkcode loopPoint} on reaching the end, instead of finishing. */
   loop: boolean;
   /** Where the loop restarts, in seconds. */
   loopPoint: number;
@@ -50,17 +51,33 @@ interface Pass {
  * Music tracks can be large, sometimes in the tens of megabytes.
  */
 export class StreamingTrack extends Phaser.Events.EventEmitter {
+  /** Intended to be the same as Phaser's audio context. */
   private readonly ctx: AudioContext;
+  /** This track's volume control, between its buffers and Phaser's master output. */
   private readonly output: GainNode;
+  /** Set of decoded buffers that are scheduled or playing. */
   private readonly nodes = new Set<AudioBufferSourceNode>();
+  /** Mediabunny's decoder for the track */
   private readonly sink: AudioBufferSink;
   private readonly options: StreamingTrackOptions;
 
+  /** The most recent passes through the track, oldest first, used to work out the current position. */
   private passes: Pass[] = [];
-  /** Incremented on every start/stop, so stale decode loops exit. */
+  /**
+   * Incremented on every start/stop, allowing clean up of stale decode loops and scheduled audio.
+   *
+   * @remarks
+   * Each run of the decode loop captures the value when it starts (as `gen`) and stops as soon as it no longer
+   * matches.
+   * This is necessary as an `async` loop can't be cancelled from outside.
+   * Without this, a loop from before a seek or restart would keep scheduling audio alongside the new one.
+   */
   private generation = 0;
+  /** Whether audio is currently scheduled or playing; `false` while paused, stopped or finished. */
   private playing = false;
+  /** Whether playback was paused and can be resumed from {@linkcode pausedAt}. */
   private paused = false;
+  /** Track position to resume from, in seconds; the position when paused, or `0` once stopped or finished. */
   private pausedAt = 0;
 
   /**
@@ -78,7 +95,9 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     return new StreamingTrack(new AudioBufferSink(track), options);
   }
 
-  // Constructor is private as StreamingTrack should be created via `create`.
+  /**
+   * Should not be invoked outside of this class; StreamingTrack should be created via {@linkcode create}.
+   */
   private constructor(sink: AudioBufferSink, options: StreamingTrackOptions) {
     super();
 
@@ -99,7 +118,7 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     return this.paused;
   }
 
-  /** Current position in seconds, like Phaser's `sound.seek`. */
+  /** Current position in seconds */
   public get seek(): number {
     return this.playing ? this.position() : this.pausedAt;
   }
@@ -132,6 +151,11 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     }
   }
 
+  /**
+   * Set the volume immediately, cancelling any fade in progress.
+   * @param value - The new volume, where `1` is full volume
+   * @returns `this`
+   */
   public setVolume(value: number): this {
     const gain = this.output.gain;
     const now = this.ctx.currentTime;
@@ -142,8 +166,7 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
   /**
    * Ramp the volume on the audio clock.
    * @param value - The volume to ramp to
-   * @param duration - How long the ramp takes at 1x game speed, in milliseconds; a {@linkcode FixedInt} ignores game
-   * speed, like it does for `SoundFade`
+   * @param duration - The duration of the fade in milliseconds (adjusted by gameSpeed unless it is {@linkcode FixedInt})
    */
   public fadeTo(value: number, duration: number | FixedInt): void {
     const gain = this.output.gain;
@@ -154,12 +177,17 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
       .linearRampToValueAtTime(value, now + applyGameSpeedMult(duration) / 1000);
   }
 
+  /** Stop playback, disconnect from the audio output and remove all listeners. */
   public override destroy(): void {
     this.halt();
     this.output.disconnect();
     super.destroy();
   }
 
+  /**
+   * Start a new run of the decode loop, after stopping any current one.
+   * @param from - Track position to start from, in seconds
+   */
   private start(from: number): void {
     this.halt();
     this.playing = true;
@@ -184,6 +212,10 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     this.passes = [];
   }
 
+  /**
+   * Work out the current track position from the audio clock.
+   * @returns The position in seconds within the pass now playing, or `0` if nothing has been scheduled yet
+   */
   private position(): number {
     const now = this.ctx.currentTime;
     let current = this.passes[0];
@@ -198,6 +230,8 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
   /**
    * Decode and schedule the track starting at `from`, looping if configured,
    * until it finishes naturally or playback is cancelled.
+   * @param gen - The generation of playback this belongs to, captured when it started (see {@linkcode StreamingTrack.generation | generation})
+   * @param from - Track position to start from, in seconds
    */
   private async pump(gen: number, from: number): Promise<void> {
     let passStart = this.ctx.currentTime + START_DELAY;
@@ -227,6 +261,7 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
 
   /**
    * Decode and schedule one pass through the track, from `trackFrom` to the end.
+   * @param gen - Generation of the playback this belongs to, captured when it started; see {@linkcode StreamingTrack.generation | generation}
    * @param passStart - Context time at which this pass should start playing
    * @param trackFrom - Track position to start from, in seconds
    * @returns The context time at which the pass ends, or `null` if playback was cancelled
@@ -262,6 +297,8 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
 
   /**
    * Record how context time maps to track time for a new pass, for position lookups.
+   * @param passStart - Context time at which the pass starts playing
+   * @param trackFrom - Track position the pass starts from, in seconds
    * @returns The context time corresponding to track time 0 in this pass
    */
   private recordPass(passStart: number, trackFrom: number): number {
@@ -279,6 +316,8 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
    * @remarks
    * This keeps waiting while the audio context is suspended, since its clock stops advancing.
    *
+   * @param gen - Generation of the playback this belongs to, captured when it started; see {@linkcode StreamingTrack.generation | generation}
+   * @param target - The context time to wait for, in seconds
    * @returns Whether playback is still current, i.e. `false` if it was cancelled while waiting
    */
   private async waitForContextTime(gen: number, target: number): Promise<boolean> {
@@ -293,7 +332,10 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     return this.isCurrent(gen);
   }
 
-  /** Whether `gen` still refers to the active playback, i.e. it hasn't been stopped or restarted since. */
+  /**
+   * @param gen - Generation of the playback this belongs to, captured when it started; see {@linkcode StreamingTrack.generation | generation}
+   * @returns Whether `gen` still refers to the active playback, i.e. it hasn't been stopped or restarted since
+   */
   private isCurrent(gen: number): boolean {
     return gen === this.generation;
   }
@@ -305,6 +347,12 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     this.emit("complete");
   }
 
+  /**
+   * Schedule a decoded buffer to play, and forget it once it has.
+   * @param buffer - The decoded audio
+   * @param when - Context time at which to start playing it, in seconds
+   * @param offset - How far into the buffer to start, in seconds
+   */
   private schedule(buffer: AudioBuffer, when: number, offset: number): void {
     const node = this.ctx.createBufferSource();
     node.buffer = buffer;
