@@ -17,6 +17,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import { isTypeHidingActive } from "#utils/challenge-utils";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
 
@@ -317,10 +318,23 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     return changed;
   }
 
+  /** True if an opponent's type is visible via Terastallization, or its species was already defeated/owned this run */
+  private isTypeKnown(opponent: Pokemon): boolean {
+    return opponent.isTerastallized || globalScene.revealedSpecies.has(opponent.species.speciesId);
+  }
+
   /**
    * Gets multiplier text for a pokemon's move against a specific opponent
    */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
+    if (
+      isTypeHidingActive()
+      && !this.isTypeKnown(opponent)
+      && !opponent.battleData.revealedMoveEffectiveness.includes(pokemonMove.moveId)
+    ) {
+      return undefined;
+    }
+
     const effectiveness = opponent.getMoveEffectiveness(
       pokemon,
       pokemonMove.getMove(),
@@ -373,7 +387,15 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       return;
     }
 
-    const opponents = pokemon.getOpponents();
+    const hideUnrevealed = isTypeHidingActive();
+    const opponents = pokemon
+      .getOpponents()
+      .filter(
+        opponent =>
+          !hideUnrevealed
+          || this.isTypeKnown(opponent)
+          || opponent.battleData.revealedMoveEffectiveness.includes(pokemonMove.moveId),
+      );
     if (opponents.length <= 0) {
       return;
     }

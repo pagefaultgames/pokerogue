@@ -169,4 +169,9 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyPassiveAbilityModify}
    */
   PASSIVE_ABILITY_MODIFY,
+  /**
+   * Challenges which modify the innate type(s) of a species
+   * @see {@linkcode Challenge.applySpeciesTypeModify}
+   */
+  SPECIES_TYPE_MODIFY,
 }

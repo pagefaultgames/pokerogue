@@ -8,6 +8,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
+import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
@@ -404,6 +405,21 @@ export function applyChallenges(
   abilityId: ValueHolder<AbilityId>,
 ): boolean;
 
+/**
+ * Apply all challenges that modify the innate type(s) of a species
+ * @param challengeType - {@linkcode ChallengeType.SPECIES_TYPE_MODIFY}
+ * @param speciesId - The ID of the species whose type(s) are being modified
+ * @param type1 - A holder for the species' primary type
+ * @param type2 - A holder for the species' secondary type, or `null` if it has none
+ * @returns Whether any challenge was sucessfully applied
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SPECIES_TYPE_MODIFY,
+  speciesId: SpeciesId,
+  type1: ValueHolder<PokemonType>,
+  type2: ValueHolder<PokemonType | null>,
+): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -579,6 +595,11 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           ret ||= r;
           break;
         }
+        case ChallengeType.SPECIES_TYPE_MODIFY: {
+          const r = c.applySpeciesTypeModify(args[0], args[1], args[2]);
+          ret ||= r;
+          break;
+        }
         default:
           challengeType satisfies never;
           break;
@@ -687,13 +708,27 @@ export function isNuzlockeChallenge(): boolean {
   return isFreshStart && isLimitedCatch && isHardcore;
 }
 
+/** Whether enemy types/effectiveness should be hidden: requires both Type Randomizer and Hidden Types to be active. */
+export function isTypeHidingActive(): boolean {
+  const { gameMode } = globalScene;
+  return (
+    gameMode.getChallengeValue(Challenges.TYPE_RANDOMIZER) > 0
+    && gameMode.getChallengeValue(Challenges.HIDDEN_TYPES) > 0
+  );
+}
+
 export function getRibbonsToAward(): RibbonFlag {
   const { gameMode } = globalScene;
   const { challenges, isClassic } = gameMode;
 
   let ribbonFlags = 0n;
 
-  const ribbonBlockChallenges = [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER];
+  const ribbonBlockChallenges = [
+    Challenges.MOVESET_RANDOMIZER,
+    Challenges.ABILITY_RANDOMIZER,
+    Challenges.TYPE_RANDOMIZER,
+    Challenges.HIDDEN_TYPES,
+  ];
   if (challenges.some(c => ribbonBlockChallenges.includes(c.id) && c.value > 0)) {
     return ribbonFlags as RibbonFlag;
   }

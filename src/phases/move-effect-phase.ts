@@ -398,6 +398,9 @@ export class MoveEffectPhase extends PokemonPhase {
      * Accounts for type and move immunities from defensive typing, abilities, and other effects.
      */
     const effectiveness = target.getMoveEffectiveness(user, move, false, false, cancelNoEffectMessage);
+    if (!target.battleData.revealedMoveEffectiveness.includes(move.id)) {
+      target.battleData.revealedMoveEffectiveness.push(move.id);
+    }
     if (effectiveness === 0) {
       return [
         cancelNoEffectMessage.value ? HitCheckResult.NO_EFFECT_NO_MESSAGE : HitCheckResult.NO_EFFECT,
