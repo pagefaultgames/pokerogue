@@ -8,6 +8,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BackgroundMusic } from "#audio/background-music";
 import { AudioBufferSink, BufferSource, Input, MP3, MP4, OGG } from "mediabunny";
+import Phaser from "phaser";
 
 /** How far ahead of the playhead to decode, in seconds. */
 const LEAD_SECONDS = 2;
