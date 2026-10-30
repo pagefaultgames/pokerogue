@@ -261,7 +261,8 @@ export class BackgroundMusic {
         SoundFade.fadeOut(globalScene, sound, realDuration, false);
       }
     });
-    globalScene.time.delayedCall(realDuration + 100, () => {
+
+    globalScene.time.delayedCall(fixed ? fixedInt(duration + 100) : duration + 100, () => {
       if (this.destroyed) {
         return;
       }

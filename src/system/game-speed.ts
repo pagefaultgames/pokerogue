@@ -22,7 +22,7 @@ const TIME_RELATED_PROPERTIES = [
  * @remarks
  * Any {@linkcode FixedInt}s passed in will be returned verbatim without adjustment.
  */
-function applyGameSpeedMult(value: number | FixedInt): number {
+export function applyGameSpeedMult(value: number | FixedInt): number {
   if (value instanceof FixedInt) {
     return value.value;
   }
