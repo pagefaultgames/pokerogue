@@ -423,3 +423,11 @@ export function getBiomeName(biome: BiomeId | -1) {
 
   return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
 }
+
+/**
+ * @param ms The duration to sleep for, in milliseconds
+ * @returns A promise that resolves after the specified duration
+ */
+export function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
