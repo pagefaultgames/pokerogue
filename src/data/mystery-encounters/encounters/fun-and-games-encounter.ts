@@ -14,7 +14,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
-import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
@@ -321,6 +321,7 @@ function handleNextTurn(): boolean {
 async function showWobbuffetHealthBar() {
   const wobbuffet = globalScene.getEnemyPokemon()!;
 
+  alignWobbuffetWithIntroSprite(wobbuffet);
   globalScene.add.existing(wobbuffet);
   globalScene.field.add(wobbuffet);
 
@@ -337,6 +338,26 @@ async function showWobbuffetHealthBar() {
 
   // Track the HP change across turns
   globalScene.currentBattle.mysteryEncounter!.misc.wobbuffetHealth = wobbuffet.hp;
+}
+
+/**
+ * Place the hidden battle Wobbuffet over the costumed Wobbuffet from the intro visuals,
+ * so that stat change and move animations targeting it play over the visible sprite.
+ * @param wobbuffet - The hidden enemy Wobbuffet
+ */
+function alignWobbuffetWithIntroSprite(wobbuffet: EnemyPokemon): void {
+  const introVisuals = globalScene.currentBattle.mysteryEncounter!.introVisuals;
+  const costumedWobbuffet = introVisuals?.getSpriteAtIndex(1)[0];
+  if (!introVisuals || !costumedWobbuffet) {
+    return;
+  }
+
+  wobbuffet.setPosition(introVisuals.x + costumedWobbuffet.x, introVisuals.y + costumedWobbuffet.y);
+
+  // Stat change animations are masked by the tint sprite, so give it the costume's outline
+  const tintSprite = wobbuffet.getTintSprite();
+  tintSprite?.stop();
+  tintSprite?.setTexture(costumedWobbuffet.texture.key);
 }
 
 function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
