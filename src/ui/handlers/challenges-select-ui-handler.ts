@@ -1,14 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { settings } from "#app/global-settings-manager";
 import type { Challenge } from "#data/challenge";
 import { Button } from "#enums/buttons";
 import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
-import { ShadowType } from "#enums/shadow-type";
 import { TextStyle } from "#enums/text-style";
 import { TabMenu } from "#ui/tab-menu";
-import { addTextObject, enableTextCopyShadows } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getRibbonsToAward } from "#utils/challenge-utils";
@@ -117,20 +115,18 @@ export class GameChallengesUiHandler extends UiHandler {
       .setOrigin(0)
       .setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
-    this.descriptionText = globalScene.add
-      .rexBBCodeText(descriptionBg.x + 6, descriptionBg.y + 4, "", {
-        fontFamily: "emerald",
-        fontSize: 84,
-        color: Color.ORANGE,
-        padding: { bottom: 6 },
-        wrap: { mode: "word", width: (descriptionBg.width - 12) * 6 },
-      })
+    this.descriptionText = addBBCodeTextObject(descriptionBg.x + 6, descriptionBg.y + 4, "", TextStyle.MESSAGE, {
+      color: Color.ORANGE,
+      padding: { bottom: 6 },
+      wrap: { mode: "word", width: (descriptionBg.width - 12) * 6 },
+    })
       .setName("text-desc")
-      .setScale(1 / 6)
-      .setShadow((6 * 84 * shadowTypeRatio) / 96, (6 * 84 * shadowTypeRatio) / 96, ShadowColor.ORANGE)
+      .setShadow(
+        getTextStyleOptions(TextStyle.MESSAGE).shadowXpos,
+        getTextStyleOptions(TextStyle.MESSAGE).shadowYpos,
+        ShadowColor.ORANGE,
+      )
       .setOrigin(0);
-    enableTextCopyShadows(this.descriptionText);
-    globalScene.add.existing(this.descriptionText);
     this.descriptionTextBaseY = this.descriptionText.y;
     this.descriptionTextMaxHeight = descriptionBg.height - 8;
 
