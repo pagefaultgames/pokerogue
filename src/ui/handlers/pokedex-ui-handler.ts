@@ -44,6 +44,7 @@ import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -565,11 +566,13 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(starterBoxContainer);
 
-    this.pokemonSprite = globalScene.add.sprite(96, 143, "pkmn__sub");
-    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-    });
+    this.pokemonSprite = globalScene.add
+      .sprite(96, 143, "pkmn__sub")
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        ignoreTimeTint: true,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
     this.starterSelectContainer.add(this.pokemonSprite);
 
     this.type1Icon = globalScene.add.sprite(10, 158, getLocalizedSpriteKey("types"));
@@ -2218,11 +2221,13 @@ export class PokedexUiHandler extends MessageUiHandler {
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-          this.pokemonSprite.setPipelineData("shiny", shiny);
-          this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant)); // TODO: is this bang correct?
-          this.pokemonSprite.setVisible(true);
+          const spriteKey = species.getSpriteKey(female!, formIndex, shiny, variant); // TODO: is this bang correct?
+          this.pokemonSprite
+            .play(spriteKey)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+            .setVisible(true);
         });
       } else {
         this.pokemonSprite.setVisible(!(this.filterMode || this.filterTextMode));

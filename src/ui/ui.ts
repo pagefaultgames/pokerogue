@@ -63,6 +63,7 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,

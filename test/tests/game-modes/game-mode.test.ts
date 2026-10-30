@@ -3,6 +3,7 @@ import { getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
 import { GameManager } from "#test/framework/game-manager";
 import * as Utils from "#utils/common";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("game-mode", () => {

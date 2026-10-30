@@ -10,6 +10,7 @@ import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import type { DamagingBattlerTagType } from "#types/battler-tags";
 import i18next from "i18next";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Battler Tags - Damage Over Time", () => {
