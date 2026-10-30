@@ -7,6 +7,8 @@
 
 import { globalScene } from "#app/global-scene";
 import type { BackgroundMusic } from "#audio/background-music";
+import { applyGameSpeedMult } from "#system/game-speed";
+import type { FixedInt } from "#utils/common";
 import { AudioBufferSink, BufferSource, Input, MP3, MP4, OGG } from "mediabunny";
 import Phaser from "phaser";
 
@@ -137,14 +139,19 @@ export class StreamingTrack extends Phaser.Events.EventEmitter {
     return this;
   }
 
-  /** Ramp the volume on the audio clock. */
-  public fadeTo(value: number, durationMs: number): void {
+  /**
+   * Ramp the volume on the audio clock.
+   * @param value - The volume to ramp to
+   * @param duration - How long the ramp takes at 1x game speed, in milliseconds; a {@linkcode FixedInt} ignores game
+   * speed, like it does for `SoundFade`
+   */
+  public fadeTo(value: number, duration: number | FixedInt): void {
     const gain = this.output.gain;
     const now = this.ctx.currentTime;
     gain
       .cancelScheduledValues(now)
       .setValueAtTime(gain.value, now)
-      .linearRampToValueAtTime(value, now + durationMs / 1000);
+      .linearRampToValueAtTime(value, now + applyGameSpeedMult(duration) / 1000);
   }
 
   public override destroy(): void {
