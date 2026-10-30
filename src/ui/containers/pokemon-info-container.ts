@@ -6,8 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
-import type { DexEntry } from "#types/dex-data";
-import type { StarterDataEntry } from "#types/save-data";
+import type { DexEntry, StarterDataEntry } from "#types/save-data";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
@@ -268,18 +267,11 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     pokemon: Pokemon,
     showMoves = false,
     speedMultiplier = 1,
-    dexEntry?: DexEntry,
-    starterEntry?: StarterDataEntry,
+    dexEntry: DexEntry = globalScene.gameData.dexData[pokemon.species.speciesId],
+    starterEntry: StarterDataEntry = globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()],
     eggInfo = false,
   ): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!dexEntry) {
-        dexEntry = globalScene.gameData.dexData[pokemon.species.speciesId];
-      }
-      if (!starterEntry) {
-        starterEntry = globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()];
-      }
-
       const caughtAttr = BigInt(dexEntry.caughtAttr);
       if (pokemon.gender > Gender.GENDERLESS) {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
