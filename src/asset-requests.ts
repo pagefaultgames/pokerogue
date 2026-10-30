@@ -14,7 +14,14 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { settings } from "#app/global-settings-manager";
 import { hasExpSprite } from "#sprites/sprite-utils";
-import type { AnimSpec, AssetRequest } from "#types/asset-set";
+import type {
+  AnimSpec,
+  AssetRequest,
+  AtlasAssetRequest,
+  AudioAssetRequest,
+  ImageAssetRequest,
+  SpritesheetAssetRequest,
+} from "#types/asset-set";
 import { coerceArray } from "#utils/array";
 import { getCachedUrl } from "#utils/fetch-utils";
 
@@ -28,15 +35,16 @@ export const TRAINER_SPRITE_ANIM: AnimSpec = { end: 128, frameRate: 24, repeat: 
  * Build the requests for a single image, plus its legacy version for UI images.
  * @param key - The texture key
  * @param folder - The folder under `images/`
- * @param filename - (Default `<key>.png`) The file name
+ * @param filename - (Default `<key>.png`) Name of the image file
+ * @returns The asset requests needed for the image.
  */
-export function imageAsset(key: string, folder: string, filename = `${key}.png`): AssetRequest[] {
+export function imageAsset(key: string, folder: string, filename = `${key}.png`): ImageAssetRequest[] {
   const eventReplacment = timedEventManager.getEventImageReplacement(key);
   if (eventReplacment) {
     folder = "events";
     filename = `${eventReplacment}.png`;
   }
-  const requests: AssetRequest[] = [{ kind: "image", key, url: getCachedUrl(`images/${folder}/${filename}`) }];
+  const requests: ImageAssetRequest[] = [{ kind: "image", key, url: getCachedUrl(`images/${folder}/${filename}`) }];
   if (folder.startsWith("ui")) {
     folder = folder.replace("ui", "ui/legacy");
     requests.push({ kind: "image", key: `${key}_legacy`, url: getCachedUrl(`images/${folder}/${filename}`) });
@@ -49,10 +57,17 @@ export function imageAsset(key: string, folder: string, filename = `${key}.png`)
  * @param key - The texture key
  * @param folder - The folder under `images/`
  * @param size - The width and height of each frame
- * @param filename - (Default `<key>.png`) The file name
+ * @param filename - (Default `<key>.png`) Name of the spritesheet file
+ * @returns The asset requests needed for the spritesheet.
+ *
  */
-export function spritesheetAsset(key: string, folder: string, size: number, filename = `${key}.png`): AssetRequest[] {
-  const requests: AssetRequest[] = [
+export function spritesheetAsset(
+  key: string,
+  folder: string,
+  size: number,
+  filename = `${key}.png`,
+): SpritesheetAssetRequest[] {
+  const requests: SpritesheetAssetRequest[] = [
     {
       kind: "spritesheet",
       key,
@@ -80,8 +95,9 @@ export function spritesheetAsset(key: string, folder: string, size: number, file
  * @param folder - The folder under `images/`; may be empty
  * @param filenameRoot - (Default `key`) The file name without extension
  * @param anim - If set, the animation to create from the atlas once it loads
+ * @returns The asset requests needed for the atlas.
  */
-export function atlasAsset(key: string, folder: string, filenameRoot = key, anim?: AnimSpec): AssetRequest[] {
+export function atlasAsset(key: string, folder: string, filenameRoot = key, anim?: AnimSpec): AtlasAssetRequest[] {
   if (folder) {
     folder += "/";
   }
@@ -90,7 +106,7 @@ export function atlasAsset(key: string, folder: string, filenameRoot = key, anim
     folder = "events/";
     filenameRoot = `${eventReplacment}`;
   }
-  const requests: AssetRequest[] = [
+  const requests: AtlasAssetRequest[] = [
     {
       kind: "atlas",
       key,
@@ -118,13 +134,14 @@ export function atlasAsset(key: string, folder: string, filenameRoot = key, anim
  * @param experimental - (Default from settings) Whether to use the experimental sprite, if one exists
  * @param anim - (Default {@linkcode POKEMON_SPRITE_ANIM}) The animation to create from the atlas once it loads,
  * or `null` for none
+ * @returns The asset request needed for the Pokémon sprite atlas.
  */
 export function pokemonAtlasAsset(
   key: string,
   atlasPath: string,
   experimental = settings.expSpritesEnabled,
   anim: AnimSpec | null = POKEMON_SPRITE_ANIM,
-): AssetRequest {
+): AtlasAssetRequest {
   const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
   if (experimental) {
     experimental = hasExpSprite(key);
@@ -141,8 +158,9 @@ export function pokemonAtlasAsset(
  * @param key - The key within the folder; the audio key is `<folder>/<key>`
  * @param folder - (Default `"se"`) The folder under `audio/`
  * @param filenames - (Default `<key>.wav`) The file name(s)
+ * @returns The asset requests needed for the sound effect.
  */
-export function seAsset(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): AssetRequest[] {
+export function seAsset(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): AudioAssetRequest[] {
   folder += "/";
   // TODO: Use actual path joining logic
   return coerceArray(filenames).map(f => ({
@@ -155,8 +173,9 @@ export function seAsset(key: string, folder = "se", filenames: string | string[]
 /**
  * Build the request for a Pokémon cry.
  * @param key - The cry's audio key, e.g. `cry/25`
+ * @returns The asset request needed for the Pokémon cry.
  */
-export function cryAsset(key: string): AssetRequest {
+export function cryAsset(key: string): AudioAssetRequest {
   return { kind: "audio", key, url: `audio/${key}.m4a` };
 }
 

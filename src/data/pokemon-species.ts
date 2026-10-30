@@ -721,7 +721,7 @@ export abstract class PokemonSpeciesForm {
     variant?: Variant,
     back = false,
   ): AssetRequest[] {
-    const requests = [
+    const requests: AssetRequest[] = [
       pokemonAtlasAsset(
         this.getSpriteKey(female, formIndex, shiny, variant, back),
         this.getSpriteAtlasPath(female, formIndex, shiny, variant, back),
