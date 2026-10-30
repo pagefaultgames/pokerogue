@@ -2,6 +2,7 @@ import { BiomeId } from "#enums/biome-id";
 import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const EndlessBossWave = {

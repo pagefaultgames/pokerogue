@@ -15,6 +15,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /**
  * Abstract class for handling UI elements related to control settings.
@@ -42,7 +43,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected settingLabels: Phaser.GameObjects.Text[];
   protected optionValueLabels: Phaser.GameObjects.Text[][];
 
-  // layout will contain the 3 Gamepad tab for each config - dualshock, xbox, snes
+  // Layouts are created for each gamepad config, such as dualshock, xbox, procon, and snes.
   protected layout: Map<string, LayoutConfig> = new Map<string, LayoutConfig>();
   // Will contain the input icons from the selected layout
   protected inputsIcons: InputsIcons;

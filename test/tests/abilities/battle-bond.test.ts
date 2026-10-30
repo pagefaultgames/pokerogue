@@ -7,6 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Battle Bond", () => {
@@ -19,7 +20,7 @@ describe("Abilities - Battle Bond", () => {
     });
   });
 
-  describe("Greninja", () => {
+  describe("Form change effect", () => {
     const baseForm = 0;
     const ashForm = 1;
 
@@ -44,7 +45,7 @@ describe("Abilities - Battle Bond", () => {
 
       greninja.hp = 0;
       greninja.status = new Status(StatusEffect.FAINT);
-      expect(greninja.isFainted()).toBe(true);
+      expect(greninja).toHaveFainted();
 
       game.move.use(MoveId.SPLASH);
       await game.doKillOpponents();
@@ -91,7 +92,7 @@ describe("Abilities - Battle Bond", () => {
     });
   });
 
-  describe("Non-Greninja", () => {
+  describe("Stat boost effect", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
@@ -159,18 +160,24 @@ describe("Abilities - Battle Bond", () => {
     it.each([
       { baseSpecies: SpeciesId.BATTLE_BOND_GRENINJA, fusionSpecies: SpeciesId.MILOTIC, slot: "Base" },
       { baseSpecies: SpeciesId.MILOTIC, fusionSpecies: SpeciesId.BATTLE_BOND_GRENINJA, slot: "Extra" },
-    ])("should not activate for fusions if Greninja is the $slot species", async ({ baseSpecies, fusionSpecies }) => {
-      game.override.starterFusionSpecies(baseSpecies).enableStarterFusion();
-      await game.classicMode.startBattle(fusionSpecies);
+    ])(
+      "should activate the stat boost for fusions if Battle Bond Greninja is the $slot species",
+      async ({ baseSpecies, fusionSpecies }) => {
+        game.override.starterFusionSpecies(baseSpecies).enableStarterFusion();
+        await game.classicMode.startBattle(fusionSpecies);
 
-      game.move.use(MoveId.THUNDERBOLT);
-      await game.toEndOfTurn();
+        const player = game.field.getPlayerPokemon();
+        expect(player.formIndex).toBe(0);
 
-      const player = game.field.getPlayerPokemon();
-      expect(player.isFusion()).toBe(true);
-      expect(player).toHaveStatStage(Stat.ATK, 0);
-      expect(player).toHaveStatStage(Stat.SPATK, 0);
-      expect(player).toHaveStatStage(Stat.SPD, 0);
-    });
+        game.move.use(MoveId.THUNDERBOLT);
+        await game.toEndOfTurn();
+
+        expect(player.formIndex).toBe(0);
+        expect(player.isFusion()).toBe(true);
+        expect(player).toHaveStatStage(Stat.ATK, 1);
+        expect(player).toHaveStatStage(Stat.SPATK, 1);
+        expect(player).toHaveStatStage(Stat.SPD, 1);
+      },
+    );
   });
 });

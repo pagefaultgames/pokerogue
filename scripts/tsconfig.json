@@ -16,7 +16,7 @@
   // so it's safe to use glob syntax like this as files in `.github/scripts/` won't be grabbed
   // unless `.github/` is specifically added.
   "include": ["../**/*.ts"],
-  "exclude": ["../node_modules", "../dist", "**/*.boilerplate.ts"],
+  "exclude": ["../assets", "../locales", "../node_modules", "../dist", "**/*.boilerplate.ts"],
   "compilerOptions": {
     // Note: make sure more specific paths appear before less specific paths
     "paths": {
@@ -63,12 +63,7 @@
         "../src/ui/utils/*.ts",
         "../src/ui/*.ts"
       ],
-      "#data/*": [
-        "../src/data/daily-seed/*.ts",
-        "../src/data/pokemon-forms/*.ts",
-        "../src/data/pokemon/*.ts",
-        "../src/data/*.ts"
-      ],
+      "#data/*": ["../src/data/daily-seed/*.ts", "../src/data/*.ts"],
       "#utils/*": ["../src/utils/*.ts"],
 
       // new subpath imports for script folders

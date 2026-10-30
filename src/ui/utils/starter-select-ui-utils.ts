@@ -20,8 +20,7 @@ import type { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { Passive } from "#enums/passive";
 import { RibbonData } from "#system/ribbon-data";
-import type { DexEntry } from "#types/dex-data";
-import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
+import type { DexAttrProps, DexEntry, StarterDataEntry, StarterPreferences } from "#types/save-data";
 import type { DefinedSpeciesDetails, SpeciesDetails } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import { SortCriteria, type SortDirection } from "#ui/dropdown";
@@ -72,10 +71,9 @@ export function isValueReductionAvailable(speciesId: number, gameData = globalSc
  */
 export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   const starterId = speciesDataRegistry.getStarter(speciesId);
-  const hatchCount = gameData.dexData[starterId].hatchedCount;
   return (
     gameData.starterData[starterId].candyCount
-    >= getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(starterId), hatchCount)
+    >= getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(starterId))
   );
 }
 

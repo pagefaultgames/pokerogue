@@ -9,6 +9,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import { playTween } from "#utils/anim-utils";
+import Phaser from "phaser";
 
 /**
  * Phase handling mid-battle form changes that do not occur in the Party modal
@@ -119,10 +120,12 @@ export class QuietFormChangePhase extends BattlePhase {
 
     pokemonTintSprite // formatting
       .setAlpha(0)
-      .setTintFill(0xffffff);
+      .setTint(0xffffff)
+      .setTintMode(Phaser.TintModes.FILL);
     pokemonFormTintSprite // formatting
       .setVisible(false)
-      .setTintFill(0xffffff);
+      .setTint(0xffffff)
+      .setTintMode(Phaser.TintModes.FILL);
 
     audioManager.playSound("battle_anims/PRSFX- Transform");
 
@@ -181,18 +184,22 @@ export class QuietFormChangePhase extends BattlePhase {
     );
     sprite.setOrigin(0.5, 1);
     const spriteKey = this.pokemon.getBattleSpriteKey();
-    sprite.play(spriteKey).stop();
-    sprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      hasShadow: false,
-      teraColor: getTypeRgb(this.pokemon.getTeraType()),
-      isTerastallized: this.pokemon.isTerastallized,
-    });
+    sprite
+      .play(spriteKey)
+      .stop()
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        hasShadow: false,
+        teraColor: getTypeRgb(this.pokemon.getTeraType()),
+        isTerastallized: this.pokemon.isTerastallized,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
     ["spriteColors", "fusionSpriteColors"].forEach(k => {
       if (this.pokemon.summonData.speciesForm) {
         k += "Base";
       }
-      sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
+      sprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+        this.pokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k];
     });
     globalScene.field.add(sprite);
     return sprite;

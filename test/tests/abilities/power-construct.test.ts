@@ -4,6 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Abilities - POWER CONSTRUCT", () => {
@@ -36,12 +37,12 @@ describe("Abilities - POWER CONSTRUCT", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.ZYGARDE);
 
     const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
-    expect(zygarde).not.toBe(undefined);
+    expect(zygarde).toBeDefined();
     expect(zygarde!.formIndex).toBe(completeForm);
 
     zygarde!.hp = 0;
     zygarde!.status = new Status(StatusEffect.FAINT);
-    expect(zygarde!.isFainted()).toBe(true);
+    expect(zygarde!).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -62,12 +63,12 @@ describe("Abilities - POWER CONSTRUCT", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.ZYGARDE);
 
     const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
-    expect(zygarde).not.toBe(undefined);
+    expect(zygarde).toBeDefined();
     expect(zygarde!.formIndex).toBe(completeForm);
 
     zygarde!.hp = 0;
     zygarde!.status = new Status(StatusEffect.FAINT);
-    expect(zygarde!.isFainted()).toBe(true);
+    expect(zygarde!).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();

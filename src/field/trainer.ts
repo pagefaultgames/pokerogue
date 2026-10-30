@@ -20,6 +20,7 @@ import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
@@ -29,6 +30,7 @@ export class Trainer extends Phaser.GameObjects.Container {
   public nameKey: string;
   public partnerNameKey: string | undefined;
   public originalIndexes: { [key: number]: number } = {};
+  private representedSpecies: Partial<Record<SpeciesId, SpeciesId[]>> = {};
 
   /**
    * Create a new Trainer.
@@ -105,19 +107,19 @@ export class Trainer extends Phaser.GameObjects.Container {
         break;
     }
 
-    const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
-      const ret = globalScene.addFieldSprite(
-        0,
-        0,
-        this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
-      );
-      ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-      });
-      return ret;
-    };
+    const getSprite = (hasShadow?: boolean, forceFemale?: boolean): Phaser.GameObjects.Sprite =>
+      globalScene
+        .addFieldSprite(
+          0,
+          0,
+          this.config.getSpriteKey(variant === TrainerVariant.FEMALE || forceFemale, this.isDouble()),
+        )
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
     const sprite = getSprite(true);
     const tintSprite = getSprite();
@@ -325,6 +327,9 @@ export class Trainer extends Phaser.GameObjects.Container {
       if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
         if (Object.hasOwn(this.config.partyMemberFuncs, index)) {
           ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
+          this.representedSpecies[ret.species.speciesId] = speciesDataRegistry.getPrevolutionChain(
+            ret.species.speciesId,
+          );
           return;
         }
         if (Object.hasOwn(this.config.partyMemberFuncs, index - template.size)) {
@@ -332,6 +337,9 @@ export class Trainer extends Phaser.GameObjects.Container {
             level,
             template.getStrength(index),
             template.getEvoThresholdKind(index),
+          );
+          this.representedSpecies[ret.species.speciesId] = speciesDataRegistry.getPrevolutionChain(
+            ret.species.speciesId,
           );
           return;
         }
@@ -436,6 +444,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         level,
         !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
       );
+      this.representedSpecies[species.speciesId] = speciesDataRegistry.getPrevolutionChain(species.speciesId);
     };
     const seedOffset = this.config.hasStaticParty
       ? this.config.getDerivedType() + ((index + 1) << 8)
@@ -490,7 +499,8 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     console.log(ret.getName());
 
-    if (speciesDataRegistry.hasPrevolution(baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
+    // Retry if an evolved mon was rolled but it wouldn't be evolved at this point
+    if (speciesDataRegistry.getPrevolutionChain(baseSpecies.speciesId).includes(ret.speciesId)) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes());
@@ -502,56 +512,35 @@ export class Trainer extends Phaser.GameObjects.Container {
       }
     }
 
-    // Prompts reroll of party member species if doesn't fit specialty type.
-    // Can be removed by adding a type parameter to getTrainerSpeciesForLevel and filtering the list of evolutions for that type.
-    if (!retry && this.config.hasSpecialtyType() && !ret.isOfType(this.config.specialtyType)) {
-      retry = true;
-      console.log("Attempting reroll of species evolution to fit specialty type...");
-      let evoAttempt = 0;
-      while (retry && evoAttempt++ < 10) {
-        ret = speciesDataRegistry.getSpecies(
-          baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
-        );
-        console.log(ret.name);
-        if (ret.isOfType(this.config.specialtyType)) {
-          retry = false;
+    // Retry if a mon or its prevolution(s) is already in the party
+    if (!retry) {
+      let currentSpeciesId: SpeciesId | null = ret.speciesId;
+      while (currentSpeciesId !== null) {
+        if (currentSpeciesId in this.representedSpecies) {
+          retry = true;
+          break;
+        }
+        currentSpeciesId = speciesDataRegistry.getPrevolution(currentSpeciesId);
+      }
+    }
+
+    // Retry if the evolution of the mon is already in the party
+    if (!retry) {
+      const preEvolutionLines = Object.values(this.representedSpecies);
+      for (const line of preEvolutionLines) {
+        if (line.includes(ret.speciesId)) {
+          retry = true;
+          break;
         }
       }
     }
 
-    // Prompts reroll of party member species if species already present in the enemy party
-    if (this.checkDuplicateSpecies(baseSpecies.speciesId)) {
-      console.log("Duplicate species detected, prompting reroll...");
-      retry = true;
-    }
-
-    if (retry && (attempt ?? 0) < 10) {
+    if (retry && (attempt ?? 0) < 25) {
       console.log("Rerolling party member...");
       ret = this.genNewPartyMemberSpecies(level, strength, (attempt ?? 0) + 1);
     }
 
     return ret;
-  }
-
-  /**
-   * Checks if the enemy trainer already has the Pokemon species in their party
-   * @param baseSpecies - The base {@linkcode SpeciesId} of the current Pokemon
-   * @returns `true` if the species is already present in the party
-   */
-  checkDuplicateSpecies(baseSpecies: SpeciesId): boolean {
-    const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
-      let root = s;
-      while (speciesDataRegistry.hasPrevolution(root)) {
-        root = speciesDataRegistry.getPrevolution(root)!;
-      }
-      return root;
-    });
-
-    const currentSpecies = globalScene.getEnemyParty().map(p => {
-      return p.species.getRootSpeciesId();
-    });
-
-    return currentSpecies.includes(baseSpecies) || staticSpecies.includes(baseSpecies);
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch = false): [number, number][] {
@@ -742,9 +731,11 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string): void {
     const tintSprites = this.getTintSprites();
-    tintSprites.map(tintSprite => {
-      tintSprite.setTintFill(color);
-      tintSprite.setVisible(true);
+    tintSprites.forEach(tintSprite => {
+      tintSprite //
+        .setTint(color)
+        .setTintMode(Phaser.TintModes.FILL)
+        .setVisible(true);
 
       if (duration) {
         tintSprite.setAlpha(0);

@@ -14,7 +14,12 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
-import { FusionSpeciesFormEvolution, SpeciesFormEvolution, validateShedinjaEvo } from "#balance/pokemon-evolutions";
+import {
+  type EvolutionItem,
+  FusionSpeciesFormEvolution,
+  SpeciesFormEvolution,
+  validateShedinjaEvo,
+} from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/signature-moves";
 import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_FRIENDSHIP } from "#balance/starters";
@@ -42,6 +47,7 @@ import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
   SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
@@ -53,7 +59,6 @@ import {
   CustomPokemonData,
   PokemonBattleData,
   PokemonSummonData,
-  PokemonTempSummonData,
   PokemonTurnData,
   PokemonWaveData,
 } from "#data/pokemon-data";
@@ -64,7 +69,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
-import { getEffectiveWeatherForMove, getWeatherMultiplierForMove } from "#data/weather";
+import { getEffectiveWeatherForMove, getWeatherMultiplierForMove, isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -79,6 +84,7 @@ import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
+import type { FormChangeItem } from "#enums/form-change-item";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
@@ -185,7 +191,7 @@ import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import SoundFade from "phaser4-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple, Writable } from "type-fest";
 import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
@@ -289,8 +295,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData = new PokemonBattleData();
   /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData();
-  /** Similar to {@linkcode PokemonSummonData}, but is reset on reload (not saved to file). */
-  public tempSummonData: PokemonTempSummonData = new PokemonTempSummonData();
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData();
   /** Per-turn data like hit count & flinch tracking */
@@ -301,9 +305,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** The position of this Pokémon on the field */
   public fieldPosition: FieldPosition;
-
-  public maskEnabled: boolean;
-  public maskSprite: Phaser.GameObjects.Sprite | null;
 
   /**
    * The set of all TMs that have been used on this Pokémon
@@ -518,24 +519,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     globalScene.fieldUI.addAt(this.battleInfo, 0);
 
-    const getSprite = (hasShadow?: boolean) => {
-      const ret = globalScene.addPokemonSprite(
-        this,
-        0,
-        0,
-        `pkmn__${this.isPlayer() ? "back__" : ""}sub`,
-        undefined,
-        true,
-      );
-      ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        teraColor: getTypeRgb(this.getTeraType()),
-        isTerastallized: this.isTerastallized,
-      });
-      return ret;
-    };
+    const getSprite = (hasShadow?: boolean): Phaser.GameObjects.Sprite =>
+      globalScene
+        .addPokemonSprite(this, 0, 0, `pkmn__${this.isPlayer() ? "back__" : ""}sub`, undefined, true)
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          teraColor: getTypeRgb(this.getTeraType()),
+          isTerastallized: this.isTerastallized,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
     this.setScale(this.getSpriteScale());
 
@@ -1154,7 +1148,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite | null {
-    return this.maskEnabled ? this.maskSprite : (this.getAt(1) as Phaser.GameObjects.Sprite);
+    return this.getAt(1) as Phaser.GameObjects.Sprite;
   }
 
   getSpriteScale(): number {
@@ -1208,13 +1202,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  async updateSpritePipelineData(): Promise<void> {
-    [this.getSprite(), this.getTintSprite()]
-      .filter(s => !!s)
-      .forEach(s => {
-        s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
-        s.pipelineData["isTerastallized"] = this.isTerastallized;
-      });
+  async updateRenderNodeData(): Promise<void> {
+    [this.getSprite(), this.getTintSprite()].forEach(s => {
+      s?.setRenderNodeData(globalScene.spriteSubmitter, "teraColor", getTypeRgb(this.getTeraType()));
+      s?.setRenderNodeData(globalScene.spriteSubmitter, "isTerastallized", this.isTerastallized);
+    });
     await this.updateInfo(true);
   }
 
@@ -1987,9 +1979,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       level: this.level,
       startingLevel,
       pokemonSpeciesForm: this.getSpeciesForm(true),
-      pokemonFormIndex: this.formIndex,
+      pokemonFormKey: this.getFormKey(),
       fusionSpeciesForm: this.getFusionSpeciesForm(true),
-      fusionFormIndex: this.fusionFormIndex,
+      fusionFormKey: this.getFusionFormKey() ?? undefined,
     };
     return getLevelMoves(
       context,
@@ -2077,6 +2069,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
    * @param useIllusion - (Default `false`) Whether to consider an active illusion
    * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
+   * @param forMoveGen - (Default `false`) Whether the typing is being requested for move generation purposes
    * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes({
@@ -2085,18 +2078,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     bypassSummonData = false,
     useIllusion = false,
     ignoreThirdType = false,
+    forMoveGen = false,
   }: {
     includeTeraType?: boolean;
     returnOriginalTypesIfStellar?: boolean;
     bypassSummonData?: boolean;
     useIllusion?: boolean;
     ignoreThirdType?: boolean;
+    forMoveGen?: boolean;
   } = {}): Writable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+    if (includeTeraType && (this.isTerastallized || forMoveGen) && shouldUseTeraStellar) {
       return [teraType];
     }
 
@@ -2441,10 +2436,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon has an ability with the given {@linkcode AbAttr}.
    */
   public hasAbilityWithAttr(attrType: AbAttrString, canApply = true, ignoreOverride = false): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType)) {
+    // n.b. Check if the ability has attribute *first*. This prevents recursion issues for some functions,
+    // like `isWeatherSuppressed`, that invoke this method, while the `canApplyAbility` check has some
+    // abilities that in turn call `isWeatherSuppressed` as part of their conditions.
+    if (this.getAbility(ignoreOverride).hasAttr(attrType) && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
+    return this.hasPassive() && this.getPassiveAbility().hasAttr(attrType) && (!canApply || this.canApplyAbility(true));
   }
 
   /**
@@ -2607,6 +2605,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     return (
       trapped.value || !!this.getTag(TrappedTag) || !!globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, side)
+    );
+  }
+
+  /**
+   * Determine whether this Pokemon can be switched out (e.g. it is not trapped,
+   * locked into using a move, or using Commander/being commanded).
+   * @returns Whether the pokemon is able to switch
+   * @remarks Pokemon that aren't on the field can always switch
+   */
+  public canSwitch(): boolean {
+    // Pokemon that are not on the field are not being switched out
+    if (!this.isOnField()) {
+      return true;
+    }
+    return (
+      this.getTag(BattlerTagType.FRENZY) == null
+      && !this.isTrapped()
+      && !(this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()).some(p =>
+        p.getTag(BattlerTagType.COMMANDED),
+      )
     );
   }
 
@@ -2832,7 +2850,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       !ignoreStrongWinds
       && arena.weatherType === WeatherType.STRONG_WINDS
-      && !arena.weather?.isEffectSuppressed()
+      && !isWeatherSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {
@@ -3329,12 +3347,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
       this.battleInfo.setVisible(true);
-      if (this.isPlayer()) {
-        // TODO: How do you get this to not require a private property access?
-        this["battleInfo"].expMaskRect.x += 150;
-      }
       globalScene.tweens.add({
-        targets: [this.battleInfo, this.battleInfo.expMaskRect],
+        targets: this.battleInfo,
         x: this.isPlayer() ? "-=150" : `+=${this.isBoss() ? 246 : 150}`,
         duration: 1000,
         ease: "Cubic.easeOut",
@@ -3347,15 +3361,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return new Promise(resolve => {
       if (this.battleInfo?.visible) {
         globalScene.tweens.add({
-          targets: [this.battleInfo, this.battleInfo.expMaskRect],
+          targets: this.battleInfo,
           x: this.isPlayer() ? "+=150" : `-=${this.isBoss() ? 246 : 150}`,
           duration: 500,
           ease: "Cubic.easeIn",
           onComplete: () => {
-            if (this.isPlayer()) {
-              // TODO: How do you get this to not require a private property access?
-              this["battleInfo"].expMaskRect.x -= 150;
-            }
             this.battleInfo.setVisible(false);
             this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
             resolve();
@@ -5324,8 +5334,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
-   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * Reset this Pokemon's {@linkcode PokemonSummonData} and update sprites/UI as necessary.
+   * @remarks
+   * {@linkcode BattlerTag}s are stored in `PokemonSummonData`, and will also all be cleared.
    */
   public resetSummonData(): void {
     if (this.summonData.speciesForm) {
@@ -5334,7 +5345,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.loadAssets(false);
     }
     this.summonData = new PokemonSummonData();
-    this.tempSummonData = new PokemonTempSummonData();
     this.updateInfo();
   }
 
@@ -5351,15 +5361,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokémon's {@linkcode PokemonWaveData | waveData}
+   * Reset this Pokémon's {@linkcode PokemonWaveData}.
    *
    * @remarks
    * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
    * @see {@linkcode resetBattleAndWaveData}
    */
-  resetWaveData(): void {
+  public resetWaveData(): void {
     this.waveData = new PokemonWaveData();
-    this.tempSummonData.waveTurnCount = 1;
+    this.summonData.waveTurnCount = 1;
   }
 
   /**
@@ -5370,14 +5380,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * terastallized to no longer terastallized:
    * - Resetting stellar type boosts
    * - Updating the Pokémon's terastallization-dependent form
-   * - Adjusting the sprite pipeline to remove the Tera effect
+   * - Adjusting the sprite render node data to remove the Tera effect
    */
   resetTera(): void {
     const wasTerastallized = this.isTerastallized;
     this.isTerastallized = false;
     this.stellarTypesBoosted = [];
     if (wasTerastallized) {
-      this.updateSpritePipelineData();
+      this.updateRenderNodeData();
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
     }
   }
@@ -5429,8 +5439,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   tint(color: number, alpha?: number, duration?: number, ease?: string) {
     const tintSprite = this.getTintSprite();
-    tintSprite?.setTintFill(color);
-    tintSprite?.setVisible(true);
+    tintSprite //
+      ?.setTint(color)
+      .setTintMode(Phaser.TintModes.FILL)
+      .setVisible(true);
 
     if (duration) {
       tintSprite?.setAlpha(0);
@@ -5466,29 +5478,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  enableMask() {
-    if (!this.maskEnabled) {
-      this.maskSprite = this.getTintSprite();
-      this.maskSprite?.setVisible(true);
-      this.maskSprite?.setPosition(
-        this.x * this.parentContainer.scale + this.parentContainer.x,
-        this.y * this.parentContainer.scale + this.parentContainer.y,
-      );
-      this.maskSprite?.setScale(this.getSpriteScale() * this.parentContainer.scale);
-      this.maskEnabled = true;
-    }
-  }
-
-  disableMask() {
-    if (this.maskEnabled) {
-      this.maskSprite?.setVisible(false);
-      this.maskSprite?.setPosition(0, 0);
-      this.maskSprite?.setScale(this.getSpriteScale());
-      this.maskSprite = null;
-      this.maskEnabled = false;
-    }
-  }
-
   /** Play the shiny sparkle animation and effects, if applicable */
   sparkle(): void {
     if (this.shinySparkle) {
@@ -5500,9 +5489,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.getFusionSpeciesForm(ignoreOverride)) {
       [this.getSprite(), this.getTintSprite()]
         .filter(s => !!s)
-        .map(s => {
-          s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
-          s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = [];
+        .forEach(s => {
+          s.renderNodeData[globalScene.spriteSubmitter.name][
+            `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`
+          ] = [];
+          s.renderNodeData[globalScene.spriteSubmitter.name][
+            `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`
+          ] = [];
         });
       return;
     }
@@ -5812,9 +5805,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
       .forEach(s => {
-        s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = spriteColors;
-        s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] =
-          fusionSpriteColors;
+        s.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          `spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+          spriteColors,
+        ) //
+          .setRenderNodeData(
+            globalScene.spriteSubmitter,
+            `fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`,
+            fusionSpriteColors,
+          );
       });
 
     canvas.remove();
@@ -6087,6 +6087,42 @@ export class PlayerPokemon extends Pokemon {
    */
   public isTmCompatible(tm: MoveId, excludeKnown = false): boolean {
     return this.getCompatibleTms(excludeKnown).includes(tm);
+  }
+
+  /**
+   * Check if an evolution item is compatible with this Pokémon.
+   * @param item - The {@linkcode EvolutionItem} to check
+   * @returns Whether this evolution item can trigger an evolution for this Pokémon (or its fusion component)
+   */
+  public isEvolutionItemCompatible(item: EvolutionItem): boolean {
+    if (
+      speciesDataRegistry.hasEvolutions(this.species.speciesId)
+      && speciesDataRegistry.getEvolutions(this.species.speciesId).some(e => e.validate(this, false, item))
+      && this.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+    ) {
+      return true;
+    }
+    return (
+      this.isFusion()
+      && !!this.fusionSpecies
+      && speciesDataRegistry.hasEvolutions(this.fusionSpecies.speciesId)
+      && speciesDataRegistry.getEvolutions(this.fusionSpecies.speciesId).some(e => e.validate(this, true, item))
+      && this.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+    );
+  }
+
+  /**
+   * Check if a form-change item is compatible with this Pokémon's current form.
+   * @param item - The {@linkcode FormChangeItem} to check
+   * @returns Whether this form-change item can trigger a form change for this Pokémon
+   */
+  public isFormChangeItemCompatible(item: FormChangeItem): boolean {
+    return speciesDataRegistry
+      .getFormChanges(this.species.speciesId)
+      .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === this.getFormKey())
+      .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+      .flatMap(fc => fc.item)
+      .includes(item);
   }
 
   /**
@@ -6729,6 +6765,10 @@ export class EnemyPokemon extends Pokemon {
     if (bossConfig.moveset != null) {
       this.tryPopulateMoveset(bossConfig.moveset, true);
     }
+
+    if (bossConfig.ivs != null) {
+      this.ivs = bossConfig.ivs;
+    }
   }
 
   override generateAndPopulateMoveset(useRivalSignatures = false, formIndex?: number): void {
@@ -7176,13 +7216,12 @@ export class EnemyPokemon extends Pokemon {
   }
 
   /**
-   * Go through a boss' health segments and give stats boosts for each newly cleared segment
-   *
+   * Go through a boss' health segments and give stat stage boosts for each newly cleared segment.
    * @remarks
-   * The base boost is 1 to a random stat that's not already maxed out per broken shield
-   * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead
-   * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
-   * @param segmentIndex - index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
+   * The base boost is 1 to a random stat that's not already maxed out per broken shield. \
+   * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead. \
+   * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each.
+   * @param segmentIndex - Index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
   private handleBossSegmentCleared(segmentIndex: number): void {
     let doStatBoost = !this.hasTrainer();
@@ -7195,28 +7234,31 @@ export class EnemyPokemon extends Pokemon {
       if (!doStatBoost) {
         continue;
       }
-      // Filter out already maxed out stat stages and weigh the rest based on existing stats
-      const leftoverStats = EFFECTIVE_STATS.filter(
-        (s: EffectiveStat) => this.getStatStage(s) + (changes.find(c => c.stat === s)?.stages ?? 0) < 6,
-      );
-      const boostedStat = weightedPick(new Map(leftoverStats.map(s => [s, this.getStat(s, false)])));
 
-      if (boostedStat === undefined) {
+      // Filter out already maxed out stat stages and weigh the rest based on existing stats
+      const leftoverStats = new Map<EffectiveStat, number>();
+      for (const stat of EFFECTIVE_STATS) {
+        if (this.getStatStage(stat) + (changes.find(c => c.stat === stat)?.stages ?? 0) < 6) {
+          leftoverStats.set(stat, this.getStat(stat, false));
+        } else {
+          leftoverStats.set(stat, 0);
+        }
+      }
+
+      if (leftoverStats.values().reduce((total, cur) => total + cur, 0) === 0) {
         doStatBoost = false;
         continue;
       }
 
       let stages = 1;
-
-      // increase the boost if the boss has at least 3 segments and we passed last shield
       if (this.bossSegments >= 3 && this.bossSegmentIndex === 0) {
         stages++;
       }
-      // increase the boost if the boss has at least 5 segments and we passed the second to last shield
       if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
-      changes.push({ stat: boostedStat, stages });
+
+      changes.push({ stat: weightedPick(leftoverStats), stages });
     }
 
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {

@@ -78,7 +78,7 @@ export class TargetSelectUiHandler extends UiHandler {
   resetCursor(cursorN: number, user: Pokemon): void {
     if (
       cursorN != null
-      && ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.tempSummonData.waveTurnCount === 1)
+      && ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.summonData.waveTurnCount === 1)
     ) {
       // Reset cursor on the first turn of a fight or if an ally was targeted last turn
       cursorN = -1;

@@ -43,6 +43,7 @@ import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -615,10 +616,12 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
         tradeBaseBg.displayHeight / 2,
         "pkmn__sub",
       );
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        ignoreTimeTint: true,
-      });
+      ret
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          ignoreTimeTint: true,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       return ret;
     };
 
@@ -635,31 +638,40 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
     ]);
 
     tradedPokemonSprite.setAlpha(0);
-    tradedPokemonTintSprite.setAlpha(0);
-    tradedPokemonTintSprite.setTintFill(getPokeballTintColor(tradedPokemon.pokeball));
+    tradedPokemonTintSprite
+      .setAlpha(0)
+      .setTint(getPokeballTintColor(tradedPokemon.pokeball))
+      .setTintMode(Phaser.TintModes.FILL);
     receivedPokemonSprite.setVisible(false);
-    receivedPokemonTintSprite.setVisible(false);
-    receivedPokemonTintSprite.setTintFill(getPokeballTintColor(receivedPokemon.pokeball));
+    receivedPokemonTintSprite
+      .setVisible(false)
+      .setTint(getPokeballTintColor(receivedPokemon.pokeball))
+      .setTintMode(Phaser.TintModes.FILL);
 
     [tradedPokemonSprite, tradedPokemonTintSprite].forEach(sprite => {
       const spriteKey = tradedPokemon.getSpriteKey(true);
       sprite.play(spriteKey);
-
-      sprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: false,
-        teraColor: getTypeRgb(tradedPokemon.getTeraType()),
-        isTerastallized: tradedPokemon.isTerastallized,
-      });
-      sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", tradedPokemon.shiny);
-      sprite.setPipelineData("variant", tradedPokemon.variant);
+      sprite
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: false,
+          teraColor: getTypeRgb(tradedPokemon.getTeraType()),
+          isTerastallized: tradedPokemon.isTerastallized,
+          ignoreTimeTint: true,
+          spriteKey: tradedPokemon.getSpriteKey(),
+          shiny: tradedPokemon.shiny,
+          variant: tradedPokemon.variant,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (tradedPokemon.summonData.speciesForm) {
           k += "Base";
         }
-        sprite.pipelineData[k] = tradedPokemon.getSprite().pipelineData[k];
+        sprite.setRenderNodeData(
+          globalScene.spriteSubmitter,
+          k,
+          tradedPokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k],
+        );
       });
     });
 
@@ -667,21 +679,25 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       const spriteKey = receivedPokemon.getSpriteKey(true);
       sprite.play(spriteKey);
 
-      sprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: false,
-        teraColor: getTypeRgb(tradedPokemon.getTeraType()),
-        isTerastallized: tradedPokemon.isTerastallized,
-      });
-      sprite.setPipelineData("ignoreTimeTint", true);
-      sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());
-      sprite.setPipelineData("shiny", receivedPokemon.shiny);
-      sprite.setPipelineData("variant", receivedPokemon.variant);
+      sprite
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: false,
+          // TODO: Shouldn't this use `receivedPokemon.getTeraType()` instead of `tradedPokemon.getTeraType()`?
+          teraColor: getTypeRgb(tradedPokemon.getTeraType()),
+          isTerastallized: tradedPokemon.isTerastallized,
+          ignoreTimeTint: true,
+          spriteKey: receivedPokemon.getSpriteKey(),
+          shiny: receivedPokemon.shiny,
+          variant: receivedPokemon.variant,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (receivedPokemon.summonData.speciesForm) {
           k += "Base";
         }
-        sprite.pipelineData[k] = receivedPokemon.getSprite().pipelineData[k];
+        sprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+          receivedPokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k];
       });
     });
 

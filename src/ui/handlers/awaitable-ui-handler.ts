@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import type { AnyFn } from "#types/type-helpers";
 import { UiHandler } from "#ui/ui-handler";
+import Phaser from "phaser";
 
 // TODO: Why does this class exist?
 export abstract class AwaitableUiHandler extends UiHandler {

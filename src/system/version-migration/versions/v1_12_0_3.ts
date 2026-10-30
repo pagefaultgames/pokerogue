@@ -9,7 +9,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { VoucherType } from "#enums/voucher-type";
 import { EggData } from "#system/egg-data";
-import type { DexData, DexEntry } from "#types/dex-data";
+import type { DexData, DexEntry } from "#types/save-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { fixedInt, randSeedItem } from "#utils/common";

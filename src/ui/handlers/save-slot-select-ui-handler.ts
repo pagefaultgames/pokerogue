@@ -21,6 +21,7 @@ import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber, getPlayTimeString } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const SESSION_SLOTS_COUNT = 5;
 const SLOTS_ON_SCREEN = 2;
@@ -533,7 +534,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
           if (fallbackName !== "") {
             fallbackName += ", ";
           }
-          fallbackName += challenge.toChallenge().getName();
+          fallbackName += challenge.toChallenge().name;
         }
 
         if (activeChallenges.length > 3) {

@@ -694,7 +694,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       new SpeciesFormEvolution({
         speciesId: SpeciesId.OINKOLOGNE,
         preFormKey: "",
-        evoFormKey: "",
+        evoFormKey: "male",
         level: 18,
         condition: { key: EvoCondKey.GENDER, gender: Gender.MALE },
       }),
@@ -2638,7 +2638,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
         speciesId: SpeciesId.BELLIBOLT,
         level: 1,
         item: EvolutionItem.THUNDER_STONE,
-        evoDelay: [20, 28, 28],
+        evoDelay: [26, 28, 30],
       }),
     ],
     eggTier: EggTier.COMMON,
@@ -3358,7 +3358,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.TOEDSCRUEL, level: 30 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.RUN_AWAY,
+    passives: AbilityId.WATER_ABSORB,
     levelMoves: [
       [1, MoveId.WRAP],
       [1, MoveId.MUD_SLAP],
@@ -3458,7 +3458,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.TOEDSCOOL,
     evolutions: [],
-    passives: AbilityId.PRANKSTER,
+    passives: AbilityId.WATER_ABSORB,
     levelMoves: [
       [1, MoveId.WRAP],
       [1, MoveId.MUD_SLAP],
@@ -6361,6 +6361,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.DRAGON_CHEER,
+      MoveId.MUD_SHOT,
     ],
   };
   generationNineSpeciesData[SpeciesId.ANNIHILAPE] = {

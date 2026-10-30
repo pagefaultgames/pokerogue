@@ -19,12 +19,14 @@ interface GameVolume {
  * Global manager for audio operations
  */
 export class AudioManager {
+  public readonly isAudioEnabled: boolean;
   private readonly volume: GameVolume;
 
   private currentBgm: BackgroundMusic | null = null;
 
-  constructor(volume: GameVolume) {
+  constructor(volume: GameVolume, isAudioEnabled = true) {
     this.volume = volume;
+    this.isAudioEnabled = isAudioEnabled;
   }
 
   /**
@@ -96,6 +98,10 @@ export class AudioManager {
    */
   // TODO: use object params
   public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true, fadeDuration = 500): BackgroundMusic | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? globalScene.currentBattle?.getBgmOverride() ?? globalScene.arena?.bgm,
     );
@@ -135,7 +141,7 @@ export class AudioManager {
   public updateSoundVolume(): void {
     this.currentBgm?.setVolume(this.getVolume(VolumeSetting.BGM));
 
-    if (!globalScene.sound) {
+    if (!this.isAudioEnabled) {
       return;
     }
 
@@ -176,7 +182,11 @@ export class AudioManager {
    * @param bgmName - The key for the replacement track
    * @returns The newly-created {@linkcode BackgroundMusic} object
    */
-  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
+  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const tempBgm = new BackgroundMusic(bgmName, false);
     tempBgm.onEnd(() => {
       this.currentBgm?.resume();
@@ -199,6 +209,10 @@ export class AudioManager {
     sound: string | AnySound,
     config: Phaser.Types.Sound.SoundConfig | Phaser.Types.Sound.SoundMarker = {},
   ): AnySound | null {
+    if (!this.isAudioEnabled) {
+      return null;
+    }
+
     const key = typeof sound === "string" ? sound : sound.key;
     try {
       const keyDetails = key.split("/");
@@ -235,6 +249,8 @@ export class AudioManager {
         return 46.5;
       case "winter_title": //Andr06 Winter Title
         return 20.57;
+      case "halloween_title": //Veilure & Andr06 Halloween Title
+        return 24.03;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.95;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
