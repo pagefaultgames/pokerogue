@@ -32,11 +32,10 @@ import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { GameData } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
-import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, DexEntry, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
-import { deepCopy } from "#utils/data";
+
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { toCamelCase } from "#utils/strings";

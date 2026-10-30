@@ -8,6 +8,7 @@ import type { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import type { StarterContainer } from "#ui/starter-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import Phaser from "phaser";
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;

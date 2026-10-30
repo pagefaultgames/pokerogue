@@ -7,6 +7,7 @@ import { EFFECTIVE_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Boss Pokemon / Shields", () => {

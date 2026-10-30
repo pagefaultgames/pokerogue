@@ -27,6 +27,7 @@ import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } f
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import * as Utils from "#utils/common";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/trashToTreasure";

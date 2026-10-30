@@ -44,9 +44,8 @@ import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { BiomeTierTimeOfDay } from "#types/biomes";
-import type { DexEntry } from "#types/dex-data";
 import type { LevelMovesWithSource } from "#types/level-moves";
-import type { DexAttrProps, StarterPreferences } from "#types/save-data";
+import type { DexAttrProps, DexEntry, StarterPreferences } from "#types/save-data";
 import type { SpeciesDetails } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import type { OptionSelectIconConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
@@ -74,7 +73,8 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
-import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import Phaser from "phaser";
+import type BBCodeText from "phaser4-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -360,9 +360,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
-    this.pokemonSprite = globalScene.add //
+    this.pokemonSprite = globalScene.add
       .sprite(53, 63, "pkmn__sub")
-      .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        ignoreTimeTint: true,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
     this.starterSelectContainer.add(this.pokemonSprite);
 
     this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
@@ -2498,14 +2502,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           }
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
-          this.pokemonSprite.play(species.getSpriteKey(female!, formIndex, shiny, variant, back)); // TODO: is this bang correct?
-          this.pokemonSprite.setPipelineData("shiny", shiny);
-          this.pokemonSprite.setPipelineData("variant", variant);
-          this.pokemonSprite.setPipelineData(
-            "spriteKey",
-            species.getSpriteKey(female!, formIndex, shiny, variant, back), // TODO: is this bang correct?
-          );
-          this.pokemonSprite.setVisible(!this.statsMode);
+          const spriteKey = species.getSpriteKey(female!, formIndex, shiny, variant, back); // TODO: is this bang correct?
+          this.pokemonSprite
+            .play(spriteKey)
+            .setVisible(!this.statsMode)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey);
         });
       } else {
         this.pokemonSprite.setVisible(!this.statsMode);

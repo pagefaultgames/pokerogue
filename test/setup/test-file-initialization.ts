@@ -8,7 +8,7 @@ import { MockImage } from "#test/mocks/mocks-container/mock-image";
 import { blobToString } from "#test/utils/game-manager-utils";
 import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 let wasInitialized = false;
 

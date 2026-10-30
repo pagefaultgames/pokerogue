@@ -29,6 +29,7 @@ import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } f
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import type { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/clowningAround";

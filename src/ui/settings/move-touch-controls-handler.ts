@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import type { TouchControl } from "#app/touch-controls";
 import { isLandscapeMode } from "#utils/app-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 type ControlPosition = { id: string; x: number; y: number };
 
