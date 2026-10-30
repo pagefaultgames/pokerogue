@@ -6,28 +6,26 @@ import i18next from "i18next";
 
 export class GameOverModifierRewardPhase extends ModifierRewardPhase {
   public readonly phaseName = "GameOverModifierRewardPhase";
-  doReward(): Promise<void> {
-    return new Promise<void>(resolve => {
-      const newModifier = this.modifierType.newModifier();
-      globalScene.addModifier(newModifier);
-      // Sound loaded into game as is
-      audioManager.playSound("se/level_up_fanfare");
-      globalScene.ui.setMode(UiMode.MESSAGE);
-      globalScene.ui.fadeIn(250).then(() => {
-        globalScene.ui.showText(
-          i18next.t("battle:rewardGain", {
-            modifierName: newModifier?.type.name,
-          }),
-          null,
-          () => {
-            globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
-            resolve();
-          },
-          null,
-          true,
-          1500,
-        );
-      });
+
+  public override async doReward(): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
+
+    const newModifier = this.modifierType.newModifier();
+    globalScene.addModifier(newModifier);
+
+    audioManager.playSound("se/level_up_fanfare");
+
+    await globalScene.ui.setMode(UiMode.MESSAGE);
+    await globalScene.ui.fadeIn(250);
+    globalScene.ui.showText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }), {
+      callback: () => {
+        globalScene.time.delayedCall(1500, () => globalScene.arenaBg.setVisible(true));
+        resolve();
+      },
+      prompt: true,
+      promptDelay: 1500,
     });
+
+    return await promise;
   }
 }

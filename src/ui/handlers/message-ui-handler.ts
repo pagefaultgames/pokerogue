@@ -2,6 +2,7 @@ import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
 import { TextStyle } from "#enums/text-style";
+import type { ShowDialogueOptions, ShowTextOptions } from "#types/ui-types";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { addBBCodeTextObject } from "#ui/text";
 import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
@@ -70,28 +71,17 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showText(
-    text: string,
-    delay?: number | null,
-    callback?: (() => void) | null,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-  ) {
+  public showText(text: string, { delay, callback, callbackDelay, prompt, promptDelay }: ShowTextOptions = {}): void {
     this.hideNameText();
-    this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
+    this.showTextInternal(text, { delay, callback, callbackDelay, prompt, promptDelay });
   }
 
-  showDialogue(
+  public showDialogue(
     text: string,
-    name?: string,
-    delay?: number | null,
-    callback?: (() => void) | null,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-  ) {
-    this.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    callback: () => void,
+    { name, delay, callbackDelay, promptDelay }: ShowDialogueOptions = {},
+  ): void {
+    this.showText(text, { delay, callback, callbackDelay, prompt: true, promptDelay });
     if (name) {
       this.showNameText(name);
     }
@@ -99,30 +89,25 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
 
   private showTextInternal(
     text: string,
-    delay?: number | null,
-    callback?: (() => void) | null,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-  ) {
-    if (delay === null || delay === undefined) {
-      delay = 20;
-    }
-
+    { delay = 20, callback, callbackDelay = 0, prompt = false, promptDelay = 0 }: ShowTextOptions = {},
+  ): void {
     // Pattern matching regex that checks for @c{}, @f{}, @s{}, and @f{} patterns within message text and parses them to their respective behaviors.
     const charVarMap = new Map<number, string>();
     const delayMap = new Map<number, number>();
     const soundMap = new Map<number, string>();
     const fadeMap = new Map<number, number>();
     const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
-    let actionMatch: RegExpExecArray | null;
+
     const pokename: string[] = [];
     const repname = ["#POKEMON1", "#POKEMON2"];
+
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
       pokename.push(globalScene.getPlayerField()[p].getNameToRender());
       text = text.split(pokename[p]).join(repname[p]);
     }
-    while ((actionMatch = actionPattern.exec(text))) {
+
+    let actionMatch: RegExpExecArray | null = actionPattern.exec(text);
+    while (actionMatch) {
       switch (actionMatch[1]) {
         case "c":
           charVarMap.set(actionMatch.index, actionMatch[2]);
@@ -138,11 +123,13 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
           break;
       }
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
+      actionMatch = actionPattern.exec(text);
     }
 
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
       text = text.split(repname[p]).join(pokename[p]);
     }
+
     if (text) {
       if (hasSpecialWrapSpace(text)) {
         const wordWrapWidth = this.message.style.wordWrapWidth ?? this.wordWrapWidth;
@@ -183,14 +170,14 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
       const originalCallback = callback;
       callback = () => {
         const showPrompt = () => this.showPrompt(originalCallback, callbackDelay);
-        if (promptDelay) {
+        if (promptDelay > 0) {
           globalScene.time.delayedCall(promptDelay, showPrompt);
         } else {
           showPrompt();
         }
       };
     }
-    if (delay) {
+    if (delay > 0) {
       this.clearText();
       if (prompt) {
         this.pendingPrompt = true;
@@ -212,7 +199,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
               audioManager.playSound(charSound);
             }
             if (callback && !this.textTimer?.repeatCount) {
-              if (callbackDelay && !prompt) {
+              if (callbackDelay > 0 && !prompt) {
                 this.textCallbackTimer = globalScene.time.delayedCall(callbackDelay, () => {
                   if (this.textCallbackTimer) {
                     this.textCallbackTimer.destroy();
@@ -238,8 +225,8 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
             this.textTimer!.paused = true;
             globalScene.time.delayedCall(150, () => {
               globalScene.ui.fadeOut(750).then(() => {
-                const delay = getFrameMs(charFade);
-                globalScene.time.delayedCall(delay, () => {
+                const charFadeDelay = getFrameMs(charFade);
+                globalScene.time.delayedCall(charFadeDelay, () => {
                   globalScene.ui.fadeIn(500).then(() => {
                     this.textTimer!.paused = false;
                     advance();

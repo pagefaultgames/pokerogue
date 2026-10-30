@@ -2400,7 +2400,7 @@ export class BattleScene extends SceneBase {
     // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
     // that changed form change modifiers worked, had previously set the `type` field to null.
     // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
-    if (!modifier || !modifier.type) {
+    if (!modifier?.type) {
       return false;
     }
     let success = false;
@@ -2425,9 +2425,7 @@ export class BattleScene extends SceneBase {
             fullItemName: modifier.type.name,
             itemName: defaultModifierType.name,
           }),
-          undefined,
-          false,
-          3000,
+          { prompt: false, promptDelay: 3000 },
         );
         return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant);
       }
@@ -2445,9 +2443,7 @@ export class BattleScene extends SceneBase {
       }
 
       if (modifier instanceof ConsumablePokemonModifier) {
-        for (const p in this.party) {
-          const pokemon = this.party[p];
-
+        for (const pokemon of this.party) {
           const args: unknown[] = [];
           if (modifier instanceof PokemonHpRestoreModifier) {
             if ((modifier as PokemonHpRestoreModifier).fainted) {
@@ -2467,11 +2463,9 @@ export class BattleScene extends SceneBase {
             const result = modifier.apply(pokemon, ...args);
             success ||= result;
           }
-        }
 
-        this.party.forEach(p => {
-          p.updateInfo(instant);
-        });
+          pokemon.updateInfo(instant);
+        }
       } else {
         const args = [this];
         if (modifier.shouldApply(...args)) {
@@ -3282,7 +3276,7 @@ export class BattleScene extends SceneBase {
     }
 
     audioManager.fadeOutBgm(2000, true);
-    this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
+    this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, () => {
       const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
         pokemon,
       ) as TurnHeldItemTransferModifier;
@@ -3586,14 +3580,12 @@ export class BattleScene extends SceneBase {
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
       availableEncounters = biomeMysteryEncounters
-        .filter(encounterType => {
-          const encounterCandidate = allMysteryEncounters[encounterType];
+        .filter(eType => {
+          const encounterCandidate = allMysteryEncounters[eType];
           if (!encounterCandidate) {
             return false;
           }
-          if (
-            timedEventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
-          ) {
+          if (timedEventManager.getMysteryEncounterTierForEvent(eType, encounterCandidate.encounterTier) !== tier) {
             return false;
           }
           const disallowedGameModes = encounterCandidate.disallowedGameModes;
@@ -3610,14 +3602,14 @@ export class BattleScene extends SceneBase {
           if (!encounterCandidate.meetsRequirements()) {
             return false;
           }
-          if (previousEncounter !== null && encounterType === previousEncounter) {
+          if (previousEncounter !== null && eType === previousEncounter) {
             return false;
           }
           return !(
             this.mysteryEncounterSaveData.encounteredEvents.length > 0
             && encounterCandidate.maxAllowedEncounters
             && encounterCandidate.maxAllowedEncounters > 0
-            && this.mysteryEncounterSaveData.encounteredEvents.filter(e => e.type === encounterType).length
+            && this.mysteryEncounterSaveData.encounteredEvents.filter(e => e.type === eType).length
               >= encounterCandidate.maxAllowedEncounters
           );
         })

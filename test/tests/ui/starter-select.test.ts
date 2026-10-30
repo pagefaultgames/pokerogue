@@ -41,7 +41,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -100,7 +100,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -161,7 +161,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -225,7 +225,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -285,7 +285,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -344,7 +344,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -405,7 +405,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -465,7 +465,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
@@ -528,7 +528,7 @@ describe.todo("UI - Starter select", () => {
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
-      currentPhase.gameMode = GameModes.CLASSIC;
+      currentPhase["gameMode"] = GameModes.CLASSIC;
       currentPhase.end();
     });
     game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {

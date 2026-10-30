@@ -213,9 +213,12 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       // 80% chance to increase flee stage +1
       const fleeChangeResult = tryChangeFleeStage(1, 8);
       if (fleeChangeResult) {
-        await showEncounterText(getEncounterText(`${namespace}:safari.eating`) ?? "", null, 1000, false);
+        await showEncounterText(getEncounterText(`${namespace}:safari.eating`), { callbackDelay: 1000, prompt: false });
       } else {
-        await showEncounterText(getEncounterText(`${namespace}:safari.busyEating`) ?? "", null, 1000, false);
+        await showEncounterText(
+          getEncounterText(`${namespace}:safari.busyEating`), //
+          { callbackDelay: 1000, prompt: false },
+        );
       }
 
       await doEndTurn(1);
@@ -241,9 +244,12 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       // 80% chance to decrease catch stage -1
       const catchChangeResult = tryChangeCatchStage(-1, 8);
       if (catchChangeResult) {
-        await showEncounterText(getEncounterText(`${namespace}:safari.angry`) ?? "", null, 1000, false);
+        await showEncounterText(getEncounterText(`${namespace}:safari.angry`), { callbackDelay: 1000, prompt: false });
       } else {
-        await showEncounterText(getEncounterText(`${namespace}:safari.besideItselfAngry`) ?? "", null, 1000, false);
+        await showEncounterText(
+          getEncounterText(`${namespace}:safari.besideItselfAngry`), //
+          { callbackDelay: 1000, prompt: false },
+        );
       }
 
       await doEndTurn(2);
@@ -282,7 +288,7 @@ async function summonSafariPokemon() {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
   // Message pokemon remaining
   encounter.setDialogueToken("remainingCount", encounter.misc.safariPokemonRemaining);
-  globalScene.phaseManager.queueMessage(getEncounterText(`${namespace}:safari.remainingCount`) ?? "", null, true);
+  globalScene.phaseManager.queueMessage(getEncounterText(`${namespace}:safari.remainingCount`));
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
@@ -558,7 +564,7 @@ async function doEndTurn(cursorIndex: number) {
       leaveEncounterWithoutBattle(true);
     }
   } else {
-    globalScene.phaseManager.queueMessage(getEncounterText(`${namespace}:safari.watching`) ?? "", 0, null, 1000);
+    globalScene.phaseManager.queueMessage(getEncounterText(`${namespace}:safari.watching`), { promptDelay: 1000 });
     initSubsequentOptionSelect({
       overrideOptions: safariZoneGameOptions,
       startingCursorIndex: cursorIndex,
@@ -568,7 +574,7 @@ async function doEndTurn(cursorIndex: number) {
 }
 
 /**
- * @returns A function to get a random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
+ * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
   return speciesDataRegistry.getSpecies(
