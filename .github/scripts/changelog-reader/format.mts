@@ -6,13 +6,26 @@
  */
 
 import { type CategoryName, CONFIG, type Label } from "./config.mts";
-
 export type PullRequest = {
   number: number;
   title: string;
   body?: string | undefined;
   labels: Label[];
 };
+
+/**
+ * @example
+ * December 20, 2025 at 10:10 AM UTC
+ */
+export const dateFormatter = new Intl.DateTimeFormat("en", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  timeZoneName: "short",
+  timeZone: "UTC",
+});
 
 /**
  * Format the changelog.
@@ -122,4 +135,37 @@ function getCategoryFromLabels(labels: Label[]): CategoryName {
     }
   }
   return "Miscellaneous";
+}
+
+export async function getFinalChangelog(changelogText: string) {
+  const versions = await getVersions();
+  let header = `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n`;
+  if (versions.changed) {
+    header += `#### Version: ${versions.currentVersion} ---> ${versions.newVersion}`;
+  } else {
+    header += "> [!WARNING]\nNo version change detected.";
+  }
+
+  const description =
+    header
+    + "\n---------------------------\n"
+    + changelogText
+    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+  return description;
+}
+
+async function getVersions(): Promise<{ changed: boolean; currentVersion: string; newVersion: string }> {
+  const baseUrl = "https://raw.githubusercontent.com/pagefaultgames/pokerogue/{BRANCH_NAME}/package.json";
+
+  const curentPackage = await (await fetch(baseUrl.replace("{BRANCH_NAME}", CONFIG.CUTOFF_BRANCH))).json();
+  const prPackage = await (await fetch(baseUrl.replace("{BRANCH_NAME}", CONFIG.REPO_BRANCH))).json();
+
+  const currentVersion = curentPackage.version;
+  const newVersion = prPackage.version;
+
+  return {
+    changed: currentVersion !== newVersion,
+    currentVersion,
+    newVersion,
+  };
 }
