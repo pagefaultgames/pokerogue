@@ -54,7 +54,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withDisallowedChallenges(Challenges.ABILITY_RANDOMIZER)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withScenePartySizeRequirement(2)
-  .withSceneRequirement(new PartyRequirement(pokemon => !pokemon.isFusion(), 2))
+  .withSceneRequirement(new PartyRequirement(pokemon => !pokemon.isFusion(), 1))
   .withFleeAllowed(false)
   .withHideWildIntroMessage(true)
   .withPreventGameStatsUpdates(true) // Do not count the Pokemon as seen or defeated since it is ours
