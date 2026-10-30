@@ -35,14 +35,7 @@ import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import {
-  type BooleanHolder,
-  isBetween,
-  type NumberHolder,
-  randSeedInt,
-  randSeedItem,
-  randSeedShuffle,
-} from "#utils/common";
+import { type BooleanHolder, isBetween, type NumberHolder, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
