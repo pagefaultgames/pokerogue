@@ -4,6 +4,7 @@ import { BackgroundMusic } from "#audio/background-music";
 import { PRSFX_SOUND_ADJUSTMENT_RATIO } from "#constants/app-constants";
 import { VolumeSetting } from "#enums/volume-setting";
 import { fixedInt } from "#utils/common";
+import Phaser from "phaser";
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
