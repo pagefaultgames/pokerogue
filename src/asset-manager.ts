@@ -175,6 +175,7 @@ export class AssetManager {
   private readonly permanent = new Set<string>();
   /** Loads that haven't finished yet, by {@linkcode getAssetId} */
   private readonly inFlight = new Map<string, Promise<void>>();
+  /** The set of root providers that are consulted when determining which assets are needed */
   private readonly rootProviders = new Set<() => Iterable<AssetRef>>();
   /** Unneeded audio waiting for its sounds to finish before being removed, by {@linkcode getAssetId} */
   private readonly waitingForAudio = new Set<string>();

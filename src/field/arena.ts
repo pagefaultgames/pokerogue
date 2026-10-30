@@ -1016,7 +1016,7 @@ export function getBiomeAssetRequests(biomeId: BiomeId): AssetRequest[] {
   const baseAKey = `${btKey}_a`;
   const baseBKey = `${btKey}_b`;
 
-  const requests = imageAsset(`${btKey}_bg`, "arenas");
+  const requests: AssetRequest[] = imageAsset(`${btKey}_bg`, "arenas");
   if (isBaseAnimated) {
     requests.push(...atlasAsset(baseAKey, "arenas"), ...atlasAsset(baseBKey, "arenas"));
   } else {
