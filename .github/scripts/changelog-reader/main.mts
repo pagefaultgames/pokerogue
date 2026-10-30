@@ -8,7 +8,7 @@
 import chalk from "chalk";
 import { Octokit } from "octokit";
 import { CONFIG, type Label } from "./config.mts";
-import { formatChangelog, type PullRequest } from "./format.mts";
+import { formatChangelog, getFinalChangelog, type PullRequest } from "./format.mts";
 
 chalk.level = 2;
 
@@ -17,20 +17,6 @@ const SCRIPT_VERSION: string = "1.0.2";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
-});
-
-/**
- * @example
- * December 20, 2025 at 10:10 AM UTC
- */
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  timeZoneName: "short",
-  timeZone: "UTC",
 });
 
 /**
@@ -72,11 +58,8 @@ async function getAndProcessChangelog(): Promise<void> {
     await updateDescription(output);
   } else {
     //! Note: to run locally, a separate GitHub API token needs to be generated
+    const description = await getFinalChangelog(output);
 
-    const description =
-      `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
-      + output
-      + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
     // dynamically imported to not need the checkout of the helper file during the workflow
     const { writeFileSafe } = await import("../../../scripts/utils/file.ts");
     writeFileSafe(CONFIG.OUTPUT_FILE, description, "utf8");
@@ -161,10 +144,7 @@ async function updateDescription(changelog: string): Promise<void> {
     return;
   }
 
-  const description =
-    `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
-    + changelog
-    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+  const description = await getFinalChangelog(changelog);
 
   await octokit.rest.pulls
     .update({
