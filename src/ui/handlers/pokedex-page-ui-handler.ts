@@ -1566,7 +1566,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               for (const bttod of this.biomes) {
                 options.push({
                   label: getBiomeLabel(bttod),
-                  selectable: false,
+                  selectable: true,
                   handler: () => false,
                 });
               }
