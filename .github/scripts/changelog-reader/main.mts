@@ -7,13 +7,10 @@
 
 import chalk from "chalk";
 import { Octokit } from "octokit";
-import { CONFIG, type Label } from "./config.mts";
+import { CONFIG, type Label, SCRIPT_VERSION } from "./config.mts";
 import { formatChangelog, getFinalChangelog, type PullRequest } from "./format.mts";
 
 chalk.level = 2;
-
-/** The version of this script */
-const SCRIPT_VERSION: string = "1.0.2";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -47,13 +44,14 @@ async function getAndProcessChangelog(): Promise<void> {
   }
 
   const pullRequests = await getPullRequests(prs);
-  if (pullRequests.length === 0) {
+  const openPrs = await getOpenPrs();
+  if (pullRequests.length === 0 && openPrs.length === 0) {
     console.log("No PRs found");
     return;
   }
-  console.log(`Found ${pullRequests.length} PRs`);
+  console.log(`Found ${pullRequests.length} merged PRs and ${openPrs.length} open PRs`);
 
-  const output = formatChangelog(pullRequests);
+  const output = formatChangelog(pullRequests, openPrs);
   if (process.env.GITHUB_ACTIONS) {
     await updateDescription(output);
   } else {
@@ -130,6 +128,26 @@ const sectionRegex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`,
 function getChangelogSection(description: string): string | undefined {
   const match = description.match(sectionRegex);
   return match?.[0];
+}
+
+/**
+ * Get all open PRs targeting the base branch
+ * @returns A Promise resolving to an Array of {@linkcode PullRequest}s
+ */
+async function getOpenPrs(): Promise<PullRequest[]> {
+  const openPrs = await octokit.rest.pulls.list({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    base: CONFIG.REPO_BRANCH,
+    per_page: 100,
+    state: "open",
+  });
+  return openPrs.data.map(pr => ({
+    number: pr.number,
+    title: pr.title,
+    body: pr.body ?? undefined,
+    labels: [],
+  }));
 }
 
 /**

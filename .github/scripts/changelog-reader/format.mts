@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { type CategoryName, CONFIG, type Label } from "./config.mts";
+import { type CategoryName, CONFIG, type Label, SCRIPT_VERSION } from "./config.mts";
 export type PullRequest = {
   number: number;
   title: string;
@@ -32,7 +32,7 @@ export const dateFormatter = new Intl.DateTimeFormat("en", {
  * @param changelog - The changelog to format
  * @returns The formatted changelog.
  */
-export function formatChangelog(changelog: PullRequest[]): string {
+export function formatChangelog(changelog: PullRequest[], openPrs: PullRequest[]): string {
   let output = "";
   const categories = new Map<CategoryName, string[]>();
   for (const category of CONFIG.CATEGORIES) {
@@ -55,6 +55,15 @@ export function formatChangelog(changelog: PullRequest[]): string {
     // Group PRs by category based on labels
     const category = getCategoryFromLabels(pr.labels);
     categories.set(category, [...(categories.get(category) || []), formattedBody]);
+  }
+
+  if (CONFIG.REPO_BRANCH !== "beta" && openPrs.length > 0) {
+    const info = openPrs.length === 1 ? "is 1 open PR" : `are ${openPrs.length} open PRs`;
+    output += `> [!NOTE]\n> There ${info} targeting ${CONFIG.REPO_BRANCH}:\n`;
+    for (const openPr of openPrs) {
+      output += `> - #${openPr.number}\n`;
+    }
+    output += "\n";
   }
 
   for (const [category, prs] of categories) {
@@ -150,7 +159,7 @@ export async function getFinalChangelog(changelogText: string) {
     header
     + "\n---------------------------\n"
     + changelogText
-    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())} by Changelog Reader v${SCRIPT_VERSION}.**`;
   return description;
 }
 
