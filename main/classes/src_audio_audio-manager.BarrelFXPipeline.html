@@ -16,11 +16,11 @@
 <p>A barrel effect allows you to apply either a 'pinch' or 'expand' distortion to
 a Game Object. The amount of the effect can be modified in real-time.</p>
 <p>A Barrel effect is added to a Game Object via the FX component:</p>
-<pre><code class="js"><span class="hl-2">const</span><span class="hl-5"> </span><span class="hl-10">sprite</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">();</span><br/><br/><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-3">postFX</span><span class="hl-5">.</span><span class="hl-6">addBarrel</span><span class="hl-5">();</span>
+<pre><code class="js"><span class="hl-3">const</span><span class="hl-1"> </span><span class="hl-10">sprite</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">();</span><br/><br/><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-4">postFX</span><span class="hl-1">.</span><span class="hl-0">addBarrel</span><span class="hl-1">();</span>
 </code><button type="button">Copy</button></pre>
 
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="284778">
+<section class="tsd-panel tsd-hierarchy" data-refl="284880">
 <h4>Hierarchy (<a href="../hierarchy.html#src/audio/audio-manager.BarrelFXPipeline">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.PostFXPipeline.html" class="tsd-signature-type tsd-kind-class">PostFXPipeline</a>
@@ -668,7 +668,7 @@ increases the batch entry unit and maxUnit values by 1.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Adds the vertices data into the batch and flushes if full.</p>
 <p>Assumes 6 vertices in the following arrangement:</p>
-<pre><code><span class="hl-7">0</span><span class="hl-5">----</span><span class="hl-7">3</span><br/><span class="hl-5">|\  </span><span class="hl-10">B</span><span class="hl-5">|</span><br/><span class="hl-5">| \  |</span><br/><span class="hl-5">|  \ |</span><br/><span class="hl-5">| </span><span class="hl-10">A</span><span class="hl-5"> \|</span><br/><span class="hl-5">|    \</span><br/><span class="hl-7">1</span><span class="hl-5">----</span><span class="hl-7">2</span>
+<pre><code><span class="hl-8">0</span><span class="hl-1">----</span><span class="hl-8">3</span><br/><span class="hl-1">|\  </span><span class="hl-10">B</span><span class="hl-1">|</span><br/><span class="hl-1">| \  |</span><br/><span class="hl-1">|  \ |</span><br/><span class="hl-1">| </span><span class="hl-10">A</span><span class="hl-1"> \|</span><br/><span class="hl-1">|    \</span><br/><span class="hl-8">1</span><span class="hl-1">----</span><span class="hl-8">2</span>
 </code><button>Copy</button></pre>
 
 <p>Where tx0/ty0 = 0, tx1/ty1 = 1, tx2/ty2 = 2 and tx3/ty3 = 3</p>
@@ -748,7 +748,7 @@ increases the batch entry unit and maxUnit values by 1.</p>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Adds the vertices data into the batch and flushes if full.</p>
 <p>Assumes 3 vertices in the following arrangement:</p>
-<pre><code><span class="hl-7">0</span><br/><span class="hl-5">|\</span><br/><span class="hl-5">| \</span><br/><span class="hl-5">|  \</span><br/><span class="hl-5">|   \</span><br/><span class="hl-5">|    \</span><br/><span class="hl-7">1</span><span class="hl-5">-----</span><span class="hl-7">2</span>
+<pre><code><span class="hl-8">0</span><br/><span class="hl-1">|\</span><br/><span class="hl-1">| \</span><br/><span class="hl-1">|  \</span><br/><span class="hl-1">|   \</span><br/><span class="hl-1">|    \</span><br/><span class="hl-8">1</span><span class="hl-1">-----</span><span class="hl-8">2</span>
 </code><button>Copy</button></pre>
 
 </div>

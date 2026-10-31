@@ -1,0 +1,114 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>docs/asserting-test-preconditions | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a>
+<div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/beta">Switch to Beta</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="" aria-current="page">docs/asserting-test-preconditions</a></li></ul></div>
+<div class="tsd-panel tsd-typography"><!--
+SPDX-FileCopyrightText: 2026 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+<h1 id="asserting-test-preconditions" class="tsd-anchor-link">Asserting Test Preconditions<a href="#asserting-test-preconditions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<h2 id="background" class="tsd-anchor-link">Background<a href="#background" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>PokéRogue's tests often use real game components (moves, species, abilities) instead of
+mocks. Our components are coupled tightly enough that mocking them is often impractical.
+The trade-off is that a test can quietly depend on how a component currently behaves,
+even when that object has nothing to do with what the test is checking.</p>
+<p>For example, a test of moveset generation might use Burn Up as its example of
+&quot;a move that requires the user to be a certain type.&quot; The test isn't about Burn Up.
+It is borrowing Burn Up's behavior to exercise the move pool filter. If Burn Up's
+mechanics change in a future generation, the test breaks even though moveset
+generation is still correct.</p>
+<h2 id="the-principle" class="tsd-anchor-link">The principle<a href="#the-principle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong>A failing test should mean &quot;functionality is broken,&quot; not &quot;the test can no longer
+evaluate the functionality.&quot;</strong></p>
+<p>When a suite relies on a behavior it isn't testing, (herein, &quot;incidental behavior&quot;),
+state the assumption explicitly as a precondition. This way, if the assumption stops
+holding, the failure says exactly that, and the developer knows to update the test's
+fixtures instead of hunting for a bug in the code under test.</p>
+<p>To demonstrate this principle, consider a contrived example with the move Burn Up and
+moveset generation. Here's necessary context: the <code>filterMovePool</code> function should
+remove moves from the pool that require the user to be a certain type that it does not
+have, and Burn Up currently has this condition. Now, consider this scenario: a new
+Pokémon game is released, and burn up no longer requires its user to be the fire type.
+A PokéRogue developer implements a PR that drops the condition from Burn Up, and
+naturally updates the Burn Up test file to account for that change.</p>
+<p>Without a precondition, the moveset generation tests then fail with messages that
+suggest moveset generation is broken. With a precondition, the suite reports one clear
+message: the assumption about Burn Up no longer holds, so swap in another move with a
+type requirement.</p>
+<h2 id="how-to-write-one" class="tsd-anchor-link">How to write one<a href="#how-to-write-one" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Put the assertion in a <code>beforeAll</code> in the <code>describe</code> block for the tests that share the
+assumption, and always give it a message beginning with <code>Violated assumption:</code>.</p>
+<p>A trimmed pseudocode-esque example is below</p>
+<pre><code class="ts"><span class="hl-0">describe</span><span class="hl-1">(</span><span class="hl-2">&quot;filterMovePool&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-0">describe</span><span class="hl-1">(</span><span class="hl-2">&quot;type requirement conditions&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-0">beforeAll</span><span class="hl-1">(() </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-0">expect</span><span class="hl-1">(</span><br/><span class="hl-1">        </span><span class="hl-4">allMoves</span><span class="hl-1">[</span><span class="hl-4">burnUp</span><span class="hl-1">],</span><br/><span class="hl-1">        </span><span class="hl-2">&quot;Violated assumption: BURN_UP should require user to be FIRE type&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-5">// `.toRequireUserToBeFireType` is just for illustration; </span><br/><span class="hl-1">      ).</span><span class="hl-0">toRequireUserToBeFireType</span><span class="hl-1">();</span><br/><span class="hl-1">    });</span><br/><span class="hl-1">    </span><span class="hl-0">it</span><span class="hl-1">(</span><span class="hl-2">&quot;does not remove a move when the user has the required type&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> { </span><span class="hl-5">/* ... */</span><span class="hl-1"> });</span><br/><span class="hl-1">    </span><span class="hl-0">it</span><span class="hl-1">(</span><span class="hl-2">&quot;removes a move when the user does not have the required type&quot;</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> { </span><span class="hl-5">/* ... */</span><span class="hl-1"> });</span><br/><span class="hl-1">    </span><span class="hl-5">// ... </span><br/><span class="hl-1">  });</span><br/><span class="hl-1">});</span>
+</code><button type="button">Copy</button></pre>
+
+<p>There are two reasons to use <code>beforeAll</code> instead of a regular <code>it()</code>. First, if the
+assumption fails, the suite stops and the tests that depend on it do not run. A
+single failure that names the actual cause is then emitted, instead of several
+failures that all point at the code under test. Second, a precondition is not part
+of what the suite is testing, so presenting it as a test case would misrepresent the
+suite's purpose.</p>
+<p>Because the failure shows up under the <code>describe</code> name and not under a test name, the
+message is what tells the reader what happened. Keep it specific: name the object and
+the behavior you expected.</p>
+<h2 id="a-precondition-is-not-a-test" class="tsd-anchor-link">A precondition is not a test<a href="#a-precondition-is-not-a-test" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>A precondition <em>checks</em> that a fixture is set up the way the suite expects. It does
+not <em>test</em> that the behavior works. In the example above, the precondition confirms
+that Burn Up has a Fire type requirement attached, not that the requirement is enforced
+correctly in battle. Coverage of the behavior itself belongs in that object's own tests
+(here, the Burn Up tests). Do not rely on preconditions elsewhere as a substitute.</p>
+<h2 id="when-to-use-this-and-when-not-to" class="tsd-anchor-link">When to use this, and when not to<a href="#when-to-use-this-and-when-not-to" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Preconditions are worth adding when the assumed behavior is the mechanism the test
+depends on, is not the subject of the test, and could plausibly change (e.g. because of
+a mechanic change in a later game or an adjustment made by balance team).</p>
+<p>Do not assert simple config-defined data, such as a species' typing, a move's base
+power, or an item's activation chance. These are not tests' job to verify, and asserting
+them everywhere adds noise without adding clarity. For example, a test might specifically
+use Snorlax to test an interaction that requires a normal type, or use ember to test an
+interaction that requires a fire type move. Such cases have no need for preconditions.</p>
+<h2 id="prefer-removing-the-assumption-where-you-can" class="tsd-anchor-link">Prefer removing the assumption where you can<a href="#prefer-removing-the-assumption-where-you-can" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>A precondition is the fallback. The better option is to make the test independent of
+incidental behavior. For example, a test that needs one Pokémon to move after another
+should set turn order explicitly, rather than rely on Snorlax being slower than its
+opponent. Implicit dependencies like that are a reason to request changes on a PR. Use a
+precondition when the dependency can't reasonably be removed, as when a unit test needs
+a real move with a particular property and building a mock would be impractical.</p>
+</div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details"><a href="#asserting-test-preconditions"><span>Asserting <wbr/>Test <wbr/>Preconditions</span></a>
+<ul>
+<li><a href="#background"><span>Background</span></a></li>
+<li><a href="#the-principle"><span>The principle</span></a></li>
+<li><a href="#how-to-write-one"><span>How to write one</span></a></li>
+<li><a href="#a-precondition-is-not-a-test"><span>A precondition is not a test</span></a></li>
+<li><a href="#when-to-use-this-and-when-not-to"><span>When to use this, and when not to</span></a></li>
+<li><a href="#prefer-removing-the-assumption-where-you-can"><span>Prefer removing the assumption where you can</span></a></li></ul></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/beta" class="tsd-nav-link">Switch to Beta</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer>
+<div class="overlay"></div></body></html>

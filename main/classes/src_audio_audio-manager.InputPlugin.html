@@ -15,13 +15,13 @@
 <div class="tsd-comment tsd-typography"><p>The Input Plugin belongs to a Scene and handles all input related events and operations for it.</p>
 <p>You can access it from within a Scene using <code>this.input</code>.</p>
 <p>It emits events directly. For example, you can do:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">input</span><span class="hl-5">.</span><span class="hl-6">on</span><span class="hl-5">(</span><span class="hl-8">&#39;pointerdown&#39;</span><span class="hl-5">, </span><span class="hl-3">callback</span><span class="hl-5">, </span><span class="hl-3">context</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">input</span><span class="hl-1">.</span><span class="hl-0">on</span><span class="hl-1">(</span><span class="hl-2">&#39;pointerdown&#39;</span><span class="hl-1">, </span><span class="hl-4">callback</span><span class="hl-1">, </span><span class="hl-4">context</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To listen for a pointer down event anywhere on the game canvas.</p>
 <p>Game Objects can be enabled for input by calling their <code>setInteractive</code> method. After which they
 will directly emit input events:</p>
-<pre><code class="javascript"><span class="hl-2">var</span><span class="hl-5"> </span><span class="hl-3">sprite</span><span class="hl-5"> = </span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">, </span><span class="hl-3">texture</span><span class="hl-5">);</span><br/><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">setInteractive</span><span class="hl-5">();</span><br/><span class="hl-3">sprite</span><span class="hl-5">.</span><span class="hl-6">on</span><span class="hl-5">(</span><span class="hl-8">&#39;pointerdown&#39;</span><span class="hl-5">, </span><span class="hl-3">callback</span><span class="hl-5">, </span><span class="hl-3">context</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">var</span><span class="hl-1"> </span><span class="hl-4">sprite</span><span class="hl-1"> = </span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">, </span><span class="hl-4">texture</span><span class="hl-1">);</span><br/><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">setInteractive</span><span class="hl-1">();</span><br/><span class="hl-4">sprite</span><span class="hl-1">.</span><span class="hl-0">on</span><span class="hl-1">(</span><span class="hl-2">&#39;pointerdown&#39;</span><span class="hl-1">, </span><span class="hl-4">callback</span><span class="hl-1">, </span><span class="hl-4">context</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>There are lots of game configuration options available relating to input.
@@ -35,7 +35,7 @@ change state (i.e. appear or disappear) then you'll need to notify the Scale Man
 the DOM in a way in which Phaser can't detect directly. Call <code>this.scale.updateBounds()</code> as part of your game init in order
 to refresh the canvas DOM bounds values, which Phaser uses for input point position calculations.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="265534">
+<section class="tsd-panel tsd-hierarchy" data-refl="265636">
 <h4>Hierarchy (<a href="../hierarchy.html#src/audio/audio-manager.InputPlugin">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="src_audio_audio-manager.EventEmitter.html" class="tsd-signature-type tsd-kind-class">EventEmitter</a>
@@ -829,11 +829,11 @@ cameras, it starts checking the camera at the top of the camera list, and if not
 <div class="tsd-comment tsd-typography"><p>Creates a function that can be passed to <code>setInteractive</code>, <code>enable</code> or <code>setHitArea</code> that will handle
 pixel-perfect input detection on an Image or Sprite based Game Object, or any custom class that extends them.</p>
 <p>The following will create a sprite that is clickable on any pixel that has an alpha value &gt;= 1.</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">, </span><span class="hl-3">key</span><span class="hl-5">).</span><span class="hl-6">setInteractive</span><span class="hl-5">(</span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">input</span><span class="hl-5">.</span><span class="hl-6">makePixelPerfect</span><span class="hl-5">());</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">, </span><span class="hl-4">key</span><span class="hl-1">).</span><span class="hl-0">setInteractive</span><span class="hl-1">(</span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">input</span><span class="hl-1">.</span><span class="hl-0">makePixelPerfect</span><span class="hl-1">());</span>
 </code><button type="button">Copy</button></pre>
 
 <p>The following will create a sprite that is clickable on any pixel that has an alpha value &gt;= 150.</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">add</span><span class="hl-5">.</span><span class="hl-6">sprite</span><span class="hl-5">(</span><span class="hl-3">x</span><span class="hl-5">, </span><span class="hl-3">y</span><span class="hl-5">, </span><span class="hl-3">key</span><span class="hl-5">).</span><span class="hl-6">setInteractive</span><span class="hl-5">(</span><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">input</span><span class="hl-5">.</span><span class="hl-6">makePixelPerfect</span><span class="hl-5">(</span><span class="hl-7">150</span><span class="hl-5">));</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">add</span><span class="hl-1">.</span><span class="hl-0">sprite</span><span class="hl-1">(</span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1">, </span><span class="hl-4">key</span><span class="hl-1">).</span><span class="hl-0">setInteractive</span><span class="hl-1">(</span><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">input</span><span class="hl-1">.</span><span class="hl-0">makePixelPerfect</span><span class="hl-1">(</span><span class="hl-8">150</span><span class="hl-1">));</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Once you have made an Interactive Object pixel perfect it impacts all input related events for it: down, up,
@@ -1046,7 +1046,7 @@ setting of the given Interactive Object (i.e. a Sprite).</p>
 <p>This cursor will be the default cursor used when interacting with the game canvas.</p>
 <p>If an Interactive Object also sets a custom cursor, this is the cursor that is reset after its use.</p>
 <p>Any valid CSS cursor value is allowed, including paths to image files, i.e.:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-5">.</span><span class="hl-3">input</span><span class="hl-5">.</span><span class="hl-6">setDefaultCursor</span><span class="hl-5">(</span><span class="hl-8">&#39;url(assets/cursors/sword.cur), pointer&#39;</span><span class="hl-5">);</span>
+<pre><code class="javascript"><span class="hl-3">this</span><span class="hl-1">.</span><span class="hl-4">input</span><span class="hl-1">.</span><span class="hl-0">setDefaultCursor</span><span class="hl-1">(</span><span class="hl-2">&#39;url(assets/cursors/sword.cur), pointer&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Please read about the differences between browsers when it comes to the file formats and sizes they support:</p>

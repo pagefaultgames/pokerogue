@@ -14,14 +14,14 @@
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Base class for defining all game helpers.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="87142">
+<section class="tsd-panel tsd-hierarchy" data-refl="87242">
 <h4>Hierarchy (<a href="../hierarchy.html#test/helpers/rng-helper.RngHelper">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="test_helpers_game-manager-helper.GameManagerHelper.html" class="tsd-signature-type tsd-kind-class">GameManagerHelper</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">RngHelper</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/a6995c571a092e762ea036589bb6f3a8fa4f5dbd/test/helpers/rng-helper.ts#L4">test/helpers/rng-helper.ts:4</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/29441f7aa7482d9e816b253d324293788936dc3e/test/helpers/rng-helper.ts#L4">test/helpers/rng-helper.ts:4</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -55,7 +55,7 @@
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">RngHelper</a></h4><aside class="tsd-sources">
 <p>Inherited from <a href="test_helpers_game-manager-helper.GameManagerHelper.html">GameManagerHelper</a>.<a href="test_helpers_game-manager-helper.GameManagerHelper.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/a6995c571a092e762ea036589bb6f3a8fa4f5dbd/test/helpers/game-manager-helper.ts#L9">test/helpers/game-manager-helper.ts:9</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/29441f7aa7482d9e816b253d324293788936dc3e/test/helpers/game-manager-helper.ts#L9">test/helpers/game-manager-helper.ts:9</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -64,7 +64,7 @@
 <div class="tsd-signature"><span class="tsd-kind-property">game</span><span class="tsd-signature-symbol">:</span> <a href="test_framework_game-manager.GameManager.html" class="tsd-signature-type tsd-kind-class">GameManager</a></div><aside class="tsd-sources">
 <p>Inherited from <a href="test_helpers_game-manager-helper.GameManagerHelper.html">GameManagerHelper</a>.<a href="test_helpers_game-manager-helper.GameManagerHelper.html#game">game</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/a6995c571a092e762ea036589bb6f3a8fa4f5dbd/test/helpers/game-manager-helper.ts#L7">test/helpers/game-manager-helper.ts:7</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/29441f7aa7482d9e816b253d324293788936dc3e/test/helpers/game-manager-helper.ts#L7">test/helpers/game-manager-helper.ts:7</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -92,12 +92,12 @@ and rounds down as necessary for integer-based RNG functions.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-example">
-<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code><span class="hl-2">let</span><span class="hl-5"> </span><span class="hl-3">zeroCounter</span><span class="hl-5"> = </span><span class="hl-7">0</span><span class="hl-5">;</span><br/><br/><span class="hl-4">await</span><span class="hl-5"> </span><span class="hl-3">game</span><span class="hl-5">.</span><span class="hl-3">rng</span><span class="hl-5">.</span><span class="hl-6">equalSample</span><span class="hl-5">(</span><span class="hl-7">1000</span><span class="hl-5">, () </span><span class="hl-2">=&gt;</span><span class="hl-5"> {</span><br/><span class="hl-5">  </span><span class="hl-4">if</span><span class="hl-5"> (</span><span class="hl-6">randSeedInt</span><span class="hl-5">(</span><span class="hl-7">1000</span><span class="hl-5">) === </span><span class="hl-7">0</span><span class="hl-5">) {</span><br/><span class="hl-5">    </span><span class="hl-3">zeroCounter</span><span class="hl-5">++;</span><br/><span class="hl-5">  }</span><br/><span class="hl-5">});</span><br/><br/><span class="hl-6">expect</span><span class="hl-5">(</span><span class="hl-3">zeroCounter</span><span class="hl-5">).</span><span class="hl-6">toBe</span><span class="hl-5">(</span><span class="hl-7">1</span><span class="hl-5">);</span>
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code><span class="hl-3">let</span><span class="hl-1"> </span><span class="hl-4">zeroCounter</span><span class="hl-1"> = </span><span class="hl-8">0</span><span class="hl-1">;</span><br/><br/><span class="hl-7">await</span><span class="hl-1"> </span><span class="hl-4">game</span><span class="hl-1">.</span><span class="hl-4">rng</span><span class="hl-1">.</span><span class="hl-0">equalSample</span><span class="hl-1">(</span><span class="hl-8">1000</span><span class="hl-1">, () </span><span class="hl-3">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-7">if</span><span class="hl-1"> (</span><span class="hl-0">randSeedInt</span><span class="hl-1">(</span><span class="hl-8">1000</span><span class="hl-1">) === </span><span class="hl-8">0</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-4">zeroCounter</span><span class="hl-1">++;</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-0">expect</span><span class="hl-1">(</span><span class="hl-4">zeroCounter</span><span class="hl-1">).</span><span class="hl-0">toBe</span><span class="hl-1">(</span><span class="hl-8">1</span><span class="hl-1">);</span>
 </code><button>Copy</button></pre>
 
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/a6995c571a092e762ea036589bb6f3a8fa4f5dbd/test/helpers/rng-helper.ts#L28">test/helpers/rng-helper.ts:28</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/29441f7aa7482d9e816b253d324293788936dc3e/test/helpers/rng-helper.ts#L28">test/helpers/rng-helper.ts:28</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
