@@ -79,7 +79,7 @@ describe("Moves - Last Respects", () => {
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 3 * 50);
   });
 
-  it("should maintain its power for the player during the next battle if it is within the same arena encounter", async () => {
+  it("should maintain its power for the player during the next battle if it is within the same arena encounter, even on reload", async () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.use(MoveId.LUNAR_DANCE);
@@ -89,6 +89,11 @@ describe("Moves - Last Respects", () => {
 
     game.move.use(MoveId.LAST_RESPECTS);
     await game.toNextWave();
+
+    expect(game.scene.arena.playerFaints).toBe(1);
+
+    await game.reload.reloadSession();
+
     expect(game.scene.arena.playerFaints).toBe(1);
 
     game.move.use(MoveId.LAST_RESPECTS);

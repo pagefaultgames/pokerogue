@@ -34,8 +34,10 @@ describe.each<{ name: string; ability: AbilityId; stat: BattleStat }>([
 
   const statName = toTitleCase(Stat[stat]);
 
-  // NB: We have a custom implementation of Embody Aspect as a simple "on summon" ability.
-  // "On summon" abilities also trigger on a Pokémon changing forms (tested elsewhere).
+  // NB: We have a custom implementation of Embody Aspect as a simple "on summon" ability, since all
+  // "on summon" abilities also trigger on a Pokémon changing forms mid-battle.
+  // This is likely how the mainline series implements it (though we won't know without reading source code).
+  // Also see: quiet-form-change-phase.test.ts
   it(`should raise the user's ${statName} by 1 stage on summon`, async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
