@@ -29,7 +29,7 @@ describe("Moves - Sketch", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("Sketch should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
+  it("should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
     const playerPokemon = game.field.getPlayerPokemon();
     // can't use normal moveset override because we need to check moveset changes
@@ -50,7 +50,7 @@ describe("Moves - Sketch", () => {
     expect(playerPokemon.moveset[1]?.moveId).toBe(MoveId.SKETCH);
   });
 
-  it("Sketch should retrieve the most recent valid move from its target history", async () => {
+  it("should retrieve the most recent valid move from its target history", async () => {
     game.override.enemyStatusEffect(StatusEffect.PARALYSIS);
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
     const playerPokemon = game.field.getPlayerPokemon();
@@ -88,5 +88,23 @@ describe("Moves - Sketch", () => {
     expect(playerPokemon).toHaveUsedMove({ move: MoveId.SKETCH, result: MoveResult.SUCCESS });
     expect(playerPokemon.moveset[0]?.moveId).toBe(MoveId.METRONOME);
     expect(playerPokemon).not.toHaveFullHp(); // Make sure opponent actually used False Swipe
+  });
+
+  it("should fail if the user is transformed", async () => {
+    game.override.enemyMoveset([]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const enemy = game.field.getEnemyPokemon();
+    game.move.changeMoveset(enemy, [MoveId.SKETCH, MoveId.SPLASH]);
+
+    game.move.use(MoveId.TRANSFORM);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    game.move.select(MoveId.SKETCH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.SKETCH, result: MoveResult.FAIL });
   });
 });

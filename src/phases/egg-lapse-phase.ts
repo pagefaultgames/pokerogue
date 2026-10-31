@@ -53,7 +53,10 @@ export class EggLapsePhase extends Phase {
                 },
                 inputDelay: 1000,
               };
-              globalScene.ui.showText(i18next.t("battle:eggSkipPrompt", { eggsToHatch: eggsToHatch.length }), 0);
+              globalScene.ui.showText(
+                i18next.t("battle:eggSkipPrompt", { count: eggsToHatch.length, eggsToHatch: eggsToHatch.length }),
+                0,
+              );
               globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, options);
             },
             100,
