@@ -160,9 +160,10 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         encounter.setDialogueToken("pokeName", removedPokemon.getNameToRender());
 
-        // Store removed pokemon types
+        // Store removed pokemon types and species
         encounter.misc = {
           removedTypes: removedPokemon.getTypes(),
+          removedSpeciesId: removedPokemon.species.speciesId,
           modifiers,
         };
       })
@@ -186,7 +187,10 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
         const bossSpecies = speciesDataRegistry.getSpecies(
-          getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes),
+          // Never give back the same species as the one that was traded away (consistent with Weird Dream).
+          // The boss can still be from the same species line, e.g. a traded Charizard can give back a Charmander,
+          // since only the exact species is excluded. In practice this is rare: bosses are 6+ cost starters.
+          getRandomSpeciesByStarterCost(starterTier, [...excludedBosses, encounter.misc.removedSpeciesId], bossTypes),
         );
         const pokemonConfig: EnemyPokemonConfig = {
           species: bossSpecies,
