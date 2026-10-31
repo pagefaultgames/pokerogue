@@ -199,6 +199,7 @@ describe("Pokerogue Admin API", () => {
         username: "test",
         discordId: "discord-test-123",
         googleId: "google-test-123",
+        resetCode: "abcdefgh",
         lastLoggedIn: "2022-01-01",
         registered: "2022-01-01",
       };

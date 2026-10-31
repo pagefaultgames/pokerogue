@@ -114,13 +114,19 @@ export class LoginPhase extends Phase {
       this.goToRegister();
     };
 
+    const goToResetPasswordButton = () => {
+      this.goToResetPassword();
+    };
+
     if (this.showText) {
       ui.showText(this.loginPromptText);
     }
 
     audioManager.playSound("ui/menu_open");
 
-    ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
+    ui.setMode(UiMode.LOGIN_OR_REGISTER, {
+      buttonActions: [goToLoginButton, goToRegistrationButton, goToResetPasswordButton],
+    });
   }
 
   private async checkUserInfo(): Promise<boolean> {
@@ -173,5 +179,21 @@ export class LoginPhase extends Phase {
     audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
+  }
+
+  public goToResetPassword(): void {
+    const { phaseManager, ui } = globalScene;
+
+    const backButton = () => {
+      phaseManager.unshiftNew("LoginPhase", false);
+      this.end();
+    };
+
+    const submitButton = async () => {
+      this.goToLogin();
+    };
+    audioManager.playSound("ui/menu_open");
+
+    ui.setMode(UiMode.RESET_PASSWORD_FORM, { buttonActions: [submitButton, backButton] });
   }
 }
