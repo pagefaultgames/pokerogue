@@ -158,7 +158,7 @@ type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSid
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
  */
-export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
+export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move, simulated?: boolean) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
 export abstract class Move implements Localizable {
@@ -948,11 +948,12 @@ export abstract class Move implements Localizable {
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
    * @param sequence - (Default `4`) The sequence number where the condition check occurs, or `-1` to check all
+   * @param simulated - (Default `false`) Whether the check is only a prediction
    * @returns Whether all conditions passed
    * @remarks
    * Only applies conditions intrinsic to the particular move being used.
    */
-  public applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4): boolean {
+  public applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4, simulated = false): boolean {
     let conditionsArray: MoveCondition[];
     switch (sequence) {
       case -1:
@@ -968,7 +969,7 @@ export abstract class Move implements Localizable {
       default:
         conditionsArray = this.conditions;
     }
-    return conditionsArray.every(cond => cond.apply(user, target, this));
+    return conditionsArray.every(cond => cond.apply(user, target, this, simulated));
   }
 
   /**
@@ -3154,14 +3155,14 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target) => {
+    return (user, target, _move, simulated) => {
       if (target.status?.effect) {
         return false;
       }
 
       const statusToApply =
         user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : StatusEffect.NONE);
-      return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
+      return !!statusToApply && target.canSetStatus(statusToApply, simulated, false, user);
     };
   }
 
@@ -3645,9 +3646,9 @@ export class OneHitKOAttr extends MoveAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, _move) => {
+    return (user, target, _move, simulated) => {
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockOneHitKOAbAttr", { pokemon: target, cancelled });
+      applyAbAttrs("BlockOneHitKOAbAttr", { pokemon: target, cancelled, simulated });
       return !cancelled.value && user.level >= target.level;
     };
   }
@@ -7398,20 +7399,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) =>
-      move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
+    return (user, target, move, simulated) =>
+      move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move, simulated);
   }
 
   getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled });
+    // simulated, as the move's condition has already shown the ability's flyout
+    applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled, simulated: true });
     if (cancelled.value) {
       return i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) });
     }
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
-    return (user, target, move) => {
+    return (user, target, move, simulated) => {
       const switchOutTarget = this.selfSwitch ? user : target;
       const player = switchOutTarget.isPlayer();
       const forceSwitchAttr = move
@@ -7449,7 +7451,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
 
         const blockedByAbility = new BooleanHolder(false);
-        applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled: blockedByAbility });
+        applyAbAttrs("ForceSwitchOutImmunityAbAttr", { pokemon: target, cancelled: blockedByAbility, simulated });
         if (blockedByAbility.value) {
           return false;
         }
@@ -7517,8 +7519,9 @@ export class ChillyReceptionAttr extends ForceSwitchOutAttr {
 
   getCondition(): MoveConditionFunc {
     // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
-    return (user, target, move) =>
-      globalScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
+    return (user, target, move, simulated) =>
+      globalScene.arena.weather?.weatherType !== WeatherType.SNOW
+      || super.getSwitchOutCondition()(user, target, move, simulated);
   }
 }
 
