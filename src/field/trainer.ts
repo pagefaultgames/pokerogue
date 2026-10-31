@@ -159,7 +159,9 @@ export class Trainer extends Phaser.GameObjects.Container {
     let name = this.config.getTitle(trainerSlot, this.variant);
 
     // Determine the title to include based on the configuration and includeTitle flag.
-    let title = includeTitle && this.config.title ? this.config.title : null;
+    const baseTitle =
+      this.variant === TrainerVariant.FEMALE && this.config.titleFemale ? this.config.titleFemale : this.config.title;
+    let title = includeTitle && baseTitle ? baseTitle : null;
     const evilTeamTitles = ["grunt"];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
