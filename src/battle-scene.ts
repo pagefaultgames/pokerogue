@@ -297,6 +297,8 @@ export class BattleScene extends SceneBase {
   public readonly animations: Animation = new Animation();
   declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
+  public titleStatsTimer: NodeJS.Timeout | null = null;
+
   constructor() {
     super("battle");
 
