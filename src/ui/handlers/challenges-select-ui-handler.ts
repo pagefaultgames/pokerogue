@@ -6,7 +6,7 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import { TabMenu } from "#ui/tab-menu";
-import { addTextObject } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getRibbonsToAward } from "#utils/challenge-utils";
@@ -115,19 +115,18 @@ export class GameChallengesUiHandler extends UiHandler {
       .setOrigin(0)
       .setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
 
-    this.descriptionText = globalScene.add
-      .rexBBCodeText(descriptionBg.x + 6, descriptionBg.y + 4, "", {
-        fontFamily: "emerald",
-        fontSize: 84,
-        color: Color.ORANGE,
-        padding: { bottom: 6 },
-        wrap: { mode: "word", width: (descriptionBg.width - 12) * 6 },
-      })
+    this.descriptionText = addBBCodeTextObject(descriptionBg.x + 6, descriptionBg.y + 4, "", TextStyle.MESSAGE, {
+      color: Color.ORANGE,
+      padding: { bottom: 6 },
+      wrap: { mode: "word", width: (descriptionBg.width - 12) * 6 },
+    })
       .setName("text-desc")
-      .setScale(1 / 6)
-      .setShadow(4, 5, ShadowColor.ORANGE)
+      .setShadow(
+        getTextStyleOptions(TextStyle.MESSAGE).shadowXpos,
+        getTextStyleOptions(TextStyle.MESSAGE).shadowYpos,
+        ShadowColor.ORANGE,
+      )
       .setOrigin(0);
-    globalScene.add.existing(this.descriptionText);
     this.descriptionTextBaseY = this.descriptionText.y;
     this.descriptionTextMaxHeight = descriptionBg.height - 8;
 
@@ -238,7 +237,13 @@ export class GameChallengesUiHandler extends UiHandler {
    * @param text - The text to set
    */
   private setDescription(text: string): void {
-    this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${text}`);
+    const descriptionWithBaseStyleRestored = text.replaceAll(
+      "[/shadow][/color]",
+      `[/shadow][/color][color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]`,
+    );
+    this.descriptionText.setText(
+      `[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${descriptionWithBaseStyleRestored}`,
+    );
     this.updateDescriptionScroll();
   }
 

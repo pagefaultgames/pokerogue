@@ -11,6 +11,7 @@ import type { HpBarSpeed } from "#enums/hp-bar-speed";
 import type { MoneyFormat } from "#enums/money-format";
 import type { MusicPreference } from "#enums/music-preference";
 import type { PlayerGender } from "#enums/player-gender";
+import type { ShadowType } from "#enums/shadow-type";
 import type { ShopCursorTarget } from "#enums/shop-cursor-target";
 import type { SpriteSet } from "#enums/sprite-set";
 import type { TypeHints } from "#enums/type-hints";
@@ -63,6 +64,7 @@ export interface DisplaySettings {
   hideUsername: boolean;
   language?: string;
   moneyFormat: MoneyFormat;
+  shadowType: ShadowType;
   shopCursorTarget: ShopCursorTarget;
   shopOverlayOpacity: number;
   showArenaFlyout: boolean;
