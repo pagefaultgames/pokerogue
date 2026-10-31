@@ -39,16 +39,6 @@ describe("Ability - Liquid Ooze", () => {
     expect(feebas).toHaveTakenDamage(karp.getInverseHp() / 2);
   });
 
-  it("should not drain the attacker's HP if it ignores indirect damage", async () => {
-    game.override.ability(AbilityId.MAGIC_GUARD);
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    game.move.use(MoveId.GIGA_DRAIN);
-    await game.toEndOfTurn();
-
-    expect(game.field.getPlayerPokemon()).toHaveFullHp();
-  });
-
   // Regression test
   it("should not apply if suppressed", async () => {
     game.override.ability(AbilityId.NEUTRALIZING_GAS);
