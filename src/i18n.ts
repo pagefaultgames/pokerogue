@@ -1,5 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { namespaceMap } from "#app/i18n-namespace-map";
+import { GRAMMAR_POST_PROCESSORS, registerGrammarFormatters } from "#grammar";
 import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
@@ -152,6 +153,10 @@ const nsEn: string[] = [];
  *    If you want the namespace name to be different from the file name, configure it in `src/i18n-namespace-map.ts`.
  */
 
+for (const processor of GRAMMAR_POST_PROCESSORS) {
+  i18next.use(processor);
+}
+
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
@@ -197,10 +202,12 @@ await i18next
         // which will be important once we get said strong typing set up correctly.
         skipOnVariables: true,
       },
-      postProcess: ["korean-postposition"],
+      postProcess: ["korean-postposition", ...GRAMMAR_POST_PROCESSORS.map(processor => processor.name)],
+      postProcessPassResolved: true,
     },
     async () => {
       i18next.services.formatter?.add("money", i18nMoneyFormatter);
+      registerGrammarFormatters((name, formatter) => i18next.services.formatter?.add(name, formatter));
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );

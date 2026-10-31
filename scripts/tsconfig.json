@@ -20,6 +20,7 @@
   "compilerOptions": {
     // Note: make sure more specific paths appear before less specific paths
     "paths": {
+      "#grammar": ["../locales/_grammar/index.ts"],
       // all the main repo paths (tsc doesn't copy them over)
       "#abilities/*": ["../src/data/abilities/*.ts"],
       "#ai/*": ["../src/ai/*.ts"],
@@ -65,6 +66,7 @@
       ],
       "#data/*": ["../src/data/daily-seed/*.ts", "../src/data/*.ts"],
       "#utils/*": ["../src/utils/*.ts"],
+      "#grammar/*": ["../locales/_grammar/*.ts"],
 
       // new subpath imports for script folders
       "#script-utils/*": ["./utils/*.ts"],
