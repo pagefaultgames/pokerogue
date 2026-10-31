@@ -37,7 +37,6 @@ import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
-import Phaser from "phaser";
 
 export class EncounterPhase extends BattlePhase {
   // Union type is necessary as this is subclassed, and typescript will otherwise complain
@@ -89,9 +88,10 @@ export class EncounterPhase extends BattlePhase {
       }, battle.waveIndex);
 
       // Add any special encounter animations to load
-      if (mysteryEncounter.encounterAnimations && mysteryEncounter.encounterAnimations.length > 0) {
+      const { encounterAnimations } = mysteryEncounter;
+      if (encounterAnimations && encounterAnimations.length > 0) {
         loadEnemyAssets.push(
-          initEncounterAnims(mysteryEncounter.encounterAnimations).then(() => loadEncounterAnimAssets(true)),
+          initEncounterAnims(encounterAnimations).then(() => loadEncounterAnimAssets(encounterAnimations)),
         );
       }
 
@@ -214,18 +214,10 @@ export class EncounterPhase extends BattlePhase {
       if (battle.mysteryEncounter?.loadAssets && battle.mysteryEncounter.loadAssets.length > 0) {
         loadEnemyAssets.push(...battle.mysteryEncounter.loadAssets);
       }
-      // Load Mystery Encounter Exclamation bubble and sfx
-      loadEnemyAssets.push(
-        new Promise<void>(resolve => {
-          globalScene
-            .loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav")
-            .loadImage("encounter_exclaim", "mystery-encounters");
-          globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
-          if (!globalScene.load.isLoading()) {
-            globalScene.load.start();
-          }
-        }),
-      );
+      // Load Mystery Encounter Exclamation bubble and sfx, and any assets the encounter declares
+      if (battle.mysteryEncounter) {
+        loadEnemyAssets.push(battle.mysteryEncounter.loadDeclaredAssets());
+      }
     } else {
       const overridedBossSegments = activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
       // for double battles, reduce the health segments for boss Pokemon unless there is an override

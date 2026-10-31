@@ -1,4 +1,6 @@
 import { getRandomRivalPartyMemberFunc } from "#ai/rival-team-gen";
+import { atlasAsset, TRAINER_SPRITE_ANIM } from "#app/asset-requests";
+import { assetManager } from "#app/global-asset-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -42,6 +44,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
+import type { AssetRequest } from "#types/asset-set";
 import type { ModifierTypeFunc } from "#types/modifier-types";
 import type {
   GenAIFunc,
@@ -828,56 +831,26 @@ export class TrainerConfig {
     return ret;
   }
 
+  /**
+   * Get the assets needed to show this trainer: its sprite (along with its animation), and its partner's in doubles.
+   * @param variant - The trainer variant to get assets for
+   * @returns The requests for the trainer's assets
+   */
+  getAssetRequests(variant: TrainerVariant): AssetRequest[] {
+    const requests = atlasAsset(
+      this.getSpriteKey(variant === TrainerVariant.FEMALE, false),
+      "trainer",
+      undefined,
+      TRAINER_SPRITE_ANIM,
+    );
+    if (variant === TrainerVariant.DOUBLE) {
+      requests.push(...atlasAsset(this.getSpriteKey(true, true), "trainer", undefined, TRAINER_SPRITE_ANIM));
+    }
+    return requests;
+  }
+
   loadAssets(variant: TrainerVariant): Promise<void> {
-    return new Promise(resolve => {
-      const isDouble = variant === TrainerVariant.DOUBLE;
-      const trainerKey = this.getSpriteKey(variant === TrainerVariant.FEMALE, false);
-      const partnerTrainerKey = this.getSpriteKey(true, true);
-      globalScene.loadAtlas(trainerKey, "trainer");
-      if (isDouble) {
-        globalScene.loadAtlas(partnerTrainerKey, "trainer");
-      }
-      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        const originalWarn = console.warn;
-        // Ignore warnings for missing frames, because there will be a lot
-        console.warn = () => {};
-        const frameNames = globalScene.anims.generateFrameNames(trainerKey, {
-          zeroPad: 4,
-          suffix: ".png",
-          start: 1,
-          end: 128,
-        });
-        const partnerFrameNames = isDouble
-          ? globalScene.anims.generateFrameNames(partnerTrainerKey, {
-              zeroPad: 4,
-              suffix: ".png",
-              start: 1,
-              end: 128,
-            })
-          : "";
-        console.warn = originalWarn;
-        if (!globalScene.anims.exists(trainerKey)) {
-          globalScene.anims.create({
-            key: trainerKey,
-            frames: frameNames,
-            frameRate: 24,
-            repeat: -1,
-          });
-        }
-        if (isDouble && !globalScene.anims.exists(partnerTrainerKey)) {
-          globalScene.anims.create({
-            key: partnerTrainerKey,
-            frames: partnerFrameNames,
-            frameRate: 24,
-            repeat: -1,
-          });
-        }
-        resolve();
-      });
-      if (!globalScene.load.isLoading()) {
-        globalScene.load.start();
-      }
-    });
+    return assetManager.load(this.getAssetRequests(variant), globalScene);
   }
 
   /**

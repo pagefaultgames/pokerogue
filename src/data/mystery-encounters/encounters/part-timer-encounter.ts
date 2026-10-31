@@ -1,3 +1,4 @@
+import { seAsset } from "#app/asset-requests";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
@@ -64,22 +65,18 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       text: `${namespace}:introDialogue`,
     },
   ])
-  .withOnInit(() => {
-    // Load sfx
-    globalScene
-      .loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav")
-      .loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav")
-      .loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav")
-      .loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav")
-      .loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav")
-      .loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav")
-      .loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav")
-      .loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav")
-      .loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav")
-      .loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
-
-    return true;
-  })
+  .withAssets(
+    seAsset("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav"),
+    seAsset("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav"),
+    seAsset("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav"),
+    seAsset("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav"),
+    seAsset("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav"),
+    seAsset("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav"),
+    seAsset("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav"),
+    seAsset("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav"),
+    seAsset("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav"),
+    seAsset("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav"),
+  )
   .setLocalizationKey(`${namespace}`)
   .withTitle(`${namespace}:title`)
   .withDescription(`${namespace}:description`)
