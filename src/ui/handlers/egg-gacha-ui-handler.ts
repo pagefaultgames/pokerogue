@@ -205,15 +205,72 @@ export class EggGachaUiHandler extends MessageUiHandler {
       this.setupGachaType(gachaTypeKey as keyof typeof GachaType, gachaType);
     }
 
-    let eggGachaOptionSelectWidth = 0;
-    switch (i18next.resolvedLanguage) {
-      case "ru":
-      case "uk":
-        eggGachaOptionSelectWidth = 100;
-        break;
-      default:
-        eggGachaOptionSelectWidth = 96;
-    }
+    const multiplierOne = "×1";
+    const multiplierTen = "×10";
+    const pullOptions = [
+      {
+        multiplier: multiplierOne,
+        count: "1",
+        icon: getVoucherTypeIcon(VoucherType.REGULAR),
+      },
+      {
+        multiplier: multiplierTen,
+        count: "10",
+        icon: getVoucherTypeIcon(VoucherType.REGULAR),
+      },
+      {
+        multiplier: multiplierOne,
+        count: "5",
+        icon: getVoucherTypeIcon(VoucherType.PLUS),
+      },
+      {
+        multiplier: multiplierOne,
+        count: "10",
+        icon: getVoucherTypeIcon(VoucherType.PREMIUM),
+      },
+      {
+        multiplier: multiplierOne,
+        count: "25",
+        icon: getVoucherTypeIcon(VoucherType.GOLDEN),
+      },
+    ];
+
+    const createColumn = (lines: string[], x: number, rightAligned = false) => {
+      const column = addTextObject(0, 0, lines.join("\n"), TextStyle.WINDOW).setLineSpacing(28).setFontSize("80px");
+      if (rightAligned) {
+        column.setOrigin(1, 0).setAlign("right");
+      }
+      return { column, x };
+    };
+
+    // Each column is its own text object so the pull counts line up regardless of glyph widths
+    const labelColumn = createColumn(
+      pullOptions.map(option => i18next.t(option.count === "1" ? "egg:pull" : "egg:pulls")),
+      63,
+    );
+    const cancelColumn = createColumn([...pullOptions.map(() => ""), i18next.t("menu:cancel")], 16);
+    const columns = [
+      createColumn(
+        pullOptions.map(option => option.multiplier),
+        28,
+      ),
+      createColumn(
+        pullOptions.map(option => option.count),
+        60,
+        true,
+      ),
+      labelColumn,
+      cancelColumn,
+    ];
+
+    // The window is sized to fit its widest content
+    const rightPadding = 8;
+    const eggGachaOptionSelectWidth = Math.ceil(
+      Math.max(
+        labelColumn.x + labelColumn.column.displayWidth + rightPadding,
+        cancelColumn.x + cancelColumn.column.displayWidth + rightPadding,
+      ),
+    );
 
     this.eggGachaOptionSelectBg = addWindow(0, 0, eggGachaOptionSelectWidth, 16 + 576 * this.scale).setOrigin(1);
     this.eggGachaOptionsContainer = globalScene.add
@@ -221,56 +278,10 @@ export class EggGachaUiHandler extends MessageUiHandler {
       .add(this.eggGachaOptionSelectBg);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    const multiplierOne = "x1";
-    const multiplierTen = "x10";
-    const pullOptions = [
-      {
-        multiplier: multiplierOne,
-        description: `1 ${i18next.t("egg:pull")}`,
-        icon: getVoucherTypeIcon(VoucherType.REGULAR),
-      },
-      {
-        multiplier: multiplierTen,
-        description: `10 ${i18next.t("egg:pulls")}`,
-        icon: getVoucherTypeIcon(VoucherType.REGULAR),
-      },
-      {
-        multiplier: multiplierOne,
-        description: `5 ${i18next.t("egg:pulls")}`,
-        icon: getVoucherTypeIcon(VoucherType.PLUS),
-      },
-      {
-        multiplier: multiplierOne,
-        description: `10 ${i18next.t("egg:pulls")}`,
-        icon: getVoucherTypeIcon(VoucherType.PREMIUM),
-      },
-      {
-        multiplier: multiplierOne,
-        description: `25 ${i18next.t("egg:pulls")}`,
-        icon: getVoucherTypeIcon(VoucherType.GOLDEN),
-      },
-    ];
-
-    const resolvedLanguage = i18next.resolvedLanguage ?? "en";
-    const pullOptionsText = pullOptions
-      .map(option => {
-        const desc = option.description.split(" ");
-        if (desc[0].length < 2) {
-          desc[0] += ["zh", "ko"].includes(resolvedLanguage.slice(0, 2)) ? " " : "  ";
-        }
-        if (option.multiplier === multiplierOne) {
-          desc[0] += " ";
-        }
-        return `     ${option.multiplier.padEnd(5)}${desc.join(" ")}`;
-      })
-      .join("\n");
-
-    const optionText = addTextObject(0, 0, `${pullOptionsText}\n${i18next.t("menu:cancel")}`, TextStyle.WINDOW)
-      .setLineSpacing(28)
-      .setFontSize("80px")
-      .setPositionRelative(this.eggGachaOptionSelectBg, 16, 9);
-
-    this.eggGachaOptionsContainer.add(optionText);
+    for (const { column, x } of columns) {
+      column.setPositionRelative(this.eggGachaOptionSelectBg, x, 9);
+      this.eggGachaOptionsContainer.add(column);
+    }
 
     pullOptions.forEach((option, i) => {
       const icon = globalScene.add
