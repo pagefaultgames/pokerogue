@@ -7,7 +7,7 @@ import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, truncateString } from "#utils/common";
 import type Phaser from "phaser";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
+import type InputText from "phaser4-rex-plugins/plugins/inputtext";
 
 export abstract class FormModalUiHandler extends ModalUiHandler {
   protected editing = false;

@@ -7,6 +7,7 @@ import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supp
 import { enumValueToKey } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 // Re-export the value holder classes for compatibility with existing imports looking over here
 // TODO: Remove these re-exports and update associated imports

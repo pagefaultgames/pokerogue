@@ -4,6 +4,7 @@ import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import Phaser from "phaser";
 
 export class TrainerPartyTemplate {
   public readonly size: number;

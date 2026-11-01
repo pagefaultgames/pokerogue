@@ -8,6 +8,7 @@ import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
 import type { MockClock } from "#test/mocks/mock-clock";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Reload", () => {

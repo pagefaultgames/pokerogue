@@ -1,3 +1,5 @@
+import Phaser from "phaser";
+
 /**
  * Abstract base class for item managers. \
  * Stores a `Map` of item IDs to their associated data, with shared methods
