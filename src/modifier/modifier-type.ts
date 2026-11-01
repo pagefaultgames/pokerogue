@@ -128,6 +128,7 @@ import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;

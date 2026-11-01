@@ -144,6 +144,7 @@ import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 // TODO: Make these (and all condition functions actually)
@@ -8454,7 +8455,8 @@ export class SketchAttr extends MoveEffectAttr {
 
       const targetMove = target.getLastNonVirtualMove();
       return (
-        targetMove != null
+        !user.isTransformed()
+        && targetMove != null
         && !invalidSketchMoves.has(targetMove.move)
         && user.getMoveset().every(m => m.moveId !== targetMove.move)
       );
@@ -10060,7 +10062,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .reflectable(),
     new StatusMove(MoveId.MILK_DRINK, PokemonType.NORMAL, -1, 5, -1, 0, 2) //
-      .attr(HealAttr, 0.5)
+      .attr(HealAttr, 0.5, undefined, false)
       .healingMove()
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(MoveId.SPARK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 2) //

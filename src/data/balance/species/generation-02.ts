@@ -4510,7 +4510,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         speciesId: SpeciesId.MISMAGIUS,
         level: 1,
         item: EvolutionItem.DUSK_STONE,
-        evoDelay: [22, 26, 30],
+        evoDelay: [26, 32, 38],
       }),
     ],
     eggTier: EggTier.COMMON,

@@ -4,7 +4,7 @@ import type { UiMode } from "#enums/ui-mode";
 import type { Starter } from "#types/save-data";
 import type { BaseOptionSelectUiHandler } from "#ui/base-option-select-ui-handler";
 import type Phaser from "phaser";
-import type InputText from "phaser3-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
+import type InputText from "phaser4-rex-plugins/plugins/gameobjects/dom/inputtext/InputText";
 
 export interface TextStyleOptions {
   scale: number;

@@ -56,6 +56,7 @@ import { coerceArray } from "#utils/array";
 import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -1879,7 +1880,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.ONE_AVG,
       trainerPartyTemplates.ONE_STRONG,
       trainerPartyTemplates.TWO_AVG,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -1901,8 +1902,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.55)
     .setEncounterBgm(TrainerType.PARASOL_LADY)
     .setPartyTemplates(
-      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
-      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.ONE_STRONG,

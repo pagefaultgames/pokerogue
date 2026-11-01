@@ -2,6 +2,7 @@ import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { coerceArray } from "#utils/array";
 import { getCachedUrl } from "#utils/fetch-utils";
+import Phaser from "phaser";
 
 export const legacyCompatibleImages: string[] = [];
 

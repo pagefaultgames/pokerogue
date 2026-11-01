@@ -10,6 +10,7 @@ import { getPartyLuckValue } from "#modifiers/modifier-type";
 import { GameManager } from "#test/framework/game-manager";
 import { stringifyEnumArray } from "#test/utils/string-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Daily Mode", () => {

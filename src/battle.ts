@@ -37,6 +37,7 @@ import {
 import { getEnumValues } from "#utils/enums";
 import { randSeedUniqueItem } from "#utils/random";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export interface TurnCommand {
   command: Command;

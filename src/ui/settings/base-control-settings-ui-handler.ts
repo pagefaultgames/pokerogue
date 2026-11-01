@@ -15,6 +15,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /**
  * Abstract class for handling UI elements related to control settings.
