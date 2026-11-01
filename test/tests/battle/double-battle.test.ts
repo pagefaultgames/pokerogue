@@ -152,8 +152,8 @@ describe("Double Battles", () => {
     let rewardsShown = false;
 
     game.promptHandler.addToNextPrompt(
-      "SelectModifierPhase",
-      UiMode.MODIFIER_SELECT,
+      "SelectRewardPhase",
+      UiMode.REWARD_SELECT,
       () => {
         rewardsShown = true;
         game.endPhase();

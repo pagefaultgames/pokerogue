@@ -140,7 +140,10 @@ export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigg
     super();
     this.statusEffects = coerceArray(statusEffects);
     this.invert = invert;
-    this.description = i18next.t("pokemonEvolutions:forms.statusEffect");
+  }
+
+  get description(): string {
+    return i18next.t("pokemonEvolutions:forms.statusEffect");
   }
 
   canChange(pokemon: Pokemon): boolean {
@@ -250,9 +253,8 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
  * Used by Ogerpon and Terapagos.
  */
 export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
-  constructor() {
-    super();
-    this.description = i18next.t("pokemonEvolutions:forms.tera");
+  get description(): string {
+    return i18next.t("pokemonEvolutions:forms.tera");
   }
 }
 
@@ -261,9 +263,8 @@ export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
  * Used by Ogerpon and Terapagos.
  */
 export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {
-  constructor() {
-    super();
-    this.description = i18next.t("pokemonEvolutions:forms.teraLapse");
+  get description(): string {
+    return i18next.t("pokemonEvolutions:forms.teraLapse");
   }
 }
 
