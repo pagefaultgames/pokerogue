@@ -1,12 +1,15 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import type { Phase } from "#app/phase";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { EvolutionItemId } from "#enums/evolution-item";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import { PartyUiHandler } from "#ui/party-ui-handler";
+import { type PartyOption, PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -57,6 +60,29 @@ export class EvolutionItemReward extends PokemonReward {
     }
 
     return false;
+  }
+
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.EVOLUTION_ITEM_REWARD,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          // TODO: improve this check here
+          const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
+          this.apply(params);
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            postApply();
+          });
+        } else {
+          onCancel();
+        }
+      },
+      this.selectFilter,
+      undefined,
+      { itemId: this.evolutionItemId },
+    );
   }
 }
 

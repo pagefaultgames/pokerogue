@@ -1,17 +1,20 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import type { Phase } from "#app/phase";
 import { allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemCategoryId } from "#enums/held-item-id";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import { PartyUiHandler } from "#ui/party-ui-handler";
+import { type PartyOption, PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";
 import { isItemInCategory } from "#utils/item-utils";
 
@@ -49,6 +52,29 @@ export class FormChangeItemReward extends PokemonReward {
     globalScene.updateItemBar(true);
 
     return true;
+  }
+
+  openParty(postApply: () => void, onCancel: () => void, _callingPhase: Phase): void {
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.FORM_CHANGE_ITEM_REWARD,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          // TODO: improve this check here
+          const params: PokemonRewardParams = { pokemon: globalScene.getPlayerParty()[slotIndex] };
+          this.apply(params);
+          globalScene.ui.setMode(UiMode.MESSAGE, true).then(() => {
+            postApply();
+          });
+        } else {
+          onCancel();
+        }
+      },
+      this.selectFilter,
+      undefined,
+      { itemId: this.formChangeItemId },
+    );
   }
 }
 

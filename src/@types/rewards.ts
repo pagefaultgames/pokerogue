@@ -45,9 +45,5 @@ export type RewardPoolWeights = {
   [tier in RarityTier]: number[];
 };
 
-export type SilentReward =
-  | TrainerItemId
-  | typeof RewardId.VOUCHER
-  | typeof RewardId.VOUCHER_PLUS
-  | typeof RewardId.VOUCHER_PREMIUM
-  | typeof RewardId.ROGUE_BALL;
+// TODO: remove this
+export type SilentReward = TrainerItemId | HeldItemId | RewardId;
