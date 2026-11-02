@@ -1,6 +1,7 @@
 import { activeOverrides } from "#app/overrides";
 import { allMoves } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
+import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -13,6 +14,7 @@ import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { RandomMoveAttr } from "#types/move-types";
+import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
@@ -196,6 +198,71 @@ export class MoveHelper extends GameManagerHelper {
       return;
     }
     this.select(moveId, pkmIndex, targetIndex);
+  }
+
+  /**
+   * Extension of {@linkcode use} which also selects an item held by the user;
+   * used for Fling, Natural Gift, Trick etc
+   *
+   * @param moveId - The {@linkcode MoveId} to use
+   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified
+   * @param itemIndex - Which of the held items of the Pokémon to consume for the move
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves
+   * @remarks
+   * If you need to check for changes in the player's moveset as part of the test, it may be
+   * better to use {@linkcode changeMoveset} and {@linkcode select} instead.
+   */
+  public useWithItem(
+    moveId: MoveId,
+    itemIndex = 0,
+    pkmIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2 = BattlerIndex.PLAYER,
+    targetIndex?: BattlerIndex,
+  ): void {
+    if ([activeOverrides.MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(activeOverrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      console.warn("Warning: `MoveHelper.use` overwriting player pokemon moveset and disabling moveset override!");
+    }
+
+    // Clear out both the normal and temporary movesets before setting the move.
+    const pokemon = this.game.scene.getPlayerField()[pkmIndex];
+    pokemon.moveset.splice(0);
+    pokemon.summonData.moveset?.splice(0);
+    pokemon.setMove(0, moveId);
+
+    const movePosition = this.getMovePosition(pkmIndex, moveId);
+    if (movePosition === -1) {
+      expect.fail(
+        `MoveHelper.select called with move '${toTitleCase(MoveId[moveId])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
+            .getPlayerParty()
+            [pkmIndex].getMoveset()
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
+            .join(", ")}]`,
+      );
+    }
+
+    this.game.promptHandler.addToNextPrompt("CommandPhase", UiMode.COMMAND, () => {
+      this.game.scene.ui.setMode(
+        UiMode.FIGHT,
+        (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+      );
+    });
+    this.game.promptHandler.addToNextPrompt("CommandPhase", UiMode.FIGHT, () => {
+      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.FIGHT,
+        movePosition,
+        MoveUseMode.NORMAL,
+      );
+    });
+    this.game.promptHandler.addToNextPrompt("ItemSelectPhase", UiMode.OPTION_SELECT, () => {
+      (this.game.scene.ui.getHandler() as OptionSelectUiHandler).setCursor(itemIndex);
+      (this.game.scene.ui.getHandler() as OptionSelectUiHandler).processInput(Button.ACTION);
+    });
+
+    if (targetIndex !== null) {
+      this.game.selectTarget(movePosition, targetIndex);
+    }
   }
 
   /**
