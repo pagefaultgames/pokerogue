@@ -324,6 +324,11 @@ class DefaultOverrides {
    */
   readonly REWARD_OVERRIDE: RewardSpecs[] = [];
 
+  /**
+   * If `true`, skip the hidden items phase.
+   */
+  readonly SKIP_HIDDEN_ITEMS_OVERRIDE: boolean = false;
+
   /** If `true`, disable all non-scripted opponent trainer encounters. */
   // TODO: Merge into `BATTLE_TYPE_OVERRIDE`
   readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
