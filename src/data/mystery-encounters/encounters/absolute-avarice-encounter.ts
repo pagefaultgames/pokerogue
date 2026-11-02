@@ -37,6 +37,7 @@ import { randInt } from "#utils/common";
 import { weightedPick } from "#utils/random";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
+import type Phaser from "phaser";
 import type { NonEmptyTuple } from "type-fest";
 
 /** the i18n namespace for this encounter */

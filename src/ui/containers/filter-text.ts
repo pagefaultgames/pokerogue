@@ -9,6 +9,7 @@ import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export enum FilterTextRow {
   NAME,

@@ -37,6 +37,7 @@ import { VariantTier } from "#enums/variant-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { getIvsFromId, randInt, randomString, randSeedFloat, randSeedInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export const EGG_SEED = 1073741824;
 

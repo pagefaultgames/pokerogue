@@ -5,6 +5,7 @@ import type { MappingSettingName } from "#types/inputs";
 import { specialIconKeys, specialIcons } from "#ui/special-icons";
 import { addTextObject, setTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import Phaser from "phaser";
 
 /**
  * A reusable UI container that manages tab-based navigation.

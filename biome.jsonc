@@ -310,7 +310,7 @@
       "arrowParentheses": "asNeeded",
       "operatorLinebreak": "before"
     },
-    "globals": ["Phaser"],
+    "globals": [],
     "parser": {
       "jsxEverywhere": false
     }

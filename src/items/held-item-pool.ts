@@ -26,6 +26,7 @@ import type {
 import { randSeedInt } from "#utils/common";
 import { isCategoryId, isHeldItemPool, isItemInCategory, isItemInRequested } from "#utils/item-utils";
 import { weightedPick } from "#utils/random";
+import Phaser from "phaser";
 import type { NonEmptyTuple } from "type-fest";
 
 /** `LUXURY` is never rolled for held item pools. */
