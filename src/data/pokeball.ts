@@ -1,6 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { PokeballType } from "#enums/pokeball";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -94,7 +95,9 @@ export function getCriticalCaptureChance(modifiedCatchRate: number): number {
   }
   const dexCount = globalScene.gameData.getSpeciesCount(d => !!d.caughtAttr);
   const catchingCharmMultiplier = new NumberHolder(1);
-  globalScene.findModifier(m => m.is("CriticalCatchChanceBoosterModifier"))?.apply(catchingCharmMultiplier);
+  globalScene.applyPlayerItems(TrainerItemEffect.CRITICAL_CATCH_CHANCE_BOOSTER, {
+    numberHolder: catchingCharmMultiplier,
+  });
   const dexMultiplier =
     globalScene.gameMode.isDaily || dexCount > 800
       ? 2.5

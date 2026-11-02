@@ -28,6 +28,7 @@ import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import type { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -42,7 +43,6 @@ import {
   WeatherChangedEvent,
 } from "#events/arena";
 import type { Pokemon } from "#field/pokemon";
-import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import { isFieldTargeted } from "#moves/move-utils";
 import type { ArenaPokemonPools, TrainerPools } from "#types/biomes";
@@ -53,6 +53,7 @@ import type { TypedEventTarget } from "#types/typed-event-target";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
+import { applyHeldItems } from "#utils/item-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import type { NonEmptyTuple, Writable } from "type-fest";
@@ -296,7 +297,7 @@ export class Arena {
 
     if (user != null) {
       weatherDuration.value = 5;
-      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT_EXTEND, { pokemon: user, fieldEffectDuration: weatherDuration });
     }
 
     if (weather === WeatherType.NONE) {
@@ -425,7 +426,7 @@ export class Arena {
 
     if (user != null) {
       terrainDuration.value = 5;
-      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT_EXTEND, { pokemon: user, fieldEffectDuration: terrainDuration });
     }
 
     if (terrain === TerrainType.NONE) {

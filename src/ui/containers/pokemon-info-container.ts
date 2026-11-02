@@ -441,7 +441,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       this.setVisible(true);
-      globalScene.hideEnemyModifierBar();
+      globalScene.hideEnemyItemBar();
     });
   }
 
@@ -490,7 +490,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
   public async hide(speedMultiplier = 1): Promise<void> {
     if (!this.visible) {
-      globalScene.showEnemyModifierBar();
+      globalScene.showEnemyItemBar();
       return;
     }
 
@@ -514,6 +514,6 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
       .off("pointerover")
       .off("pointerout");
     globalScene.ui.hideTooltip();
-    globalScene.showEnemyModifierBar();
+    globalScene.showEnemyItemBar();
   }
 }

@@ -4,7 +4,7 @@ import { BiomeId } from "#enums/biome-id";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/framework/game-manager";
@@ -161,7 +161,7 @@ describe("Phase - Battle Phase", () => {
       .startingLevel(100)
       .moveset([moveToUse])
       .enemyMoveset(MoveId.SPLASH)
-      .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
+      .startingTrainerItems([{ entry: TrainerItemId.X_ACCURACY }]);
 
     await game.classicMode.startBattle(SpeciesId.SAWK, SpeciesId.FEEBAS);
     game.field.getPlayerPokemon().hp = 1;
@@ -169,7 +169,7 @@ describe("Phase - Battle Phase", () => {
 
     await game.phaseInterceptor.to("BattleEndPhase");
     game.doRevivePokemon(0); // pretend max revive was picked
-    game.doSelectModifier();
+    game.doSelectReward();
 
     game.onNextPrompt(
       "SwitchPhase",
@@ -196,8 +196,8 @@ describe("Phase - Battle Phase", () => {
     let rewardsShown = false;
 
     game.promptHandler.addToNextPrompt(
-      "SelectModifierPhase",
-      UiMode.MODIFIER_SELECT,
+      "SelectRewardPhase",
+      UiMode.REWARD_SELECT,
       () => {
         rewardsShown = true;
         game.endPhase();

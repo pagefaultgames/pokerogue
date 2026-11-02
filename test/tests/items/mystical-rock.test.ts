@@ -1,5 +1,6 @@
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
@@ -19,14 +20,14 @@ describe("Items - Mystical Rock", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-
     game.override
-      .enemySpecies(SpeciesId.SHUCKLE)
-      .enemyMoveset(MoveId.SPLASH)
+      .battleStyle("single")
+      .criticalHits(false)
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([MoveId.SUNNY_DAY, MoveId.GRASSY_TERRAIN])
-      .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
-      .battleStyle("single");
+      .enemyMoveset(MoveId.SPLASH)
+      .startingHeldItems([{ entry: HeldItemId.MYSTICAL_ROCK, count: 2 }]);
   });
 
   it("should increase weather duration by +2 turns per stack", async () => {

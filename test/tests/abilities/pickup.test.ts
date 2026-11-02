@@ -6,7 +6,7 @@
 
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
@@ -38,7 +38,7 @@ describe("Ability - Pickup", () => {
   });
 
   it("should grab one of the enemies' items after the end of a battle", async () => {
-    game.override.enemyHeldItems([{ name: "BERRY", type: BerryType.LUM }]);
+    game.override.enemyHeldItems([{ entry: HeldItemId.LUM_BERRY }]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
@@ -53,8 +53,8 @@ describe("Ability - Pickup", () => {
 
   it("should grab one of the enemies' items in a double battle if the other is caught", async () => {
     game.override //
-      .battleStyle("double")
-      .enemyHeldItems([{ name: "BERRY", type: BerryType.LUM }]);
+      .battleStyle("double");
+    game.override.enemyHeldItems([{ entry: HeldItemId.LUM_BERRY }]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();

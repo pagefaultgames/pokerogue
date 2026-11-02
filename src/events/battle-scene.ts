@@ -1,4 +1,5 @@
-import type { BerryModifier } from "#modifiers/modifier";
+import type { BerryItemId } from "#enums/held-item-id";
+import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 
 /** Alias for all {@linkcode BattleScene} events */
@@ -55,12 +56,15 @@ export class MoveUsedEvent extends Event {
 }
 /** Container class for {@linkcode BattleSceneEventType.BERRY_USED} events */
 export class BerryUsedEvent extends Event {
-  /** The {@linkcode BerryModifier} being used */
-  public berryModifier: BerryModifier;
-  constructor(berry: BerryModifier) {
+  public pokemon: Pokemon;
+  /** The {@linkcode BerryItemId} being used */
+  public berryType: BerryItemId;
+
+  constructor(pokemon: Pokemon, berryType: BerryItemId) {
     super(BattleSceneEventType.BERRY_USED);
 
-    this.berryModifier = berry;
+    this.pokemon = pokemon;
+    this.berryType = berryType;
   }
 }
 

@@ -6,6 +6,7 @@ import { starterColors } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
@@ -163,7 +164,7 @@ export function willTerastallize(pokemon: Pokemon): boolean {
  * @returns Whether
  */
 export function canSpeciesTera(pokemon: Pokemon): boolean {
-  const hasTeraMod = globalScene.findModifier(modifier => modifier.is("TerastallizeAccessModifier")) != null;
+  const hasTeraMod = globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB);
   const isBlockedForm = pokemon.isMega() || pokemon.isMax() || pokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
   return hasTeraMod && !isBlockedForm;
 }

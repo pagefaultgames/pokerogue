@@ -3,6 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { HitCheckResult } from "#enums/hit-check-result";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
@@ -49,7 +50,7 @@ describe("Abilities - No Guard", () => {
   });
 
   it("should guarantee double battle with any one LURE", async () => {
-    game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
+    game.override.startingTrainerItems([{ entry: TrainerItemId.LURE }]).startingWave(2);
 
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 

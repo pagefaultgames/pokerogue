@@ -47,7 +47,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.doSelectModifier();
+    game.doSelectReward();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(zygarde!.formIndex).toBe(baseForm);
@@ -73,7 +73,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.doSelectModifier();
+    game.doSelectReward();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(zygarde!.formIndex).toBe(baseForm);

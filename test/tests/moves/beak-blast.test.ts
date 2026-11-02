@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -77,6 +78,19 @@ describe("Moves - Beak Blast", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.BURN);
+  });
+
+  it("should only hit twice with Multi-Lens", async () => {
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]);
+
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE);
+
+    const leadPokemon = game.field.getPlayerPokemon();
+
+    game.move.select(MoveId.BEAK_BLAST);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(leadPokemon.turnData.hitCount).toBe(2);
   });
 
   it("should be blocked by Protect", async () => {

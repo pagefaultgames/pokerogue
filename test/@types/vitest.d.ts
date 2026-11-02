@@ -12,6 +12,7 @@ import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
@@ -23,8 +24,10 @@ import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/framework/game-manager";
+import type { ToHaveAppliedItemOptions } from "#test/matchers/to-have-applied-item";
 import type { PartiallyFilledArenaTag } from "#test/matchers/to-have-arena-tag";
 import type { PartiallyFilledBattlerTag } from "#test/matchers/to-have-battler-tag";
+import type { ExpectedHeldItemType } from "#test/matchers/to-have-held-item";
 import type { ToHaveHpOptions } from "#test/matchers/to-have-hp";
 import type { PartiallyFilledPositionalTag } from "#test/matchers/to-have-positional-tag";
 import type { PartiallyFilledStatus } from "#test/matchers/to-have-status-effect";
@@ -312,6 +315,20 @@ interface ArenaMatchersNegative {
 
 interface PokemonMatchers {
   /**
+   * Check whether a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.
+   * Used during unit tests to ensure effects were applied correctly.
+   * @param id - The {@linkcode HeldItemId} of the item being applied
+   * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect} whose application will be checked
+   * @param options - A partially-filled parameters object used to query the arguments `item` was called with
+   */
+  // TODO: Should `options` truly be optional?
+  toHaveAppliedItem<T extends ApplicableHeldItemIdEffect, E extends ExtractItemEffect<T>>(
+    id: T,
+    effect: E,
+    options?: ToHaveAppliedItemOptions<E>,
+  ): void;
+
+  /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
    * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array); must be non-empty
    * @param options - The {@linkcode ToHaveTypesOptions | options} passed to the matcher
@@ -442,6 +459,20 @@ interface PokemonMatchers {
    * or does not contain exactly one copy of `moveId`.
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;
+
+  /**
+   * Check whether a {@linkcode Pokemon} has a given held item.
+   * @param received - The object to check. Should be a {@linkcode Pokemon}
+   * @param expectedId - The {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check
+   * @param count - (Default `1`) The number of items that should be present
+   */
+  toHaveHeldItem(expectedId: HeldItemId | HeldItemCategoryId, count?: number): void;
+  /**
+   * Check whether a {@linkcode Pokemon} has a given held item.
+   * @param received - The object to check. Should be a {@linkcode Pokemon}
+   * @param expectedSpecs - A partially-filled {@linkcode HeldItemSpecs} containing the desired values
+   */
+  toHaveHeldItem(expectedSpecs: ExpectedHeldItemType): void;
 }
 
 // #endregion Pokemon Matchers

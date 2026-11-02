@@ -14,7 +14,6 @@ import type { ArenaData } from "#system/arena-data";
 import type { ChallengeData } from "#system/challenge-data";
 import type { EggData } from "#system/egg-data";
 import type { GameStats } from "#system/game-stats";
-import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
 import type { RibbonData } from "#system/ribbon-data";
 import type { TrainerData } from "#system/trainer-data";
@@ -24,6 +23,7 @@ import type { StarterSpeciesId } from "#types/starter-species-id";
 // #region Server-backed fields
 
 //! IMPORTANT: Changes to these types require changes to rogueserver!
+import type { TrainerItemSaveData } from "./trainer-item-data-types";
 
 export type AppliedMigrators = { [key: string]: number };
 
@@ -53,8 +53,8 @@ export interface SessionSaveData {
   dailyConfig?: SerializedDailyRunConfig;
   party: PokemonData[];
   enemyParty: PokemonData[];
-  modifiers: ModifierData[];
-  enemyModifiers: ModifierData[];
+  trainerItems: TrainerItemSaveData;
+  enemyTrainerItems: TrainerItemSaveData;
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
   money: number;

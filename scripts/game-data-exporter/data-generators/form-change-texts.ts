@@ -24,7 +24,7 @@ import {
   SpeciesFormChangeWeatherTrigger,
 } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
-import { FormChangeItem } from "#enums/form-change-item";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { SUPPORTED_LANGUAGES } from "#system/supported-languages";
@@ -71,7 +71,7 @@ function getTriggerText(trigger: SpeciesFormChangeTrigger, t: TFunction): string
     case trigger instanceof SpeciesFormChangeAbilityTrigger:
       return [t("pokemonEvolutions:forms.ability")];
     case trigger instanceof SpeciesFormChangeItemTrigger: {
-      const item = t(`modifierType:FormChangeItem.${FormChangeItem[trigger.item]}`);
+      const item = t(`modifierType:FormChangeItem.${FormChangeItemId[trigger.item]}`);
       const key = trigger.active ? "pokemonEvolutions:forms.item" : "pokemonEvolutions:forms.deactivateItem";
       return [t(key, { item })];
     }

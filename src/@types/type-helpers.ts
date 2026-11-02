@@ -1,5 +1,6 @@
-/*
- * A collection of custom utility types that aid in type checking and ensuring strict type conformity
+/**
+ * A collection of custom utility types that aid in type checking and ensuring strict type conformity.
+ * @module
  */
 
 // biome-ignore assist/source/organizeImports: temporary until re-exports are removed
@@ -29,9 +30,11 @@ export type { RequiredKeysOf as RequiredKeys };
  *
  * @typeParam T - The type to match exactly
  */
-export type Exact<T> = {
-  [K in keyof T]: T[K];
-};
+export type Exact<T> = T extends object
+  ? {
+      [K in keyof T]: T[K];
+    }
+  : T;
 
 /**
  * Type hint that indicates that the type is intended to be closed to a specific shape.

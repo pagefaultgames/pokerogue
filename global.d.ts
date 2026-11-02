@@ -1,6 +1,7 @@
 import type { Stringable, Stringify, Unstringify } from "#types/strings";
 import type { PreventHoverExpansion } from "#types/type-helpers";
 import type { SetupServer } from "msw/node";
+import type { Writable } from "type-fest";
 
 // #region Object-related types
 
@@ -79,6 +80,15 @@ declare global {
   // Override for `Array.isArray` to not remove `readonly`-ness from arrays known to be readonly
   interface ArrayConstructor {
     isArray<T>(arg: readonly T[]): arg is readonly T[];
+  }
+
+  // Overrides for Array.map to map over tuples and readonly tuples
+  interface ReadonlyArray<T> {
+    map<U>(callbackfn: (value: T, index: number, array: this) => U, thisArg?: any): Writable<{ [K in keyof this]: U }>;
+  }
+
+  interface Array<T> {
+    map<U>(callbackfn: (value: T, index: number, array: this) => U, thisArg?: any): { [K in keyof this]: U };
   }
 }
 

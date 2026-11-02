@@ -49,9 +49,9 @@ describe("EggLapsePhase", () => {
 
   /** Run until the post-battle reward shop opens. */
   async function toShop(): Promise<void> {
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
     // Leaving the egg hatch UI fades out before the shop is shown
-    await vi.waitUntil(() => game.scene.ui.mode === UiMode.MODIFIER_SELECT);
+    await vi.waitUntil(() => game.scene.ui.mode === UiMode.REWARD_SELECT);
   }
 
   function countPhase(phaseName: "EggHatchPhase" | "EggSummaryPhase"): number {
@@ -69,7 +69,7 @@ describe("EggLapsePhase", () => {
     expect(game.scene.gameData.eggs).toHaveLength(0);
     expect(countPhase("EggHatchPhase")).toBe(2);
     expect(countPhase("EggSummaryPhase")).toBe(0);
-    expect(game).toBeAtPhase("SelectModifierPhase");
+    expect(game).toBeAtPhase("SelectRewardPhase");
   });
 
   it("should hatch a single egg normally with egg skip set to 'Never'", async () => {
@@ -83,7 +83,7 @@ describe("EggLapsePhase", () => {
     expect(game.scene.gameData.eggs).toHaveLength(0);
     expect(countPhase("EggHatchPhase")).toBe(1);
     expect(countPhase("EggSummaryPhase")).toBe(0);
-    expect(game).toBeAtPhase("SelectModifierPhase");
+    expect(game).toBeAtPhase("SelectRewardPhase");
   });
 
   it("should skip hatch animations and show the summary when 2+ eggs hatch with egg skip set to 'Always'", async () => {
@@ -103,7 +103,7 @@ describe("EggLapsePhase", () => {
     expect(game.scene.gameData.eggs).toHaveLength(0);
     expect(countPhase("EggHatchPhase")).toBe(0);
     expect(countPhase("EggSummaryPhase")).toBe(1);
-    expect(game).toBeAtPhase("SelectModifierPhase");
+    expect(game).toBeAtPhase("SelectRewardPhase");
   });
 
   it("should only count down eggs that are not ready to hatch", async () => {
@@ -118,6 +118,6 @@ describe("EggLapsePhase", () => {
     expect(game.phaseInterceptor.phaseLog).toContain("EggLapsePhase");
     expect(countPhase("EggHatchPhase")).toBe(0);
     expect(countPhase("EggSummaryPhase")).toBe(0);
-    expect(game).toBeAtPhase("SelectModifierPhase");
+    expect(game).toBeAtPhase("SelectRewardPhase");
   });
 });

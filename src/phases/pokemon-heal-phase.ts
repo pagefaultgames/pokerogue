@@ -5,7 +5,7 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
-import { HealingBoosterModifier } from "#modifiers/modifier";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { HealAchv } from "#system/achv";
 import { toDmgValue } from "#utils/common";
@@ -190,7 +190,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     // (or 1 below max for healing tokens).
     // Liquid Ooze damage (being negative) remains uncapped as normal.
     const healMult = new ValueHolder(1);
-    globalScene.applyModifiers(HealingBoosterModifier, this.player, healMult);
+    globalScene.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: healMult });
     // TODO: we need to round liquid ooze dmg towards 0, not down
     return Math.min(Math.floor(this.hpHealed * healMult.value), this.getPokemon().getMaxHp() - +this.preventFullHeal);
   }

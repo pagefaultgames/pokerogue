@@ -189,7 +189,7 @@ describe("Abilities - Ice Face", () => {
     game.move.select(MoveId.ICE_BEAM);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.doSelectModifier();
+    game.doSelectReward();
     await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(eiscue.formIndex).toBe(icefaceForm);

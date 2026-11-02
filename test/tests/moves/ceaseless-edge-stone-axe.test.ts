@@ -1,6 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -72,7 +73,7 @@ describe.each<{ name: string; move: MoveId; hazard: EntryHazardTagType; hazardNa
   it.runIf(move === MoveId.CEASELESS_EDGE)(
     "should apply 1 layer of spikes per hit when given multiple hits",
     async () => {
-      game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
+      game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]);
       await game.classicMode.startBattle(SpeciesId.ILLUMISE);
 
       game.move.use(MoveId.CEASELESS_EDGE);

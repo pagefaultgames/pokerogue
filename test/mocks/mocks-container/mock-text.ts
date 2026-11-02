@@ -366,4 +366,8 @@ export class MockText implements MockGameObject {
   enableFilters(): this {
     return this;
   }
+
+  setLetterSpacing(_spacing?: number | undefined): this {
+    return this;
+  }
 }

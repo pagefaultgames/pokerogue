@@ -387,7 +387,7 @@ export const displaySettingUiItems: SettingsUiItem<DisplaySettingsKey>[] = [
     key: "shopCursorTarget",
     label: t("settings:shopCursorTarget"),
     options: [
-      { value: ShopCursorTarget.REWARDS, label: t("settings:rewards") },
+      { value: ShopCursorTarget.REWARDS, label: t("settings:allRewards") },
       { value: ShopCursorTarget.SHOP, label: t("settings:shop") },
       { value: ShopCursorTarget.REROLL, label: t("settings:reroll") },
       { value: ShopCursorTarget.CHECK_TEAM, label: t("settings:checkTeam") },

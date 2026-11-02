@@ -7,6 +7,7 @@
 
 import "./i18n"; // needs to be imported first
 
+import { initHeldItems } from "#items/all-held-items";
 import { existsSync, rmSync } from "node:fs";
 import chalk, { type ChalkInstance } from "chalk";
 import { cliArgs, OUTPUT_DIR, SCRIPT_VERSION } from "./constants";
@@ -21,6 +22,7 @@ import { generateTmTiersData } from "./data-generators/tms";
 chalk.level = 2;
 
 async function main(): Promise<void> {
+  initHeldItems();
   const startTime = performance.now();
   const { clean, debug } = cliArgs;
   let hasPrintedTimer = false;

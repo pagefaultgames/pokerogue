@@ -28,7 +28,7 @@ describe("Challenges - Limited Catch", () => {
       .enemySpecies(SpeciesId.VOLTORB)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .startingModifier([{ name: "MASTER_BALL", count: 1 }]);
+      .startingPokeballs({ [PokeballType.MASTER_BALL]: 1 });
   });
 
   it("should allow wild Pokémon to be caught on X1 waves", async () => {
