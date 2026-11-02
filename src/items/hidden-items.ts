@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { activeOverrides } from "#app/overrides";
 import { BiomeId } from "#enums/biome-id";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
@@ -21,6 +22,11 @@ const LUCK_MULTIPLIER = 0.01;
 
 export function findHiddenItems(): Promise<void> {
   return new Promise<void>(resolve => {
+    if (activeOverrides.SKIP_HIDDEN_ITEMS_OVERRIDE) {
+      resolve();
+      return;
+    }
+
     const rewardOptions: RewardOption[] = [];
 
     const biomeId = globalScene.arena.biomeId;
