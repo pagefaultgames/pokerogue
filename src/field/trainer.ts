@@ -498,6 +498,12 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     console.log(ret.getName());
 
+    const specialtyType = this.config.specialtyType;
+    // Retry if a species that loses the specialty type on evolution is generated after it would evolve
+    if (this.config.hasSpecialtyType() && baseSpecies.isOfType(specialtyType) && !ret.isOfType(specialtyType)) {
+      retry = true;
+    }
+
     // Retry if an evolved mon was rolled but it wouldn't be evolved at this point
     if (speciesDataRegistry.getPrevolutionChain(baseSpecies.speciesId).includes(ret.speciesId)) {
       retry = true;
