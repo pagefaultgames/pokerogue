@@ -983,6 +983,8 @@ export class GameData {
 
     globalScene.trainerItems.clearItems();
     globalScene.assignTrainerItemsFromSaveData(fromSession.trainerItems, true);
+    globalScene.enemyTrainerItems.clearItems();
+    globalScene.assignTrainerItemsFromSaveData(fromSession.enemyTrainerItems, false);
 
     globalScene.updateItemBar(true);
     globalScene.updateItemBar(false);

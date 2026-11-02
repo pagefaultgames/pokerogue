@@ -44,10 +44,7 @@ enum BerryType {
  */
 function isLegacyModifierEntry(entry: Record<string, unknown>): entry is Record<string, unknown> & LegacyModifierEntry {
   return (
-    typeof entry.className === "string"
-    && typeof entry.typeId === "string"
-    && typeof entry.stackCount === "number"
-    && Array.isArray(entry.args)
+    typeof entry.className === "string" && typeof entry.typeId === "string" && typeof entry.stackCount === "number"
   );
 }
 
@@ -95,6 +92,8 @@ const uniqueModifierToItem: Record<string, HeldItemId> = {
   TurnHeldItemTransferModifier: HeldItemId.MINI_BLACK_HOLE,
   ContactHeldItemTransferChanceModifier: HeldItemId.GRIP_CLAW,
   EvolutionStatBoosterModifier: HeldItemId.EVIOLITE,
+  // For some reason it seems that Eviolite can saved as a StatBoosterModifier; this should only happens for this item
+  StatBoosterModifier: HeldItemId.EVIOLITE,
   CritBoosterModifier: HeldItemId.SCOPE_LENS,
   SpeciesCritBoosterModifier: HeldItemId.LEEK,
 } as const;
@@ -400,7 +399,8 @@ export function convertModifierSaveData(data: readonly Record<string, unknown>[]
       console.warn("Skipping malformed modifier entry during item migration:", entry);
       continue;
     }
-    const { typeId, args, stackCount, className } = entry;
+    let { typeId, args, stackCount, className } = entry;
+    args ??= [];
 
     if (className === "PokemonFormChangeItemModifier") {
       const [pokemonId, oldFormChangeItem, active] = args as PokemonFormChangeItemModifierArgs;
