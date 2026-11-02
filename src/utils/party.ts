@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { getDailyEventSeedLuck } from "#data/daily-run";
 import { RarityTier } from "#enums/reward-tier";
 import { getRarityTierTextTint } from "#ui/text";
+import Phaser from "phaser";
 import { randSeedInt } from "./common";
 import { ValueHolder } from "./value-holder";
 

@@ -6,7 +6,7 @@ import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { addBBCodeTextObject } from "#ui/text";
 import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import { getFrameMs } from "#utils/common";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;

@@ -938,8 +938,9 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     this.itemContainer.add(this.item);
 
     if (!this.rewardOption.cost && !this.rewardOption.source) {
-      this.itemTint = getItem();
-      this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
+      this.itemTint = getItem()
+        .setTint(Phaser.Display.Color.GetColor(255, 192, 255))
+        .setTintMode(Phaser.TintModes.FILL);
       this.itemContainer.add(this.itemTint);
     }
 
@@ -1064,7 +1065,12 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
                 audioManager.playSound("se/upgrade", {
                   rate: 1 + 0.25 * u,
                 });
-                this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
+                this.pbTint
+                  .setPosition(this.pb.x, this.pb.y)
+                  .setTint(0xffffff)
+                  .setTintMode(Phaser.TintModes.FILL)
+                  .setVisible(true)
+                  .setAlpha(0);
               },
               targets: this.pbTint,
               alpha: 1,

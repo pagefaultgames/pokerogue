@@ -8,6 +8,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { GameManager } from "#test/framework/game-manager";
 import { stringifyEnumArray } from "#test/utils/string-utils";
 import { getPartyLuckValue } from "#utils/party";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Daily Mode", () => {

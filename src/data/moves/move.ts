@@ -143,6 +143,7 @@ import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 // TODO: Make these (and all condition functions actually)
@@ -8423,7 +8424,8 @@ export class SketchAttr extends MoveEffectAttr {
 
       const targetMove = target.getLastNonVirtualMove();
       return (
-        targetMove != null
+        !user.isTransformed()
+        && targetMove != null
         && !invalidSketchMoves.has(targetMove.move)
         && user.getMoveset().every(m => m.moveId !== targetMove.move)
       );

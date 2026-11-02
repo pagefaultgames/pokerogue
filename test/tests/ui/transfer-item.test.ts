@@ -8,7 +8,7 @@ import { GameManager } from "#test/framework/game-manager";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("UI - Transfer Items", () => {

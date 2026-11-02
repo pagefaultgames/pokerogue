@@ -12,6 +12,7 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes
 import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/absoluteAvarice";

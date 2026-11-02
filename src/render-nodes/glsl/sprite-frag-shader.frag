@@ -12,13 +12,16 @@ precision highp float;
 precision mediump float;
 #endif
 
-uniform sampler2D uMainSampler[%count%];
+uniform sampler2D uMainSampler[2]; // 0: sprite texture, 1: tera pattern
 
 varying vec2 outTexCoord;
-varying float outTexId;
-varying vec2 outPosition;
-varying float outTintEffect;
+varying float outTexDatum;
+varying vec4 outTintEffect; // v4: .rgb = secondary tint, .a = tint mode
 varying vec4 outTint;
+varying vec2 outPosition;
+
+uniform float tintModeFill; // Phaser.TintModes.FILL
+uniform float vSign;        // direction of v from the frame's top to its bottom
 
 uniform float time;
 uniform bool ignoreTimeTint;
@@ -48,11 +51,11 @@ uniform ivec4 fusionSpriteColors[32];
 const vec3 lumaF = vec3(.299, .587, .114);
 
 float blendOverlay(float base, float blend) {
-	return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
+	return base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend));
 }
 
 vec3 blendOverlay(vec3 base, vec3 blend) {
-	return vec3(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b));
+	return vec3(blendOverlay(base.r, blend.r), blendOverlay(base.g, blend.g), blendOverlay(base.b, blend.b));
 }
 
 vec3 blendHardLight(vec3 base, vec3 blend) {
@@ -97,7 +100,7 @@ vec3 rgb2hsl(vec3 color) {
 		float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
 		float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
 
-		if (color.r == fmax )
+		if (color.r == fmax)
 			hsl.x = deltaB - deltaG;
 		else if (color.g == fmax)
 			hsl.x = (1.0 / 3.0) + deltaR - deltaB;
@@ -128,9 +131,9 @@ vec3 hsl2rgb(vec3 hsl) {
 
 		float f1 = 2.0 * hsl.z - f2;
 
-		rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
+		rgb.r = hue2rgb(f1, f2, hsl.x + (1.0 / 3.0));
 		rgb.g = hue2rgb(f1, f2, hsl.x);
-		rgb.b= hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+		rgb.b = hue2rgb(f1, f2, hsl.x - (1.0 / 3.0));
 	}
 
 	return rgb;
@@ -160,19 +163,21 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
 	vec4 texture = texture2D(uMainSampler[0], outTexCoord);
 
+	/* Shiny variant palette swap */
 	for (int i = 0; i < 32; i++) {
 		if (baseVariantColors[i].a == 0.0)
 			break;
-		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - baseVariantColors[i].rgb), vec3(0.5/255.0)))) {
+		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - baseVariantColors[i].rgb), vec3(0.5 / 255.0)))) {
 			texture.rgb = variantColors[i].rgb;
 			break;
 		}
 	}
 
+	/* Fusion palette swap */
 	for (int i = 0; i < 32; i++) {
 		if (spriteColors[i][3] == 0.0)
 			break;
-		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - spriteColors[i].rgb), vec3(0.5/255.0)))) {
+		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - spriteColors[i].rgb), vec3(0.5 / 255.0)))) {
 			vec3 fusionColor = vec3(fusionSpriteColors[i].rgb) / 255.0;
 			vec3 bg = spriteColors[i].rgb;
 			float gray = (bg.r + bg.g + bg.b) / 3.0;
@@ -188,13 +193,19 @@ void main() {
 	//  Multiply texture tint
 	vec4 color = texture * texel;
 
+	/* Tera */
 	if (color.a > 0.0 && all(lessThan(vec3(0.0), teraColor))) {
 		vec2 relUv = (outTexCoord.xy - texFrameUv.xy) / (size.xy / texSize.xy);
+		relUv.y *= vSign; // v4: keep relUv.y increasing downward from the frame's top, as in v3
 		vec2 teraTexCoord = vec2(relUv.x * (size.x / 200.0), relUv.y * (size.y / 120.0));
 		vec4 teraCol = texture2D(uMainSampler[1], teraTexCoord);
 		float floorValue = 86.0 / 255.0;
 		vec3 teraPatternHsv = rgb2hsv(teraCol.rgb);
-		teraCol.rgb = hsv2rgb(vec3((teraPatternHsv.b - floorValue) * 4.0 + teraTexCoord.x * fieldScale / 2.0 + teraTexCoord.y * fieldScale / 2.0 + teraTime * 255.0, teraPatternHsv.b, teraPatternHsv.b));
+		teraCol.rgb = hsv2rgb(vec3(
+			(teraPatternHsv.b - floorValue) * 4.0 + teraTexCoord.x * fieldScale / 2.0 + teraTexCoord.y * fieldScale / 2.0 + teraTime * 255.0,
+			teraPatternHsv.b,
+			teraPatternHsv.b
+		));
 
 		color.rgb = mix(color.rgb, blendHue(color.rgb, teraColor), 0.625);
 		teraCol.rgb = mix(teraCol.rgb, teraColor, 0.5);
@@ -206,13 +217,11 @@ void main() {
 		}
 	}
 
-	if (outTintEffect == 1.0) {
-		//  Solid color + texture alpha
+	/* Tint fill (v3: outTintEffect == 1.0). v4 stores the tint mode in outTintEffect.a. */
+	if (abs(outTintEffect.a - tintModeFill) < 0.5) {
 		color.rgb = mix(texture.rgb, outTint.bgr * outTint.a, texture.a);
-	} else if (outTintEffect == 2.0) {
-		//  Solid color, no texture
-		color = texel;
 	}
+	// v3's `outTintEffect == 2.0` ("solid color, no texture") has no v4 equivalent and is removed.
 
 	/* Apply gray */
 	float luma = dot(color.rgb, lumaF);
@@ -248,6 +257,7 @@ void main() {
 		color.rgb = blendHardLight(color.rgb, dayNightTint);
 	}
 
+	/* Shadow */
 	if (hasShadow) {
 		float width = size.x - (yOffset / 2.0);
 
@@ -260,9 +270,9 @@ void main() {
 			spriteY += 1.0;
 		}
 
-		bool yOverflow = outTexCoord.y >= vCutoff;
+		bool yOverflow = (outTexCoord.y - vCutoff) * vSign > 0.0; // v3: outTexCoord.y >= vCutoff
 
-		if ((spriteY >= 0.9 && (color.a == 0.0 || yOverflow))) {
+		if (spriteY >= 0.9 && (color.a == 0.0 || yOverflow)) {
 			float shadowSpriteY = (spriteY - 0.9) * (1.0 / 0.15);
 			if (distance(vec2(spriteX, shadowSpriteY), vec2(0.5)) < 0.5) {
 				color = vec4(vec3(0.0), 0.5);

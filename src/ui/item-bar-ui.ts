@@ -4,6 +4,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
+import Phaser from "phaser";
 
 const iconOverflowIndex = 24;
 

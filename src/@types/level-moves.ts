@@ -12,4 +12,5 @@ export interface LevelMoveContext {
   pokemonFormKey: string;
   fusionSpeciesForm?: PokemonSpeciesForm | undefined;
   fusionFormKey?: string | undefined;
+  includeDuplicates?: boolean | undefined;
 }
