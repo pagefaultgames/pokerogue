@@ -183,11 +183,13 @@ const trainerItems = {
     .attr(EnemyStatusEffectHealChanceTrainerItemAttr, 0.025)
     .iconName("wl_full_heal")
     .build(),
-  [TrainerItemId.ENEMY_ENDURE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ENDURE_CHANCE, 10) //
+  [TrainerItemId.ENEMY_ENDURE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ENDURE_CHANCE, 2) //
     .attr(EnemyEndureChanceTrainerItemAttr)
+    .iconName("wl_reset_urge")
     .build(),
-  [TrainerItemId.ENEMY_FUSED_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_FUSED_CHANCE, 10) //
+  [TrainerItemId.ENEMY_FUSED_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_FUSED_CHANCE, 1) //
     .attr(EnemyFusionChanceTrainerItemAttr)
+    .iconName("wl_custom_spliced")
     .build(),
 } as const satisfies Readonly<Record<TrainerItemId, MarkerTrainerItem | TrainerItem>>;
 

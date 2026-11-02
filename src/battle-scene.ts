@@ -2409,6 +2409,7 @@ export class BattleScene extends SceneBase {
         }
       }
     });
+    globalScene.updateItemBar(isPlayer);
   }
 
   assignTrainerItemsFromSaveData(saveData: TrainerItemSaveData, isPlayer: boolean) {
