@@ -1,6 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { Pokemon } from "#field/pokemon";
+import Phaser from "phaser";
 
 export class PokeballTray extends Phaser.GameObjects.Container {
   private player: boolean;

@@ -270,7 +270,7 @@ input:-internal-autofill-selected {
   display: none;
 }
 
-/* Show cycle buttons only on STARTER_SELECT and on touch configuration panel */
+/* Show cycle buttons only on the UIs that use them (starter select, Pokedex, run info) and on touch configuration panel */
 #touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
     [data-ui-mode="POKEDEX"],
@@ -306,7 +306,8 @@ input:-internal-autofill-selected {
   #apadCycleGender,
 #touchControls:not([data-configuring]):not(
     [data-ui-mode="STARTER_SELECT"],
-    [data-ui-mode="POKEDEX"]
+    [data-ui-mode="POKEDEX"],
+    [data-ui-mode="POKEDEX_PAGE"]
   )
   #apadCycleTera {
   display: none;

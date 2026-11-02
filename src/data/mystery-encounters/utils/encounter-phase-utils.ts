@@ -48,6 +48,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter

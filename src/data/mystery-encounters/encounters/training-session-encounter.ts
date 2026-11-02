@@ -13,8 +13,12 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { getStatKey } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
-import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { PlayerPokemon } from "#field/pokemon";
+import {
+  getEncounterText,
+  queueEncounterMessage,
+  showEncounterText,
+} from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,
@@ -26,6 +30,7 @@ import { isPokemonValidForEncounterOptionSelection } from "#mystery-encounters/e
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { PartyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
 import type { OptionSelectItem } from "#types/ui-types";
 import { randSeedShuffle } from "#utils/common";
@@ -47,6 +52,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withDisallowedChallenges(Challenges.ABILITY_RANDOMIZER)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withScenePartySizeRequirement(2)
+  .withSceneRequirement(new PartyRequirement(pokemon => !pokemon.isFusion(), 1))
   .withFleeAllowed(false)
   .withHideWildIntroMessage(true)
   .withPreventGameStatsUpdates(true) // Do not count the Pokemon as seen or defeated since it is ours
@@ -89,12 +95,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           };
         };
 
-        // Only Pokemon that are not KOed/legal can be trained
-        const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
-        };
-
-        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
+        return selectPokemonForOption(onPokemonSelected, undefined, validatePokemonSelection);
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -201,12 +202,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           });
         };
 
-        // Only Pokemon that are not KOed/legal can be trained
-        const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
-        };
-
-        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
+        return selectPokemonForOption(onPokemonSelected, undefined, validatePokemonSelection);
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -287,12 +283,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           return optionSelectItems;
         };
 
-        // Only Pokemon that are not KOed/legal can be trained
-        const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
-        };
-
-        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
+        return selectPokemonForOption(onPokemonSelected, undefined, validatePokemonSelection);
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -381,4 +372,11 @@ function getEnemyConfig(playerPokemon: PlayerPokemon, segments: number): EnemyPa
       },
     ],
   };
+}
+
+function validatePokemonSelection(pokemon: PlayerPokemon): string | null {
+  if (pokemon.isFusion()) {
+    return getEncounterText(`${namespace}:noFusion`);
+  }
+  return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
 }

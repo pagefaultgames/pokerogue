@@ -3,6 +3,7 @@ import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { BaseStatParams } from "#types/held-item-parameter";
+import Phaser from "phaser";
 
 // TODO: Consider combining these 2 into a single base class for extensibility
 

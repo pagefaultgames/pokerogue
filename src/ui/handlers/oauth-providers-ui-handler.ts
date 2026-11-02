@@ -5,6 +5,7 @@ import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainerUiHandler {
   private discordImage: Phaser.GameObjects.Image;

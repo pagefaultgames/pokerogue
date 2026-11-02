@@ -5245,6 +5245,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.SPIKES,
       MoveId.THUNDER_WAVE,
+      MoveId.OUTRAGE,
     ],
   };
   generationEightSpeciesData[SpeciesId.CURSOLA] = {
@@ -8037,8 +8038,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
           abilityHidden: AbilityId.ANALYTIC,
           baseTotal: 635,
           baseHp: 100,
-          baseAtk: 120,
-          baseDef: 110,
+          baseAtk: 110,
+          baseDef: 120,
           baseSpatk: 160,
           baseSpdef: 85,
           baseSpd: 60,
@@ -10960,6 +10961,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.NIGHT_SLASH,
+      MoveId.OUTRAGE,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_PONYTA] = {

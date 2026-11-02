@@ -53,8 +53,8 @@ export const MISSING_VARIANT_PITY_GUARANTEE = 11;
 
 // Odds are 1/x
 // [COMMON, RARE, EPIC/MANAPHY, LEGEND]
-export const RARE_EGGMOVE_RATES: readonly number[] = [48, 24, 12, 6];
-export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [16, 12, 6, 3];
+export const RARE_EGGMOVE_RATES: readonly number[] = [36, 24, 12, 6];
+export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [12, 8, 6, 4];
 
 // #endregion Egg properties
 

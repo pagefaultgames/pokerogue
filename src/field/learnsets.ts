@@ -151,7 +151,6 @@ function filterAndSortLevelMoves(
   includeEvolutionMoves = false,
   includeRelearnerMoves = false,
 ): LevelMovesWithSource {
-  const ret: LevelMovesWithSource = [];
   levelMoves.sort(([lvlA, , sourceA], [lvlB, , sourceB]) => {
     if (lvlA !== lvlB) {
       return lvlA > lvlB ? 1 : -1;
@@ -199,12 +198,15 @@ function filterAndSortLevelMoves(
     );
   });
 
+  const ret: LevelMovesWithSource = [];
   /*
    * This must be done AFTER filtering by level, else if the same move shows up
    * in levelMoves multiple times all but the lowest level one will be skipped.
    * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
    */
-  if (levelMoves) {
+  if (context.includeDuplicates) {
+    ret.push(...levelMoves);
+  } else {
     getUniqueMoves(levelMoves, ret);
   }
 
