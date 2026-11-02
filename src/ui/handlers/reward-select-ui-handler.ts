@@ -177,7 +177,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   show(args: any[]): boolean {
     globalScene.disableMenu = false;
 
-    const params = args[0] as RewardSelectUiHandlerParams;
+    const params = args[0] ?? ({} as RewardSelectUiHandlerParams);
 
     if (this.active) {
       if (params.onActionInput) {
@@ -483,15 +483,27 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
           updateCursorTarget();
 
-          handleTutorial(Tutorial.SELECT_ITEM).then(res => {
-            if (res) {
-              updateCursorTarget();
-            }
-            if (params.onActionInput) {
-              this.awaitingActionInput = true;
-              this.onActionInput = params.onActionInput;
-            }
-          });
+          if (this.hideShop) {
+            handleTutorial(Tutorial.HIDDEN_ITEMS).then(res => {
+              if (res) {
+                updateCursorTarget();
+              }
+              if (params.onActionInput) {
+                this.awaitingActionInput = true;
+                this.onActionInput = params.onActionInput;
+              }
+            });
+          } else {
+            handleTutorial(Tutorial.SELECT_ITEM).then(res => {
+              if (res) {
+                updateCursorTarget();
+              }
+              if (params.onActionInput) {
+                this.awaitingActionInput = true;
+                this.onActionInput = params.onActionInput;
+              }
+            });
+          }
         });
       });
     });

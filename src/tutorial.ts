@@ -15,6 +15,7 @@ export enum Tutorial {
   POKERUS = "POKERUS",
   STAT_CHANGE = "STAT_CHANGE",
   SELECT_ITEM = "SELECT_ITEM",
+  HIDDEN_ITEMS = "HIDDEN_ITEMS",
   EGG_GACHA = "EGG_GACHA",
 }
 
@@ -77,7 +78,18 @@ const tutorialHandlers = {
       globalScene.ui.setModeWithoutClear(UiMode.MESSAGE).then(() => {
         showTutorialDialogue("tutorial:selectItem", () =>
           globalScene.ui.showText("", null, () =>
-            globalScene.ui.setModeWithoutClear(UiMode.REWARD_SELECT, {}).then(() => resolve()),
+            globalScene.ui.setModeWithoutClear(UiMode.REWARD_SELECT).then(() => resolve()),
+          ),
+        );
+      });
+    });
+  },
+  [Tutorial.HIDDEN_ITEMS]: () => {
+    return new Promise<void>(resolve => {
+      globalScene.ui.setModeWithoutClear(UiMode.MESSAGE).then(() => {
+        showTutorialDialogue("tutorial:hiddenItems", () =>
+          globalScene.ui.showText("", null, () =>
+            globalScene.ui.setModeWithoutClear(UiMode.REWARD_SELECT).then(() => resolve()),
           ),
         );
       });

@@ -76,7 +76,6 @@ describe("UI - Party switch mode", () => {
     await game.scene.ui.setMode(UiMode.REWARD_SELECT);
     const msHandler = game.scene.ui.getHandler() as RewardSelectUiHandler;
     msHandler.processInput(Button.CANCEL);
-    msHandler.processInput(Button.ACTION);
     const confirmHandler = game.scene.ui.getHandler() as ConfirmUiHandler;
     confirmHandler.processInput(Button.ACTION);
 
