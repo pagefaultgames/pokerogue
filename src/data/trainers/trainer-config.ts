@@ -250,7 +250,7 @@ export class TrainerConfig {
   /**
    * Sets the title from the i18n file.
    * @param title - The i18n key of the title
-   * @param titleFemale - (Optional) The i18n key of the title used by the female variant.
+   * @param titleFemale - (Optional) The i18n key of the title used by the female variant. \
    * Ignored if the key does not exist in the current language, in which case `title` is used.
    */
   setTitle(title: string, titleFemale?: string): TrainerConfig {
