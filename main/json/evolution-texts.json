@@ -924,7 +924,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -2460,7 +2460,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -2812,7 +2812,7 @@
     "hi": "With high friendship|While knowing a फ़ेरी-type move",
     "vi": "Với điểm tình bạn cao|Khi đã học 1 chiêu thức hệ Tiên",
     "da": "With high friendship|Mens der kendes et Fe-type angreb",
-    "sv": "Med hög vänskap|När den kan en teknik av typen Fe",
+    "sv": "Med hög vänskapsnivå|När den kan en teknik av typen Fe",
     "tl": "With high friendship|While knowing a Diwata-type move"
   },
   {
@@ -2844,7 +2844,7 @@
     "hi": "With high friendship|While knowing a फ़ेरी-type move",
     "vi": "Với điểm tình bạn cao|Khi đã học 1 chiêu thức hệ Tiên",
     "da": "With high friendship|Mens der kendes et Fe-type angreb",
-    "sv": "Med hög vänskap|När den kan en teknik av typen Fe",
+    "sv": "Med hög vänskapsnivå|När den kan en teknik av typen Fe",
     "tl": "With high friendship|While knowing a Diwata-type move"
   },
   {
@@ -2876,7 +2876,7 @@
     "hi": "With high friendship|During Day or Dawn",
     "vi": "Với điểm tình bạn cao|Vào Ban Ngày hoặc Bình Minh",
     "da": "With high friendship|During Day or Dawn",
-    "sv": "Med hög vänskap|På dagen eller gryningen",
+    "sv": "Med hög vänskapsnivå|På dagen eller gryningen",
     "tl": "With high friendship|During Day or Dawn"
   },
   {
@@ -2908,7 +2908,7 @@
     "hi": "With high friendship|During Day or Dawn",
     "vi": "Với điểm tình bạn cao|Vào Ban Ngày hoặc Bình Minh",
     "da": "With high friendship|During Day or Dawn",
-    "sv": "Med hög vänskap|På dagen eller gryningen",
+    "sv": "Med hög vänskapsnivå|På dagen eller gryningen",
     "tl": "With high friendship|During Day or Dawn"
   },
   {
@@ -2940,7 +2940,7 @@
     "hi": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
     "da": "With high friendship|During Night or Dusk",
-    "sv": "Med hög vänskap|På natten eller skymningen",
+    "sv": "Med hög vänskapsnivå|På natten eller skymningen",
     "tl": "With high friendship|During Night or Dusk"
   },
   {
@@ -2972,7 +2972,7 @@
     "hi": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
     "da": "With high friendship|During Night or Dusk",
-    "sv": "Med hög vänskap|På natten eller skymningen",
+    "sv": "Med hög vänskapsnivå|På natten eller skymningen",
     "tl": "With high friendship|During Night or Dusk"
   },
   {
@@ -3868,7 +3868,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -3900,7 +3900,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -3932,7 +3932,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -3964,7 +3964,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -3996,7 +3996,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -6204,7 +6204,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -7194,7 +7194,7 @@
     "pl": "While holding the Deep Sea Tooth|Używając: Linking Cord (Super)",
     "id": "While holding the Deep Sea Tooth|Use the Linking Cord (Great)",
     "hi": "While holding the Deep Sea Tooth|Use the Linking Cord (Great)",
-    "vi": "Khi đang cầm vật phẩm \"Xỉ Sâu Hải\"|Sử dụng vật phẩm Cáp Trao Đổi (Khá Hiếm)",
+    "vi": "Khi đang cầm vật phẩm “Xỉ Sâu Hải”|Sử dụng vật phẩm Cáp Trao Đổi (Khá Hiếm)",
     "da": "While holding the Deep Sea Tooth|Brug en Linking Cord (Great)",
     "sv": "Om den bär en Djuphavstand|Använd förmålet Länkande lina (Super)",
     "tl": "While holding the Deep Sea Tooth|Use the Linking Cord (Great)"
@@ -7226,9 +7226,9 @@
     "pl": "While holding the Deep Sea Scale|Używając: Linking Cord (Super)",
     "id": "While holding the Deep Sea Scale|Use the Linking Cord (Great)",
     "hi": "While holding the Deep Sea Scale|Use the Linking Cord (Great)",
-    "vi": "Khi đang cầm vật phẩm \"Vảy Sâu Hải\"|Sử dụng vật phẩm Cáp Trao Đổi (Khá Hiếm)",
+    "vi": "Khi đang cầm vật phẩm “Vảy Sâu Hải”|Sử dụng vật phẩm Cáp Trao Đổi (Khá Hiếm)",
     "da": "While holding the Deep Sea Scale|Brug en Linking Cord (Great)",
-    "sv": "Om den bär en Djuphavsfjäll|Använd förmålet Länkande lina (Super)",
+    "sv": "Om den bär ett Djuphavsfjäll|Använd förmålet Länkande lina (Super)",
     "tl": "While holding the Deep Sea Scale|Use the Linking Cord (Great)"
   },
   {
@@ -7772,7 +7772,7 @@
     "hi": "With high friendship|During Day or Dawn",
     "vi": "Với điểm tình bạn cao|Vào Ban Ngày hoặc Bình Minh",
     "da": "With high friendship|During Day or Dawn",
-    "sv": "Med hög vänskap|På dagen eller gryningen",
+    "sv": "Med hög vänskapsnivå|På dagen eller gryningen",
     "tl": "With high friendship|During Day or Dawn"
   },
   {
@@ -8092,7 +8092,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -8156,7 +8156,7 @@
     "hi": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
     "da": "With high friendship|During Night or Dusk",
-    "sv": "Med hög vänskap|På natten eller skymningen",
+    "sv": "Med hög vänskapsnivå|På natten eller skymningen",
     "tl": "With high friendship|During Night or Dusk"
   },
   {
@@ -8444,7 +8444,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -8476,7 +8476,7 @@
     "hi": "With high friendship|During Day or Dawn",
     "vi": "Với điểm tình bạn cao|Vào Ban Ngày hoặc Bình Minh",
     "da": "With high friendship|During Day or Dawn",
-    "sv": "Med hög vänskap|På dagen eller gryningen",
+    "sv": "Med hög vänskapsnivå|På dagen eller gryningen",
     "tl": "With high friendship|During Day or Dawn"
   },
   {
@@ -9340,7 +9340,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -9564,7 +9564,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -13276,7 +13276,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -13372,7 +13372,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
@@ -14876,7 +14876,7 @@
     "hi": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
     "da": "With high friendship|During Night or Dusk",
-    "sv": "Med hög vänskap|På natten eller skymningen",
+    "sv": "Med hög vänskapsnivå|På natten eller skymningen",
     "tl": "With high friendship|During Night or Dusk"
   },
   {
@@ -16668,7 +16668,7 @@
     "hi": "With high friendship",
     "vi": "Với điểm tình bạn cao",
     "da": "With high friendship",
-    "sv": "Med hög vänskap",
+    "sv": "Med hög vänskapsnivå",
     "tl": "With high friendship"
   },
   {
