@@ -836,7 +836,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const allEvolutions = speciesDataRegistry.getEvolutions(this.species.speciesId);
 
     this.levelMoves = getLevelMoves(
-      { pokemonSpeciesForm: species, pokemonFormKey: formKey, level: 100, startingLevel: 1, includeDuplicates: true },
+      {
+        pokemonSpeciesForm: species,
+        pokemonFormKey: formKey,
+        level: 100,
+        startingLevel: 1,
+        includeDuplicateMoves: true,
+      },
       true,
       true,
       true,
