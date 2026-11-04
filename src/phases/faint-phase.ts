@@ -57,8 +57,6 @@ export class FaintPhase extends PokemonPhase {
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    faintPokemon.resetSummonData();
-
     if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
@@ -67,6 +65,7 @@ export class FaintPhase extends PokemonPhase {
       ) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
+        faintPokemon.resetSummonData();
         faintPokemon.loseHeldItem(instantReviveModifier);
         globalScene.updateModifiers(this.player);
         this.end();
@@ -140,6 +139,11 @@ export class FaintPhase extends PokemonPhase {
     for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
+
+    // Summon data must only be reset after post-faint/knock-out abilities are applied,
+    // as it holds temporary ability changes (Skill Swap, Entrainment, etc.) and ability suppression.
+    pokemon.resetSummonData();
+
     if (pokemon.turnData.attacksReceived?.length > 0) {
       const defeatSource = this.source;
 
@@ -239,6 +243,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
+    enemy.resetSummonData();
     enemy.hp++;
     phaseManager.unshiftNew("DamageAnimPhase", enemy.getBattlerIndex(), 0, HitResult.INDIRECT);
     this.end();
