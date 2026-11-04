@@ -327,24 +327,22 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         const tObj = data.trainer.toTrainer();
         // Because of the interesting mechanics behind rival names, the rival name and title have to be retrieved differently
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
+        let trainerText: string;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
-          const rivalName = tObj.variant === TrainerVariant.FEMALE ? "trainerNames:rivalFemale" : "trainerNames:rival";
-          const gameOutcomeLabel = addTextObject(
-            8,
-            5,
-            `${i18next.t("runHistory:defeatedRival", { context: genderStr })} ${i18next.t(rivalName)}`,
-            TextStyle.WINDOW,
-          );
-          this.add(gameOutcomeLabel);
+          const isFemaleRival = tObj.variant === TrainerVariant.FEMALE;
+          const rivalName = isFemaleRival ? "trainerNames:rivalFemale" : "trainerNames:rival";
+          const rivalTitle = (isFemaleRival && tObj.config.titleFemale) || tObj.config.title;
+          trainerText = `${rivalTitle} ${i18next.t(rivalName)}`;
         } else {
-          const gameOutcomeLabel = addTextObject(
-            8,
-            5,
-            `${i18next.t("runHistory:defeatedTrainer", { context: genderStr })}${tObj.getName(0, true)}`,
-            TextStyle.WINDOW,
-          );
-          this.add(gameOutcomeLabel);
+          trainerText = tObj.getName(0, true);
         }
+        const gameOutcomeLabel = addTextObject(
+          8,
+          5,
+          `${i18next.t("runHistory:defeatedTrainer", { context: genderStr })}${trainerText}`,
+          TextStyle.WINDOW,
+        );
+        this.add(gameOutcomeLabel);
       }
     }
 
