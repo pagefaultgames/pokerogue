@@ -8,7 +8,7 @@
 import chalk from "chalk";
 import { Octokit } from "octokit";
 import { CONFIG, type Label, SCRIPT_VERSION } from "./config.mts";
-import { formatChangelog, getFinalChangelog, type PullRequest } from "./format.mts";
+import { formatChangelog, getFinalChangelog, type OpenPullRequest, type PullRequest } from "./format.mts";
 
 chalk.level = 2;
 
@@ -134,7 +134,7 @@ function getChangelogSection(description: string): string | undefined {
  * Get all open PRs targeting the base branch
  * @returns A Promise resolving to an Array of {@linkcode PullRequest}s
  */
-async function getOpenPrs(): Promise<PullRequest[]> {
+async function getOpenPrs(): Promise<OpenPullRequest[]> {
   const openPrs = await octokit.rest.pulls.list({
     owner: CONFIG.REPO_OWNER,
     repo: CONFIG.REPO_NAME,
@@ -142,12 +142,14 @@ async function getOpenPrs(): Promise<PullRequest[]> {
     per_page: 100,
     state: "open",
   });
-  return openPrs.data.map(pr => ({
+  const ret: OpenPullRequest[] = openPrs.data.map(pr => ({
     number: pr.number,
     title: pr.title,
     body: pr.body ?? undefined,
-    labels: [],
+    labels: pr.labels.map(l => l.name as Label),
+    draft: pr.draft ?? false,
   }));
+  return ret;
 }
 
 /**
@@ -156,25 +158,44 @@ async function getOpenPrs(): Promise<PullRequest[]> {
  * @returns A Promise that resolves when the description has been updated.
  */
 async function updateDescription(changelog: string): Promise<void> {
-  if (!process.env.PR_NUMBER) {
-    console.error(chalk.red("PR_NUMBER not set. Could not update PR description."));
+  const prNumber = await getPullRequestNumber();
+  if (!prNumber) {
+    console.error(chalk.red("PR NUMBER not set or could not be determined. Could not update PR description."));
     process.exitCode = 1;
     return;
   }
 
   const description = await getFinalChangelog(changelog);
+  console.log(chalk.green(`Updating PR description with the generated changelog for PR #${prNumber}...`));
 
   await octokit.rest.pulls
     .update({
       owner: CONFIG.REPO_OWNER,
       repo: CONFIG.REPO_NAME,
-      pull_number: Number(process.env.PR_NUMBER),
+      pull_number: prNumber,
       body: description,
     })
     .catch(err => {
       process.exitCode = 1;
       console.error(chalk.red(`Failed to update PR description: ${err}`));
     });
+}
+
+/**
+ * Get the Pull Request number of the PR, that targets `main`.
+ */
+async function getPullRequestNumber() {
+  if (process.env.PR_BASE === CONFIG.CUTOFF_BRANCH) {
+    return Number(process.env.PR_NUMBER);
+  }
+
+  const prs = await octokit.rest.pulls.list({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    head: CONFIG.REPO_BRANCH,
+    base: CONFIG.CUTOFF_BRANCH,
+  });
+  return prs.data[0]?.number;
 }
 
 /**
