@@ -1,12 +1,9 @@
-import { activeOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
-import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Honey Gather", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +29,7 @@ describe("Abilities - Honey Gather", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should give money when winning a battle", async () => {
+  it.todo("should give a chance to find honey after a battle", async () => {
     await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
@@ -40,32 +37,5 @@ describe("Abilities - Honey Gather", () => {
     await game.toNextWave();
 
     expect(game.scene.money).toBeGreaterThan(1000);
-  });
-
-  it("should not give money when the enemy pokemon flees", async () => {
-    await game.classicMode.startBattle(SpeciesId.MILOTIC);
-    game.scene.money = 1000;
-
-    game.move.select(MoveId.ROAR);
-
-    await game.toNextWave();
-
-    expect(game.scene.money).toBe(1000);
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
-  });
-
-  it("should not give money when the player flees", async () => {
-    await game.classicMode.startBattle(SpeciesId.MILOTIC);
-    game.scene.money = 1000;
-
-    // Expects next wave so run must succeed
-    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
-
-    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
-    commandPhase.handleCommand(Command.RUN, 0);
-    await game.toNextWave();
-
-    expect(game.scene.money).toBe(1000);
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
   });
 });

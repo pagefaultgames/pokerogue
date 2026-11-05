@@ -18,6 +18,7 @@ import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import type { NewArenaEvent } from "#events/battle-scene";
 import type { Variant } from "#sprites/variant";
+import type { GameManager } from "#test/framework/game-manager";
 import type { ClassicModeHelper } from "#test/helpers/classic-mode-helper";
 import type { FieldHelper } from "#test/helpers/field-helper";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
@@ -56,6 +57,12 @@ export class OverridesHelper extends GameManagerHelper {
    * @defaultValue `true`
    */
   public normalizeNatures = true;
+
+  constructor(game: GameManager) {
+    super(game);
+    // Skips hidden items by default
+    this.skipHiddenItems(true);
+  }
 
   /**
    * Override the starting biome.
@@ -683,6 +690,19 @@ export class OverridesHelper extends GameManagerHelper {
   public itemRewards(items: RewardSpecs[]): this {
     vi.spyOn(activeOverrides, "REWARD_OVERRIDE", "get").mockReturnValue(items);
     this.log("Item rewards set to:", items);
+    return this;
+  }
+
+  /**
+   * Override the items rolled at the end of a battle
+   * @param items - The items to be rolled
+   * @returns `this`
+   */
+  public skipHiddenItems(skip = true): this {
+    vi.spyOn(activeOverrides, "SKIP_HIDDEN_ITEMS_OVERRIDE", "get").mockReturnValue(skip);
+    if (skip) {
+      this.log("Skipping hidden items phase");
+    }
     return this;
   }
 
