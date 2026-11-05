@@ -59,7 +59,7 @@ export function findHiddenItems(): Promise<void> {
         editHiddenItemMapPokemon(rewardMap, pokemon.species.speciesId, tier);
         const pickedPoolEntry = weightedPick(rewardMap);
 
-        const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, RarityTier.COMMON, 0);
+        const rewardOption = generateRewardOptionFromId(pickedPoolEntry.id, 0, tier, 0);
         rewardOption.source = pokemon;
 
         rewardOptions.push(rewardOption);
