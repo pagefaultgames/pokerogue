@@ -765,9 +765,7 @@ export class MovePhase extends PokemonPhase {
     ) {
       this.showFailedText();
       this.fail();
-      // clear out 2 turn moves
-      // TODO: Make a helper for this atp
-      this.pokemon.getMoveQueue().shift();
+      this.clearChargeMove();
       this.pokemon.pushMoveHistory(this.moveHistoryEntry);
       return true;
     }
@@ -940,9 +938,17 @@ export class MovePhase extends PokemonPhase {
 
     pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
-    // This clears out 2 turn moves after they've been used
-    // TODO: Remove post move queue refactor
-    pokemon.getMoveQueue().shift();
+    this.clearChargeMove();
+  }
+
+  /**
+   * Remove the second turn of a charge move from the user's move queue, along with its charging state,
+   * so that the move has to charge again the next time it is used.
+   */
+  // TODO: Remove post move queue refactor
+  protected clearChargeMove(): void {
+    this.pokemon.getMoveQueue().shift();
+    this.pokemon.removeTag(BattlerTagType.CHARGING);
   }
 
   /** Signifies the current move should fail but still use PP */
