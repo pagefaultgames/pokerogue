@@ -160,7 +160,9 @@ export class Trainer extends Phaser.GameObjects.Container {
     let name = this.config.getTitle(trainerSlot, this.variant);
 
     // Determine the title to include based on the configuration and includeTitle flag.
-    let title = includeTitle && this.config.title ? this.config.title : null;
+    const baseTitle =
+      this.variant === TrainerVariant.FEMALE && this.config.titleFemale ? this.config.titleFemale : this.config.title;
+    let title = includeTitle && baseTitle ? baseTitle : null;
     const evilTeamTitles = ["grunt"];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
@@ -498,6 +500,12 @@ export class Trainer extends Phaser.GameObjects.Container {
     let retry = false;
 
     console.log(ret.getName());
+
+    const specialtyType = this.config.specialtyType;
+    // Retry if a species that loses the specialty type on evolution is generated after it would evolve
+    if (this.config.hasSpecialtyType() && baseSpecies.isOfType(specialtyType) && !ret.isOfType(specialtyType)) {
+      retry = true;
+    }
 
     // Retry if an evolved mon was rolled but it wouldn't be evolved at this point
     if (speciesDataRegistry.getPrevolutionChain(baseSpecies.speciesId).includes(ret.speciesId)) {
