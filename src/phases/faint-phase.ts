@@ -74,6 +74,10 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    if (faintPokemon.isEnemy()) {
+      globalScene.revealedSpecies.add(faintPokemon.species.speciesId);
+    }
+
     /**
      * In case the current pokemon was just switched in, make sure it is counted as participating in the combat.
      * For EXP_SHARE purposes, if the current pokemon faints as the combat ends and it was the ONLY player pokemon

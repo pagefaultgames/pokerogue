@@ -78,6 +78,8 @@ export interface SessionSaveData {
    * Counts the amount of pokemon fainted in your party during the current arena encounter.
    */
   playerFaints: number;
+  /** Species whose type has been revealed this run by defeating or owning one */
+  revealedSpecies?: SpeciesId[];
 }
 
 export interface Unlocks {

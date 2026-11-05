@@ -783,6 +783,7 @@ export class GameData {
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
       playerFaints: globalScene.arena.playerFaints,
+      revealedSpecies: [...globalScene.revealedSpecies],
     } as SessionSaveData;
   }
 
@@ -926,6 +927,8 @@ export class GameData {
 
     globalScene.score = fromSession.score;
     globalScene.updateScoreText();
+
+    globalScene.revealedSpecies = new Set(fromSession.revealedSpecies ?? []);
 
     globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
     await globalScene.loadBiomeAssets(fromSession.arena.biome);

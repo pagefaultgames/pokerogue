@@ -249,7 +249,13 @@ const passivesChallengeAchievementsBlock = () =>
 
 const randomizerChallengesAchvBlock = () =>
   globalScene.gameMode.challenges.some(
-    c => [Challenges.MOVESET_RANDOMIZER, Challenges.ABILITY_RANDOMIZER].includes(c.id) && c.value > 0,
+    c =>
+      [
+        Challenges.MOVESET_RANDOMIZER,
+        Challenges.ABILITY_RANDOMIZER,
+        Challenges.TYPE_RANDOMIZER,
+        Challenges.HIDDEN_TYPES,
+      ].includes(c.id) && c.value > 0,
   );
 
 export const achvs = {
