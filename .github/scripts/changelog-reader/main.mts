@@ -7,30 +7,13 @@
 
 import chalk from "chalk";
 import { Octokit } from "octokit";
-import { CONFIG, type Label } from "./config.mts";
-import { formatChangelog, type PullRequest } from "./format.mts";
+import { CONFIG, type Label, SCRIPT_VERSION } from "./config.mts";
+import { formatChangelog, getFinalChangelog, type OpenPullRequest, type PullRequest } from "./format.mts";
 
 chalk.level = 2;
 
-/** The version of this script */
-const SCRIPT_VERSION: string = "1.0.2";
-
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
-});
-
-/**
- * @example
- * December 20, 2025 at 10:10 AM UTC
- */
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  timeZoneName: "short",
-  timeZone: "UTC",
 });
 
 /**
@@ -61,22 +44,20 @@ async function getAndProcessChangelog(): Promise<void> {
   }
 
   const pullRequests = await getPullRequests(prs);
-  if (pullRequests.length === 0) {
+  const openPrs = await getOpenPrs();
+  if (pullRequests.length === 0 && openPrs.length === 0) {
     console.log("No PRs found");
     return;
   }
-  console.log(`Found ${pullRequests.length} PRs`);
+  console.log(`Found ${pullRequests.length} merged PRs and ${openPrs.length} open PRs`);
 
-  const output = formatChangelog(pullRequests);
+  const output = formatChangelog(pullRequests, openPrs);
   if (process.env.GITHUB_ACTIONS) {
     await updateDescription(output);
   } else {
     //! Note: to run locally, a separate GitHub API token needs to be generated
+    const description = await getFinalChangelog(output);
 
-    const description =
-      `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
-      + output
-      + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
     // dynamically imported to not need the checkout of the helper file during the workflow
     const { writeFileSafe } = await import("../../../scripts/utils/file.ts");
     writeFileSafe(CONFIG.OUTPUT_FILE, description, "utf8");
@@ -150,33 +131,71 @@ function getChangelogSection(description: string): string | undefined {
 }
 
 /**
+ * Get all open PRs targeting the base branch
+ * @returns A Promise resolving to an Array of {@linkcode PullRequest}s
+ */
+async function getOpenPrs(): Promise<OpenPullRequest[]> {
+  const openPrs = await octokit.rest.pulls.list({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    base: CONFIG.REPO_BRANCH,
+    per_page: 100,
+    state: "open",
+  });
+  const ret: OpenPullRequest[] = openPrs.data.map(pr => ({
+    number: pr.number,
+    title: pr.title,
+    body: pr.body ?? undefined,
+    labels: pr.labels.map(l => l.name as Label),
+    draft: pr.draft ?? false,
+  }));
+  return ret;
+}
+
+/**
  * Write the generated changelog to the PR description.
  * @param changelog - The changelog to update
  * @returns A Promise that resolves when the description has been updated.
  */
 async function updateDescription(changelog: string): Promise<void> {
-  if (!process.env.PR_NUMBER) {
-    console.error(chalk.red("PR_NUMBER not set. Could not update PR description."));
+  const prNumber = await getPullRequestNumber();
+  if (!prNumber) {
+    console.error(chalk.red("PR NUMBER not set or could not be determined. Could not update PR description."));
     process.exitCode = 1;
     return;
   }
 
-  const description =
-    `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
-    + changelog
-    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+  const description = await getFinalChangelog(changelog);
+  console.log(chalk.green(`Updating PR description with the generated changelog for PR #${prNumber}...`));
 
   await octokit.rest.pulls
     .update({
       owner: CONFIG.REPO_OWNER,
       repo: CONFIG.REPO_NAME,
-      pull_number: Number(process.env.PR_NUMBER),
+      pull_number: prNumber,
       body: description,
     })
     .catch(err => {
       process.exitCode = 1;
       console.error(chalk.red(`Failed to update PR description: ${err}`));
     });
+}
+
+/**
+ * Get the Pull Request number of the PR, that targets `main`.
+ */
+async function getPullRequestNumber() {
+  if (process.env.PR_BASE === CONFIG.CUTOFF_BRANCH) {
+    return Number(process.env.PR_NUMBER);
+  }
+
+  const prs = await octokit.rest.pulls.list({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    head: CONFIG.REPO_BRANCH,
+    base: CONFIG.CUTOFF_BRANCH,
+  });
+  return prs.data[0]?.number;
 }
 
 /**

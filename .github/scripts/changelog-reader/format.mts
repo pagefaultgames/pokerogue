@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { type CategoryName, CONFIG, type Label } from "./config.mts";
-
+import { type CategoryName, CONFIG, type Label, SCRIPT_VERSION } from "./config.mts";
 export type PullRequest = {
   number: number;
   title: string;
@@ -15,11 +14,32 @@ export type PullRequest = {
 };
 
 /**
+ * Interface for PullRequests that target a hotfix/release branch
+ */
+export interface OpenPullRequest extends PullRequest {
+  draft: boolean;
+}
+
+/**
+ * @example
+ * December 20, 2025 at 10:10 AM UTC
+ */
+export const dateFormatter = new Intl.DateTimeFormat("en", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  timeZoneName: "short",
+  timeZone: "UTC",
+});
+
+/**
  * Format the changelog.
  * @param changelog - The changelog to format
  * @returns The formatted changelog.
  */
-export function formatChangelog(changelog: PullRequest[]): string {
+export function formatChangelog(changelog: PullRequest[], openPrs: OpenPullRequest[]): string {
   let output = "";
   const categories = new Map<CategoryName, string[]>();
   for (const category of CONFIG.CATEGORIES) {
@@ -42,6 +62,15 @@ export function formatChangelog(changelog: PullRequest[]): string {
     // Group PRs by category based on labels
     const category = getCategoryFromLabels(pr.labels);
     categories.set(category, [...(categories.get(category) || []), formattedBody]);
+  }
+
+  if (CONFIG.REPO_BRANCH !== "beta" && openPrs.length > 0) {
+    const info = openPrs.length === 1 ? "is 1 open PR" : `are ${openPrs.length} open PRs`;
+    output += `> [!NOTE]\n> There ${info} targeting ${CONFIG.REPO_BRANCH}:\n`;
+    for (const openPr of openPrs) {
+      output += `> - #${openPr.number}${openPr.draft ? " (Draft)" : ""}\n`;
+    }
+    output += "\n";
   }
 
   for (const [category, prs] of categories) {
@@ -122,4 +151,46 @@ function getCategoryFromLabels(labels: Label[]): CategoryName {
     }
   }
   return "Miscellaneous";
+}
+
+export async function getFinalChangelog(changelogText: string) {
+  const versions = await getVersions();
+  let header = `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n`;
+  if (versions.changed) {
+    header += `#### Version: ${versions.currentVersion} ---> ${versions.newVersion}`;
+  } else {
+    header += "> [!WARNING]\nNo version change detected.";
+  }
+
+  const description =
+    header
+    + "\n---------------------------\n"
+    + changelogText
+    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())} by Changelog Reader v${SCRIPT_VERSION}.**`;
+  return description;
+}
+
+async function getVersions(): Promise<{ changed: boolean; currentVersion: string; newVersion: string }> {
+  const baseUrl = `https://raw.githubusercontent.com/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/{BRANCH_NAME}/package.json`;
+
+  const fetchPackage = async (branch: string) => {
+    const url = baseUrl.replace("{BRANCH_NAME}", branch);
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
+    }
+    return await res.json();
+  };
+
+  const currentPackage = await fetchPackage(CONFIG.CUTOFF_BRANCH);
+  const prPackage = await fetchPackage(CONFIG.REPO_BRANCH);
+
+  const currentVersion = currentPackage.version;
+  const newVersion = prPackage.version;
+
+  return {
+    changed: currentVersion !== newVersion,
+    currentVersion,
+    newVersion,
+  };
 }
