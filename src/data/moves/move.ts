@@ -1112,15 +1112,7 @@ export abstract class Move implements Localizable {
 
     applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
-    const typeChangeHolder = new ValueHolder(this.type);
-
-    applyAbAttrs("MoveTypeChangeAbAttr", {
-      pokemon: source,
-      opponent: target,
-      move: this,
-      simulated: true,
-      moveType: typeChangeHolder,
-    });
+    const moveType = source.getMoveType(this, simulated);
 
     const abAttrParams: PreAttackModifyPowerAbAttrParams = {
       pokemon: source,
@@ -1140,7 +1132,7 @@ export abstract class Move implements Localizable {
     // Non-priority, single-hit moves of the user's Tera Type are always a minimum of 60 power
     if (
       source.isTerastallized
-      && sourceTeraType === this.type
+      && sourceTeraType === moveType
       && power.value < 60
       && this.priority <= 0
       && !this.hasAttr("MultiHitAttr")
@@ -1166,16 +1158,14 @@ export abstract class Move implements Localizable {
       applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", { pokemon: p, opponent: target, move: this, simulated, power });
     }
 
-    const typeBoost = source.findTag(
-      t => t instanceof TypeBoostTag && t.boostedType === typeChangeHolder.value,
-    ) as TypeBoostTag;
+    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === moveType) as TypeBoostTag;
     if (typeBoost) {
       power.value *= typeBoost.boostValue;
     }
 
     if (!this.hasAttr("TypelessAttr")) {
-      globalScene.arena.applyTags(WeakenMoveTypeTag, typeChangeHolder.value, power);
-      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
+      globalScene.arena.applyTags(WeakenMoveTypeTag, moveType, power);
+      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, moveType, power);
     }
 
     if (source.getTag(HelpingHandTag)) {
@@ -1185,14 +1175,10 @@ export abstract class Move implements Localizable {
     power.value *= (source.getTag(BattlerTagType.SUPREME_OVERLORD) as SupremeOverlordTag | undefined)?.getBoost() ?? 1;
 
     if (source.isGrounded()) {
-      power.value *= globalScene.arena.getTerrainPowerMultiplier(source.getMoveType(this));
+      power.value *= globalScene.arena.getTerrainPowerMultiplier(moveType);
     }
 
-    if (
-      target.isGrounded()
-      && globalScene.arena.terrainType === TerrainType.MISTY
-      && typeChangeHolder.value === PokemonType.DRAGON
-    ) {
+    if (target.isGrounded() && globalScene.arena.terrainType === TerrainType.MISTY && moveType === PokemonType.DRAGON) {
       power.value *= 0.5;
     }
 
