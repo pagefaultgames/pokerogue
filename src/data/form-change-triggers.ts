@@ -193,6 +193,9 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
 }
 
 export class MeloettaFormChangePostMoveTrigger extends SpeciesFormChangePostMoveTrigger {
+  description = i18next.t("pokemonEvolutions:forms.move", {
+    move: i18next.t("move:relicSong.name"),
+  });
   override canChange(pokemon: Pokemon): boolean {
     if (globalScene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
       return false;
