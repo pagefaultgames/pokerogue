@@ -214,12 +214,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * @see {@linkcode hitCheck}
    */
   private conductHitChecks(user: Pokemon, fieldMove: boolean): Pokemon[] {
-    /** All Pokemon targeted by this phase's invoked move */
     /** Whether any hit check ended in a success */
     let anySuccess = false;
     /** Whether the attack missed all of its targets */
     let allMiss = true;
-
+    /** All Pokemon targeted by this phase's invoked move */
     let targets = this.getTargets();
 
     // For field targeted moves, we only look for the first target that may magic bounce
@@ -872,31 +871,39 @@ export class MoveEffectPhase extends PokemonPhase {
 
   public override end(): void {
     const user = this.getUserPokemon();
+    --user.turnData.hitsLeft;
 
-    /**
+    let wasMultihit = false;
+    if (user.isFainted() && user.turnData.hitsLeft > 0) {
+      user.turnData.hitCount -= user.turnData.hitsLeft;
+      user.turnData.hitsLeft = 0;
+      wasMultihit = true;
+    }
+
+    /*
      * If this phase isn't for the invoked move's last strike (and we still have something to hit),
      * unshift another MoveEffectPhase for the next strike before ending this phase.
      */
-    if (--user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
+    if (user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
       this.addNextHitPhase();
       super.end();
       return;
     }
 
-    /**
+    /*
      * All hits of the move have resolved by now.
      * Queue message for multi-strike moves before applying Shell Bell heals.
      */
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
-    if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
+    if (hitsTotal > 1 || user.turnData.hitsLeft > 0 || wasMultihit) {
       // Queue message if multiple hits occurred or were slated to occur (such as a Triple Axel miss)
       globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
     }
 
     globalScene.applyModifiers(HitHealModifier, this.player, user);
-    this.getTargets().forEach(target => {
+    for (const target of this.getTargets()) {
       target.turnData.moveEffectiveness = null;
-    });
+    }
 
     this.queueDancerResponses();
     super.end();
