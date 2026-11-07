@@ -37,13 +37,13 @@ function removeInvalidDexData(data: SystemSaveData): void {
   }
 }
 
-const removeInvalidStarterAndDexData: SystemSaveMigrator = {
+const removeInvalidStarterAndDexData = {
   name: "removeInvalidStarterAndDexData",
   version: "1.12.0.10",
   migrate: (data: SystemSaveData): void => {
     removeInvalidStarterData(data);
     removeInvalidDexData(data);
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [removeInvalidStarterAndDexData] as const;
+export const systemMigrators = [removeInvalidStarterAndDexData] as const satisfies readonly SystemSaveMigrator[];

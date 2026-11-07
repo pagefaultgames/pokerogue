@@ -151,7 +151,7 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
  * Version 1.12 split battle bond greninja into its own species.
  * The migrator will copy over some of the data.
  */
-const migrateSpeciesSplitSystem: SystemSaveMigrator = {
+const migrateSpeciesSplitSystem = {
   name: "migrateSpeciesSplitSystem",
   version: "1.12.0.0",
   migrate: (data: SystemSaveData): void => {
@@ -162,7 +162,7 @@ const migrateSpeciesSplitSystem: SystemSaveMigrator = {
     migrateSystemGreninjaBattleBondForm(data);
     migrateSystemHisuiBasculin(data);
   },
-};
+} as const satisfies SystemSaveMigrator;
 
 /**
  * Migrate a pokemon entry that may have had battle bond froakie
@@ -223,7 +223,7 @@ function migrateSessionHisuiBasculin(pokemon: Record<string, unknown>, replaceSp
  * Migrator for battle bond froakie line and hisui basculin form, both of which
  * split into their own species in 1.12.0.0
  */
-const migrateSpeciesSplitSession: SessionSaveMigrator = {
+const migrateSpeciesSplitSession = {
   name: "migrateSpeciesSplitSession",
   version: "1.12.0.0",
   migrate: data => {
@@ -253,9 +253,9 @@ const migrateSpeciesSplitSession: SessionSaveMigrator = {
       migrateSessionGreninjaBattleBondForm(pokemon, monoGenChallenge !== 6);
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-const migrateRageFistHitCount: SessionSaveMigrator = {
+const migrateRageFistHitCount = {
   name: "migrateRageFistHitCount",
   version: "1.12.0.0",
   migrate: data => {
@@ -264,9 +264,9 @@ const migrateRageFistHitCount: SessionSaveMigrator = {
       p.summonData.hitCount = (p.battleData as { hitCount?: number })?.hitCount;
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-const convertCustomPokemonDataTypes: SessionSaveMigrator = {
+const convertCustomPokemonDataTypes = {
   name: "convertCustomPokemonDataTypes",
   version: "1.12.0.0",
   migrate: data => {
@@ -284,7 +284,7 @@ const convertCustomPokemonDataTypes: SessionSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
 function shiftFormChangeModifier(modifier: Record<string, unknown>): void {
   if (modifier.className === "PokemonFormChangeItemModifier") {
@@ -302,7 +302,7 @@ function shiftFormChangeModifier(modifier: Record<string, unknown>): void {
 }
 
 /** Shift the form change item values upward to account for newly added Mega Stones. */
-const shiftFormChangeItems: SessionSaveMigrator = {
+const shiftFormChangeItems = {
   name: "shiftFormChangeItems",
   version: "1.12.0.0",
   migrate: data => {
@@ -318,13 +318,13 @@ const shiftFormChangeItems: SessionSaveMigrator = {
       console.warn("Malformed enemy modifiers in save data, skipping form change item migrator for enemy party");
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [
+export const sessionMigrators = [
   migrateRageFistHitCount,
   convertCustomPokemonDataTypes,
   shiftFormChangeItems,
   migrateSpeciesSplitSession,
-] as const;
+] as const satisfies readonly SessionSaveMigrator[];
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [migrateSpeciesSplitSystem] as const;
+export const systemMigrators = [migrateSpeciesSplitSystem] as const satisfies readonly SystemSaveMigrator[];
