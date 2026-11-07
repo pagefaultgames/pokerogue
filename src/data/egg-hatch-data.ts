@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { PlayerPokemon } from "#field/pokemon";
-import type { DexEntry } from "#types/dex-data";
-import type { StarterDataEntry } from "#types/save-data";
+import type { DexEntry, StarterDataEntry } from "#types/save-data";
 
 /**
  * Stores data associated with a specific egg and the hatched pokemon
@@ -60,6 +59,7 @@ export class EggHatchData {
       passiveAttr: currStarterDataEntry.passiveAttr,
       valueReduction: currStarterDataEntry.valueReduction,
       classicWinCount: currStarterDataEntry.classicWinCount,
+      pity: currStarterDataEntry.pity,
     };
   }
 

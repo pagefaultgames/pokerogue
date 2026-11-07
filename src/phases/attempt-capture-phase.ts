@@ -31,6 +31,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { waitTime } from "#utils/time";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import type Phaser from "phaser";
 
 type FullPartyCatchAction = "summary" | "pokedex" | "release" | "cancel";
 

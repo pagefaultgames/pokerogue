@@ -34,6 +34,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
 import { waitTime } from "#utils/time";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -462,7 +463,7 @@ export async function trainerThrowPokeball(
   waitTime(256).then(() => {
     globalScene.trainer.setFrame("3");
     waitTime(768).then(() => {
-      globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
+      globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
     });
   });
 

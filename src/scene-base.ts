@@ -2,6 +2,7 @@ import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { coerceArray } from "#utils/array";
 import { getCachedUrl } from "#utils/fetch-utils";
+import Phaser from "phaser";
 
 export const legacyCompatibleImages: string[] = [];
 
@@ -61,6 +62,11 @@ export class SceneBase extends Phaser.Scene {
   public loadAtlas(key: string, folder: string, filenameRoot = key): this {
     if (folder) {
       folder += "/";
+    }
+    const eventReplacment = timedEventManager.getEventImageReplacement(key);
+    if (eventReplacment) {
+      folder = "events/";
+      filenameRoot = `${eventReplacment}`;
     }
     this.load.atlas(
       key,

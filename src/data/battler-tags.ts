@@ -2686,7 +2686,7 @@ export class SaltCuredTag extends DamageOverTimeTag {
     const types = pokemon.getTypes();
     // Slightly faster than doing an `includes`
     const waterOrSteel = types.some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
-    return waterOrSteel ? 0.25 : 0.125;
+    return waterOrSteel ? 0.125 : 0.0625;
   }
 }
 

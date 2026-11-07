@@ -32,9 +32,8 @@ import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { GameData } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
-import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/level-moves";
-import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
+import type { DexAttrProps, DexEntry, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem, randSeedShuffle } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
@@ -1657,15 +1656,16 @@ export class AbilityRandomizerChallenge extends Challenge {
     if (
       this.value > 2
       && [
-        AbilityId.SCHOOLING,
-        AbilityId.POWER_CONSTRUCT,
         AbilityId.BATTLE_BOND,
         AbilityId.DISGUISE,
         AbilityId.ICE_FACE,
-        AbilityId.ZERO_TO_HERO,
-        AbilityId.TERA_SHIFT,
-        AbilityId.TERA_SHELL,
+        AbilityId.POWER_CONSTRUCT,
+        AbilityId.SCHOOLING,
+        AbilityId.SHIELDS_DOWN,
         AbilityId.TERAFORM_ZERO,
+        AbilityId.TERA_SHELL,
+        AbilityId.TERA_SHIFT,
+        AbilityId.ZERO_TO_HERO,
       ].includes(abilityId.value)
     ) {
       return false;

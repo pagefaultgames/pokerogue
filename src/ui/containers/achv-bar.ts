@@ -6,6 +6,7 @@ import { TextStyle } from "#enums/text-style";
 import { Achv } from "#system/achv";
 import { Voucher } from "#system/voucher";
 import { addTextObject } from "#ui/text";
+import Phaser from "phaser";
 
 export class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;

@@ -90,6 +90,7 @@ import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils
 import { getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 const COLUMNS = 9;
 const ROWS = 9;
@@ -683,8 +684,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterPreferences.female !== undefined
       && !(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
     ) {
-      // requested gender wasn't unlocked, purging setting
-      starterPreferences.female = undefined;
+      // If preference is female and DexAttr.FEMALE is not unlocked, set the preference to male
+      // This can happen in mono-gen challenge, which removes DexAttr.FEMALE from Snorunt
+      if (starterPreferences.female && caughtAttr & DexAttr.MALE) {
+        starterPreferences.female = false;
+      } else if (!starterPreferences.female && caughtAttr & DexAttr.FEMALE) {
+        starterPreferences.female = true;
+      } else {
+        // requested gender wasn't unlocked, purging setting
+        starterPreferences.female = undefined;
+      }
     }
 
     if (starterPreferences.abilityIndex !== undefined) {
@@ -1023,7 +1032,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // TODO: how can we get here if start button can't be selected? this appears to be redundant
           this.startCursorObj.setVisible(false);
           this.showRandomCursor();
-          this.setNoStarter();
         }
         success = true;
         break;
@@ -1092,7 +1100,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         const randomStarterId = validStarters[Math.floor(Math.random() * validStarters.length)];
-        this.setStarter(randomStarterId);
+        this.setStarter(randomStarterId, false);
 
         // TODO: this might not be needed if we change .addToParty
         const dexAttr = getDexAttrFromPreferences(randomStarterId, this.starterPreferences[randomStarterId]);
@@ -1888,6 +1896,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterSummary.updateName(
                   name.length > 0 ? name : speciesDataRegistry.getSpecies(this.lastStarterId).name,
                 );
+                if (isDupe) {
+                  this.partyStarters[removeIndex].nickname = starterPreferences.nickname;
+                }
                 ui.setMode(UiMode.STARTER_SELECT);
               },
               () => {
@@ -1994,11 +2005,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       // Same species egg menu option.
-      const hatchedCount = globalScene.gameData.dexData[this.lastStarterId].hatchedCount;
-      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
-        speciesDataRegistry.getStarterCost(this.lastStarterId),
-        hatchedCount,
-      );
+      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.lastStarterId));
       useCandiesOptions.push({
         label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
         handler: () => {
@@ -2718,7 +2725,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    *
    * @param starterId - the id of the new starter
    */
-  private setStarter(starterId: StarterSpeciesId): void {
+  private setStarter(starterId: StarterSpeciesId, iconAnimation = true): void {
     const { dexEntry } = getStarterData(starterId);
 
     // Stop animation for the previously selected starter
@@ -2734,7 +2741,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (dexEntry?.caughtAttr) {
       this.setStarterDetails(starterId, false);
 
-      this.startIconAnimation(this.cursor);
+      if (iconAnimation) {
+        this.startIconAnimation(this.cursor);
+      }
 
       if (this.pokerusSpeciesIds.includes(starterId)) {
         handleTutorial(Tutorial.POKERUS);
@@ -3285,6 +3294,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.cursor = -1;
     this.oldCursor = -1;
     this.instructionsContainer.hideInstructions();
+    this.randomCursorObj.setVisible(false);
 
     this.starterSummary.clear();
 
@@ -3292,6 +3302,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.partyStarterIds.length > 0) {
+      this.partyCursorObj.setVisible(false);
       this.popPartyStarter(this.partyStarterIds.length - 1);
     }
 

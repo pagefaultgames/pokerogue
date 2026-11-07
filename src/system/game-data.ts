@@ -52,11 +52,12 @@ import { RibbonData } from "#system/ribbon-data";
 import { TrainerData } from "#system/trainer-data";
 import { applySessionVersionMigration, applySystemVersionMigration } from "#system/version-converter";
 import { vouchers } from "#system/voucher";
-import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
   AppliedMigrators,
   DexAttrProps,
+  DexData,
+  DexEntry,
   RunHistoryData,
   SeenDialogues,
   SessionSaveData,
@@ -126,7 +127,7 @@ export class GameData {
       this.trainerId = randInt(65536);
       this.secretId = randInt(65536);
     }
-    this.starterData = {};
+    this.starterData = {} as StarterData;
     this.gameStats = new GameStats();
     this.runHistory = {};
     this.unlocks = {
@@ -1545,7 +1546,7 @@ export class GameData {
   }
 
   private initStarterData(): void {
-    const starterData: StarterData = {};
+    const starterData = {} as StarterData;
 
     const starterSpeciesIds = speciesDataRegistry.getAllStarters();
     for (const speciesId of starterSpeciesIds) {
@@ -1558,6 +1559,7 @@ export class GameData {
         passiveAttr: 0,
         valueReduction: 0,
         classicWinCount: 0,
+        pity: [0, 0],
       };
     }
 
@@ -1721,7 +1723,7 @@ export class GameData {
         // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
         const shinyBonus = pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant ?? 0) : 1;
         const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
-        const eventBonus = timedEventManager.getExtraCatchCandy();
+        const eventBonus = fromEgg ? 0 : timedEventManager.getExtraCatchCandy();
         const totalCandy = shinyBonus * eggOrBossBonus + eventBonus;
         this.addStarterCandy(species.speciesId, totalCandy);
       }
@@ -1924,9 +1926,18 @@ export class GameData {
 
   getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
     const dexAttr = this.dexData[speciesId].caughtAttr;
-    // Default is female only for species where malePercent is not null but 0
-    const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
-    const formIndex = 0;
+    // Default is female for species where malePercent is not null but 0, or if the male is not caught
+    const female =
+      speciesDataRegistry.getSpecies(speciesId).malePercent === 0
+      || (!!speciesDataRegistry.getSpecies(speciesId).malePercent && (dexAttr & DexAttr.MALE) === 0n);
+    // First caught form is set as the default
+    let formIndex = 0;
+    for (let attr = 128n, i = 0; attr <= dexAttr; attr <<= 1n, i++) {
+      if ((dexAttr & attr) !== 0n) {
+        formIndex = i;
+        break;
+      }
+    }
     let variant: Variant = 0;
     let shiny = false;
     // Set shiny to true if requested, OR if non-shiny version is uncaught

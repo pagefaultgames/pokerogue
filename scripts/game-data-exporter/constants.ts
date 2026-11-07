@@ -9,7 +9,7 @@ import { defaultCommanderHelpArgs } from "#script-utils/arguments";
 import { join } from "path";
 import { Command } from "@commander-js/extra-typings";
 
-export const SCRIPT_VERSION = "1.1.0";
+export const SCRIPT_VERSION = "1.1.1";
 
 const exporterArgv = process.env.GAME_DATA_EXPORT_ARGS
   ? ["node", "game-data:export", ...(JSON.parse(process.env.GAME_DATA_EXPORT_ARGS) as string[])]

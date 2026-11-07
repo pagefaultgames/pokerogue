@@ -13,6 +13,7 @@ import { hasAllLocalizedSprites, localPing } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -167,6 +168,8 @@ export class LoadingScene extends SceneBase {
       // Load character sprites
       .loadAtlas("c_rival_m", "character", "rival_m")
       .loadAtlas("c_rival_f", "character", "rival_f")
+      .loadAtlas("c_halloween_rival_m", "events", "halloween_rival_m")
+      .loadAtlas("c_halloween_rival_f", "events", "halloween_rival_f")
 
       // Load pokemon-related images
       .loadImage("pkmn__back__sub", "pokemon/back", "sub.png")

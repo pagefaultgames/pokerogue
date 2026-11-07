@@ -2,6 +2,9 @@ import type { MockGameObject } from "#test/mocks/mock-game-object";
 import type { MockTextureManager } from "#test/mocks/mock-texture-manager";
 import { coerceArray } from "#utils/array";
 
+// TODO: Replace this with a real mock.
+type MockMask = { autoUpdate: boolean };
+
 // TODO: Make this implement Phaser.GameObjects.Container
 export class MockContainer implements MockGameObject {
   protected x: number;
@@ -15,6 +18,10 @@ export class MockContainer implements MockGameObject {
   public frame;
   protected textureManager;
   public list: MockGameObject[] = [];
+  public filters = {
+    internal: { addMask: (_mask: MockGameObject): MockMask => ({ autoUpdate: true }) },
+    external: { addMask: (_mask: MockGameObject): MockMask => ({ autoUpdate: true }) },
+  };
   public name: string;
   public active = true;
 
@@ -58,6 +65,10 @@ export class MockContainer implements MockGameObject {
 
   setMask(): this {
     /// Sets the mask that this Game Object will use to render with.
+    return this;
+  }
+
+  enableFilters(): this {
     return this;
   }
 

@@ -42,6 +42,8 @@ export class TitlePhase extends Phase {
     const now = new Date();
     if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
       audioManager.playBgm("winter_title", true);
+    } else if ((now.getMonth() === 9 && now.getDate() >= 20) || (now.getMonth() === 10 && now.getDate() <= 5)) {
+      audioManager.playBgm("halloween_title", true);
     } else {
       audioManager.playBgm("title", true);
     }
