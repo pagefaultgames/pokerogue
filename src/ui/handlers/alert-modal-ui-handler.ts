@@ -11,6 +11,7 @@ import Phaser from "phaser";
 export class AlertModalUiHandler extends ModalUiHandler {
   private label: Phaser.GameObjects.Text;
   private allowClosing = false;
+  private onClose: (() => void) | undefined;
   private overlay: Phaser.GameObjects.Rectangle;
 
   private width = 250;
@@ -55,9 +56,10 @@ export class AlertModalUiHandler extends ModalUiHandler {
    * Show the alert modal with the specified message.
    * @param args - \
    * `message`: The message that will be displayed in the alert box. \
-   * `closeDelay`: Optional delay before allowing the user to close the modal. If not provided, the alert will be unclosable.
+   * `closeDelay`: Optional delay before allowing the user to close the modal. If not provided, the alert will be unclosable. \
+   * `onClose`: Optional callback to invoke after the modal is dismissed.
    */
-  public override show(args: [message: string, closeDelay?: number]): boolean {
+  public override show(args: [message: string, closeDelay?: number, onClose?: () => void]): boolean {
     const config: ModalConfig = { buttonActions: [] };
 
     const msg = args[0];
@@ -83,6 +85,7 @@ export class AlertModalUiHandler extends ModalUiHandler {
     playTween({ targets: this.overlay, alpha: 0.7, duration: 750, ease: "Sine.easeOut" });
 
     const delay = args[1];
+    this.onClose = args[2];
     this.allowClosing = false;
     if (delay != null) {
       globalScene.time.delayedCall(fixedInt(delay), () => {
@@ -100,7 +103,8 @@ export class AlertModalUiHandler extends ModalUiHandler {
     if (ui.mode === UiMode.ALERT_MODAL) {
       ui.revertMode()
         .then(() => playTween({ targets: this.overlay, alpha: 0, duration: 500, ease: "Sine.easeOut" }))
-        .then(() => ui.remove(this.overlay, true));
+        .then(() => ui.remove(this.overlay, true))
+        .then(() => this.onClose?.());
     }
     return true;
   }
