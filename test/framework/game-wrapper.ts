@@ -144,10 +144,10 @@ export class GameWrapper {
       // @ts-expect-error
       chain: data => {
         // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
-        // @ts-expect-error
-        data?.tweens?.forEach(tween => tween.onComplete?.());
-        // @ts-expect-error
-        data.onComplete?.();
+        // @ts-expect-error: missing params for `onComplete`
+        (data as Phaser.Types.Tweens.TweenChainBuilderConfig)?.tweens?.forEach(tween => tween.onComplete?.());
+        // @ts-expect-error: missing params for `onComplete`
+        (data as Phaser.Types.Tweens.TweenChainBuilderConfig).onComplete?.();
       },
       // @ts-expect-error
       addCounter: data => {
