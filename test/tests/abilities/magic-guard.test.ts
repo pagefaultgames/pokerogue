@@ -70,8 +70,12 @@ describe("Ability - Magic Guard", () => {
       passive = AbilityId.BALL_FETCH,
       enemyAbility = AbilityId.BALL_FETCH,
     }) => {
-      game.override.enemyLevel(1).passiveAbility(passive).enemyAbility(enemyAbility).battleType(BattleType.TRAINER)
-        .randomTrainer({trainerType: TrainerType.YOUNGSTER});
+      game.override
+        .enemyLevel(1)
+        .passiveAbility(passive)
+        .enemyAbility(enemyAbility)
+        .battleType(BattleType.TRAINER)
+        .randomTrainer({ trainerType: TrainerType.YOUNGSTER });
       await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
       const player = game.field.getPlayerPokemon();
@@ -158,8 +162,7 @@ describe("Ability - Magic Guard", () => {
     game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
 
-    const burntDmg = enemy.getInverseHp();
-    expect(burntDmg).toBeCloseTo(toDmgValue(prevDmg / 2), 0);
+    expect(enemy).toHaveTakenDamage(prevDmg / 2);
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {
