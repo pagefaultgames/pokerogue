@@ -81,9 +81,9 @@ type SerializedPosTagMap = {
 export type SerializedPositionalTag = ObjectValues<SerializedPosTagMap>;
 
 /**
- * Dummy, TypeScript-only constant to ensure that all positional tag types have their corresponding parameter types correctly mapped to their serialized forms.
+ * Dummy, TypeScript-only declaration to ensure that all positional tags have their corresponding parameter types correctly mapped to their serialized forms.
  *
- * If a PositionalTag fails to meet this requirement, TypeScript will throw an error on this statement.
+ * If a tag fails to meet this requirement, TypeScript will throw an error on this statement.
  *
  * ⚠️ Does not actually exist at runtime, so it must not be used!
  * @internal

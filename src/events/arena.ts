@@ -158,7 +158,7 @@ export interface ArenaEventMap {
 }
 
 /**
- * Dummy, type-only declaration to ensure that
+ * Dummy, TypeScript-only declaration to ensure that
  * {@linkcode ArenaEventMap} has an entry for all `ArenaEventType`s.
  *
  * If an event is missing from the map, TypeScript will throw an error on this statement.
