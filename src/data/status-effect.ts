@@ -120,9 +120,10 @@ export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): 
     case StatusEffect.SLEEP:
     case StatusEffect.FREEZE:
       return 2.5;
+    case StatusEffect.NONE:
+    case StatusEffect.FAINT:
+      return 1;
   }
-
-  return 1;
 }
 
 /**

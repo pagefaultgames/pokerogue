@@ -5437,44 +5437,46 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.playAnim();
   }
 
-  tint(color: number, alpha?: number, duration?: number, ease?: string) {
+  tint(color: number, alpha = 1, duration = 0, ease = "Linear"): void {
     const tintSprite = this.getTintSprite();
-    tintSprite //
-      ?.setTint(color)
-      .setTintMode(Phaser.TintModes.FILL)
-      .setVisible(true);
+    if (!tintSprite) {
+      return;
+    }
+
+    tintSprite.setTint(color).setTintMode(Phaser.TintModes.FILL).setVisible(true);
 
     if (duration) {
-      tintSprite?.setAlpha(0);
+      tintSprite.setAlpha(0);
 
       globalScene.tweens.add({
         targets: tintSprite,
-        alpha: alpha || 1,
+        alpha,
         duration,
-        ease: ease || "Linear",
+        ease,
       });
     } else {
-      tintSprite?.setAlpha(alpha);
+      tintSprite.setAlpha(alpha);
     }
   }
 
-  untint(duration: number, ease?: string) {
+  untint(duration: number, ease = "Linear"): void {
     const tintSprite = this.getTintSprite();
+    if (!tintSprite) {
+      return;
+    }
 
     if (duration) {
       globalScene.tweens.add({
         targets: tintSprite,
         alpha: 0,
         duration,
-        ease: ease || "Linear",
+        ease,
         onComplete: () => {
-          tintSprite?.setVisible(false);
-          tintSprite?.setAlpha(1);
+          tintSprite.setVisible(false).setAlpha(1);
         },
       });
     } else {
-      tintSprite?.setVisible(false);
-      tintSprite?.setAlpha(1);
+      tintSprite.setVisible(false).setAlpha(1);
     }
   }
 
