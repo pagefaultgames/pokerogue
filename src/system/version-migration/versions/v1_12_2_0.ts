@@ -15,7 +15,7 @@ const eggCostReductionThresholds = {
   10: [8, 16, 32],
 } as const;
 
-const addPityTracker: SystemSaveMigrator = {
+const addPityTracker = {
   name: "addPityTracker",
   version: "1.12.2.0",
   migrate: (data): void => {
@@ -41,6 +41,6 @@ const addPityTracker: SystemSaveMigrator = {
       data.starterData[speciesId].pity[1] = 3 * thresholdReached;
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [addPityTracker] as const;
+export const systemMigrators = [addPityTracker] as const satisfies readonly SystemSaveMigrator[];
