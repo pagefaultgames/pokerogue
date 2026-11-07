@@ -163,7 +163,7 @@ export class Arena {
     this.playerFaints = 0;
   }
 
-  /** Clears weather, terrain and arena tags when entering new biome or trainer battle. */
+  /** Clears weather, terrain, arena tags and positional tags when entering new biome or trainer battle. */
   public resetArenaEffects(): void {
     // Don't reset weather if a Biome's permanent weather is active
     if (this.weather?.turnsLeft !== 0) {
@@ -175,6 +175,7 @@ export class Arena {
     }
     this.resetPlayerFaintCount();
     this.removeAllTags();
+    this.positionalTagManager.removeAllTags();
   }
 
   // #endregion Misc Public Methods
