@@ -30,12 +30,12 @@ describe("Abilities - Wind Power", () => {
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const shiftry = game.field.getEnemyPokemon();
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
+    expect(shiftry).not.toHaveBattlerTag(BattlerTagType.CHARGED);
 
     game.move.select(MoveId.PETAL_BLIZZARD);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
+    expect(shiftry).toHaveBattlerTag(BattlerTagType.CHARGED);
   });
 
   it("becomes charged when Tailwind takes effect on its side", async () => {
@@ -44,12 +44,12 @@ describe("Abilities - Wind Power", () => {
     await game.classicMode.startBattle(SpeciesId.SHIFTRY);
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
+    expect(shiftry).not.toHaveBattlerTag(BattlerTagType.CHARGED);
 
     game.move.select(MoveId.TAILWIND);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
+    expect(shiftry).toHaveBattlerTag(BattlerTagType.CHARGED);
   });
 
   it("does not become charged when Tailwind takes effect on opposing side", async () => {
@@ -59,15 +59,15 @@ describe("Abilities - Wind Power", () => {
     const magikarp = game.field.getEnemyPokemon();
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
-    expect(magikarp.getTag(BattlerTagType.CHARGED)).toBeUndefined();
+    expect(shiftry).not.toHaveBattlerTag(BattlerTagType.CHARGED);
+    expect(magikarp).not.toHaveBattlerTag(BattlerTagType.CHARGED);
 
     game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
-    expect(magikarp.getTag(BattlerTagType.CHARGED)).toBeUndefined();
+    expect(shiftry).toHaveBattlerTag(BattlerTagType.CHARGED);
+    expect(magikarp).not.toHaveBattlerTag(BattlerTagType.CHARGED);
   });
 
   it("does not interact with Sandstorm", async () => {
@@ -76,12 +76,12 @@ describe("Abilities - Wind Power", () => {
     await game.classicMode.startBattle(SpeciesId.SHIFTRY);
     const shiftry = game.field.getPlayerPokemon();
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
+    expect(shiftry).not.toHaveBattlerTag(BattlerTagType.CHARGED);
 
     game.move.select(MoveId.SANDSTORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
+    expect(shiftry).not.toHaveBattlerTag(BattlerTagType.CHARGED);
   });
 });

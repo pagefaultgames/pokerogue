@@ -31,7 +31,8 @@ import { getStarterColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import Phaser from "phaser";
+import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
 
 export class StarterSummary extends Phaser.GameObjects.Container {
   private readonly pokemonSprite: Phaser.GameObjects.Sprite;
@@ -101,7 +102,11 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.pokemonSprite = globalScene.add //
       .sprite(53, 63, "pkmn__sub")
-      .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        ignoreTimeTint: true,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
     this.shinyOverlay = globalScene.add
       .image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny"))
@@ -201,8 +206,8 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     globalScene.add.existing(this.statsContainer);
 
     this.add([
-      this.pokemonSprite,
       this.shinyOverlay,
+      this.pokemonSprite,
       this.pokemonNumberText,
       this.pokemonNameText,
       this.pokemonUncaughtText,
@@ -337,7 +342,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     ) //
       .setOrigin(0);
 
-    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" }) //
+    this.pokemonGrowthRateText = addTextObject(
+      8 + this.pokemonGrowthRateLabelText.displayWidth + 2,
+      106,
+      "",
+      TextStyle.GROWTH_RATE_TYPE,
+      { fontSize: "36px" },
+    ) //
       .setOrigin(0);
 
     this.pokemonLuckLabelText = addTextObject(8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
@@ -430,12 +441,14 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   }
 
   public applyChallengeVisibility(): void {
+    // TODO: this should not be handled this way
     const notFreshStart = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+    const notMovesetRandomizer = !globalScene.gameMode.hasChallenge(Challenges.MOVESET_RANDOMIZER);
 
     for (const container of this.pokemonEggMoveContainers) {
-      container.setVisible(notFreshStart);
+      container.setVisible(notFreshStart && notMovesetRandomizer);
     }
-    this.eggMovesLabel.setVisible(notFreshStart);
+    this.eggMovesLabel.setVisible(notFreshStart && notMovesetRandomizer);
     // This is not enough, we need individual checks in setStarterSpecies too! :)
     this.pokemonPassiveDisabledIcon.setVisible(notFreshStart);
     this.pokemonPassiveLabelText.setVisible(notFreshStart);
@@ -709,7 +722,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
-    const newTeraType = teraType;
+    let newTeraType = teraType;
+    if (species.speciesId === SpeciesId.TERAPAGOS) {
+      newTeraType = PokemonType.STELLAR;
+    }
     this.teraIcon.setFrame(PokemonType[newTeraType].toLowerCase());
     this.teraIcon.setVisible(!this.statsMode && this.allowTera);
   }
@@ -795,9 +811,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
       this.pokemonSprite
         .play(species.getSpriteKey(female, formIndex, shiny, variant))
-        .setPipelineData("shiny", shiny)
-        .setPipelineData("variant", variant)
-        .setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant))
+        .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
+        .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
+        .setRenderNodeData(
+          globalScene.spriteSubmitter,
+          "spriteKey",
+          species.getSpriteKey(female, formIndex, shiny, variant),
+        )
         .setVisible(!this.statsMode);
     });
   }

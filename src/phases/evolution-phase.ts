@@ -10,14 +10,17 @@ import { getTypeRgb } from "#data/type";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class EvolutionPhase extends Phase {
   // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
   // We have to use the union here
   public readonly phaseName: "EvolutionPhase" | "FormChangePhase" = "EvolutionPhase";
+
   protected pokemon: PlayerPokemon;
   protected lastLevel: number;
 
@@ -25,8 +28,8 @@ export class EvolutionPhase extends Phase {
 
   private preEvolvedPokemonName: string;
 
-  private evolution: SpeciesFormEvolution | null;
-  private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
+  private readonly evolution: SpeciesFormEvolution | null;
+  private readonly fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
   private evolutionBgm: BackgroundMusic | null;
   private evolutionHandler: EvolutionSceneUiHandler;
 
@@ -107,56 +110,60 @@ export class EvolutionPhase extends Phase {
   }
 
   /**
-   * Configure the sprite, setting its pipeline data
+   * Configure the sprite, setting its render node data
    * @param pokemon - The pokemon object that the sprite information is configured from
    * @param sprite - The sprite object to configure
-   * @param setPipeline - Whether to also set the pipeline; should be false
+   * @param setRenderNode - Whether to also set the render node; should be false
    *  if the sprite is only being updated with new sprite assets
    *
    *
    * @returns The sprite object that was passed in
    */
-  protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
+  protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setRenderNode = true): typeof sprite {
     const spriteKey = pokemon.getSpriteKey(true);
     sprite.play(spriteKey);
 
-    if (setPipeline) {
-      sprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: false,
-        teraColor: getTypeRgb(pokemon.getTeraType()),
-        isTerastallized: pokemon.isTerastallized,
-      });
+    if (setRenderNode) {
+      sprite
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: false,
+          teraColor: getTypeRgb(pokemon.getTeraType()),
+          isTerastallized: pokemon.isTerastallized,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
     }
 
     sprite
-      .setPipelineData("ignoreTimeTint", true)
-      .setPipelineData("spriteKey", spriteKey)
-      .setPipelineData("shiny", pokemon.shiny)
-      .setPipelineData("variant", pokemon.variant);
+      .setRenderNodeData(globalScene.spriteSubmitter, "ignoreTimeTint", true)
+      .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+      .setRenderNodeData(globalScene.spriteSubmitter, "shiny", pokemon.shiny)
+      .setRenderNodeData(globalScene.spriteSubmitter, "variant", pokemon.variant);
 
     for (let k of ["spriteColors", "fusionSpriteColors"]) {
       if (pokemon.summonData.speciesForm) {
         k += "Base";
       }
-      sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+      sprite.renderNodeData[globalScene.spriteSubmitter.name][k] =
+        pokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k];
     }
 
     return sprite;
   }
 
   private getPokemonSprite(): Phaser.GameObjects.Sprite {
-    const sprite = globalScene.addPokemonSprite(
-      this.pokemon,
-      this.evolutionBaseBg.displayWidth / 2,
-      this.evolutionBaseBg.displayHeight / 2,
-      "pkmn__sub",
-    );
-    sprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-    });
-    return sprite;
+    return globalScene
+      .addPokemonSprite(
+        this.pokemon,
+        this.evolutionBaseBg.displayWidth / 2,
+        this.evolutionBaseBg.displayHeight / 2,
+        "pkmn__sub",
+      )
+      .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        ignoreTimeTint: true,
+      })
+      .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
   }
 
   /**
@@ -167,12 +174,12 @@ export class EvolutionPhase extends Phase {
     this.pokemonSprite = this.configureSprite(this.pokemon, this.getPokemonSprite());
     this.pokemonTintSprite = this.configureSprite(
       this.pokemon,
-      this.getPokemonSprite().setAlpha(0).setTintFill(0xffffff),
+      this.getPokemonSprite().setAlpha(0).setTint(0xffffff).setTintMode(Phaser.TintModes.FILL),
     );
     this.pokemonEvoSprite = this.configureSprite(this.pokemon, this.getPokemonSprite().setVisible(false));
     this.pokemonEvoTintSprite = this.configureSprite(
       this.pokemon,
-      this.getPokemonSprite().setVisible(false).setTintFill(0xffffff),
+      this.getPokemonSprite().setVisible(false).setTint(0xffffff).setTintMode(Phaser.TintModes.FILL),
     );
 
     this.evolutionContainer.add([
@@ -312,25 +319,23 @@ export class EvolutionPhase extends Phase {
    *  This should end the evolution phase
    */
   private showPauseEvolutionConfirmation(endCallback: () => void): void {
-    globalScene.ui.setOverlayMode(
-      UiMode.CONFIRM,
-      () => {
+    const options: ConfirmModeConfig = {
+      yesHandler: () => {
         globalScene.ui.revertMode();
         this.pokemon.pauseEvolutions = true;
         globalScene.ui.showText(
-          i18next.t("menu:evolutionsPaused", {
-            pokemonName: this.preEvolvedPokemonName,
-          }),
+          i18next.t("menu:evolutionsPaused", { pokemonName: this.preEvolvedPokemonName }),
           null,
           endCallback,
           3000,
         );
       },
-      () => {
+      noHandler: () => {
         globalScene.ui.revertMode();
         globalScene.time.delayedCall(3000, endCallback);
       },
-    );
+    };
+    globalScene.ui.setOverlayMode(UiMode.CONFIRM, options);
   }
 
   /**

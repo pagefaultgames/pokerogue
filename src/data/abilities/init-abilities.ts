@@ -280,7 +280,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.CLOUD_NINE, 3) //
-      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(SuppressWeatherEffectAbAttr)
       .attr(PostSummonUnnamedMessageAbAttr, i18next.t("abilityTriggers:weatherEffectDisappeared"))
       .attr(PostSummonWeatherSuppressedFormChangeAbAttr)
       .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr)
@@ -514,7 +514,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.STICKY_HOLD, 3) //
       .attr(BlockItemTheftAbAttr)
-      .bypassFaint()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SHED_SKIN, 3) //
@@ -589,7 +588,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.AIR_LOCK, 3) //
-      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(SuppressWeatherEffectAbAttr)
       .attr(PostSummonUnnamedMessageAbAttr, i18next.t("abilityTriggers:weatherEffectDisappeared"))
       .attr(PostSummonWeatherSuppressedFormChangeAbAttr)
       .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr)
@@ -1407,7 +1406,7 @@ export function initAbilities() {
       )
       .build(),
     new AbBuilder(AbilityId.TRIAGE, 7) //
-      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3)
+      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.hasFlag(MoveFlags.HEALING_MOVE), 3)
       .build(),
     new AbBuilder(AbilityId.GALVANIZE, 7) //
       .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, normalTypeMoveConversionCondition)
@@ -1455,7 +1454,9 @@ export function initAbilities() {
         () => 0,
       )
       .conditionalAttr(
-        p => !p.hasSpecies(SpeciesId.BATTLE_BOND_GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        p =>
+          ((p.species.speciesId !== SpeciesId.BATTLE_BOND_GRENINJA && !p.isFusion()) || p.isFusion())
+          && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
         PostVictoryStatStageChangeAbAttr,
         groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1),
       )
@@ -2200,6 +2201,14 @@ export function initAbilities() {
     new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
       .attr(PostDefendApplyStatusEffectAbAttr, 100, false, StatusEffect.BURN)
       .bypassFaint()
+      .build(),
+    new AbBuilder(AbilityId.AURA_GUARD, 9) //
+      .attr(
+        ReceivedMoveDamageMultiplierAbAttr,
+        (target, user, move) => move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user, target }),
+        0.5,
+      )
+      .ignorable()
       .build(),
   );
 }

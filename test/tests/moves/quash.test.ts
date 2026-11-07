@@ -41,7 +41,7 @@ describe("Moves - Quash", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     // will be sunny if player_2 moved last because of quash, rainy otherwise
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("fails if the target has already moved", async () => {
@@ -52,7 +52,7 @@ describe("Moves - Quash", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerField()[1]).toHaveUsedMove({ move: MoveId.QUASH, result: MoveResult.FAIL });
   });
 
   // TODO: Enable once rampaging moves and move queue are fixed.
@@ -73,15 +73,14 @@ describe("Moves - Quash", () => {
     game.move.select(MoveId.OUTRAGE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const outrageMove = rattata.getMoveset().find(m => m.moveId === MoveId.OUTRAGE);
-    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
 
     game.move.select(MoveId.QUASH, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(outrageMove?.ppUsed).toBe(1);
-    expect(rattata.getLastXMoves()[0]).toMatchObject({
+    expect(accelgor).toHaveUsedMove({ move: MoveId.QUASH, result: MoveResult.SUCCESS });
+    expect(rattata).toHaveUsedPP(MoveId.OUTRAGE, 1);
+    expect(rattata).toHaveUsedMove({
       move: MoveId.OUTRAGE,
       result: MoveResult.SUCCESS,
       useMode: MoveUseMode.IGNORE_PP,
@@ -101,7 +100,7 @@ describe("Moves - Quash", () => {
     await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("respects trick room", async () => {
@@ -122,6 +121,6 @@ describe("Moves - Quash", () => {
     await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+    expect(game).toHaveWeather(WeatherType.RAIN);
   });
 });

@@ -13,6 +13,7 @@ const DARK_TYPE_60_POW_REPLACEMENTS: readonly MoveId[] = [
   MoveId.NIGHT_SLASH,
   // MoveId.FOUL_PLAY,
   MoveId.THROAT_CHOP,
+  MoveId.CEASELESS_EDGE,
   MoveId.FALSE_SURRENDER,
   MoveId.LASH_OUT,
   MoveId.KOWTOW_CLEAVE,
@@ -103,9 +104,8 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.MALIGNANT_CHAIN,
   ],
   [MoveId.AERIAL_ACE]: [MoveId.DRILL_PECK],
-  [MoveId.AIR_CUTTER]: [MoveId.AIR_SLASH],
-  // Jet Punch is too rare of a move to enable
-  // [MoveId.AQUA_JET]: [MoveId.JET_PUNCH],
+  [MoveId.AIR_CUTTER]: [MoveId.AIR_SLASH, MoveId.AEROBLAST],
+  [MoveId.AQUA_JET]: [MoveId.JET_PUNCH],
   [MoveId.ARM_THRUST]: [
     MoveId.BRICK_BREAK,
     MoveId.DRAIN_PUNCH,
@@ -169,6 +169,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.STEAM_ERUPTION,
     MoveId.SPARKLING_ARIA,
     MoveId.SPLISHY_SPLASH,
+    MoveId.SNIPE_SHOT,
   ],
   [MoveId.COMET_PUNCH]: [MoveId.SPIKE_CANNON, MoveId.ROCK_CLIMB, MoveId.TAIL_SLAP],
   [MoveId.CONFUSION]: [
@@ -228,9 +229,11 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.CHIP_AWAY,
     MoveId.RETALIATE,
   ],
+  [MoveId.DARK_PULSE]: [MoveId.FIERY_WRATH],
   [MoveId.DIG]: [MoveId.EARTHQUAKE, MoveId.DRILL_RUN, MoveId.THOUSAND_WAVES, MoveId.HIGH_HORSEPOWER],
   [MoveId.DISARMING_VOICE]: [MoveId.DRAINING_KISS, MoveId.MOONBLAST, MoveId.DAZZLING_GLEAM, MoveId.ALLURING_VOICE],
   [MoveId.DIVE]: [MoveId.WATERFALL, MoveId.LIQUIDATION, MoveId.FISHIOUS_REND, MoveId.AQUA_CUTTER],
+  [MoveId.DOUBLE_EDGE]: [MoveId.HEAD_CHARGE, MoveId.MULTI_ATTACK, MoveId.POPULATION_BOMB],
   [MoveId.DOUBLE_HIT]: [
     MoveId.MEGA_PUNCH,
     MoveId.HEADBUTT,
@@ -246,6 +249,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.ROCK_CLIMB,
     MoveId.CHIP_AWAY,
     MoveId.RETALIATE,
+    MoveId.POPULATION_BOMB,
   ],
   [MoveId.DOUBLE_KICK]: [
     MoveId.BRICK_BREAK,
@@ -259,8 +263,11 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.COLLISION_COURSE,
   ],
   [MoveId.DOUBLE_SLAP]: MULTIHIT_NORMAL_REPLACEMENTS,
-  // Dual Wingbeat is actually OK
-  // [MoveId.DUAL_WINGBEAT]: [MoveId.DRILL_PECK, MoveId.FLOATY_FALL],
+  [MoveId.DRAGON_PULSE]: [
+    MoveId.FICKLE_BEAM, // Purely for Hydrapple
+    MoveId.SPACIAL_REND,
+    MoveId.CORE_ENFORCER,
+  ],
   [MoveId.ECHOED_VOICE]: [
     MoveId.TRI_ATTACK,
     MoveId.UPROAR,
@@ -301,6 +308,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.BLAZE_KICK,
     MoveId.BITTER_BLADE,
   ],
+  [MoveId.FLAMETHROWER]: [MoveId.TORCH_SONG],
   // Replacements are rare
   // [MoveId.FLY]: [MoveId.SKY_ATTACK,],
   [MoveId.FURY_ATTACK]: MULTIHIT_NORMAL_REPLACEMENTS,
@@ -327,9 +335,10 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.POUNCE,
   ],
   [MoveId.GUST]: [MoveId.AIR_CUTTER, MoveId.AIR_SLASH],
+  [MoveId.GIGA_DRAIN]: [MoveId.MATCHA_GOTCHA],
   // Base move too rare
   // [MoveId.HEART_STAMP]: [MoveId.PSYCHO_CUT, MoveId.PSYCHIC_FANGS, ],
-  [MoveId.HEX]: [MoveId.SHADOW_BALL, MoveId.MOONGEIST_BEAM, MoveId.ASTRAL_BARRAGE],
+  [MoveId.HEX]: [MoveId.INFERNAL_PARADE, MoveId.MOONGEIST_BEAM, MoveId.ASTRAL_BARRAGE],
   [MoveId.HOLD_BACK]: NORMAL_40BP_REPLACEMENTS,
   [MoveId.HORN_ATTACK]: [
     MoveId.HEADBUTT,
@@ -349,6 +358,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.ICY_WIND]: [MoveId.ICE_BEAM, MoveId.FREEZE_DRY, MoveId.BLIZZARD],
   // Incinerate is actually pretty good as it removes berries.
   // [MoveId.INCINERATE]: [MoveId.FLAMETHROWER, MoveId.LAVA_PLUME, MoveId.FLAME_BURST, MoveId.SEARING_SHOT, MoveId.MYSTICAL_FIRE, MoveId.BURNING_JEALOUSY, MoveId.TORCH_SONG],
+  [MoveId.JUMP_KICK]: [MoveId.HIGH_JUMP_KICK, MoveId.AXE_KICK],
   [MoveId.KARATE_CHOP]: [
     MoveId.BRICK_BREAK,
     MoveId.WAKE_UP_SLAP,
@@ -360,6 +370,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.FLYING_PRESS,
     MoveId.COLLISION_COURSE,
   ],
+  [MoveId.LANDS_WRATH]: [MoveId.THOUSAND_WAVES, MoveId.THOUSAND_ARROWS, MoveId.EARTHQUAKE],
   [MoveId.LEAFAGE]: [
     MoveId.RAZOR_LEAF,
     MoveId.NEEDLE_ARM,
@@ -367,14 +378,18 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.SEED_BOMB,
     MoveId.HORN_LEECH,
     MoveId.PETAL_BLIZZARD,
+    MoveId.TROP_KICK,
+    MoveId.DRUM_BEATING,
     MoveId.GRAV_APPLE,
     MoveId.GRASSY_GLIDE,
     MoveId.TRAILBLAZE,
+    MoveId.FLOWER_TRICK,
     MoveId.IVY_CUDGEL,
     MoveId.WOOD_HAMMER,
     MoveId.POWER_WHIP,
     MoveId.BULLET_SEED,
   ],
+  [MoveId.LIQUIDATION]: [MoveId.AQUA_STEP, MoveId.SURGING_STRIKES, MoveId.TRIPLE_DIVE],
   [MoveId.MAGICAL_LEAF]: [MoveId.GIGA_DRAIN, MoveId.ENERGY_BALL],
   // Base move too rare
   // [MoveId.MAGNET_BOMB]: [MoveId.IRON_HEAD,MoveId.ANCHOR_SHOT,MoveId.SMART_STRIKE,MoveId.SUNSTEEL_STRIKE,MoveId.BEHEMOTH_BLADE,MoveId.BEHEMOTH_BASH	],
@@ -408,6 +423,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.FLOATY_FALL,
     MoveId.DUAL_WINGBEAT,
   ],
+  [MoveId.PHANTOM_FORCE]: [MoveId.SHADOW_FORCE],
   [MoveId.POISON_STING]: [
     MoveId.POISON_FANG,
     MoveId.POISON_JAB,
@@ -416,6 +432,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.MORTAL_SPIN,
     MoveId.NOXIOUS_TORQUE,
   ],
+  [MoveId.POISON_JAB]: [MoveId.DIRE_CLAW],
   [MoveId.POISON_TAIL]: [
     MoveId.POISON_FANG,
     MoveId.POISON_JAB,
@@ -435,13 +452,18 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.LUMINA_CRASH,
     MoveId.PSYCHIC_NOISE,
   ],
+  [MoveId.PSYCHIC]: [MoveId.LUSTER_PURGE, MoveId.MIST_BALL, MoveId.FREEZING_GLARE],
+  [MoveId.PSYSHOCK]: [MoveId.PSYSTRIKE],
   [MoveId.QUICK_ATTACK]: [MoveId.EXTREME_SPEED],
   [MoveId.RAZOR_LEAF]: [
     MoveId.LEAF_BLADE,
     MoveId.SEED_BOMB,
     MoveId.HORN_LEECH,
     MoveId.PETAL_BLIZZARD,
+    MoveId.TROP_KICK,
+    MoveId.DRUM_BEATING,
     MoveId.GRAV_APPLE,
+    MoveId.FLOWER_TRICK,
     MoveId.IVY_CUDGEL,
   ],
   [MoveId.ROCK_SMASH]: [
@@ -477,7 +499,18 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.ROLLOUT]: [MoveId.ROCK_BLAST, MoveId.ROCK_SLIDE, MoveId.MIGHTY_CLEAVE],
   [MoveId.ROUND]: [MoveId.TRI_ATTACK, MoveId.UPROAR, MoveId.HYPER_VOICE, MoveId.TECHNO_BLAST, MoveId.BOOMBURST],
   [MoveId.SCRATCH]: NORMAL_40BP_REPLACEMENTS,
+  [MoveId.SCALD]: [MoveId.STEAM_ERUPTION],
+  [MoveId.SELF_DESTRUCT]: [MoveId.EXPLOSION],
+  [MoveId.SEED_BOMB]: [
+    MoveId.TROP_KICK,
+    MoveId.IVY_CUDGEL,
+    MoveId.DRUM_BEATING,
+    MoveId.GRAV_APPLE,
+    MoveId.FLOWER_TRICK,
+    MoveId.LEAF_BLADE,
+  ],
   [MoveId.SHADOW_PUNCH]: [MoveId.SHADOW_CLAW, MoveId.SPIRIT_SHACKLE, MoveId.SPECTRAL_THIEF],
+  [MoveId.SHADOW_BALL]: [MoveId.MOONGEIST_BEAM, MoveId.ASTRAL_BARRAGE],
   [MoveId.SHOCK_WAVE]: [MoveId.THUNDERBOLT, MoveId.DISCHARGE, MoveId.PARABOLIC_CHARGE, MoveId.RISING_VOLTAGE],
   [MoveId.SLAM]: [
     MoveId.MEGA_PUNCH,
@@ -519,7 +552,23 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.STRUGGLE_BUG]: [MoveId.BUG_BUZZ, MoveId.POLLEN_PUFF],
   [MoveId.SWIFT]: [MoveId.TRI_ATTACK, MoveId.UPROAR, MoveId.HYPER_VOICE, MoveId.TECHNO_BLAST, MoveId.BOOMBURST],
   [MoveId.TACKLE]: NORMAL_40BP_REPLACEMENTS,
-  [MoveId.THUNDER_FANG]: [MoveId.THUNDER_PUNCH, MoveId.BOLT_BEAK, MoveId.AURA_WHEEL],
+  [MoveId.TAKE_DOWN]: [MoveId.DOUBLE_EDGE, MoveId.HEAD_CHARGE, MoveId.POPULATION_BOMB],
+  [MoveId.THUNDER_FANG]: [
+    MoveId.THUNDER_PUNCH,
+    MoveId.FUSION_BOLT,
+    MoveId.BOLT_STRIKE,
+    MoveId.ZING_ZAP,
+    MoveId.PLASMA_FISTS,
+    MoveId.BOLT_BEAK,
+    MoveId.AURA_WHEEL,
+  ],
+  [MoveId.THUNDER_PUNCH]: [
+    MoveId.FUSION_BOLT,
+    MoveId.BOLT_BEAK,
+    MoveId.ZING_ZAP,
+    MoveId.PLASMA_FISTS,
+    MoveId.AURA_WHEEL,
+  ],
   [MoveId.THUNDER_SHOCK]: [
     MoveId.THUNDERBOLT,
     MoveId.DISCHARGE,
@@ -538,6 +587,8 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.SEED_BOMB,
     MoveId.HORN_LEECH,
     MoveId.PETAL_BLIZZARD,
+    MoveId.TROP_KICK,
+    MoveId.DRUM_BEATING,
     MoveId.GRAV_APPLE,
     MoveId.GRASSY_GLIDE,
     MoveId.TRAILBLAZE,
@@ -578,7 +629,16 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.STEAM_ERUPTION,
     MoveId.SPARKLING_ARIA,
     MoveId.SPLISHY_SPLASH,
+    MoveId.SNIPE_SHOT,
     MoveId.CHILLING_WATER,
+    MoveId.HYDRO_STEAM,
+  ],
+  [MoveId.WATER_PULSE]: [
+    // Currently restrictive due to Clawitzer, set to only signature moves for now
+    MoveId.STEAM_ERUPTION,
+    MoveId.SPARKLING_ARIA,
+    MoveId.SNIPE_SHOT,
+    MoveId.HYDRO_STEAM,
   ],
   [MoveId.WING_ATTACK]: [MoveId.DRILL_PECK, MoveId.AERIAL_ACE, MoveId.PLUCK, MoveId.FLOATY_FALL],
 

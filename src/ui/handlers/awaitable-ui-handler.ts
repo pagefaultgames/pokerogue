@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import type { AnyFn } from "#types/type-helpers";
 import { UiHandler } from "#ui/ui-handler";
+import Phaser from "phaser";
 
 // TODO: Why does this class exist?
 export abstract class AwaitableUiHandler extends UiHandler {
@@ -35,8 +36,8 @@ export abstract class AwaitableUiHandler extends UiHandler {
         globalScene,
         -1,
         -1,
-        globalScene.scaledCanvas.width,
-        globalScene.scaledCanvas.height,
+        globalScene.scaledCanvas.width + 2,
+        globalScene.scaledCanvas.height + 2,
         0x070707,
       );
       this.tutorialOverlay.setName("tutorial-overlay");

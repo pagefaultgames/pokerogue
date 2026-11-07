@@ -36,7 +36,7 @@ describe("Abilities - Ice Face", () => {
 
     const eiscue = game.field.getEnemyPokemon();
 
-    expect(eiscue.isFullHp()).toBe(true);
+    expect(eiscue).toHaveFullHp();
     expect(eiscue.formIndex).toBe(noiceForm);
   });
 
@@ -50,17 +50,17 @@ describe("Abilities - Ice Face", () => {
 
     // First hit
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(eiscue.isFullHp()).toBe(true);
+    expect(eiscue).toHaveFullHp();
     expect(eiscue.formIndex).toBe(icefaceForm);
 
     // Second hit
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(eiscue.hp).toBeLessThan(eiscue.getMaxHp());
+    expect(eiscue).not.toHaveFullHp();
     expect(eiscue.formIndex).toBe(noiceForm);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(eiscue.hp).toBeLessThan(eiscue.getMaxHp());
+    expect(eiscue).not.toHaveFullHp();
     expect(eiscue.formIndex).toBe(noiceForm);
   });
 
@@ -74,7 +74,7 @@ describe("Abilities - Ice Face", () => {
     const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.formIndex).toBe(icefaceForm);
-    expect(eiscue.hp).toBeLessThan(eiscue.getMaxHp());
+    expect(eiscue).not.toHaveFullHp();
   });
 
   it("takes effects from status moves", async () => {
@@ -100,7 +100,7 @@ describe("Abilities - Ice Face", () => {
 
     const eiscue = game.field.getEnemyPokemon();
 
-    expect(eiscue.isFullHp()).toBe(true);
+    expect(eiscue).toHaveFullHp();
     expect(eiscue.formIndex).toBe(noiceForm);
 
     await game.toEndOfTurn();
@@ -119,7 +119,7 @@ describe("Abilities - Ice Face", () => {
     let eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.isFullHp()).toBe(true);
+    expect(eiscue).toHaveFullHp();
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);
@@ -160,7 +160,7 @@ describe("Abilities - Ice Face", () => {
     let eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.formIndex).toBe(noiceForm);
-    expect(eiscue.isFullHp()).toBe(true);
+    expect(eiscue).toHaveFullHp();
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);

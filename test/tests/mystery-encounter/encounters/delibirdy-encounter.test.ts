@@ -24,6 +24,7 @@ import type { MoneyRequirement } from "#mystery-encounters/mystery-encounter-req
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/delibirdy";
@@ -100,7 +101,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const price = (scene.currentBattle.mysteryEncounter?.options[0].requirements[0] as MoneyRequirement)
+      const price = (scene.currentBattle.mysteryEncounter!.options[0].requirements[0] as MoneyRequirement)
         .requiredMoney;
 
       expect(updateMoneySpy).toHaveBeenCalledWith(-price, true, false);

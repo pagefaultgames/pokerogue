@@ -11,7 +11,7 @@ import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "PostTurnStatusEffectPhase";
-  // biome-ignore lint/complexity/noUselessConstructor: Not unnecessary as it makes battlerIndex required
+
   constructor(battlerIndex: BattlerIndex) {
     super(battlerIndex);
   }

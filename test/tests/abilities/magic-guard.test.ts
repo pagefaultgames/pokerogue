@@ -7,7 +7,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
-import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -48,10 +47,9 @@ describe("AbilityId - Magic Guard", () => {
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBe(magikarp.getMaxHp());
+    expect(magikarp).toHaveFullHp();
   });
 
-  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ abName: string; move?: MoveId; enemyMove?: MoveId; passive?: AbilityId; enemyAbility?: AbilityId }>([
     { abName: "Bad Dreams", enemyMove: MoveId.SPORE, enemyAbility: AbilityId.BAD_DREAMS },
     { abName: "Aftermath", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.AFTERMATH },
@@ -75,7 +73,7 @@ describe("AbilityId - Magic Guard", () => {
       await game.toEndOfTurn();
 
       const magikarp = game.field.getPlayerPokemon();
-      expect(magikarp.hp).toBe(magikarp.getMaxHp());
+      expect(magikarp).toHaveFullHp();
     },
   );
 
@@ -93,7 +91,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBeLessThan(magikarp.getMaxHp());
+    expect(magikarp).not.toHaveFullHp();
   });
 
   it("should preserve toxic turn count and deal appropriate damage when disabled", async () => {
@@ -105,8 +103,8 @@ describe("AbilityId - Magic Guard", () => {
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBe(magikarp.getMaxHp());
-    expect(magikarp.status?.toxicTurnCount).toBe(1);
+    expect(magikarp).toHaveFullHp();
+    expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 1 });
 
     // have a few turns pass
     game.move.use(MoveId.SPLASH);
@@ -116,13 +114,13 @@ describe("AbilityId - Magic Guard", () => {
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(magikarp.status?.toxicTurnCount).toBe(4);
+    expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 4 });
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.GASTRO_ACID);
     await game.toNextTurn();
 
-    expect(magikarp.status?.toxicTurnCount).toBe(5);
+    expect(magikarp).toHaveStatusEffect({ effect: StatusEffect.TOXIC, toxicTurnCount: 5 });
     expect(magikarp.getHpRatio(true)).toBeCloseTo(11 / 16, 1);
   });
 
@@ -136,7 +134,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
-    expect(magikarp.hp).toBe(magikarp.getMaxHp());
+    expect(magikarp).toHaveFullHp();
     expect(magikarp).toHaveStatusEffect(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
@@ -148,8 +146,7 @@ describe("AbilityId - Magic Guard", () => {
     game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
 
-    const burntDmg = blissey.getInverseHp();
-    expect(burntDmg).toBeCloseTo(toDmgValue(prevDmg / 2), 0);
+    expect(blissey).toHaveTakenDamage(prevDmg / 2);
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {
@@ -159,7 +156,7 @@ describe("AbilityId - Magic Guard", () => {
 
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();
-    expect(player.hp).toBe(player.getMaxHp());
+    expect(player).toHaveFullHp();
     expect(player).toHaveStatusEffect(StatusEffect.POISON);
   });
 });

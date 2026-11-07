@@ -6,6 +6,7 @@ import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { playTween } from "#utils/anim-utils";
 import { fixedInt } from "#utils/common";
+import Phaser from "phaser";
 
 export class AlertModalUiHandler extends ModalUiHandler {
   private label: Phaser.GameObjects.Text;

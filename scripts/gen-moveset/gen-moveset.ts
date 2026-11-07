@@ -21,6 +21,7 @@ import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { randomString } from "#utils/common";
 import net from "node:net";
+import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { SamplerPayload } from "./types";
 

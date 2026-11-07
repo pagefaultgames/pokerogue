@@ -14,6 +14,8 @@ import {
 } from "#modifiers/modifier";
 import type { CustomModifierSettings, ModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
 import {
+  EvolutionItemModifierType,
+  FormChangeItemModifierType,
   FusePokemonModifierType,
   getPlayerModifierTypeOptions,
   getPlayerShopModifierTypeOptionsForWave,
@@ -26,6 +28,7 @@ import {
   TmModifierType,
 } from "#modifiers/modifier-type";
 import { BattlePhase } from "#phases/battle-phase";
+import type { ConfirmModeConfig } from "#types/ui-types";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/modifier-select-ui-handler";
 import { PartyOption, PartyUiHandler } from "#ui/party-ui-handler";
@@ -36,10 +39,10 @@ export type ModifierSelectCallback = (rowCursor: number, cursor: number) => bool
 
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
-  private rerollCount: number;
-  private modifierTiers?: ModifierTier[] | undefined;
-  private customModifierSettings?: CustomModifierSettings | undefined;
-  private isCopy: boolean;
+  private readonly rerollCount: number;
+  private readonly modifierTiers?: ModifierTier[] | undefined;
+  private readonly customModifierSettings?: CustomModifierSettings | undefined;
+  private readonly isCopy: boolean;
 
   private typeOptions: ModifierTypeOption[];
 
@@ -81,15 +84,15 @@ export class SelectModifierPhase extends BattlePhase {
     const modifierSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
         globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
-          globalScene.ui.setOverlayMode(
-            UiMode.CONFIRM,
-            () => {
+          const skipRewardConfirmOptions: ConfirmModeConfig = {
+            yesHandler: () => {
               globalScene.ui.revertMode();
               globalScene.ui.setMode(UiMode.MESSAGE);
               super.end();
             },
-            () => this.resetModifierSelect(modifierSelectCallback),
-          );
+            noHandler: () => this.resetModifierSelect(modifierSelectCallback),
+          };
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, skipRewardConfirmOptions);
         });
         return false;
       }
@@ -336,6 +339,8 @@ export class SelectModifierPhase extends BattlePhase {
     const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
     const isTmModifier = modifierType instanceof TmModifierType;
     const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
+    const isEvolutionItemModifier = modifierType instanceof EvolutionItemModifierType;
+    const isFormChangeItemModifier = modifierType instanceof FormChangeItemModifierType;
     const isPpRestoreModifier =
       modifierType instanceof PokemonPpRestoreModifierType || modifierType instanceof PokemonPpUpModifierType;
     const partyUiMode = isMoveModifier
@@ -344,8 +349,17 @@ export class SelectModifierPhase extends BattlePhase {
         ? PartyUiMode.TM_MODIFIER
         : isRememberMoveModifier
           ? PartyUiMode.REMEMBER_MOVE_MODIFIER
-          : PartyUiMode.MODIFIER;
+          : isEvolutionItemModifier
+            ? PartyUiMode.EVOLUTION_ITEM_MODIFIER
+            : isFormChangeItemModifier
+              ? PartyUiMode.FORM_CHANGE_ITEM_MODIFIER
+              : PartyUiMode.MODIFIER;
     const tmMoveId = isTmModifier ? (modifierType as TmModifierType).moveId : undefined;
+    const modifierItemId = isEvolutionItemModifier
+      ? (modifierType as EvolutionItemModifierType).evolutionItem
+      : isFormChangeItemModifier
+        ? (modifierType as FormChangeItemModifierType).formChangeItem
+        : undefined;
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       partyUiMode,
@@ -370,6 +384,7 @@ export class SelectModifierPhase extends BattlePhase {
         : undefined,
       tmMoveId,
       isPpRestoreModifier,
+      modifierItemId,
     );
   }
 

@@ -145,32 +145,32 @@ describe("Terrain -", () => {
       { name: "Bulldoze", move: MoveId.BULLDOZE },
       { name: "Earthquake", move: MoveId.EARTHQUAKE },
       { name: "Magnitude", move: MoveId.MAGNITUDE, basePower: 150 }, // magnitude 10
-    ])("should halve $name's base power against grounded, on-field targets", async ({
-      move,
-      basePower = allMoves[move].power,
-    }) => {
-      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+    ])(
+      "should halve $name's base power against grounded, on-field targets",
+      async ({ move, basePower = allMoves[move].power }) => {
+        await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-      // force high rolls for guaranteed magnitude 10s
-      vi.spyOn(Phaser.Math.RND, "integerInRange").mockImplementation((_min, max) => max);
+        // force high rolls for guaranteed magnitude 10s
+        vi.spyOn(Phaser.Math.RND, "integerInRange").mockImplementation((_min, max) => max);
 
-      const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
+        const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
 
-      // Turn 1: attack with grassy terrain active; 0.5x
-      game.move.use(move);
-      await game.toNextTurn();
+        // Turn 1: attack with grassy terrain active; 0.5x
+        game.move.use(move);
+        await game.toNextTurn();
 
-      expect(powerSpy).toHaveLastReturnedWith(basePower / 2);
-      powerSpy.mockClear();
+        expect(powerSpy).toHaveLastReturnedWith(basePower / 2);
+        powerSpy.mockClear();
 
-      // Turn 2: Make shuckle semi-invulnerable & hit through No Guard; 1x
-      game.move.use(move);
-      await game.move.forceEnemyMove(MoveId.DIG);
-      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toEndOfTurn();
+        // Turn 2: Make shuckle semi-invulnerable & hit through No Guard; 1x
+        game.move.use(move);
+        await game.move.forceEnemyMove(MoveId.DIG);
+        game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+        await game.toEndOfTurn();
 
-      expect(powerSpy).toHaveLastReturnedWith(basePower);
-    });
+        expect(powerSpy).toHaveLastReturnedWith(basePower);
+      },
+    );
   });
 
   describe("Electric Terrain", () => {

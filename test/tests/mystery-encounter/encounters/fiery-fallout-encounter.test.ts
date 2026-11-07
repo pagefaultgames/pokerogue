@@ -27,6 +27,7 @@ import {
 } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/fieryFallout";
@@ -225,9 +226,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       });
       expect(burnablePokemon.some(pkm => pkm.status?.effect === StatusEffect.BURN)).toBeTruthy();
       expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === AbilityId.HEATPROOF));
-      notBurnablePokemon.forEach(pkm =>
-        expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()),
-      );
+      notBurnablePokemon.forEach(pkm => expect(pkm).toHaveFullHp());
     });
 
     it("should leave encounter without battle", async () => {

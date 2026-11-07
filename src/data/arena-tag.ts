@@ -80,6 +80,7 @@ import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 /** Interface containing the serializable fields of ArenaTagData. */
@@ -778,7 +779,7 @@ export class IonDelugeTag extends ArenaTag {
  * Uniquely, adding a tag multiple times may stack multiple "layers" of the effect, increasing its severity.
  */
 export abstract class EntryHazardTag extends SerializableArenaTag {
-  public declare abstract readonly tagType: EntryHazardTagType;
+  declare public abstract readonly tagType: EntryHazardTagType;
   /**
    * The current number of layers this tag has. \
    * Starts at `1` and increases each time the trap is laid.

@@ -111,6 +111,32 @@ export abstract class EncounterPokemonRequirement implements EncounterRequiremen
 }
 
 /**
+ * A Generic requirement that checks for the presence of a minimum number of party Pokémon satisfying a given condition.
+ */
+export class PartyRequirement extends EncounterPokemonRequirement {
+  private readonly callback: (pokemon: PlayerPokemon) => boolean;
+
+  constructor(callback: (pokemon: PlayerPokemon) => boolean, minNumberOfPokemon = 1) {
+    super();
+    this.callback = callback;
+    this.minNumberOfPokemon = minNumberOfPokemon;
+    this.invertQuery = false;
+  }
+
+  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    return partyPokemon.filter(pokemon => this.callback(pokemon));
+  }
+
+  override meetsRequirement(): boolean {
+    return this.queryParty(globalScene.getPlayerParty()).length >= this.minNumberOfPokemon;
+  }
+
+  override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
+    return ["partyRequirement", this.queryParty(globalScene.getPlayerParty()).length.toString()];
+  }
+}
+
+/**
  * Combination of multiple {@linkcode EncounterPokemonRequirement | EncounterPokemonRequirements} (OR/AND possible. See {@linkcode isAnd})
  */
 export class CombinationPokemonRequirement extends EncounterPokemonRequirement {

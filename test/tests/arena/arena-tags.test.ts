@@ -61,7 +61,6 @@ describe("Arena Tags", () => {
       })),
     );
 
-  // biome-ignore format: prefer pre-2.3.6 formatting with literal preservation
   it.each(arenaTags)(
     "$name should display a message on addition, and a separate one on removal - $sideName",
     ({ tagType, side }) => {
@@ -71,7 +70,7 @@ describe("Arena Tags", () => {
       const tag = game.scene.arena.getTagOnSide(tagType, side)!;
 
       if (tag["onAddMessageKey"]) {
-        expect(game.textInterceptor.logs).toContain(
+        expect(game).toHaveShownMessage(
           i18next.t(tag["onAddMessageKey"], {
             pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
             moveName: tag["getMoveName"](),
@@ -86,7 +85,7 @@ describe("Arena Tags", () => {
       game.scene.arena.removeTagOnSide(tagType, side, false);
       if (tag["onRemoveMessageKey"]) {
         // TODO: Convert to `game.toHaveShownMessage`
-        expect(game.textInterceptor.logs).toContain(
+        expect(game).toHaveShownMessage(
           i18next.t(tag["onRemoveMessageKey"], {
             pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
             moveName: tag["getMoveName"](),

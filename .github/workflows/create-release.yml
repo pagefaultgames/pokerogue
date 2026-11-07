@@ -32,8 +32,8 @@ jobs:
             echo "Version name does not match confirmation. Exiting."
             exit 1
           fi
-          if [[ ! "${{ github.event.inputs.versionName }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Version name must follow the format X.Y.Z where X, Y, and Z are all numbers. Exiting..."
+          if [[ ! "${{ github.event.inputs.versionName }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version name must follow the format W.X.Y.Z where W, X, Y, and Z are all numbers. Exiting..."
             exit 1
           fi
         shell: bash

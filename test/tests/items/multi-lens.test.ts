@@ -33,7 +33,6 @@ describe("Items - Multi Lens", () => {
       .enemyLevel(99);
   });
 
-  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each([
     { stackCount: 1, firstHitDamage: 0.75 },
     { stackCount: 2, firstHitDamage: 0.5 },
@@ -81,7 +80,7 @@ describe("Items - Multi Lens", () => {
     game.move.select(MoveId.TRAILBLAZE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 2);
   });
 
   it("should not enhance multi-hit moves", async () => {

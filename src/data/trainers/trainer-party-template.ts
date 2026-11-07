@@ -4,6 +4,7 @@ import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import Phaser from "phaser";
 
 export class TrainerPartyTemplate {
   public readonly size: number;
@@ -218,7 +219,8 @@ export const trainerPartyTemplates = {
 
   CHAMPION: new TrainerPartyCompoundTemplate(
     new TrainerPartyTemplate(4, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
-    new TrainerPartyTemplate(2, PartyMemberStrength.STRONGER, false, true, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, false, true, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGEST, false, true, EvoLevelThresholdKind.STRONG),
   ),
 
   EVIL_LEADER: new TrainerPartyCompoundTemplate(
@@ -259,7 +261,7 @@ export const trainerPartyTemplates = {
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
     new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
     new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, false, true),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGEST),
   ),
 };
 

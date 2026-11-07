@@ -31,11 +31,11 @@ describe("Moves - Growth", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 0);
 
     game.move.select(MoveId.GROWTH);
     await game.toEndOfTurn();
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
   });
 });

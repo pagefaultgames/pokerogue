@@ -9,6 +9,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { UiMode } from "#enums/ui-mode";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
+import { consumeOAuthError, type OAuthError } from "#utils/oauth-utils";
 import i18next, { t } from "i18next";
 
 export class LoginPhase extends Phase {
@@ -21,6 +22,9 @@ export class LoginPhase extends Phase {
    */
   private readonly showText: boolean;
 
+  /** The error left in the URL by a failed OAuth redirect, if any. */
+  private oauthError: OAuthError | null = null;
+
   constructor(showText = true) {
     super();
 
@@ -32,30 +36,34 @@ export class LoginPhase extends Phase {
 
     super.start();
 
+    this.oauthError = consumeOAuthError();
+
     const hasSession = !!getCookie(sessionIdKey);
 
-    ui.setMode(UiMode.LOADING, { buttonActions: [] });
+    await ui.setMode(UiMode.LOADING, { buttonActions: [] });
 
     const response = await executeIf(bypassLogin || hasSession, updateUserInfo);
-    const success = response?.[0] ?? false;
-    const statusCode = response ? response[1] : null;
+    const [loginSuccess, statusCode] = response ?? [false, null];
 
-    if (!success) {
+    if (!loginSuccess) {
       this.checkStatus(statusCode);
       return;
     }
 
-    await gameData.loadSystem();
-    if (success || bypassLogin) {
+    const loadSuccess = await gameData.loadSystem();
+    if (loadSuccess || bypassLogin) {
       await this.end();
       return;
     }
-    ui.setMode(UiMode.MESSAGE);
-    ui.showText(t("menu:failedToLoadSaveData"));
+
+    await ui.setMode(UiMode.MESSAGE);
+    await ui.showTextPromise(`${t("menu:failedToLoadSaveData")}$${t("menu:triggerLogOut")}`);
+    removeCookie(sessionIdKey);
+    globalScene.reset(true, true);
   }
 
   public override async end(): Promise<void> {
-    globalScene.ui.setMode(UiMode.MESSAGE);
+    await globalScene.ui.setMode(UiMode.MESSAGE);
 
     if (settings.general.playerGender === PlayerGender.UNSET) {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
@@ -81,19 +89,31 @@ export class LoginPhase extends Phase {
     super.end();
   }
 
+  /**
+   * Text to display for the login prompt, based on the OAuth error (if any).
+   */
+  private get loginPromptText(): string {
+    const provider = this.oauthError?.provider === "google" ? "Google" : "Discord";
+    switch (this.oauthError?.reason) {
+      case "not_linked":
+        return i18next.t("menu:oauthNotLinked", { provider });
+      case "provider_error":
+      case "server_error":
+        return i18next.t("menu:oauthFailed", { provider });
+      default:
+        return i18next.t("menu:logInOrCreateAccount");
+    }
+  }
+
   private showLoginRegister(): void {
     const { ui } = globalScene;
 
-    const goToLoginButton = () => {
-      this.goToLogin();
-    };
+    const goToLoginButton = () => this.goToLogin();
 
-    const goToRegistrationButton = () => {
-      this.goToRegister();
-    };
+    const goToRegistrationButton = () => this.goToRegister();
 
     if (this.showText) {
-      ui.showText(i18next.t("menu:logInOrCreateAccount"));
+      ui.showText(this.loginPromptText);
     }
 
     audioManager.playSound("ui/menu_open");
@@ -102,10 +122,15 @@ export class LoginPhase extends Phase {
   }
 
   private async checkUserInfo(): Promise<boolean> {
-    globalScene.ui.playSelect();
-    const success = await updateUserInfo();
-    if (!success[0]) {
+    const { ui } = globalScene;
+
+    ui.playSelect();
+
+    const [success] = await updateUserInfo();
+    if (!success) {
       removeCookie(sessionIdKey);
+      await ui.setMode(UiMode.MESSAGE);
+      await ui.showTextPromise(t("menu:logInError"));
       globalScene.reset(true, true);
       return false;
     }
@@ -125,9 +150,19 @@ export class LoginPhase extends Phase {
       if (!success) {
         return;
       }
-      await gameData.loadSystem();
-      this.end();
+
+      const loadSuccess = await gameData.loadSystem();
+      if (loadSuccess) {
+        this.end();
+        return;
+      }
+
+      removeCookie(sessionIdKey);
+      await ui.setMode(UiMode.MESSAGE);
+      await ui.showTextPromise(t("menu:failedToLoadSaveData"));
+      globalScene.reset(true, true);
     };
+
     audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });

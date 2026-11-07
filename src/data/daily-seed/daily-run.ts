@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { dailyBiomeWeights } from "#balance/daily-biome-weights";
 import { allChallenges } from "#data/challenge";
+import { allBiomes } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import type { BiomePoolTier } from "#enums/biome-pool-tier";
@@ -364,6 +365,35 @@ export function getDailyEventSeedBiome(): BiomeId | null {
   }
 
   return startingBiome;
+}
+
+/**
+ * Get the forced biome(s) for the current wave in a custom daily run.
+ * @returns An array of {@linkcode BiomeId}s to force, or `null` if there is no forced biome for the current wave.
+ */
+export function getDailyForcedBiomes(): BiomeId[] | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  const { biomeLinks } = allBiomes.get(globalScene.arena.biomeId);
+  const waveConfig = globalScene.gameMode.dailyConfig?.forcedBiomes?.find(
+    b => b.waveIndex === globalScene.currentBattle.waveIndex,
+  );
+
+  const mapBiomes = biomeLinks.map(b => (Array.isArray(b) ? b[0] : b));
+  const forcedBiomes = waveConfig?.allMapOptions ? mapBiomes : waveConfig?.biomeId;
+
+  if (forcedBiomes == null) {
+    return null;
+  }
+
+  if (!forcedBiomes.every(b => Object.values(BiomeId).includes(b))) {
+    console.warn("Invalid biome ID(s) used for custom daily run seed forced biome:", forcedBiomes);
+    return null;
+  }
+
+  return forcedBiomes;
 }
 
 /**

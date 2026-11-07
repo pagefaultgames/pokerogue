@@ -758,6 +758,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.FROGADIER] = {
@@ -3927,6 +3928,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [42, MoveId.HORN_LEECH],
       [45, MoveId.LEAF_BLADE],
       [50, MoveId.MILK_DRINK],
+      [54, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.BODY_SLAM,
@@ -4037,7 +4039,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [47, MoveId.HORN_LEECH],
       [55, MoveId.LEAF_BLADE],
       [58, MoveId.MILK_DRINK],
-      [66, MoveId.EARTHQUAKE],
+      [60, MoveId.EARTHQUAKE],
+      [65, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.HYPER_BEAM,
@@ -4048,6 +4051,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.HIGH_HORSEPOWER,
       MoveId.THROAT_CHOP,
+      MoveId.MEGAHORN,
     ],
   };
   generationSixSpeciesData[SpeciesId.PANCHAM] = {
@@ -4255,6 +4259,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.DARKEST_LARIAT,
       MoveId.THROAT_CHOP,
       MoveId.STOMPING_TANTRUM,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.FURFROU] = {
@@ -4654,7 +4659,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       new SpeciesFormEvolution({
         speciesId: SpeciesId.MEOWSTIC,
         preFormKey: "",
-        evoFormKey: "",
+        evoFormKey: "male",
         level: 25,
         condition: {
           key: EvoCondKey.GENDER,
@@ -5002,9 +5007,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [12, MoveId.AERIAL_ACE],
       [15, MoveId.PURSUIT],
       [18, MoveId.METAL_SOUND],
-      [20, MoveId.SLASH],
+      [20, MoveId.RETALIATE],
       [24, MoveId.NIGHT_SLASH],
-      [27, MoveId.RETALIATE],
+      [27, MoveId.SLASH],
       [30, MoveId.SHADOW_CLAW],
       [32, MoveId.IRON_DEFENSE],
       [36, MoveId.IRON_HEAD],
@@ -5054,6 +5059,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.STEEL_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.DOUBLADE] = {
@@ -5100,9 +5106,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [12, MoveId.AERIAL_ACE],
       [15, MoveId.PURSUIT],
       [18, MoveId.METAL_SOUND],
-      [20, MoveId.SLASH],
+      [20, MoveId.RETALIATE],
       [24, MoveId.NIGHT_SLASH],
-      [27, MoveId.RETALIATE],
+      [27, MoveId.SLASH],
       [30, MoveId.SHADOW_CLAW],
       [32, MoveId.IRON_DEFENSE],
       [38, MoveId.IRON_HEAD],
@@ -5227,9 +5233,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [12, MoveId.AERIAL_ACE],
       [15, MoveId.PURSUIT],
       [18, MoveId.METAL_SOUND],
-      [20, MoveId.SLASH],
+      [20, MoveId.RETALIATE],
       [24, MoveId.NIGHT_SLASH],
-      [27, MoveId.RETALIATE],
+      [27, MoveId.SLASH],
       [30, MoveId.SHADOW_CLAW],
       [32, MoveId.IRON_DEFENSE],
       [38, MoveId.IRON_HEAD],
@@ -5702,6 +5708,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.MALAMAR] = {
@@ -5950,6 +5957,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.BARBARACLE] = {
@@ -8092,7 +8100,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       canChangeForm: false,
       forms: [
         new PokemonForm({
-          formName: "Average Size",
+          formName: "Medium Variety",
           formKey: "",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8116,7 +8124,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Small Size",
+          formName: "Small Variety",
           formKey: "small",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8136,11 +8144,11 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Large Size",
+          formName: "Large Variety",
           formKey: "large",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8160,12 +8168,12 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Super Size",
-          formKey: "super",
+          formName: "Jumbo Variety",
+          formKey: "jumbo",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
           height: 0.8,
@@ -8184,7 +8192,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 67,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
       ],
@@ -8320,7 +8328,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       canChangeForm: false,
       forms: [
         new PokemonForm({
-          formName: "Average Size",
+          formName: "Medium Variety",
           formKey: "",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8344,7 +8352,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Small Size",
+          formName: "Small Variety",
           formKey: "small",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8364,11 +8372,11 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Large Size",
+          formName: "Large Variety",
           formKey: "large",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
@@ -8388,12 +8396,12 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
         new PokemonForm({
-          formName: "Super Size",
-          formKey: "super",
+          formName: "Jumbo Variety",
+          formKey: "jumbo",
           type1: PokemonType.GHOST,
           type2: PokemonType.GRASS,
           height: 1.7,
@@ -8412,7 +8420,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
           baseFriendship: 50,
           baseExp: 173,
           genderDiffs: false,
-          formSpriteKey: "",
+          formSpriteKey: null,
           isStarterSelectable: true,
         }),
       ],
@@ -9014,6 +9022,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.MISTY_EXPLOSION,
       MoveId.TERRAIN_PULSE,
       MoveId.TERA_BLAST,
+      MoveId.NIGHT_SLASH,
     ],
   };
   generationSixSpeciesData[SpeciesId.YVELTAL] = {
