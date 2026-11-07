@@ -86,15 +86,14 @@ jobs:
             images/logo.png
           sparse-checkout-cone-mode: true
           
-      - name: Install pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - name: Install pnpm and Node.js
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # 2.1.0
         with:
-          version: 10
-
-      - name: Setup Node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version-file: "pokerogue_docs/.nvmrc"
+          runtime: node@24.9
+          install: true
+          require-lockfile: true
+          cache: true
+          working-directory: ${{ env.docs-dir }}
 
       - name: Checkout repository for Github Pages
         if: github.event_name == 'push'
@@ -102,10 +101,6 @@ jobs:
         with:
           path: pokerogue_gh
           ref: gh-pages
-
-      - name: Install Node.js dependencies
-        working-directory: ${{ env.docs-dir }}
-        run: pnpm i
 
       - name: Generate Typedoc docs
         working-directory: ${{ env.docs-dir }}
@@ -116,7 +111,7 @@ jobs:
 
       - name: Commit & Push docs
         # env vars are stored as strings instead of booleans (hence why an explicit check is required)
-        if: ${{ env.DRY_RUN == 'false'}}
+        if: ${{ env.DRY_RUN == 'false' }}
         run: |
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"

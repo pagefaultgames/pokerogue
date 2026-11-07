@@ -1,11 +1,11 @@
 minimumReleaseAge: 1440
 
-onlyBuiltDependencies:
-  - core-js
-  - esbuild
-  - lefthook
-  - msw
-  - vite-node
+allowBuilds:
+  core-js: true
+  esbuild: true
+  lefthook: true
+  msw: true
+  vite-node: true
 
 overrides:
   ajv@>=7.0.0-alpha.0 <8.18.0: '>=8.18.0'
@@ -29,3 +29,5 @@ patchedDependencies:
 shellEmulator: true
 
 dedupePeers: true
+
+confirmModulesPurge: false
