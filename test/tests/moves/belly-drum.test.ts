@@ -100,7 +100,5 @@ describe("Moves - BELLY DRUM", () => {
     expect(defaultMessageSpy).not.toHaveBeenCalled();
   });
 
-  // TODO: Should this test go here or in contrary.test.ts?
-  // TODO: Confirm mainline behaviour
-  it.todo("should still fail at max HP if the user has Contrary");
+  // contrary interaction tested in contrary.test.ts
 });

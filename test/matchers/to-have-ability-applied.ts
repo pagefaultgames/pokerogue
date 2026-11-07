@@ -19,11 +19,13 @@ export function toHaveAbilityApplied(
   if (!isPokemonInstance(received)) {
     return {
       pass: this.isNot,
-      message: () => `Expected to receive a Pokemon, but got ${receivedStr(received)}!`,
+      message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
 
-  const pass = received.waveData.abilitiesApplied.has(expectedAbilityId);
+  const pass = received.waveData.abilitiesApplied
+    .values()
+    .some(abilityId => this.equals(abilityId, expectedAbilityId, this.customTesters));
 
   const pkmName = getPokemonNameWithAffix(received);
   const expectedAbilityStr = getEnumStr(AbilityId, expectedAbilityId);
