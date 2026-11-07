@@ -893,7 +893,11 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
     }
 
-    globalScene.applyModifiers(HitHealModifier, this.player, user);
+    // Delayed attacks (Future Sight, Doom Desire) don't trigger the user's Shell Bell,
+    // even if the user is still on the field
+    if (this.useMode !== MoveUseMode.DELAYED_ATTACK) {
+      globalScene.applyModifiers(HitHealModifier, this.player, user);
+    }
     this.getTargets().forEach(target => {
       target.turnData.moveEffectiveness = null;
     });
