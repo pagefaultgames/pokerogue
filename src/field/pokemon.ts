@@ -1654,7 +1654,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       Math.floor(((2 * baseStat + iv) * this.level) / 100) // formatting
       + (stat === Stat.HP ? this.level + 10 : 5);
 
-    const statHolder = new ValueHolder(base);
     if (stat !== Stat.HP) {
       // the effect of natures is always rounded up (away from 0)
       const natureMulti = new ValueHolder(getNatureStatMultiplier(this.getNature(), stat));
@@ -1663,8 +1662,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       base += delta;
     }
 
+    const statHolder = new ValueHolder(base);
     globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, stat, statHolder);
-
     return Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
   }
 
