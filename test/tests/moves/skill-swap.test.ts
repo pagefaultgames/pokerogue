@@ -47,6 +47,6 @@ describe("Moves - Skill Swap", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     // player atk should be -1 after opponent gains intimidate and it activates
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 });

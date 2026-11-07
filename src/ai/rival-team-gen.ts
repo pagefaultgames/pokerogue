@@ -97,7 +97,7 @@ function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<Poke
 
     let multiplier = getTypeDamageMultiplier(ty, species.type1);
 
-    if (multiplier >= 2 && !exclude2ndType) {
+    if (!exclude2ndType) {
       const type2 = species.type2;
       if (type2 != null) {
         multiplier *= getTypeDamageMultiplier(ty, type2);

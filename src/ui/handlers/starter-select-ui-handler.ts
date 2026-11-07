@@ -90,6 +90,7 @@ import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils
 import { getPokerusStarters, getStarterColors } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 const COLUMNS = 9;
 const ROWS = 9;
@@ -306,6 +307,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.message = addTextObject(8, 8, "", TextStyle.WINDOW, { maxLines: 2 }) //
       .setOrigin(0);
     this.starterSelectMessageBoxContainer.add(this.message);
+
+    this.initNameBox(this.starterSelectMessageBoxContainer, 8);
 
     // arrow icon for the message box
     this.initPromptSprite(this.starterSelectMessageBoxContainer);
@@ -681,8 +684,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterPreferences.female !== undefined
       && !(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
     ) {
-      // requested gender wasn't unlocked, purging setting
-      starterPreferences.female = undefined;
+      // If preference is female and DexAttr.FEMALE is not unlocked, set the preference to male
+      // This can happen in mono-gen challenge, which removes DexAttr.FEMALE from Snorunt
+      if (starterPreferences.female && caughtAttr & DexAttr.MALE) {
+        starterPreferences.female = false;
+      } else if (!starterPreferences.female && caughtAttr & DexAttr.FEMALE) {
+        starterPreferences.female = true;
+      } else {
+        // requested gender wasn't unlocked, purging setting
+        starterPreferences.female = undefined;
+      }
     }
 
     if (starterPreferences.abilityIndex !== undefined) {
@@ -781,6 +792,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }
+
+    this.nameBoxContainer?.setY(this.message.y - 16);
 
     this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
@@ -1019,7 +1032,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // TODO: how can we get here if start button can't be selected? this appears to be redundant
           this.startCursorObj.setVisible(false);
           this.showRandomCursor();
-          this.setNoStarter();
         }
         success = true;
         break;
@@ -1088,7 +1100,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         const randomStarterId = validStarters[Math.floor(Math.random() * validStarters.length)];
-        this.setStarter(randomStarterId);
+        this.setStarter(randomStarterId, false);
 
         // TODO: this might not be needed if we change .addToParty
         const dexAttr = getDexAttrFromPreferences(randomStarterId, this.starterPreferences[randomStarterId]);
@@ -1373,6 +1385,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const onScreenLastIndex = Math.min(this.filteredStarterIds.length - 1, ROWS * COLUMNS - 1);
 
     switch (button) {
+      case Button.ACTION:
+        this.openPokemonMenu();
+        return true;
+      case Button.CYCLE_SHINY:
+      case Button.CYCLE_FORM:
+      case Button.CYCLE_GENDER:
+      case Button.CYCLE_ABILITY:
+      case Button.CYCLE_NATURE:
+      case Button.CYCLE_TERA:
+        return this.processCycleButtonsInput(button);
       case Button.UP:
         if (this.partyIconsCursorIndex === 0) {
           // Up from first Pokemon in the team > go to Random selection
@@ -1457,7 +1479,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         break;
       case Button.DOWN:
-        if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
+        if (currentRow < numOfRows - 1 && this.scrollCursor * 9 + this.cursor + 9 < this.filteredStarterIds.length) {
           // This is not the last row of starters
           if (currentRow - this.scrollCursor === 8) {
             // This is the last visible row, but there are more rows underneath, so we need to scroll
@@ -1874,6 +1896,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterSummary.updateName(
                   name.length > 0 ? name : speciesDataRegistry.getSpecies(this.lastStarterId).name,
                 );
+                if (isDupe) {
+                  this.partyStarters[removeIndex].nickname = starterPreferences.nickname;
+                }
                 ui.setMode(UiMode.STARTER_SELECT);
               },
               () => {
@@ -1909,6 +1934,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
               persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
               starterData.passiveAttr = persistentStarterData.passiveAttr;
+              // isDupe indicates that the starter is in the party; removeIndex tells us where
+              if (isDupe) {
+                this.partyStarters[removeIndex].passive = true;
+              }
               if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                 persistentStarterData.candyCount -= passiveCost;
                 starterData.candyCount = persistentStarterData.candyCount;
@@ -1976,11 +2005,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       // Same species egg menu option.
-      const hatchedCount = globalScene.gameData.dexData[this.lastStarterId].hatchedCount;
-      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
-        speciesDataRegistry.getStarterCost(this.lastStarterId),
-        hatchedCount,
-      );
+      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.lastStarterId));
       useCandiesOptions.push({
         label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
         handler: () => {
@@ -2700,7 +2725,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    *
    * @param starterId - the id of the new starter
    */
-  private setStarter(starterId: StarterSpeciesId): void {
+  private setStarter(starterId: StarterSpeciesId, iconAnimation = true): void {
     const { dexEntry } = getStarterData(starterId);
 
     // Stop animation for the previously selected starter
@@ -2716,7 +2741,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (dexEntry?.caughtAttr) {
       this.setStarterDetails(starterId, false);
 
-      this.startIconAnimation(this.cursor);
+      if (iconAnimation) {
+        this.startIconAnimation(this.cursor);
+      }
 
       if (this.pokerusSpeciesIds.includes(starterId)) {
         handleTutorial(Tutorial.POKERUS);
@@ -2731,6 +2758,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     // Set the cursors, using preferences if possible, default options otherwise
     this.starterSummary.setStarter(starterId, this.starterPreferences[starterId] ?? {});
+
+    this.lastStarterId = starterId;
 
     if (dexEntry?.caughtAttr) {
       this.setStarterDetails(starterId, false);
@@ -3004,7 +3033,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   // TODO: Dedupe from pokedex
   protected updateStarterValueLabel(starter: StarterContainer): void {
-    const speciesId = starter.species.speciesId;
+    const speciesId = starter.species.speciesId as StarterSpeciesId;
     const baseStarterValue = speciesDataRegistry.getStarterCost(speciesId);
     if (baseStarterValue == null) {
       return;
@@ -3018,6 +3047,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setText(valueStr);
     let textStyle: TextStyle;
     switch (baseStarterValue - starterValue) {
+      case -2:
+      case -1:
+        textStyle = TextStyle.SUMMARY_RED;
+        break;
       case 0:
         textStyle = TextStyle.WINDOW;
         break;
@@ -3121,6 +3154,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.partyStarterIds.length === 0) {
       return false;
     }
+    this.blockInput = true;
 
     if (this.isPartyValid()) {
       const ui = this.getUi();
@@ -3149,9 +3183,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       };
 
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
+        this.blockInput = false;
         ui.setModeWithoutClear(UiMode.CONFIRM, confirmStartOptions);
       });
     } else {
+      this.blockInput = false;
       this.tutorialActive = true;
       this.showText(
         i18next.t("starterSelectUiHandler:invalidParty"),
@@ -3258,6 +3294,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.cursor = -1;
     this.oldCursor = -1;
     this.instructionsContainer.hideInstructions();
+    this.randomCursorObj.setVisible(false);
 
     this.starterSummary.clear();
 
@@ -3265,6 +3302,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.partyStarterIds.length > 0) {
+      this.partyCursorObj.setVisible(false);
       this.popPartyStarter(this.partyStarterIds.length - 1);
     }
 

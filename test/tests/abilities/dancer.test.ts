@@ -307,11 +307,7 @@ describe("Abilities - Dancer", () => {
 
     const oricorio = game.field.getPlayerPokemon();
     expect(oricorio).toHaveUsedMove(
-      {
-        move: MoveId.REVELATION_DANCE,
-        useMode: MoveUseMode.INDIRECT,
-        result: MoveResult.MISS,
-      },
+      { move: MoveId.REVELATION_DANCE, useMode: MoveUseMode.INDIRECT, result: MoveResult.MISS },
       1,
     );
   });
@@ -377,17 +373,9 @@ describe("Abilities - Dancer", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(oricorio).toHaveUsedMove({
-      move: MoveId.NONE,
-      result: MoveResult.FAIL,
-      useMode: MoveUseMode.INDIRECT,
-    });
+    expect(oricorio).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL, useMode: MoveUseMode.INDIRECT });
     expect(oricorio).toHaveUsedMove(
-      {
-        move: MoveId.SPLASH,
-        result: MoveResult.SUCCESS,
-        useMode: MoveUseMode.NORMAL,
-      },
+      { move: MoveId.SPLASH, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL },
       1,
     );
     expect(oricorio).toHaveStatStage(Stat.ATK, 0);
@@ -397,17 +385,9 @@ describe("Abilities - Dancer", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
-    expect(oricorio).toHaveUsedMove({
-      move: MoveId.NONE,
-      result: MoveResult.FAIL,
-      useMode: MoveUseMode.NORMAL,
-    });
+    expect(oricorio).toHaveUsedMove({ move: MoveId.NONE, result: MoveResult.FAIL, useMode: MoveUseMode.NORMAL });
     expect(oricorio).toHaveUsedMove(
-      {
-        move: MoveId.SWORDS_DANCE,
-        result: MoveResult.SUCCESS,
-        useMode: MoveUseMode.INDIRECT,
-      },
+      { move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS, useMode: MoveUseMode.INDIRECT },
       1,
     );
     expect(oricorio).toHaveStatStage(Stat.ATK, 2);

@@ -12,19 +12,18 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 ## Team Members
 
 ### Senior Artist
-- damocleas
+- bwl626
+- "Green Ninja757" (aka DaleB)
 - “Hanniel” hanniel.15
 
 ### Artist
-- bwl626
 - “Caramel” saltedcarriemel
-- “chorus” worm_wcry.o
 - Crow W (aka Crowo)
 - Dops
-- "Green Ninja757" (aka DaleB)
 - Fontbane
+- “June D. aka worm_wcry.o“
 - “Momo” sphinx_sage
-- Necrow (aka Necrowmancy)
+- “Necrowmancy” (aka Olivia W.)
 - officerporkchops
 - Omniv
 - redactedinlight
@@ -40,6 +39,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 ### Composers
 - Andr06
 - “Big” bird_obsession
+- Faces in the Clouds (aka Caleb C.)
 - MattCello
 - Leavannite
 - Lmz
@@ -54,6 +54,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 ## UI
 - GAMEFREAK
 - LJ Birdman
+- “Necrowmancy” (aka Olivia W.)
 
 ## Pagefault Games Intro
 - Spectremint
@@ -497,8 +498,11 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 ## Bug/Issue Managers
 - Daleks
 - Lily
-- PigeonBar
+- RoflKucki
 - Snailman
+
+## Past Members
+- PigeonBar
 
 # ⚖️ Balance
 
@@ -518,7 +522,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Zaccie
 
 ### Past Members
-- Cynthia_calliope
+- lillie_lily_lilith_iris
 - Sethcurry
 - Swizzo
 
@@ -555,9 +559,7 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Curbio
 
 ### 🇯🇵 Japanese (ja)
-- 6mozuke9
 - Chapybara
-- PeachFresca
 
 ### 🇰🇷 Korean (ko)
 - sodamelon
@@ -588,9 +590,18 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 
 ### 🇷🇺 Russian (ru)
 - Shinigami Holo
+- SHOCK
+- frogspawner
 
 ### 🇺🇦 Ukrainian (uk)
 - Rahr
+- Avineldon
+
+### 🇵🇱 Polish (pl)
+- El Probador
+- HermitPurple
+- Faner
+- kryßteqq
 
 ### 🇹🇷 Turkish (tr)
 - hotpink77
@@ -598,6 +609,10 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 
 ### 🇹🇭 Thai (th)
 - tEmar1
+
+### Hindi (hi)
+- Chai
+- GreatGreatness
 
 ### Basque (eu)
 - Moro
@@ -621,6 +636,8 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Rafa (es-ES)
 - Returntoice (ko)
 - Seagull (zh-Hant)
+- 6mozuke9 (ja)
+- PeachFresca (ja)
 
 ## Wiki Translators
 
@@ -732,16 +749,14 @@ and [everyone else](https://github.com/pagefaultgames/pokerogue/graphs/contribut
 - Pom
 
 ## Moderators
-- Cynthia_calliope
-- ChaosGrimmon
-- Kat
-- Mitsue
-- Rizbh
-
-## Junior Moderators
 - Blitzy (aka Kazapple)
 - bwl626
+- ChaosGrimmon
 - Kappals
+- Kat
+- lillie_lily_lilith_iris
+- Mitsue
+- Rizbh
 
 ## Past Moderators
 - Cent

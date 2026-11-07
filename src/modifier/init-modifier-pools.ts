@@ -288,11 +288,16 @@ function initGreatModifierPool() {
       () => (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex < 180 ? 2 : 0),
       2,
     ),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 2),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, timedEventManager.isSootheBellBoosted() ? 3 : 2),
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
       () => {
+        const party = globalScene.getPlayerParty();
+        if (!party.some(p => p.getLearnableLevelMoves().length > 0)) {
+          return 0;
+        }
+
         const { waveIndex } = globalScene.currentBattle;
         const modeAdjustedWave = globalScene.gameMode.getWaveForDifficulty(waveIndex, true);
         return Math.min(1 + Math.floor(modeAdjustedWave / 30), 4);

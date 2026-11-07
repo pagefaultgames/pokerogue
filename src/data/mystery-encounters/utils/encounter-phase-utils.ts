@@ -56,6 +56,7 @@ import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter

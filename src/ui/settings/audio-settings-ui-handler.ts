@@ -5,6 +5,6 @@ export class SettingsAudioUiHandler extends BaseSettingsUiHandler {
   constructor() {
     super("audio", audioSettingsUiItems);
 
-    this.rowsToDisplay = 6;
+    this.rowsToDisplay = 7;
   }
 }

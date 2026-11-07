@@ -64,7 +64,7 @@ export const SUPPORTED_LANGUAGE_ENTRIES = {
     hasAllLocalizedImages: true,
   },
   ru: {
-    label: "Русский (Needs Help)", // Russian
+    label: "Русский", // Russian
     hasAllLocalizedImages: true,
   },
   uk: {

@@ -37,6 +37,7 @@ import {
 import { getEnumValues } from "#utils/enums";
 import { randSeedUniqueItem } from "#utils/random";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export interface TurnCommand {
   command: Command;
@@ -187,17 +188,10 @@ export class Battle {
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
     this.postBattleLoot.push(
-      ...globalScene
-        .findModifiers(
-          m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
-          false,
-        )
-        .map(i => {
-          const ret = i as PokemonHeldItemModifier;
-          //@ts-expect-error - this is awful to fix/change
-          ret.pokemonId = null;
-          return ret;
-        }),
+      ...(globalScene.findModifiers(
+        m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
+        false,
+      ) as PokemonHeldItemModifier[]),
     );
   }
 

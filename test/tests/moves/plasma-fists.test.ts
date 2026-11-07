@@ -47,7 +47,7 @@ describe("Moves - Plasma Fists", () => {
 
     field.forEach(p => {
       expect(p.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-      expect(p.hp).toBeLessThan(p.getMaxHp());
+      expect(p).not.toHaveFullHp();
     });
   });
 
@@ -66,7 +66,7 @@ describe("Moves - Plasma Fists", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.FAIRY);
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
   });
 
   it("should affect moves that become Normal type due to Normalize", async () => {
@@ -84,6 +84,6 @@ describe("Moves - Plasma Fists", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveFullHp();
   });
 });

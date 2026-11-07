@@ -89,7 +89,7 @@ describe("Abilities - Tera Shell", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(spy).toHaveLastReturnedWith(1);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
+    expect(playerPokemon).toHaveTakenDamage(40);
   });
 
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {

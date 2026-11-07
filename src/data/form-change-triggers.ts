@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
+import { isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
 import { FormChangeItem } from "#enums/form-change-item";
@@ -28,6 +29,7 @@ export abstract class SpeciesFormChangeTrigger {
   }
 }
 
+// The description should be empty so it does not show up in the Pokédex.
 export class SpeciesFormChangeManualTrigger extends SpeciesFormChangeTrigger {}
 
 export class SpeciesFormChangeAbilityTrigger extends SpeciesFormChangeTrigger {
@@ -129,7 +131,7 @@ export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigg
     super();
     this.statusEffects = coerceArray(statusEffects);
     this.invert = invert;
-    // this.description = i18next.t("pokemonEvolutions:forms.statusEffect");
+    this.description = i18next.t("pokemonEvolutions:forms.statusEffect");
   }
 
   canChange(pokemon: Pokemon): boolean {
@@ -191,6 +193,9 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
 }
 
 export class MeloettaFormChangePostMoveTrigger extends SpeciesFormChangePostMoveTrigger {
+  description = i18next.t("pokemonEvolutions:forms.move", {
+    move: i18next.t("move:relicSong.name"),
+  });
   override canChange(pokemon: Pokemon): boolean {
     if (globalScene.gameMode.hasChallenge(Challenges.SINGLE_TYPE)) {
       return false;
@@ -226,13 +231,23 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
  * Class used for triggering form changes based on the user's Tera type.
  * Used by Ogerpon and Terapagos.
  */
-export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {}
+export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
+  constructor() {
+    super();
+    this.description = i18next.t("pokemonEvolutions:forms.tera");
+  }
+}
 
 /**
  * Class used for triggering form changes based on the user's lapsed Tera type.
  * Used by Ogerpon and Terapagos.
  */
-export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {}
+export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {
+  constructor() {
+    super();
+    this.description = i18next.t("pokemonEvolutions:forms.teraLapse");
+  }
+}
 
 /**
  * Class used for triggering form changes based on weather.
@@ -259,12 +274,11 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
    */
   canChange(pokemon: Pokemon): boolean {
     const currentWeather = globalScene.arena.weather?.weatherType ?? WeatherType.NONE;
-    const isWeatherSuppressed = globalScene.arena.weather?.isEffectSuppressed();
     const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
 
     return (
       !isAbilitySuppressed
-      && !isWeatherSuppressed
+      && !isWeatherSuppressed()
       && pokemon.hasAbility(this.ability)
       && this.weathers.includes(currentWeather)
     );
@@ -298,12 +312,11 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   canChange(pokemon: Pokemon): boolean {
     if (pokemon.hasAbility(this.ability, false, true)) {
       const currentWeather = globalScene.arena.weather?.weatherType ?? WeatherType.NONE;
-      const isWeatherSuppressed = globalScene.arena.weather?.isEffectSuppressed();
       const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
       const summonDataAbility = pokemon.summonData.ability;
       const isAbilityChanged = summonDataAbility !== this.ability && summonDataAbility !== AbilityId.NONE;
 
-      if (this.weathers.includes(currentWeather) || isWeatherSuppressed || isAbilitySuppressed || isAbilityChanged) {
+      if (this.weathers.includes(currentWeather) || isWeatherSuppressed() || isAbilitySuppressed || isAbilityChanged) {
         return true;
       }
     }

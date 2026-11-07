@@ -44,6 +44,6 @@ describe("Moves - Entrainment", () => {
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 });

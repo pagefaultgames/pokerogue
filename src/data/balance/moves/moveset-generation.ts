@@ -165,6 +165,21 @@ export const BOSS_EXTRA_WEIGHT_MULTIPLIER = 0.4;
 export const MOVE_POWER_CEILING = 120;
 
 /**
+ * Level at which priority moves (e.g. quick attack) no longer benefit from
+ * increased weighting due to STAB.
+ *
+ * @privateRemarks
+ *
+ * The level cutoff is necessary to ensure priority moves are considered for
+ * lower level pokemon. Setting this to too low of a level means that a mon
+ * that doesn't yet have access to many moves would not have its priority move
+ * count as options when generating forced stab.
+ * For instance, if normal type mon only had quick attack and tackle at some level that was >=
+ * this cutoff. Then, they would always generate with tackle (even though quick attack is a better move).
+ */
+export const PRIORITY_STAB_LEVEL_CUTOFF = 45;
+
+/**
  * Set of moves that should be excluded from the forced STAB during moveset generation
  *
  * @remarks
@@ -238,15 +253,8 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   // Moves that always change type.
   MoveId.NATURE_POWER,
   MoveId.HIDDEN_POWER,
-  // Priority / not main STAB
-  MoveId.AQUA_JET,
-  MoveId.SHADOW_SNEAK,
-  MoveId.VACUUM_WAVE,
+  // Not intended for main STAB
   MoveId.POWER_UP_PUNCH,
-  MoveId.MACH_PUNCH,
-  MoveId.ICE_SHARD,
-  MoveId.BULLET_PUNCH,
-  MoveId.ACCELEROCK,
   MoveId.TRAILBLAZE,
   MoveId.FLAME_CHARGE,
 ]);

@@ -71,7 +71,7 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should not apply to Status moves", async () => {
@@ -85,7 +85,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should not apply to multi-hit moves", async () => {
@@ -142,7 +142,7 @@ describe("Abilities - Parental Bond", () => {
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 80);
+    expect(enemyPokemon).toHaveTakenDamage(80);
   });
 
   it("should not apply multiplier to counter moves", async () => {
@@ -160,7 +160,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 4 * playerDamage);
+    expect(enemyPokemon).toHaveTakenDamage(4 * playerDamage);
   });
 
   it("should not apply to multi-target moves", async () => {
@@ -205,7 +205,7 @@ describe("Abilities - Parental Bond", () => {
     // This test will time out if the user faints
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() / 2));
+    expect(leadPokemon).toHaveHp(Math.ceil(leadPokemon.getMaxHp() / 2));
   });
 
   it("Burn Up only removes type after the second strike", async () => {
@@ -221,12 +221,12 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(enemyPokemon.hp).toBeGreaterThan(0);
-    expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(true);
+    expect(enemyPokemon).not.toHaveFainted();
+    expect(leadPokemon).toHaveTypes(PokemonType.FIRE, { mode: "oneOf" });
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(false);
+    expect(leadPokemon).not.toHaveTypes(PokemonType.FIRE, { mode: "oneOf" });
   });
 
   it("Hyper Beam boosted by this ability should strike twice, then recharge", async () => {
@@ -242,11 +242,11 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.RECHARGING);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.RECHARGING);
   });
 
   it("Anchor Shot boosted by this ability should only trap the target after the second hit", async () => {
@@ -263,14 +263,14 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
+    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.TRAPPED);
   });
 
   it("Smack Down boosted by this ability should only ground the target after the second hit", async () => {
@@ -327,7 +327,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.status?.effect).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not cause user to hit into Storm Drain more than once", async () => {
@@ -341,7 +341,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {

@@ -43,7 +43,7 @@ describe("Moves - Toxic", () => {
     game.move.select(MoveId.TOXIC);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(game.field.getEnemyPokemon().status).toBeUndefined();
+    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should hit semi-invulnerable targets if user is Poison-type", async () => {
@@ -67,7 +67,7 @@ describe("Moves - Toxic", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(game.field.getEnemyPokemon().status).toBeUndefined();
+    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("moves other than Toxic should not hit semi-invulnerable targets even if user is Poison-type", async () => {
@@ -79,6 +79,6 @@ describe("Moves - Toxic", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 });

@@ -13,6 +13,7 @@ import { hasAllLocalizedSprites, localPing } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -167,6 +168,8 @@ export class LoadingScene extends SceneBase {
       // Load character sprites
       .loadAtlas("c_rival_m", "character", "rival_m")
       .loadAtlas("c_rival_f", "character", "rival_f")
+      .loadAtlas("c_halloween_rival_m", "events", "halloween_rival_m")
+      .loadAtlas("c_halloween_rival_f", "events", "halloween_rival_f")
 
       // Load pokemon-related images
       .loadImage("pkmn__back__sub", "pokemon/back", "sub.png")
@@ -295,7 +298,7 @@ export class LoadingScene extends SceneBase {
       )
 
       // egg gacha stuff
-      .loadEventBannerImages(lang)
+      .loadEventImages(lang)
       .loadAtlas("categories", "")
       .loadAtlas("egg", "egg")
       .loadAtlas("egg_crack", "egg")
@@ -317,6 +320,7 @@ export class LoadingScene extends SceneBase {
       .loadImage("encounter_radar", "mystery-encounters") // Mystery Encounter dex progress icon
       // settings atlases
       .loadAtlas("dualshock", "inputs")
+      .loadAtlas("procon", "inputs")
       .loadAtlas("xbox", "inputs")
       .loadAtlas("keyboard", "inputs")
       // sound effects
@@ -585,7 +589,7 @@ export class LoadingScene extends SceneBase {
     return this;
   }
 
-  private loadEventBannerImages(lang: string): this {
+  private loadEventImages(lang: string): this {
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
       // fallback to EN banner if translation not found
@@ -593,6 +597,9 @@ export class LoadingScene extends SceneBase {
         lang = "en";
       }
       this.loadImage(`${timedEventManager.getEventBannerFilename()}-${lang}`, "events");
+    }
+    if (timedEventManager.getLogoKey() !== "logo") {
+      this.loadImage(timedEventManager.getLogoKey(), "events");
     }
     return this;
   }

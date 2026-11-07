@@ -52,7 +52,7 @@ export class MoveCondition {
  */
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super(user => user.tempSummonData.waveTurnCount === 1);
+    super(user => user.summonData.waveTurnCount === 1);
   }
 
   // TODO: Update AI move selection logic to not require this method (and this class) at all
@@ -219,6 +219,19 @@ export const failIfDampCondition = new MoveCondition((user, _target, move) => {
   }
   return !cancelled.value;
 });
+
+export class RequireTypeCondition extends MoveCondition {
+  /** The required type that the user must have to use the move. */
+  public readonly requiredType: PokemonType;
+
+  constructor(requiredType: PokemonType) {
+    super(user => user.isOfType(requiredType, { returnOriginalTypesIfStellar: true }));
+    // Note: `this.requiredType` is not mutable, so instead of having the above
+    // lambda reference `this.requiredType`, it checks it directly, bypassing
+    // the need for the closure to retain an unnecessary reference to `this`
+    this.requiredType = requiredType;
+  }
+}
 
 /**
  * Condition used by counter-like moves if the user was hit by at least one qualifying attack this turn.

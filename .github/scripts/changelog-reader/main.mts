@@ -13,7 +13,7 @@ import { formatChangelog, type PullRequest } from "./format.mts";
 chalk.level = 2;
 
 /** The version of this script */
-const SCRIPT_VERSION: string = "1.0.1";
+const SCRIPT_VERSION: string = "1.0.2";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -112,6 +112,7 @@ async function getDiff(): Promise<Set<string>> {
  */
 async function getPullRequests(commits: Set<string>): Promise<PullRequest[]> {
   const pullRequests: PullRequest[] = [];
+  const seenPrs = new Set<number>();
   for (const sha of commits) {
     try {
       const prs = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
@@ -120,9 +121,10 @@ async function getPullRequests(commits: Set<string>): Promise<PullRequest[]> {
         commit_sha: sha,
       });
       const pr = prs.data.find(p => p.merged_at != null);
-      if (!pr) {
+      if (!pr || seenPrs.has(pr.number)) {
         continue;
       }
+      seenPrs.add(pr.number);
       const section = getChangelogSection(pr.body || "");
       pullRequests.push({
         number: pr.number,

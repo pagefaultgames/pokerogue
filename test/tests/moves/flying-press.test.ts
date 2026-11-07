@@ -1,4 +1,4 @@
-import { allAbilities, allMoves } from "#data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Challenges } from "#enums/challenges";
@@ -76,7 +76,7 @@ describe("Move - Flying Press", () => {
     });
 
     it("should deal damage as a Normal/Flying type move when Normalize is active", async () => {
-      hawlucha.setTempAbility(allAbilities[AbilityId.NORMALIZE]);
+      hawlucha.setTempAbility(AbilityId.NORMALIZE);
       checkEffForAllTypes(PokemonType.NORMAL);
     });
 
@@ -108,7 +108,7 @@ describe("Move - Flying Press", () => {
     });
 
     it("should deal damage as a Normal/Flying type move when Normalize is active", async () => {
-      hawlucha.setTempAbility(allAbilities[AbilityId.NORMALIZE]);
+      hawlucha.setTempAbility(AbilityId.NORMALIZE);
       checkEffForAllTypes(PokemonType.NORMAL);
     });
 

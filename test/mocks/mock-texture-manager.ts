@@ -10,6 +10,7 @@ import { MockRectangle } from "#test/mocks/mocks-container/mock-rectangle";
 import { MockSprite } from "#test/mocks/mocks-container/mock-sprite";
 import { MockText } from "#test/mocks/mocks-container/mock-text";
 import { MockTexture } from "#test/mocks/mocks-container/mock-texture";
+import Phaser from "phaser";
 
 /**
  * Stub class for Phaser.Textures.TextureManager

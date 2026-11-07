@@ -63,6 +63,7 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -632,7 +633,7 @@ export class UI extends Phaser.GameObjects.Container {
    * getGamepadType - returns the type of gamepad being used
    * inputMethod could be "keyboard" or "touch" or "gamepad"
    * if inputMethod is "keyboard" or "touch", then the inputMethod is returned
-   * if inputMethod is "gamepad", then the gamepad type is returned it could be "xbox" or "dualshock"
+   * if inputMethod is "gamepad", then the gamepad type is returned (e.g. "xbox", "dualshock", or "procon")
    * @returns gamepad type
    */
   public getGamepadType(): string {
