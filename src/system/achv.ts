@@ -306,7 +306,7 @@ export const achvs = {
   DAILY_VICTORY: new Achv("dailyVictory", "calendar", 100),
   FRESH_START: new ChallengeAchv(
     "freshStart",
-    "reviver_seed",
+    "fresh_start_ribbon",
     100,
     c =>
       c instanceof FreshStartChallenge
@@ -323,13 +323,13 @@ export const achvs = {
   ),
   INVERSE_BATTLE: new ChallengeAchv(
     "inverseBattle",
-    "inverse",
+    "inverse_ribbon",
     100,
     c => c instanceof InverseBattleChallenge && c.value > 0 && !randomizerChallengesAchvBlock(),
   ),
   FLIP_STATS: new ChallengeAchv(
     "flipStats",
-    "dubious_disc",
+    "flip_stats_ribbon",
     100,
     c => c instanceof FlipStatChallenge && c.value > 0 && !randomizerChallengesAchvBlock(),
   ),
@@ -663,7 +663,7 @@ export const achvs = {
   ),
   FLIP_INVERSE: new ChallengeAchv(
     "flipInverse",
-    "cracked_pot",
+    "inverse",
     50,
     ch =>
       ch instanceof FlipStatChallenge

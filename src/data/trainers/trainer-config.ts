@@ -56,6 +56,7 @@ import { coerceArray } from "#utils/array";
 import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 import type { Writable } from "type-fest";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -131,6 +132,7 @@ export class TrainerConfig {
   public nameFemale: string;
   public nameDouble: string;
   public title: string;
+  public titleFemale?: string | undefined;
   public titleDouble: string;
   public hasGenders = false;
   /**
@@ -220,7 +222,7 @@ export class TrainerConfig {
 
     const replacement = timedEventManager.getEventTrainerSpriteReplacement(this.trainerType);
     if (replacement) {
-      ret = replacement;
+      ret = this.hasGenders ? `${replacement}_${female ? "f" : "m"}` : replacement;
     }
 
     return ret;
@@ -246,11 +248,24 @@ export class TrainerConfig {
     this.hasVoucher = hasVoucher;
   }
 
-  setTitle(title: string): TrainerConfig {
+  /**
+   * Sets the title from the i18n file.
+   * @param title - The i18n key of the title
+   * @param titleFemale - (Optional) The i18n key of the title used by the female variant. \
+   * Ignored if the key does not exist in the current language, in which case `title` is used.
+   */
+  setTitle(title: string, titleFemale?: string): TrainerConfig {
     title = toCamelCase(title);
 
     // Get the title from the i18n file
     this.title = i18next.t(`titles:${title}`);
+
+    if (titleFemale) {
+      const femaleKey = `titles:${toCamelCase(titleFemale)}`;
+      if (i18next.exists(femaleKey)) {
+        this.titleFemale = i18next.t(femaleKey);
+      }
+    }
 
     return this;
   }
@@ -897,6 +912,7 @@ export class TrainerConfig {
     clone = this.hasGenders ? clone.setHasGenders(this.nameFemale, this.femaleEncounterBgm) : clone;
     clone = this.hasDouble ? clone.setHasDouble(this.nameDouble, this.doubleEncounterBgm) : clone;
     clone = this.title ? clone.setTitle(this.title) : clone;
+    clone.titleFemale = this.titleFemale;
     clone = this.titleDouble ? clone.setDoubleTitle(this.titleDouble) : clone;
     clone = this.hasCharSprite ? clone.setHasCharSprite() : clone;
     clone = this.doubleOnly ? clone.setDoubleOnly() : clone;
@@ -1879,7 +1895,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.ONE_AVG,
       trainerPartyTemplates.ONE_STRONG,
       trainerPartyTemplates.TWO_AVG,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -1901,8 +1917,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.55)
     .setEncounterBgm(TrainerType.PARASOL_LADY)
     .setPartyTemplates(
-      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
-      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.ONE_STRONG,
@@ -5350,6 +5366,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.RESHIRAM], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        p.replaceInMoveset(MoveId.FIRE_FANG, MoveId.FUSION_FLARE); // Special Attacker
         p.replaceInMoveset(MoveId.FIRE_BLAST, MoveId.BLUE_FLARE); // Blue Flare overall better if wanting an inaccurate option
       }),
     )
@@ -5774,7 +5791,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setStaticParty()
     .setEncounterBgm(TrainerType.RIVAL)
     .setBattleBgm("battle_rival")
@@ -5790,7 +5807,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setStaticParty()
     .setMoneyMultiplier(1.25)
     .setEncounterBgm(TrainerType.RIVAL)
@@ -5805,7 +5822,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setStaticParty()
     .setMoneyMultiplier(1.5)
     .setEncounterBgm(TrainerType.RIVAL)
@@ -5820,7 +5837,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setBoss()
     .setStaticParty()
     .setMoneyMultiplier(1.75)
@@ -5839,7 +5856,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setBoss()
     .setStaticParty()
     .setMoneyMultiplier(2.5)
@@ -5875,7 +5892,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setBoss()
     .setStaticParty()
     .setMoneyMultiplier(3)
@@ -6373,7 +6390,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.MIENSHAO]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.HONCHKROW, SpeciesId.TALONFLAME]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        if (p.species.speciesId === SpeciesId.AEGISLASH) {
+          // Check if King's Shield is in Aegislash's moveset, if not, replace the fourth move with King's Shield.
+          p.addIfNotInMoveset(MoveId.KINGS_SHIELD, 3);
+        }
+      }),
+    )
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MALAMAR]))
     .setPartyMemberFunc(
       4,
@@ -6406,7 +6432,16 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MIENSHAO]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.AEGISLASH, SpeciesId.FLORGES], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        if (p.species.speciesId === SpeciesId.AEGISLASH) {
+          // Check if King's Shield is in Aegislash's moveset, if not, replace the fourth move with King's Shield.
+          p.addIfNotInMoveset(MoveId.KINGS_SHIELD, 3);
+        }
+      }),
+    )
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.VOLCANION], TrainerSlot.TRAINER, true, p => {

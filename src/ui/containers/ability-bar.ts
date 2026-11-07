@@ -4,6 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { playTween } from "#utils/anim-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const defaultBarWidth = 118;
 const defaultLegacyBarWidth = 90;

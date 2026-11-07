@@ -40,6 +40,6 @@ describe("Abilities - Mold Breaker", () => {
 
     await game.toEndOfTurn();
     expect(game.scene.arena.ignoreAbilities).toBe(false);
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy).toHaveFainted();
   });
 });

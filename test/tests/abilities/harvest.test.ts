@@ -127,13 +127,13 @@ describe("Abilities - Harvest", () => {
     // ate 1 berry without recovering (no harvest)
     expect(regieleki.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
-    expect(regieleki.getStatStage(Stat.SPATK)).toBe(1);
+    expect(regieleki).toHaveStatStage(Stat.SPATK, 1);
 
     await game.toNextWave();
 
     expect(regieleki.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
-    expect(regieleki.getStatStage(Stat.SPATK)).toBe(1);
+    expect(regieleki).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("keeps harvested berries across reloads", async () => {
@@ -155,7 +155,7 @@ describe("Abilities - Harvest", () => {
     // ate 1 berry and recovered it
     expect(regieleki.battleData.berriesEaten).toEqual([]);
     expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.SPATK)).toBe(1);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.SPATK, 1);
 
     // heal up so harvest doesn't proc and kill enemy
     game.move.select(MoveId.EARTHQUAKE);
@@ -163,13 +163,13 @@ describe("Abilities - Harvest", () => {
     await game.toNextWave();
 
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.SPATK)).toBe(1);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.SPATK, 1);
 
     await game.reload.reloadSession();
 
     expect(regieleki.battleData.berriesEaten).toEqual([]);
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.SPATK)).toBe(1);
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("cannot restore capped berries", async () => {

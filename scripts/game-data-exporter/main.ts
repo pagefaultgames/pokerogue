@@ -7,8 +7,6 @@
 
 import "./i18n"; // needs to be imported first
 
-import { setSpeciesDataRegistry } from "#app/global-species-data-registry";
-import { SpeciesDataRegistry } from "#data/species-data-registry";
 import { existsSync, rmSync } from "node:fs";
 import chalk, { type ChalkInstance } from "chalk";
 import { cliArgs, OUTPUT_DIR, SCRIPT_VERSION } from "./constants";
@@ -23,7 +21,6 @@ import { generateTmTiersData } from "./data-generators/tms";
 chalk.level = 2;
 
 async function main(): Promise<void> {
-  setSpeciesDataRegistry(new SpeciesDataRegistry());
   const startTime = performance.now();
   const { clean, debug } = cliArgs;
   let hasPrintedTimer = false;

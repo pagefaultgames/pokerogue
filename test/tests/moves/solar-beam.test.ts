@@ -12,6 +12,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: Merge with other charging moves
 describe("Moves - Solar Beam", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -25,7 +26,6 @@ describe("Moves - Solar Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.SOLAR_BEAM)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -40,21 +40,20 @@ describe("Moves - Solar Beam", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.SOLAR_BEAM);
+    game.move.use(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeDefined();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.OTHER);
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).toHaveFullHp();
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.OTHER });
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.SUCCESS });
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.SOLAR_BEAM);
-    expect(playerSolarBeam?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.SOLAR_BEAM, 1);
   });
 
   it.each([
@@ -69,7 +68,7 @@ describe("Moves - Solar Beam", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
     const unshiftNewSpy = vi.spyOn(game.scene.phaseManager, "unshiftNew");
 
-    game.move.select(MoveId.SOLAR_BEAM);
+    game.move.use(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(unshiftNewSpy).toHaveBeenCalledWith(
@@ -80,13 +79,12 @@ describe("Moves - Solar Beam", () => {
       MoveUseMode.IGNORE_PP,
       MovePhaseTimingModifier.FIRST,
     );
-    expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).not.toHaveFullHp();
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SOLAR_BEAM, result: MoveResult.SUCCESS });
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.SOLAR_BEAM);
-    expect(playerSolarBeam?.ppUsed).toBe(1);
+    expect(playerPokemon).toHaveUsedPP(MoveId.SOLAR_BEAM, 1);
   });
 
   it.each([
@@ -101,7 +99,7 @@ describe("Moves - Solar Beam", () => {
 
     vi.spyOn(solarBeam, "calculateBattlePower");
 
-    game.move.select(MoveId.SOLAR_BEAM);
+    game.move.use(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("TurnEndPhase");

@@ -12,7 +12,7 @@
     },
     {
       "tagName": "@module",
-      "syntaxKind": "modifier"
+      "syntaxKind": "block"
     },
     {
       "tagName": "@interface",

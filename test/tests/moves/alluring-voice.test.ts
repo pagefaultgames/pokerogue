@@ -39,6 +39,6 @@ describe("Moves - Alluring Voice", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
+    expect(enemy).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 });

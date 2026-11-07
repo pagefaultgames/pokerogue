@@ -72,6 +72,7 @@ import { NextEncounterPhase } from "#phases/next-encounter-phase";
 import { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import { PartyExpPhase } from "#phases/party-exp-phase";
 import { PartyHealPhase } from "#phases/party-heal-phase";
+import { PartyReorderSwitchPhase } from "#phases/party-reorder-switch-phase";
 import { PokemonAnimPhase } from "#phases/pokemon-anim-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
@@ -180,6 +181,7 @@ const PHASES = Object.freeze({
   ObtainStatusEffectPhase,
   PartyExpPhase,
   PartyHealPhase,
+  PartyReorderSwitchPhase,
   PokemonAnimPhase,
   PokemonHealPhase,
   PokemonTransformPhase,

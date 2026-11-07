@@ -246,7 +246,7 @@ describe("achvs", () => {
 
   it("should initialize the achievements with IDs and parent IDs", () => {
     expect(achvs._10K_MONEY.id).toBe("_10K_MONEY");
-    expect(achvs._10K_MONEY.hasParent).toBe(undefined);
+    expect(achvs._10K_MONEY.hasParent).toBeUndefined();
     expect(achvs._100K_MONEY.id).toBe("_100K_MONEY");
     expect(achvs._100K_MONEY.hasParent).toBe(true);
     expect(achvs._100K_MONEY.parentId).toBe("_10K_MONEY");

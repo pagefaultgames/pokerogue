@@ -12,6 +12,7 @@ import {
 } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { KeyboardConfig } from "#types/inputs";
+import Phaser from "phaser";
 import { expect } from "vitest";
 
 // TODO: Review what the literal fuck this class does

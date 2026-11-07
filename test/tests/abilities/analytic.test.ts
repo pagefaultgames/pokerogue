@@ -72,6 +72,6 @@ describe("Abilities - Analytic", () => {
     game.move.select(MoveId.SPLASH, 1);
     game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemy.getInverseHp()).toBe(damage1);
+    expect(enemy).toHaveTakenDamage(damage1);
   });
 });

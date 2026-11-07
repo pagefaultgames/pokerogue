@@ -1,10 +1,11 @@
 import type { ValueOf } from "type-fest";
 
 export const ChallengeCategory = {
-  MISC: 1,
-  CHALLENGE: 2,
-  NUZLOCKE: 3,
-  RANDOMIZER: 4,
+  DIFFICULTY: 1,
+  STARTERS: 2,
+  RANDOMIZER: 3,
+  GIMMICK: 4,
+  UNUSED: 5,
 } as const;
 
 export type ChallengeCategory = ValueOf<typeof ChallengeCategory>;

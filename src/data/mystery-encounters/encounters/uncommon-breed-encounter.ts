@@ -272,10 +272,9 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
   .build();
 
 function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: MoveId) {
-  const eggMoves = pokemon.getEggMoves();
+  const eggMoves = pokemon.getEggMoves()?.filter(e => e !== previousEggMove);
   if (eggMoves) {
     // Choose a random egg move that isn't the previously chosen one
-    eggMoves.splice(previousEggMove, 1);
     const randomEggMove = randSeedItem(eggMoves);
     if (pokemon.moveset.length < 4) {
       pokemon.moveset.push(new PokemonMove(randomEggMove));

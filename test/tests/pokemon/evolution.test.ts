@@ -97,17 +97,17 @@ describe("Evolution", () => {
     const totodile = game.field.getPlayerPokemon();
     const hpBefore = totodile.hp;
 
-    expect(totodile.hp).toBe(totodile.getMaxHp());
+    expect(totodile).toHaveFullHp();
 
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
 
-    expect(golem.hp).toBe(1);
+    expect(golem).toHaveHp(1);
 
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
-    expect(totodile.hp).toBe(totodile.getMaxHp());
+    expect(totodile).toHaveFullHp();
     expect(totodile.hp).toBeGreaterThan(hpBefore);
   });
 
@@ -127,19 +127,19 @@ describe("Evolution", () => {
     const hpBefore = cyndaquil.hp;
     const maxHpBefore = cyndaquil.getMaxHp();
 
-    expect(cyndaquil.hp).toBe(Math.floor(cyndaquil.getMaxHp() / 2));
+    expect(cyndaquil).toHaveHp(cyndaquil.getMaxHp() / 2);
 
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
 
-    expect(golem.hp).toBe(1);
+    expect(golem).toHaveHp(1);
 
     game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
     expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);
     expect(cyndaquil.hp).toBeGreaterThan(hpBefore);
-    expect(cyndaquil.hp).toBeLessThan(cyndaquil.getMaxHp());
+    expect(cyndaquil).not.toHaveFullHp();
   });
 
   it("should handle rng-based split evolution", async () => {
@@ -181,7 +181,7 @@ describe("Evolution", () => {
 
     const golem = game.field.getEnemyPokemon();
     golem.hp = 1;
-    expect(golem.hp).toBe(1);
+    expect(golem).toHaveHp(1);
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("EndEvolutionPhase");

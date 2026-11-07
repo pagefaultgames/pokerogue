@@ -76,7 +76,7 @@ describe("Abilities - Commander", () => {
     await game.phaseInterceptor.to("MovePhase", false);
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
 
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(tatsugiri.getMoveHistory()).toHaveLength(0);
@@ -89,7 +89,7 @@ describe("Abilities - Commander", () => {
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
     game.move.select(MoveId.MEMENTO, 1, BattlerIndex.ENEMY);
 
@@ -101,11 +101,11 @@ describe("Abilities - Commander", () => {
     game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("FaintPhase", false);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeUndefined();
+    expect(dondozo).not.toHaveBattlerTag(BattlerTagType.COMMANDED);
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(dondozo, PokemonAnimType.COMMANDER_REMOVE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("source should still take damage from Poison while hidden", async () => {
@@ -116,14 +116,14 @@ describe("Abilities - Commander", () => {
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
     game.move.select(MoveId.SPLASH, 1);
 
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("source should still take damage from Salt Cure while hidden", async () => {
@@ -134,7 +134,7 @@ describe("Abilities - Commander", () => {
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
     tatsugiri.addTag(BattlerTagType.SALT_CURED, 0, MoveId.NONE, game.scene.getField()[BattlerIndex.ENEMY].id);
 
@@ -143,7 +143,7 @@ describe("Abilities - Commander", () => {
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("source should still take damage from Sandstorm while hidden", async () => {
@@ -154,14 +154,14 @@ describe("Abilities - Commander", () => {
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
     game.move.select(MoveId.SPLASH, 1);
 
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(tatsugiri.isFullHp()).toBeFalsy();
+    expect(tatsugiri).not.toHaveFullHp();
   });
 
   it("should make Dondozo immune to being forced out", async () => {
@@ -172,7 +172,7 @@ describe("Abilities - Commander", () => {
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
 
     game.move.select(MoveId.SPLASH, 1);
 

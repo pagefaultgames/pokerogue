@@ -40,7 +40,7 @@ describe("Form Change Phase", () => {
     // Before the form change: Should be Hero form
     const zacian = game.field.getPlayerPokemon();
     expect(zacian.getFormKey()).toBe("hero-of-many-battles");
-    expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY]);
+    expect(zacian).toHaveTypes([PokemonType.FAIRY]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);
 
     // Give Zacian a Rusted Sword
@@ -54,7 +54,7 @@ describe("Form Change Phase", () => {
     // After the form change: Should be Crowned form
     expect(game.phaseInterceptor.phaseLog.includes("FormChangePhase")).toBe(true);
     expect(zacian.getFormKey()).toBe("crowned");
-    expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY, PokemonType.STEEL]);
+    expect(zacian).toHaveTypes([PokemonType.FAIRY, PokemonType.STEEL]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 150, 115, 80, 115, 148]);
   });
 

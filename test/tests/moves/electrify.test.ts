@@ -42,7 +42,7 @@ describe("Moves - Electrify", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
   });
 
   it("should override type changes from abilities", async () => {
@@ -60,6 +60,6 @@ describe("Moves - Electrify", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-    expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
+    expect(playerPokemon).toHaveFullHp();
   });
 });

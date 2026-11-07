@@ -1656,11 +1656,15 @@ export abstract class MoveLockTag extends SerializableBattlerTag {
    * @param lastTargets - The target(s) hit by the holder's most recent use of the move
    * @returns The {@linkcode BattlerIndex}es targeted by the next use of the move.
    */
+  // TODO: move target acquisition into `MovePhase`
   protected getNextTargets(pokemon: Pokemon, move: Move, lastTargets: BattlerIndex[]): BattlerIndex[] {
     // Re-roll a random target each turn so frenzy moves don't lock onto a single
     // enemy for their whole duration in battles with multiple opponents.
     if (move.moveTarget === MoveTarget.RANDOM_NEAR_ENEMY) {
-      return getMoveTargets(pokemon, move.id).targets;
+      const { targets } = getMoveTargets(pokemon, move.id);
+      if (targets.length > 0) {
+        return targets;
+      }
     }
     return lastTargets;
   }
@@ -2682,7 +2686,7 @@ export class SaltCuredTag extends DamageOverTimeTag {
     const types = pokemon.getTypes();
     // Slightly faster than doing an `includes`
     const waterOrSteel = types.some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
-    return waterOrSteel ? 0.25 : 0.125;
+    return waterOrSteel ? 0.125 : 0.0625;
   }
 }
 

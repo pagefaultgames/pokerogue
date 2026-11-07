@@ -29,6 +29,7 @@ import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 // TODO: Refactor and split up to allow for overriding capture chance
 export class AttemptCapturePhase extends PokemonPhase {
@@ -171,9 +172,11 @@ export class AttemptCapturePhase extends PokemonPhase {
                     globalScene.animations.addPokeballCaptureStars(this.pokeball);
 
                     const pbTint = globalScene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
-                    pbTint.setOrigin(this.pokeball.originX, this.pokeball.originY);
-                    pbTint.setTintFill(0);
-                    pbTint.setAlpha(0);
+                    pbTint
+                      .setOrigin(this.pokeball.originX, this.pokeball.originY)
+                      .setTint(0)
+                      .setTintMode(Phaser.TintModes.FILL)
+                      .setAlpha(0);
                     globalScene.field.add(pbTint);
                     globalScene.tweens.add({
                       targets: pbTint,

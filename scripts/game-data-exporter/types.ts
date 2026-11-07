@@ -117,8 +117,10 @@ export interface LevelMoveEntry {
   dexNum: number;
   id: string;
   form: string | null;
-  level: number | "EVOLVE_MOVE" | "RELEARN_MOVE";
   move: string;
+  moveId: number;
+  level: number | "EVOLVE_MOVE" | "RELEARN_MOVE";
+  source: string;
 }
 
 export interface TmTierEntry {

@@ -5,6 +5,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import type { Variant } from "#sprites/variant";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
@@ -109,27 +110,27 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       return;
     }
 
-    const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
-      const ret = globalScene.addFieldSprite(0, 0, spriteKey);
-      ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        yShadowOffset: yShadow ?? 0,
-      });
-      return ret;
-    };
+    const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number): GameObjects.Sprite =>
+      globalScene
+        .addFieldSprite(0, 0, spriteKey)
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          yShadowOffset: yShadow ?? 0,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
-    const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
-      const icon = globalScene.add.sprite(-19, 2, "items", spriteKey);
-      icon.setOrigin(0.5, 1);
-      icon.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        hasShadow: !!hasShadow,
-        yShadowOffset: yShadow ?? 0,
-      });
-      return icon;
-    };
+    const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number): GameObjects.Sprite =>
+      globalScene.add
+        .sprite(-19, 2, "items", spriteKey)
+        .setOrigin(0.5, 1)
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          hasShadow: !!hasShadow,
+          yShadowOffset: yShadow ?? 0,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
     // Depending on number of sprites added, should space them to be on the circular field sprite
     const minX = -40;
@@ -155,13 +156,15 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         sprite = getSprite(spriteKey, hasShadow, yShadow);
         tintSprite = getSprite(spriteKey);
         if (isPokemon && isShiny) {
-          // Set Pipeline for shiny variant
-          sprite.setPipelineData("spriteKey", spriteKey);
-          tintSprite.setPipelineData("spriteKey", spriteKey);
-          sprite.setPipelineData("shiny", true);
-          sprite.setPipelineData("variant", variant);
-          tintSprite.setPipelineData("shiny", true);
-          tintSprite.setPipelineData("variant", variant);
+          // Set render node data for shiny variant
+          sprite
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", true)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant);
+          tintSprite
+            .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+            .setRenderNodeData(globalScene.spriteSubmitter, "shiny", true)
+            .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant);
           // Create Sprite for shiny Sparkle
           pokemonShinySparkle = globalScene.add.sprite(sprite.x, sprite.y, "shiny");
           pokemonShinySparkle.setOrigin(0.5, 1);
@@ -289,7 +292,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       return;
     }
 
-    this.getSprites().map((sprite, i) => {
+    this.getSprites().forEach((sprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
         sprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
         if (sprite.texture.frameTotal > 1) {
@@ -299,7 +302,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         }
       }
     });
-    this.getTintSprites().map((tintSprite, i) => {
+    this.getTintSprites().forEach((tintSprite, i) => {
       if (!this.spriteConfigs[i].isItem) {
         tintSprite.setTexture(this.spriteConfigs[i].spriteKey).setFrame(0);
         if (tintSprite.texture.frameTotal > 1) {
@@ -310,15 +313,13 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       }
     });
 
-    this.spriteConfigs.every((config, i) => {
+    this.spriteConfigs.forEach((config, i) => {
       if (!config.tint) {
-        return true;
+        return;
       }
 
-      const tintSprite = this.getAt(i * 2 + 1);
+      const tintSprite = this.getAt(i * 2 + 1) as GameObjects.Sprite;
       this.tint(tintSprite, 0, config.tint);
-
-      return true;
     });
   }
 
@@ -330,11 +331,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
    * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
    * @returns true if the sprite was able to be animated
    */
-  tryPlaySprite(
-    sprite: Phaser.GameObjects.Sprite,
-    tintSprite: Phaser.GameObjects.Sprite,
-    animConfig: Phaser.Types.Animations.PlayAnimationConfig,
-  ): boolean {
+  tryPlaySprite(sprite: GameObjects.Sprite, tintSprite: GameObjects.Sprite, animConfig: PlayAnimationConfig): boolean {
     // Show an error in the console if there isn't a texture loaded
     if (sprite.texture.key === "__MISSING") {
       console.error(`No texture found for '${animConfig.key}'!`);
@@ -443,10 +440,12 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
    * @param duration
    * @param ease
    */
-  private tint(sprite, color: number, alpha?: number, duration?: number, ease?: string): void {
+  private tint(sprite: GameObjects.Sprite, color: number, alpha?: number, duration?: number, ease?: string): void {
     // const tintSprites = this.getTintSprites();
-    sprite.setTintFill(color);
-    sprite.setVisible(true);
+    sprite //
+      .setTint(color)
+      .setTintMode(Phaser.TintModes.FILL)
+      .setVisible(true);
 
     if (duration) {
       sprite.setAlpha(0);

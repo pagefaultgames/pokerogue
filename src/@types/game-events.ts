@@ -55,6 +55,8 @@ export interface EventSpriteOptions {
    * An Array of tuples [source, target] for replacing images during events.
    * Source is the image key and target is the literal filename of the replacement image (without file extension).
    * The image has to be in the `events` folder for it to work.
+   * @remarks
+   * Atlas replacements will also need a `.json` to work
    */
   readonly imageReplacements?: readonly EventImageReplacement[];
   /**
@@ -91,6 +93,7 @@ export interface TimedEvent extends EventBanner {
   readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
   readonly luckBoostedSpecies?: readonly SpeciesId[];
   readonly boostFusions?: boolean; //MODIFIER REWORK PLEASE
+  readonly boostSootheBell?: boolean;
   readonly classicWaveRewards?: readonly EventWaveReward[]; // Rival battle rewards
   readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   readonly music?: readonly EventMusicReplacement[];

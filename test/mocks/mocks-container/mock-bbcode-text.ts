@@ -1,5 +1,5 @@
 import { MockText } from "#test/mocks/mocks-container/mock-text";
-import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import type BBCodeText from "phaser4-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 export class MockBBCodeText extends MockText {
   setMaxLines(..._: Parameters<BBCodeText["setMaxLines"]>): this {

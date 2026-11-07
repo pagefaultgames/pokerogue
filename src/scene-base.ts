@@ -1,6 +1,8 @@
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { coerceArray } from "#utils/array";
 import { getCachedUrl } from "#utils/fetch-utils";
+import Phaser from "phaser";
 
 export const legacyCompatibleImages: string[] = [];
 
@@ -61,6 +63,11 @@ export class SceneBase extends Phaser.Scene {
     if (folder) {
       folder += "/";
     }
+    const eventReplacment = timedEventManager.getEventImageReplacement(key);
+    if (eventReplacment) {
+      folder = "events/";
+      filenameRoot = `${eventReplacment}`;
+    }
     this.load.atlas(
       key,
       getCachedUrl(`images/${folder}${filenameRoot}.png`),
@@ -78,6 +85,10 @@ export class SceneBase extends Phaser.Scene {
   }
 
   public loadSe(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): this {
+    if (!audioManager.isAudioEnabled) {
+      return this;
+    }
+
     folder += "/";
 
     filenames = coerceArray(filenames);
@@ -89,7 +100,7 @@ export class SceneBase extends Phaser.Scene {
   }
 
   public async loadBgm(key: string): Promise<void> {
-    if (this.cache.audio.exists(key)) {
+    if (!audioManager.isAudioEnabled || this.cache.audio.exists(key)) {
       return;
     }
 

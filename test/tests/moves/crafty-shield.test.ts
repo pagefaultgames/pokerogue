@@ -43,8 +43,8 @@ describe("Moves - Crafty Shield", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(0);
+    expect(charizard).toHaveStatStage(Stat.ATK, 0);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should not protect the user and allies from attack moves", async () => {
@@ -59,8 +59,8 @@ describe("Moves - Crafty Shield", () => {
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.isFullHp()).toBe(false);
-    expect(blastoise.isFullHp()).toBe(false);
+    expect(charizard).not.toHaveFullHp();
+    expect(blastoise).not.toHaveFullHp();
   });
 
   it("should not block entry hazards and field-targeted moves", async () => {
@@ -75,9 +75,9 @@ describe("Moves - Crafty Shield", () => {
     await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(charizard.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
-    expect(blastoise.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
+    expect(charizard).toHaveBattlerTag(BattlerTagType.PERISH_SONG);
+    expect(blastoise).toHaveBattlerTag(BattlerTagType.PERISH_SONG);
   });
 
   it("should protect the user and allies from moves that ignore other protection", async () => {
@@ -94,8 +94,8 @@ describe("Moves - Crafty Shield", () => {
 
     await game.toEndOfTurn();
 
-    expect(charizard.getTag(BattlerTagType.CURSED)).toBeUndefined();
-    expect(blastoise.getTag(BattlerTagType.CURSED)).toBeUndefined();
+    expect(charizard).not.toHaveBattlerTag(BattlerTagType.CURSED);
+    expect(blastoise).not.toHaveBattlerTag(BattlerTagType.CURSED);
 
     const [dusknoir1, dusknoir2] = game.scene.getEnemyField();
     expect(dusknoir1).toHaveFullHp();
@@ -111,14 +111,14 @@ describe("Moves - Crafty Shield", () => {
     game.move.use(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(2);
+    expect(charizard).toHaveStatStage(Stat.ATK, 0);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 2);
 
     game.move.use(MoveId.HOWL, BattlerIndex.PLAYER);
     game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(charizard.getStatStage(Stat.ATK)).toBe(1);
-    expect(blastoise.getStatStage(Stat.ATK)).toBe(3);
+    expect(charizard).toHaveStatStage(Stat.ATK, 1);
+    expect(blastoise).toHaveStatStage(Stat.ATK, 3);
   });
 });
