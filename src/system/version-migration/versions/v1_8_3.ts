@@ -7,7 +7,6 @@ import type { SystemSaveMigrator } from "#types/save-migrators";
 /**
  * If pichu is caught, but the only forms registered as caught are not starterSelectable,
  * unlock the default form.
- * @param data - {@linkcode SystemSaveData}
  */
 const migratePichuForms = {
   name: "migratePichuForms",
