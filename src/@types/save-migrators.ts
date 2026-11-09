@@ -5,9 +5,9 @@ import type { GreaterThan } from "type-fest";
 
 // #region Versioning
 
-/** A version string that predates 1.12.0. */
+/** A version string that predates 1.12.0.0 */
 type LegacyVersionString = `1.${number}.${number}`;
-/** A version string that succeeds 1.12.0. */
+/** A version string that is from version 1.12.0.0 or later */
 type ModernVersionString = `1.${number}.${number}.${number}`;
 
 /** Type representing any arbitrary version string, either legacy or modern.*/
@@ -22,13 +22,16 @@ type SplitVersionString<T extends VersionString> =
   T extends `1.${infer Major extends number}.${infer MinorAndMaybePatch extends number | `${number}.${number}`}`
     ? MinorAndMaybePatch extends `${infer Minor extends number}.${infer Patch extends number}`
       ? [Major, Minor, Patch] // modern
-      : [Major, MinorAndMaybePatch, 0] // legacy (MinorAndMaybePatch is `number`)
+      : [Major, MinorAndMaybePatch, 0] // legacy (`MinorAndMaybePatch` is `number`)
     : never;
 
 /**
  * Type to compare 2 version numbers.
- * @returns `1` if `V1` is greater than `V2`, `-1` if `V1` is less than `V2`, or `0` if they are equal.
- * Returns `-1 | 0 | 1` if either one is not a specific version string.
+ * @returns One of the following:
+ * - `1` if `V1` is greater than `V2`
+ * - `-1` if `V1` is less than `V2`
+ * - `0` if they are equal
+ * - `-1 | 0 | 1` if either one is not a specific version string.
  */
 export type CompareVersions<V1 extends VersionString, V2 extends VersionString> = [VersionString] extends [V1 | V2]
   ? -1 | 0 | 1
@@ -62,7 +65,7 @@ type PairwiseCmp<P extends readonly [number, number][]> = P extends []
     : never;
 
 /**
- * @returns Whether the given array of versions is sorted in non-decreasing order.
+ * @returns Whether the given array of versions is sorted in ascending order.
  */
 export type AreVersionsSorted<V extends readonly VersionString[]> = V extends [] | readonly [VersionString]
   ? true
@@ -79,6 +82,8 @@ export type AreVersionsSorted<V extends readonly VersionString[]> = V extends []
     : never;
 
 // #endregion Versioning
+
+// #region Migrators
 
 /**
  * Interface for the type of the elements of `party` and `enemyParty` properties
@@ -140,3 +145,5 @@ export type SessionSaveMigrator = SaveMigrator<SessionSaveMigratorIn>;
 export type SettingsSaveMigrator = SaveMigrator<object>;
 
 export type SystemSaveMigrator = SaveMigrator<SystemSaveData>;
+
+// #endregion Migrators
