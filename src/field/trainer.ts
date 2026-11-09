@@ -315,6 +315,12 @@ export class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
+  /**
+   * Creates an entry in the {@linkcode Trainer.representedSpecies} field
+   * using the {@linkcode SpeciesId} as the key and the corresponding prevolution
+   * chain (an array of {@linkcode SpeciesId}) as the value.
+   * @param speciesId - The {@linkcode SpeciesId} of the Pokemon to be registered
+   */
   public registerRepresentedSpecies(speciesId: SpeciesId) {
     this.representedSpecies[speciesId] = speciesDataRegistry.getPrevolutionChain(speciesId);
   }
