@@ -6,6 +6,14 @@ import type { MoveId } from "#enums/move-id";
 import type { LevelMoveContext, LevelMovesWithSource } from "#types/level-moves";
 
 /**
+ * An array of base move sources, that lead to the "relearn" category in the pokedex.
+ */
+const POKEDEX_RELEARN_MOVE_SOURCES: readonly LearnableMoveSource[] = [
+  LearnableMoveSource.RELEARN,
+  LearnableMoveSource.PREVO,
+];
+
+/**
  * Helper method for {@linkcode getLevelMoves}
  *
  * Get all level moves the species form can learn on its own.
@@ -204,8 +212,23 @@ function filterAndSortLevelMoves(
    * in levelMoves multiple times all but the lowest level one will be skipped.
    * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
    */
-  if (context.includeDuplicates) {
-    ret.push(...levelMoves);
+  if (context.includeDuplicateMoves) {
+    // Only keeps duplicate moves from different sources/levels
+    for (const lm of levelMoves) {
+      const [level, move, source] = lm;
+      if (
+        !ret.some(
+          ([l, m, s]) =>
+            m === move
+            && (s === source
+              || (POKEDEX_RELEARN_MOVE_SOURCES.includes(getBaseLearnableMoveSource(s))
+                && POKEDEX_RELEARN_MOVE_SOURCES.includes(getBaseLearnableMoveSource(source))))
+            && l === level,
+        )
+      ) {
+        ret.push(lm);
+      }
+    }
   } else {
     getUniqueMoves(levelMoves, ret);
   }

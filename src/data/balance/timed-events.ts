@@ -12,7 +12,7 @@ export const timedEvents: readonly TimedEvent[] = [
     name: "Halloween 26",
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2026, 9, 23)),
-    endDate: new Date(Date.UTC(2026, 10, 9)),
+    endDate: new Date(Date.UTC(2026, 10, 11)),
     logo: "logo_halloween",
     bannerKey: "halloween2026",
     scale: 0.16,
@@ -54,7 +54,9 @@ export const timedEvents: readonly TimedEvent[] = [
     shinyEncounterMultiplier: 2,
     shinyCatchMultiplier: 3,
     extraCatchCandy: 1,
+    upgradeUnlockedVouchers: true,
     boostSootheBell: true,
+    music: [["title", "halloween_title"]],
     biomes: {
       [BiomeId.METROPOLIS]: [BiomeId.GRAVEYARD],
       [BiomeId.TALL_GRASS]: [BiomeId.GRAVEYARD],

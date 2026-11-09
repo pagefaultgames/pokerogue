@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.5/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -33,9 +33,12 @@
       "!!docs",
       "!!locales",
       "!!typedoc",
-      // TODO: lint css and html?
+      // TODO: lint/format these file types?
       "!!*.css",
       "!!*.html",
+      "!!*.yml",
+      "!!*.yaml",
+      "!!*.md",
       // this file is too big
       "!src/data/balance/tm-species-map.ts"
     ]

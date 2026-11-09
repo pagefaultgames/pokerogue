@@ -40,28 +40,30 @@ export class LoginPhase extends Phase {
 
     const hasSession = !!getCookie(sessionIdKey);
 
-    ui.setMode(UiMode.LOADING, { buttonActions: [] });
+    await ui.setMode(UiMode.LOADING, { buttonActions: [] });
 
     const response = await executeIf(bypassLogin || hasSession, updateUserInfo);
-    const success = response?.[0] ?? false;
-    const statusCode = response ? response[1] : null;
+    const [loginSuccess, statusCode] = response ?? [false, null];
 
-    if (!success) {
+    if (!loginSuccess) {
       this.checkStatus(statusCode);
       return;
     }
 
-    await gameData.loadSystem();
-    if (success || bypassLogin) {
+    const loadSuccess = await gameData.loadSystem();
+    if (loadSuccess || bypassLogin) {
       await this.end();
       return;
     }
-    ui.setMode(UiMode.MESSAGE);
-    ui.showText(t("menu:failedToLoadSaveData"));
+
+    await ui.setMode(UiMode.MESSAGE);
+    await ui.showTextPromise(`${t("menu:failedToLoadSaveData")}$${t("menu:triggerLogOut")}`);
+    removeCookie(sessionIdKey);
+    globalScene.reset(true, true);
   }
 
   public override async end(): Promise<void> {
-    globalScene.ui.setMode(UiMode.MESSAGE);
+    await globalScene.ui.setMode(UiMode.MESSAGE);
 
     if (settings.general.playerGender === PlayerGender.UNSET) {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
@@ -106,13 +108,9 @@ export class LoginPhase extends Phase {
   private showLoginRegister(): void {
     const { ui } = globalScene;
 
-    const goToLoginButton = () => {
-      this.goToLogin();
-    };
+    const goToLoginButton = () => this.goToLogin();
 
-    const goToRegistrationButton = () => {
-      this.goToRegister();
-    };
+    const goToRegistrationButton = () => this.goToRegister();
 
     if (this.showText) {
       ui.showText(this.loginPromptText);
@@ -124,10 +122,15 @@ export class LoginPhase extends Phase {
   }
 
   private async checkUserInfo(): Promise<boolean> {
-    globalScene.ui.playSelect();
-    const success = await updateUserInfo();
-    if (!success[0]) {
+    const { ui } = globalScene;
+
+    ui.playSelect();
+
+    const [success] = await updateUserInfo();
+    if (!success) {
       removeCookie(sessionIdKey);
+      await ui.setMode(UiMode.MESSAGE);
+      await ui.showTextPromise(t("menu:logInError"));
       globalScene.reset(true, true);
       return false;
     }
@@ -147,9 +150,19 @@ export class LoginPhase extends Phase {
       if (!success) {
         return;
       }
-      await gameData.loadSystem();
-      this.end();
+
+      const loadSuccess = await gameData.loadSystem();
+      if (loadSuccess) {
+        this.end();
+        return;
+      }
+
+      removeCookie(sessionIdKey);
+      await ui.setMode(UiMode.MESSAGE);
+      await ui.showTextPromise(t("menu:failedToLoadSaveData"));
+      globalScene.reset(true, true);
     };
+
     audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });

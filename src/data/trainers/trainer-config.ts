@@ -132,6 +132,7 @@ export class TrainerConfig {
   public nameFemale: string;
   public nameDouble: string;
   public title: string;
+  public titleFemale?: string | undefined;
   public titleDouble: string;
   public hasGenders = false;
   /**
@@ -247,11 +248,24 @@ export class TrainerConfig {
     this.hasVoucher = hasVoucher;
   }
 
-  setTitle(title: string): TrainerConfig {
+  /**
+   * Sets the title from the i18n file.
+   * @param title - The i18n key of the title
+   * @param titleFemale - (Optional) The i18n key of the title used by the female variant. \
+   * Ignored if the key does not exist in the current language, in which case `title` is used.
+   */
+  setTitle(title: string, titleFemale?: string): TrainerConfig {
     title = toCamelCase(title);
 
     // Get the title from the i18n file
     this.title = i18next.t(`titles:${title}`);
+
+    if (titleFemale) {
+      const femaleKey = `titles:${toCamelCase(titleFemale)}`;
+      if (i18next.exists(femaleKey)) {
+        this.titleFemale = i18next.t(femaleKey);
+      }
+    }
 
     return this;
   }
@@ -898,6 +912,7 @@ export class TrainerConfig {
     clone = this.hasGenders ? clone.setHasGenders(this.nameFemale, this.femaleEncounterBgm) : clone;
     clone = this.hasDouble ? clone.setHasDouble(this.nameDouble, this.doubleEncounterBgm) : clone;
     clone = this.title ? clone.setTitle(this.title) : clone;
+    clone.titleFemale = this.titleFemale;
     clone = this.titleDouble ? clone.setDoubleTitle(this.titleDouble) : clone;
     clone = this.hasCharSprite ? clone.setHasCharSprite() : clone;
     clone = this.doubleOnly ? clone.setDoubleOnly() : clone;
@@ -5776,7 +5791,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setStaticParty()
     .setEncounterBgm(TrainerType.RIVAL)
     .setBattleBgm("battle_rival")
@@ -5792,7 +5807,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setStaticParty()
     .setMoneyMultiplier(1.25)
     .setEncounterBgm(TrainerType.RIVAL)
@@ -5807,7 +5822,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setStaticParty()
     .setMoneyMultiplier(1.5)
     .setEncounterBgm(TrainerType.RIVAL)
@@ -5822,7 +5837,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setBoss()
     .setStaticParty()
     .setMoneyMultiplier(1.75)
@@ -5841,7 +5856,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setBoss()
     .setStaticParty()
     .setMoneyMultiplier(2.5)
@@ -5877,7 +5892,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Finn")
     .setHasGenders("Ivy")
     .setHasCharSprite()
-    .setTitle("Rival")
+    .setTitle("Rival", "RivalFemale")
     .setBoss()
     .setStaticParty()
     .setMoneyMultiplier(3)
