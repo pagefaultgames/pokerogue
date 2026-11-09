@@ -8,7 +8,12 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Protosynthesis", () => {
+const effectiveStatParams = { ignoreHeldItems: true };
+
+describe.each([
+  { abilityId: AbilityId.PROTOSYNTHESIS, abilityName: "Protosynthesis", arenaMove: MoveId.SUNNY_DAY },
+  { abilityId: AbilityId.QUARK_DRIVE, abilityName: "Quark Drive", arenaMove: MoveId.ELECTRIC_TERRAIN },
+])("Abilities - $abilityName", ({ abilityId, arenaMove }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -21,44 +26,79 @@ describe("Abilities - Protosynthesis", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.SPLASH, MoveId.TACKLE])
-      .ability(AbilityId.PROTOSYNTHESIS)
+      .ability(abilityId)
       .battleStyle("single")
       .criticalHits(false)
-      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.CHANSEY)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH);
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(100)
+      .enemyLevel(100);
+  });
+
+  it("should boost the higher of the user's stats", async () => {
+    game.override.playerIVs([0, 0, 0, 1, 0, 0]); // Set SpAtk to 1 so that it's higher than Atk
+    await game.classicMode.startBattle(SpeciesId.MEW);
+
+    const player = game.field.getPlayerPokemon();
+    expect(player.getNature()).toBe(Nature.HARDY);
+
+    const startingAtk = player.getEffectiveStat(Stat.ATK, effectiveStatParams);
+    const startingSpAtk = player.getEffectiveStat(Stat.SPATK, effectiveStatParams);
+    expect(startingAtk).toBeLessThan(startingSpAtk);
+
+    const enemy = game.field.getEnemyPokemon();
+    const initialHp = enemy.hp;
+
+    game.move.use(MoveId.FAIRY_WIND);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.move.forceEnemyMove(arenaMove);
+    await game.toNextTurn();
+
+    const unboostedDamage = initialHp - enemy.hp;
+    enemy.hp = initialHp;
+    const boostedAtk = player.getEffectiveStat(Stat.ATK, effectiveStatParams);
+    const boostedSpAtk = player.getEffectiveStat(Stat.SPATK, effectiveStatParams);
+    expect(boostedAtk).toBeLessThan(boostedSpAtk);
+
+    game.move.use(MoveId.FAIRY_WIND);
+    await game.toNextTurn();
+
+    const boostedDamage = initialHp - enemy.hp;
+    expect(boostedDamage).toBeGreaterThan(unboostedDamage * 1.1);
+    expect(boostedSpAtk).toBeGreaterThan(startingSpAtk);
+    expect(boostedAtk).toEqual(startingAtk);
   });
 
   it("should not consider temporary items when determining which stat to boost", async () => {
-    // Mew has uniform base stats
-    game.override
-      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
-      .enemyMoveset(MoveId.SUNNY_DAY)
-      .startingLevel(100)
-      .enemyLevel(100);
+    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }]);
     await game.classicMode.startBattle(SpeciesId.MEW);
-    const mew = game.field.getPlayerPokemon();
-    // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
-    mew.setNature(Nature.HARDY);
+
+    const player = game.field.getPlayerPokemon();
+    expect(player.getNature()).toBe(Nature.HARDY);
+
     const enemy = game.field.getEnemyPokemon();
 
-    const effectiveStatParams = { ignoreHeldItems: true };
-    const def_before_boost = mew.getEffectiveStat(Stat.DEF, effectiveStatParams);
-    const atk_before_boost = mew.getEffectiveStat(Stat.ATK, effectiveStatParams);
+    const startingDef = player.getEffectiveStat(Stat.DEF, effectiveStatParams);
+    const startingAtk = player.getEffectiveStat(Stat.ATK, effectiveStatParams);
     const initialHp = enemy.hp;
-    game.move.select(MoveId.TACKLE);
+
+    game.move.use(MoveId.TACKLE);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.move.forceEnemyMove(arenaMove);
     await game.toNextTurn();
-    const unboosted_dmg = initialHp - enemy.hp;
+
+    const unboostedDamage = initialHp - enemy.hp;
     enemy.hp = initialHp;
-    const def_after_boost = mew.getEffectiveStat(Stat.DEF, effectiveStatParams);
-    const atk_after_boost = mew.getEffectiveStat(Stat.ATK, effectiveStatParams);
-    game.move.select(MoveId.TACKLE);
+    const boostedDef = player.getEffectiveStat(Stat.DEF, effectiveStatParams);
+    const boostedAtk = player.getEffectiveStat(Stat.ATK, effectiveStatParams);
+
+    game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
-    const boosted_dmg = initialHp - enemy.hp;
-    expect(boosted_dmg).toBeGreaterThan(unboosted_dmg);
-    expect(def_after_boost).toEqual(def_before_boost);
-    expect(atk_after_boost).toBeGreaterThan(atk_before_boost);
+
+    const boostedDamage = initialHp - enemy.hp;
+    expect(boostedDamage).toBeGreaterThan(unboostedDamage * 1.1);
+    expect(boostedDef).toEqual(startingDef);
+    expect(boostedAtk).toBeGreaterThan(startingAtk);
   });
 });
