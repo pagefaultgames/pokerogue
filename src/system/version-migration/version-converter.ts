@@ -35,6 +35,8 @@ import * as v1_12_2_0 from "#system/v1_12_2_0";
 
 // #endregion Migrator Imports
 
+// #region Migrator templates
+
 /*
 // template for save migrator creation
 // versions/vA_B_C_D.ts
@@ -77,6 +79,8 @@ const settingsMigratorA: SettingsSaveMigrator = {
 export const settingsMigrators = [settingsMigratorA] as const satisfies readonly SettingsSaveMigrator[];
 */
 
+// #endregion Migrator templates
+
 /**
  * The current game version.
  * @remarks
@@ -84,6 +88,8 @@ export const settingsMigrators = [settingsMigratorA] as const satisfies readonly
  * and TypeScript does not infer exact value types from JSON imports.
  */
 const LATEST_VERSION = version as VersionString;
+
+// #region Migrators
 
 /** All system save migrators. */
 const systemMigrators = [
@@ -115,6 +121,8 @@ const settingsMigrators = [
   ...v1_12_1_0.settingsMigrators,
 ] as const satisfies readonly SettingsSaveMigrator[];
 
+// #endregion Migrators
+
 // #region Migrator Sorting Typecheck Code
 
 type MapToVersionNumbers<M extends readonly SaveMigrator[]> = M extends readonly [
@@ -124,7 +132,7 @@ type MapToVersionNumbers<M extends readonly SaveMigrator[]> = M extends readonly
   ? [First["version"], ...MapToVersionNumbers<Rest>]
   : [];
 
-// Export the types for the migrator versions to be checked inside version-types.test-d.ts.
+// The types for the migrator versions are exported in order to be used by `version-types.test-d.ts`.
 
 export type SystemMigratorVersions = MapToVersionNumbers<typeof systemMigrators>;
 export type SessionMigratorVersions = MapToVersionNumbers<typeof sessionMigrators>;
@@ -135,9 +143,9 @@ export type SettingsMigratorVersions = MapToVersionNumbers<typeof settingsMigrat
 // #region Migration Functions
 
 /**
- * Convert incoming {@linkcode SystemSaveData} that has a version below the
+ * Convert incoming system save data that has a version below the
  * current version number listed in `package.json`.
- * @param data - The {@linkcode SystemSaveData} to migrate
+ * @param data - The {@linkcode SystemSaveData} (post-parse) to migrate
  */
 export function applySystemVersionMigration(data: SystemSaveData): void {
   const prevVersion = data.gameVersion;
@@ -150,9 +158,10 @@ export function applySystemVersionMigration(data: SystemSaveData): void {
 }
 
 /**
- * Convert incoming {@linkcode SessionSaveData} that has a version below the
+ * Convert incoming session save data that has a version below the
  * current version number listed in `package.json`.
- * @param data - The {@linkcode SessionSaveData} to migrate
+ * @param data - The session save data (pre-parse) to migrate
+ * @see {@linkcode SessionSaveData}
  */
 export function applySessionVersionMigration(data: Record<string, unknown> | null): void {
   if (
@@ -178,7 +187,7 @@ export function applySessionVersionMigration(data: Record<string, unknown> | nul
     // Enemy party can be null due to some mystery encounters. Coerce to empty array before continuing
     if (data.enemyParty == null) {
       console.debug("Converting null enemyParty to empty array for migration.");
-      data.enemyParty = [] satisfies Record<string, unknown>[];
+      data.enemyParty = [];
     } else if (!validateIsArrayOfObjects(data.enemyParty)) {
       throw new SessionMigrationError("Session data has an invalid enemyParty array. Cannot migrate.");
     }
@@ -191,7 +200,7 @@ export function applySessionVersionMigration(data: Record<string, unknown> | nul
 /**
  * Convert incoming settings data that has a version below the
  * current version number listed in `package.json`.
- * @param data - The settings data object to migrate
+ * @param data - The settings data object (pre-parse) to migrate
  */
 export function applySettingsVersionMigration(data: object): void {
   if (!data || typeof data !== "object") {
@@ -226,6 +235,7 @@ function applyMigrators<D extends object>(
 ): void {
   for (const migrator of migrators) {
     if (compareVersions(saveVersion, migrator.version) !== -1) {
+      // Migrator version is less than or equal to the save data version, skip
       continue;
     }
 

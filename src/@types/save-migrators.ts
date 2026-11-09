@@ -28,9 +28,9 @@ type SplitVersionString<T extends VersionString> =
 /**
  * Type to compare 2 version numbers.
  * @returns One of the following:
- * - `1` if `V1` is greater than `V2`
- * - `-1` if `V1` is less than `V2`
- * - `0` if they are equal
+ * - `1` if `V1 > V2`
+ * - `0` if `V1 === V2`
+ * - `-1` if `V1 < V2`
  * - `-1 | 0 | 1` if either one is not a specific version string.
  */
 export type CompareVersions<V1 extends VersionString, V2 extends VersionString> = [VersionString] extends [V1 | V2]

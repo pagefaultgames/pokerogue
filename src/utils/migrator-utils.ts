@@ -49,10 +49,10 @@ export function isPropertyAnObject<const T extends string>(
 // #region Version string utils
 
 /**
- * Compare two version and returns whether one is newer than the other.
+ * Compare two {@linkcode VersionString | versions} and return whether one is newer than the other.
  * @param versionA - The first version to compare
  * @param versionB - The second version to compare
- * @returns A 3-way comparison of the two versions:
+ * @returns The result of comparing the two versions:
  * - `1`: `versionA > versionB`
  * - `0`: `versionA === versionB`
  * - `-1`: `versionA < versionB`
