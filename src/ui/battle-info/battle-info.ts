@@ -387,7 +387,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    this.setTypes(pokemon.getTypes({ useIllusion: true }));
+    this.setTypes(pokemon.getTypes({ useIllusion: true }), pokemon);
 
     const stats = this.statOrder.map(() => 0);
 
@@ -474,8 +474,11 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   /**
    * Update the type icons to match the pokemon's types
+   * @param types - The types to display
+   * @param pokemon - (Optional) The {@linkcode Pokemon} these types belong to, used by overrides that need to
+   * distinguish e.g. a Terastallized type from the Pokemon's normal typing
    */
-  setTypes(types: PokemonType[]): void {
+  setTypes(types: PokemonType[], _pokemon?: Pokemon): void {
     this.type1Icon
       .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
       .setFrame(PokemonType[types[0]].toLowerCase());
@@ -587,7 +590,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.updateStatusIcon(pokemon);
 
-    this.setTypes(pokemon.getTypes({ useIllusion: true }));
+    this.setTypes(pokemon.getTypes({ useIllusion: true }), pokemon);
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       this.updatePokemonHp(pokemon, resolve, instant);
