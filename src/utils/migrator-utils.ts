@@ -81,8 +81,8 @@ export function compareVersions(versionA: VersionString, versionB: VersionString
  * Converts a version string into an array of numbers for use in the comparison function.
  * @param versionString - The {@linkcode VersionString} to convert
  * @returns A tuple of numbers corresponding to the input version
- * @throws {Error}
- * Throws if the version string is not a valid {@linkcode VersionString}.
+ * @throws
+ * Throws an error if the version string is not a valid {@linkcode VersionString}.
  * @example
  * ```ts
  * extractVersion("1.2.3"); // output: [1, 2, 3, 0]
