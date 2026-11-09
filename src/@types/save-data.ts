@@ -18,9 +18,8 @@ import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
 import type { RibbonData } from "#system/ribbon-data";
 import type { TrainerData } from "#system/trainer-data";
-import type { VersionString } from "#types/save-migrators";
 import type { SerializedDailyRunConfig } from "#types/daily-run";
-import type { DexData } from "./dex-data";
+import type { VersionString } from "#types/save-migrators";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 
 // #region Server-backed fields
