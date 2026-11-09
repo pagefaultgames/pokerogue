@@ -40,7 +40,7 @@ function removeInvalidDexData(data: SystemSaveData): void {
 const removeInvalidStarterAndDexData = {
   name: "removeInvalidStarterAndDexData",
   version: "1.12.0.10",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     removeInvalidStarterData(data);
     removeInvalidDexData(data);
   },

@@ -1,17 +1,16 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { DexAttr } from "#enums/dex-attr";
 import { SpeciesId } from "#enums/species-id";
-import type { SystemSaveData } from "#types/save-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 
 /**
- * If pichu is caught, but the only forms registered as caught are not starterSelectable,
+ * If pichu is caught but the only forms registered as caught are not selectable as starters,
  * unlock the default form.
  */
 const migratePichuForms = {
   name: "migratePichuForms",
   version: "1.8.3",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     if (data.starterData && data.dexData) {
       // This is Pichu's Pokédex number
       const sd = 172;

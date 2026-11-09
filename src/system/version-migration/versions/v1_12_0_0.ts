@@ -148,13 +148,13 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
 }
 
 /**
- * Version 1.12 split battle bond greninja into its own species.
+ * Version 1.12 split Battle Bond Greninja into its own species.
  * The migrator will copy over some of the data.
  */
 const migrateSpeciesSplitSystem = {
   name: "migrateSpeciesSplitSystem",
   version: "1.12.0.0",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     if (!data.starterData || !data.dexData) {
       console.warn("Missing starterData or dexData, skipping battle bond Greninja migration");
       return;
@@ -200,8 +200,8 @@ function migrateSessionGreninjaBattleBondForm(pokemon: Record<string, unknown>, 
 }
 
 /**
- * Migrate a pokemon entry that may have had hisui basculin form
- * @param pokemon - The pokemon object to migrate; will be updated in place
+ * Migrate a Pokemon entry that may have had the Hisuian Basculin form unlocked
+ * @param pokemon - The Pokemon object to migrate; will be updated in place
  */
 function migrateSessionHisuiBasculin(pokemon: Record<string, unknown>, replaceSpecies: boolean): void {
   if (pokemon.species === SpeciesId.BASCULIN && pokemon.formIndex === 2) {
@@ -220,13 +220,13 @@ function migrateSessionHisuiBasculin(pokemon: Record<string, unknown>, replaceSp
 }
 
 /**
- * Migrator for battle bond froakie line and hisui basculin form, both of which
- * split into their own species in 1.12.0.0
+ * Migrator for Battle Bond Froakie line and Hisuian Basculin form,
+ * both of which split into their own species in `1.12.0.0`
  */
 const migrateSpeciesSplitSession = {
   name: "migrateSpeciesSplitSession",
   version: "1.12.0.0",
-  migrate: data => {
+  migrate: (data): void => {
     // Grab the mono-gen challenge number, used to avoid replacing species
     // which could potentially brick existing monogen runs.
     let monoGenChallenge: number | undefined;
@@ -258,7 +258,7 @@ const migrateSpeciesSplitSession = {
 const migrateRageFistHitCount = {
   name: "migrateRageFistHitCount",
   version: "1.12.0.0",
-  migrate: data => {
+  migrate: (data): void => {
     for (const p of data.party.concat(data.enemyParty)) {
       ensurePropertyIsObject(p, "summonData");
       p.summonData.hitCount = (p.battleData as { hitCount?: number })?.hitCount;
@@ -269,7 +269,7 @@ const migrateRageFistHitCount = {
 const convertCustomPokemonDataTypes = {
   name: "convertCustomPokemonDataTypes",
   version: "1.12.0.0",
-  migrate: data => {
+  migrate: (data): void => {
     for (const p of data.party) {
       // If `customPokemonData.types` exists and is an array, convert unknown types to null.
       if (isPropertyAnObject(p, "customPokemonData") && Array.isArray(p.customPokemonData.types)) {
@@ -305,7 +305,7 @@ function shiftFormChangeModifier(modifier: Record<string, unknown>): void {
 const shiftFormChangeItems = {
   name: "shiftFormChangeItems",
   version: "1.12.0.0",
-  migrate: data => {
+  migrate: (data): void => {
     if (validateIsArrayOfObjects(data.modifiers)) {
       data.modifiers.forEach(shiftFormChangeModifier);
     } else {

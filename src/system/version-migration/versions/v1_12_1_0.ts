@@ -432,7 +432,7 @@ function migrateValues(data: object): void {
 const migrateSettings = {
   name: "migrateSettings",
   version: "1.12.1.0",
-  migrate: (data: object): void => {
+  migrate: (data): void => {
     migrateKeys(data);
     migrateValues(data);
   },
@@ -443,7 +443,7 @@ export const settingsMigrators = [migrateSettings] as const satisfies readonly S
 const migrateStarterPreferences = {
   name: "migrateStarterPreferences",
   version: "1.12.1.0",
-  migrate: (_data: object): void => {
+  migrate: (_data): void => {
     const oldStarterPreferences = JSON.parse(
       localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) ?? "{}",
     ) as OldStarterPreferences;

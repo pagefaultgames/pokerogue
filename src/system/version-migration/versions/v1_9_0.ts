@@ -1,4 +1,4 @@
-import type { SessionSaveMigrator, SessionSaveMigratorIn } from "#types/save-migrators";
+import type { SessionSaveMigrator } from "#types/save-migrators";
 
 function updatePokemonMoveset(data: Record<string, unknown>): void {
   if (typeof data.customPokemonData !== "object" || data.customPokemonData === null) {
@@ -24,7 +24,7 @@ function updatePokemonMoveset(data: Record<string, unknown>): void {
 const migratePartyData = {
   name: "migratePartyData",
   version: "1.9.0",
-  migrate: (data: SessionSaveMigratorIn): void => {
+  migrate: (data): void => {
     data.party.forEach(updatePokemonMoveset);
     data.enemyParty.forEach(updatePokemonMoveset);
   },

@@ -2,18 +2,17 @@ import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { DexAttr } from "#enums/dex-attr";
 import { SpeciesId } from "#enums/species-id";
-import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /**
- * If a starter is caught, but the only forms registered as caught are not starterSelectable,
+ * If a starter is caught but the only forms registered as caught are not selectable as starters,
  * unlock the default form.
  */
 const migrateUnselectableForms = {
   name: "migrateUnselectableForms",
   version: "1.7.0",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     if (data.starterData && data.dexData) {
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
@@ -46,7 +45,7 @@ function isArrayOfAtLeastTwo(arr: unknown): arr is unknown[] {
 const migrateTera = {
   name: "migrateTera",
   version: "1.7.0",
-  migrate: data => {
+  migrate: (data): void => {
     // biome-ignore lint/style/noNegationElse: Improves readability
     if (!validateIsArrayOfObjects(data.modifiers)) {
       console.warn("Malformed player modifiers in save data, skipping tera type migrator");
