@@ -325,6 +325,19 @@ export class Trainer extends Phaser.GameObjects.Container {
     this.representedSpecies[speciesId] = speciesDataRegistry.getPrevolutionChain(speciesId);
   }
 
+  /**
+   * Generates party member for the trainer's team
+   * @param index - The slot of the generated Pokemon is expected to occupy; can
+   * be negative in the case that a signature species are set in {@linkcode
+   * TrainerConfig.partyMemberFuncs}
+   * @param level - The intended level of the generated Pokemon
+   * @param isDoubleTrainer - If the trainer is a double battle comprised of two
+   * named trainers
+   * @param usingPartyMemberFunc - If the current slot is to be filled by the
+   * Pokemon generated from a corresponding entry in {@linkcode
+   * TrainerConfig.partyMemberFuncs}
+   * @returns The generated {@linkcode EnemyPokemon} for the trainer's team
+   */
   public genPartyMember(
     index: number,
     level: number,
