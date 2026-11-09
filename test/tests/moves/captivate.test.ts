@@ -43,4 +43,20 @@ describe("Moves - Captivate", () => {
     expect(oppositeGenderEnemy.getStatStage(Stat.SPATK)).toBe(-2);
     expect(sameGenderEnemy.getStatStage(Stat.SPATK)).toBe(0);
   });
+
+  it("should still lower Sp. Atk of an opposite-gender target when the first target is the same gender", async () => {
+    await game.classicMode.startBattle(SpeciesId.NIDORAN_M, SpeciesId.NIDORAN_M);
+
+    const [sameGenderEnemy, oppositeGenderEnemy] = game.scene.getEnemyParty();
+    sameGenderEnemy.gender = Gender.MALE;
+    oppositeGenderEnemy.gender = Gender.FEMALE;
+
+    game.move.select(MoveId.CAPTIVATE, 0);
+    game.move.select(MoveId.SPLASH, 1);
+
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(sameGenderEnemy.getStatStage(Stat.SPATK)).toBe(0);
+    expect(oppositeGenderEnemy.getStatStage(Stat.SPATK)).toBe(-2);
+  });
 });
