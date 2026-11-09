@@ -340,10 +340,11 @@ export class Trainer extends Phaser.GameObjects.Container {
 
       if (!isDoubleTrainer && usingPartyMemberFunc) {
         if (index < 0) {
+          const correctedIndex = index + template.size;
           ret = this.config.partyMemberFuncs[index](
             level,
-            template.getStrength(index),
-            template.getEvoThresholdKind(index),
+            template.getStrength(correctedIndex),
+            template.getEvoThresholdKind(correctedIndex),
           );
         } else {
           ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
