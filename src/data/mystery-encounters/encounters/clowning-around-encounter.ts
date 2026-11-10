@@ -99,7 +99,6 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
     {
       species: SpeciesId.BLACEPHALON,
       isShiny: true,
-      variant: 2,
       spriteKey: "",
       fileRoot: "",
       hasShadow: true,
@@ -161,13 +160,11 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         {
           species: speciesDataRegistry.getSpecies(SpeciesId.MR_MIME),
           isBoss: true,
-          moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
+          moveSet: [MoveId.TEETER_DANCE, MoveId.METRONOME, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
         },
         {
           // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
           species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
-          shiny: true,
-          variant: 2,
           customPokemonData: new CustomPokemonData({
             ability,
             types: [firstType, secondType],
@@ -209,7 +206,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         setEncounterRewards({ fillRemaining: true });
 
-        // TODO: when Magic Room and Wonder Room are implemented, add those to start of battle
+        // TODO: when Magic Room is implemented, add it to start of battle
         encounter.startOfBattleEffects.push(
           {
             // Mr. Mime copies the Blacephalon's random ability

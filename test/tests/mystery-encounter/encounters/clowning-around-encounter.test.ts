@@ -106,14 +106,12 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(config.pokemonConfigs?.[0]).toEqual({
       species: speciesDataRegistry.getSpecies(SpeciesId.MR_MIME),
       isBoss: true,
-      moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
+      moveSet: [MoveId.TEETER_DANCE, MoveId.METRONOME, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
       species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
-      shiny: true,
-      variant: 2,
       moveSet: [MoveId.TRICK, MoveId.HYPNOSIS, MoveId.SHADOW_BALL, MoveId.MIND_BLOWN],
     });
     expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);
@@ -169,7 +167,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(SpeciesId.MR_MIME);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(MoveId.TEETER_DANCE),
-        new PokemonMove(MoveId.ALLY_SWITCH),
+        new PokemonMove(MoveId.METRONOME),
         new PokemonMove(MoveId.DAZZLING_GLEAM),
         new PokemonMove(MoveId.PSYCHIC),
       ]);
