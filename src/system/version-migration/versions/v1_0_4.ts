@@ -2,18 +2,16 @@ import { defaultStarterSpecies } from "#app/constants";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /**
  * Migrate ability starter data if empty for caught species.
- * @param data - {@linkcode SystemSaveData}
  */
-const migrateAbilityData: SystemSaveMigrator = {
+const migrateAbilityData = {
   name: "migrateAbilityData",
   version: "1.0.4",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     if (data.starterData && data.dexData) {
       Object.keys(data.starterData).forEach(sd => {
         if (data.dexData[sd]?.caughtAttr && data.starterData[sd] && !data.starterData[sd].abilityAttr) {
@@ -22,16 +20,15 @@ const migrateAbilityData: SystemSaveMigrator = {
       });
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
 /**
  * Populate legendary Pokémon statistics if they are missing.
- * @param data - {@linkcode SystemSaveData}
  */
-const fixLegendaryStats: SystemSaveMigrator = {
+const fixLegendaryStats = {
   name: "fixLegendaryStats",
   version: "1.0.4",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     if (
       data.gameStats
       && data.gameStats.legendaryPokemonCaught !== undefined
@@ -72,16 +69,15 @@ const fixLegendaryStats: SystemSaveMigrator = {
       );
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
 /**
  * Unlock all starters' first ability and female gender option.
- * @param data - {@linkcode SystemSaveData}
  */
-const fixStarterData: SystemSaveMigrator = {
+const fixStarterData = {
   name: "fixStarterData",
   version: "1.0.4",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     if (data.starterData != null) {
       for (const starterId of defaultStarterSpecies) {
         if (data.starterData[starterId]?.abilityAttr) {
@@ -93,43 +89,41 @@ const fixStarterData: SystemSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [
+export const systemMigrators = [
   migrateAbilityData,
   fixLegendaryStats,
   fixStarterData,
-] as const;
+] as const satisfies readonly SystemSaveMigrator[];
 
 /**
- * Migrate from `"REROLL_TARGET"` property to `"SHOP_CURSOR_TARGET"`
- * @param data - The `settings` object
+ * Migrate from `REROLL_TARGET` property to `SHOP_CURSOR_TARGET`
  */
-const fixRerollTarget: SettingsSaveMigrator = {
+const fixRerollTarget = {
   name: "fixRerollTarget",
   version: "1.0.4",
-  migrate: (data: object): void => {
+  migrate: (data): void => {
     if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, "SHOP_CURSOR_TARGET")) {
       data["SHOP_CURSOR_TARGET"] = data["REROLL_TARGET"];
       // biome-ignore lint/performance/noDelete: intentional
       delete data["REROLL_TARGET"];
     }
   },
-};
+} as const satisfies SettingsSaveMigrator;
 
-export const settingsMigrators: readonly SettingsSaveMigrator[] = [fixRerollTarget] as const;
+export const settingsMigrators = [fixRerollTarget] as const satisfies readonly SettingsSaveMigrator[];
 
 /**
  *  Converts old lapsing modifiers (battle items, lures, and Dire Hit) and
  *  other miscellaneous modifiers (vitamins, White Herb) to any new class
  *  names and/or change in reload arguments.
- *  @param data - {@linkcode SessionSaveData}
  */
-const migrateModifiers: SessionSaveMigrator = {
+const migrateModifiers = {
   name: "migrateModifiers",
   version: "1.0.4",
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary?
-  migrate: data => {
+  migrate: (data): void => {
     if (!validateIsArrayOfObjects(data.modifiers)) {
       console.warn("Malformed modifiers in save data, skipping 1.0.4 item migrator");
       return;
@@ -191,9 +185,9 @@ const migrateModifiers: SessionSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-const migrateCustomPokemonData: SessionSaveMigrator = {
+const migrateCustomPokemonData = {
   name: "migrateCustomPokemonData",
   version: "1.0.4",
   migrate: data => {
@@ -218,6 +212,9 @@ const migrateCustomPokemonData: SessionSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [migrateModifiers, migrateCustomPokemonData] as const;
+export const sessionMigrators = [
+  migrateModifiers,
+  migrateCustomPokemonData,
+] as const satisfies readonly SessionSaveMigrator[];
