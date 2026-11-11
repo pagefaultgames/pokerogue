@@ -19,13 +19,18 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { RibbonData } from "#system/ribbon-data";
 import type { TrainerData } from "#system/trainer-data";
 import type { SerializedDailyRunConfig } from "#types/daily-run";
+import type { VersionString } from "#types/save-migrators";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 
 // #region Server-backed fields
 
 //! IMPORTANT: Changes to these types require changes to rogueserver!
 
-export type AppliedMigrators = { [key: string]: number };
+/**
+ * A record tracking which migrators have been applied to the save data,
+ * timestamped by the date in Unix milliseconds.
+ */
+export type AppliedMigrators = Partial<Record<`${VersionString}-${string}`, number>>;
 
 export interface SystemSaveData {
   trainerId: number;
@@ -39,7 +44,7 @@ export interface SystemSaveData {
   voucherUnlocks: VoucherUnlocks;
   voucherCounts: VoucherCounts;
   eggs: EggData[];
-  gameVersion: string;
+  gameVersion: VersionString;
   timestamp: number;
   eggPity: number[];
   unlockPity: number[];
@@ -65,13 +70,13 @@ export interface SessionSaveData {
   battleType: Exclude<BattleType, BattleType.CLEAR>;
   // TODO: This being nullable NEEDS to be reflected in the type signature
   trainer: TrainerData;
-  gameVersion: string;
+  gameVersion: VersionString;
   /** The player-chosen name of the run */
   name: string;
   timestamp: number;
   challenges: ChallengeData[];
   // TODO: Change default value to `undefined` to both save space and ease nullishness checks
-  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
+  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME
   // TODO: This can be `undefined` - reflect that in the type signature
   mysteryEncounterSaveData: MysteryEncounterSaveData;
   /**
@@ -79,6 +84,8 @@ export interface SessionSaveData {
    */
   playerFaints: number;
 }
+
+// TODO: Make the index signatures more specific
 
 export interface Unlocks {
   [key: number]: boolean;
