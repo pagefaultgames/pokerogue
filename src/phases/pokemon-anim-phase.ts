@@ -283,7 +283,7 @@ export class PokemonAnimPhase extends BattlePhase {
         sprite.setRenderNodeData(
           globalScene.spriteSubmitter,
           k,
-          this.pokemon.getSprite().setRenderNodeData[globalScene.spriteSubmitter.name][k],
+          this.pokemon.getSprite().renderNodeData[globalScene.spriteSubmitter.name][k],
         ),
       );
       sprite

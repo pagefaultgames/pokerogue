@@ -877,14 +877,14 @@ export abstract class BattleAnim {
           .setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1))
           .setAlpha(1);
       } else {
+        // The Substitute doll is a field sprite, which has no `SpriteSubmitter` render node data (and no tone)
         targetSprite //
           .setPosition(0, 0)
           .setScale(1)
-          .setAlpha(1);
+          .setAlpha(1)
+          .setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0]);
       }
-      targetSprite //
-        .setRenderNodeData(globalScene.spriteSubmitter, "tone", [0.0, 0.0, 0.0, 0.0])
-        .setAngle(0);
+      targetSprite.setAngle(0);
 
       // Remove animation event listeners to enable sprites to be freed.
       userSprite.off("animationupdate");
@@ -1069,10 +1069,10 @@ export abstract class BattleAnim {
             const spriteIndex = isUser ? u++ : t++;
             const pokemonSprite = sprites[spriteIndex];
             const graphicFrameData = frameData.get(frame.target)!.get(spriteIndex)!; // TODO: are the bangs correct?
-            const spriteSourceScale =
-              isUser || !targetSubstitute
-                ? spriteSource.parentContainer.scale
-                : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
+            const isPokemonSprite = isUser || !targetSubstitute;
+            const spriteSourceScale = isPokemonSprite
+              ? spriteSource.parentContainer.scale
+              : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
 
             let blendMode = Phaser.BlendModes.DIFFERENCE;
             if (frame.blendType === AnimBlendType.NORMAL) {
@@ -1087,9 +1087,12 @@ export abstract class BattleAnim {
               .setScale(graphicFrameData.scaleX * spriteSourceScale, graphicFrameData.scaleY * spriteSourceScale)
               .setData("locked", frame.locked)
               .setAlpha(frame.opacity / 255)
-              .setRenderNodeData(globalScene.spriteSubmitter, "tone", frame.tone)
               .setVisible(frame.visible && (isUser ? user.visible : target.visible))
               .setBlendMode(blendMode);
+            // Substitute doll copies are field sprites, which lack `SpriteSubmitter` render node data (and tone support)
+            if (isPokemonSprite) {
+              pokemonSprite.setRenderNodeData(globalScene.spriteSubmitter, "tone", frame.tone);
+            }
           }
         }
         if (anim?.frameTimedEvents.has(f)) {
