@@ -14,28 +14,33 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="compareversions"><span class="tsd-kind-call-signature">compareVersions</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">versionA</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">versionB</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">-1</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">0</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">1</span><a href="#compareversions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="compareversions"><span class="tsd-kind-call-signature">compareVersions</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsa">A</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src__types_save-migrators.VersionString.html" class="tsd-signature-type tsd-kind-type-alias">VersionString</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsb">B</a> <span class="tsd-signature-keyword">extends</span> <a href="../types/src__types_save-migrators.VersionString.html" class="tsd-signature-type tsd-kind-type-alias">VersionString</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">versionA</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsa">A</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">versionB</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsb">B</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../types/src__types_save-migrators.CompareVersions.html" class="tsd-signature-type tsd-kind-type-alias">CompareVersions</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsa">A</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsb">B</a><span class="tsd-signature-symbol">&gt;</span><a href="#compareversions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Compares two versions and returns whether one is newer than the other.</p>
+<div class="tsd-comment tsd-typography"><p>Compare two <a href="../types/src__types_save-migrators.VersionString.html" class="tsd-kind-type-alias"><code>versions</code></a> and return whether one is newer than the other.</p>
 </div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="compareversionsa"><span class="tsd-kind-type-parameter">A</span> <span class="tsd-signature-keyword">extends</span> <a href="../types/src__types_save-migrators.VersionString.html" class="tsd-signature-type tsd-kind-type-alias">VersionString</a></span></li>
+<li><span id="compareversionsb"><span class="tsd-kind-type-parameter">B</span> <span class="tsd-signature-keyword">extends</span> <a href="../types/src__types_save-migrators.VersionString.html" class="tsd-signature-type tsd-kind-type-alias">VersionString</a></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">versionA</span>: <span class="tsd-signature-type">string</span></span>
+<li><span><span class="tsd-kind-parameter">versionA</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsa">A</a></span>
 <div class="tsd-comment tsd-typography"><p>The first version to compare</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">versionB</span>: <span class="tsd-signature-type">string</span></span>
+<li><span><span class="tsd-kind-parameter">versionB</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsb">B</a></span>
 <div class="tsd-comment tsd-typography"><p>The second version to compare</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">-1</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">0</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">1</span></h4><p>The result of the comparison:</p>
+<h4 class="tsd-returns-title">Returns <a href="../types/src__types_save-migrators.CompareVersions.html" class="tsd-signature-type tsd-kind-type-alias">CompareVersions</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsa">A</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#compareversionsb">B</a><span class="tsd-signature-symbol">&gt;</span></h4><p>The result of comparing the two versions:</p>
 <ul>
-<li><code>1</code>: <code>versionA</code> is newer</li>
-<li><code>-1</code>: <code>versionB</code> is newer</li>
-<li><code>0</code>: The versions are equal</li>
+<li><code>1</code>: <code>versionA &gt; versionB</code></li>
+<li><code>0</code>: <code>versionA === versionB</code></li>
+<li><code>-1</code>: <code>versionA &lt; versionB</code></li>
 </ul>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/670a2cfce7a47641a740423c070c9b9119bb03ed/src/utils/migrator-utils.ts#L83">src/utils/migrator-utils.ts:83</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/pagefaultgames/pokerogue/blob/31665e5a420fe6c619c84173b9c679b33eadf861/src/utils/migrator-utils.ts#L60">src/utils/migrator-utils.ts:60</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
