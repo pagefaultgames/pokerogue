@@ -541,6 +541,22 @@ export abstract class BaseOptionSelectUiHandler<T extends OptionSelectItem> exte
     return true;
   }
 
+  /**
+   * Updates the label of an option at the specified index.
+   * @param index - The index of the option to update
+   * @param newLabel - The new label to set for the option
+   * @remarks
+   * Also triggers a rerender of the displayed options.
+   */
+  public updateLabel(index: number, newLabel: string): void {
+    if (index < 0 || index >= this.options.length) {
+      throw new Error("Invalid option index");
+    }
+    this.options[index].label = newLabel;
+    this.options[index].displayLabel = newLabel;
+    this.displayCurrentOptions();
+  }
+
   public override clear(): void {
     super.clear();
 

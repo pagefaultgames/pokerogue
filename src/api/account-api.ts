@@ -6,8 +6,10 @@ import type {
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
+  AccountResetPwRequest,
 } from "#types/api";
 import { removeCookie, setCookie } from "#utils/cookies";
+import { saveUsername } from "#utils/usernames";
 
 /** A wrapper for PokéRogue account API requests. */
 export class PokerogueAccountApi extends ApiBase {
@@ -21,6 +23,7 @@ export class PokerogueAccountApi extends ApiBase {
 
       if (response.ok) {
         const resData = (await response.json()) as AccountInfoResponse;
+        saveUsername(resData.username);
         return [resData, response.status];
       }
       console.warn("Could not get account info!", response.status, response.statusText);
@@ -94,6 +97,21 @@ export class PokerogueAccountApi extends ApiBase {
     removeCookie(SESSION_ID_COOKIE_NAME); // we are always clearing the cookie.
   }
 
+  public async getResetCode(): Promise<string | null> {
+    try {
+      const response = await this.doGet("/account/resetcode");
+      if (response.ok) {
+        const resetCode = (await response.text()) as string;
+        return resetCode;
+      }
+      console.warn("Get reset code failed!", response.status, response.statusText);
+      return null;
+    } catch (error) {
+      console.warn("Get reset code failed!", error);
+      return null;
+    }
+  }
+
   public async changePassword(changePwData: AccountChangePwRequest): Promise<string | null> {
     try {
       const response = await this.doPost("/account/changepw", changePwData, "form-urlencoded");
@@ -104,6 +122,21 @@ export class PokerogueAccountApi extends ApiBase {
       return response.text();
     } catch (err) {
       console.warn("Change password failed!", err);
+    }
+
+    return "Unknown error!";
+  }
+
+  public async resetPassword(resetPwData: AccountResetPwRequest): Promise<string | null> {
+    try {
+      const response = await this.doPost("/account/resetpw", resetPwData, "form-urlencoded");
+      if (response.ok) {
+        return null;
+      }
+      console.warn("Reset password failed!", response.status, response.statusText);
+      return response.text();
+    } catch (err) {
+      console.warn("Reset password failed!", err);
     }
 
     return "Unknown error!";

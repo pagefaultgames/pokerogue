@@ -16,6 +16,7 @@ export async function updateUserInfo(): Promise<[success: boolean, status: numbe
       return [false, status];
     }
     loggedInUser = accountInfo;
+    loggedInUser.hasAdminRole = true; // TODO: remove. Used to show the admin panel for testing
     return [true, 200];
   }
 
@@ -25,6 +26,7 @@ export async function updateUserInfo(): Promise<[success: boolean, status: numbe
     discordId: "",
     googleId: "",
     hasAdminRole: false,
+    resetCode: "",
   };
   for (let s = 0; s < 5; s++) {
     if (localStorage.getItem(getSessionDataLocalStorageKey(s))) {

@@ -14,7 +14,7 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
 
   public override getWidth(): number {
     const buttonWidth = this.buttonLabels.reduce((sum, label) => sum + label.width, 0) / 6;
-    return buttonWidth + 50;
+    return buttonWidth + 75;
   }
 
   public override getHeight(): number {
@@ -26,7 +26,7 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
   }
 
   public override getButtonLabels(): string[] {
-    return [i18next.t("menu:login"), i18next.t("menu:register")];
+    return [i18next.t("menu:login"), i18next.t("menu:register"), i18next.t("menu:resetPassword")];
   }
 
   public override getInputFieldConfigs(): InputFieldConfig[] {
