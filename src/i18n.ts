@@ -100,7 +100,7 @@ const fonts: LoadingFontFaceProperty[] = [
 
 // #region Functions
 
-async function initFonts(language: string | undefined) {
+async function initFonts(language: string | undefined): Promise<void> {
   const results = await Promise.allSettled(
     fonts
       .filter(font => !font.only || font.only.some(exclude => language?.indexOf(exclude) === 0))
@@ -129,6 +129,33 @@ function i18nMoneyFormatter(amount: any): string {
   }
 
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
+}
+
+/**
+ * Maps language codes to the ones configured in i18next.
+ * @remarks
+ * Used to fix language auto-detection when multiple language codes are specified in he browser's supported language list, \
+ * but earlier entries don't have an exact match in the configured list of languages.
+ *
+ * If the browser's supported languages list is `["zh-CN", "ko"]`, then without a mapping from "zh-CN" to "zh-Hans" \
+ * the auto-detection would select Korean instead of Simplified Chinese
+ * even though Simplified Chinese is specified earlier in the supported languages list.
+ * @param lang - The language code to convert
+ * @returns The normalized language code
+ */
+function convertDetectedLanguage(lang: string): string {
+  switch (lang) {
+    case "zh-CN":
+    case "zh-SG":
+    case "zh-Hans-CN":
+      return "zh-Hans";
+    case "zh-TW":
+    case "zh-HK":
+    case "zh-MO":
+    case "zh-Hant-TW":
+      return "zh-Hant";
+  }
+  return lang;
 }
 
 // #endregion Functions
@@ -180,6 +207,7 @@ await i18next
       },
       defaultNS: "menu",
       detection: {
+        convertDetectedLanguage,
         lookupLocalStorage: "prLang",
         caches: ["localStorage"],
         order: ["localStorage", "navigator"],
