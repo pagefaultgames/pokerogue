@@ -10,6 +10,7 @@ import {
 import { eventBus } from "#app/event-bus";
 import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene, initGlobalScene } from "#app/global-scene";
@@ -27,7 +28,14 @@ import { TurnCommandManager } from "#app/turn-command-manager";
 import { UiInputs } from "#app/ui-inputs";
 import { STARTING_WAVE } from "#balance/misc";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
-import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
+import {
+  getCommonAnimAssetRequests,
+  getMoveAnimAssetRequests,
+  initCommonAnims,
+  initMoveAnim,
+  loadCommonAnimAssets,
+  loadMoveAnimAssets,
+} from "#data/battle-anims";
 import { getDailyMysteryEncounter } from "#data/daily-run";
 import { allMoves, biomeDepths, modifierTypes } from "#data/data-lists";
 import { classicFinalBossDialogue } from "#data/dialogue";
@@ -36,6 +44,7 @@ import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } fro
 import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
 import { getTypeRgb } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -63,7 +72,7 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import type { UiWindowStyle } from "#enums/ui-window-style";
 import { VolumeSetting } from "#enums/volume-setting";
 import { NewArenaEvent } from "#events/battle-scene";
-import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
+import { Arena, getBiomeAssetRequests, getBiomeKey } from "#field/arena";
 import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
@@ -102,7 +111,6 @@ import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounter-biomes";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { expSpriteKeys } from "#sprites/sprite-keys";
-import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
 import { clearVariantData, variantData } from "#sprites/variant";
 import type { Achv } from "#system/achv";
@@ -113,6 +121,7 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { AssetRef } from "#types/asset-set";
 import type { Constructor } from "#types/common";
 import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
@@ -353,21 +362,6 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  public loadPokemonAtlas(key: string, atlasPath: string, experimental = settings.expSpritesEnabled): void {
-    const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
-    if (experimental) {
-      experimental = hasExpSprite(key);
-    }
-    if (variant) {
-      atlasPath = atlasPath.replace("variant/", "");
-    }
-    this.load.atlas(
-      key,
-      `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,
-      `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`,
-    );
-  }
-
   /**
    * Load game assets necessary for the scene to run.
    * Called by Phaser on new game start.
@@ -382,8 +376,15 @@ export class BattleScene extends SceneBase {
     await Promise.all([
       this.initExpSprites(),
       this.initVariantData(),
-      initCommonAnims().then(() => loadCommonAnimAssets(true)),
-      Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
+      initCommonAnims().then(() => {
+        // Common animations can play at any time, so they are never unloaded
+        assetManager.retain(getCommonAnimAssetRequests());
+        return loadCommonAnimAssets();
+      }),
+      Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => {
+        assetManager.retain(getMoveAnimAssetRequests(defaultMoves));
+        return loadMoveAnimAssets(defaultMoves);
+      }),
     ]).catch(reason => {
       throw new Error(`Unexpected error during BattleScene preLoad!\nReason: ${reason}`);
     });
@@ -420,7 +421,50 @@ export class BattleScene extends SceneBase {
       this.renderer.renderNodes.addNode(FieldSpriteBatchHandler.NAME, this.fieldSpriteBatchHandler);
     }
 
+    this.registerRequiredAssets();
     this.launchBattle();
+  }
+
+  /**
+   * Tell the asset manager which assets this scene still needs, and which of the assets loaded at boot it may unload.
+   */
+  private registerRequiredAssets(): void {
+    // Town is the base biome, so it is never unloaded
+    assetManager.retain(getBiomeAssetRequests(BiomeId.TOWN));
+    // The starting biome was loaded by the loading scene; adopt it so it can be unloaded once the run moves on
+    assetManager.adopt(Object.values(BiomeId).flatMap(biome => getBiomeAssetRequests(biome)));
+    assetManager.addRootProvider(() => this.getRequiredAssets());
+  }
+
+  /**
+   * @returns Every asset the current run may use without loading it again first: both parties', the current trainer's
+   * and mystery encounter's, the current turn's, the current biome's, and the animations of delayed attacks that have
+   * yet to land
+   */
+  private getRequiredAssets(): AssetRef[] {
+    const assets: AssetRef[] = [];
+    for (const pokemon of [...this.getPlayerParty(), ...this.getEnemyParty()]) {
+      assets.push(...pokemon.getRequiredAssets());
+    }
+    if (this.currentBattle?.trainer) {
+      assets.push(...this.currentBattle.trainer.getRequiredAssets());
+    }
+    if (this.currentBattle?.mysteryEncounter) {
+      assets.push(...this.currentBattle.mysteryEncounter.getRequiredAssets());
+    }
+    if (this.currentBattle) {
+      assets.push(...this.currentBattle.turnAssets);
+    }
+    if (this.arena) {
+      assets.push(...getBiomeAssetRequests(this.arena.biomeId));
+      // Delayed attacks (e.g. Future Sight) play their move's animation when they land, and the move may not be in
+      // anyone's moveset (e.g. when called by Metronome)
+      const delayedMoves = this.arena.positionalTagManager.tags
+        .filter(tag => tag instanceof DelayedAttackTag)
+        .map(tag => tag.sourceMove);
+      assets.push(...getMoveAnimAssetRequests(delayedMoves));
+    }
+    return assets;
   }
 
   update() {
@@ -1632,79 +1676,8 @@ export class BattleScene extends SceneBase {
    * @param biome - The {@linkcode BiomeId} of the biome to load assets for
    * @returns A promise that resolves when the assets have finished loading
    */
-  public async loadBiomeAssets(biome: BiomeId): Promise<void> {
-    const { promise, resolve } = Promise.withResolvers<void>();
-    const btKey = getBiomeKey(biome);
-
-    // Already in texture cache — nothing to load
-    if (this.textures.exists(`${btKey}_bg`)) {
-      resolve();
-      return promise;
-    }
-
-    const isBaseAnimated = btKey === "end";
-    const baseAKey = `${btKey}_a`;
-    const baseBKey = `${btKey}_b`;
-
-    this.loadImage(`${btKey}_bg`, "arenas");
-
-    if (isBaseAnimated) {
-      this.loadAtlas(baseAKey, "arenas") //
-        .loadAtlas(baseBKey, "arenas");
-    } else {
-      this.loadImage(baseAKey, "arenas") //
-        .loadImage(baseBKey, "arenas");
-    }
-
-    if (getBiomeHasProps(biome)) {
-      for (let p = 1; p <= 3; p++) {
-        const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
-        const propKey = `${btKey}_b_${p}`;
-        if (isPropAnimated) {
-          this.loadAtlas(propKey, "arenas");
-        } else {
-          this.loadImage(propKey, "arenas");
-        }
-      }
-    }
-
-    this.load.once(Phaser.Loader.Events.COMPLETE, resolve);
-    this.load.start();
-
-    return promise;
-  }
-
-  /**
-   * Clears the visual assets for a given biome from the texture cache to free up memory. \
-   * The "TOWN" biome is exempt from clearing as it is the base biome.
-   * @param biome - The {@linkcode BiomeId} of the biome to clear assets for
-   */
-  public clearBiomeAssets(biome: BiomeId): void {
-    const btKey = getBiomeKey(biome);
-
-    // Don't clear TOWN — it's the starting biome
-    if (btKey === "town") {
-      return;
-    }
-
-    const keysToClear = [`${btKey}_bg`, `${btKey}_a`, `${btKey}_b`];
-
-    if (getBiomeHasProps(biome)) {
-      for (let p = 1; p <= 3; p++) {
-        keysToClear.push(`${btKey}_b_${p}`);
-      }
-    }
-
-    for (const key of keysToClear) {
-      if (this.anims.exists(key)) {
-        console.log(`Removing animation for key ${key}..`);
-        this.anims.remove(key);
-      }
-
-      if (this.textures.exists(key)) {
-        this.textures.remove(key);
-      }
-    }
+  public loadBiomeAssets(biome: BiomeId): Promise<void> {
+    return assetManager.load(getBiomeAssetRequests(biome), this);
   }
 
   updateFieldScale(): Promise<void> {
@@ -3246,29 +3219,6 @@ export class BattleScene extends SceneBase {
     };
     // TODO: Don't store it here
     window["gameInfo"] = gameInfo;
-  }
-
-  /**
-   * This function retrieves the sprite and audio keys for active Pokemon.
-   * Active Pokemon include both enemy and player Pokemon of the current wave.
-   * Note: Questions on garbage collection go to `@frutescens`
-   * @returns a string array of active sprite and audio keys that should not be deleted
-   */
-  getActiveKeys(): string[] {
-    const keys: string[] = [];
-    let activePokemon: (PlayerPokemon | EnemyPokemon)[] = this.getPlayerParty();
-    activePokemon = activePokemon.concat(this.getEnemyParty());
-    for (const p of activePokemon) {
-      keys.push(p.getSpriteKey(true));
-      if (p.isPlayer()) {
-        keys.push(p.getBattleSpriteKey(true, true));
-      }
-      keys.push(p.species.getCryKey(p.formIndex));
-      if (p.fusionSpecies) {
-        keys.push(p.fusionSpecies.getCryKey(p.fusionFormIndex));
-      }
-    }
-    return keys;
   }
 
   /**

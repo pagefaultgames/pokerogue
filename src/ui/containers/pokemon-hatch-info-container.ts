@@ -136,7 +136,7 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     const shiny = pokemon.shiny;
     const variant = pokemon.variant;
     this.currentPokemonSprite.setVisible(false);
-    species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
+    species.loadAssets(female, formIndex, shiny, variant).then(() => {
       speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, pokemon.formIndex).cry();
       this.currentPokemonSprite
         .play(species.getSpriteKey(female, formIndex, shiny, variant))

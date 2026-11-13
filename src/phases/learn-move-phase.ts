@@ -210,7 +210,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     }
     pokemon.setMove(index, this.moveId);
     initMoveAnim(this.moveId).then(() => {
-      loadMoveAnimAssets([this.moveId], true);
+      loadMoveAnimAssets([this.moveId]);
     });
     globalScene.ui.setMode(this.messageMode);
     const learnMoveText = i18next.t("battle:learnMove", {
