@@ -4,6 +4,7 @@ import type { Challenge } from "#data/challenge";
 import { copyChallenge } from "#data/challenge";
 import { BattleStyle } from "#enums/battle-style";
 import type { Challenges } from "#enums/challenges";
+import { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
@@ -17,7 +18,7 @@ type ChallengeStub = { id: Challenges; value: number; severity: number };
  * Helper to handle Challenge mode specifics
  */
 export class ChallengeModeHelper extends GameManagerHelper {
-  challenges: Challenge[] = [];
+  public readonly challenges: Challenge[] = [];
 
   /**
    * Adds a challenge to the challenge mode helper.
@@ -25,7 +26,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param value - The challenge value.
    * @param severity - The challenge severity.
    */
-  addChallenge(id: Challenges, value: number, severity: number) {
+  public addChallenge(id: Challenges, value: number, severity: number): void {
     const challenge = copyChallenge({ id, value, severity });
     this.challenges.push(challenge);
   }
@@ -39,14 +40,37 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * that need to stop and do something before the `CommandPhase` starts.
    */
   // TODO: This duplicates all but 1 line of code from the classic mode variant...
-  async runToSummon(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
+  async runToSummon(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
-      this.game.override.shiny(false).enemyShiny(false);
+      if (activeOverrides.SHINY_OVERRIDE == null) {
+        this.game.override.shiny(false);
+      }
+      if (activeOverrides.ENEMY_SHINY_OVERRIDE == null) {
+        this.game.override.enemyShiny(false);
+      }
     }
 
-    this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+    if (this.game.override.normalizeIVs) {
+      if (activeOverrides.IVS_OVERRIDE == null) {
+        this.game.override.playerIVs(31);
+      }
+      if (activeOverrides.ENEMY_IVS_OVERRIDE == null) {
+        this.game.override.enemyIVs(31);
+      }
+    }
+
+    if (this.game.override.normalizeNatures) {
+      if (activeOverrides.NATURE_OVERRIDE == null) {
+        this.game.override.nature(Nature.HARDY);
+      }
+      if (activeOverrides.ENEMY_NATURE_OVERRIDE == null) {
+        this.game.override.enemyNature(Nature.HARDY);
+      }
+    }
+
+    this.game.promptHandler.addToNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
@@ -66,28 +90,28 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @returns A Promise that resolves when the battle is started.
    */
   // TODO: This duplicates all its code with the classic mode variant...
-  async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
+  public async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>): Promise<void> {
     await this.runToSummon(...speciesIds);
 
     if (settings.general.battleStyle === BattleStyle.SWITCH) {
-      this.game.onNextPrompt(
+      this.game.promptHandler.addToNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,
         () => {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+        () => this.game.isCurrentPhase("CommandPhase", "TurnInitPhase"),
       );
 
-      this.game.onNextPrompt(
+      this.game.promptHandler.addToNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,
         () => {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+        () => this.game.isCurrentPhase("CommandPhase", "TurnInitPhase"),
       );
     }
 

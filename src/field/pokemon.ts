@@ -1557,11 +1557,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    const highestStatBoost = this.findTag(
-      t => t instanceof HighestStatBoostTag && (t as HighestStatBoostTag).stat === stat,
-    ) as HighestStatBoostTag;
-    if (highestStatBoost) {
-      ret *= highestStatBoost.multiplier;
+    if (!ignoreAbility) {
+      const highestStatBoost = this.findTag(
+        t => t instanceof HighestStatBoostTag && (t as HighestStatBoostTag).stat === stat,
+      ) as HighestStatBoostTag;
+      if (highestStatBoost) {
+        ret *= highestStatBoost.multiplier;
+      }
     }
 
     return Math.max(Math.floor(ret), 1);

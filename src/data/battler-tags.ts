@@ -2330,24 +2330,22 @@ export class SlowStartTag extends AbilityBattlerTag {
 
 export class HighestStatBoostTag extends AbilityBattlerTag {
   declare public readonly tagType: HighestStatBoostTagType;
-  public stat: EffectiveStat = Stat.ATK;
-  public multiplier = 1.3;
+
+  public readonly stat: EffectiveStat | undefined;
+  public readonly multiplier: number = 0;
 
   constructor(tagType: HighestStatBoostTagType, ability: AbilityId) {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
   }
 
-  /**
-   * When given a battler tag or json representing one, load the data for it.
-   * @param source - An object containing the fields needed to reconstruct this tag.
-   */
   public override loadTag<T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "stat" | "multiplier">): void {
     super.loadTag(source);
-    this.stat = source.stat;
-    this.multiplier = source.multiplier;
+
+    (this as Writable<HighestStatBoostTag>).stat = source.stat;
+    (this as Writable<HighestStatBoostTag>).multiplier = source.multiplier;
   }
 
-  onAdd(pokemon: Pokemon): void {
+  public override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
     const highestStat = EFFECTIVE_STATS.reduce(
@@ -2367,9 +2365,9 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       [Stat.ATK, 0],
     )[0];
 
-    this.stat = highestStat;
+    (this as Writable<HighestStatBoostTag>).stat = highestStat;
+    (this as Writable<HighestStatBoostTag>).multiplier = highestStat === Stat.SPD ? 1.5 : 1.3;
 
-    this.multiplier = highestStat === Stat.SPD ? 1.5 : 1.3;
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:highestStatBoostOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2382,7 +2380,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     );
   }
 
-  onRemove(pokemon: Pokemon): void {
+  public override onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
     globalScene.phaseManager.queueMessage(
