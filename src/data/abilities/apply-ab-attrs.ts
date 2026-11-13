@@ -116,8 +116,6 @@ export function applyAbAttrs<T extends CallableAbAttrString>(
   applyAbAttrsInternal(attrType, params, { messages });
 }
 
-// TODO: Improve the type signatures of the following methods / refactor the apply methods
-
 /**
  * `AbAttrPredicate` used to avoid triggering Imposter and other non re-activating `PostSummonAbAttr`s
  * when gaining the ability again.
