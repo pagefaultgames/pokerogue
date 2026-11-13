@@ -21,7 +21,17 @@ export type PhaseString = keyof PhaseMap;
 /** Type for predicate functions operating on a specific type of {@linkcode Phase}. */
 export type PhaseConditionFunc<T extends PhaseString> = (phase: PhaseMap[T]) => boolean;
 
-/** Interface type representing the assumption that all phases with pokemon associated are dynamic */
+/**
+ * Interface representing a Phase subject to dynamic speed-based ordering. \
+ * All phases implementing this interface will be sorted in
+ * ascending speed order if multiple are queued at once (unless explicitly forbidden).
+ */
 export interface DynamicPhase extends Phase {
+  /**
+   * @returns The {@linkcode Pokemon} associated with this Phase.
+   * Must be static across the Phase's entire lifetime.
+   * @remarks
+   * The linked Pokemon's Speed stat will be used to determine the order of this Phase's execution.
+   */
   getPokemon(): Pokemon;
 }
