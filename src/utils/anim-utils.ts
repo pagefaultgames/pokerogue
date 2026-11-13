@@ -8,12 +8,11 @@ import type { Except } from "type-fest";
  * save for ones related to the `onComplete` callback.
  * @internal
  */
-interface PlayTweenConfig
-  extends Except<
-    Phaser.Types.Tweens.TweenBuilderConfig,
-    "onComplete" | "onCompleteParams",
-    { requireExactProps: true }
-  > {}
+type PlayTweenConfig = Except<
+  Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig,
+  "onComplete" | "onCompleteParams",
+  { requireExactProps: true }
+>;
 
 /**
  * Play a Tween animation and wait for its animation to complete.
