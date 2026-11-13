@@ -100,17 +100,40 @@ export class EncounterPhase extends BattlePhase {
       globalScene.field.add(mysteryEncounter.introVisuals!);
     }
 
-    let totalBst = 0;
+    if (!battle.isBattleMysteryEncounter() && !this.loaded) {
+      if (battle.battleType === BattleType.TRAINER) {
+        const trainer = battle.trainer!;
+        const config = trainer.config;
+        const isDoubleTrainer = !!config.trainerTypeDouble && trainer.isDouble() && !config.doubleOnly;
+        const template = trainer.getPartyTemplate();
+        const leftoverIndices: number[] = [];
 
-    battle.enemyLevels?.every((level, e) => {
-      if (battle.isBattleMysteryEncounter()) {
-        // Skip enemy loading for MEs, those are loaded elsewhere
-        return false;
-      }
-      if (!this.loaded) {
-        if (battle.battleType === BattleType.TRAINER) {
-          battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
+        // Generate static members first
+        if (isDoubleTrainer) {
+          battle.enemyLevels?.forEach((level, i) => {
+            battle.enemyParty[i] = trainer.genPartyMember(i, level, isDoubleTrainer, false);
+          });
         } else {
+          battle.enemyLevels?.forEach((level, i) => {
+            const hasOffsetIndex = Object.hasOwn(config.partyMemberFuncs, i - template.size);
+            const hasNormalIndex = Object.hasOwn(config.partyMemberFuncs, i);
+            if (hasOffsetIndex || hasNormalIndex) {
+              battle.enemyParty[i] = trainer.genPartyMember(
+                hasNormalIndex ? i : i - template.size,
+                level,
+                isDoubleTrainer,
+                true,
+              );
+            } else {
+              leftoverIndices.push(i);
+            }
+          });
+          for (const i of leftoverIndices) {
+            battle.enemyParty[i] = trainer.genPartyMember(i, battle.enemyLevels![i], isDoubleTrainer, false);
+          }
+        }
+      } else {
+        battle.enemyLevels?.forEach((level, i) => {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
           if (
@@ -121,7 +144,7 @@ export class EncounterPhase extends BattlePhase {
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);
           }
-          battle.enemyParty[e] = globalScene.addEnemyPokemon(
+          battle.enemyParty[i] = globalScene.addEnemyPokemon(
             enemySpecies,
             level,
             TrainerSlot.NONE,
@@ -129,19 +152,24 @@ export class EncounterPhase extends BattlePhase {
             this.isEncounterShinyLocked(),
           );
           if (globalScene.currentBattle.isClassicFinalBoss) {
-            battle.enemyParty[e].ivs.fill(31);
+            battle.enemyParty[i].ivs.fill(31);
           }
           globalScene
             .getPlayerParty()
             .slice(0, battle.double ? 2 : 1)
             .reverse()
             .forEach(playerPokemon => {
-              applyAbAttrs("SyncEncounterNatureAbAttr", { pokemon: playerPokemon, target: battle.enemyParty[e] });
+              applyAbAttrs("SyncEncounterNatureAbAttr", { pokemon: playerPokemon, target: battle.enemyParty[i] });
             });
-        }
+        });
       }
-      const enemyPokemon = globalScene.getEnemyParty()[e];
-      if (e < (battle.double ? 2 : 1)) {
+    }
+
+    const enemyParty = globalScene.getEnemyParty();
+    let totalBst = 0;
+
+    enemyParty.forEach((enemyPokemon, i) => {
+      if (i < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
         enemyPokemon.fieldSetup(true);
       }
@@ -194,7 +222,6 @@ export class EncounterPhase extends BattlePhase {
         `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`,
       );
       console.log("Moveset:", moveset);
-      return true;
     });
 
     if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === PLAYER_PARTY_MAX_SIZE) {

@@ -317,34 +317,55 @@ export class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  public genPartyMember(index: number): EnemyPokemon {
+  /**
+   * Creates an entry in the {@linkcode Trainer.representedSpecies} field
+   * using the {@linkcode SpeciesId} as the key and the corresponding prevolution
+   * chain (an array of {@linkcode SpeciesId}) as the value.
+   * @param speciesId - The {@linkcode SpeciesId} of the Pokemon to be registered
+   */
+  public registerRepresentedSpecies(speciesId: SpeciesId) {
+    this.representedSpecies[speciesId] = speciesDataRegistry.getPrevolutionChain(speciesId);
+  }
+
+  /**
+   * Generates party member for the trainer's team
+   * @param index - The slot of the generated Pokemon is expected to occupy; can
+   * be negative in the case that a signature species are set in {@linkcode
+   * TrainerConfig.partyMemberFuncs}
+   * @param level - The intended level of the generated Pokemon
+   * @param isDoubleTrainer - If the trainer is a double battle comprised of two
+   * named trainers
+   * @param usingPartyMemberFunc - If the current slot is to be filled by the
+   * Pokemon generated from a corresponding entry in {@linkcode
+   * TrainerConfig.partyMemberFuncs}
+   * @returns The generated {@linkcode EnemyPokemon} for the trainer's team
+   */
+  public genPartyMember(
+    index: number,
+    level: number,
+    isDoubleTrainer: boolean,
+    usingPartyMemberFunc: boolean,
+  ): EnemyPokemon {
     const battle = globalScene.currentBattle;
-    const level = battle.enemyLevels?.[index]!; // TODO: is this bang correct?
 
     let ret!: EnemyPokemon;
     const genMon = () => {
       const template = this.getPartyTemplate();
       const strength: PartyMemberStrength = template.getStrength(index);
 
-      if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
-        if (Object.hasOwn(this.config.partyMemberFuncs, index)) {
-          ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
-          this.representedSpecies[ret.species.speciesId] = speciesDataRegistry.getPrevolutionChain(
-            ret.species.speciesId,
-          );
-          return;
-        }
-        if (Object.hasOwn(this.config.partyMemberFuncs, index - template.size)) {
-          ret = this.config.partyMemberFuncs[index - template.size](
+      if (!isDoubleTrainer && usingPartyMemberFunc) {
+        if (index < 0) {
+          const correctedIndex = index + template.size;
+          ret = this.config.partyMemberFuncs[index](
             level,
-            template.getStrength(index),
-            template.getEvoThresholdKind(index),
+            template.getStrength(correctedIndex),
+            template.getEvoThresholdKind(correctedIndex),
           );
-          this.representedSpecies[ret.species.speciesId] = speciesDataRegistry.getPrevolutionChain(
-            ret.species.speciesId,
-          );
-          return;
+        } else {
+          ret = this.config.partyMemberFuncs[index](level, strength, template.getEvoThresholdKind(index));
         }
+        this.registerRepresentedSpecies(ret.species.speciesId);
+        return;
       }
       let offset = 0;
 
@@ -362,7 +383,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
       // If we are in a double battle of named trainers,
       // we need to use alternate species pools (generate half the party from each trainer)
-      if (this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly) {
+      if (isDoubleTrainer) {
         useNewSpeciesPool = true;
 
         const speciesPoolPartner = signatureSpecies[TrainerType[this.config.trainerTypeDouble]];
@@ -446,7 +467,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         level,
         !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
       );
-      this.representedSpecies[species.speciesId] = speciesDataRegistry.getPrevolutionChain(species.speciesId);
+      this.registerRepresentedSpecies(species.speciesId);
     };
     const seedOffset = this.config.hasStaticParty
       ? this.config.getDerivedType() + ((index + 1) << 8)

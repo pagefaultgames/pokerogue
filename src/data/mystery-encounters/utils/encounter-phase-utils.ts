@@ -42,7 +42,6 @@ import {
 } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
-import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { Variant } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
@@ -148,7 +147,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   // Trainer
   const trainerType = partyConfig?.trainerType;
   const partyTrainerConfig = partyConfig?.trainerConfig;
-  let trainerConfig: TrainerConfig;
+  let trainerConfig: TrainerConfig | null = null;
   if (trainerType != null || partyTrainerConfig) {
     globalScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.TRAINER_BATTLE;
     if (globalScene.currentBattle.trainer) {
@@ -203,37 +202,67 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   const additive = Math.max(Math.round((globalScene.currentBattle.waveIndex / 10) * mult), 0);
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
-  battle.enemyLevels.forEach((level, e) => {
-    let enemySpecies: PokemonSpecies | undefined;
-    let dataSource: PokemonData | undefined;
-    let isBoss = false;
-    if (!loaded) {
-      if ((trainerType != null || trainerConfig) && battle.trainer) {
-        // Allows overriding a trainer's pokemon to use specific species/data
-        if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
-          const config = partyConfig.pokemonConfigs[e];
-          level = config.level ? config.level : level;
-          dataSource = config.dataSource;
-          enemySpecies = config.species;
-          isBoss = config.isBoss;
-          battle.enemyParty[e] = globalScene.addEnemyPokemon(
-            enemySpecies,
-            level,
+  const trainer = battle.trainer;
+
+  if (!loaded) {
+    if ((trainerType != null || trainerConfig) && trainer) {
+      const config = trainer.config;
+      const isDoubleTrainer = !!config.trainerTypeDouble && trainer.isDouble() && !config.doubleOnly;
+      const template = trainer.getPartyTemplate();
+      const leftoverIndices: number[] = [];
+      let i = 0;
+
+      // Generate static members first
+      if (partyConfig?.pokemonConfigs) {
+        for (; i < partyConfig.pokemonConfigs.length; i++) {
+          const config = partyConfig.pokemonConfigs[i];
+          battle.enemyParty[i] = globalScene.addEnemyPokemon(
+            config.species,
+            config.level ? config.level : battle.enemyLevels[i],
             TrainerSlot.TRAINER,
-            isBoss,
+            config.isBoss,
             false,
-            dataSource,
+            config.dataSource,
           );
-        } else {
-          battle.enemyParty[e] = battle.trainer.genPartyMember(e);
+          trainer.registerRepresentedSpecies(config.species.speciesId);
+        }
+      } else if (isDoubleTrainer) {
+        for (; i < battle.enemyLevels.length; i++) {
+          battle.enemyParty[i] = trainer.genPartyMember(i, battle.enemyLevels[i], isDoubleTrainer, false);
         }
       } else {
-        if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
-          const config = partyConfig.pokemonConfigs[e];
-          level = config.level ? config.level : level;
-          dataSource = config.dataSource;
-          enemySpecies = config.species;
+        for (; i < battle.enemyLevels.length; i++) {
+          const hasOffsetIndex = Object.hasOwn(config.partyMemberFuncs, i - template.size);
+          const hasNormalIndex = Object.hasOwn(config.partyMemberFuncs, i);
+          if (hasOffsetIndex || hasNormalIndex) {
+            battle.enemyParty[i] = trainer.genPartyMember(
+              hasNormalIndex ? i : i - template.size,
+              battle.enemyLevels[i],
+              isDoubleTrainer,
+              true,
+            );
+          } else {
+            leftoverIndices.push(i);
+          }
+          for (const i of leftoverIndices) {
+            battle.enemyParty[i] = trainer.genPartyMember(i, battle.enemyLevels![i], isDoubleTrainer, false);
+          }
+        }
+      }
+    } else {
+      battle.enemyLevels.forEach((level, i) => {
+        let enemySpecies: PokemonSpecies | undefined;
+        let dataSource: PokemonData | undefined;
+        let isBoss = false;
+
+        if (partyConfig?.pokemonConfigs && i < partyConfig.pokemonConfigs.length) {
+          const config = partyConfig.pokemonConfigs[i];
+          if (config.level) {
+            level = config.level;
+          }
           isBoss = config.isBoss;
+          enemySpecies = config.species;
+          dataSource = config.dataSource;
           if (isBoss) {
             globalScene.currentBattle.mysteryEncounter!.encounterMode = MysteryEncounterMode.BOSS_BATTLE;
           }
@@ -241,7 +270,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
         }
 
-        battle.enemyParty[e] = globalScene.addEnemyPokemon(
+        battle.enemyParty[i] = globalScene.addEnemyPokemon(
           enemySpecies,
           level,
           TrainerSlot.NONE,
@@ -249,10 +278,13 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           false,
           dataSource,
         );
-      }
+      });
     }
+  }
 
-    const enemyPokemon = globalScene.getEnemyParty()[e];
+  const enemyParty = globalScene.getEnemyParty();
+  battle.enemyLevels.forEach((level, e) => {
+    const enemyPokemon = enemyParty[e];
 
     // Make sure basic data is clean
     enemyPokemon.hp = enemyPokemon.getMaxHp();
@@ -305,7 +337,12 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       if (config.isBoss) {
         let segments =
           config.bossSegments
-          ?? globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, level, enemySpecies, true);
+          ?? globalScene.getEncounterBossSegments(
+            globalScene.currentBattle.waveIndex,
+            level,
+            enemyPokemon.species,
+            true,
+          );
         if (config.bossSegmentModifier != null) {
           segments += config.bossSegmentModifier;
         }
