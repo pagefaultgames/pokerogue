@@ -52,6 +52,18 @@ export function isSpreadMove(move: Move): boolean {
   return false;
 }
 
+/**
+ * Determine whether a Pokemon using {@linkcode MoveId.CURSE | Curse} uses its Ghost-type effect
+ * (cursing a target) rather than its non-Ghost effect (changing its own stats).
+ * @param user - The {@linkcode Pokemon} using Curse
+ * @returns Whether `user` counts as Ghost type for Curse
+ * @remarks
+ * Terastallized Stellar-type Pokemon use their original types.
+ */
+export function isGhostTypeCurseUser(user: Pokemon): boolean {
+  return user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true });
+}
+
 export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
   const variableTarget = new ValueHolder(replaceTarget ?? allMoves[move].moveTarget);
   user.getOpponents(false).forEach(p => applyMoveAttrs("VariableTargetAttr", user, p, allMoves[move], variableTarget));
@@ -71,8 +83,8 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
     case MoveTarget.CURSE:
       // Non ghost-type Curse targets exclusively the user; ghost-type Curse targets any enemy
-      // TODO: check if the user is about to Terastallize to/from Ghost type
-      if (!user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
+      // (if the user's type changes before it moves, e.g. by Terastallizing, `MovePhase` re-resolves the target)
+      if (!isGhostTypeCurseUser(user)) {
         set = [user];
         break;
       }
