@@ -1,5 +1,5 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
+import { AttackTypeBoosterModifier, HitHealModifier } from "#app/modifier/modifier";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
@@ -327,8 +327,79 @@ describe("Moves - Delayed Attacks", () => {
     expect(typeMock).toHaveLastReturnedWith(PokemonType.ELECTRIC);
   });
 
-  // TODO: this is not implemented
-  it.todo("should not apply Shell Bell recovery, even if user is on field");
+  // https://github.com/pagefaultgames/pokerogue/issues/5355
+  it.each([
+    { name: "on field", switchOut: false },
+    { name: "off field", switchOut: true },
+  ])("should not apply the enemy's Shell Bell recovery or crash if the user is $name", async ({ switchOut }) => {
+    // Trainer battle so the enemy has another Pokemon to switch to
+    game.override.battleType(BattleType.TRAINER).enemyHeldItems([{ name: "SHELL_BELL" }]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const futureSightUser = game.field.getEnemyPokemon();
+    futureSightUser.hp = Math.floor(futureSightUser.getMaxHp() / 2);
+    const startingHp = futureSightUser.hp;
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.SPLASH);
+    if (switchOut) {
+      game.forceEnemyToSwitch();
+    } else {
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+    }
+    await game.toNextTurn();
+
+    expect(futureSightUser.isOnField()).toBe(!switchOut);
+
+    // Stop once the attack is queued, then spy only on its hit
+    // (every other move used, including Splash, also considers Shell Bell)
+    await passTurns(1, false);
+    const shellBellSpy = vi.spyOn(HitHealModifier.prototype, "apply");
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon()).not.toHaveFullHp();
+    expect(shellBellSpy).not.toHaveBeenCalled();
+    expect(futureSightUser).toHaveHp(startingHp);
+  });
+
+  // The player's Shell Bell currently isn't checked for delayed attacks at all (their phase is created with the
+  // user's ID instead of a battler index, so it always looks up enemy modifiers), but it shouldn't apply either way
+  it.each([
+    { name: "on field", switchOut: false },
+    { name: "off field", switchOut: true },
+  ])("should not apply the player's Shell Bell recovery if the user is $name", async ({ switchOut }) => {
+    game.override.startingHeldItems([{ name: "SHELL_BELL" }]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+
+    const futureSightUser = game.field.getPlayerPokemon();
+    futureSightUser.hp = Math.floor(futureSightUser.getMaxHp() / 2);
+    const startingHp = futureSightUser.hp;
+
+    game.move.use(MoveId.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    if (switchOut) {
+      game.doSwitchPokemon(1);
+    } else {
+      game.move.use(MoveId.SPLASH);
+    }
+    await game.toNextTurn();
+
+    expect(futureSightUser.isOnField()).toBe(!switchOut);
+
+    // Stop once the attack is queued, then spy only on its hit
+    // (every other move used, including Splash, also considers Shell Bell)
+    await passTurns(1, false);
+    const shellBellSpy = vi.spyOn(HitHealModifier.prototype, "apply");
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon()).not.toHaveFullHp();
+    expect(shellBellSpy).not.toHaveBeenCalled();
+    expect(futureSightUser).toHaveHp(startingHp);
+  });
 
   // TODO: Enable once code is added to MEP to do this
   it.todo("should not apply the user's abilities when dealing damage if the user is inactive", async () => {
