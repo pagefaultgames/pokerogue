@@ -1,4 +1,6 @@
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
@@ -7,7 +9,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Electro Shot", () => {
   let phaserGame: Phaser.Game;
@@ -76,6 +78,35 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon).toHaveUsedMove({ move: MoveId.ELECTRO_SHOT, result: MoveResult.SUCCESS });
     expect(playerPokemon).toHaveUsedPP(MoveId.ELECTRO_SHOT, 1);
+  });
+
+  it("should need to charge again after the attack turn is cancelled by flinching", async () => {
+    vi.spyOn(allMoves[MoveId.ASTONISH], "chance", "get").mockReturnValue(100);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.ELECTRO_SHOT);
+    await game.toNextTurn();
+
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGING);
+
+    await game.move.forceEnemyMove(MoveId.ASTONISH);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toNextTurn();
+
+    expect(enemyPokemon).toHaveFullHp();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(playerPokemon.getMoveQueue()).toHaveLength(0);
+
+    game.move.use(MoveId.ELECTRO_SHOT);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.ELECTRO_SHOT, result: MoveResult.OTHER });
+    expect(playerPokemon).toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should only increase Sp. Atk once with Multi-Lens", async () => {
