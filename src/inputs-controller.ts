@@ -353,6 +353,17 @@ export class InputsController {
     this.ensureKeyboardIsInit();
     const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD)!, event.keyCode);
     if (buttonDown != null) {
+      // Toggles must not depend on keyup: exiting fullscreen with Escape can swallow it.
+      // Use the browser's repeat flag so a fresh press still works after a lost release.
+      if (buttonDown === Button.MENU || buttonDown === Button.STATS) {
+        if (!event.repeat) {
+          this.events.emit("input_down", {
+            controller_type: "keyboard",
+            button: buttonDown,
+          });
+        }
+        return;
+      }
       if (this.buttonLock.includes(buttonDown)) {
         return;
       }
@@ -386,7 +397,9 @@ export class InputsController {
         button: buttonUp,
       });
       const index = this.buttonLock.indexOf(buttonUp);
-      this.buttonLock.splice(index, 1);
+      if (index !== -1) {
+        this.buttonLock.splice(index, 1);
+      }
       clearInterval(this.inputInterval[buttonUp]);
     }
   }
