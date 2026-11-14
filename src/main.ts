@@ -3,7 +3,7 @@ import "#init/init-manifest"; // initializes the manifest, must be done *before*
 import "#app/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
-import { isMobile, preventDoubleTapZoom } from "#app/touch-controls";
+import { enableTouchControlsOnQuadrupleTap, isMobile, preventDoubleTapZoom } from "#app/touch-controls";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
@@ -17,6 +17,7 @@ if (isBeta || isDev) {
 }
 
 preventDoubleTapZoom();
+enableTouchControlsOnQuadrupleTap();
 
 async function startGame(): Promise<void> {
   const { initSettingsManager } = await import("#app/global-settings-manager");
