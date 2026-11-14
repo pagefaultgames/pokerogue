@@ -59,7 +59,7 @@
     "phaser4-rex-plugins": "^4.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.6",
+    "@biomejs/biome": "2.6.7",
     "@commander-js/extra-typings": "^15.0.0",
     "@inquirer/prompts": "^8.7.5",
     "@ls-lint/ls-lint": "2.3.1",
