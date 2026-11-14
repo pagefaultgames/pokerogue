@@ -2,11 +2,13 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
@@ -268,6 +270,49 @@ describe("UI - Party switch mode", () => {
 
     expect(game.scene.getPlayerParty()[2]).toBe(fourthPokemon);
     expect(game.scene.getPlayerParty()[3]).toBe(thirdPokemon);
+  });
+
+  it("should not swap out a pokémon locked into a queued move", async () => {
+    game.override
+      .startingLevel(200)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyStatusEffect(StatusEffect.POISON)
+      .battleStyle("single")
+      .battleType(BattleType.WILD);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA, SpeciesId.RAYQUAZA);
+    const [abra, , rayquaza] = game.scene.getPlayerParty();
+
+    // The opponent faints from poison while Abra is underground, so Dig carries over into the next wave
+    game.field.getEnemyPokemon().hp = 1;
+    game.move.use(MoveId.DIG);
+    await game.phaseInterceptor.to("SelectModifierPhase");
+
+    expect(abra).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
+
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK);
+    const partyHandler = game.scene.ui.getHandler() as PartyUiHandler;
+
+    // Choosing "Switch" on Abra is rejected
+    partyHandler.setCursor(0);
+    partyHandler.processInput(Button.ACTION);
+    partyHandler.setCursor(1);
+    partyHandler.processInput(Button.ACTION);
+
+    expect(game.scene.getPlayerParty()[0]).toBe(abra);
+
+    // Choosing Abra as the swap target for a benched pokémon is rejected
+    partyHandler.setCursor(2);
+    partyHandler.processInput(Button.ACTION);
+    partyHandler.setCursor(1);
+    partyHandler.processInput(Button.ACTION);
+    partyHandler.setCursor(0);
+    partyHandler.processInput(Button.ACTION);
+    // Clear the pending selection so later tests start from an idle party screen
+    partyHandler.processInput(Button.CANCEL);
+
+    expect(game.scene.getPlayerParty()[0]).toBe(abra);
+    expect(game.scene.getPlayerParty()[2]).toBe(rayquaza);
   });
 
   it.each([
