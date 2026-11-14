@@ -105,33 +105,29 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(config.pokemonConfigs?.[0]).toEqual({
       species: speciesDataRegistry.getSpecies(SpeciesId.MR_MIME),
       isBoss: true,
-      moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
+      moveSet: [MoveId.TEETER_DANCE, MoveId.METRONOME, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
       species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
-      shiny: true,
-      variant: 2,
       moveSet: [MoveId.TRICK, MoveId.HYPNOSIS, MoveId.SHADOW_BALL, MoveId.MIND_BLOWN],
     });
     expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);
     expect([
       AbilityId.STURDY,
-      AbilityId.PICKUP,
       AbilityId.INTIMIDATE,
+      AbilityId.SERENE_GRACE,
       AbilityId.GUTS,
-      AbilityId.DROUGHT,
-      AbilityId.DRIZZLE,
-      AbilityId.SNOW_WARNING,
-      AbilityId.SAND_STREAM,
-      AbilityId.ELECTRIC_SURGE,
-      AbilityId.PSYCHIC_SURGE,
-      AbilityId.GRASSY_SURGE,
-      AbilityId.MISTY_SURGE,
-      AbilityId.MAGICIAN,
+      AbilityId.DOWNLOAD,
+      AbilityId.MAGIC_GUARD,
+      AbilityId.MOLD_BREAKER,
+      AbilityId.UNAWARE,
       AbilityId.SHEER_FORCE,
+      AbilityId.FLARE_BOOST,
+      AbilityId.REGENERATOR,
       AbilityId.PRANKSTER,
+      AbilityId.OPPORTUNIST,
     ]).toContain(config.pokemonConfigs?.[1].customPokemonData?.ability);
     expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].customPokemonData?.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());
@@ -168,7 +164,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(SpeciesId.MR_MIME);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(MoveId.TEETER_DANCE),
-        new PokemonMove(MoveId.ALLY_SWITCH),
+        new PokemonMove(MoveId.METRONOME),
         new PokemonMove(MoveId.DAZZLING_GLEAM),
         new PokemonMove(MoveId.PSYCHIC),
       ]);
