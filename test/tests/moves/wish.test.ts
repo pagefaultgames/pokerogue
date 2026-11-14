@@ -1,5 +1,6 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
@@ -168,5 +169,18 @@ describe("Move - Wish", () => {
       }),
     );
     expect(alomomola).toHaveHp(1);
+  });
+
+  it("should be removed when the next wave is a trainer battle", async () => {
+    game.override.battleType(BattleType.WILD);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA);
+
+    game.override.battleType(BattleType.TRAINER);
+    game.move.use(MoveId.WISH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    expect(game.scene.currentBattle.battleType).toBe(BattleType.TRAINER);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
   });
 });
