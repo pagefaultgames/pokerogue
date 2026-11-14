@@ -12,6 +12,7 @@ import { HpBarSpeed } from "#enums/hp-bar-speed";
 import { MoneyFormat } from "#enums/money-format";
 import { MusicPreference } from "#enums/music-preference";
 import { PlayerGender } from "#enums/player-gender";
+import { ShadowType } from "#enums/shadow-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpriteSet } from "#enums/sprite-set";
 import { TypeHints } from "#enums/type-hints";
@@ -257,6 +258,15 @@ export const displaySettingUiItems: SettingsUiItem<DisplaySettingsKey>[] = [
     options: [
       { value: UiTheme.DEFAULT, label: t("settings:default") },
       { value: UiTheme.LEGACY, label: t("settings:legacy") },
+    ],
+    requiresReload: true,
+  },
+  {
+    key: "shadowType",
+    label: t("settings:shadowType"),
+    options: [
+      { value: ShadowType.ORIGINAL, label: t("settings:original") },
+      { value: ShadowType.LITE, label: t("settings:lite") },
     ],
     requiresReload: true,
   },

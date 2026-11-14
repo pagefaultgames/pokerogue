@@ -21,7 +21,7 @@ import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { SessionSaveData } from "#types/save-data";
-import { addBBCodeTextObject, addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
@@ -177,8 +177,8 @@ export class RunInfoUiHandler extends UiHandler {
     if (this.runInfo.modifiers.length > 0) {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = globalScene.add.container(0, 0);
-      const abilityButtonText = addTextObject(8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {
-        fontSize: "34px",
+      const abilityButtonText = addTextObject(8, -2, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {
+        fontSize: "60px",
       });
       const gamepadType = this.getUi().getGamepadType();
       let abilityButtonElement: Phaser.GameObjects.Sprite;
@@ -557,29 +557,30 @@ export class RunInfoUiHandler extends UiHandler {
   private async parseRunInfo(windowX: number, windowY: number) {
     // Parsing and displaying the mode.
     // In the future, parsing Challenges + Challenge Rules may have to be reworked as PokeRogue adds additional challenges and users can stack these challenges in various ways.
+    const windowFrag = (text: string) => getBBCodeFrag(text, TextStyle.WINDOW, true);
     const modeText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
       lineSpacing: 3,
     });
     modeText.setPosition(7, 5);
-    modeText.appendText(i18next.t("runHistory:mode") + ": ", false);
+    modeText.appendText(windowFrag(i18next.t("runHistory:mode") + ": "), false);
     switch (this.runInfo.gameMode) {
       case GameModes.DAILY:
-        modeText.appendText(`${i18next.t("gameMode:dailyRun")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:dailyRun")}`), false);
         break;
       case GameModes.SPLICED_ENDLESS:
-        modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:endlessSpliced")}`), false);
         break;
       case GameModes.CHALLENGE: {
-        modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
-        modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:challenge")}`), false);
+        modeText.appendText(windowFrag(`${i18next.t("runHistory:challengeRules")}: `));
         modeText.setWrapMode(1); // wrap by word
         modeText.setWrapWidth(500);
         const rules: string[] = this.challengeParser();
         if (rules) {
           for (let i = 0; i < rules.length; i++) {
             if (i > 0) {
-              modeText.appendText(" + ", false);
+              modeText.appendText(windowFrag(" + "), false);
             }
             modeText.appendText(rules[i], false);
           }
@@ -587,10 +588,10 @@ export class RunInfoUiHandler extends UiHandler {
         break;
       }
       case GameModes.ENDLESS:
-        modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:endless")}`), false);
         break;
       case GameModes.CLASSIC:
-        modeText.appendText(`${i18next.t("gameMode:classic")}`, false);
+        modeText.appendText(windowFrag(`${i18next.t("gameMode:classic")}`), false);
         break;
     }
 
@@ -599,7 +600,7 @@ export class RunInfoUiHandler extends UiHandler {
       (this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS)
       && this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave
     ) {
-      modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
+      modeText.appendText(windowFrag(` [${i18next.t("runHistory:personalBest")}]`));
       modeText.setTint(...RAINBOW_TINT);
     }
 
@@ -612,11 +613,11 @@ export class RunInfoUiHandler extends UiHandler {
       lineSpacing,
     });
     const runTime = getPlayTimeString(this.runInfo.playTime);
-    runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
+    runInfoText.appendText(windowFrag(`${i18next.t("runHistory:runLength")}: ${runTime}`), false);
     const runMoney = formatMoney(settings.display.moneyFormat, this.runInfo.money);
     const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false);
     runInfoText.appendText(
-      `[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney: runMoney })}[/color]`,
+      `[color=${moneyTextColor}][shadow=${getTextColor(TextStyle.MONEY_WINDOW, true)}]${i18next.t("battleScene:moneyOwned", { formattedMoney: runMoney })}[/shadow][/color]`,
     );
     runInfoText.setPosition(7, 70);
     runInfoTextContainer.add(runInfoText);
@@ -634,8 +635,16 @@ export class RunInfoUiHandler extends UiHandler {
     );
     let luckInfo = i18next.t("runHistory:luck") + ": " + getLuckString(luckValue);
     if (luckValue < 14) {
-      luckInfo = "[color=#" + getLuckTextTint(luckValue).toString(16) + "]" + luckInfo + "[/color]";
+      luckInfo =
+        "[color=#"
+        + getLuckTextTint(luckValue).toString(16)
+        + "][shadow="
+        + getTextColor(TextStyle.WINDOW, true)
+        + "]"
+        + luckInfo
+        + "[/shadow][/color]";
     } else {
+      luckInfo = windowFrag(luckInfo);
       luckText.setTint(...RAINBOW_TINT);
     }
     luckText.appendText("[align=right]" + luckInfo + "[/align]", false);
@@ -774,15 +783,19 @@ export class RunInfoUiHandler extends UiHandler {
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility(true).name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
-      const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
+      const summaryFrag = (text: string) => getBBCodeFrag(text, TextStyle.SUMMARY, true);
+      const summaryShadow = getTextColor(TextStyle.SUMMARY, true);
+      const pokeInfoText = addBBCodeTextObject(0, 0, summaryFrag(pName), TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
         lineSpacing,
       });
       pokeInfoText.appendText(
-        `${i18next.t("saveSlotSelectUiHandler:lv")}${formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
+        summaryFrag(
+          `${i18next.t("saveSlotSelectUiHandler:lv")}${formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
+        ),
       );
-      pokeInfoText.appendText(pAbilityInfo);
-      pokeInfoText.appendText(pPassiveInfo);
+      pokeInfoText.appendText(summaryFrag(pAbilityInfo));
+      pokeInfoText.appendText(summaryFrag(pPassiveInfo));
       pokeInfoTextContainer.add(pokeInfoText);
 
       // Pokemon Stats
@@ -792,19 +805,24 @@ export class RunInfoUiHandler extends UiHandler {
       pokemon.stats.forEach(element => pStats.push(formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pNature, i);
-        pStats[i] = isMult < 1 ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
-        pStats[i] = isMult > 1 ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
+        const arrow =
+          isMult < 1
+            ? `[color=#40c8f8][shadow=${summaryShadow}]↓[/shadow][/color]`
+            : isMult > 1
+              ? `[color=#f89890][shadow=${summaryShadow}]↑[/shadow][/color]`
+              : "";
+        pStats[i] = summaryFrag(pStats[i]) + arrow;
       }
-      const hp = i18next.t("pokemonInfo:stat.hpShortened") + ": " + pStats[0];
-      const atk = i18next.t("pokemonInfo:stat.atkShortened") + ": " + pStats[1];
-      const def = i18next.t("pokemonInfo:stat.defShortened") + ": " + pStats[2];
-      const spatk = i18next.t("pokemonInfo:stat.spatkShortened") + ": " + pStats[3];
-      const spdef = i18next.t("pokemonInfo:stat.spdefShortened") + ": " + pStats[4];
+      const hp = summaryFrag(i18next.t("pokemonInfo:stat.hpShortened") + ": ") + pStats[0];
+      const atk = summaryFrag(i18next.t("pokemonInfo:stat.atkShortened") + ": ") + pStats[1];
+      const def = summaryFrag(i18next.t("pokemonInfo:stat.defShortened") + ": ") + pStats[2];
+      const spatk = summaryFrag(i18next.t("pokemonInfo:stat.spatkShortened") + ": ") + pStats[3];
+      const spdef = summaryFrag(i18next.t("pokemonInfo:stat.spdefShortened") + ": ") + pStats[4];
       const speedLabel =
         currentLanguage === "es-ES" || currentLanguage === "pt_BR"
           ? i18next.t("runHistory:spdShortened")
           : i18next.t("pokemonInfo:stat.spdShortened");
-      const speed = speedLabel + ": " + pStats[5];
+      const speed = summaryFrag(speedLabel + ": ") + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(-5, 0, hp, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
