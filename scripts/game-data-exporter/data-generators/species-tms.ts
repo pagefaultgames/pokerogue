@@ -8,7 +8,6 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import chalk from "chalk";
 import { writeData } from "../helpers";
 import type { TmEntry } from "../types";
 
@@ -16,36 +15,23 @@ export async function generateTmsData(): Promise<void> {
   const entries: TmEntry[] = [];
 
   for (const speciesData of Object.values(speciesDataRegistry.data)) {
-    for (const move of speciesDataRegistry.getTms(speciesData.species.speciesId)) {
-      const data: TmEntry = {
-        dexNum: speciesData.species.speciesId,
-        id: SpeciesId[speciesData.species.speciesId],
-        form: null,
-        move: MoveId[move],
-      };
-      entries.push(data);
-    }
+    const formCount = speciesData.species.forms.length;
+    const tmsPerForm = Array.from({ length: Math.max(formCount, 1) }, (_, formIndex) => {
+      return speciesDataRegistry.getTms(speciesData.species.speciesId, formIndex);
+    });
 
-    const allFormKeys = speciesData.species.forms.map(f => f.formKey);
-    for (const formKey in speciesData.formTms) {
-      if (!allFormKeys.includes(formKey)) {
-        console.log(
-          chalk.yellow(
-            `⚠️  Warning(tms): FormKey "${formKey}" does not exist for species ${speciesData.species.speciesId} (${speciesData.species.name})`,
-          ),
-        );
-      }
-      if (speciesData.formTms) {
-        const formTms = speciesData.formTms[formKey];
-        for (const move of formTms) {
-          const data: TmEntry = {
-            dexNum: speciesData.species.speciesId,
-            id: SpeciesId[speciesData.species.speciesId],
-            form: formKey,
-            move: MoveId[move],
-          };
-          entries.push(data);
+    for (const [formIndex, tms] of tmsPerForm.entries()) {
+      for (const move of tms) {
+        const isShared = formCount > 1 && tmsPerForm.every(tmSet => tmSet.includes(move));
+        if (isShared && formIndex > 0) {
+          continue;
         }
+        entries.push({
+          dexNum: speciesData.species.speciesId,
+          id: SpeciesId[speciesData.species.speciesId],
+          form: formCount === 0 || isShared ? null : speciesData.species.getFormKey(formIndex),
+          move: MoveId[move],
+        });
       }
     }
   }
