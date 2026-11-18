@@ -51,16 +51,10 @@ export class LoadingScene extends SceneBase {
       .loadImage("pbinfo_player_stats", "ui")
       .loadImage("pbinfo_player_mini", "ui")
       .loadImage("pbinfo_player_mini_stats", "ui")
-      .loadAtlas("pbinfo_player_type", "ui")
-      .loadAtlas("pbinfo_player_type1", "ui")
-      .loadAtlas("pbinfo_player_type2", "ui")
       .loadImage("pbinfo_enemy_mini", "ui")
       .loadImage("pbinfo_enemy_mini_stats", "ui")
       .loadImage("pbinfo_enemy_boss", "ui")
       .loadImage("pbinfo_enemy_boss_stats", "ui")
-      .loadAtlas("pbinfo_enemy_type", "ui")
-      .loadAtlas("pbinfo_enemy_type1", "ui")
-      .loadAtlas("pbinfo_enemy_type2", "ui")
       .loadAtlas("pbinfo_stat_numbers", "ui")
       .loadAtlas("numbers", "ui")
       .loadAtlas("numbers_red", "ui")
@@ -276,6 +270,20 @@ export class LoadingScene extends SceneBase {
       .loadAtlas(`pbinfo_stat${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_stat${keySuffix}`) // Pixel text for in-battle stats info tab
       .loadImage(`overlay_lv${keySuffix}`, "ui", `text_images/${lang}/battle_ui/overlay_lv${keySuffix}.png`) // Pixel text in-battle 'Lv.'
       .loadImage(`overlay_hp_label${keySuffix}`, "ui", `text_images/${lang}/battle_ui/overlay_hp_label${keySuffix}.png`)
+      .loadAtlas(`pbinfo_player_type${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_player_type${keySuffix}`)
+      .loadAtlas(
+        `pbinfo_player_type1${keySuffix}`,
+        "ui",
+        `text_images/${lang}/battle_ui/pbinfo_player_type1${keySuffix}`,
+      )
+      .loadAtlas(
+        `pbinfo_player_type2${keySuffix}`,
+        "ui",
+        `text_images/${lang}/battle_ui/pbinfo_player_type2${keySuffix}`,
+      )
+      .loadAtlas(`pbinfo_enemy_type${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_enemy_type${keySuffix}`)
+      .loadAtlas(`pbinfo_enemy_type1${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_enemy_type1${keySuffix}`)
+      .loadAtlas(`pbinfo_enemy_type2${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_enemy_type2${keySuffix}`)
       .loadImage(
         `overlay_hp_label_boss${keySuffix}`,
         "ui",

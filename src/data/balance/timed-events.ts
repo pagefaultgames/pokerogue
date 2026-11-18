@@ -9,6 +9,16 @@ import type { TimedEvent } from "#types/game-events";
 
 export const timedEvents: readonly TimedEvent[] = [
   {
+    name: "Item Update waiting room",
+    eventType: EventType.NO_TIMER_DISPLAY,
+    startDate: new Date(Date.UTC(2026, 6, 17)),
+    endDate: new Date(Date.UTC(2026, 11, 31)),
+    classicWaveRewards: [
+      { wave: 115, type: "MEGA_BRACELET" },
+      { wave: 115, type: "DYNAMAX_BAND" },
+    ],
+  },
+  {
     name: "Halloween 26",
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2026, 9, 23)),
@@ -105,16 +115,6 @@ export const timedEvents: readonly TimedEvent[] = [
       { wave: 115, type: "DYNAMAX_BAND" },
     ],
     dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM", "CANDY_JAR"],
-  },
-  {
-    name: "Item Update waiting room",
-    eventType: EventType.NO_TIMER_DISPLAY,
-    startDate: new Date(Date.UTC(2026, 6, 17)),
-    endDate: new Date(Date.UTC(2026, 11, 31)),
-    classicWaveRewards: [
-      { wave: 115, type: "MEGA_BRACELET" },
-      { wave: 115, type: "DYNAMAX_BAND" },
-    ],
   },
   {
     name: "Mega Pride 2026",
