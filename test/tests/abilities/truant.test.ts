@@ -1,5 +1,7 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -64,5 +66,64 @@ describe("Ability - Truant", () => {
       expect.objectContaining({ move: MoveId.TACKLE, result: MoveResult.SUCCESS }),
     );
     expect(enemy).not.toHaveFullHp();
+  });
+
+  describe("when gained by evolving while on the field", () => {
+    beforeEach(() => {
+      game.override
+        .ability(AbilityId.NONE)
+        .battleType(BattleType.WILD)
+        .startingWave(71)
+        .startingLevel(35)
+        .enemySpecies(SpeciesId.GOLEM)
+        .enemyLevel(100);
+    });
+
+    /** Evolve a Vigoroth into a Slaking on the field and move on to the next wave */
+    async function evolveIntoSlaking(): Promise<void> {
+      await game.classicMode.startBattle(SpeciesId.VIGOROTH);
+
+      const vigoroth = game.field.getPlayerPokemon();
+      vigoroth.abilityIndex = 0;
+      expect(vigoroth.getAbility().id).toBe(AbilityId.VITAL_SPIRIT);
+
+      game.field.getEnemyPokemon().hp = 1;
+      game.move.select(MoveId.TACKLE);
+      await game.toNextWave();
+
+      expect(vigoroth.species.speciesId).toBe(SpeciesId.SLAKING);
+      expect(vigoroth.isOnField()).toBe(true);
+    }
+
+    /** Check that the Slaking ignores moves used before evolving: it acts first, then loafs around */
+    async function expectToActThenLoaf(): Promise<void> {
+      const slaking = game.field.getPlayerPokemon();
+      expect(slaking).toHaveBattlerTag(BattlerTagType.TRUANT);
+
+      // Turn 1: Tackle succeeds, since Slaking has not moved yet
+      game.move.select(MoveId.TACKLE);
+      await game.toNextTurn();
+      expect(slaking.getLastXMoves(1)[0]).toEqual(
+        expect.objectContaining({ move: MoveId.TACKLE, result: MoveResult.SUCCESS }),
+      );
+
+      // Turn 2: Truant activates
+      game.move.select(MoveId.TACKLE);
+      await game.toNextTurn();
+      expect(slaking.getLastXMoves(1)[0]).toEqual(
+        expect.objectContaining({ move: MoveId.NONE, result: MoveResult.FAIL }),
+      );
+    }
+
+    it("should act first and then loaf around", async () => {
+      await evolveIntoSlaking();
+      await expectToActThenLoaf();
+    });
+
+    it("should act first and then loaf around after reloading the session", async () => {
+      await evolveIntoSlaking();
+      await game.reload.reloadSession();
+      await expectToActThenLoaf();
+    });
   });
 });
