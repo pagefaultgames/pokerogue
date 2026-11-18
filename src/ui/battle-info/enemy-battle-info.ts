@@ -1,14 +1,16 @@
 import { globalScene } from "#app/global-scene";
 import { settings } from "#app/global-settings-manager";
+import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { TypeHints } from "#enums/type-hints";
-import type { EnemyPokemon } from "#field/pokemon";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { isTypeHidingActive } from "#utils/challenge-utils";
 import { getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -52,6 +54,20 @@ export class EnemyBattleInfo extends BattleInfo {
       .setName("icon_type_3")
       .setOrigin(0);
     this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
+  }
+
+  override setTypes(types: PokemonType[], pokemon?: Pokemon): void {
+    // Don't hide a Tera type or a species already defeated/owned this run
+    if (
+      isTypeHidingActive()
+      && !pokemon?.isTerastallized
+      && !(pokemon && globalScene.revealedSpecies.has(pokemon.species.speciesId))
+    ) {
+      // Keep the mono/dual-type shape visible, only hide which type(s) it actually is
+      super.setTypes(types.map(() => PokemonType.UNKNOWN));
+      return;
+    }
+    super.setTypes(types);
   }
 
   constructor() {
