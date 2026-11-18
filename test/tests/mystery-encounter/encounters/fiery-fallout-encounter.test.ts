@@ -225,8 +225,60 @@ describe("Fiery Fallout - Mystery Encounter", () => {
         );
       });
       expect(burnablePokemon.some(pkm => pkm.status?.effect === StatusEffect.BURN)).toBeTruthy();
-      expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === AbilityId.HEATPROOF));
+      expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === AbilityId.HEATPROOF)).toBe(true);
       notBurnablePokemon.forEach(pkm => expect(pkm).toHaveFullHp());
+    });
+
+    // https://github.com/pagefaultgames/pokerogue/issues/5290
+    it("should only burn a Pokemon that can be burned", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [
+        SpeciesId.ARCANINE,
+        SpeciesId.NINETALES,
+        SpeciesId.LAPRAS,
+        SpeciesId.GENGAR,
+        SpeciesId.ABRA,
+      ]);
+
+      // Gengar is the only Pokemon that can be burned, so it is picked regardless of the roll.
+      // If immunities were ignored, the seeded roll would decide whether this test catches it.
+      const [, , lapras, gengar, abra] = scene.getPlayerParty();
+      game.field.mockAbility(lapras, AbilityId.WATER_VEIL);
+      game.field.mockAbility(abra, AbilityId.WATER_VEIL);
+
+      await runMysteryEncounterToEnd(game, 2);
+
+      for (const pkm of [lapras, abra]) {
+        expect(pkm).toHaveStatusEffect(StatusEffect.NONE);
+        expect(pkm.customPokemonData.ability).not.toBe(AbilityId.HEATPROOF);
+      }
+      expect(gengar).toHaveStatusEffect(StatusEffect.BURN);
+      expect(gengar.customPokemonData.ability).toBe(AbilityId.HEATPROOF);
+    });
+
+    it("should still damage the party but not burn anyone if no Pokemon can be burned", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [
+        SpeciesId.ARCANINE,
+        SpeciesId.NINETALES,
+        SpeciesId.LAPRAS,
+        SpeciesId.ABRA,
+      ]);
+
+      const party = scene.getPlayerParty();
+      const [arcanine, ninetales, lapras, abra] = party;
+      game.field.mockAbility(lapras, AbilityId.WATER_VEIL);
+      abra.status = new Status(StatusEffect.PARALYSIS);
+
+      await runMysteryEncounterToEnd(game, 2);
+
+      for (const pkm of [lapras, abra]) {
+        expect(pkm.hp).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.2));
+      }
+      expect(arcanine).toHaveFullHp();
+      expect(ninetales).toHaveFullHp();
+      expect(lapras).toHaveStatusEffect(StatusEffect.NONE);
+      expect(abra).toHaveStatusEffect(StatusEffect.PARALYSIS);
+      party.forEach(pkm => expect(pkm.customPokemonData.ability).not.toBe(AbilityId.HEATPROOF));
+      expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBeUndefined();
     });
 
     it("should leave encounter without battle", async () => {
