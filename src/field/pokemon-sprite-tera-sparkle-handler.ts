@@ -60,16 +60,10 @@ export class PokemonSpriteTeraSparkleHandler {
           "tera_sparkle",
         );
         sparkle
-          .setRenderNodeRole(
-            "Submitter",
-            globalScene.spriteSubmitter,
-            s.renderNodeData[globalScene.spriteSubmitter.name]?.["ignoreTimeTint"],
-          )
-          .setRenderNodeRole(
-            "BatchHandler",
-            globalScene.spriteBatchHandler,
-            s.renderNodeData[globalScene.spriteSubmitter.name]?.["ignoreTimeTint"],
-          );
+          .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+            ignoreTimeTint: s.renderNodeData[globalScene.spriteSubmitter.name]?.["ignoreTimeTint"],
+          })
+          .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
         sparkle.setName("sprite-tera-sparkle");
         sparkle.play("tera_sparkle");
         parent.add(sparkle);
