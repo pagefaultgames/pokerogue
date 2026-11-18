@@ -9709,7 +9709,7 @@ export function initMoves() {
     new StatusMove(MoveId.MIMIC, PokemonType.NORMAL, -1, 10, -1, 0, 1) //
       .attr(MovesetCopyMoveAttr)
       .ignoresSubstitute(),
-    new StatusMove(MoveId.SCREECH, PokemonType.NORMAL, 100, 40, -1, 0, 1) //
+    new StatusMove(MoveId.SCREECH, PokemonType.NORMAL, 85, 40, -1, 0, 1) //
       .attr(StatStageChangeAttr, [Stat.DEF], -2)
       .soundBased()
       .reflectable(),
@@ -9871,7 +9871,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1) //
       .attr(RestAttr, 3)
       .healingMove(),
-    new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 95, 10, 20, 0, 1)
+    new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -10069,7 +10069,7 @@ export function initMoves() {
     new AttackMove(MoveId.FURY_CUTTER, PokemonType.BUG, MoveCategory.PHYSICAL, 40, 95, 20, -1, 0, 2)
       .attr(ConsecutiveUseDoublePowerAttr, 3, true)
       .slicingMove(),
-    new AttackMove(MoveId.STEEL_WING, PokemonType.STEEL, MoveCategory.PHYSICAL, 70, 100, 25, 10, 0, 2) //
+    new AttackMove(MoveId.STEEL_WING, PokemonType.STEEL, MoveCategory.PHYSICAL, 70, 90, 25, 10, 0, 2) //
       .attr(StatStageChangeAttr, [Stat.DEF], 1, true),
     new StatusMove(MoveId.MEAN_LOOK, PokemonType.NORMAL, -1, 5, -1, 0, 2)
       .condition(failIfGhostTypeCondition)
@@ -10480,7 +10480,7 @@ export function initMoves() {
     new AttackMove(MoveId.SILVER_WIND, PokemonType.BUG, MoveCategory.SPECIAL, 60, 100, 5, 10, 0, 3)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 1, true)
       .windMove(),
-    new StatusMove(MoveId.METAL_SOUND, PokemonType.STEEL, 100, 40, -1, 0, 3)
+    new StatusMove(MoveId.METAL_SOUND, PokemonType.STEEL, 85, 40, -1, 0, 3)
       .attr(StatStageChangeAttr, [Stat.SPDEF], -2)
       .soundBased()
       .reflectable(),
@@ -11175,7 +11175,7 @@ export function initMoves() {
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(MoveId.FROST_BREATH, PokemonType.ICE, MoveCategory.SPECIAL, 60, 100, 10, -1, 0, 5) //
+    new AttackMove(MoveId.FROST_BREATH, PokemonType.ICE, MoveCategory.SPECIAL, 60, 90, 10, -1, 0, 5) //
       .attr(CritOnlyAttr),
     new AttackMove(MoveId.DRAGON_TAIL, PokemonType.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
       .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
