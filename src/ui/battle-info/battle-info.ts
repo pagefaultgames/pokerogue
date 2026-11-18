@@ -477,7 +477,9 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    */
   setTypes(types: PokemonType[]): void {
     this.type1Icon
-      .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
+      .setTexture(
+        getLocalizedSpriteKey(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`),
+      )
       .setFrame(PokemonType[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
     this.type3Icon.setVisible(types.length > 2);
