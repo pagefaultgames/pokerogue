@@ -655,6 +655,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.HAMMER_ARM],
+      [RELEARN_MOVE, MoveId.SLACK_OFF],
       [1, MoveId.TACKLE],
       [3, MoveId.TAIL_WHIP],
       [5, MoveId.EMBER],

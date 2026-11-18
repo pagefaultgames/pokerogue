@@ -2521,6 +2521,7 @@ export class TelekinesisTag extends SerializableBattlerTag {
   }
 }
 
+// TODO: Allow persistence after form change/evo (for Flash Fire)
 export class TypeBoostTag extends SerializableBattlerTag {
   declare public readonly tagType: TypeBoostTagType;
   #boostedType: PokemonType;

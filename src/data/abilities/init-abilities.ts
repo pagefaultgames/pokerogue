@@ -1686,6 +1686,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.STALWART, 8) //
+      // TODO: Add attr for hitting through Substitute
       .attr(BlockRedirectAbAttr)
       .build(),
     new AbBuilder(AbilityId.STEAM_ENGINE, 8) //
