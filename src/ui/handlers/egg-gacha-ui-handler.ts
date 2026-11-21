@@ -265,9 +265,10 @@ export class EggGachaUiHandler extends MessageUiHandler {
       })
       .join("\n");
 
-    const optionText = addTextObject(0, 0, `${pullOptionsText}\n${i18next.t("menu:cancel")}`, TextStyle.WINDOW)
+    const optionText = addTextObject(0, 0, `${pullOptionsText}\n${i18next.t("menu:cancel")}`, TextStyle.WINDOW, {
+      fontSize: "80px",
+    })
       .setLineSpacing(28)
-      .setFontSize("80px")
       .setPositionRelative(this.eggGachaOptionSelectBg, 16, 9);
 
     this.eggGachaOptionsContainer.add(optionText);

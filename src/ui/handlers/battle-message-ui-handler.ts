@@ -4,7 +4,7 @@ import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 import type BBCodeText from "phaser4-rex-plugins/plugins/bbcodetext";
@@ -176,7 +176,8 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       const newStats = globalScene.getPlayerParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = "";
       for (const s of PERMANENT_STATS) {
-        levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
+        const statValue = showTotals ? newStats[s] : newStats[s] - prevStats[s];
+        levelUpStatsValuesText += `${getBBCodeFrag(String(statValue), TextStyle.WINDOW)}\n`;
       }
       this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
       this.levelUpStatsIncrContent.setVisible(!showTotals);
