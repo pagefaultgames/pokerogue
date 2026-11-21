@@ -1,3 +1,4 @@
+import { seAsset } from "#app/asset-requests";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
@@ -54,6 +55,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
   .withHideWildIntroMessage(true)
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([]) // Set in onInit()
+  .withAssets(seAsset("PRSFX- Spotlight2", "battle_anims", "PRSFX- Spotlight2.wav"))
   .withIntroDialogue([
     {
       text: `${namespace}:intro`,
@@ -129,7 +131,6 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     ];
 
     encounter.setDialogueToken("enemyPokemon", pokemon.getNameToRender());
-    globalScene.loadSe("PRSFX- Spotlight2", "battle_anims", "PRSFX- Spotlight2.wav");
     return true;
   })
   .withOnVisualsStart(() => {

@@ -808,7 +808,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     shiny: boolean,
     variant: Variant,
   ): void {
-    species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
+    species.loadAssets(female, formIndex, shiny, variant).then(() => {
       this.pokemonSprite
         .play(species.getSpriteKey(female, formIndex, shiny, variant))
         .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)

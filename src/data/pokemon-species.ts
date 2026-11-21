@@ -1,5 +1,7 @@
 import { determineEnemySpecies } from "#ai/ai-species-gen";
+import { cryAsset, pokemonAtlasAsset } from "#app/asset-requests";
 import type { GameMode } from "#app/game-mode";
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
@@ -24,6 +26,7 @@ import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
+import type { AssetRequest } from "#types/asset-set";
 import type { LevelMoves } from "#types/level-moves";
 import type { Localizable } from "#types/locales";
 import type { StarterMoveset } from "#types/save-data";
@@ -35,7 +38,7 @@ import { toCamelCase, toPascalCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
-import Phaser from "phaser";
+import type Phaser from "phaser";
 import type { If, IsNumericLiteral } from "type-fest";
 
 export enum Region {
@@ -702,62 +705,51 @@ export abstract class PokemonSpeciesForm {
     );
   }
 
-  async loadAssets(
+  /**
+   * Get the assets needed to show this species form: its sprite (along with its animation) and its cry (if audio is enabled).
+   * @param female - Whether to use the female sprite
+   * @param formIndex - The form to use
+   * @param shiny - (Default `false`) Whether to use the shiny sprite
+   * @param variant - The shiny variant to use
+   * @param back - (Default `false`) Whether to use the back sprite
+   * @returns The requests for this species form's assets
+   */
+  getAssetRequests(
     female: boolean,
     formIndex?: number,
     shiny = false,
     variant?: Variant,
-    startLoad = false,
     back = false,
-  ): Promise<void> {
+  ): AssetRequest[] {
+    const requests: AssetRequest[] = [
+      pokemonAtlasAsset(
+        this.getSpriteKey(female, formIndex, shiny, variant, back),
+        this.getSpriteAtlasPath(female, formIndex, shiny, variant, back),
+      ),
+    ];
+    if (audioManager.isAudioEnabled) {
+      requests.push(cryAsset(this.getCryKey(formIndex)));
+    }
+    return requests;
+  }
+
+  async loadAssets(female: boolean, formIndex?: number, shiny = false, variant?: Variant, back = false): Promise<void> {
     // We need to populate the color cache for this species' variant
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
-    globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
-    // TODO: this should be routed through audiomanager rather than a raw `load.audio` call
-    if (audioManager.isAudioEnabled) {
-      globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
-    }
     if (variant != null) {
       await this.loadVariantColors(spriteKey, female, variant, back, formIndex);
     }
-    return new Promise<void>(resolve => {
-      globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        const originalWarn = console.warn;
-        // Ignore warnings for missing frames, because there will be a lot
-        console.warn = () => {};
-        const frameNames = globalScene.anims.generateFrameNames(spriteKey, {
-          zeroPad: 4,
-          suffix: ".png",
-          start: 1,
-          end: 400,
-        });
-        console.warn = originalWarn;
-        if (globalScene.anims.exists(spriteKey)) {
-          // Bang is safe since we just checked that the animation exists
-          globalScene.anims.get(spriteKey)!.frameRate = 10;
-        } else {
-          globalScene.anims.create({
-            key: this.getSpriteKey(female, formIndex, shiny, variant, back),
-            frames: frameNames,
-            frameRate: 10,
-            repeat: -1,
-          });
-        }
-        const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
-          .replace("variant/", "")
-          .replace(/_[1-3]$/, "");
-        if (variant != null) {
-          loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
-        }
-      });
-      if (startLoad) {
-        if (!globalScene.load.isLoading()) {
-          globalScene.load.start();
-        }
-      } else {
-        resolve();
-      }
-    });
+    await assetManager.load(this.getAssetRequests(female, formIndex, shiny, variant, back), globalScene);
+    if (globalScene.anims.exists(spriteKey)) {
+      // Bang is safe since we just checked that the animation exists
+      globalScene.anims.get(spriteKey)!.frameRate = 10;
+    }
+    if (variant != null) {
+      const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
+        .replace("variant/", "")
+        .replace(/_[1-3]$/, "");
+      await loadPokemonVariantAssets(spriteKey, spritePath, variant);
+    }
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound | null {
