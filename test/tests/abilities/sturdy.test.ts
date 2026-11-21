@@ -80,6 +80,40 @@ describe("Abilities - Sturdy", () => {
     expect(game.field.getEnemyPokemon()).toHaveFullHp();
   });
 
+  it("shows its flyout once when an OHKO move is used against it", async () => {
+    await game.classicMode.startBattle(SpeciesId.LUCARIO);
+
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const abilityDisplaySpy = vi.spyOn(game.scene.phaseManager, "queueAbilityDisplay");
+
+    game.move.use(MoveId.FISSURE);
+    await game.toEndOfTurn();
+
+    expect(abilityDisplaySpy.mock.calls).toEqual([
+      [enemyPokemon, false, true],
+      [enemyPokemon, false, false],
+    ]);
+  });
+
+  it("doesn't activate when the enemy only considers using an OHKO move", async () => {
+    game.override
+      .ability(AbilityId.STURDY)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyLevel(100)
+      .enemyMoveset([MoveId.FISSURE, MoveId.SHEER_COLD, MoveId.SPLASH]);
+    await game.classicMode.startBattle(SpeciesId.ARON);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const abilityDisplaySpy = vi.spyOn(game.scene.phaseManager, "queueAbilityDisplay");
+
+    game.move.use(MoveId.SPLASH);
+    // the enemy has chosen its move, but no move has been used yet
+    await game.phaseInterceptor.to("TurnStartPhase", false);
+
+    expect(abilityDisplaySpy).not.toHaveBeenCalled();
+    expect(playerPokemon).not.toHaveAbilityApplied(AbilityId.STURDY);
+  });
+
   it("doesn't incorrectly activate on the second hit of a multi-hit if the damage from the first hit is reduced by boss bars", async () => {
     game.override.startingWave(10);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
