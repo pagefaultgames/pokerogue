@@ -4,6 +4,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -55,6 +56,36 @@ describe("Moves - Fly and Bounce", () => {
     expect(player).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.SUCCESS });
     expect(player).not.toHaveBattlerTag(BattlerTagType.FLYING);
     expect(player).toHaveUsedPP(MoveId.FLY, 1);
+  });
+
+  it("should need to charge again after the attack turn is cancelled by sleep", async () => {
+    game.override.enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.BOUNCE);
+    await game.toNextTurn();
+
+    expect(player).toHaveBattlerTag(BattlerTagType.CHARGING);
+
+    // Sleeps through the attack turn, then wakes up on the turn after
+    player.doSetStatus(StatusEffect.SLEEP, 2);
+    await game.toNextTurn();
+
+    expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(player.getMoveQueue()).toHaveLength(0);
+
+    game.move.use(MoveId.BOUNCE);
+    await game.toEndOfTurn();
+
+    expect(player).not.toHaveStatusEffect(StatusEffect.SLEEP);
+    expect(player).toHaveUsedMove({ move: MoveId.BOUNCE, result: MoveResult.OTHER });
+    expect(player).toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(enemy).toHaveFullHp();
   });
 
   // TODO: Move to a No Guard test file
