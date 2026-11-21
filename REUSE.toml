@@ -56,6 +56,7 @@ path = [
     "pnpm-workspace.yaml",
     # Miscellaneous files of insignificant originality
     ".nvmrc",
+    ".npmrc",
     "RELEASE",
     # patch files for broken packages
     "patches/*.patch"
