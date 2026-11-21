@@ -7081,7 +7081,6 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.DISARMING_VOICE,
       MoveId.DRAINING_KISS,
       MoveId.MISTY_TERRAIN,
-      MoveId.PLAY_ROUGH,
       MoveId.MYSTICAL_FIRE,
       MoveId.DAZZLING_GLEAM,
       MoveId.MISTY_EXPLOSION,
