@@ -108,7 +108,7 @@ import {
   upperHandCondition,
   userSleptOrComatoseCondition,
 } from "#moves/move-condition";
-import { getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
+import { getCounterAttackTarget, getMoveTargets, isGhostTypeCurseUser } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
@@ -6718,7 +6718,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 // TODO: Use composition once `StatStageChangeAttr` is refactored to accept a grouped stats object
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
+    if (isGhostTypeCurseUser(user)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
