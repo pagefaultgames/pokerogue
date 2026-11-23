@@ -7,6 +7,8 @@ import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id"
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
+import { permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { tempStatToTrainerItem } from "#items/x-items";
 import { DepartmentStoreSaleEncounter } from "#mystery-encounters/department-store-sale-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -138,7 +140,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(rewardSelectHandler.options.length).toEqual(3);
       for (const option of rewardSelectHandler.options) {
         expect(
-          option.rewardOption.reward.id === RewardId.PP_UP || option.rewardOption.reward.id === RewardId.VITAMIN,
+          option.rewardOption.reward.id === RewardId.PP_UP
+            || (Object.values(permanentStatToHeldItem) as readonly number[]).includes(option.rewardOption.reward.id),
         ).toBeTruthy();
       }
     });
@@ -178,7 +181,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       for (const option of rewardSelectHandler.options) {
         expect(
           option.rewardOption.reward.id === TrainerItemId.DIRE_HIT
-            || option.rewardOption.reward.id === RewardId.TEMP_STAT_STAGE_BOOSTER,
+            || (Object.values(tempStatToTrainerItem) as readonly number[]).includes(option.rewardOption.reward.id),
         ).toBeTruthy();
       }
     });

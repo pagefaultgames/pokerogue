@@ -5,6 +5,7 @@
 
 import { type PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { randSeedInt } from "#utils/common";
+import Phaser from "phaser";
 
 /** Every {@linkcode PoolRarityTier}, in ascending order of rarity. */
 export const POOL_RARITY_TIERS = [
