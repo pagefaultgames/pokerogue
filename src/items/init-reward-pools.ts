@@ -62,7 +62,7 @@ const FIELD_EFFECT_MOVES: readonly MoveId[] = [
 /** Species that can hold a Leek. */
 const LEEK_SPECIES: readonly SpeciesId[] = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-function getCommonRewardPoolEntries(): RewardPoolEntry[] {
+function getCommonRewardPoolEntries(): readonly RewardPoolEntry[] {
   return [
     { id: RewardId.POKEBALL, weight: pokeballWeightFunc(PokeballType.POKEBALL, 6) },
     { id: RewardId.RARE_CANDY, weight: 2 },
@@ -77,7 +77,7 @@ function getCommonRewardPoolEntries(): RewardPoolEntry[] {
   ];
 }
 
-function getGreatRewardPoolEntries(): RewardPoolEntry[] {
+function getGreatRewardPoolEntries(): readonly RewardPoolEntry[] {
   return [
     { id: RewardId.GREAT_BALL, weight: pokeballWeightFunc(PokeballType.GREAT_BALL, 6) },
     { id: RewardId.PP_UP, weight: 2 },
@@ -160,7 +160,7 @@ function getGreatRewardPoolEntries(): RewardPoolEntry[] {
   ];
 }
 
-function getUltraRewardPoolEntries(): RewardPoolEntry[] {
+function getUltraRewardPoolEntries(): readonly RewardPoolEntry[] {
   return [
     { id: RewardId.ULTRA_BALL, weight: pokeballWeightFunc(PokeballType.ULTRA_BALL, 15) },
     { id: TrainerItemId.MAX_LURE, weight: lureWeightFunc(TrainerItemId.MAX_LURE, 4) },
@@ -263,7 +263,7 @@ function getUltraRewardPoolEntries(): RewardPoolEntry[] {
   ];
 }
 
-function getRogueRewardPoolEntries(): RewardPoolEntry[] {
+function getRogueRewardPoolEntries(): readonly RewardPoolEntry[] {
   return [
     { id: RewardId.ROGUE_BALL, weight: pokeballWeightFunc(PokeballType.ROGUE_BALL, 16) },
     { id: RewardId.RELIC_GOLD, weight: skipInLastClassicWaveOrDefault(2) },
@@ -290,7 +290,7 @@ function getRogueRewardPoolEntries(): RewardPoolEntry[] {
   ];
 }
 
-function getMasterRewardPoolEntries(): RewardPoolEntry[] {
+function getMasterRewardPoolEntries(): readonly RewardPoolEntry[] {
   return [
     { id: RewardId.MASTER_BALL, weight: pokeballWeightFunc(PokeballType.MASTER_BALL, 24) },
     { id: TrainerItemId.SHINY_CHARM, weight: 14 },

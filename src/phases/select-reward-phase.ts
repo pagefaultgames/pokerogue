@@ -46,14 +46,14 @@ export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolea
  * Per-option contribution to the reroll cost while rarity tiers are locked.
  * `LUXURY` options (only reachable via guaranteed options) are priced like `MASTER`.
  */
-const LOCKED_REROLL_TIER_COSTS: Readonly<Record<RarityTier, number>> = {
+const LOCKED_REROLL_TIER_COSTS = {
   [RarityTier.COMMON]: 50,
   [RarityTier.GREAT]: 125,
   [RarityTier.ULTRA]: 300,
   [RarityTier.ROGUE]: 750,
   [RarityTier.MASTER]: 2000,
   [RarityTier.LUXURY]: 2000,
-};
+} as const satisfies Record<RarityTier, number>;
 
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";

@@ -44,8 +44,8 @@ export type RewardConfiguration = RewardPoolId | Reward;
 
 /** A single weighted entry of a reward pool tier. */
 export interface RewardPoolEntry {
-  id: RewardPoolId;
-  weight: number | RewardWeightFunc;
+  readonly id: RewardPoolId;
+  readonly weight: number | RewardWeightFunc;
 }
 
 /** Entries for a reward pool, keyed by tier. Omitted tiers are treated as empty. */
