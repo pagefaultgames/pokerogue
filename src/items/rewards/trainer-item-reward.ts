@@ -14,7 +14,7 @@ export class TrainerItemReward extends Reward<TrainerItemId> {
 
   /**
    * The {@linkcode TrainerItemId} granted by this reward.
-   * @deprecated Alias of {@linkcode id}; kept until external callsites are migrated.
+   * @deprecated Alias of {@linkcode id}, kept until external callsites are migrated.
    */
   public get itemId(): TrainerItemId {
     return this.id;

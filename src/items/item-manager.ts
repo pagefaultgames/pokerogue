@@ -46,11 +46,7 @@ export abstract class ItemManager<Id extends number, Data extends { stack: numbe
    * @param excludeTempStack - (Default `false`) Whether the temporary stack should be excluded.
    */
   public getItems(excludeTempStack = false): Id[] {
-    const items = Array.from(this.items.keys());
-    if (excludeTempStack) {
-      return items;
-    }
-    return items.filter(k => this.getStack(k) > 0);
+    return Array.from(this.items.keys()).filter(k => this.getStack(k, excludeTempStack) > 0);
   }
 
   public getItemCount(): number {
