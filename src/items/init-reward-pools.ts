@@ -70,7 +70,7 @@ function getCommonRewardPoolEntries(): RewardPoolEntry[] {
     { id: RewardId.SUPER_POTION, weight: potionWeightFunc(25, 0.75, 1) },
     { id: RewardId.ETHER, weight: etherWeightFunc(3) },
     { id: RewardId.MAX_ETHER, weight: etherWeightFunc(1) },
-    { id: RewardId.LURE, weight: lureWeightFunc(TrainerItemId.LURE, 2) },
+    { id: TrainerItemId.LURE, weight: lureWeightFunc(TrainerItemId.LURE, 2) },
     { id: RewardId.TEMP_STAT_STAGE_BOOSTER, weight: 4 },
     { id: RewardId.BERRY, weight: 2 },
     { id: RewardId.TM_COMMON, weight: 2 },
@@ -110,8 +110,8 @@ function getGreatRewardPoolEntries(): RewardPoolEntry[] {
     },
     { id: RewardId.ELIXIR, weight: etherWeightFunc(3) },
     { id: RewardId.MAX_ELIXIR, weight: etherWeightFunc(1) },
-    { id: RewardId.DIRE_HIT, weight: 4 },
-    { id: RewardId.SUPER_LURE, weight: lureWeightFunc(TrainerItemId.SUPER_LURE, 4) },
+    { id: TrainerItemId.DIRE_HIT, weight: 4 },
+    { id: TrainerItemId.SUPER_LURE, weight: lureWeightFunc(TrainerItemId.SUPER_LURE, 4) },
     { id: RewardId.NUGGET, weight: skipInLastClassicWaveOrDefault(5) },
     { id: RewardId.SPECIES_STAT_BOOSTER, weight: 2 },
     { id: RewardId.EVOLUTION_ITEM, weight: waveScaledWeightFunc(15, 8, 1) },
@@ -163,7 +163,7 @@ function getGreatRewardPoolEntries(): RewardPoolEntry[] {
 function getUltraRewardPoolEntries(): RewardPoolEntry[] {
   return [
     { id: RewardId.ULTRA_BALL, weight: pokeballWeightFunc(PokeballType.ULTRA_BALL, 15) },
-    { id: RewardId.MAX_LURE, weight: lureWeightFunc(TrainerItemId.MAX_LURE, 4) },
+    { id: TrainerItemId.MAX_LURE, weight: lureWeightFunc(TrainerItemId.MAX_LURE, 4) },
     { id: RewardId.BIG_NUGGET, weight: skipInLastClassicWaveOrDefault(12) },
     { id: RewardId.PP_MAX, weight: 3 },
     { id: RewardId.MINT, weight: 4 },

@@ -3,6 +3,15 @@ import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { RewardPoolId } from "#types/rewards";
 import type { ValueOf } from "type-fest";
 
+/**
+ * Map of all reward names to their IDs.
+ *
+ * @remarks
+ * Entries are formatted `0xXXYY`, where `XX` is the {@linkcode RewardCategoryId | category} and `YY` is the
+ * reward's offset within that category.
+ *
+ * Rewards granting a single specific held or trainer item use that item's ID directly and have no `RewardId`.
+ */
 export const RewardId = {
   POKEBALL: 0x2001,
   GREAT_BALL: 0x2002,
@@ -53,19 +62,15 @@ export const RewardId = {
   MEMORY_MUSHROOM: 0x2b03,
   DNA_SPLICERS: 0x2b04,
 
-  // Held item generators (direct held item rewards use the `HeldItemId` itself)
+  // Held item generators
   SPECIES_STAT_BOOSTER: 0x2c01,
   RARE_SPECIES_STAT_BOOSTER: 0x2c02,
   VITAMIN: 0x2c03,
   ATTACK_TYPE_BOOSTER: 0x2c04,
   BERRY: 0x2c05,
 
-  // Trainer item generators (direct trainer item rewards use the `TrainerItemId` itself)
+  // Trainer item generators
   TEMP_STAT_STAGE_BOOSTER: 0x2d01,
-  DIRE_HIT: 0x2d02,
-  LURE: 0x2d03,
-  SUPER_LURE: 0x2d04,
-  MAX_LURE: 0x2d05,
 
   FORM_CHANGE_ITEM: 0x2e01,
   RARE_FORM_CHANGE_ITEM: 0x2e02,

@@ -5,6 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import type { RewardMatchKey } from "#types/rewards";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
@@ -20,30 +21,12 @@ export class ChangeTeraTypeReward extends PokemonReward {
   public readonly teraType: PokemonType;
 
   constructor(teraType: PokemonType) {
-    super(RewardId.TERA_SHARD, "", `${PokemonType[teraType].toLowerCase()}_tera_shard`, (pokemon: PlayerPokemon) => {
-      if (
-        [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
-          s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
-        ).length > 0
-      ) {
-        return PartyUiHandler.NoEffectMessage;
-      }
-      return null;
-    });
-
+    super(RewardId.TERA_SHARD);
     this.teraType = teraType;
   }
 
-  /**
-   * Return the deduplication match key for a Tera Shard.
-   * @param teraType - The {@linkcode PokemonType} to build the key for
-   */
-  public static getVariantMatchKey(teraType: PokemonType): string {
-    return `tera:${teraType}`;
-  }
-
-  override get matchKey(): string {
-    return ChangeTeraTypeReward.getVariantMatchKey(this.teraType);
+  override get matchKey(): RewardMatchKey {
+    return `tera:${this.teraType}`;
   }
 
   get name(): string {
@@ -56,6 +39,14 @@ export class ChangeTeraTypeReward extends PokemonReward {
     return i18next.t("reward:changeTeraType.description", {
       teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
     });
+  }
+
+  get iconName(): string {
+    return `${PokemonType[this.teraType].toLowerCase()}_tera_shard`;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return TERA_LOCKED_SPECIES.some(s => pokemon.hasSpecies(s)) ? PartyUiHandler.NoEffectMessage : null;
   }
 
   /**
@@ -91,15 +82,14 @@ export class TeraTypeRewardGenerator extends RewardGenerator<PokemonType> {
     return teraTypes.length > 0 && teraTypes.every(t => t === teraTypes[0]) ? teraTypes[0] : undefined;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<string>): PokemonType[] {
+  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): PokemonType[] {
     if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
       return [];
     }
 
     const excludedType = this.getSharedPartyTeraType();
     return getEnumValues(PokemonType).filter(
-      t =>
-        t !== PokemonType.UNKNOWN && t !== excludedType && !exclusions?.has(ChangeTeraTypeReward.getVariantMatchKey(t)),
+      t => t !== PokemonType.UNKNOWN && t !== excludedType && !exclusions?.has(`tera:${t}`),
     );
   }
 

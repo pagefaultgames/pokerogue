@@ -1,15 +1,32 @@
 import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#data/data-lists";
 import { Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
-import type { TrainerItemId } from "#enums/trainer-item-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { Reward, RewardGenerator } from "#items/reward";
 import { tempStatToTrainerItem } from "#items/x-items";
+import type { RewardMatchKey } from "#types/rewards";
 
-/** A reward granting a single trainer item to the player. */
+/**
+ * Trainer items that lapse over battles; rewarding one grants a full stack (i.e. its full duration).
+ * TODO: Derive this from the trainer item definitions if they gain a "lapsing" flag
+ */
+const LAPSING_TRAINER_ITEMS: ReadonlySet<TrainerItemId> = new Set<TrainerItemId>([
+  TrainerItemId.LURE,
+  TrainerItemId.SUPER_LURE,
+  TrainerItemId.MAX_LURE,
+  TrainerItemId.X_ATTACK,
+  TrainerItemId.X_DEFENSE,
+  TrainerItemId.X_SP_ATK,
+  TrainerItemId.X_SP_DEF,
+  TrainerItemId.X_SPEED,
+  TrainerItemId.X_ACCURACY,
+  TrainerItemId.DIRE_HIT,
+]);
+
+/** A reward granting a trainer item to the player. */
 export class TrainerItemReward extends Reward<TrainerItemId> {
   constructor(itemId: TrainerItemId) {
-    // Display strings and icon are sourced from the trainer item itself (see getters below)
-    super(itemId, "", "", "se/restore");
+    super(itemId);
   }
 
   /**
@@ -19,7 +36,6 @@ export class TrainerItemReward extends Reward<TrainerItemId> {
   public get itemId(): TrainerItemId {
     return this.id;
   }
-
   override get name(): string {
     return allTrainerItems[this.id].name;
   }
@@ -32,16 +48,10 @@ export class TrainerItemReward extends Reward<TrainerItemId> {
     return allTrainerItems[this.id].iconName;
   }
 
+  /** Lapsing items are granted as a full stack (i.e. full duration); all others add a single stack. */
   apply(): boolean {
-    return globalScene.trainerItems.add(this.id);
-  }
-}
-
-/** A trainer item reward granting a full stack (i.e. full duration) of a lapsing trainer item. */
-// TODO: This probably shouldn't need to be its own class...
-export class LapsingTrainerItemReward extends TrainerItemReward {
-  override apply(): boolean {
-    return globalScene.trainerItems.add(this.id, allTrainerItems[this.id].maxStackCount);
+    const count = LAPSING_TRAINER_ITEMS.has(this.id) ? allTrainerItems[this.id].maxStackCount : 1;
+    return globalScene.trainerItems.add(this.id, count);
   }
 }
 
@@ -55,14 +65,14 @@ export class TempStatStageBoosterRewardGenerator extends RewardGenerator<TempBat
     [Stat.ACC]: "x_accuracy",
   };
 
-  override getAvailableItems(exclusions?: ReadonlySet<string>): TempBattleStat[] {
+  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): TempBattleStat[] {
     return TEMP_BATTLE_STATS.filter(stat => {
       const item = tempStatToTrainerItem[stat];
       return !exclusions?.has(Reward.getMatchKey(item)) && !globalScene.trainerItems.isMaxStack(item);
     });
   }
 
-  override generateReward(stat: TempBattleStat): LapsingTrainerItemReward {
-    return new LapsingTrainerItemReward(tempStatToTrainerItem[stat]);
+  override generateReward(stat: TempBattleStat): TrainerItemReward {
+    return new TrainerItemReward(tempStatToTrainerItem[stat]);
   }
 }

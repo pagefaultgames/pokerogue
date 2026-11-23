@@ -7,12 +7,11 @@ import { PartyUiHandler } from "#ui/party-ui-handler";
 
 export class RememberMoveReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.MEMORY_MUSHROOM, localeKey, iconImage, (pokemon: PlayerPokemon) => {
-      if (pokemon.getLearnableLevelMoves().length === 0) {
-        return PartyUiHandler.NoEffectMessage;
-      }
-      return null;
-    });
+    super(RewardId.MEMORY_MUSHROOM, { localeKey, iconName: iconImage });
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.getLearnableLevelMoves().length === 0 ? PartyUiHandler.NoEffectMessage : null;
   }
 
   /**

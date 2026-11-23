@@ -58,9 +58,6 @@ const rewardRarities: Readonly<Partial<Record<RewardId, RarityTier>>> = {
   [RewardId.BERRY]: RarityTier.COMMON,
 
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: RarityTier.COMMON,
-  [RewardId.LURE]: RarityTier.COMMON,
-  [RewardId.SUPER_LURE]: RarityTier.GREAT,
-  [RewardId.MAX_LURE]: RarityTier.ULTRA,
 
   [RewardId.FORM_CHANGE_ITEM]: RarityTier.ULTRA,
   [RewardId.RARE_FORM_CHANGE_ITEM]: RarityTier.ROGUE,

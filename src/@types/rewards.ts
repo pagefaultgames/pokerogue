@@ -1,4 +1,9 @@
+import type { EvolutionItemId } from "#enums/evolution-item";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import type { HeldItemId } from "#enums/held-item-id";
+import type { MoveId } from "#enums/move-id";
+import type { Nature } from "#enums/nature";
+import type { PokemonType } from "#enums/pokemon-type";
 import type { RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
@@ -18,6 +23,22 @@ export type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
  */
 export type RewardWeightFunc = (rerollCount: number) => number;
 
+// #region Match keys
+
+/**
+ * A deduplication key identifying a reward.
+ */
+export type RewardMatchKey =
+  | `reward:${RewardId}`
+  | `held:${HeldItemId}`
+  | `trainer:${TrainerItemId}`
+  | `tm:${MoveId}`
+  | `mint:${Nature}`
+  | `tera:${PokemonType}`
+  | `evolution:${EvolutionItemId}`
+  | `formChange:${FormChangeItemId}`;
+
+// #endregion Match keys
 /**
  * Config for generation of a single reward.
  */

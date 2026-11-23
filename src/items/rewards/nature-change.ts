@@ -5,43 +5,21 @@ import { RewardId } from "#enums/reward-id";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import type { RewardMatchKey } from "#types/rewards";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 export class PokemonNatureChangeReward extends PokemonReward {
-  protected nature: Nature;
+  protected readonly nature: Nature;
 
   constructor(nature: Nature) {
-    super(
-      RewardId.MINT,
-      "",
-      `mint_${
-        getEnumKeys(Stat)
-          .find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)
-          ?.toLowerCase() || "neutral"
-      }`,
-      (pokemon: PlayerPokemon) => {
-        if (pokemon.getNature() === this.nature) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-    );
-
+    super(RewardId.MINT);
     this.nature = nature;
   }
 
-  /**
-   * Return the deduplication match key for a mint.
-   * @param nature - The {@linkcode Nature} to build the key for
-   */
-  public static getVariantMatchKey(nature: Nature): string {
-    return `mint:${nature}`;
-  }
-
-  override get matchKey(): string {
-    return PokemonNatureChangeReward.getVariantMatchKey(this.nature);
+  override get matchKey(): RewardMatchKey {
+    return `mint:${this.nature}`;
   }
 
   get name(): string {
@@ -54,6 +32,15 @@ export class PokemonNatureChangeReward extends PokemonReward {
     return i18next.t("reward:pokemonNatureChange.description", {
       natureName: getNatureName(this.nature, true, true, true),
     });
+  }
+
+  get iconName(): string {
+    const boostedStat = getEnumKeys(Stat).find(s => getNatureStatMultiplier(this.nature, Stat[s]) > 1);
+    return `mint_${boostedStat?.toLowerCase() || "neutral"}`;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.getNature() === this.nature ? PartyUiHandler.NoEffectMessage : null;
   }
 
   /**
@@ -70,10 +57,8 @@ export class PokemonNatureChangeReward extends PokemonReward {
 }
 
 export class MintRewardGenerator extends RewardGenerator<Nature> {
-  override getAvailableItems(exclusions?: ReadonlySet<string>): Nature[] {
-    return getEnumValues(Nature).filter(
-      nature => !exclusions?.has(PokemonNatureChangeReward.getVariantMatchKey(nature)),
-    );
+  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): Nature[] {
+    return getEnumValues(Nature).filter(nature => !exclusions?.has(`mint:${nature}`));
   }
 
   override generateReward(nature: Nature): PokemonNatureChangeReward {

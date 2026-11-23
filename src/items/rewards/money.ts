@@ -19,13 +19,13 @@ export class AddMoneyReward extends Reward {
     moneyMultiplier: number,
     moneyMultiplierDescriptorKey: string,
   ) {
-    super(id, localeKey, iconImage, "se/buy");
+    super(id, { localeKey, iconName: iconImage, soundName: "se/buy" });
 
     this.moneyMultiplier = moneyMultiplier;
     this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;
   }
 
-  get description(): string {
+  override get description(): string {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     const formattedMoney = formatMoney(settings.display.moneyFormat, moneyAmount.value);

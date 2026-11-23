@@ -6,6 +6,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Reward, RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
+import type { RewardMatchKey } from "#types/rewards";
 import { HeldItemReward } from "./held-item-reward";
 
 const COMMON_SPECIES_STAT_BOOSTERS: readonly SpeciesStatBoosterItemId[] = [
@@ -36,7 +37,7 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesSt
    * Items no party member can use are omitted.
    * @param exclusions - Optional set of match keys to exclude
    */
-  private getItemWeights(exclusions?: ReadonlySet<string>): Map<SpeciesStatBoosterItemId, number> {
+  private getItemWeights(exclusions?: ReadonlySet<RewardMatchKey>): Map<SpeciesStatBoosterItemId, number> {
     const tierItems = (this.rare ? RARE_SPECIES_STAT_BOOSTERS : COMMON_SPECIES_STAT_BOOSTERS).filter(
       item => !exclusions?.has(Reward.getMatchKey(item)),
     );
@@ -73,7 +74,7 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesSt
     return itemWeights;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<string>): SpeciesStatBoosterItemId[] {
+  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): SpeciesStatBoosterItemId[] {
     return [...this.getItemWeights(exclusions).keys()];
   }
 

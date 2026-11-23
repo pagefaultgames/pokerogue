@@ -1,6 +1,5 @@
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
-import { TrainerItemId } from "#enums/trainer-item-id";
 import { VoucherType } from "#enums/voucher-type";
 import type { Reward, RewardGenerator } from "./reward";
 import { EvolutionItemRewardGenerator } from "./rewards/evolution-item";
@@ -23,7 +22,7 @@ import { SpeciesStatBoosterRewardGenerator } from "./rewards/species-stat-booste
 import { PokemonStatusHealReward } from "./rewards/status-heal";
 import { TeraTypeRewardGenerator } from "./rewards/tera-type";
 import { TmRewardGenerator } from "./rewards/tm";
-import { LapsingTrainerItemReward, TempStatStageBoosterRewardGenerator } from "./rewards/trainer-item-reward";
+import { TempStatStageBoosterRewardGenerator } from "./rewards/trainer-item-reward";
 import { AddVoucherReward } from "./rewards/voucher";
 
 /**
@@ -138,13 +137,8 @@ export const allRewards = {
   [RewardId.ATTACK_TYPE_BOOSTER]: new AttackTypeBoosterRewardGenerator(),
   [RewardId.BERRY]: new BerryRewardGenerator(),
 
-  // Trainer items
-  // TODO: These duplicate the corresponding `TrainerItemId`s
-  [RewardId.LURE]: new LapsingTrainerItemReward(TrainerItemId.LURE),
-  [RewardId.SUPER_LURE]: new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
-  [RewardId.MAX_LURE]: new LapsingTrainerItemReward(TrainerItemId.MAX_LURE),
+  // Trainer item generators
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: new TempStatStageBoosterRewardGenerator(),
-  [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT),
 } as const satisfies Readonly<Record<RewardId, Reward | RewardGenerator>>;
 
 export type AllRewardsType = typeof allRewards;

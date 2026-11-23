@@ -9,33 +9,20 @@ import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import type { RewardMatchKey } from "#types/rewards";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {
-  public moveId: MoveId;
+  public readonly moveId: MoveId;
 
   constructor(id: RewardId, moveId: MoveId) {
-    super(id, "", `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`, (pokemon: PlayerPokemon) => {
-      if (!pokemon.isTmCompatible(moveId, true)) {
-        return PartyUiHandler.NoEffectMessage;
-      }
-      return null;
-    });
-
+    super(id);
     this.moveId = moveId;
   }
 
-  /**
-   * Return the deduplication match key for a TM.
-   * @param moveId - The {@linkcode MoveId} taught by the TM
-   */
-  public static getVariantMatchKey(moveId: MoveId): string {
-    return `tm:${moveId}`;
-  }
-
-  override get matchKey(): string {
-    return TmReward.getVariantMatchKey(this.moveId);
+  override get matchKey(): RewardMatchKey {
+    return `tm:${this.moveId}`;
   }
 
   get name(): string {
@@ -49,6 +36,14 @@ export class TmReward extends PokemonReward {
     return i18next.t(settings.display.enableMoveInfo ? "reward:tmWithInfo.description" : "reward:tm.description", {
       moveName: allMoves[this.moveId].name,
     });
+  }
+
+  get iconName(): string {
+    return `tm_${PokemonType[allMoves[this.moveId].type].toLowerCase()}`;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.isTmCompatible(this.moveId, true) ? null : PartyUiHandler.NoEffectMessage;
   }
 
   /**
@@ -87,7 +82,7 @@ export class TmRewardGenerator extends RewardGenerator<MoveId> {
     }
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<string>): MoveId[] {
+  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): MoveId[] {
     const party = globalScene.getPlayerParty();
     const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
     return partyMemberCompatibleTms
@@ -95,7 +90,7 @@ export class TmRewardGenerator extends RewardGenerator<MoveId> {
       .filter(tm => tmPoolTiers[tm] === this.tier)
       .filter(tm => !allMoves[tm].isUnimplemented)
       .filter((tm, i, array) => array.indexOf(tm) === i)
-      .filter(tm => !exclusions?.has(TmReward.getVariantMatchKey(tm)));
+      .filter(tm => !exclusions?.has(`tm:${tm}`));
   }
 
   override generateReward(moveId: MoveId): TmReward {

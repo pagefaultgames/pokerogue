@@ -54,13 +54,23 @@ import {
 } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 // biome-ignore lint/correctness/noUnusedImports: used in TSDoc
 import type { SelectRewardPhase } from "#phases/select-reward-phase";
-import type { RewardPoolId } from "#types/rewards";
+import type { RewardMatchKey, RewardPoolId } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { weightedPick } from "#utils/random";
 import i18next from "i18next";
+
+// #region Base rewards
+
+/** Configuration options for a {@linkcode Reward}'s assets. */
+export interface RewardAssetConfig {
+  localeKey?: string | undefined;
+  iconName?: string | undefined;
+  soundName?: string | undefined;
+}
 
 /**
  * Abstract base class for all rewards.
@@ -68,23 +78,22 @@ import i18next from "i18next";
  */
 export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
   public readonly id: Id;
-  private readonly localeKey: string;
-  private readonly _iconName: string;
   public readonly soundName: string;
+  protected readonly localeKey?: string | undefined;
+  private readonly _iconName?: string | undefined;
 
-  constructor(id: Id, localeKey: string, iconName: string, soundName = "se/restore") {
+  constructor(id: Id, assets: RewardAssetConfig = {}) {
     this.id = id;
-    this.localeKey = localeKey;
-    this._iconName = iconName;
-    this.soundName = soundName;
+    this.localeKey = assets.localeKey;
+    this._iconName = assets.iconName;
+    this.soundName = assets.soundName ?? "se/restore";
   }
 
   /**
    * Return the deduplication match key for any pool ID.
-   * Two rewards with the same match key are never offered together during a single reward selection.
    * @param id - The {@linkcode RewardPoolId} to build the key for
    */
-  public static getMatchKey(id: RewardPoolId): string {
+  public static getMatchKey(id: RewardPoolId): RewardMatchKey {
     if (isHeldItemId(id)) {
       return `held:${id}`;
     }
@@ -98,7 +107,7 @@ export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
    * The deduplication match key of this reward. Defaults to {@linkcode Reward.getMatchKey | getMatchKey(this.id)}.
    * Generated rewards with sub-variants (e.g. TMs) should override this to include the variant.
    */
-  public get matchKey(): string {
+  public get matchKey(): RewardMatchKey {
     return Reward.getMatchKey(this.id);
   }
 
@@ -107,15 +116,15 @@ export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
   }
 
   public get name(): string {
-    return i18next.t(`${this.localeKey}.name`);
+    return this.localeKey ? i18next.t(`${this.localeKey}.name`) : "";
   }
 
   public get description(): string {
-    return i18next.t(`${this.localeKey}.description`);
+    return this.localeKey ? i18next.t(`${this.localeKey}.description`) : "";
   }
 
   public get iconName(): string {
-    return this._iconName;
+    return this._iconName ?? "";
   }
 
   /**
@@ -135,8 +144,83 @@ export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
   abstract apply(params?: unknown): void;
 }
 
+// #endregion Base rewards
+
+// #region Pokemon rewards
+
+/** Rewards that are applied to individual Pokemon. */
+export abstract class PokemonReward<Id extends RewardPoolId = RewardPoolId> extends Reward<Id> {
+  constructor(id: Id, config: RewardAssetConfig = {}) {
+    super(id, config);
+  }
+
+  /**
+   * Get the message explaining why this reward cannot be used on a Pokemon.
+   * @param pokemon - The Pokemon being considered
+   * @returns The message to display, or `null` if the Pokemon is eligible
+   */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
+  protected getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return null;
+  }
+
+  /** The filter used by the party UI to decide which Pokemon can receive this reward. */
+  public get selectFilter(): PokemonSelectFilter {
+    return (pokemon: PlayerPokemon) => this.getIneligibilityMessage(pokemon);
+  }
+
+  abstract override apply(_params: PokemonRewardParams): void;
+}
+
+/** Rewards that are applied to a single move of an individual Pokemon. */
+export abstract class PokemonMoveReward extends PokemonReward<RewardId> {
+  constructor(id: RewardId, config: RewardAssetConfig = {}) {
+    super(id, config);
+  }
+
+  /**
+   * Get the message explaining why this reward cannot be used on a move.
+   * @param move - The move being considered
+   * @returns The message to display, or `null` if the move is eligible
+   */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
+  protected getMoveIneligibilityMessage(move: PokemonMove): string | null {
+    return null;
+  }
+
+  /** Filter used by the party UI to decide which moves can receive this reward. */
+  public get moveSelectFilter(): PokemonMoveSelectFilter {
+    return (move: PokemonMove) => this.getMoveIneligibilityMessage(move);
+  }
+
+  abstract override apply(_params: PokemonMoveRewardParams): void;
+}
+
+export interface PokemonRewardParams {
+  pokemon: PlayerPokemon;
+}
+
+export interface PokemonMoveRewardParams {
+  pokemon: PlayerPokemon;
+  moveIndex: number;
+}
+
+export interface PokemonMoveRecallRewardParams {
+  pokemon: PlayerPokemon;
+  moveIndex: number;
+  cost?: number;
+}
+
+export interface PokemonFusionRewardParams {
+  pokemon: PlayerPokemon;
+  pokemon2: PlayerPokemon;
+}
+
+// #endregion Pokemon rewards
+
 /**
- * Dynamic generator for a given type of reward.
+ * A {@linkcode RewardGenerator} produces {@linkcode Reward}s for a family of related variants
+ * (TMs, berries, mints, ...), and is the *only* place variants of that family are sampled.
  *
  * Subclasses implement {@linkcode getAvailableItems} and {@linkcode generateReward},
  * and may override {@linkcode getWeight} to bias random generation.
@@ -148,13 +232,13 @@ export abstract class RewardGenerator<TVariant = unknown> {
    * Return all variants this generator can currently produce for the player's run/party.
    * @param exclusions - Optional set of match keys to exclude
    */
-  public abstract getAvailableItems(exclusions?: ReadonlySet<string>): TVariant[];
+  public abstract getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): TVariant[];
 
   /**
    * Return the count of distinct variants this generator can currently produce.
    * @param exclusions - Optional set of match keys to exclude
    */
-  public getCapacity(exclusions?: ReadonlySet<string>): number {
+  public getCapacity(exclusions?: ReadonlySet<RewardMatchKey>): number {
     return this.getAvailableItems(exclusions).length;
   }
 
@@ -183,7 +267,7 @@ export abstract class RewardGenerator<TVariant = unknown> {
    * @returns The generated reward, or `null` if no variants are available
    * @sealed
    */
-  public generateRandomReward(exclusions?: ReadonlySet<string>): Reward | null {
+  public generateRandomReward(exclusions?: ReadonlySet<RewardMatchKey>): Reward | null {
     const variants = this.getAvailableItems(exclusions);
     if (variants.length === 0) {
       return null;
@@ -196,67 +280,15 @@ export abstract class RewardGenerator<TVariant = unknown> {
   }
 }
 
-/** Rewards that are applied to individual Pokemon. */
-export abstract class PokemonReward<Id extends RewardPoolId = RewardPoolId> extends Reward<Id> {
-  // TODO: Make this an overriddable getter rather than defining functions in the constructor
-  public selectFilter: PokemonSelectFilter | undefined;
-
-  constructor(id: Id, localeKey: string, iconName: string, selectFilter?: PokemonSelectFilter, soundName?: string) {
-    super(id, localeKey, iconName, soundName);
-    this.selectFilter = selectFilter;
-  }
-
-  abstract override apply(_params: PokemonRewardParams): void;
-}
-
-/** Rewards that are applied to a single move of an individual Pokemon. */
-export abstract class PokemonMoveReward extends PokemonReward<RewardId> {
-  public moveSelectFilter: PokemonMoveSelectFilter | undefined;
-
-  constructor(
-    id: RewardId,
-    localeKey: string,
-    iconName: string,
-    selectFilter?: PokemonSelectFilter,
-    moveSelectFilter?: PokemonMoveSelectFilter,
-  ) {
-    super(id, localeKey, iconName, selectFilter);
-    this.moveSelectFilter = moveSelectFilter;
-  }
-
-  abstract override apply(_params: PokemonMoveRewardParams): void;
-}
-
-export interface PokemonRewardParams {
-  pokemon: PlayerPokemon;
-}
-
-export interface PokemonMoveRewardParams {
-  pokemon: PlayerPokemon;
-  moveIndex: number;
-}
-
-export interface PokemonMoveRecallRewardParams {
-  pokemon: PlayerPokemon;
-  moveIndex: number;
-  cost?: number;
-}
-
-export interface PokemonFusionRewardParams {
-  pokemon: PlayerPokemon;
-  pokemon2: PlayerPokemon;
-}
-
 /** A {@linkcode Reward} as presented to the player, together with its rarity and cost. */
 export class RewardOption {
-  // TODO: Rename to `reward` or similar
-  public type: Reward;
+  public readonly reward: Reward;
   public upgradeCount: number;
   public tier: RarityTier;
   public cost: number;
 
-  constructor(type: Reward, upgradeCount: number, tier: RarityTier, cost = 0) {
-    this.type = type;
+  constructor(reward: Reward, upgradeCount: number, tier: RarityTier, cost = 0) {
+    this.reward = reward;
     this.upgradeCount = upgradeCount;
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);

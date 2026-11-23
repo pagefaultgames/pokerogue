@@ -8,6 +8,7 @@ import type {
   PoolRarityTier,
   RewardConfiguration,
   RewardGenerationOptions,
+  RewardMatchKey,
   RewardPoolEntries,
   RewardPoolEntry,
   RewardPoolId,
@@ -106,7 +107,7 @@ function resolveWeight(weight: number | RewardWeightFunc, rerollCount: number): 
  * @param exclusions - Optional set of match keys to exclude
  * @returns True if available, false if excluded or exhausted
  */
-function isPoolEntryAvailable(id: RewardPoolId, exclusions?: ReadonlySet<string>): boolean {
+function isPoolEntryAvailable(id: RewardPoolId, exclusions?: ReadonlySet<RewardMatchKey>): boolean {
   if (isHeldItemId(id)) {
     return isHeldItemRewardAvailable(id, globalScene.getPlayerParty(), exclusions);
   }
@@ -117,8 +118,6 @@ function isPoolEntryAvailable(id: RewardPoolId, exclusions?: ReadonlySet<string>
   if (entry instanceof RewardGenerator) {
     return entry.getCapacity(exclusions) > 0;
   }
-  // Use the registered reward's own key, since some rewards (e.g. lures) are keyed by the item they grant
-  // rather than by the `RewardId` they are registered under
   return !exclusions?.has(entry.matchKey);
 }
 
@@ -164,6 +163,18 @@ export class RewardPool {
     this.entries = createTieredRecord(tier => [...(entries[tier] ?? [])]);
   }
 
+  /**
+   * Replace the entries of every tier. Tiers omitted from `entries` are emptied.
+   * @param entries - The new entries, keyed by tier
+   * @returns `this`
+   */
+  public setEntries(entries: RewardPoolEntries): this {
+    for (const tier of POOL_RARITY_TIERS) {
+      this.entries[tier] = [...(entries[tier] ?? [])];
+    }
+    return this;
+  }
+
   // #region Generation
 
   /**
@@ -176,7 +187,7 @@ export class RewardPool {
   public generateOptions(count: number, options: RewardGenerationOptions = {}): RewardOption[] {
     const { rerollCount = 0, lockedTiers, customSettings } = options;
     const weights = this.resolveWeights(rerollCount);
-    const exclusions = new Set<string>();
+    const exclusions = new Set<RewardMatchKey>();
     const result: RewardOption[] = [];
 
     if (!customSettings) {
@@ -200,7 +211,7 @@ export class RewardPool {
 
     for (const option of guaranteedRewardOptions) {
       result.push(option);
-      exclusions.add(option.type.matchKey);
+      exclusions.add(option.reward.matchKey);
     }
 
     for (const specs of guaranteedRewardSpecs) {
@@ -259,7 +270,7 @@ export class RewardPool {
    */
   private pickOption(
     weights: ResolvedRewardWeights,
-    exclusions: Set<string>,
+    exclusions: Set<RewardMatchKey>,
     baseTier: PoolRarityTier = randomBaseTier(),
     allowLuckUpgrades = true,
   ): RewardOption | null {
@@ -286,7 +297,7 @@ export class RewardPool {
    */
   private pickFromTier(
     weights: ResolvedRewardWeights,
-    exclusions: Set<string>,
+    exclusions: Set<RewardMatchKey>,
     tier: PoolRarityTier,
     upgradeCount: number,
   ): RewardOption | null {
@@ -314,7 +325,7 @@ export class RewardPool {
     specs: RewardConfiguration,
     tier: RarityTier,
     upgradeCount: number,
-    exclusions: Set<string>,
+    exclusions: Set<RewardMatchKey>,
   ): RewardOption | null {
     const reward = createRewardFromSpecs(specs, exclusions);
     if (!reward) {

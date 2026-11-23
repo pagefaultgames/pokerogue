@@ -159,7 +159,7 @@ export class SelectRewardPhase extends BattlePhase {
       super.end();
       return true;
     }
-    const reward = this.typeOptions[cursor].type;
+    const { reward } = this.typeOptions[cursor];
     return this.applyReward(reward, -1, rewardSelectCallback);
   }
 
@@ -173,7 +173,7 @@ export class SelectRewardPhase extends BattlePhase {
       shopOptions[
         rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT
       ];
-    const reward = shopOption.type;
+    const { reward } = shopOption;
     // Apply Black Sludge to healing item cost
     const healingItemCost = new NumberHolder(shopOption.cost);
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: healingItemCost });

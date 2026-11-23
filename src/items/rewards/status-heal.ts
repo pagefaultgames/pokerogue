@@ -7,16 +7,18 @@ import i18next from "i18next";
 
 export class PokemonStatusHealReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.FULL_HEAL, localeKey, iconImage, (pokemon: PlayerPokemon) => {
-      if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
-        return PartyUiHandler.NoEffectMessage;
-      }
-      return null;
-    });
+    super(RewardId.FULL_HEAL, { localeKey, iconName: iconImage });
   }
 
-  get description(): string {
+  override get description(): string {
     return i18next.t("reward:pokemonStatusHeal.description");
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
+      return PartyUiHandler.NoEffectMessage;
+    }
+    return null;
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {

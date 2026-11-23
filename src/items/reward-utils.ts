@@ -8,7 +8,7 @@ import type { FormChangeItemReward } from "#items/form-change";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { getRewardTier } from "#items/reward-defaults-tiers";
 import { getTrainerItemTier } from "#items/trainer-item-default-tiers";
-import type { RewardConfiguration, RewardPoolId } from "#types/rewards";
+import type { RewardConfiguration, RewardMatchKey, RewardPoolId } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { ValueHolder } from "#utils/value-holder";
@@ -79,7 +79,10 @@ export function getDefaultRewardTier(id: RewardPoolId): RarityTier {
  * @param exclusions - Match keys excluded during random generation
  * @returns The reward, or `null` if a generator has no available variants
  */
-export function createRewardFromSpecs(specs: RewardConfiguration, exclusions?: ReadonlySet<string>): Reward | null {
+export function createRewardFromSpecs(
+  specs: RewardConfiguration,
+  exclusions?: ReadonlySet<RewardMatchKey>,
+): Reward | null {
   const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;
   const args: unknown = typeof specs === "object" ? specs.args : undefined;
 

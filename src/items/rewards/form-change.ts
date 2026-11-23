@@ -11,6 +11,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import type { RewardMatchKey } from "#types/rewards";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { isItemInCategory } from "#utils/item-utils";
 
@@ -18,26 +19,15 @@ import { isItemInCategory } from "#utils/item-utils";
  * Class that represents form changing items
  */
 export class FormChangeItemReward extends PokemonReward {
-  public formChangeItemId: FormChangeItemId;
+  public readonly formChangeItemId: FormChangeItemId;
 
   constructor(id: RewardId, formChangeItemId: FormChangeItemId) {
-    super(id, "", allHeldItems[formChangeItemId].iconName, (pokemon: PlayerPokemon) =>
-      pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage,
-    );
-
+    super(id);
     this.formChangeItemId = formChangeItemId;
   }
 
-  /**
-   * Return the deduplication match key for a form change item.
-   * @param formChangeItemId - The {@linkcode FormChangeItemId} to build the key for
-   */
-  public static getVariantMatchKey(formChangeItemId: FormChangeItemId): string {
-    return `form_change:${formChangeItemId}`;
-  }
-
-  override get matchKey(): string {
-    return FormChangeItemReward.getVariantMatchKey(this.formChangeItemId);
+  override get matchKey(): RewardMatchKey {
+    return `formChange:${this.formChangeItemId}`;
   }
 
   get name(): string {
@@ -46,6 +36,14 @@ export class FormChangeItemReward extends PokemonReward {
 
   get description(): string {
     return allHeldItems[this.formChangeItemId].description;
+  }
+
+  get iconName(): string {
+    return allHeldItems[this.formChangeItemId].iconName;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage;
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -70,7 +68,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeIte
     this.isRareFormChangeItem = isRareFormChangeItem;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<string>): FormChangeItemId[] {
+  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): FormChangeItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: REFACTOR THIS FUCKERY PLEASE
@@ -132,7 +130,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeIte
           isItemInCategory(
             i,
             this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
-          ) && !exclusions?.has(FormChangeItemReward.getVariantMatchKey(i)),
+          ) && !exclusions?.has(`formChange:${i}`),
       );
 
     return formChangeItemPool;
