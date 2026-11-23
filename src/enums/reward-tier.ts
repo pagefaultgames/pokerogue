@@ -7,3 +7,6 @@ export enum RarityTier {
   MASTER,
   LUXURY,
 }
+
+/** Valid rarity tiers for reward pools. */
+export type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;

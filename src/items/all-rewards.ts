@@ -1,8 +1,7 @@
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
-import { TrainerItemId } from "#enums/trainer-item-id";
 import { VoucherType } from "#enums/voucher-type";
-import { EmptyReward, type Reward, type RewardGenerator } from "./reward";
+import type { Reward, RewardGenerator } from "./reward";
 import { EvolutionItemRewardGenerator } from "./rewards/evolution-item";
 import { FormChangeItemRewardGenerator } from "./rewards/form-change";
 import { FusePokemonReward } from "./rewards/fuse";
@@ -23,15 +22,14 @@ import { SpeciesStatBoosterRewardGenerator } from "./rewards/species-stat-booste
 import { PokemonStatusHealReward } from "./rewards/status-heal";
 import { TeraTypeRewardGenerator } from "./rewards/tera-type";
 import { TmRewardGenerator } from "./rewards/tm";
-import { LapsingTrainerItemReward, TempStatStageBoosterRewardGenerator } from "./rewards/trainer-item-reward";
+import { TempStatStageBoosterRewardGenerator } from "./rewards/trainer-item-reward";
 import { AddVoucherReward } from "./rewards/voucher";
 
-// TODO: Merge with `reward-utils.ts` and possibly remove export
+/**
+ * Registry of every standalone reward and reward generator, keyed by {@linkcode RewardId}.
+ * Generic held/trainer item rewards are created from their IDs rather than here.
+ */
 export const allRewards = {
-  [RewardId.NONE]: new EmptyReward(),
-  [RewardId.GENERIC_HELD_ITEM]: new EmptyReward(),
-  [RewardId.GENERIC_TRAINER_ITEM]: new EmptyReward(),
-
   // Pokeball rewards
   [RewardId.POKEBALL]: new AddPokeballReward(RewardId.POKEBALL, "pb", 5),
   [RewardId.GREAT_BALL]: new AddPokeballReward(RewardId.GREAT_BALL, "gb", 5),
@@ -132,26 +130,15 @@ export const allRewards = {
   [RewardId.FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(false),
   [RewardId.RARE_FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(true),
 
-  // Held items
-
+  // Held item generators
   [RewardId.SPECIES_STAT_BOOSTER]: new SpeciesStatBoosterRewardGenerator(false),
   [RewardId.RARE_SPECIES_STAT_BOOSTER]: new SpeciesStatBoosterRewardGenerator(true),
-
   [RewardId.VITAMIN]: new BaseStatBoosterRewardGenerator(),
-
   [RewardId.ATTACK_TYPE_BOOSTER]: new AttackTypeBoosterRewardGenerator(),
-
   [RewardId.BERRY]: new BerryRewardGenerator(),
 
-  // Trainer items
-
-  [RewardId.LURE]: new LapsingTrainerItemReward(RewardId.LURE, TrainerItemId.LURE),
-  [RewardId.SUPER_LURE]: new LapsingTrainerItemReward(RewardId.SUPER_LURE, TrainerItemId.SUPER_LURE),
-  [RewardId.MAX_LURE]: new LapsingTrainerItemReward(RewardId.MAX_LURE, TrainerItemId.MAX_LURE),
-
+  // Trainer item generators
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: new TempStatStageBoosterRewardGenerator(),
-
-  [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(RewardId.DIRE_HIT, TrainerItemId.DIRE_HIT),
 } as const satisfies Readonly<Record<RewardId, Reward | RewardGenerator>>;
 
 export type AllRewardsType = typeof allRewards;

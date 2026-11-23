@@ -147,7 +147,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
       setEncounterRewards({
-        guaranteedRewardSpecs: [RewardId.TM_COMMON, RewardId.TM_GREAT, RewardId.MEMORY_MUSHROOM],
+        guaranteedRewardConfigs: [RewardId.TM_COMMON, RewardId.TM_GREAT, RewardId.MEMORY_MUSHROOM],
         fillRemaining: true,
       });
 

@@ -11,7 +11,6 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
-import type { HeldItemReward } from "#items/held-item-reward";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounter-biomes";
@@ -167,8 +166,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
-      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.MACHO_BRACE);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toBe(HeldItemId.MACHO_BRACE);
     });
   });
 
@@ -210,7 +208,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.RARER_CANDY);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toBe(RewardId.RARER_CANDY);
     });
   });
 });

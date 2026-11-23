@@ -3,38 +3,40 @@ import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { SpeciesStatBoosterItemId } from "#enums/held-item-id";
 import { HeldItemId } from "#enums/held-item-id";
-import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
-import { weightedPick } from "#utils/random";
 import { HeldItemReward } from "./held-item-reward";
 
-/**
- * Consumable type generator for {@linkcode SpeciesStatBoosterReward}, which
- * encapsulates the logic for weighting the most useful held item from
- * the current list of {@linkcode items}.
- * @extends RewardGenerator
- */
-export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
-  /** Object comprised of the currently available species-based stat boosting held items */
+const COMMON_SPECIES_STAT_BOOSTERS: readonly SpeciesStatBoosterItemId[] = [
+  HeldItemId.DEEP_SEA_SCALE,
+  HeldItemId.DEEP_SEA_TOOTH,
+];
 
-  private rare: boolean;
+const RARE_SPECIES_STAT_BOOSTERS: readonly SpeciesStatBoosterItemId[] = [
+  HeldItemId.LIGHT_BALL,
+  HeldItemId.THICK_CLUB,
+  HeldItemId.METAL_POWDER,
+  HeldItemId.QUICK_POWDER,
+];
+
+/**
+ * Generator for species-specific stat boosting held items,
+ * weighting each item by the number of party members able to use it.
+ */
+export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesStatBoosterItemId> {
+  private readonly rare: boolean;
   constructor(rare: boolean) {
     super();
     this.rare = rare;
   }
-  override generateReward(pregenArgs?: SpeciesStatBoosterItemId) {
-    const id = this.rare ? RewardId.RARE_SPECIES_STAT_BOOSTER : RewardId.SPECIES_STAT_BOOSTER;
 
-    if (pregenArgs !== undefined) {
-      return new HeldItemReward(id, pregenArgs);
-    }
-
-    // Get a pool of items based on the rarity.
-    const tierItems = this.rare
-      ? [HeldItemId.LIGHT_BALL, HeldItemId.THICK_CLUB, HeldItemId.METAL_POWDER, HeldItemId.QUICK_POWDER]
-      : [HeldItemId.DEEP_SEA_SCALE, HeldItemId.DEEP_SEA_TOOTH];
+  /**
+   * Weigh each item of this generator's tier by how many party members could use it.
+   * Items no party member can use are omitted.
+   */
+  private getItemWeights(): Map<SpeciesStatBoosterItemId, number> {
+    const tierItems = this.rare ? RARE_SPECIES_STAT_BOOSTERS : COMMON_SPECIES_STAT_BOOSTERS;
 
     const itemWeights = new Map<SpeciesStatBoosterItemId, number>();
 
@@ -51,24 +53,32 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
         ).species;
 
         // If party member already has the item being weighted currently, skip to the next item
-        const hasItem = p.heldItemManager.hasItem(item);
+        if (p.heldItemManager.hasItem(item)) {
+          continue;
+        }
 
-        if (!hasItem) {
-          if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
-            // Add weight if party member has a matching species or, if applicable, a matching fusion species
-            itemWeights.set(item, (itemWeights.get(item) ?? 0) + 1);
-          } else if (checkedSpecies.includes(SpeciesId.PIKACHU) && hasFling) {
-            // Add weight to Light Ball if party member has Fling
-            itemWeights.set(item, (itemWeights.get(item) ?? 0) + 1);
-          }
+        if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
+          // Add weight if party member has a matching species or, if applicable, a matching fusion species
+          itemWeights.set(item, (itemWeights.get(item) ?? 0) + 1);
+        } else if (checkedSpecies.includes(SpeciesId.PIKACHU) && hasFling) {
+          // Add weight to Light Ball if party member has Fling
+          itemWeights.set(item, (itemWeights.get(item) ?? 0) + 1);
         }
       }
     }
 
-    if (itemWeights.size > 0) {
-      return new HeldItemReward(id, weightedPick(itemWeights));
-    }
+    return itemWeights;
+  }
 
-    return null;
+  public override getAllAvailableItems(): SpeciesStatBoosterItemId[] {
+    return [...this.getItemWeights().keys()];
+  }
+
+  protected override getWeight(item: SpeciesStatBoosterItemId): number {
+    return this.getItemWeights().get(item) ?? 1;
+  }
+
+  override generateReward(item: SpeciesStatBoosterItemId): HeldItemReward {
+    return new HeldItemReward(item);
   }
 }

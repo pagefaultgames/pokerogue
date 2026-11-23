@@ -8,11 +8,12 @@ import {
 } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
-import { RarityTier } from "#enums/reward-tier";
+import { type PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { clampPoolRarityTier, rollRarityTier } from "#items/rarity-tier-utils";
 import type {
   AnyHeldItemRoll,
   HeldItemConfiguration,
@@ -26,11 +27,7 @@ import type {
 import { randSeedInt } from "#utils/common";
 import { isCategoryId, isHeldItemPool, isItemInCategory, isItemInRequested } from "#utils/item-utils";
 import { weightedPick } from "#utils/random";
-import Phaser from "phaser";
 import type { NonEmptyTuple } from "type-fest";
-
-/** `LUXURY` is never rolled for held item pools. */
-type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
 
 /**
  * A default pool of held items, organized by tier.
@@ -38,11 +35,73 @@ type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
  */
 type HeldItemTieredPool = Readonly<Record<PoolRarityTier, HeldItemPool>>;
 
-export const wildHeldItemPool = {} as HeldItemTieredPool;
+// #region Default pools
 
-export const trainerHeldItemPool = {} as HeldItemTieredPool;
+/** Held items generated for wild Pokemon. */
+export const wildHeldItemPool: HeldItemTieredPool = {
+  [RarityTier.COMMON]: [{ entry: HeldItemCategoryId.BERRY, weight: 1 }],
+  [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 1 }],
+  [RarityTier.ULTRA]: [
+    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
+    { entry: HeldItemId.WHITE_HERB, weight: 0 },
+  ],
+  [RarityTier.ROGUE]: [{ entry: HeldItemId.LUCKY_EGG, weight: 4 }],
+  [RarityTier.MASTER]: [{ entry: HeldItemId.GOLDEN_EGG, weight: 1 }],
+};
 
-export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
+/** Held items generated for trainer Pokemon. */
+export const trainerHeldItemPool: HeldItemTieredPool = {
+  [RarityTier.COMMON]: [
+    { entry: HeldItemCategoryId.BERRY, weight: 8 },
+    { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
+  ],
+  [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 3 }],
+  [RarityTier.ULTRA]: [
+    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
+    { entry: HeldItemId.WHITE_HERB, weight: 0 },
+  ],
+  [RarityTier.ROGUE]: [
+    { entry: HeldItemId.FOCUS_BAND, weight: 2 },
+    { entry: HeldItemId.LUCKY_EGG, weight: 4 },
+    { entry: HeldItemId.QUICK_CLAW, weight: 1 },
+    { entry: HeldItemId.GRIP_CLAW, weight: 1 },
+    { entry: HeldItemId.WIDE_LENS, weight: 1 },
+  ],
+  [RarityTier.MASTER]: [
+    { entry: HeldItemId.KINGS_ROCK, weight: 1 },
+    { entry: HeldItemId.LEFTOVERS, weight: 1 },
+    { entry: HeldItemId.SHELL_BELL, weight: 1 },
+    { entry: HeldItemId.SCOPE_LENS, weight: 1 },
+  ],
+};
+
+/** Held items generated for daily run starters. */
+export const dailyStarterHeldItemPool: HeldItemTieredPool = {
+  [RarityTier.COMMON]: [
+    { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
+    { entry: HeldItemCategoryId.BERRY, weight: 3 },
+  ],
+  [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 }],
+  [RarityTier.ULTRA]: [
+    { entry: HeldItemId.REVIVER_SEED, weight: 4 },
+    { entry: HeldItemId.SOOTHE_BELL, weight: 1 },
+    { entry: HeldItemId.SOUL_DEW, weight: 1 },
+    { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
+  ],
+  [RarityTier.ROGUE]: [
+    { entry: HeldItemId.GRIP_CLAW, weight: 5 },
+    { entry: HeldItemId.BATON, weight: 2 },
+    { entry: HeldItemId.FOCUS_BAND, weight: 5 },
+    { entry: HeldItemId.QUICK_CLAW, weight: 3 },
+    { entry: HeldItemId.KINGS_ROCK, weight: 3 },
+  ],
+  [RarityTier.MASTER]: [
+    { entry: HeldItemId.LEFTOVERS, weight: 1 },
+    { entry: HeldItemId.SHELL_BELL, weight: 1 },
+  ],
+};
+
+// #endregion Default pools
 
 // #region Initialization
 
@@ -220,42 +279,7 @@ export function generateEnemyPokemonHeldItems(
  * @returns The {@linkcode HeldItemPool} for the resulting tier
  */
 function determineItemPool(pool: HeldItemTieredPool, upgradeCount: number): HeldItemPool {
-  const tier = Phaser.Math.Clamp(
-    getRandomTier() + upgradeCount,
-    RarityTier.COMMON,
-    RarityTier.MASTER,
-  ) as PoolRarityTier;
-  return pool[tier];
-}
-
-/**
- * Generate a random item rarity for a wild or trainer held item.
- *
- * Probability distribution (out of 1024):
- * - Common: 768/1024 (~75.00%)
- * - Great:  195/1024 (~19.04%)
- * - Ultra:   48/1024 (~4.69%)
- * - Rogue:   12/1024 (~1.17%)
- * - Master:   1/1024 (~0.098%)
- *
- * @returns The rarity tier
- */
-function getRandomTier(): PoolRarityTier {
-  const tierValue = randSeedInt(1024);
-
-  if (tierValue > 255) {
-    return RarityTier.COMMON;
-  }
-  if (tierValue > 60) {
-    return RarityTier.GREAT;
-  }
-  if (tierValue > 12) {
-    return RarityTier.ULTRA;
-  }
-  if (tierValue > 0) {
-    return RarityTier.ROGUE;
-  }
-  return RarityTier.MASTER;
+  return pool[clampPoolRarityTier(rollRarityTier() + upgradeCount)];
 }
 
 /**
@@ -460,27 +484,61 @@ export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {
   return weightedPick(itemMap);
 }
 
+/** Berries rolled at double weight by default. */
+const PREFERRED_BERRIES: readonly BerryItemId[] = [
+  HeldItemId.SITRUS_BERRY,
+  HeldItemId.LUM_BERRY,
+  HeldItemId.LEPPA_BERRY,
+] as const;
+
+/**
+ * Get the default generation weight of a berry.
+ * @param item - The berry to weigh
+ * @returns `2` for berries in {@linkcode PREFERRED_BERRIES} and `1` otherwise
+ */
+export function getDefaultBerryWeight(item: BerryItemId): number {
+  return PREFERRED_BERRIES.includes(item) ? 2 : 1;
+}
+
 /**
  * Generate a new berry held item.
  * @param customWeights - Custom weights to use when generating the item
  * @param target - The pokemon receiving the item (berries already at max stack have weight 0)
  * @returns The {@linkcode BerryItemId} of the chosen berry
- *
- * @remarks
- * Unlisted berries have a weight of `2` for Sitrus, Lum and Leppa berries and `1` otherwise.
  */
 export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): BerryItemId {
   const itemMap = new Map<BerryItemId, number>();
   for (const item of berryItemIds) {
-    if (target?.heldItemManager.isMaxStack(item)) {
-      itemMap.set(item, 0);
-      continue;
-    }
-    const isPreferredBerry =
-      item === HeldItemId.SITRUS_BERRY || item === HeldItemId.LUM_BERRY || item === HeldItemId.LEPPA_BERRY;
-    itemMap.set(item, customWeights[item] ?? (isPreferredBerry ? 2 : 1));
+    itemMap.set(
+      item,
+      target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? getDefaultBerryWeight(item)),
+    );
   }
   return weightedPick(itemMap);
+}
+
+/**
+ * Count the attack moves of each type across a party's movesets, ignoring {@linkcode PokemonType.UNKNOWN | UNKNOWN} and {@linkcode PokemonType.STELLAR | STELLAR}.
+ * @param party - The Pokemon whose movesets to consider
+ * @param maxCount - (Default `3`) The cap applied to each type's count
+ * @returns A map of each encountered type to its capped attack move count
+ */
+export function getPartyAttackMoveTypeCounts(party: readonly Pokemon[], maxCount = 3): Map<RegularPokemonType, number> {
+  const counts = new Map<RegularPokemonType, number>();
+  for (const pokemon of party) {
+    for (const pokemonMove of pokemon.getMoveset()) {
+      const move = pokemonMove.getMove();
+      if (!move.is("AttackMove")) {
+        continue;
+      }
+      const type = pokemon.getMoveType(move);
+      if (type === PokemonType.UNKNOWN || type === PokemonType.STELLAR) {
+        continue;
+      }
+      counts.set(type, Math.min((counts.get(type) ?? 0) + 1, maxCount));
+    }
+  }
+  return counts;
 }
 
 /**
@@ -491,8 +549,7 @@ export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {},
  * @returns The {@linkcode HeldItemId} of the chosen type booster
  *
  * @remarks
- * Each type's default weight is the number of matching attack moves in the party, capped at `3`.
- * {@linkcode PokemonType.UNKNOWN | UNKNOWN} and {@linkcode PokemonType.STELLAR | STELLAR} moves are ignored.
+ * Each type's default weight is given by {@linkcode getPartyAttackMoveTypeCounts}.
  * If the party has no eligible attack moves, the {@linkcode PokemonType.NORMAL | NORMAL} booster is returned.
  */
 export function getNewAttackTypeBoosterHeldItem(
@@ -500,29 +557,15 @@ export function getNewAttackTypeBoosterHeldItem(
   party: Pokemon[] = [],
   customWeights: HeldItemResolvedWeights = {},
 ): HeldItemId {
-  const attackMoveTypes = party
-    .values()
-    .flatMap(p =>
-      p
-        .getMoveset()
-        .filter(pm => pm.getMove().is("AttackMove"))
-        .map(pm => p.getMoveType(pm.getMove()))
-        .filter((type): type is RegularPokemonType => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-    )
-    .toArray();
+  const attackMoveTypeCounts = getPartyAttackMoveTypeCounts(party);
 
-  const attackMoveTypeWeights = new Map<RegularPokemonType, number>();
-  for (const type of attackMoveTypes) {
-    attackMoveTypeWeights.set(type, Math.min((attackMoveTypeWeights.get(type) ?? 0) + 1, 3));
-  }
-
-  if (attackMoveTypeWeights.size === 0) {
+  if (attackMoveTypeCounts.size === 0) {
     // Fallback to avoid bubbling `null` through the entire item generation chain
     return attackTypeToHeldItem[PokemonType.NORMAL];
   }
 
   const typeMap = new Map<RegularPokemonType, number>();
-  for (const [type, count] of attackMoveTypeWeights) {
+  for (const [type, count] of attackMoveTypeCounts) {
     const item = attackTypeToHeldItem[type];
     typeMap.set(type, target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? count));
   }

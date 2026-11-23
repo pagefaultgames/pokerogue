@@ -5,7 +5,10 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
+import { permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { tempStatToTrainerItem } from "#items/x-items";
 import { DepartmentStoreSaleEncounter } from "#mystery-encounters/department-store-sale-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
@@ -99,7 +102,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
-        expect(getRewardCategory(option.rewardOption.type.id)).toBe(RewardCategoryId.TM);
+        expect(getRewardCategory(option.rewardOption.reward.id)).toBe(RewardCategoryId.TM);
       }
     });
 
@@ -137,7 +140,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(rewardSelectHandler.options.length).toEqual(3);
       for (const option of rewardSelectHandler.options) {
         expect(
-          option.rewardOption.type.id === RewardId.PP_UP || option.rewardOption.type.id === RewardId.VITAMIN,
+          option.rewardOption.reward.id === RewardId.PP_UP
+            || (Object.values(permanentStatToHeldItem) as readonly number[]).includes(option.rewardOption.reward.id),
         ).toBeTruthy();
       }
     });
@@ -176,8 +180,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
         expect(
-          option.rewardOption.type.id === RewardId.DIRE_HIT
-            || option.rewardOption.type.id === RewardId.TEMP_STAT_STAGE_BOOSTER,
+          option.rewardOption.reward.id === TrainerItemId.DIRE_HIT
+            || (Object.values(tempStatToTrainerItem) as readonly number[]).includes(option.rewardOption.reward.id),
         ).toBeTruthy();
       }
     });
@@ -215,7 +219,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(4);
       for (const option of rewardSelectHandler.options) {
-        expect(getRewardCategory(option.rewardOption.type.id)).toBe(RewardCategoryId.POKEBALL);
+        expect(getRewardCategory(option.rewardOption.reward.id)).toBe(RewardCategoryId.POKEBALL);
       }
     });
 

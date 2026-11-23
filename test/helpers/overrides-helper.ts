@@ -24,7 +24,7 @@ import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { MoveHelper } from "#test/helpers/move-helper";
 import { getEnumStr, stringifyEnumArray } from "#test/utils/string-utils";
 import type { HeldItemConfiguration } from "#types/held-item-data-types";
-import type { RewardSpecs } from "#types/rewards";
+import type { RewardConfiguration } from "#types/rewards";
 import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
@@ -680,7 +680,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items - The items to be rolled
    * @returns `this`
    */
-  public itemRewards(items: RewardSpecs[]): this {
+  public itemRewards(items: RewardConfiguration[]): this {
     vi.spyOn(activeOverrides, "REWARD_OVERRIDE", "get").mockReturnValue(items);
     this.log("Item rewards set to:", items);
     return this;

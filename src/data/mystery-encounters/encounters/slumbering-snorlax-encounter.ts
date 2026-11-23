@@ -118,7 +118,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       // Pick battle
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       setEncounterRewards({
-        guaranteedRewardSpecs: [HeldItemId.LEFTOVERS],
+        guaranteedRewardConfigs: [HeldItemId.LEFTOVERS],
         fillRemaining: true,
       });
       encounter.startOfBattleEffects.push({
@@ -165,7 +165,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         // Steal the Snorlax's Leftovers
         const instance = globalScene.currentBattle.mysteryEncounter!;
         setEncounterRewards({
-          guaranteedRewardSpecs: [HeldItemId.LEFTOVERS],
+          guaranteedRewardConfigs: [HeldItemId.LEFTOVERS],
           fillRemaining: false,
         });
         // Snorlax exp to Pokemon that did the stealing

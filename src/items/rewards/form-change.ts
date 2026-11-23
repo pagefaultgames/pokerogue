@@ -10,24 +10,19 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { isItemInCategory } from "#utils/item-utils";
 
 /**
  * Class that represents form changing items
  */
 export class FormChangeItemReward extends PokemonReward {
-  public formChangeItemId: FormChangeItemId;
+  public readonly formChangeItemId: FormChangeItemId;
 
   constructor(id: RewardId, formChangeItemId: FormChangeItemId) {
-    super(id, "", allHeldItems[formChangeItemId].iconName, (pokemon: PlayerPokemon) =>
-      pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage,
-    );
-
+    super(id);
     this.formChangeItemId = formChangeItemId;
-    this.id = RewardId.FORM_CHANGE_ITEM;
   }
 
   get name(): string {
@@ -36,6 +31,18 @@ export class FormChangeItemReward extends PokemonReward {
 
   get description(): string {
     return allHeldItems[this.formChangeItemId].description;
+  }
+
+  get iconName(): string {
+    return allHeldItems[this.formChangeItemId].iconName;
+  }
+
+  public override equals(other: Reward): boolean {
+    return other instanceof FormChangeItemReward && this.formChangeItemId === other.formChangeItemId;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage;
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -52,21 +59,15 @@ export class FormChangeItemReward extends PokemonReward {
   }
 }
 
-export class FormChangeItemRewardGenerator extends RewardGenerator {
-  private isRareFormChangeItem: boolean;
+export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeItemId> {
+  private readonly isRareFormChangeItem: boolean;
 
   constructor(isRareFormChangeItem: boolean) {
     super();
     this.isRareFormChangeItem = isRareFormChangeItem;
   }
 
-  override generateReward(pregenArgs?: FormChangeItemId) {
-    if (pregenArgs !== undefined) {
-      return new FormChangeItemReward(
-        this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM,
-        pregenArgs,
-      );
-    }
+  public override getAllAvailableItems(): FormChangeItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: REFACTOR THIS FUCKERY PLEASE
@@ -129,15 +130,15 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
           this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
         ),
       );
-    // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
-    if (formChangeItemPool.length === 0) {
-      return null;
-    }
+    return formChangeItemPool;
+  }
 
-    return new FormChangeItemReward(
-      this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM,
-      randSeedItem(formChangeItemPool),
-    );
+  private get rareRewardId(): RewardId {
+    return this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM;
+  }
+
+  override generateReward(formChangeItemId: FormChangeItemId): FormChangeItemReward {
+    return new FormChangeItemReward(this.rareRewardId, formChangeItemId);
   }
 }

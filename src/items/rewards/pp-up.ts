@@ -1,5 +1,4 @@
 import type { RewardId } from "#enums/reward-id";
-import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonMoveReward, type PokemonMoveRewardParams } from "#items/reward";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -9,27 +8,20 @@ export class PokemonPpUpReward extends PokemonMoveReward {
   protected upPoints: number;
 
   constructor(id: RewardId, localeKey: string, iconImage: string, upPoints: number) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      (_pokemon: PlayerPokemon) => {
-        return null;
-      },
-      (pokemonMove: PokemonMove) => {
-        if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3 || pokemonMove.maxPpOverride) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "ppUp",
-    );
+    super(id, { localeKey, iconName: iconImage });
 
     this.upPoints = upPoints;
   }
 
-  get description(): string {
+  override get description(): string {
     return i18next.t("reward:pokemonPpUp.description", { upPoints: this.upPoints });
+  }
+
+  protected override getMoveIneligibilityMessage(pokemonMove: PokemonMove): string | null {
+    if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3 || pokemonMove.maxPpOverride) {
+      return PartyUiHandler.NoEffectMessage;
+    }
+    return null;
   }
 
   /**

@@ -1270,7 +1270,7 @@ export class HardcoreChallenge extends Challenge {
     if (!shopItem) {
       return true;
     }
-    isValid.value = getRewardCategory(shopItem.type.id) !== RewardCategoryId.REVIVE;
+    isValid.value = getRewardCategory(shopItem.reward.id) !== RewardCategoryId.REVIVE;
     return true;
   }
 

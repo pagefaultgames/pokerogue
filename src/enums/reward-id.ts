@@ -1,8 +1,18 @@
+import type { HeldItemId } from "#enums/held-item-id";
+import type { TrainerItemId } from "#enums/trainer-item-id";
+import type { RewardPoolId } from "#types/rewards";
 import type { ValueOf } from "type-fest";
 
+/**
+ * Map of all reward names to their IDs.
+ *
+ * @remarks
+ * Entries are formatted `0xXXYY`, where `XX` is the {@linkcode RewardCategoryId | category} and `YY` is the
+ * reward's offset within that category.
+ *
+ * Rewards granting a single specific held or trainer item use that item's ID directly and have no `RewardId`.
+ */
 export const RewardId = {
-  NONE: 0x0000,
-
   POKEBALL: 0x2001,
   GREAT_BALL: 0x2002,
   ULTRA_BALL: 0x2003,
@@ -52,19 +62,15 @@ export const RewardId = {
   MEMORY_MUSHROOM: 0x2b03,
   DNA_SPLICERS: 0x2b04,
 
-  GENERIC_HELD_ITEM: 0x2c00,
+  // Held item generators
   SPECIES_STAT_BOOSTER: 0x2c01,
   RARE_SPECIES_STAT_BOOSTER: 0x2c02,
   VITAMIN: 0x2c03,
   ATTACK_TYPE_BOOSTER: 0x2c04,
   BERRY: 0x2c05,
 
-  GENERIC_TRAINER_ITEM: 0x2d00,
+  // Trainer item generators
   TEMP_STAT_STAGE_BOOSTER: 0x2d01,
-  DIRE_HIT: 0x2d02,
-  LURE: 0x2d03,
-  SUPER_LURE: 0x2d04,
-  MAX_LURE: 0x2d05,
 
   FORM_CHANGE_ITEM: 0x2e01,
   RARE_FORM_CHANGE_ITEM: 0x2e02,
@@ -72,9 +78,7 @@ export const RewardId = {
 
 export type RewardId = ValueOf<typeof RewardId>;
 
-// TODO: These are incorrect and do not match up with the actual reward IDs...
 export const RewardCategoryId = {
-  NONE: 0x0000,
   POKEBALL: 0x2000,
   VOUCHER: 0x2100,
   MONEY: 0x2200,
@@ -94,8 +98,62 @@ export const RewardCategoryId = {
 
 export type RewardCategoryId = ValueOf<typeof RewardCategoryId>;
 
-const ITEM_CATEGORY_MASK = 0xff00;
+/** Bitmask extracting the category (high byte) from a reward ID. */
+const REWARD_CATEGORY_MASK = 0xff00;
 
-export function getRewardCategory(itemId: RewardId): RewardCategoryId {
-  return (itemId & ITEM_CATEGORY_MASK) as RewardCategoryId;
+const TRAINER_ITEM_ID_START = 0x1000;
+const REWARD_ID_START = 0x2000;
+
+// #region Pool ID guards
+
+/**
+ * Guard for whether a pool ID refers to a held item.
+ * @param id - The {@linkcode RewardPoolId} to check
+ */
+export function isHeldItemId(id: RewardPoolId): id is HeldItemId {
+  return id < TRAINER_ITEM_ID_START;
 }
+
+/**
+ * Guard for whether a pool ID refers to a trainer item.
+ * @param id - The {@linkcode RewardPoolId} to check
+ */
+export function isTrainerItemId(id: RewardPoolId): id is TrainerItemId {
+  return id >= TRAINER_ITEM_ID_START && id < REWARD_ID_START;
+}
+
+/**
+ * Guard for whether a pool ID refers to a standalone reward (i.e. an entry of `allRewards`).
+ * @param id - The {@linkcode RewardPoolId} to check
+ */
+export function isRewardId(id: RewardPoolId): id is RewardId {
+  return id >= REWARD_ID_START;
+}
+
+// #endregion Pool ID guards
+
+/**
+ * Get the {@linkcode RewardCategoryId} of a pool ID.
+ * @param id - The {@linkcode RewardPoolId} to classify
+ */
+export function getRewardCategory(id: RewardPoolId): RewardCategoryId {
+  if (isHeldItemId(id)) {
+    return RewardCategoryId.HELD_ITEM;
+  }
+  if (isTrainerItemId(id)) {
+    return RewardCategoryId.TRAINER_ITEM;
+  }
+  return (id & REWARD_CATEGORY_MASK) as RewardCategoryId;
+}
+
+type Assert<T extends true> = T;
+
+// biome-ignore lint/correctness/noUnusedVariables: Compile time verifier
+type EnsureNoIdCollision = [
+  // No reward ID equals a held item ID
+  Assert<RewardId & HeldItemId>,
+  // No reward ID equals a trainer item ID
+  Assert<RewardId & TrainerItemId>,
+  // No reward ID equals a reward category ID
+  Assert<RewardId & RewardCategoryId>,
+];

@@ -1,7 +1,7 @@
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 
-const rewardRarities = {
+const rewardRarities: Readonly<Partial<Record<RewardId, RarityTier>>> = {
   [RewardId.POKEBALL]: RarityTier.COMMON,
   [RewardId.GREAT_BALL]: RarityTier.GREAT,
   [RewardId.ULTRA_BALL]: RarityTier.ULTRA,
@@ -58,15 +58,11 @@ const rewardRarities = {
   [RewardId.BERRY]: RarityTier.COMMON,
 
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: RarityTier.COMMON,
-  [RewardId.LURE]: RarityTier.COMMON,
-  [RewardId.SUPER_LURE]: RarityTier.GREAT,
-  [RewardId.MAX_LURE]: RarityTier.ULTRA,
 
   [RewardId.FORM_CHANGE_ITEM]: RarityTier.ULTRA,
   [RewardId.RARE_FORM_CHANGE_ITEM]: RarityTier.ROGUE,
 };
 
 export function getRewardTier(reward: RewardId): RarityTier {
-  const tier = rewardRarities[reward];
-  return tier ?? RarityTier.LUXURY;
+  return rewardRarities[reward] ?? RarityTier.LUXURY;
 }

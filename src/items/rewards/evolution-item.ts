@@ -5,20 +5,16 @@ import { EvolutionItemId } from "#enums/evolution-item";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class EvolutionItemReward extends PokemonReward {
-  public evolutionItemId: EvolutionItemId;
+  public readonly evolutionItemId: EvolutionItemId;
 
   constructor(id: RewardId, evolutionItemId: EvolutionItemId) {
-    super(id, "", EvolutionItemId[evolutionItemId].toLowerCase(), (pokemon: PlayerPokemon) =>
-      pokemon.isEvolutionItemCompatible(this.evolutionItemId) ? null : PartyUiHandler.NoEffectMessage,
-    );
-
+    super(id);
     this.evolutionItemId = evolutionItemId;
   }
 
@@ -28,6 +24,18 @@ export class EvolutionItemReward extends PokemonReward {
 
   get description(): string {
     return i18next.t("reward:evolutionItem.description");
+  }
+
+  get iconName(): string {
+    return EvolutionItemId[this.evolutionItemId].toLowerCase();
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.isEvolutionItemCompatible(this.evolutionItemId) ? null : PartyUiHandler.NoEffectMessage;
+  }
+
+  public override equals(other: Reward): boolean {
+    return other instanceof EvolutionItemReward && this.evolutionItemId === other.evolutionItemId;
   }
 
   /**
@@ -60,18 +68,14 @@ export class EvolutionItemReward extends PokemonReward {
   }
 }
 
-export class EvolutionItemRewardGenerator extends RewardGenerator {
-  private rare: boolean;
+export class EvolutionItemRewardGenerator extends RewardGenerator<EvolutionItemId> {
+  private readonly rare: boolean;
   constructor(rare: boolean) {
     super();
     this.rare = rare;
   }
 
-  override generateReward(pregenArgs?: EvolutionItemId) {
-    if (pregenArgs !== undefined) {
-      return new EvolutionItemReward(this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM, pregenArgs);
-    }
-
+  public override getAllAvailableItems(): EvolutionItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: refactor once species code isn't a horrible burning mess
@@ -109,15 +113,13 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
     ]
       .flat()
       .flatMap(e => e.item)
-      .filter(i => !!i && i > 50 === this.rare);
+      .filter((i): i is EvolutionItemId => !!i && i > 50 === this.rare);
 
-    if (evolutionItemPool.length === 0) {
-      return null;
-    }
+    return [...new Set(evolutionItemPool)];
+  }
 
-    return new EvolutionItemReward(
-      this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM,
-      randSeedItem(evolutionItemPool),
-    );
+  override generateReward(evolutionItemId: EvolutionItemId): EvolutionItemReward {
+    const id = this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM;
+    return new EvolutionItemReward(id, evolutionItemId);
   }
 }

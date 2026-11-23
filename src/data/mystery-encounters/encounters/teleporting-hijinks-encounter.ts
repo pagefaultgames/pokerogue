@@ -176,7 +176,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
       };
 
       setEncounterRewards({
-        guaranteedRewardSpecs: [HeldItemId.MAGNET, HeldItemId.METAL_COAT],
+        guaranteedRewardConfigs: [HeldItemId.MAGNET, HeldItemId.METAL_COAT],
         fillRemaining: true,
       });
       await transitionMysteryEncounterIntroVisuals(true, true);

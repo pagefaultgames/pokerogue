@@ -14,31 +14,21 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
   protected restorePoints: number;
 
   constructor(id: RewardId, localeKey: string, iconImage: string, restorePoints: number) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      (_pokemon: PlayerPokemon) => {
-        return null;
-      },
-      (pokemonMove: PokemonMove) => {
-        if (!pokemonMove.ppUsed) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "ether",
-    );
+    super(id, { localeKey, iconName: iconImage });
 
     this.restorePoints = restorePoints;
   }
 
-  get description(): string {
+  override get description(): string {
     return this.restorePoints > -1
       ? i18next.t("reward:pokemonPpRestore.description", {
           restorePoints: this.restorePoints,
         })
       : i18next.t("reward:pokemonPpRestore.extra.fully");
+  }
+
+  protected override getMoveIneligibilityMessage(pokemonMove: PokemonMove): string | null {
+    return pokemonMove.ppUsed ? null : PartyUiHandler.NoEffectMessage;
   }
 
   /**
@@ -61,28 +51,21 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
   protected restorePoints: number;
 
   constructor(id: RewardId, localeKey: string, iconImage: string, restorePoints: number) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      (pokemon: PlayerPokemon) => {
-        if (pokemon.getMoveset().filter(m => m.ppUsed).length === 0) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "elixir",
-    );
+    super(id, { localeKey, iconName: iconImage });
 
     this.restorePoints = restorePoints;
   }
 
-  get description(): string {
+  override get description(): string {
     return this.restorePoints > -1
       ? i18next.t("reward:pokemonAllMovePpRestore.description", {
           restorePoints: this.restorePoints,
         })
       : i18next.t("reward:pokemonAllMovePpRestore.extra.fully");
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.getMoveset().some(m => m.ppUsed) ? null : PartyUiHandler.NoEffectMessage;
   }
 
   /**

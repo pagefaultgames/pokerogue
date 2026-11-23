@@ -28,7 +28,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { Variant } from "#sprites/variant";
 import type { CustomDailyRunConfig } from "#types/daily-run";
 import type { HeldItemConfiguration } from "#types/held-item-data-types";
-import type { RewardSpecs } from "#types/rewards";
+import type { RewardConfiguration } from "#types/rewards";
 import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
@@ -322,7 +322,7 @@ class DefaultOverrides {
    *
    * Note that, for all items in the array, `count` is not used.
    */
-  readonly REWARD_OVERRIDE: RewardSpecs[] = [];
+  readonly REWARD_OVERRIDE: RewardConfiguration[] = [];
 
   /** If `true`, disable all non-scripted opponent trainer encounters. */
   // TODO: Merge into `BATTLE_TYPE_OVERRIDE`

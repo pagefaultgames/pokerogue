@@ -5,12 +5,12 @@ import type { EvolutionItemId } from "#enums/evolution-item";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import type { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
-import { RewardPoolType } from "#enums/reward-pool-type";
-import type { RarityTier } from "#enums/reward-tier";
+import { type PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { FusePokemonReward } from "#items/fuse";
 import { tryTransferHeldItem } from "#items/item-utility";
+import { isPoolRarityTier } from "#items/rarity-tier-utils";
 import { RememberMoveReward } from "#items/remember-move";
 import {
   type PokemonMoveRecallRewardParams,
@@ -21,12 +21,7 @@ import {
   type Reward,
   type RewardOption,
 } from "#items/reward";
-import {
-  type CustomRewardSettings,
-  generatePlayerRewardOptions,
-  generateRewardPoolWeights,
-  getRewardPoolForType,
-} from "#items/reward-pool-utils";
+import { generatePlayerRewardOptions } from "#items/reward-pool-utils";
 import {
   applyReward,
   getPlayerShopRewardOptionsForWave,
@@ -38,6 +33,7 @@ import {
 } from "#items/reward-utils";
 import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
+import type { CustomRewardSettings } from "#types/rewards";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { PartyOption, PartyUiHandler, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
@@ -46,10 +42,24 @@ import i18next from "i18next";
 
 export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
+/**
+ * Per-option contribution to the reroll cost while rarity tiers are locked.
+ * `LUXURY` options (only reachable via guaranteed options) are priced like `MASTER`.
+ */
+const LOCKED_REROLL_TIER_COSTS = {
+  [RarityTier.COMMON]: 50,
+  [RarityTier.GREAT]: 125,
+  [RarityTier.ULTRA]: 300,
+  [RarityTier.ROGUE]: 750,
+  [RarityTier.MASTER]: 2000,
+  [RarityTier.LUXURY]: 2000,
+} as const satisfies Record<RarityTier, number>;
+
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";
   private readonly rerollCount: number;
-  private readonly rarityTiers?: RarityTier[] | undefined;
+  /** Per-slot tiers to reroll into when tiers are locked; `undefined` slots are rolled randomly. */
+  private readonly rarityTiers?: readonly (PoolRarityTier | undefined)[] | undefined;
   private readonly customRewardSettings?: CustomRewardSettings | undefined;
   private readonly isCopy: boolean;
 
@@ -57,7 +67,7 @@ export class SelectRewardPhase extends BattlePhase {
 
   constructor(
     rerollCount = 0,
-    rarityTiers?: RarityTier[],
+    rarityTiers?: readonly (PoolRarityTier | undefined)[],
     customRewardSettings?: CustomRewardSettings,
     isCopy = false,
   ) {
@@ -89,9 +99,6 @@ export class SelectRewardPhase extends BattlePhase {
       globalScene.reroll = false;
     }
 
-    if (!this.isCopy) {
-      generateRewardPoolWeights(getRewardPoolForType(this.getPoolType()), this.rerollCount);
-    }
     const rewardCount = this.getRewardCount();
 
     this.typeOptions = this.getRewardOptions(rewardCount);
@@ -152,7 +159,7 @@ export class SelectRewardPhase extends BattlePhase {
       super.end();
       return true;
     }
-    const reward = this.typeOptions[cursor].type;
+    const { reward } = this.typeOptions[cursor];
     return this.applyReward(reward, -1, rewardSelectCallback);
   }
 
@@ -166,7 +173,7 @@ export class SelectRewardPhase extends BattlePhase {
       shopOptions[
         rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT
       ];
-    const reward = shopOption.type;
+    const { reward } = shopOption;
     // Apply Black Sludge to healing item cost
     const healingItemCost = new NumberHolder(shopOption.cost);
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: healingItemCost });
@@ -208,7 +215,8 @@ export class SelectRewardPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew(
       "SelectRewardPhase",
       this.rerollCount + 1,
-      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RarityTier[],
+      // Keep slot positions aligned; non-pool tiers (i.e. LUXURY) are rerolled randomly
+      this.typeOptions.map(o => (isPoolRarityTier(o.tier) ? o.tier : undefined)),
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
@@ -400,7 +408,7 @@ export class SelectRewardPhase extends BattlePhase {
       const newItemCount =
         (this.customRewardSettings.guaranteedRarityTiers?.length ?? 0)
         + (this.customRewardSettings.guaranteedRewardOptions?.length ?? 0)
-        + (this.customRewardSettings.guaranteedRewardSpecs?.length ?? 0);
+        + (this.customRewardSettings.guaranteedRewardConfigs?.length ?? 0);
       if (this.customRewardSettings.fillRemaining) {
         const originalCount = rewardCountHolder.value;
         rewardCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
@@ -438,9 +446,8 @@ export class SelectRewardPhase extends BattlePhase {
       return baseValue;
     }
     if (lockRarities) {
-      const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of this.typeOptions) {
-        baseValue += tierValues[opt.type.tier ?? 0];
+        baseValue += LOCKED_REROLL_TIER_COSTS[opt.tier];
       }
     } else {
       baseValue = 250;
@@ -468,16 +475,12 @@ export class SelectRewardPhase extends BattlePhase {
     return modifiedRerollCost.value;
   }
 
-  getPoolType(): RewardPoolType {
-    return RewardPoolType.PLAYER;
-  }
-
   getRewardOptions(rewardCount: number): RewardOption[] {
-    return generatePlayerRewardOptions(
-      rewardCount,
-      globalScene.lockRarityTiers ? this.rarityTiers : undefined,
-      this.customRewardSettings,
-    );
+    return generatePlayerRewardOptions(rewardCount, {
+      rerollCount: this.rerollCount,
+      lockedTiers: globalScene.lockRarityTiers ? this.rarityTiers : undefined,
+      customSettings: this.customRewardSettings,
+    });
   }
 
   copy(): SelectRewardPhase {

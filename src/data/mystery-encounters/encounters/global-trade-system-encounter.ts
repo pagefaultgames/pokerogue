@@ -14,8 +14,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
-import { RewardPoolType } from "#enums/reward-pool-type";
-import { RarityTier } from "#enums/reward-tier";
+import { type PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
@@ -23,7 +22,7 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
 import type { RewardOption } from "#items/reward";
-import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { generatePlayerRewardOptions } from "#items/reward-pool-utils";
 import { isTmReward } from "#items/reward-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
@@ -401,24 +400,22 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        let tier = getHeldItemTier(heldItemId) ?? RarityTier.GREAT;
+        const baseTier = getHeldItemTier(heldItemId);
+        const tier: PoolRarityTier =
+          baseTier < RarityTier.MASTER ? ((baseTier + 1) as PoolRarityTier) : RarityTier.MASTER;
 
-        // Increment tier by 1
-        if (tier < RarityTier.MASTER) {
-          tier++;
-        }
-
-        generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER));
         let item: RewardOption | null = null;
         // TMs excluded from possible rewards
-        while (!item || isTmReward(item.type)) {
-          item = generatePlayerRewardOptions(1, [], {
-            guaranteedRarityTiers: [tier],
-            allowLuckUpgrades: false,
+        while (!item || isTmReward(item.reward)) {
+          item = generatePlayerRewardOptions(1, {
+            customSettings: {
+              guaranteedRarityTiers: [tier],
+              allowLuckUpgrades: false,
+            },
           })[0];
         }
 
-        encounter.setDialogueToken("itemName", item.type.name);
+        encounter.setDialogueToken("itemName", item.reward.name);
         setEncounterRewards({
           guaranteedRewardOptions: [item],
           fillRemaining: false,

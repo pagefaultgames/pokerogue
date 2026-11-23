@@ -8,28 +8,15 @@ import { PokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {
-  public moveId: MoveId;
+  public readonly moveId: MoveId;
 
   constructor(id: RewardId, moveId: MoveId) {
-    super(
-      id,
-      "",
-      `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.isTmCompatible(moveId, true)) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "tm",
-    );
-
+    super(id);
     this.moveId = moveId;
   }
 
@@ -44,6 +31,18 @@ export class TmReward extends PokemonReward {
     return i18next.t(settings.display.enableMoveInfo ? "reward:tmWithInfo.description" : "reward:tm.description", {
       moveName: allMoves[this.moveId].name,
     });
+  }
+
+  get iconName(): string {
+    return `tm_${PokemonType[allMoves[this.moveId].type].toLowerCase()}`;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.isTmCompatible(this.moveId, true) ? null : PartyUiHandler.NoEffectMessage;
+  }
+
+  public override equals(other: Reward): boolean {
+    return other instanceof TmReward && this.moveId === other.moveId;
   }
 
   /**
@@ -63,37 +62,36 @@ export class TmReward extends PokemonReward {
   }
 }
 
-export class TmRewardGenerator extends RewardGenerator {
-  private tier: RarityTier;
+export class TmRewardGenerator extends RewardGenerator<MoveId> {
+  private readonly tier: RarityTier;
   constructor(tier: RarityTier) {
     super();
     this.tier = tier;
   }
 
-  override generateReward(pregenArgs?: MoveId) {
-    let id: RewardId = RewardId.TM_COMMON;
-    if (this.tier === RarityTier.GREAT) {
-      id = RewardId.TM_GREAT;
-    } else if (this.tier === RarityTier.ULTRA) {
-      id = RewardId.TM_ULTRA;
+  /** The {@linkcode RewardId} corresponding to this generator's tier. */
+  private get rewardId(): RewardId {
+    switch (this.tier) {
+      case RarityTier.GREAT:
+        return RewardId.TM_GREAT;
+      case RarityTier.ULTRA:
+        return RewardId.TM_ULTRA;
+      default:
+        return RewardId.TM_COMMON;
     }
+  }
 
-    if (pregenArgs !== undefined) {
-      return new TmReward(id, pregenArgs);
-    }
-
+  public override getAllAvailableItems(): MoveId[] {
     const party = globalScene.getPlayerParty();
     const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
-    const tierUniqueCompatibleTms = partyMemberCompatibleTms
+    return partyMemberCompatibleTms
       .flat()
       .filter(tm => tmPoolTiers[tm] === this.tier)
       .filter(tm => !allMoves[tm].isUnimplemented)
       .filter((tm, i, array) => array.indexOf(tm) === i);
-    if (tierUniqueCompatibleTms.length === 0) {
-      return null;
-    }
+  }
 
-    const randTmIndex = randSeedItem(tierUniqueCompatibleTms);
-    return new TmReward(id, randTmIndex);
+  override generateReward(moveId: MoveId): TmReward {
+    return new TmReward(this.rewardId, moveId);
   }
 }

@@ -15,7 +15,7 @@ export class RewardPhase extends BattlePhase {
   constructor(rewardId: SilentReward) {
     super();
 
-    this.reward = generateRewardOptionFromId(rewardId)?.type;
+    this.reward = generateRewardOptionFromId(rewardId)!.reward;
   }
 
   start() {

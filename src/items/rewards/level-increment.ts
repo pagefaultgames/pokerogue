@@ -4,7 +4,7 @@ import { getLevelTotalExp } from "#data/exp";
 import { RewardId } from "#enums/reward-id";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { Pokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, Reward } from "#items/reward";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
@@ -34,10 +34,10 @@ function incrementLevelWithCandy(pokemon: Pokemon): boolean {
 
 export class PokemonLevelIncrementReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.RARE_CANDY, localeKey, iconImage, (_pokemon: PlayerPokemon) => null);
+    super(RewardId.RARE_CANDY, { localeKey, iconName: iconImage });
   }
 
-  get description(): string {
+  override get description(): string {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
@@ -57,10 +57,10 @@ export class PokemonLevelIncrementReward extends PokemonReward {
 
 export class AllPokemonLevelIncrementReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.RARER_CANDY, localeKey, iconImage);
+    super(RewardId.RARER_CANDY, { localeKey, iconName: iconImage });
   }
 
-  get description(): string {
+  override get description(): string {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;

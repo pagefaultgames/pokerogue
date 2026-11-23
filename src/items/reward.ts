@@ -42,60 +42,77 @@
  * and RewardOption, which is displayed during the select reward phase at the end of each encounter.
  *
  * @packageDocumentation
-*/
+ */
+// TODO update package doc
 
-import type { RewardId } from "#enums/reward-id";
+import { getRewardCategory, type RewardCategoryId, type RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 // biome-ignore lint/correctness/noUnusedImports: used in TSDoc
 import type { SelectRewardPhase } from "#phases/select-reward-phase";
+import type { RewardPoolId } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { weightedPick } from "#utils/random";
 import i18next from "i18next";
 
-export abstract class Reward {
-  public id: RewardId;
-  private readonly localeKey: string;
-  private readonly _iconName: string;
-  public group: string; // TODO: Make a union type of all groups
-  public readonly soundName: string;
-  public tier: RarityTier;
+// #region Base rewards
 
-  // TODO: These bangs are emphatically NOT correct
-  constructor(
-    id: RewardId,
-    localeKey: string | null,
-    iconName: string | null,
-    group?: string,
-    soundName = "se/restore",
-  ) {
+/** Configuration options for a {@linkcode Reward}'s assets. */
+export interface RewardAssetConfig {
+  localeKey?: string | undefined;
+  iconName?: string | undefined;
+  soundName?: string | undefined;
+}
+
+/**
+ * Abstract base class for all rewards.
+ * @typeParam Id - The {@linkcode RewardPoolId} identifying this reward.
+ */
+export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
+  public readonly id: Id;
+  public readonly soundName: string;
+  protected readonly localeKey?: string | undefined;
+  private readonly _iconName?: string | undefined;
+
+  constructor(id: Id, assets: RewardAssetConfig = {}) {
     this.id = id;
-    this.localeKey = localeKey!;
-    this._iconName = iconName!;
-    this.group = group!;
-    this.soundName = soundName;
+    this.localeKey = assets.localeKey;
+    this._iconName = assets.iconName;
+    this.soundName = assets.soundName ?? "se/restore";
+  }
+
+  public get category(): RewardCategoryId {
+    return getRewardCategory(this.id);
   }
 
   public get name(): string {
-    return i18next.t(`${this.localeKey}.name`);
+    return this.localeKey ? i18next.t(`${this.localeKey}.name`) : "";
   }
 
   public get description(): string {
-    return i18next.t(`${this.localeKey}.description`);
+    return this.localeKey ? i18next.t(`${this.localeKey}.description`) : "";
   }
 
   public get iconName(): string {
-    return this._iconName;
+    return this._iconName ?? "";
   }
 
-  // TODO: Should this be abstract?
+  /**
+   * Check whether another reward is an exact match with this one.
+   * @param other - The other reward to compare against
+   */
+  public equals(other: Reward): boolean {
+    return this.id === other.id;
+  }
+
   /**
    * Check whether this reward should be applied.
    * @param params - The parameters used by this reward
    * @returns Whether the reward should be allowed to apply its effects.
    */
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract hook method
-  shouldApply(params: Exact<Parameters<this["apply"]>[0]>): boolean {
+  shouldApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
@@ -107,60 +124,56 @@ export abstract class Reward {
   abstract apply(params?: unknown): void;
 }
 
-/**
- * A {@linkcode RewardGenerator} represents a dynamic generator for a given type of reward.
- * These can be customized by lieu of {@linkcode RewardGenerator.generateReward | RewardGenerator} to alter the generation result.
- */
-// TODO: Make generic over the type of reward generated
-export abstract class RewardGenerator {
-  /**
-   * Dynamically generate a new reward.
-   * @param pregenArgs - An optional argument taken by super classes to customize the reward generated.
-   * @returns The generated reward, or `null` if none are able to be produced
-   */
-  // TODO: Remove null from signature in favor of adding a condition or similar (reduces bangs needed)
-  public abstract generateReward(pregenArgs?: unknown): Reward | null;
-}
+// #endregion Base rewards
+
+// #region Pokemon rewards
 
 /** Rewards that are applied to individual Pokemon. */
-export abstract class PokemonReward extends Reward {
-  // TODO: Make this an overriddable getter rather than defining functions in the constructor
-  public selectFilter: PokemonSelectFilter | undefined;
+export abstract class PokemonReward<Id extends RewardPoolId = RewardPoolId> extends Reward<Id> {
+  constructor(id: Id, config: RewardAssetConfig = {}) {
+    super(id, config);
+  }
 
-  constructor(
-    id: RewardId,
-    localeKey: string,
-    iconName: string,
-    selectFilter?: PokemonSelectFilter,
-    group?: string,
-    soundName?: string,
-  ) {
-    super(id, localeKey, iconName, group, soundName);
-    this.selectFilter = selectFilter;
+  /**
+   * Get the message explaining why this reward cannot be used on a Pokemon.
+   * @param pokemon - The Pokemon being considered
+   * @returns The message to display, or `null` if the Pokemon is eligible
+   */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
+  protected getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return null;
+  }
+
+  /** The filter used by the party UI to decide which Pokemon can receive this reward. */
+  public get selectFilter(): PokemonSelectFilter {
+    return (pokemon: PlayerPokemon) => this.getIneligibilityMessage(pokemon);
   }
 
   abstract override apply(_params: PokemonRewardParams): void;
 }
 
-export abstract class PokemonMoveReward extends PokemonReward {
-  // TODO: This is unsafe and breaks LSP
-  public moveSelectFilter: PokemonMoveSelectFilter | undefined;
-
-  constructor(
-    id: RewardId,
-    localeKey: string,
-    iconName: string,
-    selectFilter?: PokemonSelectFilter,
-    moveSelectFilter?: PokemonMoveSelectFilter,
-    group?: string,
-  ) {
-    super(id, localeKey, iconName, selectFilter, group);
-    this.moveSelectFilter = moveSelectFilter;
+/** Rewards that are applied to a single move of an individual Pokemon. */
+export abstract class PokemonMoveReward extends PokemonReward<RewardId> {
+  constructor(id: RewardId, config: RewardAssetConfig = {}) {
+    super(id, config);
   }
 
-  apply(_params: PokemonMoveRewardParams): boolean {
-    return false;
+  /**
+   * Get the message explaining why this reward cannot be used on a move.
+   * @param move - The move being considered
+   * @returns The message to display, or `null` if the move is eligible
+   */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
+  protected getMoveIneligibilityMessage(move: PokemonMove): string | null {
+    return null;
   }
+
+  /** Filter used by the party UI to decide which moves can receive this reward. */
+  public get moveSelectFilter(): PokemonMoveSelectFilter {
+    return (move: PokemonMove) => this.getMoveIneligibilityMessage(move);
+  }
+
+  abstract override apply(_params: PokemonMoveRewardParams): void;
 }
 
 export interface PokemonRewardParams {
@@ -183,25 +196,95 @@ export interface PokemonFusionRewardParams {
   pokemon2: PlayerPokemon;
 }
 
+// #endregion Pokemon rewards
+
+/**
+ * A {@linkcode RewardGenerator} produces {@linkcode Reward}s for a family of related entries
+ * (TMs, berries, mints, ...), and is the *only* place entries of that family are sampled.
+ *
+ * Subclasses implement {@linkcode getAllAvailableItems} and {@linkcode generateReward},
+ * and may override {@linkcode getWeight} to bias random generation.
+ *
+ * @typeParam TEntry - The type identifying a single entry of this generator.
+ */
+export abstract class RewardGenerator<TEntry = unknown> {
+  /**
+   * Return all entries this generator can currently produce for the player's run/party.
+   */
+  public abstract getAllAvailableItems(): TEntry[];
+
+  /**
+   * Return all entries available to produce, excluding those matching any already selected reward.
+   * @param selected - Already selected rewards to exclude
+   */
+  public getAvailableItems(selected: readonly Reward[] = []): TEntry[] {
+    const items = this.getAllAvailableItems();
+    if (selected.length === 0) {
+      return items;
+    }
+    return items.filter(entry => {
+      const candidate = this.generateReward(entry);
+      return !selected.some(reward => reward.equals(candidate));
+    });
+  }
+
+  /**
+   * Return the count of distinct entries this generator can currently produce.
+   * @param selected - Already selected rewards to exclude
+   */
+  public getCapacity(selected: readonly Reward[] = []): number {
+    return this.getAvailableItems(selected).length;
+  }
+
+  /**
+   * Return the relative weight of an entry during random generation.
+   * Only ever called with entries in {@linkcode getAvailableItems}, and must return a positive number.
+   * @param entry - The entry to weigh
+   * @param entries - All entries currently available (for weights that depend on the pool's composition)
+   * @returns The entry's weight, defaults to `1` (uniform) if not overridden
+   */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
+  protected getWeight(entry: TEntry, entries: readonly TEntry[]): number {
+    return 1;
+  }
+
+  /**
+   * Create the reward for a specific entry.
+   * Does not check availability, use {@linkcode generateRandomReward} for that.
+   * @param entry - The entry to produce
+   */
+  public abstract generateReward(entry: TEntry): Reward;
+
+  /**
+   * Sample a random entry (respecting availability and {@linkcode getWeight}) and create its reward.
+   * @param selected - Already selected rewards to exclude
+   * @returns The generated reward, or `null` if no entries are available
+   * @sealed
+   */
+  public generateRandomReward(selected: readonly Reward[] = []): Reward | null {
+    const entries = this.getAvailableItems(selected);
+    if (entries.length === 0) {
+      return null;
+    }
+    const weights = new Map<TEntry, number>();
+    for (const entry of entries) {
+      weights.set(entry, this.getWeight(entry, entries));
+    }
+    return this.generateReward(weightedPick(weights));
+  }
+}
+
+/** A {@linkcode Reward} as presented to the player, together with its rarity and cost. */
 export class RewardOption {
-  // TODO: Rename to `reward` or similar
-  public type: Reward;
+  public readonly reward: Reward;
   public upgradeCount: number;
   public tier: RarityTier;
   public cost: number;
 
-  constructor(type: Reward, upgradeCount: number, tier: RarityTier, cost = 0) {
-    this.type = type;
+  constructor(reward: Reward, upgradeCount: number, tier: RarityTier, cost = 0) {
+    this.reward = reward;
     this.upgradeCount = upgradeCount;
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
-}
-
-export class EmptyReward extends Reward {
-  constructor() {
-    super(0x0000, "", "");
-  }
-
-  override apply(): void {}
 }

@@ -232,7 +232,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         await doNewTeamPostProcess(transformations);
         globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
         setEncounterRewards({
-          guaranteedRewardSpecs: [
+          guaranteedRewardConfigs: [
             RewardId.MEMORY_MUSHROOM,
             RewardId.ROGUE_BALL,
             RewardId.MINT,

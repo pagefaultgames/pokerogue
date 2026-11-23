@@ -1,49 +1,82 @@
 import type { HeldItemId } from "#enums/held-item-id";
 import type { RewardId } from "#enums/reward-id";
-import type { RarityTier } from "#enums/reward-tier";
+import type { PoolRarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { AllRewardsType } from "#items/all-rewards";
-import type { RewardGenerator } from "#items/reward";
+import type { Reward, RewardOption } from "#items/reward";
 
-export type WeightedRewardWeightFunc = (rerollCount?: number) => number;
-
+/**
+ * Union of all (disjoint) types that can be put in a reward pool.
+ */
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
 
-type AllRewardGenerators = {
-  [k in keyof AllRewardsType as AllRewardsType[k] extends RewardGenerator ? k : never]: AllRewardsType[k];
-};
+/**
+ * @param rerollCount - The number of rerolls performed during the current reward selection
+ */
+export type RewardWeightFunc = (rerollCount: number) => number;
 
-type RewardGeneratorArgMap = {
-  [k in keyof AllRewardGenerators]: NonNullable<Parameters<AllRewardGenerators[k]["generateReward"]>[0]>;
-};
+/**
+ * Config for generation of a single reward.
+ */
+export type RewardConfiguration = RewardPoolId | Reward;
 
-/** Union type containing all {@linkcode RewardId}s corresponding to valid {@linkcode RewardGenerator}s. */
-type RewardGeneratorId = keyof AllRewardGenerators;
+// #region Pools
 
-type RewardGeneratorSpecs<T extends RewardGeneratorId = RewardGeneratorId> = {
-  id: T;
-  args: RewardGeneratorArgMap[T];
-};
+/** A single weighted entry of a reward pool tier. */
+export interface RewardPoolEntry {
+  readonly id: RewardPoolId;
+  readonly weight: number | RewardWeightFunc;
+}
 
-/** Union type used to specify fixed rewards used in generation. */
-// TODO: Rename from "specs" since this is only sometimes an object
-export type RewardSpecs<T extends RewardPoolId = RewardPoolId> = T extends RewardGeneratorId
-  ? T | RewardGeneratorSpecs<T>
-  : T;
+/** Entries for a reward pool, keyed by tier. Omitted tiers are treated as empty. */
+export type RewardPoolEntries = Partial<Record<PoolRarityTier, readonly RewardPoolEntry[]>>;
 
-export type RewardPoolEntry = {
-  id: RewardPoolId;
-  weight: number | WeightedRewardWeightFunc;
-  maxWeight?: number;
-};
+/** Settings used to fix part (or all) of a reward selection ahead of time, e.g. by mystery encounters. */
+export interface CustomRewardSettings {
+  /** Tiers to roll one option from each, in order. */
+  guaranteedRarityTiers?: PoolRarityTier[];
+  /** Pre-built options to include directly. */
+  guaranteedRewardOptions?: RewardOption[];
+  /** Rewards to generate directly by configuration. */
+  guaranteedRewardConfigs?: RewardConfiguration[];
+  /**
+   * If set to `true`, fill the remainder of shop items that were not overridden by the 3 options above, up to the `count` param value.
+   * @example
+   * ```ts
+   * count = 4;
+   * customRewardSettings = { guaranteedRarityTiers: [RarityTier.GREAT], fillRemaining: true };
+   * ```
+   * The first item in the shop will be `GREAT` tier, and the remaining `3` items will be generated normally.
+   *
+   * If `fillRemaining: false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of the value of `count`).
+   * @defaultValue `false`
+   */
+  fillRemaining?: boolean;
+  /** If specified, adjusts the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all. */
+  rerollMultiplier?: number;
+  /**
+   * If `false`, prevent set item tiers from upgrading via luck.
+   * @defaultValue `true`
+   */
+  allowLuckUpgrades?: boolean;
+}
 
-export type RewardPool = {
-  [tier in RarityTier]: RewardPoolEntry[];
-};
+/** Options controlling a single call to `RewardPool.generateOptions`. */
+export interface RewardGenerationOptions {
+  /**
+   * The number of rerolls performed during the current reward selection (to pass to weight functions).
+   * @defaultValue `0`
+   */
+  rerollCount?: number;
+  /**
+   * Per-slot tiers to roll from (used for Lock Capsule), `undefined` slots are rolled randomly.
+   * Ignored if `customSettings` is provided.
+   */
+  lockedTiers?: readonly (PoolRarityTier | undefined)[] | undefined;
+  /** @see {@linkcode CustomRewardSettings}. */
+  customSettings?: CustomRewardSettings | undefined;
+}
 
-export type RewardPoolWeights = {
-  [tier in RarityTier]: number[];
-};
+// #endregion Pools
 
 export type SilentReward =
   | TrainerItemId

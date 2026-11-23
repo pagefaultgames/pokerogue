@@ -4,34 +4,23 @@ import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
+/** Species whose Tera type cannot be changed by Tera Shards. */
+const TERA_LOCKED_SPECIES: readonly SpeciesId[] = [SpeciesId.TERAPAGOS, SpeciesId.OGERPON, SpeciesId.SHEDINJA];
+
+/** Stellar shards are generated with a `1 / STELLAR_SHARD_ODDS` chance. */
+const STELLAR_SHARD_ODDS = 64;
+
 export class ChangeTeraTypeReward extends PokemonReward {
-  private teraType: PokemonType;
+  public readonly teraType: PokemonType;
 
   constructor(teraType: PokemonType) {
-    super(
-      RewardId.TERA_SHARD,
-      "",
-      `${PokemonType[teraType].toLowerCase()}_tera_shard`,
-      (pokemon: PlayerPokemon) => {
-        if (
-          [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
-            s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
-          ).length > 0
-        ) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "tera_shard",
-    );
-
+    super(RewardId.TERA_SHARD);
     this.teraType = teraType;
   }
 
@@ -47,16 +36,25 @@ export class ChangeTeraTypeReward extends PokemonReward {
     });
   }
 
+  get iconName(): string {
+    return `${PokemonType[this.teraType].toLowerCase()}_tera_shard`;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return TERA_LOCKED_SPECIES.some(s => pokemon.hasSpecies(s)) ? PartyUiHandler.NoEffectMessage : null;
+  }
+
   /**
    * Checks if {@linkcode TerrastalizeConsumable} should be applied
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if the {@linkcode TerrastalizeConsumable} should be applied
    */
   shouldApply({ pokemon }: PokemonRewardParams): boolean {
-    return (
-      pokemon.teraType !== this.teraType
-      && ![SpeciesId.SHEDINJA, SpeciesId.OGERPON, SpeciesId.TERAPAGOS].some(s => pokemon.hasSpecies(s))
-    );
+    return pokemon.teraType !== this.teraType && !TERA_LOCKED_SPECIES.some(s => pokemon.hasSpecies(s));
+  }
+
+  public override equals(other: Reward): boolean {
+    return other instanceof ChangeTeraTypeReward && this.teraType === other.teraType;
   }
 
   /**
@@ -70,35 +68,40 @@ export class ChangeTeraTypeReward extends PokemonReward {
   }
 }
 
-export class TeraTypeRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: PokemonType) {
-    if (pregenArgs !== undefined) {
-      return new ChangeTeraTypeReward(pregenArgs[0]);
-    }
-    if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
-      return null;
-    }
-
-    const shardType = this.getTeraType();
-    return new ChangeTeraTypeReward(shardType);
+export class TeraTypeRewardGenerator extends RewardGenerator<PokemonType> {
+  /**
+   * Get the Tera type shared by every eligible party member, if any.
+   * Offering that type would be useless, so it is excluded from generation.
+   */
+  private getSharedPartyTeraType(): PokemonType | undefined {
+    const teraTypes = globalScene
+      .getPlayerParty()
+      .filter(p => !TERA_LOCKED_SPECIES.some(s => p.hasSpecies(s)))
+      .map(p => p.teraType);
+    return teraTypes.length > 0 && teraTypes.every(t => t === teraTypes[0]) ? teraTypes[0] : undefined;
   }
 
-  private getTeraType(): PokemonType {
-    // If all party members have a given Tera Type, omit it from the pool
-    const excludedType = globalScene.getPlayerParty().reduce((prevType, p) => {
-      if (
-        // Ignore Pokemon with fixed Tera Types
-        p.hasSpecies(SpeciesId.TERAPAGOS)
-        || p.hasSpecies(SpeciesId.OGERPON)
-        || p.hasSpecies(SpeciesId.SHEDINJA)
-      ) {
-        return prevType;
-      }
-      return prevType === p.teraType ? prevType : PokemonType.UNKNOWN;
-    }, PokemonType.UNKNOWN);
+  public override getAllAvailableItems(): PokemonType[] {
+    if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
+      return [];
+    }
 
-    const validTypes = getEnumValues(PokemonType).filter(t => t !== excludedType);
-    // 1/64 chance for tera stellar
-    return randSeedInt(64) ? randSeedItem(validTypes) : PokemonType.STELLAR;
+    const excludedType = this.getSharedPartyTeraType();
+    return getEnumValues(PokemonType).filter(t => t !== PokemonType.UNKNOWN && t !== excludedType);
+  }
+
+  /**
+   * Stellar shards are rolled `1 / STELLAR_SHARD_ODDS` of the time; all other types are uniform.
+   * Weighting Stellar by the number of other entries keeps its probability exact regardless of exclusions.
+   */
+  protected override getWeight(type: PokemonType, entries: readonly PokemonType[]): number {
+    if (type === PokemonType.STELLAR) {
+      return Math.max(entries.length - 1, 1);
+    }
+    return STELLAR_SHARD_ODDS - 1;
+  }
+
+  override generateReward(teraType: PokemonType): ChangeTeraTypeReward {
+    return new ChangeTeraTypeReward(teraType);
   }
 }

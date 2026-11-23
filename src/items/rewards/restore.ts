@@ -7,7 +7,7 @@ import { RewardId } from "#enums/reward-id";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, Reward } from "#items/reward";
-import { PartyUiHandler, type PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
 import { NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
@@ -63,33 +63,15 @@ export class PokemonHpRestoreReward extends PokemonReward {
     restorePoints: number,
     restorePercent: number,
     healStatus = false,
-    selectFilter?: PokemonSelectFilter,
-    group?: string,
   ) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      selectFilter
-        || ((pokemon: PlayerPokemon) => {
-          if (
-            !pokemon.hp
-            || (pokemon.isFullHp()
-              && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
-          ) {
-            return PartyUiHandler.NoEffectMessage;
-          }
-          return null;
-        }),
-      group || "potion",
-    );
+    super(id, { localeKey, iconName: iconImage });
 
     this.restorePoints = restorePoints;
     this.restorePercent = restorePercent;
     this.healStatus = healStatus;
   }
 
-  get description(): string {
+  override get description(): string {
     return this.restorePoints
       ? i18next.t("reward:pokemonHpRestore.description", {
           restorePoints: this.restorePoints,
@@ -98,6 +80,16 @@ export class PokemonHpRestoreReward extends PokemonReward {
       : this.healStatus
         ? i18next.t("reward:pokemonHpRestore.extra.fullyWithStatus")
         : i18next.t("reward:pokemonHpRestore.extra.fully");
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    if (
+      !pokemon.hp
+      || (pokemon.isFullHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
+    ) {
+      return PartyUiHandler.NoEffectMessage;
+    }
+    return null;
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -110,44 +102,27 @@ export class PokemonHpRestoreReward extends PokemonReward {
 
 export class PokemonReviveReward extends PokemonHpRestoreReward {
   constructor(id: RewardId, localeKey: string, iconImage: string, restorePercent: number) {
-    super(
-      id,
-      localeKey,
-      iconImage,
-      0,
-      restorePercent,
-      false,
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.isFainted()) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "revive",
-    );
-
-    this.selectFilter = (pokemon: PlayerPokemon) => {
-      if (pokemon.hp) {
-        return PartyUiHandler.NoEffectMessage;
-      }
-      return null;
-    };
+    super(id, localeKey, iconImage, 0, restorePercent);
   }
 
-  get description(): string {
+  override get description(): string {
     return i18next.t("reward:pokemonRevive.description", {
       restorePercent: this.restorePercent,
     });
   }
 
-  apply({ pokemon }: PokemonRewardParams): boolean {
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.hp ? PartyUiHandler.NoEffectMessage : null;
+  }
+
+  override apply({ pokemon }: PokemonRewardParams): boolean {
     return restorePokemonHp(pokemon, this.restorePercent, { fainted: true });
   }
 }
 
 export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(RewardId.SACRED_ASH, localeKey, iconImage, "reward:allPokemonFullRevive", "reward");
+    super(RewardId.SACRED_ASH, { localeKey, iconName: iconImage });
   }
 
   apply(): boolean {

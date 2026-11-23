@@ -4,33 +4,16 @@ import { Nature } from "#enums/nature";
 import { RewardId } from "#enums/reward-id";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 export class PokemonNatureChangeReward extends PokemonReward {
-  protected nature: Nature;
+  public readonly nature: Nature;
 
   constructor(nature: Nature) {
-    super(
-      RewardId.MINT,
-      "",
-      `mint_${
-        getEnumKeys(Stat)
-          .find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)
-          ?.toLowerCase() || "neutral"
-      }`,
-      (pokemon: PlayerPokemon) => {
-        if (pokemon.getNature() === this.nature) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-      "mint",
-    );
-
+    super(RewardId.MINT);
     this.nature = nature;
   }
 
@@ -46,6 +29,19 @@ export class PokemonNatureChangeReward extends PokemonReward {
     });
   }
 
+  get iconName(): string {
+    const boostedStat = getEnumKeys(Stat).find(s => getNatureStatMultiplier(this.nature, Stat[s]) > 1);
+    return `mint_${boostedStat?.toLowerCase() || "neutral"}`;
+  }
+
+  protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
+    return pokemon.getNature() === this.nature ? PartyUiHandler.NoEffectMessage : null;
+  }
+
+  public override equals(other: Reward): boolean {
+    return other instanceof PokemonNatureChangeReward && this.nature === other.nature;
+  }
+
   /**
    * Applies {@linkcode PokemonNatureChangeConsumable}
    * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
@@ -59,11 +55,12 @@ export class PokemonNatureChangeReward extends PokemonReward {
   }
 }
 
-export class MintRewardGenerator extends RewardGenerator {
-  override generateReward(pregenArgs?: Nature) {
-    if (pregenArgs !== undefined) {
-      return new PokemonNatureChangeReward(pregenArgs);
-    }
-    return new PokemonNatureChangeReward(randSeedItem(getEnumValues(Nature)));
+export class MintRewardGenerator extends RewardGenerator<Nature> {
+  public override getAllAvailableItems(): Nature[] {
+    return getEnumValues(Nature);
+  }
+
+  override generateReward(nature: Nature): PokemonNatureChangeReward {
+    return new PokemonNatureChangeReward(nature);
   }
 }
