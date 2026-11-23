@@ -15,7 +15,6 @@ import type { Reward, RewardOption } from "#items/reward";
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
 
 /**
- * A dynamic weight for a pool entry.
  * @param rerollCount - The number of rerolls performed during the current reward selection
  */
 export type RewardWeightFunc = (rerollCount: number) => number;
@@ -59,7 +58,7 @@ export interface CustomRewardSettings {
   /** Pre-built options to include directly. */
   guaranteedRewardOptions?: RewardOption[];
   /** Rewards to generate directly by configuration. */
-  guaranteedRewardSpecs?: RewardConfiguration[];
+  guaranteedRewardConfigs?: RewardConfiguration[];
   /**
    * If set to `true`, fill the remainder of shop items that were not overridden by the 3 options above, up to the `count` param value.
    * @example

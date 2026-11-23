@@ -4,7 +4,7 @@ import type { PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { allRewards } from "#items/all-rewards";
 import { createTieredRecord, isPoolRarityTier, POOL_RARITY_TIERS, rollRarityTier } from "#items/rarity-tier-utils";
 import { Reward, RewardGenerator, RewardOption } from "#items/reward";
-import { createRewardFromSpecs, getDefaultRewardTier } from "#items/reward-utils";
+import { createRewardFromSpecs, getDefaultRewardTier, getRewardConfigId } from "#items/reward-utils";
 import type {
   RewardConfiguration,
   RewardGenerationOptions,
@@ -144,7 +144,7 @@ export class RewardPool {
 
     const {
       guaranteedRewardOptions = [],
-      guaranteedRewardSpecs = [],
+      guaranteedRewardConfigs = [],
       guaranteedRarityTiers = [],
       fillRemaining = false,
       allowLuckUpgrades = true,
@@ -155,9 +155,9 @@ export class RewardPool {
       exclusions.add(option.reward.matchKey);
     }
 
-    for (const specs of guaranteedRewardSpecs) {
-      const id = typeof specs === "object" ? specs.id : specs;
-      const option = this.createOption(specs, getDefaultRewardTier(id), 0, exclusions);
+    for (const config of guaranteedRewardConfigs) {
+      const id = getRewardConfigId(config);
+      const option = this.createOption(config, getDefaultRewardTier(id), 0, exclusions);
       if (option) {
         result.push(option);
       }

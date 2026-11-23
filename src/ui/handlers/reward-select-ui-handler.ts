@@ -580,21 +580,20 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         );
       }
 
-      const reward = options[this.cursor].rewardOption.type;
+      const reward = options[this.cursor].rewardOption.reward;
       if (reward) {
         const messageHandler = ui.getMessageHandler();
         ui.showText(reward.description);
 
         const cost = options[this.cursor].rewardOption.cost;
-        const type = options[this.cursor].rewardOption.type;
         if (cost > 0) {
           const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
           const costStyleName = cost <= globalScene.money ? "MONEY" : "PARTY_RED";
           const costText = i18next.t("RewardSelectUiHandler:itemCost", { formattedMoney });
-          const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
-          messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconName);
+          const nameWithCost = `${reward.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
+          messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), reward.iconName);
         } else {
-          messageHandler.showNameText(type.name, type.iconName);
+          messageHandler.showNameText(reward.name, reward.iconName);
         }
 
         if (isTmReward(reward)) {
@@ -824,7 +823,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = globalScene.add.sprite(0, 0, "items", this.rewardOption.type.iconName);
+      const item = globalScene.add.sprite(0, 0, "items", this.rewardOption.reward.iconName);
       return item;
     };
 
@@ -838,10 +837,10 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(0, 35, this.rewardOption.type.name, TextStyle.PARTY, { align: "center" });
+    this.itemText = addTextObject(0, 35, this.rewardOption.reward.name, TextStyle.PARTY, { align: "center" });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
-    this.itemText.setTint(this.rewardOption.type.tier ? getRarityTierTextTint(this.rewardOption.type.tier) : undefined);
+    this.itemText.setTint(this.rewardOption.tier ? getRarityTierTextTint(this.rewardOption.tier) : undefined);
     this.add(this.itemText);
 
     if (this.rewardOption.cost) {
@@ -1057,7 +1056,7 @@ class RewardSelectOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset = 0) {
-    return getPokeballAtlasKey((this.rewardOption.type.tier + tierOffset) as number as PokeballType);
+    return getPokeballAtlasKey((this.rewardOption.tier + tierOffset) as number as PokeballType);
   }
 
   updateCostText(): void {

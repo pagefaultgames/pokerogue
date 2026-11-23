@@ -12,11 +12,19 @@ import type { RewardConfiguration, RewardMatchKey, RewardPoolId } from "#types/r
 import type { Exact } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { ValueHolder } from "#utils/value-holder";
-import { type PokemonMoveReward, type Reward, RewardGenerator, RewardOption } from "./reward";
+import { type PokemonMoveReward, Reward, RewardGenerator, RewardOption } from "./reward";
 import { HeldItemReward } from "./rewards/held-item-reward";
 import type { RememberMoveReward } from "./rewards/remember-move";
 import type { TmReward } from "./rewards/tm";
 import { TrainerItemReward } from "./rewards/trainer-item-reward";
+
+function isConfigReward(config: RewardConfiguration): config is Reward {
+  return config instanceof Reward;
+}
+
+export function getRewardConfigId(config: RewardConfiguration): RewardPoolId {
+  return isConfigReward(config) ? config.id : config;
+}
 
 export function isTmReward(reward: Reward): reward is TmReward {
   return reward.category === RewardCategoryId.TM;
@@ -75,17 +83,19 @@ export function getDefaultRewardTier(id: RewardPoolId): RarityTier {
 
 /**
  * Create a {@linkcode Reward} from a {@linkcode RewardConfiguration}.
- * @param specs - The {@linkcode RewardConfiguration} to resolve
+ * @param config - The {@linkcode RewardConfiguration} to resolve
  * @param exclusions - Match keys excluded during random generation
  * @returns The reward, or `null` if a generator has no available variants
  */
 export function createRewardFromSpecs(
-  specs: RewardConfiguration,
+  config: RewardConfiguration,
   exclusions?: ReadonlySet<RewardMatchKey>,
 ): Reward | null {
-  const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;
-  const args: unknown = typeof specs === "object" ? specs.args : undefined;
+  if (isConfigReward(config)) {
+    return config;
+  }
 
+  const id = config;
   if (isHeldItemId(id)) {
     return new HeldItemReward(id);
   }
@@ -94,15 +104,10 @@ export function createRewardFromSpecs(
   }
 
   const entry = allRewards[id];
-  if (!(entry instanceof RewardGenerator)) {
-    return entry;
-  }
-  if (args === undefined) {
+  if (entry instanceof RewardGenerator) {
     return entry.generateRandomReward(exclusions);
   }
-  // `RewardSpecs` guarantees `args` matches this generator's variant type at the call site,
-  // but TS cannot carry that relationship through the id -> generator lookup.
-  return (entry as RewardGenerator).generateReward(args);
+  return entry;
 }
 
 /**
@@ -123,7 +128,7 @@ export function generateRewardOptionFromId(
   if (!reward) {
     return null;
   }
-  const id: RewardPoolId = typeof config === "object" ? config.id : config;
+  const id: RewardPoolId = getRewardConfigId(config);
   return new RewardOption(reward, upgradeCount, tierOverride ?? getDefaultRewardTier(id), cost);
 }
 
@@ -158,7 +163,10 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
   return options
     .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
     .flat()
-    .filter(shopItem => {
+    .filter((shopItem): shopItem is RewardOption => {
+      if (!shopItem) {
+        return false;
+      }
       const status = new ValueHolder(true);
       applyChallenges(ChallengeType.SHOP_ITEM, shopItem, status);
       return status.value;
