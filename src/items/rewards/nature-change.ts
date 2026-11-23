@@ -6,7 +6,6 @@ import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
@@ -33,8 +32,16 @@ export class PokemonNatureChangeReward extends PokemonReward {
     this.nature = nature;
   }
 
+  /**
+   * Return the deduplication match key for a mint.
+   * @param nature - The {@linkcode Nature} to build the key for
+   */
+  public static getVariantMatchKey(nature: Nature): string {
+    return `mint:${nature}`;
+  }
+
   override get matchKey(): string {
-    return `mint:${this.nature}`;
+    return PokemonNatureChangeReward.getVariantMatchKey(this.nature);
   }
 
   get name(): string {
@@ -64,14 +71,12 @@ export class PokemonNatureChangeReward extends PokemonReward {
 
 export class MintRewardGenerator extends RewardGenerator<Nature> {
   override getAvailableItems(exclusions?: ReadonlySet<string>): Nature[] {
-    return getEnumValues(Nature).filter(nature => !exclusions?.has(`mint:${nature}`));
+    return getEnumValues(Nature).filter(
+      nature => !exclusions?.has(PokemonNatureChangeReward.getVariantMatchKey(nature)),
+    );
   }
 
-  override generateReward(pregenArgs?: Nature): PokemonNatureChangeReward {
-    if (pregenArgs !== undefined) {
-      return new PokemonNatureChangeReward(pregenArgs);
-    }
-    const variants = this.getAvailableItems();
-    return new PokemonNatureChangeReward(randSeedItem(variants.length > 0 ? variants : getEnumValues(Nature)));
+  override generateReward(nature: Nature): PokemonNatureChangeReward {
+    return new PokemonNatureChangeReward(nature);
   }
 }

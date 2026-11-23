@@ -12,7 +12,6 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { isItemInCategory } from "#utils/item-utils";
 
 /**
@@ -27,11 +26,18 @@ export class FormChangeItemReward extends PokemonReward {
     );
 
     this.formChangeItemId = formChangeItemId;
-    this.id = RewardId.FORM_CHANGE_ITEM;
+  }
+
+  /**
+   * Return the deduplication match key for a form change item.
+   * @param formChangeItemId - The {@linkcode FormChangeItemId} to build the key for
+   */
+  public static getVariantMatchKey(formChangeItemId: FormChangeItemId): string {
+    return `form_change:${formChangeItemId}`;
   }
 
   override get matchKey(): string {
-    return `form_change:${this.formChangeItemId}`;
+    return FormChangeItemReward.getVariantMatchKey(this.formChangeItemId);
   }
 
   get name(): string {
@@ -126,23 +132,14 @@ export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeIte
           isItemInCategory(
             i,
             this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
-          ) && !exclusions?.has(`form_change:${i}`),
+          ) && !exclusions?.has(FormChangeItemReward.getVariantMatchKey(i)),
       );
 
     return formChangeItemPool;
   }
 
-  override generateReward(pregenArgs?: FormChangeItemId): FormChangeItemReward | null {
+  override generateReward(formChangeItemId: FormChangeItemId): FormChangeItemReward {
     const id = this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM;
-    if (pregenArgs !== undefined) {
-      return new FormChangeItemReward(id, pregenArgs);
-    }
-
-    const variants = this.getAvailableItems();
-    if (variants.length === 0) {
-      return null;
-    }
-
-    return new FormChangeItemReward(id, randSeedItem(variants));
+    return new FormChangeItemReward(id, formChangeItemId);
   }
 }

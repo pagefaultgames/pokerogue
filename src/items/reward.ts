@@ -162,10 +162,11 @@ export abstract class RewardGenerator<TVariant = unknown> {
    * Return the relative weight of a variant during random generation.
    * Only ever called with variants returned by {@linkcode getAvailableItems}, and must return a positive number.
    * @param variant - The variant to weigh
+   * @param variants - All variants currently available (for weights that depend on the pool's composition)
    * @returns The variant's weight, defaults to `1` (uniform) if not overridden
    */
   // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
-  protected getWeight(variant: TVariant): number {
+  protected getWeight(variant: TVariant, variants: readonly TVariant[]): number {
     return 1;
   }
 
@@ -189,7 +190,7 @@ export abstract class RewardGenerator<TVariant = unknown> {
     }
     const weights = new Map<TVariant, number>();
     for (const variant of variants) {
-      weights.set(variant, this.getWeight(variant));
+      weights.set(variant, this.getWeight(variant, variants));
     }
     return this.generateReward(weightedPick(weights));
   }

@@ -139,12 +139,12 @@ export const allRewards = {
   [RewardId.BERRY]: new BerryRewardGenerator(),
 
   // Trainer items
-  // TODO: these duplicate the corresponding `TrainerItemId`s
-  [RewardId.LURE]: new LapsingTrainerItemReward(RewardId.LURE, TrainerItemId.LURE),
-  [RewardId.SUPER_LURE]: new LapsingTrainerItemReward(RewardId.SUPER_LURE, TrainerItemId.SUPER_LURE),
-  [RewardId.MAX_LURE]: new LapsingTrainerItemReward(RewardId.MAX_LURE, TrainerItemId.MAX_LURE),
+  // TODO: These duplicate the corresponding `TrainerItemId`s
+  [RewardId.LURE]: new LapsingTrainerItemReward(TrainerItemId.LURE),
+  [RewardId.SUPER_LURE]: new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
+  [RewardId.MAX_LURE]: new LapsingTrainerItemReward(TrainerItemId.MAX_LURE),
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: new TempStatStageBoosterRewardGenerator(),
-  [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(RewardId.DIRE_HIT, TrainerItemId.DIRE_HIT),
+  [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT),
 } as const satisfies Readonly<Record<RewardId, Reward | RewardGenerator>>;
 
 export type AllRewardsType = typeof allRewards;

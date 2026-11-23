@@ -1,53 +1,47 @@
 import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#data/data-lists";
-import { RewardId } from "#enums/reward-id";
 import { Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { Reward, RewardGenerator } from "#items/reward";
 import { tempStatToTrainerItem } from "#items/x-items";
-import { randSeedItem } from "#utils/common";
 
-export class TrainerItemReward extends Reward {
-  public readonly itemId: TrainerItemId;
-  constructor(id: RewardId, itemId: TrainerItemId) {
-    super(id, "", "", "se/restore");
-    this.itemId = itemId;
+/** A reward granting a single trainer item to the player. */
+export class TrainerItemReward extends Reward<TrainerItemId> {
+  constructor(itemId: TrainerItemId) {
+    // Display strings and icon are sourced from the trainer item itself (see getters below)
+    super(itemId, "", "", "se/restore");
   }
 
   /**
-   * Return the deduplication match key for a trainer item ID.
-   * @param itemId - Trainer item ID
-   * @returns Match key string
+   * The {@linkcode TrainerItemId} granted by this reward.
+   * @deprecated Alias of {@linkcode id}; kept until external callsites are migrated.
    */
-  public static getItemMatchKey(itemId: TrainerItemId): string {
-    return `trainer:${itemId}`;
+  public get itemId(): TrainerItemId {
+    return this.id;
   }
 
-  override get matchKey(): string {
-    return TrainerItemReward.getItemMatchKey(this.itemId);
+  override get name(): string {
+    return allTrainerItems[this.id].name;
   }
 
-  get name(): string {
-    return allTrainerItems[this.itemId].name;
+  override get description(): string {
+    return allTrainerItems[this.id].description;
   }
 
-  get description(): string {
-    return allTrainerItems[this.itemId].description;
-  }
-
-  get iconName(): string {
-    return allTrainerItems[this.itemId].iconName;
+  override get iconName(): string {
+    return allTrainerItems[this.id].iconName;
   }
 
   apply(): boolean {
-    return globalScene.trainerItems.add(this.itemId);
+    return globalScene.trainerItems.add(this.id);
   }
 }
 
+/** A trainer item reward granting a full stack (i.e. full duration) of a lapsing trainer item. */
 // TODO: This probably shouldn't need to be its own class...
 export class LapsingTrainerItemReward extends TrainerItemReward {
-  apply(): boolean {
-    return globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].maxStackCount);
+  override apply(): boolean {
+    return globalScene.trainerItems.add(this.id, allTrainerItems[this.id].maxStackCount);
   }
 }
 
@@ -64,16 +58,11 @@ export class TempStatStageBoosterRewardGenerator extends RewardGenerator<TempBat
   override getAvailableItems(exclusions?: ReadonlySet<string>): TempBattleStat[] {
     return TEMP_BATTLE_STATS.filter(stat => {
       const item = tempStatToTrainerItem[stat];
-      return !exclusions?.has(`trainer:${item}`) && !globalScene.trainerItems.isMaxStack(item);
+      return !exclusions?.has(Reward.getMatchKey(item)) && !globalScene.trainerItems.isMaxStack(item);
     });
   }
 
-  override generateReward(pregenArgs?: TempBattleStat): LapsingTrainerItemReward {
-    if (pregenArgs !== undefined) {
-      return new LapsingTrainerItemReward(RewardId.TEMP_STAT_STAGE_BOOSTER, tempStatToTrainerItem[pregenArgs]);
-    }
-    const variants = this.getAvailableItems();
-    const stat = variants.length > 0 ? randSeedItem(variants) : randSeedItem(TEMP_BATTLE_STATS);
-    return new LapsingTrainerItemReward(RewardId.TEMP_STAT_STAGE_BOOSTER, tempStatToTrainerItem[stat]);
+  override generateReward(stat: TempBattleStat): LapsingTrainerItemReward {
+    return new LapsingTrainerItemReward(tempStatToTrainerItem[stat]);
   }
 }

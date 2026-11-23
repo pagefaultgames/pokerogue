@@ -1,7 +1,8 @@
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
-const trainerItemRarities = {
+/** Default rarity tiers for trainer items. */
+const trainerItemRarities: Readonly<Partial<Record<TrainerItemId, RarityTier>>> = {
   [TrainerItemId.MAP]: RarityTier.COMMON,
   [TrainerItemId.IV_SCANNER]: RarityTier.ULTRA,
   [TrainerItemId.LOCK_CAPSULE]: RarityTier.ROGUE,
@@ -44,7 +45,11 @@ const trainerItemRarities = {
   [TrainerItemId.DIRE_HIT]: RarityTier.GREAT,
 };
 
+/**
+ * Get the default rarity tier of a trainer item, used when it is offered as a reward outside of a pool.
+ * Unlisted items default to {@linkcode RarityTier.LUXURY}.
+ * @param item - The {@linkcode TrainerItemId} to look up
+ */
 export function getTrainerItemTier(item: TrainerItemId): RarityTier {
-  const tier = trainerItemRarities[item];
-  return tier ?? RarityTier.LUXURY;
+  return trainerItemRarities[item] ?? RarityTier.LUXURY;
 }

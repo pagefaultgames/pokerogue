@@ -101,9 +101,8 @@ function isPoolEntryAvailable(id: RewardPoolId, exclusions?: ReadonlySet<string>
   if (entry instanceof RewardGenerator) {
     return entry.getCapacity(exclusions) > 0;
   }
-  return !exclusions?.has(Reward.getMatchKey(id));
+  return !exclusions?.has(entry.matchKey);
 }
-
 /**
  * Generates a random RarityTier to draw rewards from the pool. The probabilities are:
  * 1/1024 (Master tier)
@@ -184,12 +183,12 @@ function getRewardMapForTier(
 /**
  * Generates reward options for a {@linkcode SelectRewardPhase}
  * @param count - Determines the number of items to generate
- * @param rarityTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param rarityTiers - (Optional) Per-slot tiers to roll from (i.e. Lock Capsule), random roll for undefined entries
  * @param customRewardSettings - (Optional) See {@linkcode CustomRewardSettings}
  */
 export function generatePlayerRewardOptions(
   count: number,
-  rarityTiers?: PoolRarityTier[],
+  rarityTiers?: readonly (PoolRarityTier | undefined)[],
   customRewardSettings?: CustomRewardSettings,
 ): RewardOption[] {
   const options: RewardOption[] = [];

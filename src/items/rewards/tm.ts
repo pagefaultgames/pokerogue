@@ -10,7 +10,6 @@ import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 export class TmReward extends PokemonReward {
@@ -27,8 +26,16 @@ export class TmReward extends PokemonReward {
     this.moveId = moveId;
   }
 
+  /**
+   * Return the deduplication match key for a TM.
+   * @param moveId - The {@linkcode MoveId} taught by the TM
+   */
+  public static getVariantMatchKey(moveId: MoveId): string {
+    return `tm:${moveId}`;
+  }
+
   override get matchKey(): string {
-    return `tm:${this.moveId}`;
+    return TmReward.getVariantMatchKey(this.moveId);
   }
 
   get name(): string {
@@ -68,6 +75,18 @@ export class TmRewardGenerator extends RewardGenerator<MoveId> {
     this.tier = tier;
   }
 
+  /** The {@linkcode RewardId} corresponding to this generator's tier. */
+  private get rewardId(): RewardId {
+    switch (this.tier) {
+      case RarityTier.GREAT:
+        return RewardId.TM_GREAT;
+      case RarityTier.ULTRA:
+        return RewardId.TM_ULTRA;
+      default:
+        return RewardId.TM_COMMON;
+    }
+  }
+
   override getAvailableItems(exclusions?: ReadonlySet<string>): MoveId[] {
     const party = globalScene.getPlayerParty();
     const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
@@ -76,27 +95,10 @@ export class TmRewardGenerator extends RewardGenerator<MoveId> {
       .filter(tm => tmPoolTiers[tm] === this.tier)
       .filter(tm => !allMoves[tm].isUnimplemented)
       .filter((tm, i, array) => array.indexOf(tm) === i)
-      .filter(tm => !exclusions?.has(`tm:${tm}`));
+      .filter(tm => !exclusions?.has(TmReward.getVariantMatchKey(tm)));
   }
 
-  override generateReward(pregenArgs?: MoveId): TmReward | null {
-    let id: RewardId = RewardId.TM_COMMON;
-    if (this.tier === RarityTier.GREAT) {
-      id = RewardId.TM_GREAT;
-    } else if (this.tier === RarityTier.ULTRA) {
-      id = RewardId.TM_ULTRA;
-    }
-
-    if (pregenArgs !== undefined) {
-      return new TmReward(id, pregenArgs);
-    }
-
-    const variants = this.getAvailableItems();
-    if (variants.length === 0) {
-      return null;
-    }
-
-    const randTmIndex = randSeedItem(variants);
-    return new TmReward(id, randTmIndex);
+  override generateReward(moveId: MoveId): TmReward {
+    return new TmReward(this.rewardId, moveId);
   }
 }

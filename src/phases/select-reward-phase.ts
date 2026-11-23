@@ -6,7 +6,7 @@ import type { FormChangeItemId } from "#enums/form-change-item-id";
 import type { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
 import { RewardPoolType } from "#enums/reward-pool-type";
-import type { RarityTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { FusePokemonReward } from "#items/fuse";
@@ -27,6 +27,7 @@ import {
   generateRewardPoolWeights,
   getRewardPoolForType,
 } from "#items/reward-pool-utils";
+import { isPoolRarityTier } from "#items/reward-pools";
 import {
   applyReward,
   getPlayerShopRewardOptionsForWave,
@@ -38,6 +39,7 @@ import {
 } from "#items/reward-utils";
 import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
+import type { PoolRarityTier } from "#types/rewards";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { PartyOption, PartyUiHandler, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
@@ -46,10 +48,24 @@ import i18next from "i18next";
 
 export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
+/**
+ * Per-option contribution to the reroll cost while rarity tiers are locked.
+ * `LUXURY` options (only reachable via guaranteed options) are priced like `MASTER`.
+ */
+const LOCKED_REROLL_TIER_COSTS: Readonly<Record<RarityTier, number>> = {
+  [RarityTier.COMMON]: 50,
+  [RarityTier.GREAT]: 125,
+  [RarityTier.ULTRA]: 300,
+  [RarityTier.ROGUE]: 750,
+  [RarityTier.MASTER]: 2000,
+  [RarityTier.LUXURY]: 2000,
+};
+
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";
   private readonly rerollCount: number;
-  private readonly rarityTiers?: RarityTier[] | undefined;
+  /** Per-slot tiers to reroll into when tiers are locked; `undefined` slots are rolled randomly. */
+  private readonly rarityTiers?: readonly (PoolRarityTier | undefined)[] | undefined;
   private readonly customRewardSettings?: CustomRewardSettings | undefined;
   private readonly isCopy: boolean;
 
@@ -57,7 +73,7 @@ export class SelectRewardPhase extends BattlePhase {
 
   constructor(
     rerollCount = 0,
-    rarityTiers?: RarityTier[],
+    rarityTiers?: readonly (PoolRarityTier | undefined)[],
     customRewardSettings?: CustomRewardSettings,
     isCopy = false,
   ) {
@@ -208,7 +224,8 @@ export class SelectRewardPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew(
       "SelectRewardPhase",
       this.rerollCount + 1,
-      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RarityTier[],
+      // Keep slot positions aligned; non-pool tiers (i.e. LUXURY) are rerolled randomly
+      this.typeOptions.map(o => (isPoolRarityTier(o.tier) ? o.tier : undefined)),
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
@@ -438,9 +455,8 @@ export class SelectRewardPhase extends BattlePhase {
       return baseValue;
     }
     if (lockRarities) {
-      const tierValues = [50, 125, 300, 750, 2000];
       for (const opt of this.typeOptions) {
-        baseValue += tierValues[opt.type.tier ?? 0];
+        baseValue += LOCKED_REROLL_TIER_COSTS[opt.tier];
       }
     } else {
       baseValue = 250;

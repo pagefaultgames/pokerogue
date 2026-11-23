@@ -7,7 +7,6 @@ import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -22,8 +21,16 @@ export class EvolutionItemReward extends PokemonReward {
     this.evolutionItemId = evolutionItemId;
   }
 
+  /**
+   * Return the deduplication match key for an evolution item.
+   * @param evolutionItemId - The {@linkcode EvolutionItemId} to build the key for
+   */
+  public static getVariantMatchKey(evolutionItemId: EvolutionItemId): string {
+    return `evolution:${evolutionItemId}`;
+  }
+
   override get matchKey(): string {
-    return `evolution:${this.evolutionItemId}`;
+    return EvolutionItemReward.getVariantMatchKey(this.evolutionItemId);
   }
 
   get name(): string {
@@ -109,22 +116,16 @@ export class EvolutionItemRewardGenerator extends RewardGenerator<EvolutionItemI
     ]
       .flat()
       .flatMap(e => e.item)
-      .filter((i): i is EvolutionItemId => !!i && i > 50 === this.rare && !exclusions?.has(`evolution:${i}`));
+      .filter(
+        (i): i is EvolutionItemId =>
+          !!i && i > 50 === this.rare && !exclusions?.has(EvolutionItemReward.getVariantMatchKey(i)),
+      );
 
     return [...new Set(evolutionItemPool)];
   }
 
-  override generateReward(pregenArgs?: EvolutionItemId): EvolutionItemReward | null {
+  override generateReward(evolutionItemId: EvolutionItemId): EvolutionItemReward {
     const id = this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM;
-    if (pregenArgs !== undefined) {
-      return new EvolutionItemReward(id, pregenArgs);
-    }
-
-    const variants = this.getAvailableItems();
-    if (variants.length === 0) {
-      return null;
-    }
-
-    return new EvolutionItemReward(id, randSeedItem(variants));
+    return new EvolutionItemReward(id, evolutionItemId);
   }
 }
