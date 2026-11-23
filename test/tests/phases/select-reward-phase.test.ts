@@ -17,7 +17,7 @@ import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import type { RewardSpecs } from "#types/rewards";
+import type { RewardConfiguration } from "#types/rewards";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import Phaser from "phaser";
@@ -70,7 +70,7 @@ describe("SelectRewardPhase", () => {
 
   it("should modify reroll cost", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
-    const specs: RewardSpecs[] = [RewardId.POTION, RewardId.ETHER, RewardId.REVIVE];
+    const specs: RewardConfiguration[] = [RewardId.POTION, RewardId.ETHER, RewardId.REVIVE];
 
     const selectRewardPhase1 = new SelectRewardPhase(0, undefined, {
       guaranteedRewardSpecs: specs,

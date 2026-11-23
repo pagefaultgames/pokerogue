@@ -1,145 +1,114 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
-import { type BerryItemId, berryItemIds, HeldItemId } from "#enums/held-item-id";
+import { type BerryItemId, berryItemIds, type HeldItemId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
-import { RewardId } from "#enums/reward-id";
 import { PERMANENT_STATS, type PermanentStat } from "#enums/stat";
-import type { PlayerPokemon } from "#field/pokemon";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
-import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
+import { getDefaultBerryWeight, getPartyAttackMoveTypeCounts } from "#items/held-item-pool";
+import { PokemonReward, type PokemonRewardParams, Reward, RewardGenerator } from "#items/reward";
 import i18next from "i18next";
 
-export class HeldItemReward extends PokemonReward {
-  public itemId: HeldItemId;
-  constructor(id: RewardId, itemId: HeldItemId, soundName?: string | undefined) {
+/**
+ * Check whether a held item can currently be offered as a reward.
+ * @param itemId - The item to check
+ * @param party - The party that would receive the item
+ * @param exclusions - Optional set of match keys to exclude
+ * @returns `true` if the item is not excluded and at least one party member can hold another copy
+ */
+export function isHeldItemRewardAvailable(
+  itemId: HeldItemId,
+  party: readonly Pokemon[],
+  exclusions?: ReadonlySet<string>,
+): boolean {
+  return !exclusions?.has(Reward.getMatchKey(itemId)) && party.some(p => !p.heldItemManager.isMaxStack(itemId));
+}
+
+/** A reward granting a single held item to a party member. */
+export class HeldItemReward extends PokemonReward<HeldItemId> {
+  constructor(itemId: HeldItemId) {
     super(
-      id,
+      itemId,
       "",
       "",
-      (pokemon: PlayerPokemon) => {
-        const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
-        const maxStackCount = allHeldItems[this.itemId].maxStackCount;
-        if (!maxStackCount) {
-          return i18next.t("reward:pokemonHeldItem.extra.inoperable", {
-            pokemonName: getPokemonNameWithAffix(pokemon),
-          });
-        }
-        if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
-          return i18next.t("reward:pokemonHeldItem.extra.tooMany", {
-            pokemonName: getPokemonNameWithAffix(pokemon),
-          });
-        }
-        return null;
-      },
-      soundName,
+      (pokemon: PlayerPokemon) =>
+        pokemon.heldItemManager.isMaxStack(itemId)
+          ? i18next.t("reward:pokemonHeldItem.extra.tooMany", {
+              pokemonName: getPokemonNameWithAffix(pokemon),
+            })
+          : null,
+      allHeldItems[itemId].soundName,
     );
-    this.itemId = itemId;
   }
 
   /**
-   * Return the deduplication match key for a held item ID.
-   * @param itemId - Held item ID
-   * @returns Match key string
+   * The {@linkcode HeldItemId} granted by this reward.
+   * @deprecated Alias of {@linkcode id}, kept until external callsites are migrated.
    */
-  public static getItemMatchKey(itemId: HeldItemId): string {
-    return `held:${itemId}`;
+  public get itemId(): HeldItemId {
+    return this.id;
   }
 
-  override get matchKey(): string {
-    return HeldItemReward.getItemMatchKey(this.itemId);
+  override get name(): string {
+    return allHeldItems[this.id].name;
   }
 
-  get name(): string {
-    return allHeldItems[this.itemId].name;
+  override get description(): string {
+    return allHeldItems[this.id].description;
   }
 
-  get description(): string {
-    return allHeldItems[this.itemId].description;
+  override get iconName(): string {
+    return allHeldItems[this.id].iconName;
   }
 
-  get iconName(): string {
-    return allHeldItems[this.itemId].iconName;
-  }
-
-  apply({ pokemon }: PokemonRewardParams): boolean {
-    return pokemon.heldItemManager.add(this.itemId);
+  override apply({ pokemon }: PokemonRewardParams): void {
+    pokemon.heldItemManager.add(this.id);
   }
 }
 
 export class BerryRewardGenerator extends RewardGenerator<BerryItemId> {
   override getAvailableItems(exclusions?: ReadonlySet<string>): BerryItemId[] {
     const party = globalScene.getPlayerParty();
-    return berryItemIds.filter(item => {
-      if (exclusions?.has(`held:${item}`)) {
-        return false;
-      }
-      return party.some(p => !p.heldItemManager.isMaxStack(item));
-    });
+    return berryItemIds.filter(item => isHeldItemRewardAvailable(item, party, exclusions));
   }
 
-  override generateReward(pregenArgs?: BerryItemId): HeldItemReward {
-    if (pregenArgs !== undefined) {
-      return new HeldItemReward(RewardId.BERRY, pregenArgs);
-    }
-    const variants = this.getAvailableItems();
-    const customWeights: Record<number, number> = {};
-    for (const item of variants) {
-      const isPreferred =
-        item === HeldItemId.SITRUS_BERRY || item === HeldItemId.LUM_BERRY || item === HeldItemId.LEPPA_BERRY;
-      customWeights[item] = isPreferred ? 2 : 1;
-    }
-    return new HeldItemReward(RewardId.BERRY, getNewBerryHeldItem(customWeights));
+  protected override getWeight(item: BerryItemId): number {
+    return getDefaultBerryWeight(item);
+  }
+
+  override generateReward(item: BerryItemId): HeldItemReward {
+    return new HeldItemReward(item);
   }
 }
 
-export class AttackTypeBoosterRewardGenerator extends RewardGenerator<PokemonType> {
-  override getAvailableItems(exclusions?: ReadonlySet<string>): PokemonType[] {
+export class AttackTypeBoosterRewardGenerator extends RewardGenerator<RegularPokemonType> {
+  override getAvailableItems(exclusions?: ReadonlySet<string>): RegularPokemonType[] {
     const party = globalScene.getPlayerParty();
-    const attackMoveTypes = party
-      .values()
-      .flatMap(p =>
-        p
-          .getMoveset()
-          .filter(pm => pm.getMove().is("AttackMove"))
-          .map(pm => p.getMoveType(pm.getMove()))
-          .filter((type): type is RegularPokemonType => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-      )
-      .toArray();
-
-    const uniqueTypes = [...new Set(attackMoveTypes.length > 0 ? attackMoveTypes : [PokemonType.NORMAL])];
-    return uniqueTypes.filter(type => {
-      const item = attackTypeToHeldItem[type];
-      return !exclusions?.has(`held:${item}`) && party.some(p => !p.heldItemManager.isMaxStack(item));
-    });
+    const attackMoveTypeCounts = getPartyAttackMoveTypeCounts(party);
+    const types: RegularPokemonType[] =
+      attackMoveTypeCounts.size > 0 ? [...attackMoveTypeCounts.keys()] : [PokemonType.NORMAL];
+    return types.filter(type => isHeldItemRewardAvailable(attackTypeToHeldItem[type], party, exclusions));
   }
 
-  override generateReward(pregenArgs?: PokemonType): HeldItemReward {
-    if (pregenArgs !== undefined) {
-      const item = attackTypeToHeldItem[pregenArgs];
-      return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
-    }
-    const item = getNewAttackTypeBoosterHeldItem(undefined, globalScene.getPlayerParty());
-    return new HeldItemReward(RewardId.ATTACK_TYPE_BOOSTER, item);
+  /** Types with more attack moves in the party are weighted higher. */
+  protected override getWeight(type: RegularPokemonType): number {
+    return getPartyAttackMoveTypeCounts(globalScene.getPlayerParty()).get(type) ?? 1;
+  }
+
+  override generateReward(type: RegularPokemonType): HeldItemReward {
+    return new HeldItemReward(attackTypeToHeldItem[type]);
   }
 }
 
 export class BaseStatBoosterRewardGenerator extends RewardGenerator<PermanentStat> {
   override getAvailableItems(exclusions?: ReadonlySet<string>): PermanentStat[] {
     const party = globalScene.getPlayerParty();
-    return PERMANENT_STATS.filter(stat => {
-      const item = permanentStatToHeldItem[stat];
-      return !exclusions?.has(`held:${item}`) && party.some(p => !p.heldItemManager.isMaxStack(item));
-    });
+    return PERMANENT_STATS.filter(stat => isHeldItemRewardAvailable(permanentStatToHeldItem[stat], party, exclusions));
   }
 
-  override generateReward(pregenArgs?: PermanentStat): HeldItemReward {
-    if (pregenArgs !== undefined) {
-      const item = permanentStatToHeldItem[pregenArgs];
-      return new HeldItemReward(RewardId.VITAMIN, item);
-    }
-    return new HeldItemReward(RewardId.VITAMIN, getNewVitaminHeldItem());
+  override generateReward(stat: PermanentStat): HeldItemReward {
+    return new HeldItemReward(permanentStatToHeldItem[stat]);
   }
 }

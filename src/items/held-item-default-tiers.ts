@@ -2,7 +2,8 @@ import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { RarityTier } from "#enums/reward-tier";
 import { getHeldItemCategory } from "#utils/item-utils";
 
-const heldItemRarities = {
+/** Default rarity tiers for held items, by item or (as a fallback) by category. */
+const heldItemRarities: Readonly<Partial<Record<HeldItemId | HeldItemCategoryId, RarityTier>>> = {
   [HeldItemCategoryId.BERRY]: RarityTier.COMMON,
 
   [HeldItemCategoryId.BASE_STAT_BOOST]: RarityTier.GREAT,
@@ -37,13 +38,13 @@ const heldItemRarities = {
 
   [HeldItemId.MINI_BLACK_HOLE]: RarityTier.MASTER,
   [HeldItemId.MULTI_LENS]: RarityTier.MASTER,
-};
+} as const;
 
+/**
+ * Get the default rarity tier of a held item.
+ * @param item - The {@linkcode HeldItemId} to look up
+ * @returns The default rarity tier of the item, falling back to its category then {@linkcode RarityTier.LUXURY}
+ */
 export function getHeldItemTier(item: HeldItemId): RarityTier {
-  let tier = heldItemRarities[item];
-  if (!tier) {
-    const category = getHeldItemCategory(item);
-    tier = heldItemRarities[category];
-  }
-  return tier ?? RarityTier.LUXURY;
+  return heldItemRarities[item] ?? heldItemRarities[getHeldItemCategory(item)] ?? RarityTier.LUXURY;
 }

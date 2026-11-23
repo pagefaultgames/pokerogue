@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { leaveEncounterWithoutBattle, setEncounterRewards } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
-import type { RewardSpecs } from "#types/rewards";
+import type { RewardConfiguration } from "#types/rewards";
 import { randSeedInt } from "#utils/common";
 
 /** i18n namespace for encounter */
@@ -59,7 +59,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose TMs
-      const rewards: RewardSpecs[] = [];
+      const rewards: RewardConfiguration[] = [];
       let i = 0;
       while (i < 5) {
         // 2/2/1 weight on TM rarity
@@ -88,7 +88,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose Vitamins
-      const rewards: RewardSpecs[] = [];
+      const rewards: RewardConfiguration[] = [];
       let i = 0;
       while (i < 3) {
         // 2/1 weight on base stat booster vs PP Up
@@ -115,7 +115,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose X Items
-      const rewards: RewardSpecs[] = [];
+      const rewards: RewardConfiguration[] = [];
       let i = 0;
       while (i < 5) {
         // 4/1 weight on base stat booster vs Dire Hit
@@ -142,7 +142,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose Pokeballs
-      const rewards: RewardSpecs[] = [];
+      const rewards: RewardConfiguration[] = [];
       let i = 0;
       while (i < 4) {
         // 10/30/20/5 weight on pokeballs

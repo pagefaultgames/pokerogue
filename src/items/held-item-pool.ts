@@ -460,27 +460,61 @@ export function getNewVitaminHeldItem(customWeights: HeldItemResolvedWeights = {
   return weightedPick(itemMap);
 }
 
+/** Berries rolled at double weight by default. */
+const PREFERRED_BERRIES: readonly BerryItemId[] = [
+  HeldItemId.SITRUS_BERRY,
+  HeldItemId.LUM_BERRY,
+  HeldItemId.LEPPA_BERRY,
+] as const;
+
+/**
+ * Get the default generation weight of a berry.
+ * @param item - The berry to weigh
+ * @returns `2` for berries in {@linkcode PREFERRED_BERRIES} and `1` otherwise
+ */
+export function getDefaultBerryWeight(item: BerryItemId): number {
+  return PREFERRED_BERRIES.includes(item) ? 2 : 1;
+}
+
 /**
  * Generate a new berry held item.
  * @param customWeights - Custom weights to use when generating the item
  * @param target - The pokemon receiving the item (berries already at max stack have weight 0)
  * @returns The {@linkcode BerryItemId} of the chosen berry
- *
- * @remarks
- * Unlisted berries have a weight of `2` for Sitrus, Lum and Leppa berries and `1` otherwise.
  */
 export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {}, target?: Pokemon): BerryItemId {
   const itemMap = new Map<BerryItemId, number>();
   for (const item of berryItemIds) {
-    if (target?.heldItemManager.isMaxStack(item)) {
-      itemMap.set(item, 0);
-      continue;
-    }
-    const isPreferredBerry =
-      item === HeldItemId.SITRUS_BERRY || item === HeldItemId.LUM_BERRY || item === HeldItemId.LEPPA_BERRY;
-    itemMap.set(item, customWeights[item] ?? (isPreferredBerry ? 2 : 1));
+    itemMap.set(
+      item,
+      target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? getDefaultBerryWeight(item)),
+    );
   }
   return weightedPick(itemMap);
+}
+
+/**
+ * Count the attack moves of each type across a party's movesets, ignoring {@linkcode PokemonType.UNKNOWN | UNKNOWN} and {@linkcode PokemonType.STELLAR | STELLAR}.
+ * @param party - The Pokemon whose movesets to consider
+ * @param maxCount - (Default `3`) The cap applied to each type's count
+ * @returns A map of each encountered type to its capped attack move count
+ */
+export function getPartyAttackMoveTypeCounts(party: readonly Pokemon[], maxCount = 3): Map<RegularPokemonType, number> {
+  const counts = new Map<RegularPokemonType, number>();
+  for (const pokemon of party) {
+    for (const pokemonMove of pokemon.getMoveset()) {
+      const move = pokemonMove.getMove();
+      if (!move.is("AttackMove")) {
+        continue;
+      }
+      const type = pokemon.getMoveType(move);
+      if (type === PokemonType.UNKNOWN || type === PokemonType.STELLAR) {
+        continue;
+      }
+      counts.set(type, Math.min((counts.get(type) ?? 0) + 1, maxCount));
+    }
+  }
+  return counts;
 }
 
 /**
@@ -491,8 +525,7 @@ export function getNewBerryHeldItem(customWeights: HeldItemResolvedWeights = {},
  * @returns The {@linkcode HeldItemId} of the chosen type booster
  *
  * @remarks
- * Each type's default weight is the number of matching attack moves in the party, capped at `3`.
- * {@linkcode PokemonType.UNKNOWN | UNKNOWN} and {@linkcode PokemonType.STELLAR | STELLAR} moves are ignored.
+ * Each type's default weight is given by {@linkcode getPartyAttackMoveTypeCounts}.
  * If the party has no eligible attack moves, the {@linkcode PokemonType.NORMAL | NORMAL} booster is returned.
  */
 export function getNewAttackTypeBoosterHeldItem(
@@ -500,29 +533,15 @@ export function getNewAttackTypeBoosterHeldItem(
   party: Pokemon[] = [],
   customWeights: HeldItemResolvedWeights = {},
 ): HeldItemId {
-  const attackMoveTypes = party
-    .values()
-    .flatMap(p =>
-      p
-        .getMoveset()
-        .filter(pm => pm.getMove().is("AttackMove"))
-        .map(pm => p.getMoveType(pm.getMove()))
-        .filter((type): type is RegularPokemonType => type !== PokemonType.UNKNOWN && type !== PokemonType.STELLAR),
-    )
-    .toArray();
+  const attackMoveTypeCounts = getPartyAttackMoveTypeCounts(party);
 
-  const attackMoveTypeWeights = new Map<RegularPokemonType, number>();
-  for (const type of attackMoveTypes) {
-    attackMoveTypeWeights.set(type, Math.min((attackMoveTypeWeights.get(type) ?? 0) + 1, 3));
-  }
-
-  if (attackMoveTypeWeights.size === 0) {
+  if (attackMoveTypeCounts.size === 0) {
     // Fallback to avoid bubbling `null` through the entire item generation chain
     return attackTypeToHeldItem[PokemonType.NORMAL];
   }
 
   const typeMap = new Map<RegularPokemonType, number>();
-  for (const [type, count] of attackMoveTypeWeights) {
+  for (const [type, count] of attackMoveTypeCounts) {
     const item = attackTypeToHeldItem[type];
     typeMap.set(type, target?.heldItemManager.isMaxStack(item) ? 0 : (customWeights[item] ?? count));
   }

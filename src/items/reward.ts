@@ -42,25 +42,37 @@
  * and RewardOption, which is displayed during the select reward phase at the end of each encounter.
  *
  * @packageDocumentation
-*/
+ */
+// TODO update package doc
 
-import { getRewardCategory, type RewardCategoryId, type RewardId } from "#enums/reward-id";
+import {
+  getRewardCategory,
+  isHeldItemId,
+  isTrainerItemId,
+  type RewardCategoryId,
+  type RewardId,
+} from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 // biome-ignore lint/correctness/noUnusedImports: used in TSDoc
 import type { SelectRewardPhase } from "#phases/select-reward-phase";
+import type { RewardPoolId } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { weightedPick } from "#utils/random";
 import i18next from "i18next";
 
-export abstract class Reward {
-  public id: RewardId;
+/**
+ * Abstract base class for all rewards.
+ * @typeParam Id - The {@linkcode RewardPoolId} identifying this reward.
+ */
+export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
+  public readonly id: Id;
   private readonly localeKey: string;
   private readonly _iconName: string;
   public readonly soundName: string;
-  public tier: RarityTier;
 
-  constructor(id: RewardId, localeKey: string, iconName: string, soundName = "se/restore") {
+  constructor(id: Id, localeKey: string, iconName: string, soundName = "se/restore") {
     this.id = id;
     this.localeKey = localeKey;
     this._iconName = iconName;
@@ -68,14 +80,24 @@ export abstract class Reward {
   }
 
   /**
-   * Return the deduplication match key for a reward ID.
-   * @param id - Reward ID
-   * @returns Match key string
+   * Return the deduplication match key for any pool ID.
+   * Two rewards with the same match key are never offered together during a single reward selection.
+   * @param id - The {@linkcode RewardPoolId} to build the key for
    */
-  public static getMatchKey(id: RewardId): string {
+  public static getMatchKey(id: RewardPoolId): string {
+    if (isHeldItemId(id)) {
+      return `held:${id}`;
+    }
+    if (isTrainerItemId(id)) {
+      return `trainer:${id}`;
+    }
     return `reward:${id}`;
   }
 
+  /**
+   * The deduplication match key of this reward. Defaults to {@linkcode Reward.getMatchKey | getMatchKey(this.id)}.
+   * Generated rewards with sub-variants (e.g. TMs) should override this to include the variant.
+   */
   public get matchKey(): string {
     return Reward.getMatchKey(this.id);
   }
@@ -96,14 +118,12 @@ export abstract class Reward {
     return this._iconName;
   }
 
-  // TODO: Should this be abstract?
   /**
    * Check whether this reward should be applied.
    * @param params - The parameters used by this reward
    * @returns Whether the reward should be allowed to apply its effects.
    */
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract hook method
-  shouldApply(params: Exact<Parameters<this["apply"]>[0]>): boolean {
+  shouldApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
@@ -116,18 +136,22 @@ export abstract class Reward {
 }
 
 /**
- * A {@linkcode RewardGenerator} represents a dynamic generator for a given type of reward.
- * These can be customized by lieu of {@linkcode RewardGenerator.generateReward | RewardGenerator} to alter the generation result.
+ * Dynamic generator for a given type of reward.
+ *
+ * Subclasses implement {@linkcode getAvailableItems} and {@linkcode generateReward},
+ * and may override {@linkcode getWeight} to bias random generation.
+ *
+ * @typeParam TVariant - The type identifying a single variant of this generator.
  */
 export abstract class RewardGenerator<TVariant = unknown> {
   /**
-   * Return all valid items currently available for this run or party.
+   * Return all variants this generator can currently produce for the player's run/party.
    * @param exclusions - Optional set of match keys to exclude
    */
   public abstract getAvailableItems(exclusions?: ReadonlySet<string>): TVariant[];
 
   /**
-   * Return the count of distinct items this generator can currently produce.
+   * Return the count of distinct variants this generator can currently produce.
    * @param exclusions - Optional set of match keys to exclude
    */
   public getCapacity(exclusions?: ReadonlySet<string>): number {
@@ -135,26 +159,48 @@ export abstract class RewardGenerator<TVariant = unknown> {
   }
 
   /**
-   * Dynamically generate a new reward.
-   * @param pregenArgs - An optional argument taken by super classes to customize the reward generated.
-   * @returns The generated reward, or `null` if none are able to be produced
+   * Return the relative weight of a variant during random generation.
+   * Only ever called with variants returned by {@linkcode getAvailableItems}, and must return a positive number.
+   * @param variant - The variant to weigh
+   * @returns The variant's weight, defaults to `1` (uniform) if not overridden
    */
-  // TODO: Remove null from signature in favor of adding a condition or similar (reduces bangs needed)
-  public abstract generateReward(pregenArgs?: TVariant): Reward | null;
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
+  protected getWeight(variant: TVariant): number {
+    return 1;
+  }
+
+  /**
+   * Create the reward for a specific variant.
+   * Does not check availability, use {@linkcode generateRandomReward} for that.
+   * @param variant - The variant to produce
+   */
+  public abstract generateReward(variant: TVariant): Reward;
+
+  /**
+   * Sample a random variant (respecting availability and {@linkcode getWeight}) and create its reward.
+   * @param exclusions - Optional set of match keys to exclude
+   * @returns The generated reward, or `null` if no variants are available
+   * @sealed
+   */
+  public generateRandomReward(exclusions?: ReadonlySet<string>): Reward | null {
+    const variants = this.getAvailableItems(exclusions);
+    if (variants.length === 0) {
+      return null;
+    }
+    const weights = new Map<TVariant, number>();
+    for (const variant of variants) {
+      weights.set(variant, this.getWeight(variant));
+    }
+    return this.generateReward(weightedPick(weights));
+  }
 }
 
 /** Rewards that are applied to individual Pokemon. */
-export abstract class PokemonReward extends Reward {
+export abstract class PokemonReward<Id extends RewardPoolId = RewardPoolId> extends Reward<Id> {
   // TODO: Make this an overriddable getter rather than defining functions in the constructor
   public selectFilter: PokemonSelectFilter | undefined;
 
-  constructor(
-    id: RewardId,
-    localeKey: string,
-    iconName: string,
-    selectFilter?: PokemonSelectFilter,
-    soundName?: string,
-  ) {
+  constructor(id: Id, localeKey: string, iconName: string, selectFilter?: PokemonSelectFilter, soundName?: string) {
     super(id, localeKey, iconName, soundName);
     this.selectFilter = selectFilter;
   }
@@ -162,8 +208,8 @@ export abstract class PokemonReward extends Reward {
   abstract override apply(_params: PokemonRewardParams): void;
 }
 
-export abstract class PokemonMoveReward extends PokemonReward {
-  // TODO: This is unsafe and breaks LSP
+/** Rewards that are applied to a single move of an individual Pokemon. */
+export abstract class PokemonMoveReward extends PokemonReward<RewardId> {
   public moveSelectFilter: PokemonMoveSelectFilter | undefined;
 
   constructor(
@@ -177,9 +223,7 @@ export abstract class PokemonMoveReward extends PokemonReward {
     this.moveSelectFilter = moveSelectFilter;
   }
 
-  apply(_params: PokemonMoveRewardParams): boolean {
-    return false;
-  }
+  abstract override apply(_params: PokemonMoveRewardParams): void;
 }
 
 export interface PokemonRewardParams {
@@ -202,6 +246,7 @@ export interface PokemonFusionRewardParams {
   pokemon2: PlayerPokemon;
 }
 
+/** A {@linkcode Reward} as presented to the player, together with its rarity and cost. */
 export class RewardOption {
   // TODO: Rename to `reward` or similar
   public type: Reward;
@@ -215,12 +260,4 @@ export class RewardOption {
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
-}
-
-export class EmptyReward extends Reward {
-  constructor() {
-    super(0x0000, "", "");
-  }
-
-  override apply(): void {}
 }
