@@ -8,11 +8,12 @@ import {
 } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
-import { RarityTier } from "#enums/reward-tier";
+import { type PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { clampPoolRarityTier, rollRarityTier } from "#items/rarity-tier-utils";
 import type {
   AnyHeldItemRoll,
   HeldItemConfiguration,
@@ -29,20 +30,79 @@ import { weightedPick } from "#utils/random";
 import Phaser from "phaser";
 import type { NonEmptyTuple } from "type-fest";
 
-/** `LUXURY` is never rolled for held item pools. */
-type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
-
 /**
  * A default pool of held items, organized by tier.
  * Used to generate items for enemy trainers, wild Pokemon and daily run starters.
  */
 type HeldItemTieredPool = Readonly<Record<PoolRarityTier, HeldItemPool>>;
 
-export const wildHeldItemPool = {} as HeldItemTieredPool;
+// #region Default pools
 
-export const trainerHeldItemPool = {} as HeldItemTieredPool;
+/** Held items generated for wild Pokemon. */
+export const wildHeldItemPool: HeldItemTieredPool = {
+  [RarityTier.COMMON]: [{ entry: HeldItemCategoryId.BERRY, weight: 1 }],
+  [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 1 }],
+  [RarityTier.ULTRA]: [
+    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 },
+    { entry: HeldItemId.WHITE_HERB, weight: 0 },
+  ],
+  [RarityTier.ROGUE]: [{ entry: HeldItemId.LUCKY_EGG, weight: 4 }],
+  [RarityTier.MASTER]: [{ entry: HeldItemId.GOLDEN_EGG, weight: 1 }],
+};
 
-export const dailyStarterHeldItemPool = {} as HeldItemTieredPool;
+/** Held items generated for trainer Pokemon. */
+export const trainerHeldItemPool: HeldItemTieredPool = {
+  [RarityTier.COMMON]: [
+    { entry: HeldItemCategoryId.BERRY, weight: 8 },
+    { entry: HeldItemCategoryId.VITAMIN, weight: 3 },
+  ],
+  [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.VITAMIN, weight: 3 }],
+  [RarityTier.ULTRA]: [
+    { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 10 },
+    { entry: HeldItemId.WHITE_HERB, weight: 0 },
+  ],
+  [RarityTier.ROGUE]: [
+    { entry: HeldItemId.FOCUS_BAND, weight: 2 },
+    { entry: HeldItemId.LUCKY_EGG, weight: 4 },
+    { entry: HeldItemId.QUICK_CLAW, weight: 1 },
+    { entry: HeldItemId.GRIP_CLAW, weight: 1 },
+    { entry: HeldItemId.WIDE_LENS, weight: 1 },
+  ],
+  [RarityTier.MASTER]: [
+    { entry: HeldItemId.KINGS_ROCK, weight: 1 },
+    { entry: HeldItemId.LEFTOVERS, weight: 1 },
+    { entry: HeldItemId.SHELL_BELL, weight: 1 },
+    { entry: HeldItemId.SCOPE_LENS, weight: 1 },
+  ],
+};
+
+/** Held items generated for daily run starters. */
+export const dailyStarterHeldItemPool: HeldItemTieredPool = {
+  [RarityTier.COMMON]: [
+    { entry: HeldItemCategoryId.VITAMIN, weight: 1 },
+    { entry: HeldItemCategoryId.BERRY, weight: 3 },
+  ],
+  [RarityTier.GREAT]: [{ entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 }],
+  [RarityTier.ULTRA]: [
+    { entry: HeldItemId.REVIVER_SEED, weight: 4 },
+    { entry: HeldItemId.SOOTHE_BELL, weight: 1 },
+    { entry: HeldItemId.SOUL_DEW, weight: 1 },
+    { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
+  ],
+  [RarityTier.ROGUE]: [
+    { entry: HeldItemId.GRIP_CLAW, weight: 5 },
+    { entry: HeldItemId.BATON, weight: 2 },
+    { entry: HeldItemId.FOCUS_BAND, weight: 5 },
+    { entry: HeldItemId.QUICK_CLAW, weight: 3 },
+    { entry: HeldItemId.KINGS_ROCK, weight: 3 },
+  ],
+  [RarityTier.MASTER]: [
+    { entry: HeldItemId.LEFTOVERS, weight: 1 },
+    { entry: HeldItemId.SHELL_BELL, weight: 1 },
+  ],
+};
+
+// #endregion Default pools
 
 // #region Initialization
 
@@ -220,42 +280,7 @@ export function generateEnemyPokemonHeldItems(
  * @returns The {@linkcode HeldItemPool} for the resulting tier
  */
 function determineItemPool(pool: HeldItemTieredPool, upgradeCount: number): HeldItemPool {
-  const tier = Phaser.Math.Clamp(
-    getRandomTier() + upgradeCount,
-    RarityTier.COMMON,
-    RarityTier.MASTER,
-  ) as PoolRarityTier;
-  return pool[tier];
-}
-
-/**
- * Generate a random item rarity for a wild or trainer held item.
- *
- * Probability distribution (out of 1024):
- * - Common: 768/1024 (~75.00%)
- * - Great:  195/1024 (~19.04%)
- * - Ultra:   48/1024 (~4.69%)
- * - Rogue:   12/1024 (~1.17%)
- * - Master:   1/1024 (~0.098%)
- *
- * @returns The rarity tier
- */
-function getRandomTier(): PoolRarityTier {
-  const tierValue = randSeedInt(1024);
-
-  if (tierValue > 255) {
-    return RarityTier.COMMON;
-  }
-  if (tierValue > 60) {
-    return RarityTier.GREAT;
-  }
-  if (tierValue > 12) {
-    return RarityTier.ULTRA;
-  }
-  if (tierValue > 0) {
-    return RarityTier.ROGUE;
-  }
-  return RarityTier.MASTER;
+  return pool[clampPoolRarityTier(rollRarityTier() + upgradeCount)];
 }
 
 /**

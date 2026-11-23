@@ -5,7 +5,7 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { RewardId } from "#enums/reward-id";
-import type { RarityTier } from "#enums/reward-tier";
+import type { PoolRarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Reward, RewardOption } from "#items/reward";
 
@@ -13,9 +13,6 @@ import type { Reward, RewardOption } from "#items/reward";
  * Union of all (disjoint) types that can be put in a reward pool.
  */
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
-
-/** Valid rarity tiers for reward pools. */
-export type PoolRarityTier = Exclude<RarityTier, RarityTier.LUXURY>;
 
 /**
  * A dynamic weight for a pool entry.

@@ -5,11 +5,12 @@ import type { EvolutionItemId } from "#enums/evolution-item";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import type { MoveId } from "#enums/move-id";
 import { PartyUiMode } from "#enums/party-ui-mode";
-import { RarityTier } from "#enums/reward-tier";
+import { type PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import { FusePokemonReward } from "#items/fuse";
 import { tryTransferHeldItem } from "#items/item-utility";
+import { isPoolRarityTier } from "#items/rarity-tier-utils";
 import { RememberMoveReward } from "#items/remember-move";
 import {
   type PokemonMoveRecallRewardParams,
@@ -20,7 +21,6 @@ import {
   type Reward,
   type RewardOption,
 } from "#items/reward";
-import { isPoolRarityTier } from "#items/reward-pool";
 import { generatePlayerRewardOptions } from "#items/reward-pool-utils";
 import {
   applyReward,
@@ -33,7 +33,7 @@ import {
 } from "#items/reward-utils";
 import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
-import type { CustomRewardSettings, PoolRarityTier } from "#types/rewards";
+import type { CustomRewardSettings } from "#types/rewards";
 import type { ConfirmModeConfig } from "#types/ui-types";
 import { PartyOption, PartyUiHandler, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";

@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { isHeldItemId, isTrainerItemId } from "#enums/reward-id";
-import { RarityTier } from "#enums/reward-tier";
+import type { PoolRarityTier, RarityTier } from "#enums/reward-tier";
 import { allRewards } from "#items/all-rewards";
+import { createTieredRecord, isPoolRarityTier, POOL_RARITY_TIERS, rollRarityTier } from "#items/rarity-tier-utils";
 import { Reward, RewardGenerator, RewardOption } from "#items/reward";
 import { createRewardFromSpecs, getDefaultRewardTier } from "#items/reward-utils";
 import type {
-  PoolRarityTier,
   RewardConfiguration,
   RewardGenerationOptions,
   RewardMatchKey,
@@ -19,63 +19,6 @@ import { getPartyLuckValue } from "#utils/party";
 import { weightedPick } from "#utils/random";
 import { isHeldItemRewardAvailable } from "./rewards/held-item-reward";
 
-// #region Tier helpers
-
-/** Every {@linkcode PoolRarityTier} in ascending rarity order. */
-export const POOL_RARITY_TIERS = [
-  RarityTier.COMMON,
-  RarityTier.GREAT,
-  RarityTier.ULTRA,
-  RarityTier.ROGUE,
-  RarityTier.MASTER,
-] as const satisfies readonly PoolRarityTier[];
-
-/**
- * @param tier - The tier to check
- * @returns Whether the numeric tier is a valid reward pool tier
- */
-export function isPoolRarityTier(tier: number): tier is PoolRarityTier {
-  return (POOL_RARITY_TIERS as readonly number[]).includes(tier);
-}
-
-/** Create a record with one value per {@linkcode PoolRarityTier}. */
-function createTieredRecord<T>(init: (tier: PoolRarityTier) => T): Record<PoolRarityTier, T> {
-  return {
-    [RarityTier.COMMON]: init(RarityTier.COMMON),
-    [RarityTier.GREAT]: init(RarityTier.GREAT),
-    [RarityTier.ULTRA]: init(RarityTier.ULTRA),
-    [RarityTier.ROGUE]: init(RarityTier.ROGUE),
-    [RarityTier.MASTER]: init(RarityTier.MASTER),
-  };
-}
-
-/**
- * Generates a random RarityTier to draw rewards from the pool. The probabilities are:
- * 1/1024 (Master tier)
- * 12/1024 (Rogue tier)
- * 48/1024 (Ultra tier)
- * 195/1024 (Great tier)
- * 768/1024 (Common tier)
- * @returns The rolled {@linkcode PoolRarityTier}
- */
-function randomBaseTier(): PoolRarityTier {
-  const tierValue = randSeedInt(1024);
-
-  if (tierValue > 255) {
-    return RarityTier.COMMON;
-  }
-  if (tierValue > 60) {
-    return RarityTier.GREAT;
-  }
-  if (tierValue > 12) {
-    return RarityTier.ULTRA;
-  }
-  if (tierValue) {
-    return RarityTier.ROGUE;
-  }
-  return RarityTier.MASTER;
-}
-
 /**
  * Retry order for tiers without valid entries - steps down to common, then up from the initial tier to master.
  * @param initialTier - The tier to start from
@@ -84,8 +27,6 @@ function getTierSearchOrder(initialTier: PoolRarityTier): PoolRarityTier[] {
   const index = POOL_RARITY_TIERS.indexOf(initialTier);
   return [...POOL_RARITY_TIERS.slice(0, index + 1).reverse(), ...POOL_RARITY_TIERS.slice(index + 1)];
 }
-
-// #endregion Tier helpers
 
 // #region Weights and availability
 
@@ -271,11 +212,10 @@ export class RewardPool {
   private pickOption(
     weights: ResolvedRewardWeights,
     exclusions: Set<RewardMatchKey>,
-    baseTier: PoolRarityTier = randomBaseTier(),
+    baseTier: PoolRarityTier = rollRarityTier(),
     allowLuckUpgrades = true,
   ): RewardOption | null {
     const upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(weights, baseTier) : 0;
-    // `getRarityUpgradeCount` only ever upgrades into existing pool tiers
     const initialTier = (baseTier + upgradeCount) as PoolRarityTier;
 
     for (const tier of getTierSearchOrder(initialTier)) {
