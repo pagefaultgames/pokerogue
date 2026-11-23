@@ -5,7 +5,6 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { RewardId } from "#enums/reward-id";
-import { Stat } from "#enums/stat";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { generateRewardOptionFromId } from "#items/reward-utils";
@@ -97,10 +96,10 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const rewards = [
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.ATK })!,
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.DEF })!,
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.SPD })!,
-            generateRewardOptionFromId(RewardId.DIRE_HIT)!,
+            generateRewardOptionFromId(TrainerItemId.X_ATTACK)!,
+            generateRewardOptionFromId(TrainerItemId.X_DEFENSE)!,
+            generateRewardOptionFromId(TrainerItemId.X_SPEED)!,
+            generateRewardOptionFromId(TrainerItemId.DIRE_HIT)!,
             generateRewardOptionFromId(RewardId.RARER_CANDY)!,
           ];
 
@@ -145,10 +144,10 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const rewards = [
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.SPATK })!,
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.SPDEF })!,
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.SPD })!,
-            generateRewardOptionFromId(RewardId.DIRE_HIT)!,
+            generateRewardOptionFromId(TrainerItemId.X_SP_ATK)!,
+            generateRewardOptionFromId(TrainerItemId.X_SP_DEF)!,
+            generateRewardOptionFromId(TrainerItemId.X_SPEED)!,
+            generateRewardOptionFromId(TrainerItemId.DIRE_HIT)!,
             generateRewardOptionFromId(RewardId.RARER_CANDY)!,
           ];
 
@@ -193,8 +192,8 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const rewards = [
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.ACC })!,
-            generateRewardOptionFromId({ id: RewardId.TEMP_STAT_STAGE_BOOSTER, args: Stat.SPD })!,
+            generateRewardOptionFromId(TrainerItemId.X_ACCURACY)!,
+            generateRewardOptionFromId(TrainerItemId.X_SPEED)!,
             generateRewardOptionFromId(RewardId.GREAT_BALL)!,
             generateRewardOptionFromId(TrainerItemId.IV_SCANNER)!,
             generateRewardOptionFromId(RewardId.RARER_CANDY)!,

@@ -187,7 +187,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         await hideOricorioPokemon();
         setEncounterRewards({
-          guaranteedRewardSpecs: [HeldItemId.BATON],
+          guaranteedRewardConfigs: [HeldItemId.BATON],
           fillRemaining: true,
         });
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);

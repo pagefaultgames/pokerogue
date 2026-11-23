@@ -4,6 +4,8 @@ import { playerRewardPool, type RewardPool } from "#items/reward-pool";
 import { generateRewardOptionFromId } from "#items/reward-utils";
 import type { RewardConfiguration, RewardGenerationOptions } from "#types/rewards";
 
+export type { CustomRewardSettings } from "#types/rewards";
+
 /** Options for {@linkcode generatePlayerRewardOptions}. */
 export interface PlayerRewardGenerationOptions extends RewardGenerationOptions {
   /**

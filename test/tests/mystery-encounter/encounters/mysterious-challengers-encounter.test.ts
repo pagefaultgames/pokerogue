@@ -165,9 +165,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(3);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.TM_COMMON);
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe(RewardId.TM_GREAT);
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toBe(RewardId.MEMORY_MUSHROOM);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toBe(RewardId.TM_COMMON);
+      expect(rewardSelectHandler.options[1].rewardOption.reward.id).toBe(RewardId.TM_GREAT);
+      expect(rewardSelectHandler.options[2].rewardOption.reward.id).toBe(RewardId.MEMORY_MUSHROOM);
     });
   });
 

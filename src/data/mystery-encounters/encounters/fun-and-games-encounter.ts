@@ -270,21 +270,21 @@ function handleNextTurn(): boolean {
     if (healthRatio < 0.03) {
       // Grand prize
       setEncounterRewards({
-        guaranteedRewardSpecs: [HeldItemId.MULTI_LENS],
+        guaranteedRewardConfigs: [HeldItemId.MULTI_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:bestResult`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards({
-        guaranteedRewardSpecs: [HeldItemId.SCOPE_LENS],
+        guaranteedRewardConfigs: [HeldItemId.SCOPE_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:greatResult`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards({
-        guaranteedRewardSpecs: [HeldItemId.WIDE_LENS],
+        guaranteedRewardConfigs: [HeldItemId.WIDE_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:goodResult`;

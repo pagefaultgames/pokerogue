@@ -16,7 +16,6 @@ import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
-import type { Reward } from "#items/reward";
 import { applyReward, generateRewardOptionFromId } from "#items/reward-utils";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -144,7 +143,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
-        guaranteedRewardSpecs: [RewardId.RARER_CANDY],
+        guaranteedRewardConfigs: [RewardId.RARER_CANDY],
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -163,15 +162,15 @@ async function spawnNextTrainerOrEndEncounter() {
 
     // Give 10x Voucher
     // TODO: Fix
-    const reward = generateRewardOptionFromId(RewardId.VOUCHER_PREMIUM).type;
-    applyReward(reward as Reward, {});
+    const reward = generateRewardOptionFromId(RewardId.VOUCHER_PREMIUM)!.reward;
+    applyReward(reward, {});
     audioManager.playSound("item_fanfare");
-    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: (reward as Reward).name }));
+    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: reward.name }));
 
     await showEncounterDialogue(`${namespace}:victory2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
     const machoBrace = generateRewardOptionFromId(HeldItemId.MACHO_BRACE)!;
-    machoBrace.type.tier = RarityTier.MASTER;
+    machoBrace.tier = RarityTier.MASTER;
     setEncounterRewards({
       guaranteedRewardOptions: [machoBrace],
       fillRemaining: false,

@@ -100,11 +100,11 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
-      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(i18next.t("item:xAttack.name"));
-      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xDefense.name"));
-      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
-      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(i18next.t("item:direHit.name"));
-      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(i18next.t("reward:rarerCandy.name"));
+      expect(rewardSelectHandler.options[0].rewardOption.reward.name).toBe(i18next.t("item:xAttack.name"));
+      expect(rewardSelectHandler.options[1].rewardOption.reward.name).toBe(i18next.t("item:xDefense.name"));
+      expect(rewardSelectHandler.options[2].rewardOption.reward.name).toBe(i18next.t("item:xSpeed.name"));
+      expect(rewardSelectHandler.options[3].rewardOption.reward.name).toBe(i18next.t("item:direHit.name"));
+      expect(rewardSelectHandler.options[4].rewardOption.reward.name).toBe(i18next.t("reward:rarerCandy.name"));
     });
 
     it("should leave encounter without battle", async () => {
@@ -151,11 +151,11 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
-      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(i18next.t("item:xSpAtk.name"));
-      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xSpDef.name"));
-      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
-      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(i18next.t("item:direHit.name"));
-      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(i18next.t("reward:rarerCandy.name"));
+      expect(rewardSelectHandler.options[0].rewardOption.reward.name).toBe(i18next.t("item:xSpAtk.name"));
+      expect(rewardSelectHandler.options[1].rewardOption.reward.name).toBe(i18next.t("item:xSpDef.name"));
+      expect(rewardSelectHandler.options[2].rewardOption.reward.name).toBe(i18next.t("item:xSpeed.name"));
+      expect(rewardSelectHandler.options[3].rewardOption.reward.name).toBe(i18next.t("item:direHit.name"));
+      expect(rewardSelectHandler.options[4].rewardOption.reward.name).toBe(i18next.t("reward:rarerCandy.name"));
     });
 
     it("should leave encounter without battle", async () => {
@@ -203,17 +203,17 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(5);
-      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(i18next.t("item:xAccuracy.name"));
-      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(i18next.t("item:xSpeed.name"));
-      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
+      expect(rewardSelectHandler.options[0].rewardOption.reward.name).toBe(i18next.t("item:xAccuracy.name"));
+      expect(rewardSelectHandler.options[1].rewardOption.reward.name).toBe(i18next.t("item:xSpeed.name"));
+      expect(rewardSelectHandler.options[2].rewardOption.reward.name).toBe(
         i18next.t("reward:addPokeball.name", {
           rewardCount: 5,
           pokeballName: i18next.t("pokeball:greatBall"),
         }),
       );
       expect(i18next.t).toHaveBeenCalledWith("reward:addPokeball.name", expect.objectContaining({ modifierCount: 5 }));
-      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(i18next.t("item:ivScanner.name"));
-      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(i18next.t("reward:rarerCandy.name"));
+      expect(rewardSelectHandler.options[3].rewardOption.reward.name).toBe(i18next.t("item:ivScanner.name"));
+      expect(rewardSelectHandler.options[4].rewardOption.reward.name).toBe(i18next.t("reward:rarerCandy.name"));
     });
 
     it("should leave encounter without battle", async () => {

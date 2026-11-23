@@ -139,12 +139,12 @@ describe("Weird Dream - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(6);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual(RewardId.MEMORY_MUSHROOM);
-      expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual(RewardId.ROGUE_BALL);
-      expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual(RewardId.MINT);
-      expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual(RewardId.MINT);
-      expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual(RewardId.MINT);
-      expect(rewardSelectHandler.options[5].rewardOption.type.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toEqual(RewardId.MEMORY_MUSHROOM);
+      expect(rewardSelectHandler.options[1].rewardOption.reward.id).toEqual(RewardId.ROGUE_BALL);
+      expect(rewardSelectHandler.options[2].rewardOption.reward.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[3].rewardOption.reward.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[4].rewardOption.reward.id).toEqual(RewardId.MINT);
+      expect(rewardSelectHandler.options[5].rewardOption.reward.id).toEqual(RewardId.MINT);
     });
 
     it("should leave encounter without battle", async () => {

@@ -275,7 +275,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         if (numBugTypes < 2) {
           setEncounterRewards({
-            guaranteedRewardSpecs: [RewardId.SUPER_LURE, RewardId.GREAT_BALL],
+            guaranteedRewardConfigs: [TrainerItemId.SUPER_LURE, RewardId.GREAT_BALL],
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -286,7 +286,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           ];
         } else if (numBugTypes < 4) {
           setEncounterRewards({
-            guaranteedRewardSpecs: [HeldItemId.QUICK_CLAW, RewardId.MAX_LURE, RewardId.ULTRA_BALL],
+            guaranteedRewardConfigs: [HeldItemId.QUICK_CLAW, TrainerItemId.MAX_LURE, RewardId.ULTRA_BALL],
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -297,7 +297,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           ];
         } else if (numBugTypes < 6) {
           setEncounterRewards({
-            guaranteedRewardSpecs: [HeldItemId.GRIP_CLAW, RewardId.MAX_LURE, RewardId.ROGUE_BALL],
+            guaranteedRewardConfigs: [HeldItemId.GRIP_CLAW, TrainerItemId.MAX_LURE, RewardId.ROGUE_BALL],
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -319,19 +319,19 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
             rewardOptions.push(generateRewardOptionFromId(TrainerItemId.DYNAMAX_BAND)!);
           }
           const nonRareEvolutionReward = generateRewardOptionFromId(RewardId.EVOLUTION_ITEM);
-          if (nonRareEvolutionReward.type.id) {
+          if (nonRareEvolutionReward) {
             specialOptions.push(nonRareEvolutionReward);
           }
           const rareEvolutionReward = generateRewardOptionFromId(RewardId.RARE_EVOLUTION_ITEM);
-          if (rareEvolutionReward.type.id) {
+          if (rareEvolutionReward) {
             specialOptions.push(rareEvolutionReward);
           }
           const formChangeReward = generateRewardOptionFromId(RewardId.FORM_CHANGE_ITEM);
-          if (formChangeReward.type.id) {
+          if (formChangeReward) {
             specialOptions.push(formChangeReward);
           }
           const rareFormChangeReward = generateRewardOptionFromId(RewardId.RARE_FORM_CHANGE_ITEM);
-          if (rareFormChangeReward.type.id) {
+          if (rareFormChangeReward) {
             specialOptions.push(rareFormChangeReward);
           }
           if (specialOptions.length > 0) {
@@ -427,11 +427,11 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         globalScene.updateItemBar(true);
 
         const bugNet = generateRewardOptionFromId(TrainerItemId.GOLDEN_BUG_NET)!;
-        bugNet.type.tier = RarityTier.ROGUE;
+        bugNet.tier = RarityTier.ROGUE;
 
         setEncounterRewards({
           guaranteedRewardOptions: [bugNet],
-          guaranteedRewardSpecs: [HeldItemId.REVIVER_SEED],
+          guaranteedRewardConfigs: [HeldItemId.REVIVER_SEED],
           fillRemaining: false,
         });
         leaveEncounterWithoutBattle(true);

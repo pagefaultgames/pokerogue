@@ -164,7 +164,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
       setEncounterRewards(
         {
-          guaranteedRewardSpecs: [RewardId.RELIC_GOLD],
+          guaranteedRewardConfigs: [RewardId.RELIC_GOLD],
           guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE],
           fillRemaining: true,
         },

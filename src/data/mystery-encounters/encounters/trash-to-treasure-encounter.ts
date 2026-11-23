@@ -131,7 +131,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         setEncounterRewards({
-          guaranteedRewardSpecs: [HeldItemId.LEFTOVERS],
+          guaranteedRewardConfigs: [HeldItemId.LEFTOVERS],
           guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.GREAT],
           fillRemaining: true,
         });

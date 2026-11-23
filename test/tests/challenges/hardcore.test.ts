@@ -82,12 +82,12 @@ describe("Challenges - Hardcore", () => {
     const rewardSelectHandler = game.scene.ui.handlers.find(h => h instanceof RewardSelectUiHandler)!;
     expect(
       rewardSelectHandler.options.find(
-        reward => getRewardCategory(reward.rewardOption.type.id) === RewardCategoryId.REVIVE,
+        reward => getRewardCategory(reward.rewardOption.reward.id) === RewardCategoryId.REVIVE,
       ),
     ).toBeUndefined();
     expect(
       rewardSelectHandler.shopOptionsRows.find(row =>
-        row.find(item => getRewardCategory(item.rewardOption.type.id) === RewardCategoryId.REVIVE),
+        row.find(item => getRewardCategory(item.rewardOption.reward.id) === RewardCategoryId.REVIVE),
       ),
     ).toBeUndefined();
   });

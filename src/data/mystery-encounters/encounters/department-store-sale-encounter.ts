@@ -3,6 +3,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { leaveEncounterWithoutBattle, setEncounterRewards } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
@@ -75,7 +76,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       }
 
       setEncounterRewards({
-        guaranteedRewardSpecs: rewards,
+        guaranteedRewardConfigs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -102,7 +103,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       }
 
       setEncounterRewards({
-        guaranteedRewardSpecs: rewards,
+        guaranteedRewardConfigs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -121,7 +122,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
         // 4/1 weight on base stat booster vs Dire Hit
         const roll = randSeedInt(5);
         if (roll === 0) {
-          rewards.push(RewardId.DIRE_HIT);
+          rewards.push(TrainerItemId.DIRE_HIT);
         } else {
           rewards.push(RewardId.TEMP_STAT_STAGE_BOOSTER);
         }
@@ -129,7 +130,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       }
 
       setEncounterRewards({
-        guaranteedRewardSpecs: rewards,
+        guaranteedRewardConfigs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -160,7 +161,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       }
 
       setEncounterRewards({
-        guaranteedRewardSpecs: rewards,
+        guaranteedRewardConfigs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();

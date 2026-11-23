@@ -4,12 +4,11 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { RewardOption } from "#items/reward";
-import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { generatePlayerRewardOptions } from "#items/reward-pool-utils";
 import { isTmReward } from "#items/reward-utils";
 import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
@@ -101,22 +100,23 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? RarityTier.ULTRA
             : RarityTier.GREAT;
-    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER));
     let item: RewardOption | null = null;
     // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
-    while (!item || isTmReward(item.type) || (item.type as TrainerItemReward).itemId === TrainerItemId.CANDY_JAR) {
-      item = generatePlayerRewardOptions(1, [], {
-        guaranteedRarityTiers: [tier],
-        allowLuckUpgrades: false,
+    while (!item || isTmReward(item.reward) || (item.reward as TrainerItemReward).itemId === TrainerItemId.CANDY_JAR) {
+      item = generatePlayerRewardOptions(1, {
+        customSettings: {
+          guaranteedRarityTiers: [tier],
+          allowLuckUpgrades: false,
+        },
       })[0];
     }
-    encounter.setDialogueToken("itemName", item.type.name);
+    encounter.setDialogueToken("itemName", item.reward.name);
     encounter.misc = item;
 
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
     encounter.spriteConfigs = [
       {
-        spriteKey: item.type.iconName,
+        spriteKey: item.reward.iconName,
         fileRoot: "items",
         hasShadow: false,
         x: 35,

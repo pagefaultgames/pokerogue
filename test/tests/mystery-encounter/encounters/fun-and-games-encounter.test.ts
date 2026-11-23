@@ -8,10 +8,8 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { HeldItemReward } from "#items/held-item-reward";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FunAndGamesEncounter } from "#mystery-encounters/fun-and-games-encounter";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -217,8 +215,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
-      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.WIDE_LENS);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toBe(HeldItemId.WIDE_LENS);
     });
 
     it("should have Scope Lens item in allRewards if Wubboffet is at 3-15% HP remaining", async () => {
@@ -248,8 +245,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
-      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.SCOPE_LENS);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toBe(HeldItemId.SCOPE_LENS);
     });
 
     it("should have Multi Lens item in allRewards if Wubboffet is at <3% HP remaining", async () => {
@@ -279,8 +275,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe(RewardId.GENERIC_HELD_ITEM);
-      expect((rewardSelectHandler.options[0].rewardOption.type as HeldItemReward).itemId).toBe(HeldItemId.MULTI_LENS);
+      expect(rewardSelectHandler.options[0].rewardOption.reward.id).toBe(HeldItemId.MULTI_LENS);
     });
   });
 
