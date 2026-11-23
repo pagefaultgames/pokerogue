@@ -259,7 +259,7 @@ export class RewardPool {
    * @param tier - The tier the option is presented with
    * @param upgradeCount - Tier upgrades having occurred
    * @param exclusions - Match keys to exclude and add the picked option's key to
-   * @returns The created option, or `null` if `specs` names a generator with no available variants
+   * @returns The created option, or `null` if `specs` names a generator with no available entries
    */
   private createOption(
     specs: RewardConfiguration,

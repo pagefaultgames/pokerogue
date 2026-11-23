@@ -95,11 +95,11 @@ export class TeraTypeRewardGenerator extends RewardGenerator<PokemonType> {
 
   /**
    * Stellar shards are rolled `1 / STELLAR_SHARD_ODDS` of the time; all other types are uniform.
-   * Weighting Stellar by the number of other variants keeps its probability exact regardless of exclusions.
+   * Weighting Stellar by the number of other entries keeps its probability exact regardless of exclusions.
    */
-  protected override getWeight(type: PokemonType, variants: readonly PokemonType[]): number {
+  protected override getWeight(type: PokemonType, entries: readonly PokemonType[]): number {
     if (type === PokemonType.STELLAR) {
-      return Math.max(variants.length - 1, 1);
+      return Math.max(entries.length - 1, 1);
     }
     return STELLAR_SHARD_ODDS - 1;
   }

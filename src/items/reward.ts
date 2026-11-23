@@ -105,7 +105,7 @@ export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
 
   /**
    * The deduplication match key of this reward. Defaults to {@linkcode Reward.getMatchKey | getMatchKey(this.id)}.
-   * Generated rewards with sub-variants (e.g. TMs) should override this to include the variant.
+   * Generated rewards with distinct entries (e.g. TMs) should override this to include the entry.
    */
   public get matchKey(): RewardMatchKey {
     return Reward.getMatchKey(this.id);
@@ -219,23 +219,23 @@ export interface PokemonFusionRewardParams {
 // #endregion Pokemon rewards
 
 /**
- * A {@linkcode RewardGenerator} produces {@linkcode Reward}s for a family of related variants
- * (TMs, berries, mints, ...), and is the *only* place variants of that family are sampled.
+ * A {@linkcode RewardGenerator} produces {@linkcode Reward}s for a family of related entries
+ * (TMs, berries, mints, ...), and is the *only* place entries of that family are sampled.
  *
  * Subclasses implement {@linkcode getAvailableItems} and {@linkcode generateReward},
  * and may override {@linkcode getWeight} to bias random generation.
  *
- * @typeParam TVariant - The type identifying a single variant of this generator.
+ * @typeParam TEntry - The type identifying a single entry of this generator.
  */
-export abstract class RewardGenerator<TVariant = unknown> {
+export abstract class RewardGenerator<TEntry = unknown> {
   /**
-   * Return all variants this generator can currently produce for the player's run/party.
+   * Return all entries this generator can currently produce for the player's run/party.
    * @param exclusions - Optional set of match keys to exclude
    */
-  public abstract getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): TVariant[];
+  public abstract getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): TEntry[];
 
   /**
-   * Return the count of distinct variants this generator can currently produce.
+   * Return the count of distinct entries this generator can currently produce.
    * @param exclusions - Optional set of match keys to exclude
    */
   public getCapacity(exclusions?: ReadonlySet<RewardMatchKey>): number {
@@ -243,38 +243,38 @@ export abstract class RewardGenerator<TVariant = unknown> {
   }
 
   /**
-   * Return the relative weight of a variant during random generation.
-   * Only ever called with variants returned by {@linkcode getAvailableItems}, and must return a positive number.
-   * @param variant - The variant to weigh
-   * @param variants - All variants currently available (for weights that depend on the pool's composition)
-   * @returns The variant's weight, defaults to `1` (uniform) if not overridden
+   * Return the relative weight of an entry during random generation.
+   * Only ever called with entries returned by {@linkcode getAvailableItems}, and must return a positive number.
+   * @param entry - The entry to weigh
+   * @param entries - All entries currently available (for weights that depend on the pool's composition)
+   * @returns The entry's weight, defaults to `1` (uniform) if not overridden
    */
   // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract hook method
-  protected getWeight(variant: TVariant, variants: readonly TVariant[]): number {
+  protected getWeight(entry: TEntry, entries: readonly TEntry[]): number {
     return 1;
   }
 
   /**
-   * Create the reward for a specific variant.
+   * Create the reward for a specific entry.
    * Does not check availability, use {@linkcode generateRandomReward} for that.
-   * @param variant - The variant to produce
+   * @param entry - The entry to produce
    */
-  public abstract generateReward(variant: TVariant): Reward;
+  public abstract generateReward(entry: TEntry): Reward;
 
   /**
-   * Sample a random variant (respecting availability and {@linkcode getWeight}) and create its reward.
+   * Sample a random entry (respecting availability and {@linkcode getWeight}) and create its reward.
    * @param exclusions - Optional set of match keys to exclude
-   * @returns The generated reward, or `null` if no variants are available
+   * @returns The generated reward, or `null` if no entries are available
    * @sealed
    */
   public generateRandomReward(exclusions?: ReadonlySet<RewardMatchKey>): Reward | null {
-    const variants = this.getAvailableItems(exclusions);
-    if (variants.length === 0) {
+    const entries = this.getAvailableItems(exclusions);
+    if (entries.length === 0) {
       return null;
     }
-    const weights = new Map<TVariant, number>();
-    for (const variant of variants) {
-      weights.set(variant, this.getWeight(variant, variants));
+    const weights = new Map<TEntry, number>();
+    for (const entry of entries) {
+      weights.set(entry, this.getWeight(entry, entries));
     }
     return this.generateReward(weightedPick(weights));
   }

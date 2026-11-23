@@ -85,7 +85,7 @@ export function getDefaultRewardTier(id: RewardPoolId): RarityTier {
  * Create a {@linkcode Reward} from a {@linkcode RewardConfiguration}.
  * @param config - The {@linkcode RewardConfiguration} to resolve
  * @param exclusions - Match keys excluded during random generation
- * @returns The reward, or `null` if a generator has no available variants
+ * @returns The reward, or `null` if a generator has no available entries
  */
 export function createRewardFromSpecs(
   config: RewardConfiguration,
@@ -116,7 +116,7 @@ export function createRewardFromSpecs(
  * @param cost - The monetary cost of selecting the option; default `0`
  * @param tierOverride - An optional {@linkcode RarityTier} to override the option's default rarity
  * @param upgradeCount - The number of tier upgrades having occurred; default `0`
- * @returns The generated {@linkcode RewardOption}, or `null` if `specs` names a generator with no available variants
+ * @returns The generated {@linkcode RewardOption}, or `null` if `specs` names a generator with no available entries
  */
 export function generateRewardOptionFromId(
   config: RewardConfiguration,
