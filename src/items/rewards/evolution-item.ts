@@ -5,8 +5,7 @@ import { EvolutionItemId } from "#enums/evolution-item";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import type { RewardMatchKey } from "#types/rewards";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -17,10 +16,6 @@ export class EvolutionItemReward extends PokemonReward {
   constructor(id: RewardId, evolutionItemId: EvolutionItemId) {
     super(id);
     this.evolutionItemId = evolutionItemId;
-  }
-
-  override get matchKey(): RewardMatchKey {
-    return `evolution:${this.evolutionItemId}`;
   }
 
   get name(): string {
@@ -76,7 +71,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator<EvolutionItemI
     this.rare = rare;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): EvolutionItemId[] {
+  public override getAllAvailableItems(): EvolutionItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: refactor once species code isn't a horrible burning mess
@@ -114,9 +109,14 @@ export class EvolutionItemRewardGenerator extends RewardGenerator<EvolutionItemI
     ]
       .flat()
       .flatMap(e => e.item)
-      .filter((i): i is EvolutionItemId => !!i && i > 50 === this.rare && !exclusions?.has(`evolution:${i}`));
+      .filter((i): i is EvolutionItemId => !!i && i > 50 === this.rare);
 
     return [...new Set(evolutionItemPool)];
+  }
+
+  protected override getEntry(reward: Reward): EvolutionItemId | null {
+    const id = this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM;
+    return reward instanceof EvolutionItemReward && reward.id === id ? reward.evolutionItemId : null;
   }
 
   override generateReward(evolutionItemId: EvolutionItemId): EvolutionItemReward {

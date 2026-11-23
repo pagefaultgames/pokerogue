@@ -45,19 +45,13 @@
  */
 // TODO update package doc
 
-import {
-  getRewardCategory,
-  isHeldItemId,
-  isTrainerItemId,
-  type RewardCategoryId,
-  type RewardId,
-} from "#enums/reward-id";
+import { getRewardCategory, type RewardCategoryId, type RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 // biome-ignore lint/correctness/noUnusedImports: used in TSDoc
 import type { SelectRewardPhase } from "#phases/select-reward-phase";
-import type { RewardMatchKey, RewardPoolId } from "#types/rewards";
+import type { RewardPoolId } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { weightedPick } from "#utils/random";
@@ -87,28 +81,6 @@ export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
     this.localeKey = assets.localeKey;
     this._iconName = assets.iconName;
     this.soundName = assets.soundName ?? "se/restore";
-  }
-
-  /**
-   * Return the deduplication match key for any pool ID.
-   * @param id - The {@linkcode RewardPoolId} to build the key for
-   */
-  public static getMatchKey(id: RewardPoolId): RewardMatchKey {
-    if (isHeldItemId(id)) {
-      return `held:${id}`;
-    }
-    if (isTrainerItemId(id)) {
-      return `trainer:${id}`;
-    }
-    return `reward:${id}`;
-  }
-
-  /**
-   * The deduplication match key of this reward. Defaults to {@linkcode Reward.getMatchKey | getMatchKey(this.id)}.
-   * Generated rewards with distinct entries (e.g. TMs) should override this to include the entry.
-   */
-  public get matchKey(): RewardMatchKey {
-    return Reward.getMatchKey(this.id);
   }
 
   public get category(): RewardCategoryId {
@@ -222,7 +194,7 @@ export interface PokemonFusionRewardParams {
  * A {@linkcode RewardGenerator} produces {@linkcode Reward}s for a family of related entries
  * (TMs, berries, mints, ...), and is the *only* place entries of that family are sampled.
  *
- * Subclasses implement {@linkcode getAvailableItems} and {@linkcode generateReward},
+ * Subclasses implement {@linkcode getAllAvailableItems}, {@linkcode getEntry}, and {@linkcode generateReward},
  * and may override {@linkcode getWeight} to bias random generation.
  *
  * @typeParam TEntry - The type identifying a single entry of this generator.
@@ -230,21 +202,38 @@ export interface PokemonFusionRewardParams {
 export abstract class RewardGenerator<TEntry = unknown> {
   /**
    * Return all entries this generator can currently produce for the player's run/party.
-   * @param exclusions - Optional set of match keys to exclude
    */
-  public abstract getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): TEntry[];
+  public abstract getAllAvailableItems(): TEntry[];
+
+  /**
+   * Extract the entry corresponding to this generator from a reward, if applicable.
+   * @param reward - The reward to inspect
+   */
+  protected abstract getEntry(reward: Reward): TEntry | null;
+
+  /**
+   * Return all entries available to produce, excluding those matching any already selected reward.
+   * @param selected - Already selected rewards to exclude
+   */
+  public getAvailableItems(selected: readonly Reward[] = []): TEntry[] {
+    const items = this.getAllAvailableItems();
+    if (selected.length === 0) {
+      return items;
+    }
+    return items.filter(entry => !selected.some(reward => this.getEntry(reward) === entry));
+  }
 
   /**
    * Return the count of distinct entries this generator can currently produce.
-   * @param exclusions - Optional set of match keys to exclude
+   * @param selected - Already selected rewards to exclude
    */
-  public getCapacity(exclusions?: ReadonlySet<RewardMatchKey>): number {
-    return this.getAvailableItems(exclusions).length;
+  public getCapacity(selected: readonly Reward[] = []): number {
+    return this.getAvailableItems(selected).length;
   }
 
   /**
    * Return the relative weight of an entry during random generation.
-   * Only ever called with entries returned by {@linkcode getAvailableItems}, and must return a positive number.
+   * Only ever called with entries in {@linkcode getAvailableItems}, and must return a positive number.
    * @param entry - The entry to weigh
    * @param entries - All entries currently available (for weights that depend on the pool's composition)
    * @returns The entry's weight, defaults to `1` (uniform) if not overridden
@@ -263,12 +252,12 @@ export abstract class RewardGenerator<TEntry = unknown> {
 
   /**
    * Sample a random entry (respecting availability and {@linkcode getWeight}) and create its reward.
-   * @param exclusions - Optional set of match keys to exclude
+   * @param selected - Already selected rewards to exclude
    * @returns The generated reward, or `null` if no entries are available
    * @sealed
    */
-  public generateRandomReward(exclusions?: ReadonlySet<RewardMatchKey>): Reward | null {
-    const entries = this.getAvailableItems(exclusions);
+  public generateRandomReward(selected: readonly Reward[] = []): Reward | null {
+    const entries = this.getAvailableItems(selected);
     if (entries.length === 0) {
       return null;
     }

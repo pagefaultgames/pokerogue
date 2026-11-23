@@ -10,8 +10,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import type { RewardMatchKey } from "#types/rewards";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { isItemInCategory } from "#utils/item-utils";
 
@@ -24,10 +23,6 @@ export class FormChangeItemReward extends PokemonReward {
   constructor(id: RewardId, formChangeItemId: FormChangeItemId) {
     super(id);
     this.formChangeItemId = formChangeItemId;
-  }
-
-  override get matchKey(): RewardMatchKey {
-    return `formChange:${this.formChangeItemId}`;
   }
 
   get name(): string {
@@ -68,7 +63,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeIte
     this.isRareFormChangeItem = isRareFormChangeItem;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): FormChangeItemId[] {
+  public override getAllAvailableItems(): FormChangeItemId[] {
     const party = globalScene.getPlayerParty();
 
     // TODO: REFACTOR THIS FUCKERY PLEASE
@@ -125,19 +120,25 @@ export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeIte
     ]
       .flat()
       .flatMap(fc => fc.item)
-      .filter(
-        i =>
-          isItemInCategory(
-            i,
-            this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
-          ) && !exclusions?.has(`formChange:${i}`),
+      .filter(i =>
+        isItemInCategory(
+          i,
+          this.isRareFormChangeItem ? HeldItemCategoryId.RARE_FORM_CHANGE : HeldItemCategoryId.FORM_CHANGE,
+        ),
       );
 
     return formChangeItemPool;
   }
 
+  protected override getEntry(reward: Reward): FormChangeItemId | null {
+    return reward instanceof FormChangeItemReward && reward.id === this.rareRewardId ? reward.formChangeItemId : null;
+  }
+
+  private get rareRewardId(): RewardId {
+    return this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM;
+  }
+
   override generateReward(formChangeItemId: FormChangeItemId): FormChangeItemReward {
-    const id = this.isRareFormChangeItem ? RewardId.RARE_FORM_CHANGE_ITEM : RewardId.FORM_CHANGE_ITEM;
-    return new FormChangeItemReward(id, formChangeItemId);
+    return new FormChangeItemReward(this.rareRewardId, formChangeItemId);
   }
 }

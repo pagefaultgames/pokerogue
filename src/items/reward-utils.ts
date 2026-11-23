@@ -8,7 +8,7 @@ import type { FormChangeItemReward } from "#items/form-change";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { getRewardTier } from "#items/reward-defaults-tiers";
 import { getTrainerItemTier } from "#items/trainer-item-default-tiers";
-import type { RewardConfiguration, RewardMatchKey, RewardPoolId } from "#types/rewards";
+import type { RewardConfiguration, RewardPoolId } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { ValueHolder } from "#utils/value-holder";
@@ -84,13 +84,10 @@ export function getDefaultRewardTier(id: RewardPoolId): RarityTier {
 /**
  * Create a {@linkcode Reward} from a {@linkcode RewardConfiguration}.
  * @param config - The {@linkcode RewardConfiguration} to resolve
- * @param exclusions - Match keys excluded during random generation
+ * @param selected - Already selected rewards to exclude during random generation
  * @returns The reward, or `null` if a generator has no available entries
  */
-export function createRewardFromSpecs(
-  config: RewardConfiguration,
-  exclusions?: ReadonlySet<RewardMatchKey>,
-): Reward | null {
+export function createRewardFromSpecs(config: RewardConfiguration, selected: readonly Reward[] = []): Reward | null {
   if (isConfigReward(config)) {
     return config;
   }
@@ -105,7 +102,7 @@ export function createRewardFromSpecs(
 
   const entry = allRewards[id];
   if (entry instanceof RewardGenerator) {
-    return entry.generateRandomReward(exclusions);
+    return entry.generateRandomReward(selected);
   }
   return entry;
 }

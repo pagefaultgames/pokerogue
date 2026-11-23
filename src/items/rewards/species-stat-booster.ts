@@ -4,9 +4,8 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { SpeciesStatBoosterItemId } from "#enums/held-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
-import { Reward, RewardGenerator } from "#items/reward";
+import { type Reward, RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
-import type { RewardMatchKey } from "#types/rewards";
 import { HeldItemReward } from "./held-item-reward";
 
 const COMMON_SPECIES_STAT_BOOSTERS: readonly SpeciesStatBoosterItemId[] = [
@@ -35,12 +34,9 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesSt
   /**
    * Weigh each item of this generator's tier by how many party members could use it.
    * Items no party member can use are omitted.
-   * @param exclusions - Optional set of match keys to exclude
    */
-  private getItemWeights(exclusions?: ReadonlySet<RewardMatchKey>): Map<SpeciesStatBoosterItemId, number> {
-    const tierItems = (this.rare ? RARE_SPECIES_STAT_BOOSTERS : COMMON_SPECIES_STAT_BOOSTERS).filter(
-      item => !exclusions?.has(Reward.getMatchKey(item)),
-    );
+  private getItemWeights(): Map<SpeciesStatBoosterItemId, number> {
+    const tierItems = this.rare ? RARE_SPECIES_STAT_BOOSTERS : COMMON_SPECIES_STAT_BOOSTERS;
 
     const itemWeights = new Map<SpeciesStatBoosterItemId, number>();
 
@@ -74,8 +70,15 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesSt
     return itemWeights;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): SpeciesStatBoosterItemId[] {
-    return [...this.getItemWeights(exclusions).keys()];
+  public override getAllAvailableItems(): SpeciesStatBoosterItemId[] {
+    return [...this.getItemWeights().keys()];
+  }
+
+  protected override getEntry(reward: Reward): SpeciesStatBoosterItemId | null {
+    const tierItems = this.rare ? RARE_SPECIES_STAT_BOOSTERS : COMMON_SPECIES_STAT_BOOSTERS;
+    return reward instanceof HeldItemReward && tierItems.includes(reward.id as SpeciesStatBoosterItemId)
+      ? (reward.id as SpeciesStatBoosterItemId)
+      : null;
   }
 
   protected override getWeight(item: SpeciesStatBoosterItemId): number {

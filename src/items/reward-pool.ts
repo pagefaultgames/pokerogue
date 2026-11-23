@@ -1,14 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { isHeldItemId, isTrainerItemId } from "#enums/reward-id";
-import type { PoolRarityTier, RarityTier } from "#enums/reward-tier";
+import type { PoolRarityTier } from "#enums/reward-tier";
 import { allRewards } from "#items/all-rewards";
 import { createTieredRecord, isPoolRarityTier, POOL_RARITY_TIERS, rollRarityTier } from "#items/rarity-tier-utils";
 import { Reward, RewardGenerator, RewardOption } from "#items/reward";
-import { createRewardFromSpecs, getDefaultRewardTier, getRewardConfigId } from "#items/reward-utils";
+import { getDefaultRewardTier, getRewardConfigId } from "#items/reward-utils";
 import type {
-  RewardConfiguration,
   RewardGenerationOptions,
-  RewardMatchKey,
   RewardPoolEntries,
   RewardPoolEntry,
   RewardPoolId,
@@ -17,7 +15,8 @@ import type {
 import { randSeedInt } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
 import { weightedPick } from "#utils/random";
-import { isHeldItemRewardAvailable } from "./rewards/held-item-reward";
+import { HeldItemReward, isHeldItemRewardAvailable } from "./rewards/held-item-reward";
+import { TrainerItemReward } from "./rewards/trainer-item-reward";
 
 /**
  * Retry order for tiers without valid entries - steps down to common, then up from the initial tier to master.
@@ -30,8 +29,8 @@ function getTierSearchOrder(initialTier: PoolRarityTier): PoolRarityTier[] {
 
 // #region Weights and availability
 
-/** Positive, resolved weights of a pool's entries for a single generation. */
-type ResolvedRewardWeights = Readonly<Record<PoolRarityTier, ReadonlyMap<RewardPoolEntry, number>>>;
+/** Positive, resolved weights of a pool's entries for a working generation session. */
+type WorkingRewardWeights = Record<PoolRarityTier, Map<RewardPoolEntry, number>>;
 
 /**
  * @param weight - The entry's static or dynamic weight
@@ -42,49 +41,184 @@ function resolveWeight(weight: number | RewardWeightFunc, rerollCount: number): 
   return typeof weight === "number" ? weight : weight(rerollCount);
 }
 
+function getGenerator(id: RewardPoolId): RewardGenerator | null {
+  if (isHeldItemId(id) || isTrainerItemId(id)) {
+    return null;
+  }
+  const entry = allRewards[id];
+  return entry instanceof RewardGenerator ? entry : null;
+}
+
 /**
  * Check if a reward pool entry is available for selection given active exclusions.
  * @param id - Pool entry ID
  * @param exclusions - Optional set of match keys to exclude
  * @returns True if available, false if excluded or exhausted
  */
-function isPoolEntryAvailable(id: RewardPoolId, exclusions?: ReadonlySet<RewardMatchKey>): boolean {
+function isPoolEntryAvailable(id: RewardPoolId, selectedRewards?: readonly Reward[]): boolean {
   if (isHeldItemId(id)) {
-    return isHeldItemRewardAvailable(id, globalScene.getPlayerParty(), exclusions);
+    return isHeldItemRewardAvailable(id, globalScene.getPlayerParty());
   }
   if (isTrainerItemId(id)) {
-    return !globalScene.trainerItems.isMaxStack(id) && !exclusions?.has(Reward.getMatchKey(id));
+    return !globalScene.trainerItems.isMaxStack(id);
   }
-  const entry = allRewards[id];
-  if (entry instanceof RewardGenerator) {
-    return entry.getCapacity(exclusions) > 0;
+  const generator = getGenerator(id);
+  if (generator) {
+    return generator.getCapacity(selectedRewards) > 0;
   }
-  return !exclusions?.has(entry.matchKey);
+  return true;
+}
+
+function initWeightMap(entries: Record<PoolRarityTier, RewardPoolEntry[]>, rerollCount: number): WorkingRewardWeights {
+  return createTieredRecord(tier => {
+    const weights = new Map<RewardPoolEntry, number>();
+    for (const entry of entries[tier]) {
+      if (isPoolEntryAvailable(entry.id)) {
+        const weight = resolveWeight(entry.weight, rerollCount);
+        if (weight > 0) {
+          weights.set(entry, weight);
+        }
+      }
+    }
+    return weights;
+  });
 }
 
 /**
  * Check whether a tier exists in the pool and has at least one entry with positive weight.
- * @param weights - The resolved pool weights
+ * @param weights - The working pool weights
  * @param tier - The tier to check
  */
-function hasRollableEntries(weights: ResolvedRewardWeights, tier: number): boolean {
+function hasRollableEntries(weights: WorkingRewardWeights, tier: number): boolean {
   return isPoolRarityTier(tier) && weights[tier].size > 0;
 }
 
 /**
  * Determines the number of tier upgrades for a given rarity tier, based on the party luck.
  * Will not upgrade into a tier that has no rollable entries.
- * @param weights - The resolved weights of the pool being rolled from
+ * @param weights - The working weights of the pool being rolled from
  * @param baseTier - The initial tier to upgrade
  * @returns The number of tiers to upgrade by
  */
-function getRarityUpgradeCount(weights: ResolvedRewardWeights, baseTier: PoolRarityTier): number {
+function getRarityUpgradeCount(weights: WorkingRewardWeights, baseTier: PoolRarityTier): number {
   const upgradeOdds = Math.floor(128 / ((getPartyLuckValue() + 4) / 4));
   let upgradeCount = 0;
   while (hasRollableEntries(weights, baseTier + upgradeCount + 1) && randSeedInt(upgradeOdds) < 4) {
     upgradeCount++;
   }
   return upgradeCount;
+}
+
+/**
+ * Resolve a pool entry ID into a {@linkcode Reward} instance.
+ * @param id - The pool entry ID to resolve
+ * @param selectedRewards - Already selected rewards to exclude during generation
+ * @returns The resolved reward, or `null` if the entry cannot produce a reward
+ */
+function resolveEntryToReward(id: RewardPoolId, selectedRewards: readonly Reward[] = []): Reward | null {
+  if (isHeldItemId(id)) {
+    return new HeldItemReward(id);
+  }
+  if (isTrainerItemId(id)) {
+    return new TrainerItemReward(id);
+  }
+  const generator = getGenerator(id);
+  if (generator) {
+    return generator.generateRandomReward(selectedRewards);
+  }
+  return (allRewards[id] as Reward) ?? null;
+}
+
+/**
+ * Pick a random entry from a tier and create a {@linkcode RewardOption}.
+ * @param weights - The working pool weights
+ * @param selectedRewards - Already selected rewards to exclude during generation
+ * @param tier - The tier to pick from
+ * @param upgradeCount - The number of tier upgrades applied
+ * @returns The created option, or `null` if no rollable entries remain in the tier
+ */
+function pickFromTier(
+  weights: WorkingRewardWeights,
+  selectedRewards: Reward[],
+  tier: PoolRarityTier,
+  upgradeCount: number,
+): RewardOption | null {
+  const candidates = weights[tier];
+  if (candidates.size === 0) {
+    return null;
+  }
+  const pickedEntry = weightedPick(candidates);
+  const reward = resolveEntryToReward(pickedEntry.id, selectedRewards);
+  if (!reward) {
+    candidates.delete(pickedEntry);
+    return pickFromTier(weights, selectedRewards, tier, upgradeCount);
+  }
+
+  selectedRewards.push(reward);
+
+  const generator = getGenerator(pickedEntry.id);
+  if (generator == null || generator.getCapacity(selectedRewards) === 0) {
+    // This also removes selected non-generators, as `getGenerator` is `null` in that case
+    candidates.delete(pickedEntry);
+  }
+
+  return new RewardOption(reward, upgradeCount, tier);
+}
+
+/**
+ * Roll a reward option, upgrading tiers with luck and falling back across tiers.
+ * @param weights - The working pool weights
+ * @param selectedRewards - Already selected rewards to exclude during generation
+ * @param baseTier - Initial rarity tier, rolled randomly if omitted
+ * @param enableLuckUpgrades - Whether luck can upgrade the tier
+ * @returns The created option, or `null` if the pool is exhausted
+ */
+function pickOption(
+  weights: WorkingRewardWeights,
+  selectedRewards: Reward[],
+  baseTier: PoolRarityTier = rollRarityTier(),
+  enableLuckUpgrades = true,
+): RewardOption | null {
+  const upgradeCount = enableLuckUpgrades ? getRarityUpgradeCount(weights, baseTier) : 0;
+  const initialTier = (baseTier + upgradeCount) as PoolRarityTier;
+
+  for (const tier of getTierSearchOrder(initialTier)) {
+    const option = pickFromTier(weights, selectedRewards, tier, tier === initialTier ? upgradeCount : 0);
+    if (option) {
+      return option;
+    }
+  }
+  return null;
+}
+
+/**
+ * Remove any entries matching the given reward or exhausted generators from working weights.
+ * @param weights - The working pool weights
+ * @param reward - The reward to remove matching entries for
+ * @param selectedRewards - Already selected rewards
+ *
+ * @remarks
+ * This is not intended to be used retroactively for regular selections
+ * (this can be done immediately, see {@linkcode pickFromTier}), but rather for situations like custom
+ * settings where we don't have an entry to point to.
+ */
+function removeRewardFromWeights(
+  weights: WorkingRewardWeights,
+  reward: Reward,
+  selectedRewards: readonly Reward[],
+): void {
+  for (const tier of POOL_RARITY_TIERS) {
+    for (const entry of weights[tier].keys()) {
+      if (entry.id === reward.id) {
+        weights[tier].delete(entry);
+      } else {
+        const generator = getGenerator(entry.id);
+        if (generator && generator.getCapacity(selectedRewards) === 0) {
+          weights[tier].delete(entry);
+        }
+      }
+    }
+  }
 }
 
 // #endregion Weights and availability
@@ -127,13 +261,16 @@ export class RewardPool {
    */
   public generateOptions(count: number, options: RewardGenerationOptions = {}): RewardOption[] {
     const { rerollCount = 0, lockedTiers, customSettings } = options;
-    const weights = this.resolveWeights(rerollCount);
-    const exclusions = new Set<RewardMatchKey>();
+    const selectedRewards: Reward[] = [];
+
+    // Active weights for a generation session (modified for dedup purposes)
+    const workingWeights: WorkingRewardWeights = initWeightMap(this.entries, rerollCount);
+
     const result: RewardOption[] = [];
 
     if (!customSettings) {
       for (let i = 0; i < count; i++) {
-        const option = this.pickOption(weights, exclusions, lockedTiers?.[i]);
+        const option = pickOption(workingWeights, selectedRewards, lockedTiers?.[i]);
         if (!option) {
           break;
         }
@@ -152,19 +289,22 @@ export class RewardPool {
 
     for (const option of guaranteedRewardOptions) {
       result.push(option);
-      exclusions.add(option.reward.matchKey);
+      selectedRewards.push(option.reward);
+      removeRewardFromWeights(workingWeights, option.reward, selectedRewards);
     }
 
     for (const config of guaranteedRewardConfigs) {
-      const id = getRewardConfigId(config);
-      const option = this.createOption(config, getDefaultRewardTier(id), 0, exclusions);
-      if (option) {
-        result.push(option);
+      const reward = config instanceof Reward ? config : resolveEntryToReward(config, selectedRewards);
+      if (reward) {
+        const id = getRewardConfigId(config);
+        result.push(new RewardOption(reward, 0, getDefaultRewardTier(id)));
+        selectedRewards.push(reward);
+        removeRewardFromWeights(workingWeights, reward, selectedRewards);
       }
     }
 
     for (const tier of guaranteedRarityTiers) {
-      const option = this.pickOption(weights, exclusions, tier, allowLuckUpgrades);
+      const option = pickOption(workingWeights, selectedRewards, tier, allowLuckUpgrades);
       if (option) {
         result.push(option);
       }
@@ -172,7 +312,7 @@ export class RewardPool {
 
     if (fillRemaining) {
       while (result.length < count) {
-        const option = this.pickOption(weights, exclusions);
+        const option = pickOption(workingWeights, selectedRewards);
         if (!option) {
           break;
         }
@@ -181,98 +321,6 @@ export class RewardPool {
     }
 
     return result;
-  }
-
-  /**
-   * Resolve the weight of every entry against the current game state, keeping only positive ones.
-   * @param rerollCount - The number of rerolls performed so far
-   */
-  private resolveWeights(rerollCount: number): ResolvedRewardWeights {
-    return createTieredRecord(tier => {
-      const weights = new Map<RewardPoolEntry, number>();
-      for (const entry of this.entries[tier]) {
-        const weight = isPoolEntryAvailable(entry.id) ? resolveWeight(entry.weight, rerollCount) : 0;
-        if (weight > 0) {
-          weights.set(entry, weight);
-        }
-      }
-      return weights;
-    });
-  }
-
-  /**
-   * Generate one option, starting from `baseTier` (upgraded by luck if allowed) and falling back to
-   * other tiers if it has no valid entries.
-   * @param weights - The resolved weights for this generation
-   * @param exclusions - Match keys to exclude and add the picked option's key to
-   * @param baseTier - The tier to start from (random if omitted)
-   * @param allowLuckUpgrades - Whether the tier may be upgraded via luck
-   * @returns The generated option, or `null` if no valid entries remain in any tier
-   */
-  private pickOption(
-    weights: ResolvedRewardWeights,
-    exclusions: Set<RewardMatchKey>,
-    baseTier: PoolRarityTier = rollRarityTier(),
-    allowLuckUpgrades = true,
-  ): RewardOption | null {
-    const upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(weights, baseTier) : 0;
-    const initialTier = (baseTier + upgradeCount) as PoolRarityTier;
-
-    for (const tier of getTierSearchOrder(initialTier)) {
-      const option = this.pickFromTier(weights, exclusions, tier, tier === initialTier ? upgradeCount : 0);
-      if (option) {
-        return option;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Pick one option from a specific tier.
-   * @param weights - The resolved weights for this generation
-   * @param exclusions - Match keys to exclude and add the picked option's key to
-   * @param tier - The tier to roll from
-   * @param upgradeCount - Tier upgrades having occurred
-   * @returns The generated option, or `null` if the tier has no valid entries
-   */
-  private pickFromTier(
-    weights: ResolvedRewardWeights,
-    exclusions: Set<RewardMatchKey>,
-    tier: PoolRarityTier,
-    upgradeCount: number,
-  ): RewardOption | null {
-    const candidates = new Map<RewardPoolEntry, number>();
-    for (const [entry, weight] of weights[tier]) {
-      if (isPoolEntryAvailable(entry.id, exclusions)) {
-        candidates.set(entry, weight);
-      }
-    }
-    if (candidates.size === 0) {
-      return null;
-    }
-    return this.createOption(weightedPick(candidates).id, tier, upgradeCount, exclusions);
-  }
-
-  /**
-   * Resolve a {@linkcode RewardConfiguration} into an option and register it in the exclusion set.
-   * @param specs - The specs to resolve
-   * @param tier - The tier the option is presented with
-   * @param upgradeCount - Tier upgrades having occurred
-   * @param exclusions - Match keys to exclude and add the picked option's key to
-   * @returns The created option, or `null` if `specs` names a generator with no available entries
-   */
-  private createOption(
-    specs: RewardConfiguration,
-    tier: RarityTier,
-    upgradeCount: number,
-    exclusions: Set<RewardMatchKey>,
-  ): RewardOption | null {
-    const reward = createRewardFromSpecs(specs, exclusions);
-    if (!reward) {
-      return null;
-    }
-    exclusions.add(reward.matchKey);
-    return new RewardOption(reward, upgradeCount, tier);
   }
 
   // #endregion Generation

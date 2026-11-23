@@ -8,8 +8,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import type { RewardMatchKey } from "#types/rewards";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import i18next from "i18next";
 
@@ -19,10 +18,6 @@ export class TmReward extends PokemonReward {
   constructor(id: RewardId, moveId: MoveId) {
     super(id);
     this.moveId = moveId;
-  }
-
-  override get matchKey(): RewardMatchKey {
-    return `tm:${this.moveId}`;
   }
 
   get name(): string {
@@ -82,15 +77,18 @@ export class TmRewardGenerator extends RewardGenerator<MoveId> {
     }
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): MoveId[] {
+  public override getAllAvailableItems(): MoveId[] {
     const party = globalScene.getPlayerParty();
     const partyMemberCompatibleTms = party.map(p => p.getCompatibleTms(true, true, true));
     return partyMemberCompatibleTms
       .flat()
       .filter(tm => tmPoolTiers[tm] === this.tier)
       .filter(tm => !allMoves[tm].isUnimplemented)
-      .filter((tm, i, array) => array.indexOf(tm) === i)
-      .filter(tm => !exclusions?.has(`tm:${tm}`));
+      .filter((tm, i, array) => array.indexOf(tm) === i);
+  }
+
+  protected override getEntry(reward: Reward): MoveId | null {
+    return reward instanceof TmReward ? reward.moveId : null;
   }
 
   override generateReward(moveId: MoveId): TmReward {

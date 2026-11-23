@@ -4,8 +4,7 @@ import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import type { RewardMatchKey } from "#types/rewards";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
@@ -23,10 +22,6 @@ export class ChangeTeraTypeReward extends PokemonReward {
   constructor(teraType: PokemonType) {
     super(RewardId.TERA_SHARD);
     this.teraType = teraType;
-  }
-
-  override get matchKey(): RewardMatchKey {
-    return `tera:${this.teraType}`;
   }
 
   get name(): string {
@@ -82,15 +77,17 @@ export class TeraTypeRewardGenerator extends RewardGenerator<PokemonType> {
     return teraTypes.length > 0 && teraTypes.every(t => t === teraTypes[0]) ? teraTypes[0] : undefined;
   }
 
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): PokemonType[] {
+  public override getAllAvailableItems(): PokemonType[] {
     if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
       return [];
     }
 
     const excludedType = this.getSharedPartyTeraType();
-    return getEnumValues(PokemonType).filter(
-      t => t !== PokemonType.UNKNOWN && t !== excludedType && !exclusions?.has(`tera:${t}`),
-    );
+    return getEnumValues(PokemonType).filter(t => t !== PokemonType.UNKNOWN && t !== excludedType);
+  }
+
+  protected override getEntry(reward: Reward): PokemonType | null {
+    return reward instanceof ChangeTeraTypeReward ? reward.teraType : null;
   }
 
   /**

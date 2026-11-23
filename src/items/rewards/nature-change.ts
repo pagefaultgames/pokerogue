@@ -4,22 +4,17 @@ import { Nature } from "#enums/nature";
 import { RewardId } from "#enums/reward-id";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
-import type { RewardMatchKey } from "#types/rewards";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 export class PokemonNatureChangeReward extends PokemonReward {
-  protected readonly nature: Nature;
+  public readonly nature: Nature;
 
   constructor(nature: Nature) {
     super(RewardId.MINT);
     this.nature = nature;
-  }
-
-  override get matchKey(): RewardMatchKey {
-    return `mint:${this.nature}`;
   }
 
   get name(): string {
@@ -57,8 +52,12 @@ export class PokemonNatureChangeReward extends PokemonReward {
 }
 
 export class MintRewardGenerator extends RewardGenerator<Nature> {
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): Nature[] {
-    return getEnumValues(Nature).filter(nature => !exclusions?.has(`mint:${nature}`));
+  public override getAllAvailableItems(): Nature[] {
+    return getEnumValues(Nature);
+  }
+
+  protected override getEntry(reward: Reward): Nature | null {
+    return reward instanceof PokemonNatureChangeReward ? reward.nature : null;
   }
 
   override generateReward(nature: Nature): PokemonNatureChangeReward {

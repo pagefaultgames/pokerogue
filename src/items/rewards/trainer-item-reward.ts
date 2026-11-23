@@ -4,7 +4,6 @@ import { Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Reward, RewardGenerator } from "#items/reward";
 import { tempStatToTrainerItem } from "#items/x-items";
-import type { RewardMatchKey } from "#types/rewards";
 
 /**
  * Trainer items that lapse over battles; rewarding one grants a full stack (i.e. its full duration).
@@ -65,11 +64,22 @@ export class TempStatStageBoosterRewardGenerator extends RewardGenerator<TempBat
     [Stat.ACC]: "x_accuracy",
   };
 
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): TempBattleStat[] {
+  public override getAllAvailableItems(): TempBattleStat[] {
     return TEMP_BATTLE_STATS.filter(stat => {
       const item = tempStatToTrainerItem[stat];
-      return !exclusions?.has(Reward.getMatchKey(item)) && !globalScene.trainerItems.isMaxStack(item);
+      return !globalScene.trainerItems.isMaxStack(item);
     });
+  }
+
+  protected override getEntry(reward: Reward): TempBattleStat | null {
+    if (reward instanceof TrainerItemReward) {
+      for (const [stat, item] of Object.entries(tempStatToTrainerItem)) {
+        if (item === reward.id) {
+          return Number(stat) as TempBattleStat;
+        }
+      }
+    }
+    return null;
   }
 
   override generateReward(stat: TempBattleStat): TrainerItemReward {

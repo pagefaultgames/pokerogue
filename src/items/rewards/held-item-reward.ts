@@ -1,30 +1,25 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
-import { type BerryItemId, berryItemIds, type HeldItemId } from "#enums/held-item-id";
+import { type BerryItemId, berryItemIds, HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { PERMANENT_STATS, type PermanentStat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { getDefaultBerryWeight, getPartyAttackMoveTypeCounts } from "#items/held-item-pool";
-import { PokemonReward, type PokemonRewardParams, Reward, RewardGenerator } from "#items/reward";
-import type { RewardMatchKey } from "#types/rewards";
+import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
+import { isItemInCategory } from "#utils/item-utils";
 import i18next from "i18next";
 
 /**
  * Check whether a held item can currently be offered as a reward.
  * @param itemId - The item to check
  * @param party - The party that would receive the item
- * @param exclusions - Optional set of match keys to exclude
- * @returns `true` if the item is not excluded and at least one party member can hold another copy
+ * @returns `true` if at least one party member can hold another copy
  */
-export function isHeldItemRewardAvailable(
-  itemId: HeldItemId,
-  party: readonly Pokemon[],
-  exclusions?: ReadonlySet<RewardMatchKey>,
-): boolean {
-  return !exclusions?.has(Reward.getMatchKey(itemId)) && party.some(p => !p.heldItemManager.isMaxStack(itemId));
+export function isHeldItemRewardAvailable(itemId: HeldItemId, party: readonly Pokemon[]): boolean {
+  return party.some(p => !p.heldItemManager.isMaxStack(itemId));
 }
 
 /** A reward granting a single held item to a party member. */
@@ -65,9 +60,15 @@ export class HeldItemReward extends PokemonReward<HeldItemId> {
 }
 
 export class BerryRewardGenerator extends RewardGenerator<BerryItemId> {
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): BerryItemId[] {
+  public override getAllAvailableItems(): BerryItemId[] {
     const party = globalScene.getPlayerParty();
-    return berryItemIds.filter(item => isHeldItemRewardAvailable(item, party, exclusions));
+    return berryItemIds.filter(item => isHeldItemRewardAvailable(item, party));
+  }
+
+  protected override getEntry(reward: Reward): BerryItemId | null {
+    return reward instanceof HeldItemReward && isItemInCategory(reward.id, HeldItemCategoryId.BERRY)
+      ? (reward.id as BerryItemId)
+      : null;
   }
 
   protected override getWeight(item: BerryItemId): number {
@@ -80,12 +81,23 @@ export class BerryRewardGenerator extends RewardGenerator<BerryItemId> {
 }
 
 export class AttackTypeBoosterRewardGenerator extends RewardGenerator<RegularPokemonType> {
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): RegularPokemonType[] {
+  public override getAllAvailableItems(): RegularPokemonType[] {
     const party = globalScene.getPlayerParty();
     const attackMoveTypeCounts = getPartyAttackMoveTypeCounts(party);
     const types: RegularPokemonType[] =
       attackMoveTypeCounts.size > 0 ? [...attackMoveTypeCounts.keys()] : [PokemonType.NORMAL];
-    return types.filter(type => isHeldItemRewardAvailable(attackTypeToHeldItem[type], party, exclusions));
+    return types.filter(type => isHeldItemRewardAvailable(attackTypeToHeldItem[type], party));
+  }
+
+  protected override getEntry(reward: Reward): RegularPokemonType | null {
+    if (reward instanceof HeldItemReward && isItemInCategory(reward.id, HeldItemCategoryId.TYPE_ATTACK_BOOSTER)) {
+      for (const [type, itemId] of Object.entries(attackTypeToHeldItem)) {
+        if (itemId === reward.id) {
+          return Number(type) as RegularPokemonType;
+        }
+      }
+    }
+    return null;
   }
 
   /** Types with more attack moves in the party are weighted higher. */
@@ -99,9 +111,20 @@ export class AttackTypeBoosterRewardGenerator extends RewardGenerator<RegularPok
 }
 
 export class BaseStatBoosterRewardGenerator extends RewardGenerator<PermanentStat> {
-  override getAvailableItems(exclusions?: ReadonlySet<RewardMatchKey>): PermanentStat[] {
+  public override getAllAvailableItems(): PermanentStat[] {
     const party = globalScene.getPlayerParty();
-    return PERMANENT_STATS.filter(stat => isHeldItemRewardAvailable(permanentStatToHeldItem[stat], party, exclusions));
+    return PERMANENT_STATS.filter(stat => isHeldItemRewardAvailable(permanentStatToHeldItem[stat], party));
+  }
+
+  protected override getEntry(reward: Reward): PermanentStat | null {
+    if (reward instanceof HeldItemReward && isItemInCategory(reward.id, HeldItemCategoryId.VITAMIN)) {
+      for (const [stat, itemId] of Object.entries(permanentStatToHeldItem)) {
+        if (itemId === reward.id) {
+          return Number(stat) as PermanentStat;
+        }
+      }
+    }
+    return null;
   }
 
   override generateReward(stat: PermanentStat): HeldItemReward {
