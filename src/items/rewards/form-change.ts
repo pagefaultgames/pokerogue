@@ -37,6 +37,10 @@ export class FormChangeItemReward extends PokemonReward {
     return allHeldItems[this.formChangeItemId].iconName;
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof FormChangeItemReward && this.formChangeItemId === other.formChangeItemId;
+  }
+
   protected override getIneligibilityMessage(pokemon: PlayerPokemon): string | null {
     return pokemon.isFormChangeItemCompatible(this.formChangeItemId) ? null : PartyUiHandler.NoEffectMessage;
   }
@@ -128,10 +132,6 @@ export class FormChangeItemRewardGenerator extends RewardGenerator<FormChangeIte
       );
 
     return formChangeItemPool;
-  }
-
-  protected override getEntry(reward: Reward): FormChangeItemId | null {
-    return reward instanceof FormChangeItemReward && reward.id === this.rareRewardId ? reward.formChangeItemId : null;
   }
 
   private get rareRewardId(): RewardId {

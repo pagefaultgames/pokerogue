@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
-import { type BerryItemId, berryItemIds, HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
+import { type BerryItemId, berryItemIds, type HeldItemId } from "#enums/held-item-id";
 import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { PERMANENT_STATS, type PermanentStat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -9,7 +9,6 @@ import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { getDefaultBerryWeight, getPartyAttackMoveTypeCounts } from "#items/held-item-pool";
 import { PokemonReward, type PokemonRewardParams, type Reward, RewardGenerator } from "#items/reward";
-import { isItemInCategory } from "#utils/item-utils";
 import i18next from "i18next";
 
 /**
@@ -54,6 +53,10 @@ export class HeldItemReward extends PokemonReward<HeldItemId> {
       : null;
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof HeldItemReward && this.id === other.id;
+  }
+
   override apply({ pokemon }: PokemonRewardParams): void {
     pokemon.heldItemManager.add(this.id);
   }
@@ -63,12 +66,6 @@ export class BerryRewardGenerator extends RewardGenerator<BerryItemId> {
   public override getAllAvailableItems(): BerryItemId[] {
     const party = globalScene.getPlayerParty();
     return berryItemIds.filter(item => isHeldItemRewardAvailable(item, party));
-  }
-
-  protected override getEntry(reward: Reward): BerryItemId | null {
-    return reward instanceof HeldItemReward && isItemInCategory(reward.id, HeldItemCategoryId.BERRY)
-      ? (reward.id as BerryItemId)
-      : null;
   }
 
   protected override getWeight(item: BerryItemId): number {
@@ -89,17 +86,6 @@ export class AttackTypeBoosterRewardGenerator extends RewardGenerator<RegularPok
     return types.filter(type => isHeldItemRewardAvailable(attackTypeToHeldItem[type], party));
   }
 
-  protected override getEntry(reward: Reward): RegularPokemonType | null {
-    if (reward instanceof HeldItemReward && isItemInCategory(reward.id, HeldItemCategoryId.TYPE_ATTACK_BOOSTER)) {
-      for (const [type, itemId] of Object.entries(attackTypeToHeldItem)) {
-        if (itemId === reward.id) {
-          return Number(type) as RegularPokemonType;
-        }
-      }
-    }
-    return null;
-  }
-
   /** Types with more attack moves in the party are weighted higher. */
   protected override getWeight(type: RegularPokemonType): number {
     return getPartyAttackMoveTypeCounts(globalScene.getPlayerParty()).get(type) ?? 1;
@@ -114,17 +100,6 @@ export class BaseStatBoosterRewardGenerator extends RewardGenerator<PermanentSta
   public override getAllAvailableItems(): PermanentStat[] {
     const party = globalScene.getPlayerParty();
     return PERMANENT_STATS.filter(stat => isHeldItemRewardAvailable(permanentStatToHeldItem[stat], party));
-  }
-
-  protected override getEntry(reward: Reward): PermanentStat | null {
-    if (reward instanceof HeldItemReward && isItemInCategory(reward.id, HeldItemCategoryId.VITAMIN)) {
-      for (const [stat, itemId] of Object.entries(permanentStatToHeldItem)) {
-        if (itemId === reward.id) {
-          return Number(stat) as PermanentStat;
-        }
-      }
-    }
-    return null;
   }
 
   override generateReward(stat: PermanentStat): HeldItemReward {

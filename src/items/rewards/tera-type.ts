@@ -53,6 +53,10 @@ export class ChangeTeraTypeReward extends PokemonReward {
     return pokemon.teraType !== this.teraType && !TERA_LOCKED_SPECIES.some(s => pokemon.hasSpecies(s));
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof ChangeTeraTypeReward && this.teraType === other.teraType;
+  }
+
   /**
    * Applies {@linkcode TerrastalizeConsumable}
    * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
@@ -84,10 +88,6 @@ export class TeraTypeRewardGenerator extends RewardGenerator<PokemonType> {
 
     const excludedType = this.getSharedPartyTeraType();
     return getEnumValues(PokemonType).filter(t => t !== PokemonType.UNKNOWN && t !== excludedType);
-  }
-
-  protected override getEntry(reward: Reward): PokemonType | null {
-    return reward instanceof ChangeTeraTypeReward ? reward.teraType : null;
   }
 
   /**

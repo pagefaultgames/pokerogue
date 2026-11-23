@@ -100,6 +100,14 @@ export abstract class Reward<Id extends RewardPoolId = RewardPoolId> {
   }
 
   /**
+   * Check whether another reward is an exact match with this one.
+   * @param other - The other reward to compare against
+   */
+  public equals(other: Reward): boolean {
+    return this.id === other.id;
+  }
+
+  /**
    * Check whether this reward should be applied.
    * @param params - The parameters used by this reward
    * @returns Whether the reward should be allowed to apply its effects.
@@ -194,7 +202,7 @@ export interface PokemonFusionRewardParams {
  * A {@linkcode RewardGenerator} produces {@linkcode Reward}s for a family of related entries
  * (TMs, berries, mints, ...), and is the *only* place entries of that family are sampled.
  *
- * Subclasses implement {@linkcode getAllAvailableItems}, {@linkcode getEntry}, and {@linkcode generateReward},
+ * Subclasses implement {@linkcode getAllAvailableItems} and {@linkcode generateReward},
  * and may override {@linkcode getWeight} to bias random generation.
  *
  * @typeParam TEntry - The type identifying a single entry of this generator.
@@ -206,12 +214,6 @@ export abstract class RewardGenerator<TEntry = unknown> {
   public abstract getAllAvailableItems(): TEntry[];
 
   /**
-   * Extract the entry corresponding to this generator from a reward, if applicable.
-   * @param reward - The reward to inspect
-   */
-  protected abstract getEntry(reward: Reward): TEntry | null;
-
-  /**
    * Return all entries available to produce, excluding those matching any already selected reward.
    * @param selected - Already selected rewards to exclude
    */
@@ -220,7 +222,10 @@ export abstract class RewardGenerator<TEntry = unknown> {
     if (selected.length === 0) {
       return items;
     }
-    return items.filter(entry => !selected.some(reward => this.getEntry(reward) === entry));
+    return items.filter(entry => {
+      const candidate = this.generateReward(entry);
+      return !selected.some(reward => reward.equals(candidate));
+    });
   }
 
   /**

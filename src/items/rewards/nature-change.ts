@@ -38,6 +38,10 @@ export class PokemonNatureChangeReward extends PokemonReward {
     return pokemon.getNature() === this.nature ? PartyUiHandler.NoEffectMessage : null;
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof PokemonNatureChangeReward && this.nature === other.nature;
+  }
+
   /**
    * Applies {@linkcode PokemonNatureChangeConsumable}
    * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
@@ -54,10 +58,6 @@ export class PokemonNatureChangeReward extends PokemonReward {
 export class MintRewardGenerator extends RewardGenerator<Nature> {
   public override getAllAvailableItems(): Nature[] {
     return getEnumValues(Nature);
-  }
-
-  protected override getEntry(reward: Reward): Nature | null {
-    return reward instanceof PokemonNatureChangeReward ? reward.nature : null;
   }
 
   override generateReward(nature: Nature): PokemonNatureChangeReward {

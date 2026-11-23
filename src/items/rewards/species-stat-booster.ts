@@ -4,7 +4,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { SpeciesStatBoosterItemId } from "#enums/held-item-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
-import { type Reward, RewardGenerator } from "#items/reward";
+import { RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoostHeldItemAttr } from "#items/stat-multiply";
 import { HeldItemReward } from "./held-item-reward";
 
@@ -72,13 +72,6 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator<SpeciesSt
 
   public override getAllAvailableItems(): SpeciesStatBoosterItemId[] {
     return [...this.getItemWeights().keys()];
-  }
-
-  protected override getEntry(reward: Reward): SpeciesStatBoosterItemId | null {
-    const tierItems = this.rare ? RARE_SPECIES_STAT_BOOSTERS : COMMON_SPECIES_STAT_BOOSTERS;
-    return reward instanceof HeldItemReward && tierItems.includes(reward.id as SpeciesStatBoosterItemId)
-      ? (reward.id as SpeciesStatBoosterItemId)
-      : null;
   }
 
   protected override getWeight(item: SpeciesStatBoosterItemId): number {

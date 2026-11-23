@@ -41,6 +41,10 @@ export class TmReward extends PokemonReward {
     return pokemon.isTmCompatible(this.moveId, true) ? null : PartyUiHandler.NoEffectMessage;
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof TmReward && this.moveId === other.moveId;
+  }
+
   /**
    * Apply this reward, queueing a `LearnMovePhase` for the target.
    * @param pokemon - The {@linkcode PlayerPokemon} that should learn the TM
@@ -85,10 +89,6 @@ export class TmRewardGenerator extends RewardGenerator<MoveId> {
       .filter(tm => tmPoolTiers[tm] === this.tier)
       .filter(tm => !allMoves[tm].isUnimplemented)
       .filter((tm, i, array) => array.indexOf(tm) === i);
-  }
-
-  protected override getEntry(reward: Reward): MoveId | null {
-    return reward instanceof TmReward ? reward.moveId : null;
   }
 
   override generateReward(moveId: MoveId): TmReward {

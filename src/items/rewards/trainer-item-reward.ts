@@ -47,6 +47,10 @@ export class TrainerItemReward extends Reward<TrainerItemId> {
     return allTrainerItems[this.id].iconName;
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof TrainerItemReward && this.id === other.id;
+  }
+
   /** Lapsing items are granted as a full stack (i.e. full duration); all others add a single stack. */
   apply(): boolean {
     const count = LAPSING_TRAINER_ITEMS.has(this.id) ? allTrainerItems[this.id].maxStackCount : 1;
@@ -69,17 +73,6 @@ export class TempStatStageBoosterRewardGenerator extends RewardGenerator<TempBat
       const item = tempStatToTrainerItem[stat];
       return !globalScene.trainerItems.isMaxStack(item);
     });
-  }
-
-  protected override getEntry(reward: Reward): TempBattleStat | null {
-    if (reward instanceof TrainerItemReward) {
-      for (const [stat, item] of Object.entries(tempStatToTrainerItem)) {
-        if (item === reward.id) {
-          return Number(stat) as TempBattleStat;
-        }
-      }
-    }
-    return null;
   }
 
   override generateReward(stat: TempBattleStat): TrainerItemReward {

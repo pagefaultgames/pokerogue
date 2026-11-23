@@ -34,6 +34,10 @@ export class EvolutionItemReward extends PokemonReward {
     return pokemon.isEvolutionItemCompatible(this.evolutionItemId) ? null : PartyUiHandler.NoEffectMessage;
   }
 
+  public override equals(other: Reward): boolean {
+    return other instanceof EvolutionItemReward && this.evolutionItemId === other.evolutionItemId;
+  }
+
   /**
    * Applies {@linkcode EvolutionItemConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
@@ -112,11 +116,6 @@ export class EvolutionItemRewardGenerator extends RewardGenerator<EvolutionItemI
       .filter((i): i is EvolutionItemId => !!i && i > 50 === this.rare);
 
     return [...new Set(evolutionItemPool)];
-  }
-
-  protected override getEntry(reward: Reward): EvolutionItemId | null {
-    const id = this.rare ? RewardId.RARE_EVOLUTION_ITEM : RewardId.EVOLUTION_ITEM;
-    return reward instanceof EvolutionItemReward && reward.id === id ? reward.evolutionItemId : null;
   }
 
   override generateReward(evolutionItemId: EvolutionItemId): EvolutionItemReward {
