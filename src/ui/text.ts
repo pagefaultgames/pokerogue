@@ -220,28 +220,15 @@ export function getTextStyleOptions(
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-    case TextStyle.SUMMARY_DEX_NUM: {
-      const fontSizeLabel = "96px";
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { top: 2, bottom: 10 };
-          break;
-        case "eu":
-          styleOptions.padding = { right: 66 };
-          break;
-      }
-      styleOptions.fontSize = fontSizeLabel;
-      break;
-    }
+    case TextStyle.SUMMARY_DEX_NUM:
     case TextStyle.SUMMARY_DEX_NUM_GOLD: {
       const fontSizeLabel = "96px";
       switch (lang) {
-        case "ja":
-          styleOptions.padding = { top: 2, bottom: 10 };
+        case "eu":
+          styleOptions.padding = { bottom: 6, right: 66 };
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-      shadowSize = 5;
       break;
     }
     case TextStyle.SUMMARY_STATS:
