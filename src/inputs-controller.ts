@@ -165,6 +165,9 @@ export class InputsController {
       const uiKeys: readonly AnySettingKey[] = ["uiWindowStyle", "uiTheme"];
       if (category === "display" && uiKeys.includes(key)) {
         this.touchControls.render();
+      } else if (category === "general" && key === "enableTouchControls" && value === true) {
+        // Apply theme styling that is skipped at startup if touch controls were disabled
+        this.touchControls.render();
       } else if (category === "gamepad" && key === "enabled" && typeof value === "boolean") {
         this.setGamepadSupport(value);
       }
