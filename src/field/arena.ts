@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { atlasAsset, imageAsset } from "#app/asset-requests";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -45,6 +46,7 @@ import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import { isFieldTargeted } from "#moves/move-utils";
+import type { AssetRequest } from "#types/asset-set";
 import type { ArenaPokemonPools, TrainerPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
@@ -1001,6 +1003,35 @@ export class Arena {
 
 export function getBiomeKey(biomeId: BiomeId): string {
   return enumValueToKey(BiomeId, biomeId).toLowerCase();
+}
+
+/**
+ * Get the textures a biome's arena uses: its background, both bases and, for biomes that have them, its props.
+ * @param biomeId - The biome to get textures for
+ * @returns The requests for the biome's textures
+ */
+export function getBiomeAssetRequests(biomeId: BiomeId): AssetRequest[] {
+  const btKey = getBiomeKey(biomeId);
+  const isBaseAnimated = btKey === "end";
+  const baseAKey = `${btKey}_a`;
+  const baseBKey = `${btKey}_b`;
+
+  const requests: AssetRequest[] = imageAsset(`${btKey}_bg`, "arenas");
+  if (isBaseAnimated) {
+    requests.push(...atlasAsset(baseAKey, "arenas"), ...atlasAsset(baseBKey, "arenas"));
+  } else {
+    requests.push(...imageAsset(baseAKey, "arenas"), ...imageAsset(baseBKey, "arenas"));
+  }
+
+  if (getBiomeHasProps(biomeId)) {
+    for (let p = 1; p <= 3; p++) {
+      const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
+      const propKey = `${btKey}_b_${p}`;
+      requests.push(...(isPropAnimated ? atlasAsset(propKey, "arenas") : imageAsset(propKey, "arenas")));
+    }
+  }
+
+  return requests;
 }
 
 export function getBiomeHasProps(biomeId: BiomeId): boolean {

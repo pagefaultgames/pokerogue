@@ -1112,7 +1112,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
         const starterCost = globalScene.gameData.getSpeciesStarterValue(randomStarterId);
         const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(randomStarterId, props.formIndex);
-        speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
+        speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
             this.addToParty(randomStarterId, dexAttr, abilityIndex, natureIndex, moveset, teraType);
             this.getUi().playSelect();

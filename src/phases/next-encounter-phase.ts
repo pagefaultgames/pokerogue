@@ -1,6 +1,10 @@
+import { assetManager } from "#app/global-asset-manager";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "#phases/encounter-phase";
+
+/** How often, in waves, unused assets are unloaded when nothing else has triggered it. */
+const ASSET_SWEEP_WAVE_INTERVAL = 5;
 
 /**
  * The phase between defeating an encounter and starting another wild wave.
@@ -67,6 +71,15 @@ export class NextEncounterPhase extends EncounterPhase {
         if (lastEncounterVisuals) {
           globalScene.field.remove(lastEncounterVisuals, true);
           globalScene.lastMysteryEncounter!.introVisuals = undefined;
+        }
+        // Unload assets no longer needed: after trainer battles, which use the most, and every few waves otherwise.
+        // Not when this wave ends in a biome change, as the switch to the new biome unloads them then.
+        const endsInBiomeChange = globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome();
+        if (
+          !endsInBiomeChange
+          && (globalScene.lastEnemyTrainer || globalScene.currentBattle.waveIndex % ASSET_SWEEP_WAVE_INTERVAL === 0)
+        ) {
+          assetManager.sweep();
         }
 
         if (globalScene.currentBattle.isClassicFinalBoss) {
