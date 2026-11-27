@@ -31,8 +31,9 @@ export const POKEMON_SPRITE_ANIM: AnimSpec = { end: 400, frameRate: 10, repeat: 
 /** The animation every trainer sprite atlas gets. */
 export const TRAINER_SPRITE_ANIM: AnimSpec = { end: 128, frameRate: 24, repeat: -1 };
 
+// TODO: Make it so that legacy assets are only loaded when user has legacy UI enabled.
 /**
- * Build the requests for a single image, plus its legacy version for UI images.
+ * Build the requests for a single image (and its legacy version for UI images)
  * @param key - The texture key
  * @param folder - The folder under `images/`
  * @param filename - (Default `<key>.png`) Name of the image file
@@ -53,7 +54,7 @@ export function imageAsset(key: string, folder: string, filename = `${key}.png`)
 }
 
 /**
- * Build the requests for a spritesheet of square frames, plus its legacy version for UI spritesheets.
+ * Build the requests for a spritesheet of square frames (and its legacy version for UI spritesheets)
  * @param key - The texture key
  * @param folder - The folder under `images/`
  * @param size - The width and height of each frame
