@@ -2086,7 +2086,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     // "Lv." label position relative to slot background
     let levelLabelPosition = { x: 24 + 8, y: 10 + 12 };
     // offset from "Lv." to the level number; should not be changed.
-    const levelTextToLevelLabelOffset = { x: 9, y: 0 };
+    const levelTextToLevelLabelOffset = { x: 9, y: 0.25 };
     // offests from "Lv." to gender, spliced and status icons, these depend on the type of slot.
     let genderTextToLevelLabelOffset = { x: 68 - (isFusion ? 8 : 0), y: -9 };
     let splicedIconToLevelLabelOffset = { x: 68, y: 3.5 - 12 };
@@ -2097,7 +2097,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     let hpBarPosition = { x: 8, y: 31 };
     // offsets of hp bar overlay (showing the remaining hp) and number; should not be changed.
     const hpOverlayToBarOffset = { x: 16, y: 2 };
-    const hpTextToBarOffset = { x: -3, y: -2 };
+    const hpTextToBarOffset = { x: -3, y: -2.3 };
     // description position relative to slot background
     let descriptionLabelPosition = { x: 32, y: 46 };
 
@@ -2112,10 +2112,10 @@ class PartySlot extends Phaser.GameObjects.Container {
     // Benched slots have significantly different parameters
     if (this.isBenched) {
       slotPb = { x: 2, y: 12 };
-      namePosition = { x: 21, y: 2 };
+      namePosition = { x: 21, y: 1.7 };
       maxNameTextWidth = 52;
       levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
-      genderTextToLevelLabelOffset = { x: 36, y: 0 };
+      genderTextToLevelLabelOffset = { x: 36, y: 0.25 };
       splicedIconToLevelLabelOffset = { x: 36 + (genderSymbol ? 8 : 0), y: 0.5 };
       statusIconToLevelLabelOffset = { x: 43, y: 0 };
       hpBarPosition = { x: 72, y: 6 };
@@ -2161,7 +2161,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       0,
       0,
       this.pokemon.level.toString(),
-      this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED,
+      this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY_LEVEL_HP : TextStyle.PARTY_RED,
     )
       .setPositionRelative(slotLevelLabel, levelTextToLevelLabelOffset.x, levelTextToLevelLabelOffset.y)
       .setOrigin(0, 0.25);
@@ -2236,7 +2236,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       .setScale(hpRatio, 1)
       .setVisible(false);
 
-    this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY)
+    this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY_LEVEL_HP)
       .setOrigin(1, 0)
       .setPositionRelative(
         this.slotHpBar,

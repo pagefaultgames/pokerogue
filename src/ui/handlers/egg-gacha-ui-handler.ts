@@ -236,7 +236,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     ];
 
     const createColumn = (lines: string[], x: number, rightAligned = false) => {
-      const column = addTextObject(0, 0, lines.join("\n"), TextStyle.WINDOW).setLineSpacing(28).setFontSize("80px");
+      const column = addTextObject(0, 0, lines.join("\n"), TextStyle.WINDOW, { fontSize: "80px" }).setLineSpacing(28);
       if (rightAligned) {
         column.setOrigin(1, 0).setAlign("right");
       }

@@ -99,7 +99,7 @@ describe("UI - Arena Flyout", () => {
       const info = flyout[infoType satisfies "weatherInfo" | "terrainInfo"]!;
       expect(info).toBeDefined();
       expect(info).toMatchObject(expected);
-      expect(flyout["flyoutTextField"].text).toBe(flyout["getTagText"](info));
+      expect(flyout["flyoutTextField"].text).toBe(flyout["getTagText"](info, true));
       expect(flyout["flyoutTextField"].text).toMatch(`${expected.duration}/${expected.maxDuration}`);
     }
 
