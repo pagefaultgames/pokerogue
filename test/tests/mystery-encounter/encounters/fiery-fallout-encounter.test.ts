@@ -26,6 +26,7 @@ import {
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
+import * as Utils from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -225,8 +226,60 @@ describe("Fiery Fallout - Mystery Encounter", () => {
         );
       });
       expect(burnablePokemon.some(pkm => pkm.status?.effect === StatusEffect.BURN)).toBeTruthy();
-      expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === AbilityId.HEATPROOF));
+      expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === AbilityId.HEATPROOF)).toBe(true);
       notBurnablePokemon.forEach(pkm => expect(pkm).toHaveFullHp());
+    });
+
+    // https://github.com/pagefaultgames/pokerogue/issues/5290
+    // Lapras and Abra are immune, so Gengar is the only valid target. If immunities were ignored,
+    // the lowest and highest rolls can't both land on Gengar, so at least one case would fail.
+    it.each<{ name: string; roll: (range: number, min?: number) => number }>([
+      { name: "lowest", roll: (_range, min = 0) => min },
+      { name: "highest", roll: (range, min = 0) => min + range - 1 },
+    ])("should only burn a Pokemon that can be burned - $name roll", async ({ roll }) => {
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
+
+      const [, , lapras, gengar, abra] = scene.getPlayerParty();
+      game.field.mockAbility(lapras, AbilityId.WATER_VEIL);
+      game.field.mockAbility(abra, AbilityId.WATER_VEIL);
+      const randSeedIntSpy = vi.spyOn(Utils, "randSeedInt").mockImplementation(roll);
+
+      await runMysteryEncounterToEnd(game, 2);
+
+      for (const pkm of [lapras, abra]) {
+        expect(pkm).toHaveStatusEffect(StatusEffect.NONE);
+        expect(pkm.customPokemonData.ability).not.toBe(AbilityId.HEATPROOF);
+      }
+      expect(gengar).toHaveStatusEffect(StatusEffect.BURN);
+      expect(gengar.customPokemonData.ability).toBe(AbilityId.HEATPROOF);
+      // Gengar should be the only candidate rolled for; fails if the roll stops going through `randSeedInt`
+      expect(randSeedIntSpy).toHaveBeenCalledWith(1);
+    });
+
+    it("should still damage the party but not burn anyone if no Pokemon can be burned", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [
+        SpeciesId.ARCANINE,
+        SpeciesId.NINETALES,
+        SpeciesId.LAPRAS,
+        SpeciesId.ABRA,
+      ]);
+
+      const party = scene.getPlayerParty();
+      const [arcanine, ninetales, lapras, abra] = party;
+      game.field.mockAbility(lapras, AbilityId.WATER_VEIL);
+      abra.status = new Status(StatusEffect.PARALYSIS);
+
+      await runMysteryEncounterToEnd(game, 2);
+
+      for (const pkm of [lapras, abra]) {
+        expect(pkm.hp).toBe(pkm.getMaxHp() - Math.floor(pkm.getMaxHp() * 0.2));
+      }
+      expect(arcanine).toHaveFullHp();
+      expect(ninetales).toHaveFullHp();
+      expect(lapras).toHaveStatusEffect(StatusEffect.NONE);
+      expect(abra).toHaveStatusEffect(StatusEffect.PARALYSIS);
+      party.forEach(pkm => expect(pkm.customPokemonData.ability).not.toBe(AbilityId.HEATPROOF));
+      expect(scene.currentBattle.mysteryEncounter?.dialogueTokens["burnedPokemon"]).toBeUndefined();
     });
 
     it("should leave encounter without battle", async () => {
