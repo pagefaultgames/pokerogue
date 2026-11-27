@@ -5278,6 +5278,7 @@ export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
  * Allows the source's moves to bypass the effects of opposing Light Screen, Reflect, Aurora Veil, Safeguard, Mist, and Substitute.
  * @sealed
  */
+// TODO: Split for functionality to just bypass substitute, take params to determine what to bypass, or add a new AbAttr just for that
 export class InfiltratorAbAttr extends AbAttr {
   declare private readonly _: never;
   constructor() {

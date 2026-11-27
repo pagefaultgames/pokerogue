@@ -13738,6 +13738,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STORED_POWER,
       MoveId.RETALIATE,
       MoveId.WORK_UP,
+      MoveId.PLAY_ROUGH,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
