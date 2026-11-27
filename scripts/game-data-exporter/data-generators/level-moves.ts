@@ -20,20 +20,30 @@ export async function generateLevelMovesData(): Promise<void> {
 
   for (const species of speciesDataRegistry.getAllSpecies()) {
     const formCount = species.forms.length;
-    for (let formIndex = 0; formIndex <= formCount; formIndex++) {
+    const movesPerForm = Array.from({ length: Math.max(formCount, 1) }, (_, formIndex) => {
       const ctx: LevelMoveContext = {
         pokemonSpeciesForm: species,
         pokemonFormKey: species.getFormKey(formIndex),
         startingLevel: 1,
         level: 999,
       };
-      const levelMoves = getLevelMoves(ctx, true, true, true);
+      return getLevelMoves(ctx, true, true, true);
+    });
+    const keysPerForm = movesPerForm.map(
+      moves => new Set(moves.map(([level, move, source]) => `${level}-${move}-${source}`)),
+    );
+
+    for (const [formIndex, levelMoves] of movesPerForm.entries()) {
       for (const [level, move, source] of levelMoves) {
+        const isShared = formCount > 1 && keysPerForm.every(keys => keys.has(`${level}-${move}-${source}`));
+        if (isShared && formIndex > 0) {
+          continue;
+        }
         const levelString = level === 0 ? "EVOLVE_MOVE" : level === -1 ? "RELEARN_MOVE" : level;
         entries.push({
           dexNum: species.speciesId,
           id: SpeciesId[species.speciesId],
-          form: formCount === 0 ? null : species.getFormKey(formIndex),
+          form: formCount === 0 || isShared ? null : species.getFormKey(formIndex),
           moveId: move,
           move: MoveId[move],
           level: levelString,
