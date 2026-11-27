@@ -1,0 +1,890 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>InputAudioTrack | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a>
+<div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main">Switch to Main</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/src_audio_streaming-track.html">src/audio/streaming-track</a></li>
+<li><a href="" aria-current="page">InputAudioTrack</a></li></ul>
+<h1>Class InputAudioTrack</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Represents an audio track in an input file.</p>
+</div></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="288722">
+<h4>Hierarchy (<a href="../hierarchy.html#src/audio/streaming-track.InputAudioTrack">View Summary</a>)</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">InputAudioTrack</span></li></ul></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:496</li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#input" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>input</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#codec" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>codec</span></a>
+<a href="#disposition" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>disposition</span></a>
+<a href="#id" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>id</span></a>
+<a href="#internalcodecid" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>internal<wbr/>Codec<wbr/>Id</span></a>
+<a href="#languagecode" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>language<wbr/>Code</span></a>
+<a href="#name" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>name</span></a>
+<a href="#number" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>number</span></a>
+<a href="#numberofchannels" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>number<wbr/>Of<wbr/>Channels</span></a>
+<a href="#samplerate" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>sample<wbr/>Rate</span></a>
+<a href="#timeresolution" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>time<wbr/>Resolution</span></a>
+<a href="#type" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>type</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#canbepairedwith" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Be<wbr/>Paired<wbr/>With</span></a>
+<a href="#candecode" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Decode</span></a>
+<a href="#computeduration" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>compute<wbr/>Duration</span></a>
+<a href="#computedurationornull" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>compute<wbr/>Duration<wbr/>Or<wbr/>Null</span></a>
+<a href="#computepacketstats" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>compute<wbr/>Packet<wbr/>Stats</span></a>
+<a href="#determinepackettype" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>determine<wbr/>Packet<wbr/>Type</span></a>
+<a href="#getaveragebitrate" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Average<wbr/>Bitrate</span></a>
+<a href="#getbitrate" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Bitrate</span></a>
+<a href="#getcodec" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Codec</span></a>
+<a href="#getcodecparameterstring" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Codec<wbr/>Parameter<wbr/>String</span></a>
+<a href="#getdecoderconfig" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Decoder<wbr/>Config</span></a>
+<a href="#getdisposition" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Disposition</span></a>
+<a href="#getdurationfrommetadata" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Duration<wbr/>From<wbr/>Metadata</span></a>
+<a href="#getfirsttimestamp" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>First<wbr/>Timestamp</span></a>
+<a href="#getfirsttimestampornull" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>First<wbr/>Timestamp<wbr/>Or<wbr/>Null</span></a>
+<a href="#getinternalcodecid" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Internal<wbr/>Codec<wbr/>Id</span></a>
+<a href="#getlanguagecode" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Language<wbr/>Code</span></a>
+<a href="#getliverefreshinterval" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Live<wbr/>Refresh<wbr/>Interval</span></a>
+<a href="#getname" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Name</span></a>
+<a href="#getnumberofchannels" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Number<wbr/>Of<wbr/>Channels</span></a>
+<a href="#getpairableaudiotracks" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pairable<wbr/>Audio<wbr/>Tracks</span></a>
+<a href="#getpairabletracks" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pairable<wbr/>Tracks</span></a>
+<a href="#getpairablevideotracks" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pairable<wbr/>Video<wbr/>Tracks</span></a>
+<a href="#getprerollduration" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pre<wbr/>Roll<wbr/>Duration</span></a>
+<a href="#getprimarypairableaudiotrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Primary<wbr/>Pairable<wbr/>Audio<wbr/>Track</span></a>
+<a href="#getprimarypairablevideotrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Primary<wbr/>Pairable<wbr/>Video<wbr/>Track</span></a>
+<a href="#getsamplerate" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Sample<wbr/>Rate</span></a>
+<a href="#gettimeresolution" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Time<wbr/>Resolution</span></a>
+<a href="#getunixtimefortimestamp" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Unix<wbr/>Time<wbr/>For<wbr/>Timestamp</span></a>
+<a href="#hasonlykeypackets" class="tsd-index-link tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Only<wbr/>Key<wbr/>Packets</span></a>
+<a href="#haspairableaudiotrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Pairable<wbr/>Audio<wbr/>Track</span></a>
+<a href="#haspairabletrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Pairable<wbr/>Track</span></a>
+<a href="#haspairablevideotrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Pairable<wbr/>Video<wbr/>Track</span></a>
+<a href="#hasunixtimemapping" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Unix<wbr/>Time<wbr/>Mapping</span></a>
+<a href="#isaudiotrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Audio<wbr/>Track</span></a>
+<a href="#islive" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Live</span></a>
+<a href="#isrelativetounixepoch" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Relative<wbr/>To<wbr/>Unix<wbr/>Epoch</span></a>
+<a href="#isvideotrack" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Video<wbr/>Track</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="constructorinputaudiotrack"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">InputAudioTrack</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><a href="#constructorinputaudiotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#constructor">constructor</a></p></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="input"><code class="tsd-tag">Readonly</code><span>input</span><a href="#input" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">input</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.Input.html" class="tsd-signature-type tsd-kind-class">Input</a></div>
+<div class="tsd-comment tsd-typography"><p>The input file this track belongs to.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#input">input</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:131</li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="codec"><span>codec</span><a href="#codec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li>
+<div class="tsd-signature" id="codeccodec"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">codec</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;mp3&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;aac&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;opus&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;vorbis&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;flac&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ac3&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;eac3&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;dts&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;truehd&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16be&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24be&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32be&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32be&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64be&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-u8&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s8&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ulaw&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;alaw&quot;</span><br/><span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The codec of the track's packets.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;mp3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;aac&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;opus&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;vorbis&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;flac&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ac3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;eac3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;dts&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;truehd&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-u8&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s8&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ulaw&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;alaw&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="#getcodec" class="tsd-kind-method">InputAudioTrack.getCodec</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<p>Overrides InputTrack.codec</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:504</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="disposition"><span>disposition</span><a href="#disposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="dispositiondisposition"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">disposition</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/src_audio_streaming-track.TrackDisposition.html" class="tsd-signature-type tsd-kind-type-alias">TrackDisposition</a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The track's disposition, i.e. information about its intended usage.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/src_audio_streaming-track.TrackDisposition.html" class="tsd-signature-type tsd-kind-type-alias">TrackDisposition</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-1">Deprecated<a href="#deprecated-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="src_audio_streaming-track.InputTrack.html#getdisposition" class="tsd-kind-method">InputTrack.getDisposition</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from InputTrack.disposition</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:244</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="id"><span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="idid"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">id</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The unique ID of this track in the input file, which is its 1-based index in the list of tracks returned by
+<a href="src_audio_streaming-track.Input.html#gettracks" class="tsd-kind-method">Input.getTracks</a>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<p>Inherited from InputTrack.id</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:163</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="internalcodecid"><span>internal<wbr/>Codec<wbr/>Id</span><a href="#internalcodecid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="internalcodecidinternalcodecid"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">internalCodecId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" class="tsd-signature-type external" target="_blank">Uint8Array</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src__types_typed-arrays.ArrayBufferLike.html" class="tsd-signature-type tsd-kind-type-alias">ArrayBufferLike</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>See <a href="src_audio_streaming-track.InputTrack.html#getinternalcodecid" class="tsd-kind-method">InputTrack.getInternalCodecId</a>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" class="tsd-signature-type external" target="_blank">Uint8Array</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src__types_typed-arrays.ArrayBufferLike.html" class="tsd-signature-type tsd-kind-type-alias">ArrayBufferLike</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-2">Deprecated<a href="#deprecated-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="src_audio_streaming-track.InputTrack.html#getinternalcodecid" class="tsd-kind-method">InputTrack.getInternalCodecId</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from InputTrack.internalCodecId</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:188</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="languagecode"><span>language<wbr/>Code</span><a href="#languagecode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="languagecodelanguagecode"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">languageCode</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The ISO 639-2/T language code for this track. If the language is unknown, this field is <code>'und'</code> (undetermined).</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-3">Deprecated<a href="#deprecated-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="src_audio_streaming-track.InputTrack.html#getlanguagecode" class="tsd-kind-method">InputTrack.getLanguageCode</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from InputTrack.languageCode</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:198</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="name"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="namename"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">name</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>A user-defined name for this track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-4">Deprecated<a href="#deprecated-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="src_audio_streaming-track.InputTrack.html#getname" class="tsd-kind-method">InputTrack.getName</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from InputTrack.name</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:205</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="number"><span>number</span><a href="#number" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="numbernumber"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">number</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The 1-based index of this track among all tracks of the same type in the input file. For example, the first
+video track has number 1, the second video track has number 2, and so on. The index refers to the order in
+which the tracks are returned by <a href="src_audio_streaming-track.Input.html#gettracks" class="tsd-kind-method">Input.getTracks</a>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<p>Inherited from InputTrack.number</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:169</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="numberofchannels"><span>number<wbr/>Of<wbr/>Channels</span><a href="#numberofchannels" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li>
+<div class="tsd-signature" id="numberofchannelsnumberofchannels"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">numberOfChannels</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The number of audio channels in the track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-5">Deprecated<a href="#deprecated-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="#getnumberofchannels" class="tsd-kind-method">InputAudioTrack.getNumberOfChannels</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:512</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="samplerate"><span>sample<wbr/>Rate</span><a href="#samplerate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li>
+<div class="tsd-signature" id="sampleratesamplerate"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">sampleRate</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The track's audio sample rate in hertz.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-6">Deprecated<a href="#deprecated-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="#getsamplerate" class="tsd-kind-method">InputAudioTrack.getSampleRate</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:519</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="timeresolution"><span>time<wbr/>Resolution</span><a href="#timeresolution" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li>
+<div class="tsd-signature" id="timeresolutiontimeresolution"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">timeResolution</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>A positive number x such that all timestamps and durations of all packets of this track are
+integer multiples of 1/x.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-7">Deprecated<a href="#deprecated-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="src_audio_streaming-track.InputTrack.html#gettimeresolution" class="tsd-kind-method">InputTrack.getTimeResolution</a> instead.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from InputTrack.timeResolution</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:216</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="type"><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li>
+<div class="tsd-signature" id="typetype"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">type</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;audio&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;video&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;subtitle&quot;</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The type of the track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">&quot;audio&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;video&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;subtitle&quot;</span></h4><aside class="tsd-sources">
+<p>Overrides InputTrack.type</p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:497</li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="canbepairedwith"><span>can<wbr/>Be<wbr/>Paired<wbr/>With</span><a href="#canbepairedwith" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="canbepairedwith-1"><span class="tsd-kind-call-signature">canBePairedWith</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">other</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#canbepairedwith-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns <code>true</code> if this track can be paired with the given track. Two tracks being pairable means they can be
+presented (displayed) together.</p>
+<p>Returns <code>false</code> if <code>other</code> equals <code>this</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">other</span>: <a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#canbepairedwith">canBePairedWith</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:326</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="candecode"><span>can<wbr/>Decode</span><a href="#candecode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="candecode-1"><span class="tsd-kind-call-signature">canDecode</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#candecode-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Checks if this track's packets can be decoded by the browser.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#candecode">canDecode</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:533</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="computeduration"><span>compute<wbr/>Duration</span><a href="#computeduration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="computeduration-1"><span class="tsd-kind-call-signature">computeDuration</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html" class="tsd-signature-type tsd-kind-type-alias">PacketRetrievalOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><a href="#computeduration-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the end timestamp of the last packet of this track, in seconds.</p>
+<p>By default, when the underlying media is live, this method will only resolve once the live stream ends. If you
+want to query the current end timestamp of the stream, set <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html#skiplivewait" class="tsd-kind-property">PacketRetrievalOptions.skipLiveWait</a> to <code>true</code>
+in the options.</p>
+<p>Returns 0 if the track has no packets. Use <a href="src_audio_streaming-track.InputTrack.html#computedurationornull" class="tsd-kind-method">InputTrack.computeDurationOrNull</a> to have it
+return <code>null</code> instead.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html" class="tsd-signature-type tsd-kind-type-alias">PacketRetrievalOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#computeduration">computeDuration</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:278</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="computedurationornull"><span>compute<wbr/>Duration<wbr/>Or<wbr/>Null</span><a href="#computedurationornull" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="computedurationornull-1"><span class="tsd-kind-call-signature">computeDurationOrNull</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html" class="tsd-signature-type tsd-kind-type-alias">PacketRetrievalOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#computedurationornull-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Like <a href="src_audio_streaming-track.InputTrack.html#computeduration" class="tsd-kind-method">InputTrack.computeDuration</a>, but returns <code>null</code> when the track has no packets.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html" class="tsd-signature-type tsd-kind-type-alias">PacketRetrievalOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#computedurationornull">computeDurationOrNull</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:282</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="computepacketstats"><span>compute<wbr/>Packet<wbr/>Stats</span><a href="#computepacketstats" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="computepacketstats-1"><span class="tsd-kind-call-signature">computePacketStats</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">targetPacketCount</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html" class="tsd-signature-type tsd-kind-type-alias">PacketRetrievalOptions</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_audio_streaming-track.PacketStats.html" class="tsd-signature-type tsd-kind-type-alias">PacketStats</a><span class="tsd-signature-symbol">&gt;</span><a href="#computepacketstats-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Computes aggregate packet statistics for this track, such as average packet rate or bitrate.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">targetPacketCount</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>This optional parameter sets a target for how many packets this method must have
+looked at before it can return early; this means, you can use it to aggregate only a subset (prefix) of all
+packets. This is very useful for getting a great estimate of video frame rate without having to scan through the
+entire file.</p>
+<p>By default, when the underlying media is live and <code>targetPacketCount</code> is not set, this method will only resolve
+once the live stream ends. If you want to query the current packet statistics of the stream, set
+<a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html#skiplivewait" class="tsd-kind-property">PacketRetrievalOptions.skipLiveWait</a> to <code>true</code> in the options.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="../types/src_audio_streaming-track.PacketRetrievalOptions.html" class="tsd-signature-type tsd-kind-type-alias">PacketRetrievalOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_audio_streaming-track.PacketStats.html" class="tsd-signature-type tsd-kind-type-alias">PacketStats</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#computepacketstats">computePacketStats</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:306</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="determinepackettype"><span>determine<wbr/>Packet<wbr/>Type</span><a href="#determinepackettype" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="determinepackettype-1"><span class="tsd-kind-call-signature">determinePacketType</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">packet</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.EncodedPacket.html" class="tsd-signature-type tsd-kind-class">EncodedPacket</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_audio_streaming-track.PacketType.html" class="tsd-signature-type tsd-kind-type-alias">PacketType</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#determinepackettype-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>For a given packet of this track, this method determines the actual type of this packet (key/delta) by looking
+into its bitstream. Returns null if the type couldn't be determined.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">packet</span>: <a href="src_audio_streaming-track.EncodedPacket.html" class="tsd-signature-type tsd-kind-class">EncodedPacket</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_audio_streaming-track.PacketType.html" class="tsd-signature-type tsd-kind-type-alias">PacketType</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#determinepackettype">determinePacketType</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:534</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getaveragebitrate"><span>get<wbr/>Average<wbr/>Bitrate</span><a href="#getaveragebitrate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getaveragebitrate-1"><span class="tsd-kind-call-signature">getAverageBitrate</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getaveragebitrate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the average bitrate of the track in bits per second, as specified in the track's metadata. This might
+not match the actual media data's bitrate.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getaveragebitrate">getAverageBitrate</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:254</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getbitrate"><span>get<wbr/>Bitrate</span><a href="#getbitrate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getbitrate-1"><span class="tsd-kind-call-signature">getBitrate</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getbitrate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the peak bitrate of the track in bits per second, as specified in the track's metadata. This might not
+match the actual media data's bitrate.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getbitrate">getBitrate</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:249</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getcodec"><span>get<wbr/>Codec</span><a href="#getcodec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getcodec-1"><span class="tsd-kind-call-signature">getCodec</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;mp3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;aac&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;opus&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;vorbis&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;flac&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ac3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;eac3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;dts&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;truehd&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-u8&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s8&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ulaw&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;alaw&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span><a href="#getcodec-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The codec of the track's packets.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;mp3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;aac&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;opus&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;vorbis&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;flac&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ac3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;eac3&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;dts&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;truehd&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s16be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s24be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s32be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f32be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-f64be&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-u8&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pcm-s8&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ulaw&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;alaw&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getcodec">getCodec</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:499</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getcodecparameterstring"><span>get<wbr/>Codec<wbr/>Parameter<wbr/>String</span><a href="#getcodecparameterstring" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getcodecparameterstring-1"><span class="tsd-kind-call-signature">getCodecParameterString</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getcodecparameterstring-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the full codec parameter string for this track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getcodecparameterstring">getCodecParameterString</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:526</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getdecoderconfig"><span>get<wbr/>Decoder<wbr/>Config</span><a href="#getdecoderconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getdecoderconfig-1"><span class="tsd-kind-call-signature">getDecoderConfig</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AudioDecoderConfig</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getdecoderconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the <a href="https://www.w3.org/TR/webcodecs/#audio-decoder-config">decoder configuration</a> for decoding the
+track's packets using an <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioDecoder"><code>AudioDecoder</code></a>. Returns
+null if the track's codec is unknown.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AudioDecoderConfig</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:525</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getdisposition"><span>get<wbr/>Disposition</span><a href="#getdisposition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getdisposition-1"><span class="tsd-kind-call-signature">getDisposition</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_audio_streaming-track.TrackDisposition.html" class="tsd-signature-type tsd-kind-type-alias">TrackDisposition</a><span class="tsd-signature-symbol">&gt;</span><a href="#getdisposition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the track's disposition, i.e. information about its intended usage.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_audio_streaming-track.TrackDisposition.html" class="tsd-signature-type tsd-kind-type-alias">TrackDisposition</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getdisposition">getDisposition</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:239</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getdurationfrommetadata"><span>get<wbr/>Duration<wbr/>From<wbr/>Metadata</span><a href="#getdurationfrommetadata" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getdurationfrommetadata-1"><span class="tsd-kind-call-signature">getDurationFromMetadata</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.DurationMetadataRequestOptions.html" class="tsd-signature-type tsd-kind-type-alias">DurationMetadataRequestOptions</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getdurationfrommetadata-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Gets the duration (end timestamp) in seconds of this track from metadata stored in the file. This value may be
+approximate or diverge from the actual, precise duration returned by <code>.computeDuration()</code>, but compared to that
+method, this method is cheaper. When the duration cannot be determined from the file metadata, <code>null</code>
+is returned.</p>
+<p>By default, when the underlying media is live, this method will only resolve once the live stream
+ends. If you want to query the current duration of the media, set
+<a href="../types/src_audio_streaming-track.DurationMetadataRequestOptions.html#skiplivewait" class="tsd-kind-property">DurationMetadataRequestOptions.skipLiveWait</a> to <code>true</code> in the options.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="../types/src_audio_streaming-track.DurationMetadataRequestOptions.html" class="tsd-signature-type tsd-kind-type-alias">DurationMetadataRequestOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getdurationfrommetadata">getDurationFromMetadata</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:293</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getfirsttimestamp"><span>get<wbr/>First<wbr/>Timestamp</span><a href="#getfirsttimestamp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getfirsttimestamp-1"><span class="tsd-kind-call-signature">getFirstTimestamp</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><a href="#getfirsttimestamp-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the start timestamp of the first packet of this track, in seconds. While often near zero, this value
+may be positive or even negative. A negative starting timestamp means the track's timing has been offset. Samples
+with a negative timestamp should not be presented.</p>
+<p>Returns 0 if the track has no packets. Use <a href="src_audio_streaming-track.InputTrack.html#getfirsttimestampornull" class="tsd-kind-method">InputTrack.getFirstTimestampOrNull</a> to have it
+return <code>null</code> instead.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getfirsttimestamp">getFirstTimestamp</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:263</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getfirsttimestampornull"><span>get<wbr/>First<wbr/>Timestamp<wbr/>Or<wbr/>Null</span><a href="#getfirsttimestampornull" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getfirsttimestampornull-1"><span class="tsd-kind-call-signature">getFirstTimestampOrNull</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getfirsttimestampornull-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Like <a href="src_audio_streaming-track.InputTrack.html#getfirsttimestamp" class="tsd-kind-method">InputTrack.getFirstTimestamp</a>, but returns <code>null</code> when the track has no packets.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getfirsttimestampornull">getFirstTimestampOrNull</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:267</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getinternalcodecid"><span>get<wbr/>Internal<wbr/>Codec<wbr/>Id</span><a href="#getinternalcodecid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getinternalcodecid-1"><span class="tsd-kind-call-signature">getInternalCodecId</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><br/>    <span class="tsd-signature-type">string</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span><br/>    <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" class="tsd-signature-type external" target="_blank">Uint8Array</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src__types_typed-arrays.ArrayBufferLike.html" class="tsd-signature-type tsd-kind-type-alias">ArrayBufferLike</a><span class="tsd-signature-symbol">&gt;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span><a href="#getinternalcodecid-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the identifier of the codec used internally by the container. It is not homogenized by Mediabunny
+and depends entirely on the container format.</p>
+<p>This method can be used to determine the codec of a track in case Mediabunny doesn't know that codec.</p>
+<ul>
+<li>For ISOBMFF files, this resolves to the name of the Sample Description Box (e.g. <code>'avc1'</code>).</li>
+<li>For Matroska files, this resolves to the value of the <code>CodecID</code> element.</li>
+<li>For WAVE files, this resolves to the value of the format tag in the <code>'fmt '</code> chunk.</li>
+<li>For ADTS files, this resolves to the <code>MPEG-4 Audio Object Type</code>.</li>
+<li>For MPEG-TS files, this resolves to the <code>streamType</code> value from the Program Map Table.</li>
+<li>In all other cases, this resolves to <code>null</code>.</li>
+</ul>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" class="tsd-signature-type external" target="_blank">Uint8Array</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src__types_typed-arrays.ArrayBufferLike.html" class="tsd-signature-type tsd-kind-type-alias">ArrayBufferLike</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getinternalcodecid">getInternalCodecId</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:183</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getlanguagecode"><span>get<wbr/>Language<wbr/>Code</span><a href="#getlanguagecode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getlanguagecode-1"><span class="tsd-kind-call-signature">getLanguageCode</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#getlanguagecode-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the ISO 639-2/T language code for this track. If the language is unknown, this resolves to <code>'und'</code>
+(undetermined).</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getlanguagecode">getLanguageCode</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:193</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getliverefreshinterval"><span>get<wbr/>Live<wbr/>Refresh<wbr/>Interval</span><a href="#getliverefreshinterval" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getliverefreshinterval-1"><span class="tsd-kind-call-signature">getLiveRefreshInterval</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getliverefreshinterval-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the track's live refresh interval in seconds, or <code>null</code> if the track is not live. This interval describes
+the time it takes, on average, for new live media data to become available.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getliverefreshinterval">getLiveRefreshInterval</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:319</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getname"><span>get<wbr/>Name</span><a href="#getname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getname-1"><span class="tsd-kind-call-signature">getName</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getname-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the user-defined name for this track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getname">getName</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:200</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getnumberofchannels"><span>get<wbr/>Number<wbr/>Of<wbr/>Channels</span><a href="#getnumberofchannels" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getnumberofchannels-1"><span class="tsd-kind-call-signature">getNumberOfChannels</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><a href="#getnumberofchannels-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the number of audio channels in the track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:507</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getpairableaudiotracks"><span>get<wbr/>Pairable<wbr/>Audio<wbr/>Tracks</span><a href="#getpairableaudiotracks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getpairableaudiotracks-1"><span class="tsd-kind-call-signature">getPairableAudioTracks</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#getpairableaudiotracks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Gets the list of other audio tracks that can be paired with this track. An optional query can be provided to
+narrow down the results.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">query</span>: <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getpairableaudiotracks">getPairableAudioTracks</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:341</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getpairabletracks"><span>get<wbr/>Pairable<wbr/>Tracks</span><a href="#getpairabletracks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getpairabletracks-1"><span class="tsd-kind-call-signature">getPairableTracks</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#getpairabletracks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Gets the list of other tracks that can be paired with this track. An optional query can be provided to narrow
+down the results.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">query</span>: <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getpairabletracks">getPairableTracks</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:331</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getpairablevideotracks"><span>get<wbr/>Pairable<wbr/>Video<wbr/>Tracks</span><a href="#getpairablevideotracks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getpairablevideotracks-1"><span class="tsd-kind-call-signature">getPairableVideoTracks</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#getpairablevideotracks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Gets the list of other video tracks that can be paired with this track. An optional query can be provided to
+narrow down the results.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">query</span>: <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getpairablevideotracks">getPairableVideoTracks</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:336</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getprerollduration"><span>get<wbr/>Pre<wbr/>Roll<wbr/>Duration</span><a href="#getprerollduration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getprerollduration-1"><span class="tsd-kind-call-signature">getPreRollDuration</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getprerollduration-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the decoder pre-roll duration for this track. It specifies how far ahead of any given timestamp,
+in seconds, decoding must start so that the audio at that timestamp comes out correctly and the codec state has
+properly converged. Returns <code>null</code> if the track's codec is unknown.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:532</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getprimarypairableaudiotrack"><span>get<wbr/>Primary<wbr/>Pairable<wbr/>Audio<wbr/>Track</span><a href="#getprimarypairableaudiotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getprimarypairableaudiotrack-1"><span class="tsd-kind-call-signature">getPrimaryPairableAudioTrack</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getprimarypairableaudiotrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the primary track that can be paired with this track, optionally steered by the provided query.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">query</span>: <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getprimarypairableaudiotrack">getPrimaryPairableAudioTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:345</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getprimarypairablevideotrack"><span>get<wbr/>Primary<wbr/>Pairable<wbr/>Video<wbr/>Track</span><a href="#getprimarypairablevideotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getprimarypairablevideotrack-1"><span class="tsd-kind-call-signature">getPrimaryPairableVideoTrack</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">?:</span> <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getprimarypairablevideotrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the primary track that can be paired with this track, optionally steered by the provided query.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">query</span>: <a href="../types/src_audio_streaming-track.InputTrackQuery.html" class="tsd-signature-type tsd-kind-type-alias">InputTrackQuery</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getprimarypairablevideotrack">getPrimaryPairableVideoTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:343</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="getsamplerate"><span>get<wbr/>Sample<wbr/>Rate</span><a href="#getsamplerate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getsamplerate-1"><span class="tsd-kind-call-signature">getSampleRate</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><a href="#getsamplerate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the track's audio sample rate in hertz.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:514</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="gettimeresolution"><span>get<wbr/>Time<wbr/>Resolution</span><a href="#gettimeresolution" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="gettimeresolution-1"><span class="tsd-kind-call-signature">getTimeResolution</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><a href="#gettimeresolution-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns a positive number x such that all timestamps and durations of all packets of this track are
+integer multiples of 1/x.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#gettimeresolution">getTimeResolution</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:210</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="getunixtimefortimestamp"><span>get<wbr/>Unix<wbr/>Time<wbr/>For<wbr/>Timestamp</span><a href="#getunixtimefortimestamp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="getunixtimefortimestamp-1"><span class="tsd-kind-call-signature">getUnixTimeForTimestamp</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">timestamp</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><a href="#getunixtimefortimestamp-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the Unix time (in seconds since January 1, 1970 00:00:00 UTC) that the given track timestamp (in seconds)
+maps to, or <code>null</code> if there is no such mapping. This provides a piecewise-continuous mapping from this track's
+timestamp space into wall-clock time. Such mapping exists, for example, for HLS playlists with
+<code>#EXT-X-PROGRAM-DATE-TIME</code> tags present.</p>
+<p>This mapping can be available even when <a href="src_audio_streaming-track.InputTrack.html#isrelativetounixepoch" class="tsd-kind-method">InputTrack.isRelativeToUnixEpoch</a> is <code>false</code>, for example for HLS
+streams with program date time information but with <a href="../types/src_audio_streaming-track.HlsInputFormatOptions.html#offsettimestampsbydatetime" class="tsd-kind-property">HlsInputFormatOptions.offsetTimestampsByDateTime</a>
+set to <code>false</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">timestamp</span>: <span class="tsd-signature-type">number</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#getunixtimefortimestamp">getUnixTimeForTimestamp</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:232</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-external">
+<h3 class="tsd-anchor-link" id="hasonlykeypackets"><span>has<wbr/>Only<wbr/>Key<wbr/>Packets</span><a href="#hasonlykeypackets" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-external">
+<li class="tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="hasonlykeypackets-1"><span class="tsd-kind-call-signature">hasOnlyKeyPackets</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#hasonlykeypackets-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns whether the track metadata says that this track only contains key packets. The actual packets may
+differ.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#hasonlykeypackets">hasOnlyKeyPackets</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:505</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="haspairableaudiotrack"><span>has<wbr/>Pairable<wbr/>Audio<wbr/>Track</span><a href="#haspairableaudiotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="haspairableaudiotrack-1"><span class="tsd-kind-call-signature">hasPairableAudioTrack</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">predicate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">track</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="../types/src_audio_streaming-track.MaybePromise.html" class="tsd-signature-type tsd-kind-type-alias">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#haspairableaudiotrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns <code>true</code> if there is an audio track that can be paired with this track.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">predicate</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">track</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="../types/src_audio_streaming-track.MaybePromise.html" class="tsd-signature-type tsd-kind-type-alias">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#haspairableaudiotrack">hasPairableAudioTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:351</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="haspairabletrack"><span>has<wbr/>Pairable<wbr/>Track</span><a href="#haspairabletrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="haspairabletrack-1"><span class="tsd-kind-call-signature">hasPairableTrack</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">predicate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">track</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="../types/src_audio_streaming-track.MaybePromise.html" class="tsd-signature-type tsd-kind-type-alias">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#haspairabletrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns <code>true</code> if there is another track that can be paired with this track.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">predicate</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">track</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.InputTrack.html" class="tsd-signature-type tsd-kind-class">InputTrack</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="../types/src_audio_streaming-track.MaybePromise.html" class="tsd-signature-type tsd-kind-type-alias">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#haspairabletrack">hasPairableTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:347</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="haspairablevideotrack"><span>has<wbr/>Pairable<wbr/>Video<wbr/>Track</span><a href="#haspairablevideotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="haspairablevideotrack-1"><span class="tsd-kind-call-signature">hasPairableVideoTrack</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">predicate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">track</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="../types/src_audio_streaming-track.MaybePromise.html" class="tsd-signature-type tsd-kind-type-alias">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#haspairablevideotrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns <code>true</code> if there is a video track that can be paired with this track.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">predicate</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">track</span><span class="tsd-signature-symbol">:</span> <a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="../types/src_audio_streaming-track.MaybePromise.html" class="tsd-signature-type tsd-kind-type-alias">MaybePromise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#haspairablevideotrack">hasPairableVideoTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:349</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="hasunixtimemapping"><span>has<wbr/>Unix<wbr/>Time<wbr/>Mapping</span><a href="#hasunixtimemapping" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="hasunixtimemapping-1"><span class="tsd-kind-call-signature">hasUnixTimeMapping</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#hasunixtimemapping-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Whether the track's timestamps can be mapped to Unix wall clock time via
+<a href="src_audio_streaming-track.InputTrack.html#getunixtimefortimestamp" class="tsd-kind-method">InputTrack.getUnixTimeForTimestamp</a>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#hasunixtimemapping">hasUnixTimeMapping</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:237</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="isaudiotrack"><span>is<wbr/>Audio<wbr/>Track</span><a href="#isaudiotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="isaudiotrack-1"><span class="tsd-kind-call-signature">isAudioTrack</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-kind-parameter">this</span> <span class="tsd-signature-keyword">is</span> <a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a><a href="#isaudiotrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns true if and only if this track is an audio track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-kind-parameter">this</span> <span class="tsd-signature-keyword">is</span> <a href="" class="tsd-signature-type tsd-kind-class">InputAudioTrack</a></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#isaudiotrack">isAudioTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:158</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="islive"><span>is<wbr/>Live</span><a href="#islive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="islive-1"><span class="tsd-kind-call-signature">isLive</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#islive-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Whether or not this track is currently live, meaning the media's end is still unknown.</p>
+<p>The value returned by this method may change over time as the track stops being live. To keep track of the
+track's live status, poll this method at the track's refresh interval
+via <a href="src_audio_streaming-track.InputTrack.html#getliverefreshinterval" class="tsd-kind-method">InputTrack.getLiveRefreshInterval</a>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#islive">isLive</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:314</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="isrelativetounixepoch"><span>is<wbr/>Relative<wbr/>To<wbr/>Unix<wbr/>Epoch</span><a href="#isrelativetounixepoch" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="isrelativetounixepoch-1"><span class="tsd-kind-call-signature">isRelativeToUnixEpoch</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#isrelativetounixepoch-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns whether the timestamps of this track are relative to the Unix epoch (January 1, 1970 00:00:00 UTC).
+When <code>true</code>, each timestamp maps to a definitive point in time.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#isrelativetounixepoch">isRelativeToUnixEpoch</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:221</li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
+<h3 class="tsd-anchor-link" id="isvideotrack"><span>is<wbr/>Video<wbr/>Track</span><a href="#isvideotrack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-external">
+<li class="tsd-is-inherited tsd-is-external">
+<div class="tsd-signature tsd-anchor-link" id="isvideotrack-1"><span class="tsd-kind-call-signature">isVideoTrack</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-kind-parameter">this</span> <span class="tsd-signature-keyword">is</span> <a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a><a href="#isvideotrack-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns true if and only if this track is a video track.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-kind-parameter">this</span> <span class="tsd-signature-keyword">is</span> <a href="src_audio_streaming-track.InputVideoTrack.html" class="tsd-signature-type tsd-kind-class">InputVideoTrack</a></h4><aside class="tsd-sources">
+<p>Inherited from <a href="src_audio_streaming-track.InputTrack.html">InputTrack</a>.<a href="src_audio_streaming-track.InputTrack.html#isvideotrack">isVideoTrack</a></p>
+<ul>
+<li>Defined in node_modules/.pnpm/mediabunny@1.66.4/node_modules/mediabunny/dist/modules/src/input-track.d.ts:156</li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#input" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>input</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
+<div><a href="#codec" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>codec</span></a><a href="#disposition" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>disposition</span></a><a href="#id" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>id</span></a><a href="#internalcodecid" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>internal<wbr/>Codec<wbr/>Id</span></a><a href="#languagecode" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>language<wbr/>Code</span></a><a href="#name" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>name</span></a><a href="#number" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>number</span></a><a href="#numberofchannels" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>number<wbr/>Of<wbr/>Channels</span></a><a href="#samplerate" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>sample<wbr/>Rate</span></a><a href="#timeresolution" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>time<wbr/>Resolution</span></a><a href="#type" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>type</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#canbepairedwith" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Be<wbr/>Paired<wbr/>With</span></a><a href="#candecode" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>can<wbr/>Decode</span></a><a href="#computeduration" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>compute<wbr/>Duration</span></a><a href="#computedurationornull" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>compute<wbr/>Duration<wbr/>Or<wbr/>Null</span></a><a href="#computepacketstats" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>compute<wbr/>Packet<wbr/>Stats</span></a><a href="#determinepackettype" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>determine<wbr/>Packet<wbr/>Type</span></a><a href="#getaveragebitrate" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Average<wbr/>Bitrate</span></a><a href="#getbitrate" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Bitrate</span></a><a href="#getcodec" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Codec</span></a><a href="#getcodecparameterstring" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Codec<wbr/>Parameter<wbr/>String</span></a><a href="#getdecoderconfig" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Decoder<wbr/>Config</span></a><a href="#getdisposition" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Disposition</span></a><a href="#getdurationfrommetadata" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Duration<wbr/>From<wbr/>Metadata</span></a><a href="#getfirsttimestamp" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>First<wbr/>Timestamp</span></a><a href="#getfirsttimestampornull" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>First<wbr/>Timestamp<wbr/>Or<wbr/>Null</span></a><a href="#getinternalcodecid" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Internal<wbr/>Codec<wbr/>Id</span></a><a href="#getlanguagecode" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Language<wbr/>Code</span></a><a href="#getliverefreshinterval" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Live<wbr/>Refresh<wbr/>Interval</span></a><a href="#getname" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Name</span></a><a href="#getnumberofchannels" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Number<wbr/>Of<wbr/>Channels</span></a><a href="#getpairableaudiotracks" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pairable<wbr/>Audio<wbr/>Tracks</span></a><a href="#getpairabletracks" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pairable<wbr/>Tracks</span></a><a href="#getpairablevideotracks" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pairable<wbr/>Video<wbr/>Tracks</span></a><a href="#getprerollduration" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Pre<wbr/>Roll<wbr/>Duration</span></a><a href="#getprimarypairableaudiotrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Primary<wbr/>Pairable<wbr/>Audio<wbr/>Track</span></a><a href="#getprimarypairablevideotrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Primary<wbr/>Pairable<wbr/>Video<wbr/>Track</span></a><a href="#getsamplerate" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Sample<wbr/>Rate</span></a><a href="#gettimeresolution" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Time<wbr/>Resolution</span></a><a href="#getunixtimefortimestamp" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Unix<wbr/>Time<wbr/>For<wbr/>Timestamp</span></a><a href="#hasonlykeypackets" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Only<wbr/>Key<wbr/>Packets</span></a><a href="#haspairableaudiotrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Pairable<wbr/>Audio<wbr/>Track</span></a><a href="#haspairabletrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Pairable<wbr/>Track</span></a><a href="#haspairablevideotrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Pairable<wbr/>Video<wbr/>Track</span></a><a href="#hasunixtimemapping" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Unix<wbr/>Time<wbr/>Mapping</span></a><a href="#isaudiotrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Audio<wbr/>Track</span></a><a href="#islive" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Live</span></a><a href="#isrelativetounixepoch" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Relative<wbr/>To<wbr/>Unix<wbr/>Epoch</span></a><a href="#isvideotrack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Video<wbr/>Track</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/main" class="tsd-nav-link">Switch to Main</a></nav>
+<nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer>
+<div class="overlay"></div></body></html>
