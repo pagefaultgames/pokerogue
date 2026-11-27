@@ -1,4 +1,5 @@
 import { USE_SEASONAL_SPLASH_MESSAGES } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
 
 // #region Interfaces/Types
 
@@ -51,6 +52,8 @@ const BATTLES_WON_WEIGHT_MULTIPLIER = 15;
 const POKEMON_NAMES_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
 const SEASONAL_WEIGHT_MULTIPLIER = 15;
+/** The weight multiplier for the generic event splash messages */
+const GENERIC_EVENT_WEIGHT_MULTIPLIER = 5;
 
 // #endregion Constants
 
@@ -98,7 +101,6 @@ const commonSplashMessages = [
   "shoutoutsToTheArtists",
   "gamblingNotEncouraged",
   "dontForgetToTakeABreak",
-  "wEvent",
   "ifItsNotAccurateItsAccurate",
   "everyLossIsProgressMade",
   "liveWoChienReaction",
@@ -236,6 +238,12 @@ const commonSplashMessages = [
 
 // #endregion Common Messages
 
+// #region Generic Event Messages
+
+const genericEventSplashMessages: string[] = ["wEvent"];
+
+// #endregion Generic Event Messages
+
 // #region Seasonal Messages
 
 const seasonalSplashMessages: Season[] = [
@@ -368,6 +376,16 @@ export function getSplashMessages(): string[] {
           splashMessages.push(...weightedMessage);
         }
       }
+    }
+  }
+
+  if (timedEventManager.isEventActive()) {
+    console.log(
+      `Adding ${genericEventSplashMessages.length} generic event splash messages (weight: x${GENERIC_EVENT_WEIGHT_MULTIPLIER})`,
+    );
+    for (const message of genericEventSplashMessages) {
+      const weightedMessage = new Array(GENERIC_EVENT_WEIGHT_MULTIPLIER).fill(`genericEvent.${message}`);
+      splashMessages.push(...weightedMessage);
     }
   }
 

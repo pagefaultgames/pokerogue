@@ -232,6 +232,43 @@ export function preventDoubleTapZoom(): void {
   );
 }
 
+const quadrupleTapThresholdMillis = 500;
+const quadrupleTapCount = 4;
+
+/**
+ * Installs a single document-level listener that re-enables touch controls when the screen is
+ * tapped {@linkcode quadrupleTapCount} times in quick succession while they are disabled.
+ * This lets players who accidentally disabled touch controls on a touchscreen device recover
+ * without needing to reach the settings menu. Intended to be called once at startup.
+ */
+export function enableTouchControlsOnQuadrupleTap(): void {
+  if (!hasTouchscreen()) {
+    return;
+  }
+
+  let tapTimestamps: number[] = [];
+
+  document.addEventListener(
+    "touchstart",
+    (event: TouchEvent) => {
+      if (settings.general.enableTouchControls || event.touches.length > 1) {
+        tapTimestamps = [];
+        return;
+      }
+
+      const now = event.timeStamp;
+      tapTimestamps = tapTimestamps.filter(timestamp => now - timestamp <= quadrupleTapThresholdMillis);
+      tapTimestamps.push(now);
+
+      if (tapTimestamps.length >= quadrupleTapCount) {
+        tapTimestamps = [];
+        settings.update("general", "enableTouchControls", true);
+      }
+    },
+    { capture: true, passive: true },
+  );
+}
+
 /**
  * Check if the device is a mobile device.
  *

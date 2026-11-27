@@ -37,12 +37,12 @@ describe("Abilities - Beast Boost", () => {
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 100, 1000, 200, 100, 100]);
     console.log(playerPokemon.stats);
 
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, 0);
 
     game.move.select(MoveId.FLAMETHROWER);
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, 1);
   });
 
   it("should use in-battle overriden stats when determining the stat stage to raise by 1", async () => {
@@ -54,14 +54,14 @@ describe("Abilities - Beast Boost", () => {
     // If the opponent uses Guard Split, the pokemon's second highest stat (SPATK) should be chosen
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 100, 201, 200, 100, 100]);
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 0);
 
     game.move.select(MoveId.FLAMETHROWER);
 
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("should have order preference in case of stat ties", async () => {
@@ -73,12 +73,12 @@ describe("Abilities - Beast Boost", () => {
     // Set up tie between SPATK, SPDEF, and SPD, where SPATK should win
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 1, 1, 100, 100, 100]);
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 0);
 
     game.move.select(MoveId.FLAMETHROWER);
 
     await game.phaseInterceptor.to("VictoryPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPATK, 1);
   });
 });

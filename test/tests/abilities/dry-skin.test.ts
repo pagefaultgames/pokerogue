@@ -34,13 +34,13 @@ describe("Abilities - Dry Skin", () => {
     // first turn
     game.move.use(MoveId.SUNNY_DAY);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
 
     // second turn
     enemy.hp = enemy.getMaxHp();
     game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
   });
 
   it("during rain, gain 1/8 of maximum health at the end of each turn", async () => {
@@ -144,6 +144,6 @@ describe("Abilities - Dry Skin", () => {
 
     await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
   });
 });

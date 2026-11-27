@@ -9,6 +9,7 @@ import { FieldPhase } from "#phases/field-phase";
 import { NumberHolder } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";

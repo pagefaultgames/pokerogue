@@ -40,19 +40,19 @@ describe("Moves - Guard Swap", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     for (const s of BATTLE_STATS) {
-      expect(player.getStatStage(s)).toBe(0);
-      expect(enemy.getStatStage(s)).toBe(1);
+      expect(player).toHaveStatStage(s, 0);
+      expect(enemy).toHaveStatStage(s, 1);
     }
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     for (const s of BATTLE_STATS) {
       if (s === Stat.DEF || s === Stat.SPDEF) {
-        expect(player.getStatStage(s)).toBe(1);
-        expect(enemy.getStatStage(s)).toBe(0);
+        expect(player).toHaveStatStage(s, 1);
+        expect(enemy).toHaveStatStage(s, 0);
       } else {
-        expect(player.getStatStage(s)).toBe(0);
-        expect(enemy.getStatStage(s)).toBe(1);
+        expect(player).toHaveStatStage(s, 0);
+        expect(enemy).toHaveStatStage(s, 1);
       }
     }
   });

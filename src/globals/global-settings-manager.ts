@@ -7,6 +7,10 @@ export let settings: GlobalSettingsManager;
 
 // This is necessary to allow the species data exporter script to function
 export async function initSettingsManager(): Promise<void> {
+  if (settings != null) {
+    return;
+  }
+
   const { getDataTypeKey } = await import("#utils/data");
   const { SettingsManager } = await import("#system/settings-manager");
 

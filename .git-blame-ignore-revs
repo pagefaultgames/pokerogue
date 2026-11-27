@@ -106,3 +106,6 @@ b836dd3f7d13456d1f85435dfe355d31a0a043aa
 
 # dev: enable Biome formatting of `balance/` directory
 f124d55cc1b343e84856fdda7d1dac624846e490
+
+# chore: update Biome to `2.5.14` and apply to repo
+3baf8afc1f4c1a42cd65ed5f346fe933d9e17abe

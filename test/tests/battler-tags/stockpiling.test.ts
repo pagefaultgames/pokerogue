@@ -6,6 +6,7 @@ import type { Pokemon } from "#field/pokemon";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { GameManager } from "#test/framework/game-manager";
 import type { StatChange } from "#types/stat-change";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const stockPileStatChanges: StatChange[] = [

@@ -11,6 +11,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/framework/game-manager";
 import type { TurnMove } from "#types/turn-move";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - SubstituteTag", () => {

@@ -34,7 +34,7 @@ describe("Abilities - Sand Spit", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
+    expect(game).toHaveWeather(WeatherType.SANDSTORM);
   });
 
   it("should trigger even when fainting", async () => {
@@ -45,7 +45,7 @@ describe("Abilities - Sand Spit", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
+    expect(game).toHaveWeather(WeatherType.SANDSTORM);
   });
 
   it("should not trigger when targetted with status moves", async () => {
@@ -54,7 +54,6 @@ describe("Abilities - Sand Spit", () => {
 
     game.move.select(MoveId.COIL);
     await game.toNextTurn();
-
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SANDSTORM);
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 });

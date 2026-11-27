@@ -14,7 +14,7 @@ export abstract class Phase {
   /**
    * End the current phase and start the next one.
    * @remarks
-   * Phases that override `end()` are responsible for calling `super.end()` themselves (after any async operations resolve).
+   * Phases that override `end()` are responsible for calling `super.end()` themselves (after any async operations resolve). \
    * Additionally, attempting to call this function multiple times from the same Phase will likely crash the game.
    */
   public end(): void {
@@ -37,7 +37,7 @@ export abstract class Phase {
    * @returns Whether this Phase is of the provided type.
    *
    * @remarks
-   * This does not check for subclasses! It only checks if the phase is *exactly* the given type.
+   * This does not check for subclasses! It only checks if the phase is *exactly* the given type. \
    * This method exists to avoid circular import issues, as using `instanceof` would require importing each phase.
    */
   public is<K extends keyof PhaseMap>(phaseName: K): this is PhaseMap[K] {

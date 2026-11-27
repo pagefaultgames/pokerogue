@@ -40,7 +40,7 @@ describe("Abilities - Storm Drain", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(true);
+    expect(enemy1).toHaveFullHp();
   });
 
   it("should not redirect non-water type moves", async () => {
@@ -55,7 +55,7 @@ describe("Abilities - Storm Drain", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(false);
+    expect(enemy1).not.toHaveFullHp();
   });
 
   it("should boost the user's spatk without damaging", async () => {
@@ -68,8 +68,8 @@ describe("Abilities - Storm Drain", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy2.isFullHp()).toBe(true);
-    expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
+    expect(enemy2).toHaveFullHp();
+    expect(enemy2).toHaveStatStage(Stat.SPATK, 1);
   });
 
   it("should not redirect moves changed from water type via ability", async () => {
@@ -83,7 +83,7 @@ describe("Abilities - Storm Drain", () => {
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(false);
+    expect(enemy1).not.toHaveFullHp();
   });
 
   it("should redirect moves changed to water type via ability", async () => {
@@ -97,7 +97,7 @@ describe("Abilities - Storm Drain", () => {
     game.move.use(MoveId.ROUND, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy1.isFullHp()).toBe(true);
-    expect(enemy2.getStatStage(Stat.SPATK)).toBe(1);
+    expect(enemy1).toHaveFullHp();
+    expect(enemy2).toHaveStatStage(Stat.SPATK, 1);
   });
 });

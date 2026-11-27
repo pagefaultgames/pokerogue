@@ -39,15 +39,15 @@ describe("Moves - Octolock", () => {
     game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, -1);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPDEF, -1);
 
     // take a second turn to make sure stat changes occur again
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-2);
-    expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-2);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, -2);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPDEF, -2);
   });
 
   it("if target pokemon has BIG_PECKS, should only lower SPDEF stat stage by 1", async () => {
@@ -60,8 +60,8 @@ describe("Moves - Octolock", () => {
     game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPDEF, -1);
   });
 
   it("if target pokemon has WHITE_SMOKE, should not reduce any stat stages", async () => {
@@ -74,8 +74,8 @@ describe("Moves - Octolock", () => {
     game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPDEF, 0);
   });
 
   it("if target pokemon has CLEAR_BODY, should not reduce any stat stages", async () => {
@@ -88,8 +88,8 @@ describe("Moves - Octolock", () => {
     game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(enemyPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(enemyPokemon).toHaveStatStage(Stat.SPDEF, 0);
   });
 
   it("traps the target pokemon", async () => {
@@ -121,8 +121,8 @@ describe("Moves - Octolock", () => {
 
     // after Octolock - player should still not be trapped, and no stat loss
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPDEF, 0);
   });
 
   it("does not work on pokemon with added ghost type via Trick-or-Treat", async () => {
@@ -140,7 +140,7 @@ describe("Moves - Octolock", () => {
 
     // after Octolock - pokemon should still not be trapped, and no stat loss
     expect(enemy.findTag(t => t instanceof TrappedTag)).toBeUndefined();
-    expect(enemy.getStatStage(Stat.DEF)).toBe(0);
-    expect(enemy.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(enemy).toHaveStatStage(Stat.DEF, 0);
+    expect(enemy).toHaveStatStage(Stat.SPDEF, 0);
   });
 });

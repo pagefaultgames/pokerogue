@@ -76,7 +76,7 @@ describe("Abilities - ZEN MODE", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(darmanitan.isFainted()).toBe(true);
+    expect(darmanitan).toHaveFainted();
     expect(game.scene.getPlayerParty()[1].formIndex).toBe(zenForm);
   });
 
@@ -93,7 +93,7 @@ describe("Abilities - ZEN MODE", () => {
 
     darmanitan.hp = 0;
     darmanitan.status = new Status(StatusEffect.FAINT);
-    expect(darmanitan.isFainted()).toBe(true);
+    expect(darmanitan).toHaveFainted();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();

@@ -20,11 +20,24 @@ import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
+import type { Writable } from "type-fest";
 
-interface ConditionalMenu {
-  excluded: boolean;
+type ConditionalMenu = {
+  /** The {@linkcode MenuOptions} to modify */
   options: MenuOptions[];
-}
+} & (
+  | {
+      /** Whether the options should be removed from the menu entirely */
+      excluded: boolean;
+      dimmed?: never;
+    }
+  | {
+      /** Whether the options should be grayed out */
+      dimmed: boolean;
+      excluded?: never;
+    }
+);
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -62,14 +75,15 @@ export class MenuUiHandler extends OptionSelectUiHandler {
   constructor() {
     super(UiMode.MENU);
 
-    this.excludedMenus = () => [
-      {
-        excluded: globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase"),
-        options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
-      },
-      { excluded: bypassLogin, options: [MenuOptions.LOG_OUT] },
-      { excluded: !globalScene.currentBattle, options: [MenuOptions.SAVE_AND_QUIT] },
-    ];
+    this.excludedMenus = () =>
+      [
+        {
+          dimmed: globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase"),
+          options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
+        },
+        { excluded: bypassLogin, options: [MenuOptions.LOG_OUT] },
+        { excluded: !globalScene.currentBattle, options: [MenuOptions.SAVE_AND_QUIT] },
+      ] satisfies ConditionalMenu[];
   }
 
   protected override get windowHeight(): number {
@@ -133,6 +147,7 @@ export class MenuUiHandler extends OptionSelectUiHandler {
     this.menuMessageBoxContainer.add([this.menuMessageBox, this.dialogueMessageBox, this.message]);
 
     this.initTutorialOverlay(this.menuContainer);
+    this.initNameBox(this.menuMessageBoxContainer, this.textPadding, -7);
     this.initPromptSprite(this.menuMessageBoxContainer);
     this.menuContainer.add(this.menuMessageBoxContainer);
 
@@ -170,11 +185,22 @@ export class MenuUiHandler extends OptionSelectUiHandler {
     );
 
     const options: OptionSelectItem[] = validOptions.map((option: MenuOptions) => {
+      const conditionalOpts: Partial<Writable<Pick<OptionSelectItem, "selectable" | "color">>> = {};
+
+      for (const em of this.excludedMenus()) {
+        if (em.dimmed && em.options.includes(option)) {
+          conditionalOpts.selectable = false;
+          conditionalOpts.color = TextStyle.SUMMARY_GRAY;
+          break;
+        }
+      }
+
       return {
         label: `${i18next.t(`menuUiHandler:${toCamelCase(MenuOptions[option])}`)}`,
         handler: () => this.optionSelected(option),
         keepOpen: true,
-      };
+        ...conditionalOpts,
+      } satisfies OptionSelectItem;
     });
 
     return {

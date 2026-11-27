@@ -34,12 +34,11 @@ describe("Moves - Fusion Bolt", () => {
     await game.classicMode.startBattle(SpeciesId.ZEKROM);
 
     const partyMember = game.field.getPlayerPokemon();
-    const initialHp = partyMember.hp;
 
     game.move.select(fusionBolt);
 
     await game.toNextTurn();
 
-    expect(initialHp - partyMember.hp).toBe(0);
+    expect(partyMember).toHaveFullHp();
   });
 });

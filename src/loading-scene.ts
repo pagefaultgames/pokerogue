@@ -13,6 +13,7 @@ import { hasAllLocalizedSprites, localPing } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import Phaser from "phaser";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -50,16 +51,10 @@ export class LoadingScene extends SceneBase {
       .loadImage("pbinfo_player_stats", "ui")
       .loadImage("pbinfo_player_mini", "ui")
       .loadImage("pbinfo_player_mini_stats", "ui")
-      .loadAtlas("pbinfo_player_type", "ui")
-      .loadAtlas("pbinfo_player_type1", "ui")
-      .loadAtlas("pbinfo_player_type2", "ui")
       .loadImage("pbinfo_enemy_mini", "ui")
       .loadImage("pbinfo_enemy_mini_stats", "ui")
       .loadImage("pbinfo_enemy_boss", "ui")
       .loadImage("pbinfo_enemy_boss_stats", "ui")
-      .loadAtlas("pbinfo_enemy_type", "ui")
-      .loadAtlas("pbinfo_enemy_type1", "ui")
-      .loadAtlas("pbinfo_enemy_type2", "ui")
       .loadAtlas("pbinfo_stat_numbers", "ui")
       .loadAtlas("numbers", "ui")
       .loadAtlas("numbers_red", "ui")
@@ -170,6 +165,8 @@ export class LoadingScene extends SceneBase {
       // Load character sprites
       .loadAtlas("c_rival_m", "character", "rival_m")
       .loadAtlas("c_rival_f", "character", "rival_f")
+      .loadAtlas("c_halloween_rival_m", "events", "halloween_rival_m")
+      .loadAtlas("c_halloween_rival_f", "events", "halloween_rival_f")
 
       // Load pokemon-related images
       .loadImage("pkmn__back__sub", "pokemon/back", "sub.png")
@@ -276,6 +273,20 @@ export class LoadingScene extends SceneBase {
       .loadAtlas(`pbinfo_stat${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_stat${keySuffix}`) // Pixel text for in-battle stats info tab
       .loadImage(`overlay_lv${keySuffix}`, "ui", `text_images/${lang}/battle_ui/overlay_lv${keySuffix}.png`) // Pixel text in-battle 'Lv.'
       .loadImage(`overlay_hp_label${keySuffix}`, "ui", `text_images/${lang}/battle_ui/overlay_hp_label${keySuffix}.png`)
+      .loadAtlas(`pbinfo_player_type${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_player_type${keySuffix}`)
+      .loadAtlas(
+        `pbinfo_player_type1${keySuffix}`,
+        "ui",
+        `text_images/${lang}/battle_ui/pbinfo_player_type1${keySuffix}`,
+      )
+      .loadAtlas(
+        `pbinfo_player_type2${keySuffix}`,
+        "ui",
+        `text_images/${lang}/battle_ui/pbinfo_player_type2${keySuffix}`,
+      )
+      .loadAtlas(`pbinfo_enemy_type${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_enemy_type${keySuffix}`)
+      .loadAtlas(`pbinfo_enemy_type1${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_enemy_type1${keySuffix}`)
+      .loadAtlas(`pbinfo_enemy_type2${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_enemy_type2${keySuffix}`)
       .loadImage(
         `overlay_hp_label_boss${keySuffix}`,
         "ui",
@@ -298,7 +309,7 @@ export class LoadingScene extends SceneBase {
       )
 
       // egg gacha stuff
-      .loadEventBannerImages(lang)
+      .loadEventImages(lang)
       .loadAtlas("categories", "")
       .loadAtlas("egg", "egg")
       .loadAtlas("egg_crack", "egg")
@@ -320,6 +331,7 @@ export class LoadingScene extends SceneBase {
       .loadImage("encounter_radar", "mystery-encounters") // Mystery Encounter dex progress icon
       // settings atlases
       .loadAtlas("dualshock", "inputs")
+      .loadAtlas("procon", "inputs")
       .loadAtlas("xbox", "inputs")
       .loadAtlas("keyboard", "inputs")
       // sound effects
@@ -588,7 +600,7 @@ export class LoadingScene extends SceneBase {
     return this;
   }
 
-  private loadEventBannerImages(lang: string): this {
+  private loadEventImages(lang: string): this {
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
       // fallback to EN banner if translation not found
@@ -596,6 +608,9 @@ export class LoadingScene extends SceneBase {
         lang = "en";
       }
       this.loadImage(`${timedEventManager.getEventBannerFilename()}-${lang}`, "events");
+    }
+    if (timedEventManager.getLogoKey() !== "logo") {
+      this.loadImage(timedEventManager.getLogoKey(), "events");
     }
     return this;
   }

@@ -8,7 +8,8 @@ import { fixedInt } from "#utils/common";
 import { getUsernames } from "#utils/usernames";
 import i18next from "i18next";
 import JSZip from "jszip";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
+import Phaser from "phaser";
+import type InputText from "phaser4-rex-plugins/plugins/inputtext";
 
 interface BuildInteractableImageOpts {
   scale?: number;

@@ -3,6 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,8 +42,8 @@ describe("Moves - Quick Guard", () => {
     await game.move.forceEnemyMove(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(blastoise.hp).toBe(blastoise.getMaxHp());
+    expect(charizard).toHaveFullHp();
+    expect(blastoise).toHaveFullHp();
   });
 
   it.each<{ name: string; move: MoveId; ability: AbilityId }>([
@@ -60,10 +61,10 @@ describe("Moves - Quick Guard", () => {
     await game.move.forceEnemyMove(move, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(blastoise.hp).toBe(blastoise.getMaxHp());
-    expect(charizard.status?.effect).toBeUndefined();
-    expect(blastoise.status?.effect).toBeUndefined();
+    expect(charizard).toHaveFullHp();
+    expect(blastoise).toHaveFullHp();
+    expect(charizard).toHaveStatusEffect(StatusEffect.NONE);
+    expect(blastoise).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should increment (but not respect) other protection moves' fail counters", async () => {
@@ -77,17 +78,17 @@ describe("Moves - Quick Guard", () => {
     game.move.select(MoveId.QUICK_GUARD);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.QUICK_GUARD, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.QUICK_GUARD);
     await game.toNextTurn();
 
     // ignored fail chance
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.QUICK_GUARD, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
   });
 });

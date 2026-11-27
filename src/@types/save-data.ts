@@ -16,11 +16,21 @@ import type { EggData } from "#system/egg-data";
 import type { GameStats } from "#system/game-stats";
 import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
+import type { RibbonData } from "#system/ribbon-data";
 import type { TrainerData } from "#system/trainer-data";
-import type { SerializedDailyRunConfig } from "./daily-run";
-import type { DexData } from "./dex-data";
+import type { SerializedDailyRunConfig } from "#types/daily-run";
+import type { VersionString } from "#types/save-migrators";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 
-export type AppliedMigrators = { [key: string]: number };
+// #region Server-backed fields
+
+//! IMPORTANT: Changes to these types require changes to rogueserver!
+
+/**
+ * A record tracking which migrators have been applied to the save data,
+ * timestamped by the date in Unix milliseconds.
+ */
+export type AppliedMigrators = Partial<Record<`${VersionString}-${string}`, number>>;
 
 export interface SystemSaveData {
   trainerId: number;
@@ -34,7 +44,7 @@ export interface SystemSaveData {
   voucherUnlocks: VoucherUnlocks;
   voucherCounts: VoucherCounts;
   eggs: EggData[];
-  gameVersion: string;
+  gameVersion: VersionString;
   timestamp: number;
   eggPity: number[];
   unlockPity: number[];
@@ -60,13 +70,13 @@ export interface SessionSaveData {
   battleType: Exclude<BattleType, BattleType.CLEAR>;
   // TODO: This being nullable NEEDS to be reflected in the type signature
   trainer: TrainerData;
-  gameVersion: string;
+  gameVersion: VersionString;
   /** The player-chosen name of the run */
   name: string;
   timestamp: number;
   challenges: ChallengeData[];
   // TODO: Change default value to `undefined` to both save space and ease nullishness checks
-  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
+  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME
   // TODO: This can be `undefined` - reflect that in the type signature
   mysteryEncounterSaveData: MysteryEncounterSaveData;
   /**
@@ -74,6 +84,8 @@ export interface SessionSaveData {
    */
   playerFaints: number;
 }
+
+// TODO: Make the index signatures more specific
 
 export interface Unlocks {
   [key: number]: boolean;
@@ -97,9 +109,53 @@ export interface StarterFormMoveData {
   [key: number]: StarterMoveset;
 }
 
-export interface StarterMoveData {
-  [key: number]: StarterMoveset | StarterFormMoveData;
+export interface DexAttrProps {
+  shiny: boolean;
+  female: boolean;
+  variant: Variant;
+  formIndex: number;
 }
+
+export interface DexData {
+  [key: number]: DexEntry;
+}
+
+export interface DexEntry {
+  seenAttr: bigint;
+  caughtAttr: bigint;
+  natureAttr: number;
+  seenCount: number;
+  caughtCount: number;
+  hatchedCount: number;
+  ivs: number[];
+  ribbons: RibbonData;
+}
+
+export interface StarterDataEntry {
+  moveset: StarterMoveset | StarterFormMoveData | null;
+  eggMoves: number;
+  candyCount: number;
+  friendship: number;
+  abilityAttr: number;
+  passiveAttr: number;
+  valueReduction: number;
+  classicWinCount: number;
+  pity: [lastShiny: number, lastNewVariant: number];
+}
+
+export type StarterData = Record<StarterSpeciesId, StarterDataEntry>;
+
+// TODO: Rework into a bitmask
+export type TutorialFlags = {
+  [key in Tutorial]: boolean;
+};
+
+// TODO: Rework into a bitmask
+export interface SeenDialogues {
+  [key: string]: boolean;
+}
+
+// #endregion Server-backed fields
 
 /** The starter's current attributes (such as selected nature, nickname, etc). */
 export interface StarterPreferences {
@@ -116,13 +172,16 @@ export interface StarterPreferences {
 
 export type AllStarterPreferences = Partial<Record<SpeciesId, StarterPreferences | undefined>>;
 
-export interface DexAttrProps {
-  shiny: boolean;
-  female: boolean;
-  variant: Variant;
-  formIndex: number;
+export type RunHistoryData = Record<number /* timestamp */, RunEntry>;
+
+export interface RunEntry {
+  entry: SessionSaveData;
+  isVictory: boolean;
+  /** Automatically set to false at the moment - implementation TBD */
+  isFavorite: boolean;
 }
 
+// TODO: find better file to place this in, it's not save data related
 export interface Starter {
   speciesId: SpeciesId;
   shiny: boolean;
@@ -137,39 +196,4 @@ export interface Starter {
   nickname?: string | undefined;
   teraType?: PokemonType | undefined;
   ivs: number[];
-}
-
-// TODO: What type of number does this store?
-export type RunHistoryData = Record<number, RunEntry>;
-
-export interface RunEntry {
-  entry: SessionSaveData;
-  isVictory: boolean;
-  /** Automatically set to false at the moment - implementation TBD */
-  isFavorite: boolean;
-}
-
-export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData | null;
-  eggMoves: number;
-  candyCount: number;
-  friendship: number;
-  abilityAttr: number;
-  passiveAttr: number;
-  valueReduction: number;
-  classicWinCount: number;
-}
-
-export interface StarterData {
-  [key: number]: StarterDataEntry;
-}
-
-// TODO: Rework into a bitmask
-export type TutorialFlags = {
-  [key in Tutorial]: boolean;
-};
-
-// TODO: Rework into a bitmask
-export interface SeenDialogues {
-  [key: string]: boolean;
 }

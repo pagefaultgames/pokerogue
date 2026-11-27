@@ -27,7 +27,8 @@ import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
+import Phaser from "phaser";
+import RoundRectangle from "phaser4-rex-plugins/plugins/roundrectangle";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -1026,11 +1027,13 @@ export class RunInfoUiHandler extends UiHandler {
       const formIndex = pkmn.formIndex;
       const variant = pkmn.variant;
       const species = pkmn.getSpeciesForm();
-      const pokemonSprite: Phaser.GameObjects.Sprite = globalScene.add.sprite(60 + 40 * i, 40 + row * 80, "pkmn__sub");
-      pokemonSprite.setPipeline(globalScene.spritePipeline, {
-        tone: [0.0, 0.0, 0.0, 0.0],
-        ignoreTimeTint: true,
-      });
+      const pokemonSprite: Phaser.GameObjects.Sprite = globalScene.add
+        .sprite(60 + 40 * i, 40 + row * 80, "pkmn__sub")
+        .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+          tone: [0.0, 0.0, 0.0, 0.0],
+          ignoreTimeTint: true,
+        })
+        .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
       this.hallofFameContainer.add(pokemonSprite);
       const speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
       speciesLoaded.set(id, false);
@@ -1038,11 +1041,13 @@ export class RunInfoUiHandler extends UiHandler {
       const female = pkmn.gender === 1;
       species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
         speciesLoaded.set(id, true);
-        pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
-        pokemonSprite.setPipelineData("shiny", shiny);
-        pokemonSprite.setPipelineData("variant", variant);
-        pokemonSprite.setPipelineData("spriteKey", species.getSpriteKey(female, formIndex, shiny, variant));
-        pokemonSprite.setVisible(true);
+        const spriteKey = species.getSpriteKey(female, formIndex, shiny, variant);
+        pokemonSprite
+          .play(spriteKey)
+          .setRenderNodeData(globalScene.spriteSubmitter, "shiny", shiny)
+          .setRenderNodeData(globalScene.spriteSubmitter, "variant", variant)
+          .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+          .setVisible(true);
       });
       if (pkmn.isFusion()) {
         const fusionIcon = globalScene.add.sprite(80 + 40 * i, 50 + row * 80, pkmn.getFusionIconAtlasKey());

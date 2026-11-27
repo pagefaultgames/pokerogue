@@ -128,20 +128,17 @@ export class EggHatchPhase extends Phase {
       this.eggCounterContainer = new EggCounterContainer(this.eggsToHatchCount);
       this.eggHatchContainer.add(this.eggCounterContainer);
 
-      const getPokemonSprite = () => {
-        const ret = globalScene.add.sprite(
-          this.eggHatchBg.displayWidth / 2,
-          this.eggHatchBg.displayHeight / 2,
-          "pkmn__sub",
-        );
-        ret.setPipeline(globalScene.spritePipeline, {
-          tone: [0.0, 0.0, 0.0, 0.0],
-          ignoreTimeTint: true,
-        });
-        return ret;
-      };
+      const getPokemonSprite = (): Phaser.GameObjects.Sprite =>
+        globalScene.add
+          .sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, "pkmn__sub")
+          .setRenderNodeRole("Submitter", globalScene.spriteSubmitter, {
+            tone: [0.0, 0.0, 0.0, 0.0],
+            ignoreTimeTint: true,
+          })
+          .setRenderNodeRole("BatchHandler", globalScene.spriteBatchHandler);
 
-      this.eggHatchContainer.add((this.pokemonSprite = getPokemonSprite()));
+      this.pokemonSprite = getPokemonSprite();
+      this.eggHatchContainer.add(this.pokemonSprite);
 
       this.pokemonShinySparkle = globalScene.add.sprite(this.pokemonSprite.x, this.pokemonSprite.y, "shiny");
       this.pokemonShinySparkle.setVisible(false);
@@ -358,11 +355,12 @@ export class EggHatchPhase extends Phase {
     const spriteKey = this.pokemon.getSpriteKey(true);
     this.pokemonSprite.play(spriteKey);
 
-    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
-    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
-    this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
-    this.pokemonSprite.setVisible(true);
+    this.pokemonSprite
+      .setRenderNodeData(globalScene.spriteSubmitter, "ignoreTimeTint", true)
+      .setRenderNodeData(globalScene.spriteSubmitter, "shiny", isShiny)
+      .setRenderNodeData(globalScene.spriteSubmitter, "variant", this.pokemon.variant)
+      .setRenderNodeData(globalScene.spriteSubmitter, "spriteKey", spriteKey)
+      .setVisible(true);
 
     globalScene.time.delayedCall(fixedInt(250), () => {
       this.eggsToHatchCount--;

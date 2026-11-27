@@ -5,10 +5,11 @@ import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import type { TextStyleOptions } from "#types/ui-types";
+import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
 import i18next from "i18next";
 import type Phaser from "phaser";
-import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
+import type BBCodeText from "phaser4-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import type InputText from "phaser4-rex-plugins/plugins/inputtext";
 
 export function addTextObject(
   x: number,
@@ -23,6 +24,19 @@ export function addTextObject(
     .text(x, y, content, styleOptions)
     .setScale(scale)
     .setShadow(shadowXpos, shadowYpos, shadowColor);
+  const wordWrapWidth = ret.style.wordWrapWidth;
+  if (wordWrapWidth && !ret.style.wordWrapCallback) {
+    ret.setWordWrapCallback((text, textObject) => {
+      const currentWrapWidth = textObject.style.wordWrapWidth ?? wordWrapWidth;
+      if (hasSpecialWrapSpace(text)) {
+        return wrapTextAtSpaces(text, currentWrapWidth, line => textObject.context.measureText(line).width);
+      }
+
+      return textObject.style.wordWrapUseAdvanced
+        ? textObject.advancedWordWrap(text, textObject.context, currentWrapWidth)
+        : textObject.basicWordWrap(text, textObject.context, currentWrapWidth);
+    });
+  }
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 30);
   }
@@ -51,7 +65,7 @@ export function addBBCodeTextObject(
   y: number,
   content: string,
   style: TextStyle,
-  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle,
+  extraStyleOptions?: BBCodeText.TextStyle,
 ): BBCodeText {
   const { scale, styleOptions, shadowColor, shadowXpos, shadowYpos } = getTextStyleOptions(style, extraStyleOptions);
 
@@ -85,7 +99,7 @@ export function addTextInputObject(
 
 export function getTextStyleOptions(
   style: TextStyle,
-  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle,
+  extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle | BBCodeText.TextStyle,
 ): TextStyleOptions {
   const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
@@ -199,11 +213,6 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.GROWTH_RATE_TYPE: {
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { left: 24 };
-          break;
-      }
       styleOptions.fontSize = defaultFontSize - 30;
       shadowXpos = 3;
       shadowYpos = 3;
@@ -275,11 +284,12 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
         case "id":
+        case "ru":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
         default:
-          fontSizeValue = "96px";
+          fontSizeValue = "92px";
           break;
       }
       styleOptions.fontSize = fontSizeValue;

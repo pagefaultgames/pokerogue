@@ -58,9 +58,6 @@ describe("Abilities - Honey Gather", () => {
     await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
-    // something weird is going on with the test framework, so this is required to prevent a crash
-    const enemy = game.field.getEnemyPokemon();
-    vi.spyOn(enemy, "scene", "get").mockReturnValue(game.scene);
     // Expects next wave so run must succeed
     vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
 

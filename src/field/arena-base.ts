@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { BiomeId } from "#enums/biome-id";
 import { getBiomeHasProps, getBiomeKey } from "#field/arena";
 import { randSeedInt } from "#utils/common";
+import Phaser from "phaser";
 
 // TODO: this needs documentation
 export class ArenaBase extends Phaser.GameObjects.Container {

@@ -8,7 +8,10 @@
 import { STARTER_OPTIONS } from "#daily-seed/constants";
 import {
   promptAbility,
+  promptAbilityIndex,
   promptFormIndex,
+  promptGender,
+  promptIvs,
   promptMoveset,
   promptNature,
   promptSpeciesId,
@@ -85,14 +88,27 @@ async function promptStarterOptions(starterConfig: DailySeedStarter): Promise<vo
       break;
     case "ability":
       starterConfig.ability = await promptAbility();
+      starterOptions.splice(starterOptions.indexOf("abilityIndex"), 1);
+      break;
+    case "abilityIndex":
+      starterConfig.abilityIndex = await promptAbilityIndex(starterConfig.speciesId);
+      starterOptions.splice(starterOptions.indexOf("ability"), 1);
       break;
     case "passive":
       starterConfig.passive = await promptAbility(true);
+      break;
+    case "ivs":
+      starterConfig.ivs = await promptIvs();
+      break;
+    case "gender":
+      starterConfig.gender = await promptGender();
       break;
     case "finish":
       // Re-add all used options for next starter
       starterOptions.splice(0, starterOptions.length, ...STARTER_OPTIONS);
       return;
+    default:
+      option satisfies never;
   }
   starterOptions.splice(starterOptions.indexOf(option), 1);
   await promptStarterOptions(starterConfig);

@@ -1,8 +1,8 @@
-import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -33,10 +33,10 @@ describe("Test Ability Swapping", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
-    game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.INTIMIDATE]);
+    game.field.getPlayerPokemon().setTempAbility(AbilityId.INTIMIDATE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should remove primal weather when the setter's ability is removed", async () => {
@@ -44,10 +44,10 @@ describe("Test Ability Swapping", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
-    game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
+    game.field.getPlayerPokemon().setTempAbility(AbilityId.BALL_FETCH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.weather?.weatherType).toBeUndefined();
+    expect(game).toHaveWeather(WeatherType.NONE);
   });
 
   it("should not activate passive abilities", async () => {
@@ -55,10 +55,10 @@ describe("Test Ability Swapping", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
-    game.field.getPlayerPokemon().setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
+    game.field.getPlayerPokemon().setTempAbility(AbilityId.BALL_FETCH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(1); // would be 2 if passive activated again
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, 1); // would be 2 if passive activated again
   });
 
   // Pickup and Honey Gather are special cases as they're the only abilities to be Unsuppressable but not Unswappable
@@ -69,6 +69,6 @@ describe("Test Ability Swapping", () => {
     game.move.select(MoveId.ROLE_PLAY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 });

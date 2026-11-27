@@ -36,7 +36,7 @@ describe("Moves - Gigaton Hammer", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
+    expect(enemy1).not.toHaveFullHp();
 
     await game.doKillOpponents();
     await game.toNextWave();
@@ -59,7 +59,7 @@ describe("Moves - Gigaton Hammer", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
+    expect(enemy1).not.toHaveFullHp();
 
     await game.doKillOpponents();
     await game.toNextWave();
@@ -69,6 +69,6 @@ describe("Moves - Gigaton Hammer", () => {
 
     const enemy2 = game.field.getEnemyPokemon();
 
-    expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
+    expect(enemy2).not.toHaveFullHp();
   });
 });

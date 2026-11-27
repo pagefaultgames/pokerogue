@@ -42,9 +42,7 @@ describe("Moves - U-turn", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // assert
-    expect(game.scene.getPlayerParty()[1].hp).toEqual(
-      Math.floor(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp),
-    );
+    expect(game.scene.getPlayerParty()[1]).toHaveHp(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp);
     expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });
@@ -61,7 +59,7 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.field.getPlayerPokemon();
-    expect(playerPkm.hp).not.toEqual(playerPkm.getMaxHp());
+    expect(playerPkm).not.toHaveFullHp();
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchSummonPhase");
@@ -79,7 +77,7 @@ describe("Moves - U-turn", () => {
 
     // assert
     const playerPkm = game.field.getPlayerPokemon();
-    expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
+    expect(playerPkm).toHaveStatusEffect(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.phaseLog).not.toContain("SwitchSummonPhase");
@@ -94,7 +92,7 @@ describe("Moves - U-turn", () => {
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemy.isFainted()).toBe(true);
+    expect(enemy).toHaveFainted();
 
     // Check that U-Turn forced a switch
     expect(game.phaseInterceptor.phaseLog).toContain("SwitchSummonPhase");

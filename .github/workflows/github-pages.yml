@@ -47,7 +47,7 @@ jobs:
               - "typedoc.config.js"
               - "tsdoc.json"
               - "tsconfig.json"
-              - "typedoc-plugins/**/*"
+              - "plugins/typedoc/**/*"
 
   pages:
     name: Github Pages

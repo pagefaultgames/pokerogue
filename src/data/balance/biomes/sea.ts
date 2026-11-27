@@ -83,7 +83,7 @@ const pokemonPool: BiomePokemonPools = {
 
 const trainerPool: TrainerPools = {
   [BiomePoolTier.COMMON]: [TrainerType.SAILOR, TrainerType.SWIMMER],
-  [BiomePoolTier.UNCOMMON]: [TrainerType.SCUBA_DIVER],
+  [BiomePoolTier.UNCOMMON]: [],
   [BiomePoolTier.RARE]: [],
   [BiomePoolTier.SUPER_RARE]: [],
   [BiomePoolTier.ULTRA_RARE]: [],

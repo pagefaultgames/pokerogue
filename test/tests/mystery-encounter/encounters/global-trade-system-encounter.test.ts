@@ -17,6 +17,7 @@ import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import * as Utils from "#utils/common";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/globalTradeSystem";

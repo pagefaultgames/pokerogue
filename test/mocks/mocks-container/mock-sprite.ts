@@ -6,7 +6,7 @@ type Frame = Phaser.Textures.Frame;
 
 export class MockSprite implements MockGameObject {
   private phaserSprite;
-  public pipelineData;
+  public renderNodeData: Record<string, Record<string, any>>;
   public texture;
   public key;
   public frame;
@@ -31,7 +31,7 @@ export class MockSprite implements MockGameObject {
 
     // Phaser.GameObjects.Sprite.prototype.texture = { frameTotal: 1, get: () => null };
     this.phaserSprite = new Phaser.GameObjects.Sprite(textureManager.scene, x, y, texture);
-    this.pipelineData = {};
+    this.renderNodeData = {};
     this.texture = {
       key: texture || "",
     };
@@ -49,9 +49,16 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  setPipeline(obj): this {
-    // Sets the pipeline of this Game Object.
-    this.phaserSprite.setPipeline(obj);
+  setRenderNodeRole(...args: Parameters<Phaser.GameObjects.Sprite["setRenderNodeRole"]>): this {
+    this.phaserSprite.setRenderNodeRole(...args);
+    const renderNode = args[1];
+    if (!renderNode) {
+      return this;
+    }
+    const renderNodeData = args[2] || {};
+    const renderNodeName = typeof renderNode === "string" ? renderNode : renderNode.name;
+    this.renderNodeData[renderNodeName] ??= {};
+    Object.assign(this.renderNodeData[renderNodeName], renderNodeData);
     return this;
   }
 
@@ -59,9 +66,13 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  setTintFill(color): this {
-    // Sets the tint fill color.
-    this.phaserSprite.setTintFill(color);
+  setTint(color): this {
+    this.phaserSprite.setTint(color);
+    return this;
+  }
+
+  setTintMode(mode): this {
+    this.phaserSprite.setTintMode(mode);
     return this;
   }
 
@@ -131,12 +142,6 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  setTint(color): this {
-    // Sets the tint of this Game Object.
-    this.phaserSprite.setTint(color);
-    return this;
-  }
-
   setFrame(frame, _updateSize?: boolean, _updateOrigin?: boolean): this {
     // Sets the frame this Game Object will use to render with.
     this.frame = frame;
@@ -192,8 +197,9 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
-  setPipelineData(key: string, value: any): this {
-    this.pipelineData[key] = value;
+  setRenderNodeData(renderNode: string | Phaser.Renderer.WebGL.RenderNodes.RenderNode, key: string, value: any): this {
+    this.renderNodeData[typeof renderNode === "string" ? renderNode : renderNode.name] ??= {};
+    this.renderNodeData[typeof renderNode === "string" ? renderNode : renderNode.name][key] = value;
     return this;
   }
 

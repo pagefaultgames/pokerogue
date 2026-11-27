@@ -5,6 +5,7 @@ import { getKeyWithKeycode } from "#inputs/config-handler";
 import { BaseBindingUiHandler } from "#ui/base-binding-ui-handler";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class KeyboardBindingUiHandler extends BaseBindingUiHandler {
   constructor() {

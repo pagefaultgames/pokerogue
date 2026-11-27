@@ -12,6 +12,7 @@ import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 /**
  * Parameters influencing the position of elements within the battle info container
@@ -75,8 +76,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected type2Icon: Phaser.GameObjects.Sprite;
   protected type3Icon: Phaser.GameObjects.Sprite;
   protected expBar: Phaser.GameObjects.Image;
-
-  public expMaskRect: Phaser.GameObjects.Graphics;
 
   protected statsContainer: Phaser.GameObjects.Container;
   protected statsBox: Phaser.GameObjects.Sprite;
@@ -465,7 +464,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.teraIcon
       .setVisible(ty !== PokemonType.UNKNOWN)
-      .setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(ty)))
+      .setTint(Phaser.Display.Color.GetColor(...getTypeRgb(ty)))
+      .setTintMode(Phaser.TintModes.FILL)
       .setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
     this.lastTeraType = ty;
 
@@ -477,7 +477,9 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    */
   setTypes(types: PokemonType[]): void {
     this.type1Icon
-      .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
+      .setTexture(
+        getLocalizedSpriteKey(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`),
+      )
       .setFrame(PokemonType[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
     this.type3Icon.setVisible(types.length > 2);

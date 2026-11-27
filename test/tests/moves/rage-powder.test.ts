@@ -30,19 +30,18 @@ describe("Moves - Rage Powder", () => {
   test("move effect should be bypassed by Grass type", async () => {
     await game.classicMode.startBattle(SpeciesId.AMOONGUSS, SpeciesId.VENUSAUR);
 
-    const enemyPokemon = game.scene.getEnemyField();
+    const [enemy0, enemy1] = game.scene.getEnemyField();
 
     game.move.select(MoveId.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
-
     await game.move.selectEnemyMove(MoveId.RAGE_POWDER);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    // If redirection was bypassed, both enemies should be damaged
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
+    // redirection was bypassed, both enemies should be damaged
+    expect(enemy0).not.toHaveFullHp();
+    expect(enemy1).not.toHaveFullHp();
   });
 
   test("move effect should be bypassed by Overcoat", async () => {
@@ -51,9 +50,7 @@ describe("Moves - Rage Powder", () => {
     // Test with two non-Grass type player Pokemon
     await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
 
-    const enemyPokemon = game.scene.getEnemyField();
-
-    const enemyStartingHp = enemyPokemon.map(p => p.hp);
+    const [enemy0, enemy1] = game.scene.getEnemyField();
 
     game.move.select(MoveId.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
@@ -64,7 +61,7 @@ describe("Moves - Rage Powder", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     // If redirection was bypassed, both enemies should be damaged
-    expect(enemyPokemon[0].hp).toBeLessThan(enemyStartingHp[0]);
-    expect(enemyPokemon[1].hp).toBeLessThan(enemyStartingHp[1]);
+    expect(enemy0).not.toHaveFullHp();
+    expect(enemy1).not.toHaveFullHp();
   });
 });

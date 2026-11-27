@@ -4,6 +4,7 @@ import { EaseType } from "#enums/ease-type";
 import { TimeOfDay } from "#enums/time-of-day";
 import { BattleSceneEventType } from "#events/battle-scene";
 import { fixedInt } from "#utils/common";
+import Phaser from "phaser";
 
 /** A small self contained UI element that displays the time of day as an icon */
 export class TimeOfDayWidget extends Phaser.GameObjects.Container {

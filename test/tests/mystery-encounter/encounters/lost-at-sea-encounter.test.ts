@@ -13,6 +13,7 @@ import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import i18next from "i18next";
+import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/lostAtSea";
@@ -247,9 +248,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
         ),
       );
 
-      notAllowedPkm.forEach(pkm =>
-        expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()),
-      );
+      notAllowedPkm.forEach(pkm => expect(pkm).toHaveFullHp());
     });
 
     it("should leave encounter without battle", async () => {

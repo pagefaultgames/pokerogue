@@ -35,8 +35,8 @@ describe("Abilities - Defiant", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 3);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, -1);
   });
 
   it("lowering your own stats should not trigger defiant", async () => {
@@ -47,9 +47,9 @@ describe("Abilities - Defiant", () => {
     game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPDEF, -1);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, -1);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("white herb should remove only the negative effects", async () => {
@@ -60,7 +60,7 @@ describe("Abilities - Defiant", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);
+    expect(playerPokemon).toHaveStatStage(Stat.DEF, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, 3);
   });
 });

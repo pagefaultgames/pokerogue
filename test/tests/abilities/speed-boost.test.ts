@@ -39,7 +39,7 @@ describe("Abilities - Speed Boost", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("should not trigger this turn if pokemon was switched into combat via attack, but the turn after", async () => {
@@ -49,11 +49,11 @@ describe("Abilities - Speed Boost", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
     const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("checking back to back swtiches", async () => {
@@ -65,17 +65,17 @@ describe("Abilities - Speed Boost", () => {
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
     expect(game.field.getPlayerPokemon()).toBe(ninjask);
-    expect(ninjask.getStatStage(Stat.SPD)).toBe(0);
+    expect(ninjask).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
     expect(game.field.getPlayerPokemon()).toBe(shuckle);
-    expect(shuckle.getStatStage(Stat.SPD)).toBe(0);
+    expect(shuckle).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(shuckle.getStatStage(Stat.SPD)).toBe(1);
+    expect(shuckle).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("should not trigger this turn if pokemon was switched into combat via normal switch, but the turn after", async () => {
@@ -84,11 +84,11 @@ describe("Abilities - Speed Boost", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
     const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 
   it("should not trigger if pokemon fails to escape", async () => {
@@ -105,10 +105,10 @@ describe("Abilities - Speed Boost", () => {
     await game.toNextTurn();
 
     const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 0);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);
   });
 });

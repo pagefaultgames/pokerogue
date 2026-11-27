@@ -70,6 +70,7 @@ const defaultDisplaySettings: DisplaySettings = {
 };
 
 const defaultAudioSettings: AudioSettings = {
+  enableAudio: true,
   bgmVolume: 0.5,
   fieldVolume: 0.5,
   masterVolume: 0.3,

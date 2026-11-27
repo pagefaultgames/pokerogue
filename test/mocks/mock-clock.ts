@@ -12,7 +12,7 @@ export class MockClock extends Clock {
         eventEmitter.on(SceneEvents.PRE_UPDATE, this.preUpdate, this);
         eventEmitter.on(SceneEvents.UPDATE, this.update, this);
        */
-      this.preUpdate(this.systems.game.loop.time, 1);
+      this.preUpdate();
       this.update(this.systems.game.loop.time, 1);
     }, 1);
   }

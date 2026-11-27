@@ -2,10 +2,10 @@ import { defaultStarterSpecies } from "#app/constants";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import type { SystemSaveData } from "#types/save-data";
+import type { StarterData, SystemSaveData } from "#types/save-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 
-const createStarterData: SystemSaveMigrator = {
+const createStarterData = {
   name: "createStarterData",
   version: "1.0.3",
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: it's simpler this way
@@ -16,7 +16,7 @@ const createStarterData: SystemSaveMigrator = {
 
     const allStarterIds = speciesDataRegistry.getAllStarters();
 
-    data.starterData = {};
+    data.starterData = {} as StarterData;
     for (const speciesId of allStarterIds) {
       data.starterData[speciesId] = {
         moveset: null,
@@ -27,6 +27,7 @@ const createStarterData: SystemSaveMigrator = {
         passiveAttr: 0,
         valueReduction: 0,
         classicWinCount: 0,
+        pity: [0, 0],
       };
     }
 
@@ -80,6 +81,6 @@ const createStarterData: SystemSaveMigrator = {
       }
     }
   },
-};
+} as const satisfies SystemSaveMigrator;
 
-export const systemMigrators: readonly SystemSaveMigrator[] = [createStarterData] as const;
+export const systemMigrators = [createStarterData] as const satisfies readonly SystemSaveMigrator[];

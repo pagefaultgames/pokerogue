@@ -6,6 +6,7 @@ import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 interface BaseStatsOverlaySettings {
   scale?: number; // scale the box? A scale of 0.5 is recommended

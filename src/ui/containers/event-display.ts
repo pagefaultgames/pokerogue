@@ -6,6 +6,7 @@ import type { TimedEvent } from "#types/game-events";
 import { addTextObject } from "#ui/text";
 import { padInt } from "#utils/common";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
   private readonly event: TimedEvent | nil;

@@ -1,4 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { settings } from "#app/global-settings-manager";
+import { PlayerGender } from "#enums/player-gender";
 import type { TextStyle } from "#enums/text-style";
 import { getTextWithColors } from "#ui/text";
 import i18next from "i18next";
@@ -31,7 +33,10 @@ export function getEncounterText(keyOrString?: string, primaryStyle?: TextStyle)
  * @param keyOrString
  */
 function getTextWithDialogueTokens(keyOrString: string): string | null {
-  const tokens = globalScene.currentBattle?.mysteryEncounter?.dialogueTokens;
+  const dialogueTokens = globalScene.currentBattle?.mysteryEncounter?.dialogueTokens;
+  // i18next falls back to the base key when no `_female` variant exists
+  const tokens =
+    settings.general.playerGender === PlayerGender.FEMALE ? { ...dialogueTokens, context: "female" } : dialogueTokens;
 
   if (i18next.exists(keyOrString, tokens)) {
     return i18next.t(keyOrString, tokens);

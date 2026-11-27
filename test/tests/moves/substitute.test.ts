@@ -1,4 +1,3 @@
-import { SubstituteTag, TrappedTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -16,6 +15,7 @@ import { UiMode } from "#enums/ui-mode";
 import { StealHeldItemChanceAttr } from "#moves/move";
 import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/framework/game-manager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -51,7 +51,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
+    expect(leadPokemon).toHaveHp(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
   });
 
   it("should redirect enemy attack damage to the Substitute doll", async () => {
@@ -65,14 +65,14 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveHp(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     const postSubHp = leadPokemon.hp;
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.hp).toBe(postSubHp);
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveHp(postSubHp);
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
   });
 
   it("should fade after redirecting more damage than its remaining HP", async () => {
@@ -88,14 +88,14 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.hp).toBe(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveHp(Math.ceil((leadPokemon.getMaxHp() * 3) / 4));
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     const postSubHp = leadPokemon.hp;
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.hp).toBe(postSubHp);
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
+    expect(leadPokemon).toHaveHp(postSubHp);
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
   });
 
   it("should block stat changes from status moves", async () => {
@@ -109,8 +109,8 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 0);
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
   });
 
   it("should be bypassed by sound-based moves", async () => {
@@ -124,12 +124,12 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     const postSubHp = leadPokemon.hp;
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     expect(leadPokemon.hp).toBeLessThan(postSubHp);
   });
 
@@ -144,12 +144,12 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     const postSubHp = leadPokemon.hp;
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+    expect(leadPokemon).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     expect(leadPokemon.hp).toBeLessThan(postSubHp);
   });
 
@@ -167,7 +167,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("shouldn't block moves that target the user's side of the field", async () => {
@@ -185,7 +185,7 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
   });
 
   it("shouldn't block the opponent from setting hazards", async () => {
@@ -201,7 +201,7 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
   });
 
   it("shouldn't block moves that target both sides of the field", async () => {
@@ -220,8 +220,8 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     pokemon.forEach(p => expect(p.getMoveEffectiveness).not.toHaveReturnedWith(0));
-    expect(game.scene.arena.getTag(ArenaTagType.TRICK_ROOM)).toBeDefined();
-    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TRICK_ROOM);
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
   });
 
   it("should protect the user from flinching", async () => {
@@ -238,7 +238,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   it("should protect the user from being trapped", async () => {
@@ -255,7 +255,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getTag(TrappedTag)).toBeUndefined();
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.SAND_TOMB);
   });
 
   it("should prevent the user's stats from being lowered", async () => {
@@ -272,7 +272,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.DEF)).toBe(0);
+    expect(leadPokemon).toHaveStatStage(Stat.DEF, 0);
   });
 
   it("should protect the user from being afflicted with status effects", async () => {
@@ -343,7 +343,7 @@ describe("Moves - Substitute", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.getHeldItems().length).toBe(1);
-    expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
+    expect(enemyPokemon).toHaveHp(enemyPostAttackHp);
   });
 
   it("should prevent the user's stats from being reset by Clear Smog", async () => {
@@ -359,7 +359,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should prevent the user from becoming confused", async () => {
@@ -376,8 +376,8 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
+    expect(leadPokemon).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
+    expect(leadPokemon).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should transfer to the switched in Pokemon when the source uses Baton Pass", async () => {
@@ -396,10 +396,8 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MovePhase", false);
 
-    const switchedPokemon = game.field.getPlayerPokemon();
-    const subTag = switchedPokemon.getTag(SubstituteTag)!;
-    expect(subTag).toBeDefined();
-    expect(subTag.hp).toBe(Math.floor((leadPokemon.getMaxHp() * 1) / 4));
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveBattlerTag({ tagType: BattlerTagType.SUBSTITUTE, hp: toDmgValue(leadPokemon.getMaxHp() / 4) });
   });
 
   it("should prevent the source's Rough Skin from activating when hit", async () => {
@@ -413,7 +411,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should prevent the source's Focus Punch from failing when hit", async () => {
@@ -433,8 +431,8 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.FOCUS_PUNCH, result: MoveResult.SUCCESS });
+    expect(enemyPokemon).not.toHaveFullHp();
   });
 
   it("should not allow Shell Trap to activate when attacked", async () => {
@@ -450,7 +448,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.SHELL_TRAP, result: MoveResult.FAIL });
   });
 
   it("should not allow Beak Blast to burn opponents when hit", async () => {
@@ -484,8 +482,8 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(playerPokemon).toHaveUsedMove({ move: MoveId.COUNTER, result: MoveResult.FAIL });
+    expect(enemyPokemon).toHaveFullHp();
   });
 
   it("should prevent Sappy Seed from applying its Leech Seed effect to the user", async () => {
@@ -503,7 +501,7 @@ describe("Moves - Substitute", () => {
     await game.move.forceHit(); // forces Sappy Seed to hit
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.getTag(BattlerTagType.SEEDED)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.SEEDED);
   });
 
   it("should fail if the user has 1 max HP", async () => {

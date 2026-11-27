@@ -4,6 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import Phaser from "phaser";
 
 const hiddenX = -150;
 const shownX = 0;

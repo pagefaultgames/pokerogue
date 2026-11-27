@@ -40,15 +40,14 @@ function migrateSummonData(summonData: Record<string, unknown>): void {
   }
 }
 /**
- * Fix player pokemon move history entries with updated `MoveUseModes`,
- * based on the prior values of `virtual` and `ignorePP`.
- * Needed to ensure Last Resort and move-calling moves still work OK.
- * @param data - {@linkcode SystemSaveData}
+ * Fix player pokemon move history entries with updated `MoveUseMode`s,
+ * based on the prior values of `virtual` and `ignorePP`. \
+ * Needed to ensure Last Resort and move-calling moves still work.
  */
-const fixMoveHistory: SessionSaveMigrator = {
+const fixMoveHistory = {
   name: "fixMoveHistory",
   version: "1.10.0",
-  migrate: data => {
+  migrate: (data): void => {
     data.party.forEach(pkmn => {
       ensurePropertyIsObject(pkmn, "summonData");
       migrateSummonData(pkmn.summonData);
@@ -62,6 +61,6 @@ const fixMoveHistory: SessionSaveMigrator = {
       });
     }
   },
-};
+} as const satisfies SessionSaveMigrator;
 
-export const sessionMigrators: readonly SessionSaveMigrator[] = [fixMoveHistory] as const;
+export const sessionMigrators = [fixMoveHistory] as const satisfies readonly SessionSaveMigrator[];

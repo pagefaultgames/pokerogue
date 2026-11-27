@@ -41,8 +41,8 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
-    expect(charizard.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(charizard).toHaveFullHp();
+    expect(charizard).toHaveStatStage(Stat.SPDEF, 0);
     expect(charizard);
   });
 
@@ -65,16 +65,16 @@ describe("Moves - Protect", () => {
       game.move.select(MoveId.PROTECT);
       await game.toNextTurn();
 
-      expect(charizard.hp).toBe(charizard.getMaxHp());
-      expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      expect(charizard).toHaveFullHp();
+      expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
       expect(conditionSpy).toHaveLastReturnedWith(true);
     }
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
-    expect(charizard.hp).toBeLessThan(charizard.getMaxHp());
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).not.toHaveFullHp();
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
     expect(conditionSpy).toHaveLastReturnedWith(false);
   });
 
@@ -97,7 +97,7 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
   });
 
   it("should reset fail chance on move failure", async () => {
@@ -109,15 +109,15 @@ describe("Moves - Protect", () => {
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
 
     game.move.select(MoveId.SPIKY_SHIELD);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.SUCCESS });
   });
 
   it("should reset fail chance on using another move", async () => {
@@ -129,34 +129,38 @@ describe("Moves - Protect", () => {
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
   });
 
-  it("should reset fail chance on starting a new wave", async () => {
+  it("should not reset fail chance on starting a new wave", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
-    game.move.select(MoveId.PROTECT);
+    game.move.use(MoveId.PROTECT);
     // Wait until move end phase to kill opponent to ensure protect doesn't fail due to going last
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.doKillOpponents();
     await game.toNextWave();
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
-    game.move.select(MoveId.SPIKY_SHIELD);
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
+
+    game.move.use(MoveId.SPIKY_SHIELD);
+    await game.toNextTurn();
+
+    expect(charizard).toHaveUsedMove({ move: MoveId.SPIKY_SHIELD, result: MoveResult.FAIL });
   });
 
+  // TODO: this is probably more deserving inside the psychic terrain tests
   it("should not be blocked by Psychic Terrain", async () => {
     game.override.ability(AbilityId.PSYCHIC_SURGE);
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
@@ -165,7 +169,7 @@ describe("Moves - Protect", () => {
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
   });
 
   it("should stop subsequent hits of multi-hit moves", async () => {
@@ -179,7 +183,7 @@ describe("Moves - Protect", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(charizard.hp).toBe(charizard.getMaxHp());
+    expect(charizard).toHaveFullHp();
     expect(enemyPokemon.turnData.hitCount).toBe(1);
   });
 
@@ -194,8 +198,8 @@ describe("Moves - Protect", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemyPokemon).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.SUCCESS });
+    expect(charizard).toHaveUsedMove({ move: MoveId.PROTECT, result: MoveResult.FAIL });
   });
 
   it("should not block Protection-bypassing moves or Future Sight", async () => {
@@ -215,7 +219,7 @@ describe("Moves - Protect", () => {
     await game.move.forceEnemyMove(MoveId.MIGHTY_CLEAVE);
     await game.toNextTurn();
 
-    expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
+    expect(aggron).not.toHaveFullHp();
 
     aggron.hp = aggron.getMaxHp();
 
@@ -224,8 +228,8 @@ describe("Moves - Protect", () => {
     await game.move.forceEnemyMove(MoveId.SPORE);
     await game.toNextTurn();
 
-    expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
-    expect(aggron.status?.effect).toBeUndefined(); // check that protect actually worked
+    expect(aggron).not.toHaveFullHp();
+    expect(aggron).toHaveStatusEffect(StatusEffect.NONE); // check that protect actually worked
   });
 
   it("should block status moves", async () => {

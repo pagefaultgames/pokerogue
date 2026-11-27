@@ -40,7 +40,7 @@ describe("Moves - False Swipe", () => {
     game.move.select(MoveId.FALSE_SWIPE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.hp).toBe(1);
+    expect(enemy).toHaveHp(1);
     const falseSwipeHistory = player
       .getMoveHistory()
       .every(turnMove => turnMove.move === MoveId.FALSE_SWIPE && turnMove.result === MoveResult.SUCCESS);
