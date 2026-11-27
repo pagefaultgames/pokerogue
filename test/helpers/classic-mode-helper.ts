@@ -28,16 +28,33 @@ export class ClassicModeHelper extends GameManagerHelper {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
-      this.game.override.shiny(false).enemyShiny(false);
-    }
-    if (this.game.override.normalizeIVs) {
-      this.game.override.playerIVs(31).enemyIVs(31);
-    }
-    if (this.game.override.normalizeNatures) {
-      this.game.override.nature(Nature.HARDY).enemyNature(Nature.HARDY);
+      if (activeOverrides.SHINY_OVERRIDE == null) {
+        this.game.override.shiny(false);
+      }
+      if (activeOverrides.ENEMY_SHINY_OVERRIDE == null) {
+        this.game.override.enemyShiny(false);
+      }
     }
 
-    this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+    if (this.game.override.normalizeIVs) {
+      if (activeOverrides.IVS_OVERRIDE == null) {
+        this.game.override.playerIVs(31);
+      }
+      if (activeOverrides.ENEMY_IVS_OVERRIDE == null) {
+        this.game.override.enemyIVs(31);
+      }
+    }
+
+    if (this.game.override.normalizeNatures) {
+      if (activeOverrides.NATURE_OVERRIDE == null) {
+        this.game.override.nature(Nature.HARDY);
+      }
+      if (activeOverrides.ENEMY_NATURE_OVERRIDE == null) {
+        this.game.override.enemyNature(Nature.HARDY);
+      }
+    }
+
+    this.game.promptHandler.addToNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
@@ -46,6 +63,7 @@ export class ClassicModeHelper extends GameManagerHelper {
     });
 
     await this.game.phaseInterceptor.to("EncounterPhase");
+
     if (activeOverrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
@@ -60,24 +78,24 @@ export class ClassicModeHelper extends GameManagerHelper {
     await this.runToSummon(...speciesIds);
 
     if (settings.general.battleStyle === BattleStyle.SWITCH) {
-      this.game.onNextPrompt(
+      this.game.promptHandler.addToNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,
         () => {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+        () => this.game.isCurrentPhase("CommandPhase", "TurnInitPhase"),
       );
 
-      this.game.onNextPrompt(
+      this.game.promptHandler.addToNextPrompt(
         "CheckSwitchPhase",
         UiMode.CONFIRM,
         () => {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+        () => this.game.isCurrentPhase("CommandPhase", "TurnInitPhase"),
       );
     }
 
@@ -103,14 +121,14 @@ export class ClassicModeHelper extends GameManagerHelper {
    */
   public async startBattleWithSwitch(pokemonIndex: IntClosedRange<1, 5>): Promise<void> {
     this.game.settings.battleStyle(BattleStyle.SWITCH);
-    this.game.onNextPrompt(
+    this.game.promptHandler.addToNextPrompt(
       "CheckSwitchPhase",
       UiMode.CONFIRM,
       () => {
         this.game.scene.ui.getHandler().setCursor(0);
         this.game.scene.ui.getHandler().processInput(Button.ACTION);
       },
-      () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+      () => this.game.isCurrentPhase("CommandPhase", "TurnInitPhase"),
     );
     this.game.doSelectPartyPokemon(pokemonIndex);
 
