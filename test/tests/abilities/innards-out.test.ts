@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
@@ -54,5 +55,24 @@ describe("Abilities - Innards Out", () => {
 
     expect(magikarp1).toHaveFainted();
     expect(magikarp2).toHaveFullHp();
+  });
+
+  // https://github.com/pagefaultgames/pokerogue/issues/2621
+  it("should not activate when the holder faints from its own Explosion after being hit by a damaging move", async () => {
+    // Keep Magikarp from being knocked out by Tackle
+    game.override.enemyLevel(100);
+    // Gastly is immune to Explosion, so any damage it takes would come from Innards Out
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
+
+    const gastly = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.EXPLOSION);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
+
+    expect(magikarp).toHaveFainted();
+    expect(gastly).toHaveFullHp();
   });
 });
