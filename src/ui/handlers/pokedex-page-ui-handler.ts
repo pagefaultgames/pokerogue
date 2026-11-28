@@ -922,14 +922,21 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (preSpeciesId) {
       const preSpecies = speciesDataRegistry.getSpecies(preSpeciesId);
       const preEvolutions = speciesDataRegistry.getEvolutions(preSpecies.speciesId);
+      // Keep only the prevolution's evolutions that lead to the form currently being displayed.
+      // Forms that are not reached by evolution (e.g. Megas, Gigantamax, Cosplay Pikachu) match none of these cases.
       this.preEvolutions = preEvolutions.filter(
         e =>
           e.speciesId === species.speciesId
-          && (((e.evoFormKey === "" || e.evoFormKey === null) // This takes care of Cosplay Pikachu (Pichu is not shown)
-            && (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) // This takes care of Gholdengo
-              || (preSpecies.forms.length > 0 && species.forms.length === 0) // This takes care of everything else
+          && (((e.evoFormKey === "" || e.evoFormKey === null) // The evolution does not specify a target form
+            // The prevolution has a form with the same key (e.g. Plant Burmy -> Plant Wormadam, East Shellos -> East Gastrodon)
+            && (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey)
+              // Only the prevolution has forms (e.g. Gimmighoul -> Gholdengo, Burmy -> Mothim)
+              || (preSpecies.forms.length > 0 && species.forms.length === 0)
+              // Neither has forms (e.g. Charmander -> Charmeleon), or the prevolution has none and this is the default form,
+              // whose key may be empty (e.g. Charmeleon -> Charizard) or not (e.g. Type: Null -> Normal Silvally)
               || (preSpecies.forms.length === 0
-                && (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) // This takes care of Burmy, Shellos etc
+                && (species.forms.length === 0 || formIndex === 0 || species.forms[formIndex]?.formKey === ""))))
+            // The evolution targets this exact form (e.g. Toxel -> Amped Toxtricity)
             || e.evoFormKey === species.forms[formIndex]?.formKey),
       );
     }

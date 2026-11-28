@@ -501,5 +501,20 @@ describe("UI - Pokedex", () => {
     expect(pageHandler["isSeen"]()).toEqual(true);
   });
 
+  // These species' default forms have a non-empty form key, while their prevolutions have no forms
+  it.each([
+    { species: SpeciesId.SILVALLY, prevo: SpeciesId.TYPE_NULL },
+    { species: SpeciesId.CHERRIM, prevo: SpeciesId.CHERUBI },
+    { species: SpeciesId.AEGISLASH, prevo: SpeciesId.DOUBLADE },
+    { species: SpeciesId.PALAFIN, prevo: SpeciesId.FINIZEN },
+  ])("should show the prevolution of the default form of species $species", async ({ species, prevo }) => {
+    const pageHandler = await runToPokedexPage(speciesDataRegistry.getSpecies(species), { formIndex: 0 });
+
+    expect(pageHandler["formIndex"]).toEqual(0);
+    expect(pageHandler["preEvolutions"]).toHaveLength(1);
+    expect(pageHandler["preEvolutions"][0].speciesId).toEqual(species);
+    expect(speciesDataRegistry.getPrevolution(species)).toEqual(prevo);
+  });
+
   // #endregion Pokedex Pages Tests
 });
