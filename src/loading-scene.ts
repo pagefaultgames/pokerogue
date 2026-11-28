@@ -144,6 +144,7 @@ export class LoadingScene extends SceneBase {
       .loadImage("select_gen_cursor", "ui")
       .loadImage("select_gen_cursor_highlight", "ui")
 
+      .loadImage("silver_key", "ui")
       .loadImage("language_icon", "ui")
       .loadImage("saving_icon", "ui")
       .loadImage("discord_oauth", "ui")
@@ -152,6 +153,8 @@ export class LoadingScene extends SceneBase {
       .loadImage("link_icon", "ui")
       .loadImage("unlink_icon", "ui")
       .loadImage("default_bg", "arenas")
+      .loadImage("unown_open", "ui", "unown_open.png")
+      .loadImage("unown_closed", "ui", "unown_closed.png")
       .loadBiomeImages(startingBiome)
 
       // Load trainer images

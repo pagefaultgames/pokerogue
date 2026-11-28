@@ -34,6 +34,7 @@ describe("Pokerogue Account API", () => {
         discordId: "23235353543535",
         googleId: "1ed1d1d11d1d1d1d1d1",
         hasAdminRole: false,
+        resetCode: "abcdefgh",
       };
       server.use(http.get(`${apiBase}/account/info`, () => HttpResponse.json(expectedAccountInfo)));
 
