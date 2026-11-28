@@ -9,13 +9,13 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
   public messageBg: Phaser.GameObjects.Image;
   public messageContainer: Phaser.GameObjects.Container;
-  public canCancel: boolean;
-  public cancelled: boolean;
+  /**
+   * A cancellation function set by the Phase using this UI handler.
+   * If it is not set, cancel requests will be ignored.
+   */
+  public cancelFunc: (() => void) | undefined;
 
   setup() {
-    this.canCancel = false;
-    this.cancelled = false;
-
     const ui = this.getUi();
 
     this.evolutionContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
@@ -47,16 +47,17 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
   show(_args: any[]): boolean {
     super.show(_args);
 
-    globalScene.ui.bringToTop(this.evolutionContainer);
-    globalScene.ui.bringToTop(this.messageBg.setVisible(true));
-    globalScene.ui.bringToTop(this.messageContainer.setVisible(true));
-
+    globalScene.ui
+      .bringToTop(this.evolutionContainer)
+      .bringToTop(this.messageBg.setVisible(true))
+      .bringToTop(this.messageContainer.setVisible(true));
     return true;
   }
 
   processInput(button: Button): boolean {
-    if (this.canCancel && !this.cancelled && button === Button.CANCEL) {
-      this.cancelled = true;
+    if (button === Button.CANCEL && this.cancelFunc != null) {
+      this.cancelFunc();
+      this.cancelFunc = undefined;
       return true;
     }
 
@@ -78,8 +79,7 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
 
   clear() {
     this.clearText();
-    this.canCancel = false;
-    this.cancelled = false;
+    this.cancelFunc = undefined;
     this.evolutionContainer.removeAll(true);
     this.messageContainer.setVisible(false);
     this.messageBg.setVisible(false);
