@@ -40,6 +40,45 @@ describe("Abilities - Innards Out", () => {
     expect(feebas).toHaveTakenDamage(20);
   });
 
+  it("should not activate if the ability holder lost Innards Out via Skill Swap before fainting", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.SKILL_SWAP);
+    await game.toNextTurn();
+
+    expect(magikarp.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(feebas.getAbility().id).toBe(AbilityId.INNARDS_OUT);
+
+    magikarp.hp = 20;
+    game.move.use(MoveId.X_SCISSOR);
+    await game.toEndOfTurn();
+
+    expect(magikarp).toHaveFainted();
+    expect(feebas).toHaveFullHp();
+  });
+
+  it("should not activate if the ability holder's ability was suppressed before fainting", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.GASTRO_ACID);
+    await game.toNextTurn();
+
+    expect(magikarp.summonData.abilitySuppressed).toBe(true);
+
+    magikarp.hp = 20;
+    game.move.use(MoveId.X_SCISSOR);
+    await game.toEndOfTurn();
+
+    expect(magikarp).toHaveFainted();
+    expect(feebas).toHaveFullHp();
+  });
+
   it("should not damage an ally in Double Battles", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
