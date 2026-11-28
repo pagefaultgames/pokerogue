@@ -367,7 +367,7 @@ export class GameChallengesUiHandler extends UiHandler {
 
       challengeLabel.rightArrow
         .setPositionRelative(challengeLabel.label, this.optionsBg.width - 20, 4)
-        .setVisible(challenge.value !== challenge.maxValue);
+        .setVisible(challenge.value !== challenge.maxValue && !this.isHiddenTypesBlocked(challenge));
 
       tempText.setText(challenge.getValue());
       // monotype challenge has a unique display and needs to be accounted for manually
@@ -628,9 +628,12 @@ export class GameChallengesUiHandler extends UiHandler {
           break;
         case Button.RIGHT:
           if (challenges.length > 0) {
-            success = this.getActiveChallenge().increaseValue();
-            if (success) {
-              this.updateText();
+            const activeChallenge = this.getActiveChallenge();
+            if (!this.isHiddenTypesBlocked(activeChallenge)) {
+              success = activeChallenge.increaseValue();
+              if (success) {
+                this.updateText();
+              }
             }
           }
           break;
@@ -703,6 +706,14 @@ export class GameChallengesUiHandler extends UiHandler {
 
   private getActiveChallenge(): Challenge {
     return this.getFilteredChallenges()[this.cursor + this.scrollCursor];
+  }
+
+  /** Hidden Types has no effect without Type Randomizer, so don't let it be turned on alone */
+  private isHiddenTypesBlocked(challenge: Challenge): boolean {
+    return (
+      challenge.id === Challenges.HIDDEN_TYPES
+      && globalScene.gameMode.getChallengeValue(Challenges.TYPE_RANDOMIZER) === 0
+    );
   }
 
   public override clear(): void {
