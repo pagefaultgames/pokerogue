@@ -52,9 +52,12 @@ describe("Move - Payback", () => {
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.PAYBACK].power);
   });
 
-  // TODO: Enable test once ability to force catch failure is added
-  it.todo("should trigger for enemies on player failed ball catch", async () => {
+  it("should double power for enemies if the player fails to catch the target", async () => {
+    game.override.ability(AbilityId.STURDY); // ensure we don't get OHKO'd
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getEnemyPokemon();
+    vi.spyOn(feebas.species, "catchRate", "get").mockReturnValue(0);
 
     game.doThrowPokeball(PokeballType.POKEBALL);
     await game.move.forceEnemyMove(MoveId.PAYBACK);

@@ -508,9 +508,14 @@ export class GameManager {
   /**
    * Select the BALL option from the command menu, then press Action; in the BALL
    * menu, select a pokéball type and press Action again to throw it.
-   * @param ballIndex - The {@linkcode PokeballType} to throw
+   * @param ballType - The {@linkcode PokeballType} to throw
    */
-  public doThrowPokeball(ballIndex: PokeballType) {
+  public doThrowPokeball(ballType: PokeballType) {
+    expect(
+      this.scene.pokeballCounts[ballType],
+      "Expected at least 1 ball of the given type to be present!",
+    ).toBeGreaterThan(0);
+
     this.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
@@ -518,7 +523,7 @@ export class GameManager {
 
     this.onNextPrompt("CommandPhase", UiMode.BALL, () => {
       const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
-      ballHandler.setCursor(ballIndex);
+      ballHandler.setCursor(ballType);
       ballHandler.processInput(Button.ACTION); // select ball and throw
     });
   }
